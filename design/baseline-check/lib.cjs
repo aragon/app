@@ -105,6 +105,11 @@ const launch = async () => {
     try {
         return await deps.chromium.launch({
             executablePath: chromiumExecutable(),
+            // Chromium re-rasters only the invalidated part of a tile and draws it over the pixels already there,
+            // so a rounded edge on a fractional position (the wallet button in the top bar) came out a shade
+            // different with every repaint, and the result depended on how often the page had repainted. Full
+            // raster clears the tile first.
+            args: ['--disable-partial-raster'],
         });
     } catch (error) {
         return die(
@@ -115,11 +120,14 @@ const launch = async () => {
 
 // Injected before any page script: hides the dev-only overlays and stops CSS motion.
 const pageSetup = () => {
+    // CSS animations and transitions jump to their end state (spinners and pulsing dots hold their first frame), the
+    // text caret is not drawn (it blinks), smooth scrolling is off.
+    const motion =
+        '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:0s!important;transition-delay:0s!important;scroll-behavior:auto!important;caret-color:transparent!important}';
     const css = [
         // Next.js dev indicator, React Query devtools, the app's dev panel button.
         'nextjs-portal,.tsqd-parent-container,.tsqd-open-btn-container,button[title="Show dev panel"]{display:none!important}',
-        // CSS animations and transitions jump to their end state (spinners and pulsing dots hold their first frame).
-        '*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:0s!important;transition-delay:0s!important;scroll-behavior:auto!important}',
+        motion,
         // The Explore "Featured" carousel is moved by framer-motion (an inline transform on its track, set on every
         // animation frame): pin the track 160px in, the frame the canvas reproduces. See README, "Determinism".
         '.overflow-hidden>.flex.w-max.will-change-transform{transform:translateX(-160px)!important}',
@@ -133,6 +141,35 @@ const pageSetup = () => {
         add();
     } else {
         document.addEventListener('DOMContentLoaded', add);
+    }
+    // A document stylesheet does not reach into shadow roots, where the wallet SDK's modal (Lit web components) keeps
+    // its own animations (the header title slides in, buttons fade). Every shadow root gets the motion rule as an
+    // adopted stylesheet, and keeps it when the component assigns its own list (Lit assigns adoptedStyleSheets).
+    if (
+        typeof CSSStyleSheet === 'function' &&
+        'adoptedStyleSheets' in Document.prototype
+    ) {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(motion);
+        const property = Object.getOwnPropertyDescriptor(
+            ShadowRoot.prototype,
+            'adoptedStyleSheets',
+        );
+        Object.defineProperty(ShadowRoot.prototype, 'adoptedStyleSheets', {
+            ...property,
+            set(sheets) {
+                property.set.call(
+                    this,
+                    sheets.includes(sheet) ? sheets : [...sheets, sheet],
+                );
+            },
+        });
+        const attachShadow = Element.prototype.attachShadow;
+        Element.prototype.attachShadow = function (...args) {
+            const root = attachShadow.apply(this, args);
+            root.adoptedStyleSheets = [];
+            return root;
+        };
     }
     // The React Hook Form devtools panel is a fixed element without a stable selector: hide it whenever it renders.
     const hideFormDevtools = () => {
@@ -148,6 +185,35 @@ const pageSetup = () => {
         }
     };
     setInterval(hideFormDevtools, 300);
+    // Chromium keeps how an inline SVG was painted while an ancestor was being scaled (a dialog opening from 88%
+    // scale), so the antialiasing of icons (the dialog's close icon) depended on the animation frame it was first
+    // painted in. Taking every SVG out of the layout and back in, in one task, makes it paint again at rest; nothing
+    // is shown in between. Also walks open shadow roots (the wallet SDK's icons).
+    window.baselineRepaintSvgs = () => {
+        const roots = [document];
+        // The array grows while it is iterated: shadow roots found inside shadow roots are walked as well.
+        for (const root of roots) {
+            for (const el of root.querySelectorAll('*')) {
+                if (el.shadowRoot) {
+                    roots.push(el.shadowRoot);
+                }
+            }
+        }
+        const svgs = roots.flatMap((root) => [...root.querySelectorAll('svg')]);
+        const styles = svgs.map((svg) => svg.getAttribute('style'));
+        for (const svg of svgs) {
+            svg.style.setProperty('display', 'none', 'important');
+        }
+        void document.body.offsetHeight;
+        svgs.forEach((svg, i) => {
+            if (styles[i] === null) {
+                svg.removeAttribute('style');
+            } else {
+                svg.setAttribute('style', styles[i]);
+            }
+        });
+        void document.body.offsetHeight;
+    };
     // What settle() waits for inside the page: the whole document has arrived, React has hydrated every control of
     // it (React Query devtools, hidden above, are not React's), fonts and images are loaded, no skeleton is left.
     window.baselineReady = () => {
@@ -358,7 +424,9 @@ const settle = async (page) => {
             return;
         }
         if (Date.now() > deadline) {
-            const waiting = [...state.pending].map((r) => r.url().slice(0, 120));
+            const waiting = [...state.pending].map((r) =>
+                r.url().slice(0, 120),
+            );
             throw new Error(
                 `page did not settle within 60s (${waiting.length > 0 ? `requests in flight: ${waiting.join(', ')}` : 'hydration, fonts, images or loading skeletons still pending'})`,
             );
@@ -383,6 +451,14 @@ const goto = async (page, route, opts = {}) => {
 // Screenshots until two consecutive frames are identical: late layout (the permissions graph fitting its viewport)
 // or a JS-driven animation shows up as frames that differ.
 const stableScreenshot = async (page, fullPage) => {
+    await page.evaluate(() => window.baselineRepaintSvgs());
+    // Two animation frames, so what was just laid out has also been painted.
+    await page.evaluate(
+        () =>
+            new Promise((resolve) =>
+                requestAnimationFrame(() => requestAnimationFrame(resolve)),
+            ),
+    );
     const take = () => page.screenshot({ fullPage, animations: 'disabled' });
     let frame = await take();
     for (let attempt = 0; ; attempt++) {
@@ -392,7 +468,9 @@ const stableScreenshot = async (page, fullPage) => {
             return frame;
         }
         if (attempt === 40) {
-            throw new Error('the page never held still (frames keep differing)');
+            throw new Error(
+                'the page never held still (frames keep differing)',
+            );
         }
         frame = next;
     }
@@ -457,7 +535,9 @@ const answers = async (url, what, hint) => {
         if (response.ok) {
             return response;
         }
-        return die(`${what} answered HTTP ${response.status} on ${url}. ${hint}`);
+        return die(
+            `${what} answered HTTP ${response.status} on ${url}. ${hint}`,
+        );
     } catch (error) {
         return die(
             `${what} does not answer on ${url} (${error.cause?.code ?? error.name}). ${hint}`,
@@ -488,7 +568,9 @@ const runCapture = async (jobs, match) => {
         );
     }
     const filter = rest[0];
-    const selected = filter ? jobs.filter((job) => match(job.name, filter)) : jobs;
+    const selected = filter
+        ? jobs.filter((job) => match(job.name, filter))
+        : jobs;
     if (selected.length === 0) {
         die(
             `"${filter}" matches nothing. Names: ${jobs.map((job) => job.name).join(', ')}`,

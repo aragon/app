@@ -1,9 +1,10 @@
 'use strict';
 // Walks through the creation wizards as nadia.eth and captures each step.
 // Usage: node capture-wizards.cjs [--update]
-//   [createDao|createWorkspace|createProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
+//   [createDao|createWorkspace|createProposal|msCreateProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
 const {
     TV_ROUTE: TV,
+    MS_ROUTE: MS,
     SPP_ROUTE: SPP,
     WORKSPACE_ID: WS,
     deps,
@@ -84,10 +85,15 @@ const wizards = {
                 'Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury and fund public goods.',
             );
         await page.getByRole('button', { name: /^Add$/ }).click();
-        await page.getByLabel('URL', { exact: true }).fill('https://meridian.xyz');
+        await page
+            .getByLabel('URL', { exact: true })
+            .fill('https://meridian.xyz');
         await page.getByLabel(/Link text/).fill('Website');
         await shot(page, 'create-dao-step2-describe-filled');
-        await page.getByRole('button', { name: /Publish DAO/ }).last().click();
+        await page
+            .getByRole('button', { name: /Publish DAO/ })
+            .last()
+            .click();
         await page
             .getByRole('dialog')
             .getByRole('button', { name: 'Sign transaction' })
@@ -152,6 +158,10 @@ const wizards = {
             .waitFor();
         await shot(page, 'dialog-publish-proposal-transaction', viewport);
     },
+    async msCreateProposal(page) {
+        await enter(page, `${MS}/create/${D.MS_PLUGIN}/proposal`);
+        await shot(page, 'ms-create-proposal-step1-empty');
+    },
     async execute(page) {
         await enter(page, `${TV}/create/execute`);
         await shot(page, 'create-execute-step1');
@@ -183,7 +193,10 @@ const wizards = {
         await shot(page, 'spp-create-proposal-step1-empty');
     },
     async workspaceExecute(page) {
-        await enter(page, `/workspace/${WS}/${seed.tvAccountId}/create/execute`);
+        await enter(
+            page,
+            `/workspace/${WS}/${seed.tvAccountId}/create/execute`,
+        );
         await shot(page, 'workspace-create-execute-step1');
     },
 };

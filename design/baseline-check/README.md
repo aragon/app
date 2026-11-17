@@ -73,7 +73,7 @@ in `COVERED`, or a commented entry in `SKIP` (today: the automations pages, the 
 
 ```sh
 node design/baseline-check/capture-pages.cjs [--update] [part of a shot name]   # e.g. "ms-", "mobile", "dao-dashboard"
-node design/baseline-check/capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
+node design/baseline-check/capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|msCreateProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
 node design/baseline-check/capture-dialogs.cjs [--update] [connectDialog|connected|vote|mobileNav]
 node design/baseline-check/render-canvas.cjs [--mobile] [Main.dc.html ...]      # artboards only, no comparison
 node design/baseline-check/compare.cjs [--threshold <percent>]                  # default 1
@@ -163,16 +163,27 @@ Consequences that are visible in the screenshots:
 
 ## Determinism
 
-Two captures of the same code give byte-identical files. What makes that so:
+Two captures of the same code give byte-identical files, for every reference: no screenshot needs a tolerance, so
+`cmp` (or `git status` after `capture.sh --update`) is enough to tell whether the app changed. What makes that so:
 
 - **Clock**: see above. Dates and relative labels ("3 days left") do not depend on when the capture runs.
 - **Motion**: the browser asks for reduced motion, CSS animations and transitions are cut to zero length, and
-  screenshots are taken with animations disabled, so spinners and the pulsing status dot hold their first frame.
+  screenshots are taken with animations disabled, so spinners and the pulsing status dot hold their first frame. The
+  same rule is adopted by every shadow root, which a document stylesheet does not reach: the wallet SDK's modal is
+  made of web components that animate their own header and buttons. The text caret is not drawn.
 - **Explore carousel**: the "Featured" row is moved by framer-motion on every animation frame, which CSS settings do
   not reach. `lib.cjs` pins its track with one CSS rule (`translateX(-160px)`), the frame the canvas reproduces.
 - **Readiness**: a screenshot is taken only when React has hydrated the page, no request has been in flight for
   half a second, fonts and all images (lazy ones included) have loaded, no loading skeleton is left, and two
   consecutive frames are identical.
+- **Raster**: Chromium runs with `--disable-partial-raster`. By default it re-rasters only the invalidated part of a
+  tile, over the pixels already there, so an antialiased edge on a fractional position (the rounded wallet button in
+  the top bar) came out a shade different after each repaint, and the file depended on how often the page had
+  repainted.
+- **Icons**: an inline SVG painted while a dialog was still scaling open (kit dialogs open from 88% with
+  framer-motion) kept the antialiasing of that frame. Before each screenshot every SVG, in the document and in open
+  shadow roots, is taken out of the layout and put back in the same task, so it is painted again at rest, and two
+  animation frames pass before the first screenshot.
 - **Permissions graph**: React Flow measures its edges while the graph is still zooming to fit, which leaves
   rounding noise. `capture-pages.cjs` makes it measure again once the graph is at rest.
 - **Wallet pages**: the server renders every page as "not connected". The scripts let the wallet connect on Explore
@@ -193,4 +204,10 @@ Two captures of the same code give byte-identical files. What makes that so:
 
 Measured on a 4-core Linux container with a slow filesystem, Chromium 153, Node 22.23.4:
 
-RUNTIMES
+| Step | Time |
+|---|---|
+| `start.sh`, with the `.next/` cache of an earlier start | 20 s to 8 min |
+| `capture.sh`, 121 screenshots, first run after a start or a later one | about 12 min |
+
+Most of a run is waiting: every page opens in a fresh browser context, and each screenshot is taken at least twice,
+until two frames match. A first start without the `.next/` cache compiles the app and takes much longer.
