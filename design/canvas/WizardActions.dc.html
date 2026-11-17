@@ -27,7 +27,7 @@ body{margin:0}
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"hasBack":{"editor":"boolean","default":false},"isLast":{"editor":"boolean","default":false},"submitLabel":{"editor":null},"helpText":{"editor":null},"backHref":{"editor":null},"nextHref":{"editor":null},"hover":{"editor":"boolean","default":false},"$preview":{"width":800,"height":48}}'>
+<script type="text/x-dc" data-dc-script data-props='{"hasBack":{"editor":"boolean","default":false},"isLast":{"editor":"boolean","default":false},"submitLabel":{"editor":null},"helpText":{"editor":null},"backHref":{"editor":null},"nextHref":{"editor":null},"onNext":{"editor":null},"onBack":{"editor":null},"hover":{"editor":"boolean","default":false},"$preview":{"width":800,"height":48}}'>
 // Back / Next buttons at the bottom of a full-page wizard step (apps/app: shared/components/wizards/wizardPage/
 // wizardPageStep/wizardPageStep.tsx footer, labels and variant from wizard/useWizardFooter.ts). Last child of
 // `.wizard-step`:
@@ -39,6 +39,9 @@ body{margin:0}
 //   helpText     the wizard's submitHelpText, printed under the buttons on the last step only.
 //   backHref     screen the Back button opens (the previous step, or where the wizard was opened from).
 //   nextHref     screen the Next / submit button opens (the next step, or the dialog the last step opens).
+//   onNext       a function from the screen's script, called on Next / submit instead of following nextHref: an
+//                interactive flow in one artboard validates its step there (as the app does on submit) and moves on.
+//   onBack       the same for Back.
 //   hover        draws the submit button hovered (the screenshot's pointer rests on it after clicking "Next").
 // The dropdown variant (nextDropdownItems, e.g. the create-proposal "Next" menu) is not covered: mount a kit
 // Dropdown.Container in the screen instead.
@@ -50,8 +53,8 @@ class Component extends DCLogic {
     return {
       no: false,
       // href only when given: an <a> without a target renders differently from the <button>.
-      backProps: p.backHref ? { href: p.backHref } : {},
-      nextProps: p.nextHref ? { href: p.nextHref } : {},
+      backProps: p.onBack ? { onClick: p.onBack } : p.backHref ? { href: p.backHref } : {},
+      nextProps: p.onNext ? { onClick: p.onNext } : p.nextHref ? { href: p.nextHref } : {},
       backClass: p.hasBack ? '' : 'invisible',
       variant,
       label: isLast ? (p.submitLabel ?? 'Submit') : 'Next',
