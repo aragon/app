@@ -128,7 +128,8 @@ class Component extends DCLogic {
       true_: true, two: 2,
       crumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'MGP-8' }],
       crumbTag: { label: 'Active', variant: 'info' },
-      endDate: Date.now() + 3 * day + 3600000,
+      // Fixed "now" (when the reference screenshots were taken).
+      endDate: Date.UTC(2026, 10, 16, 18, 0) + 3 * day + 3600000,
       yes: '6220000', no: '1100000', abstain: '402000', support: 50, minPart: 15, supply: '50000000',
       actions: [
         { index: 0, action: transfer('0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 'USD Coin', grants, '250000000000') },

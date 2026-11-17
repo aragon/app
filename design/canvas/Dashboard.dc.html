@@ -139,7 +139,8 @@ a{color:#3164fa}a:hover{color:#003bf5}
 class Component extends DCLogic {
   renderVals() {
     const day = 86400000;
-    const now = Date.now();
+    // Fixed "now" (when the reference screenshots were taken) so mock dates render the same on every visit.
+    const now = Date.UTC(2026, 10, 16, 18, 0);
     return {
       yes: true, two: 2, three: 3, six: 6,
       stats: [

@@ -16,6 +16,7 @@ together with reference screenshots of the real app and the mock backend used to
 |---|---|
 | `canvas/canvas.json` | The canvas index: every artboard, its frame, notes and the design-system version in use |
 | `canvas/*.dc.html` | One file per screen. Screens mount real kit components (`GovUiKit.*`); app-only layout (sidebar, page header, aside cards) is markup copied from `apps/app` |
+| `canvas/assets/` | Images the screens use, linked by relative path (`assets/net_bg.svg`) and published with the screens |
 | `reference/*.webp` | Full-page screenshots of the real app running on mock data (lossless WebP). What "correct" looks like |
 | `mock-backend/` | Mock Aragon backend + JSON-RPC, app launcher and screenshot scripts. See its README |
 
@@ -44,6 +45,16 @@ into `canvas/`, and commit and push whatever changed. Nothing changed: no commit
 
 **Refresh (repo → canvas).** Publish this branch's `canvas/` files to the branch's canvas. Sync first if the canvas may
 have hand edits.
+
+What keeps a refresh deterministic, so the same files always give the same canvas:
+
+- **Pin the kit.** Copy the design system's files at the version recorded in `canvas.json` → `designSystems[].version`,
+  never its latest. Moving to a newer kit is a deliberate change (see Kit updates).
+- **Images are files, not uploads.** Put them in `canvas/assets/` and link them by relative path. An upload gets an id
+  that exists only in the canvas it was uploaded to, so a new canvas built from this folder would show it broken.
+- **Fixed "now".** Mock dates are computed from a fixed timestamp (when the reference screenshots were taken), never
+  `Date.now()`. Relative labels drawn by kit components themselves ("3 days left") still use the viewer's clock, as in
+  the app.
 
 Edits Claude makes are published to the canvas and committed in the same step.
 
