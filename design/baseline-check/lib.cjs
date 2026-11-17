@@ -305,6 +305,7 @@ const newContext = async (browser, opts = {}) => {
 
 const TV_ROUTE = '/dao/ethereum-mainnet/meridian.dao.eth';
 const MS_ROUTE = '/dao/ethereum-mainnet/atlas-grants.dao.eth';
+const SPP_ROUTE = '/dao/ethereum-mainnet/northstar.dao.eth';
 const WORKSPACE_ID = 'meridian-ecosystem';
 
 // Workspaces live in the browser's localStorage: seed one that holds both mock DAOs.
@@ -583,6 +584,7 @@ module.exports = {
     PINATA_REPLY,
     TV_ROUTE,
     MS_ROUTE,
+    SPP_ROUTE,
     WORKSPACE_ID,
     deps,
     die,

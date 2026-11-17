@@ -3,7 +3,9 @@
 const {
     TV_ROUTE: TV,
     MS_ROUTE: MS,
+    SPP_ROUTE: SPP,
     WORKSPACE_ID: WS,
+    deps,
     newContext,
     workspaceSeed,
     settle,
@@ -13,6 +15,8 @@ const {
     runCapture,
 } = require('./lib.cjs');
 const D = require('./data.cjs');
+// Northstar Protocol, the staged-governance (SPP) DAO, built the way mock-server.cjs builds it.
+const NS = require('./data-spp.cjs').build({ ...D, viem: deps.viem });
 
 const seed = workspaceSeed();
 const workspaceSections = (prefix, base, sections) =>
@@ -53,6 +57,29 @@ const PAGES = [
     ['ms-permissions', `${MS}/permissions`, { permissions: true }],
     ['ms-settings', `${MS}/settings`],
     ['ms-settings-process-agc', `${MS}/settings/agc`],
+    ['spp-dashboard', `${SPP}/dashboard`],
+    ['spp-proposals', `${SPP}/proposals`],
+    ['spp-proposal-nsp-8-approval-active', `${SPP}/proposals/NSP-8`],
+    ['spp-proposal-nsp-7-advanceable', `${SPP}/proposals/NSP-7`],
+    ['spp-proposal-nsp-6-veto-active', `${SPP}/proposals/NSP-6`],
+    ['spp-proposal-nsp-5-vetoed', `${SPP}/proposals/NSP-5`],
+    ['spp-proposal-nsp-4-executable', `${SPP}/proposals/NSP-4`],
+    ['spp-proposal-nsp-3-expired', `${SPP}/proposals/NSP-3`],
+    ['spp-proposal-nsp-2-executed', `${SPP}/proposals/NSP-2`],
+    ['spp-proposal-nsp-1-rejected', `${SPP}/proposals/NSP-1`],
+    ['spp-members', `${SPP}/members`],
+    // The other tabs of the members page (daoUtils.getPluginTabId; a Safe tab adds the DAO address).
+    ['spp-members-core-team', `${SPP}/members?members=${NS.MS_ADDR.toLowerCase()}-core-team`],
+    ['spp-members-council-safe', `${SPP}/members?members=${NS.COUNCIL_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`],
+    ['spp-members-guardian-safe', `${SPP}/members?members=${NS.GUARDIAN_SAFE.toLowerCase()}-safe-${NS.DAO_ADDR.toLowerCase()}`],
+    ['spp-member-detail', `${SPP}/members/${D.PEOPLE[0].address}`],
+    ['spp-assets', `${SPP}/assets`],
+    ['spp-transactions', `${SPP}/transactions`],
+    ['spp-permissions', `${SPP}/permissions`, { permissions: true }],
+    ['spp-settings', `${SPP}/settings`],
+    ['spp-settings-process-nsp', `${SPP}/settings/nsp`],
+    // Behind the safeAccountPage feature flag, which is on in the local environment (NEXT_PUBLIC_ENV=local).
+    ['safe-account', `/safe/ethereum-mainnet/${NS.COUNCIL_SAFE}`],
     ...workspaceSections('workspace-all', `/workspace/${WS}/all`, [
         'overview',
         'todos',
@@ -75,6 +102,14 @@ const PAGES = [
             'settings',
         ],
     ),
+    [
+        'workspace-account-member-detail',
+        `/workspace/${WS}/${seed.tvAccountId}/members/${D.PEOPLE[0].address}`,
+    ],
+    [
+        'workspace-account-proposal-mgp-8',
+        `/workspace/${WS}/${seed.tvAccountId}/proposals/MGP-8`,
+    ],
     ['workspace-edit', `/workspace/${WS}/edit`],
     ['not-found-404', '/this-page-does-not-exist', { status: 404, errorPage: true }],
     [

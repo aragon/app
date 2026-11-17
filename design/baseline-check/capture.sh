@@ -27,4 +27,6 @@ if [ "${1:-}" = "--update" ]; then
     done
     cp "$HERE/out/shots"/*.webp "$REFERENCE/"
     echo "design/reference updated"
+    # Every page route of the app has a reference or a reason not to.
+    node "$HERE/check-routes.cjs" | tail -n 1
 fi

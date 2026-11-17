@@ -53,13 +53,27 @@ design/baseline-check/capture.sh --update
 ```
 
 This captures everything and, only if no capture failed, makes `design/reference/` exactly the set of this run:
-new screenshots are copied in and screenshots the run no longer produces are removed.
+new screenshots are copied in and screenshots the run no longer produces are removed. It then runs the route
+coverage check (below).
+
+### Route coverage
+
+```sh
+node design/baseline-check/check-routes.cjs
+```
+
+Lists every page route of the app (each `page.tsx` under `apps/app/src/app`) with the reference that shows it, and
+exits 1 when a route has no reference and no reason in its skip list, when a listed reference is not in
+`design/reference/`, or when a listed route no longer exists. Both lists are at the top of `check-routes.cjs`. A new
+page in the app makes the check fail until it gets a capture (`capture-pages.cjs` or `capture-wizards.cjs`) and a row
+in `COVERED`, or a commented entry in `SKIP` (today: the automations pages, the plugin pages no mock DAO has, the
+`/workspace` redirect and the two workspace catch-alls that only answer 404).
 
 ### Parts
 
 ```sh
 node design/baseline-check/capture-pages.cjs [--update] [part of a shot name]   # e.g. "ms-", "mobile", "dao-dashboard"
-node design/baseline-check/capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|execute|createProcess]
+node design/baseline-check/capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
 node design/baseline-check/capture-dialogs.cjs [--update] [connectDialog|connected|vote|mobileNav]
 node design/baseline-check/render-canvas.cjs [--mobile] [Main.dc.html ...]      # artboards only, no comparison
 node design/baseline-check/compare.cjs [--threshold <percent>]                  # default 1
@@ -104,10 +118,12 @@ does not ship; the fonts load through `tokens.css`.
 
 | | |
 |---|---|
-| Backend | `mock-server.cjs` answers the Aragon backend routes the app uses from `data.cjs`. `start.sh` points `ARAGON_BACKEND_URL` at it. |
+| Backend | `mock-server.cjs` answers the Aragon backend routes the app uses from `data.cjs` (Northstar: `data-spp.cjs`, `routes-spp.cjs`). `start.sh` points `ARAGON_BACKEND_URL` at it. |
+| Safe transaction service | The app's `/api/safe` proxy has no URL override: `server-preload.cjs` forwards its upstream (`api.safe.global/tx-service`) to the mock, and `start.sh` sets a dummy `NEXT_SECRET_SAFE_API_KEY`, without which the proxy refuses to load. |
 | Ethereum RPC | The same server answers JSON-RPC on `/rpc` (`NEXT_SECRET_RPC_OVERRIDE_1`): ENS forward and reverse lookups (Multicall3 + Universal Resolver), block timestamps, MRD balances and voting power, `canVote`, and `hasPermission` (true only for the demo wallet `nadia.eth`). |
 | IPFS | Pinning through Pinata is faked on the server (`server-preload.cjs`) and in the browser (`lib.cjs`); nothing is uploaded. |
 | CMS | The five `aragon/app-cms` files the app fetches are served from the snapshot in `cms/`, on the server and in the browser. To refresh the snapshot, download the files from `https://raw.githubusercontent.com/aragon/app-cms/main/` again. |
+| Feature flags | Not overridden. The app runs as `NEXT_PUBLIC_ENV=local` (from `config/.env.local`), so the flags take their `local` value from the CMS snapshot's `feature-flags.json`; `workspaces` and `safeAccountPage` (the `/safe/...` page) are on there. A flag can also be forced per browser with the app's override cookie (`featureFlags.constants.ts`). |
 | Wallet | `wallet-inject.cjs` injects an EIP-1193 / EIP-6963 wallet (shown as MetaMask) with one account. Reads go to the mock RPC; signing and sending never complete, so transaction dialogs stop at "Sign transaction". |
 | Images | DAO avatars and token logos of the mock data point at `mock-assets.aragon.test`; the browser gets `design/canvas/assets/mock/{avatar,token}/<key>.svg`, the same files the canvas screens use. |
 | Clock | One reference time, `referenceTime` in `design/screens.json` (override: `MOCK_NOW`, for the servers and the scripts alike). The mock data is computed from it, the Next.js server's `Date` is frozen at it, and so is the browser's (timers keep running). |
@@ -131,6 +147,16 @@ Consequences that are visible in the screenshots:
   12 members, 8 of them with ENS names; 11 transactions; permissions.
 - **Atlas Grants Council** (`atlas-grants.dao.eth`, 3-of-5 multisig). Treasury in USDC, DAI and ETH; 6 proposals
   AGC-1..6 (executed, expired, rejected, executable, active, pending); 5 members, all with ENS names; 4 transactions.
+- **Northstar Protocol** (`northstar.dao.eth`, staged governance: one Staged Proposal Processor process, NSP), in
+  `data-spp.cjs` with its routes in `routes-spp.cjs`. Stage 1 "Council approval": the Northstar Council Safe (3-of-5)
+  and the Core Team multisig (2-of-3) as approval bodies; stage 2 "Community veto": NSP token holders and the Security
+  Guardian Safe (2-of-4) as veto bodies. 8 proposals NSP-1..8 (rejected, executed, expired, executable, vetoed, active
+  in the veto stage, advanceable, active in the approval stage); 12 people across the bodies; treasury of about $8.3M.
+  The Safes are drawn as external bodies on proposal pages (the app at HEAD throws on a Safe body described with
+  `interfaceType: 'safe'`); their owners, queue and history come from the backend's `/v2/safe/*`, and the Safe
+  account page reads its balances from the Safe transaction service, which `server-preload.cjs` forwards to the mock.
+  Northstar is in no list (Explore, "your DAOs", workspace), so the pages of the other DAOs do not change; its pages
+  are reached by URL (`spp-*` screenshots).
 - 7 more DAOs, which only appear in the Explore list (9 DAOs in total).
 - A workspace "Meridian Ecosystem" holding both DAOs. Workspaces live in the browser's localStorage, so the capture
   scripts seed it there.

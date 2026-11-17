@@ -7,6 +7,18 @@ const { deps, MOCK_PORT, OUT } = require('./lib.cjs');
 const D = require('./data.cjs');
 
 const { viem } = deps;
+const { createRoutes } = require('./routes-spp.cjs');
+const NS = require('./data-spp.cjs').build({
+    NOW: D.NOW,
+    addr: D.addr,
+    txh: D.txh,
+    viem,
+    NET: D.NET,
+    ASSET_HOST: D.ASSET_HOST,
+    TOKENS: D.TOKENS,
+    HEAD_BLOCK: D.HEAD_BLOCK,
+});
+const nsRoutes = createRoutes(NS, { viem });
 fs.mkdirSync(OUT, { recursive: true });
 const LOG = path.join(OUT, 'mock-requests.log');
 const log = (line) =>
@@ -148,9 +160,14 @@ const ENS_BY_ADDR = Object.fromEntries(
 );
 ENS_BY_ADDR[D.TV_DAO_ADDR.toLowerCase()] = 'meridian.dao.eth';
 ENS_BY_ADDR[D.MS_DAO_ADDR.toLowerCase()] = 'atlas-grants.dao.eth';
+Object.assign(ENS_BY_ADDR, NS.ENS);
 const ZERO_WORD = `0x${'0'.repeat(64)}`;
 // Returns { success, returnData } for a single contract call.
 const innerCall = (to, data) => {
+    const northstar = nsRoutes.innerCall(to, data);
+    if (northstar) {
+        return northstar;
+    }
     try {
         const dec = viem.decodeFunctionData({ abi: reverseAbi, data });
         const a = String(dec.args[0]).toLowerCase();
@@ -384,6 +401,10 @@ const handle = (req, res, bodyText) => {
             `RPC ${Array.isArray(body) ? body.map((c) => c.method).join(',') : body?.method}`,
         );
         return send(res, 200, reply);
+    }
+
+    if (nsRoutes.handle(req, url, res, { send, notFound })) {
+        return true;
     }
 
     let m;

@@ -1,15 +1,24 @@
 'use strict';
 // Walks through the creation wizards as nadia.eth and captures each step.
-// Usage: node capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|execute|createProcess]
+// Usage: node capture-wizards.cjs [--update]
+//   [createDao|createWorkspace|createProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
 const {
     TV_ROUTE: TV,
+    SPP_ROUTE: SPP,
+    WORKSPACE_ID: WS,
+    deps,
     newContext,
+    workspaceSeed,
     gotoConnected,
     shot,
     runCapture,
 } = require('./lib.cjs');
 const D = require('./data.cjs');
 const walletScript = require('./wallet-inject.cjs');
+const NS = require('./data-spp.cjs').build({ ...D, viem: deps.viem });
+const seed = workspaceSeed();
+// Wizards that run inside the mock workspace, whose context also gets the workspace seed.
+const IN_WORKSPACE = new Set(['workspaceExecute']);
 
 const viewport = { fullPage: false };
 const NADIA = D.PEOPLE[0];
@@ -169,13 +178,24 @@ const wizards = {
         await page.getByRole('dialog').waitFor();
         await shot(page, 'dialog-create-process-add-voting-body', viewport);
     },
+    async sppCreateProposal(page) {
+        await enter(page, `${SPP}/create/${NS.SPP_ADDR}/proposal`);
+        await shot(page, 'spp-create-proposal-step1-empty');
+    },
+    async workspaceExecute(page) {
+        await enter(page, `/workspace/${WS}/${seed.tvAccountId}/create/execute`);
+        await shot(page, 'workspace-create-execute-step1');
+    },
 };
 
 const jobs = Object.entries(wizards).map(([name, wizard]) => ({
     name,
     run: async (browser) => {
         const context = await newContext(browser, {
-            initScripts: [walletScript(NADIA.address)],
+            initScripts: [
+                walletScript(NADIA.address),
+                ...(IN_WORKSPACE.has(name) ? [seed.script] : []),
+            ],
         });
         await wizard(await context.newPage());
     },

@@ -44,6 +44,8 @@ rm -rf "$APP_DIR/.next/dev/cache/fetch-cache"
     export ARAGON_BACKEND_URL="http://localhost:$MOCK_PORT"
     export NEXT_SECRET_RPC_OVERRIDE_1="http://localhost:$MOCK_PORT/rpc"
     export NEXT_SECRET_RPC_KEY=mock NEXT_SECRET_ANKR_RPC_KEY=mock NEXT_SECRET_DRPC_RPC_KEY=mock
+    # The /api/safe proxy refuses to start without a key; server-preload.cjs sends its requests to the mock backend.
+    export NEXT_SECRET_SAFE_API_KEY=mock
     export NEXT_TELEMETRY_DISABLED=1 TZ=UTC
     export NODE_OPTIONS="${NODE_OPTIONS:-} --require \"$HERE/server-preload.cjs\""
     cd "$APP_DIR"
