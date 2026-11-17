@@ -1,0 +1,1 @@
+export { useResolveWorkspaceAvatar } from './useResolveWorkspaceAvatar';

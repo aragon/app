@@ -505,13 +505,13 @@
         },
         "group": {
           "inbox": "Inbox",
-          "workspace": "Workspace"
+          "settings": "Settings"
         },
         "link": {
           "accountSettings": "Settings",
           "assets": "Assets",
           "dashboard": "Dashboard",
-          "edit": "Edit workspace",
+          "admin": "Workspace admin",
           "members": "Members",
           "permissions": "Permissions",
           "proposals": "Proposals",
@@ -4698,7 +4698,9 @@
         "type": {
           "dao": "DAO",
           "safe": "Safe"
-        }
+        },
+        "menu": "More",
+        "remove": "Remove from workspace"
       },
       "workspaceAccountStateCard": {
         "error": {
@@ -4926,7 +4928,9 @@
         "message": "{{account}} isn't part of {{workspace}}."
       },
       "workspaceSelector": {
-        "create": "Create workspace"
+        "create": "Create workspace",
+        "import": "Import workspace",
+        "importError": "This file is not a valid workspace export."
       },
       "workspaceEditPage": {
         "steps": {
@@ -5041,6 +5045,50 @@
       "workspaceTodosPage": {
         "main": {
           "title": "To-dos"
+        }
+      },
+      "workspaceAdminPage": {
+        "title": "Workspace admin",
+        "details": {
+          "title": "Details",
+          "edit": "Edit details",
+          "name": "Name",
+          "description": "Description",
+          "noDescription": "No description",
+          "links": "Links"
+        },
+        "accounts": {
+          "title": "Accounts",
+          "add": "Add account",
+          "empty": {
+            "heading": "No accounts yet",
+            "description": "Add a Safe or Aragon DAO to bring its assets, transactions and members into this workspace."
+          },
+          "removeError": "Unable to remove the account. Try again."
+        },
+        "storage": {
+          "title": "Storage",
+          "published": {
+            "term": "Published",
+            "value": "None"
+          },
+          "sync": {
+            "term": "Sync",
+            "value": "Local only"
+          },
+          "export": "Export workspace"
+        }
+      },
+      "workspaceEditDetailsDialog": {
+        "title": "Edit details",
+        "description": "Update how your workspace is described to visitors.",
+        "action": {
+          "save": "Save changes",
+          "cancel": "Cancel"
+        },
+        "error": {
+          "title": "Unable to save the details",
+          "description": "Your changes were not saved. Try again."
         }
       }
     }

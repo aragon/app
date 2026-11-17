@@ -11,7 +11,7 @@ import { ResourcesInputItem } from './resourcesInputItem';
 export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
 
 export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
-    const { name, helpText, fieldPrefix, defaultValue } = props;
+    const { name, helpText, fieldPrefix, defaultValue, isStacked } = props;
 
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -41,6 +41,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
                     {fields.map((field, index) => (
                         <ResourcesInputItem
                             index={index}
+                            isStacked={isStacked}
                             key={field.id}
                             name={fieldName}
                             remove={remove}

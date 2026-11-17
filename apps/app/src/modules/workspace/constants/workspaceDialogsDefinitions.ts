@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishWorkspaceDialog } from '../dialogs/publishWorkspaceDialog';
+import { WorkspaceEditDetailsDialog } from '../dialogs/workspaceEditDetailsDialog';
 import { WorkspaceSelectAccountDialog } from '../dialogs/workspaceSelectAccountDialog';
 import { WorkspaceDialogId } from './workspaceDialogId';
 
@@ -7,6 +8,10 @@ export const workspaceDialogsDefinitions: Record<
     WorkspaceDialogId,
     IDialogComponentDefinitions
 > = {
+    // Not `requiresWallet`: workspaces are stored locally.
+    [WorkspaceDialogId.EDIT_DETAILS]: {
+        Component: WorkspaceEditDetailsDialog,
+    },
     // Not `requiresWallet`: workspaces are stored locally (see `createWorkspace.md` → Ownership).
     [WorkspaceDialogId.PUBLISH_WORKSPACE]: {
         Component: PublishWorkspaceDialog,

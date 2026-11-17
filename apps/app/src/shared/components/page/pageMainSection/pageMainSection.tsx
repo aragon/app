@@ -11,11 +11,16 @@ import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
 export interface IPageMainSectionActionProps
-    extends Omit<IButtonProps, 'variant' | 'size' | 'children'> {
+    extends Omit<IButtonProps, 'size' | 'children'> {
     /**
      * Label of the section action.
      */
     label: string;
+    /**
+     * Variant of the section action.
+     * @default primary
+     */
+    variant?: IButtonProps['variant'];
 }
 
 export interface IPageMainSectionProps extends ComponentProps<'div'> {

@@ -175,6 +175,14 @@ class WorkspaceUtils {
     };
 
     /**
+     * URL of the admin page of a workspace.
+     * @param workspaceId - ID of the workspace.
+     * @returns The admin page URL.
+     */
+    getWorkspaceAdminUrl = (workspaceId: string): string =>
+        this.getWorkspaceUrl(workspaceId, 'admin');
+
+    /**
      * URL of the edit wizard of a workspace.
      * @param workspaceId - ID of the workspace.
      * @param step - Optional step to open the wizard on, read back by `parseWorkspaceEditStep`.

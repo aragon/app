@@ -481,4 +481,218 @@ describe('workspace service', () => {
             expect(getStoredWorkspaces()).toEqual({ existing });
         });
     });
+
+    describe('updateWorkspaceDetails', () => {
+        const details = {
+            name: 'Renamed',
+            description: 'New description',
+            avatar: 'ipfs://avatar',
+            links: [{ name: 'Site', url: 'https://example.org' }],
+        };
+
+        it('replaces the details, keeping the ID, accounts and targets', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+
+            const workspace = await workspaceService.updateWorkspaceDetails({
+                urlParams: { id: created.id },
+                body: details,
+            });
+
+            expect(workspace).toEqual({ ...created, ...details });
+            expect(getStoredWorkspaces()).toEqual({ [created.id]: workspace });
+        });
+
+        it('rejects with a not-found error for an unknown workspace', async () => {
+            await expect(
+                workspaceService.updateWorkspaceDetails({
+                    urlParams: { id: 'unknown' },
+                    body: details,
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+
+    describe('removeWorkspaceAccount', () => {
+        const safeAccount: IWorkspaceAccount = {
+            id: 'ethereum-sepolia-0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
+            type: WorkspaceAccountType.SAFE,
+            address: '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419',
+            network: Network.ETHEREUM_SEPOLIA,
+        };
+
+        it('removes the account, keeping the order of the others', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const [daoAccount] = created.accounts;
+            await workspaceService.addWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: { account: safeAccount },
+            });
+
+            const workspace = await workspaceService.removeWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: { accountId: daoAccount.id },
+            });
+
+            expect(workspace.accounts).toEqual([safeAccount]);
+            expect(getStoredWorkspaces()).toEqual({ [created.id]: workspace });
+        });
+
+        it('leaves the workspace unchanged for an account it does not hold', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+
+            const workspace = await workspaceService.removeWorkspaceAccount({
+                urlParams: { id: created.id },
+                body: { accountId: safeAccount.id },
+            });
+
+            expect(workspace).toEqual(created);
+        });
+
+        it('rejects with a not-found error for an unknown workspace', async () => {
+            await expect(
+                workspaceService.removeWorkspaceAccount({
+                    urlParams: { id: 'unknown' },
+                    body: { accountId: safeAccount.id },
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+
+    describe('workspace export', () => {
+        it('exports the workspace without its ID, under a format version', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+
+            const exported = await workspaceService.exportWorkspace({
+                urlParams: { id: created.id },
+            });
+
+            const { id: _id, ...workspace } = created;
+            expect(JSON.parse(exported)).toEqual({ version: 1, workspace });
+        });
+
+        it('rejects with a not-found error for an unknown workspace', async () => {
+            await expect(
+                workspaceService.exportWorkspace({
+                    urlParams: { id: 'unknown' },
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+    });
+
+    describe('workspace export round trip', () => {
+        it('re-imports a workspace whose links were saved without a protocol', async () => {
+            const created = await workspaceService.createWorkspace({
+                body: buildBody({
+                    links: [{ name: 'Site', url: 'example.org' }],
+                }),
+            });
+            const exported = await workspaceService.exportWorkspace({
+                urlParams: { id: created.id },
+            });
+
+            const imported = await workspaceService.importWorkspace(exported);
+
+            expect(imported.links).toEqual([
+                { name: 'Site', url: 'https://example.org' },
+            ]);
+        });
+    });
+
+    describe('workspace import', () => {
+        it('stores an exported workspace as a new workspace, leaving the existing one untouched', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const exported = await workspaceService.exportWorkspace({
+                urlParams: { id: existing.id },
+            });
+
+            const imported = await workspaceService.importWorkspace(exported);
+
+            expect(imported).toEqual({ ...existing, id: 'new-workspace-2' });
+            expect(getStoredWorkspaces()).toEqual({
+                [existing.id]: existing,
+                [imported.id]: imported,
+            });
+        });
+
+        it('never takes the ID of a demo workspace', async () => {
+            const imported = await workspaceService.importWorkspace(
+                JSON.stringify({
+                    version: 1,
+                    workspace: buildBody({ name: 'Aragon Demo' }),
+                }),
+            );
+
+            expect(imported.id).toEqual('aragon-demo-2');
+        });
+
+        it('stores the workspace on local storage when opened from a session workspace route', async () => {
+            const fixture = {
+                fixture: { ...buildBody({ name: 'Fixture' }), id: 'fixture' },
+            };
+            await workspaceService.activateSessionWorkspaceRegistry(
+                JSON.stringify(fixture),
+            );
+            window.history.pushState(
+                null,
+                '',
+                '/workspace/fixture/all/overview',
+            );
+
+            const imported = await workspaceService.importWorkspace(
+                JSON.stringify({ version: 1, workspace: buildBody() }),
+            );
+
+            expect(getStoredWorkspaces()).toEqual({ [imported.id]: imported });
+            expect(workspaceService.hasSessionWorkspace(imported.id)).toBe(
+                false,
+            );
+        });
+
+        it.each([
+            ['invalid JSON', '{'],
+            [
+                'an unknown version',
+                JSON.stringify({ version: 2, workspace: buildBody() }),
+            ],
+            [
+                'a workspace registry',
+                JSON.stringify({ first: { ...buildBody(), id: 'first' } }),
+            ],
+            [
+                'an invalid account',
+                JSON.stringify({
+                    version: 1,
+                    workspace: buildBody({
+                        accounts: [
+                            {
+                                id: 'ethereum-sepolia-0x123',
+                                type: WorkspaceAccountType.DAO,
+                                address: '0x123',
+                                network: Network.ETHEREUM_SEPOLIA,
+                            },
+                        ],
+                    }),
+                }),
+            ],
+        ])('rejects %s without storing anything', async (_, rawExport) => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+
+            await expect(
+                workspaceService.importWorkspace(rawExport),
+            ).rejects.toThrow();
+            expect(getStoredWorkspaces()).toEqual({ [existing.id]: existing });
+        });
+    });
 });

@@ -120,6 +120,14 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('getWorkspaceAdminUrl', () => {
+        it('builds the url of the admin page', () => {
+            expect(workspaceUtils.getWorkspaceAdminUrl('demo')).toEqual(
+                '/workspace/demo/admin',
+            );
+        });
+    });
+
     describe('getWorkspaceEditUrl', () => {
         it('builds the url of the edit wizard', () => {
             expect(workspaceUtils.getWorkspaceEditUrl('demo')).toEqual(
@@ -358,6 +366,12 @@ describe('workspace utils', () => {
     });
 
     describe('resolveAccountScope', () => {
+        it('reads the admin page segment as the aggregated scope', () => {
+            expect(workspaceUtils.resolveAccountScope('admin')).toEqual(
+                workspaceAllAccountsSegment,
+            );
+        });
+
         const accountId =
             'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
