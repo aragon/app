@@ -58,6 +58,7 @@ export const WorkspaceAccountMembersPage: React.FC<
             return (
                 <DaoMembersPage
                     params={Promise.resolve({ network, addressOrEns: address })}
+                    showFiltersAsDropdown={true}
                 />
             );
         default:
