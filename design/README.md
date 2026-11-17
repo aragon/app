@@ -13,8 +13,9 @@ diff.
 
 `design/` is not a workspace. Nothing in it is built, deployed or released, and no CI job reads it.
 
-**Status (17 November 2026): pilot.** 4 of about 40 screens are redrawn, plus 3 shared parts. The baseline lives on the
-branch `claude/eloquent-cori-mv7xrx` until it is merged to `main`. See [Status](#status).
+**Status (17 November 2026): baseline complete, not yet merged.** All 121 reference screenshots of the app are redrawn
+(118 desktop screens, 2 of them also at phone width, and one phone-only dialog: 119 screens), plus 11 shared parts. The baseline
+lives on the branch `claude/eloquent-cori-mv7xrx` until it is merged to `main`. See [Status](#status).
 
 ## Links and access
 
@@ -83,6 +84,9 @@ flowchart LR
 4. Build in `apps/app` on the same branch, or one based on it. One pull request carries the screens and the code. The
    app needs its changeset as usual; a change to a kit component is a kit change with its own changeset (root
    `AGENTS.md`, Releases) and is listed in the pull request.
+   If the design changed a kit component, the screens hold stand-ins for it. The same pull request changes the kit
+   component, moves the canvas to the re-synced kit, puts the real component back, and proves it renders as the
+   stand-in did (`compare.cjs --against`). Until then the check fails.
 5. If the build ends up different from the design, change the screen to match before merging.
 6. After the merge, `design/canvas/` on `main` is the new baseline. Still to do by hand: refresh the baseline canvas
    from `main`, remove the exploration's file from `design/canvases/`, delete its canvas, and retake the affected
@@ -103,43 +107,52 @@ baseline canvas is refreshed from `main`.
   live in `design/canvas/assets/`.
 - A canvas is only refreshed after it has been synced, so hand edits are never overwritten.
 - The kit version of a canvas changes only on purpose, in a commit that says so.
+- Kit components cannot be edited on a canvas. An exploration that changes one draws a marked stand-in in its place
+  (`data-stands-in-for`); the check fails while any stand-in is left, so the pull request that implements the design
+  must change the kit component and put the real one back ([RUNBOOK.md](RUNBOOK.md), Handover).
+- Board positions are not edited by hand in `canvas.json`: a screen goes on a row of `screens.json` → `pages`, and
+  `baseline-check/layout-canvas.cjs` places it.
 
 ## Checking the baseline against the app
 
 Owner: the design lead. When: before an exploration starts from a screen, and after a release that changed the UI. Manual for now.
 
 1. Run the app on mock data and retake the screenshots into a scratch folder ([baseline-check](baseline-check/README.md)).
-2. For each screen in the Status table, compare the new screenshot with the committed one and with the screen
-   (`compare.cjs` prints the differences). A difference means either the app changed on purpose (update the screen and
+2. Compare the new screenshots with the committed ones; with the fixed clock an unchanged app gives byte-identical
+   files, so every file that differs is a change in the app (`compare.cjs` then shows the screen against it). A difference means either the app changed on purpose (update the screen and
    the reference) or the app is wrong (file a bug; leave both as they are).
 3. Commit the updated references together with the screen fixes.
 
 ## Status
 
-| Screen | File | App route | Reference | Match at 1440 px | At 390 px |
-|---|---|---|---|---|---|
-| Explore | `Main.dc.html` | `/` | `explore.webp` | same height, 0.4% of pixels differ | same height, 0.4% |
-| DAO dashboard | `Dashboard.dc.html` | `/dao/…/dashboard` | `dao-dashboard.webp` | same height, 0.0% | same height, 0.0% |
-| Proposals | `Proposals.dc.html` | `/dao/…/proposals` | `dao-proposals.webp` | same height, 0.0% | no reference |
-| Proposal detail (active) | `Proposal.dc.html` | `/dao/…/proposals/MGP-8` | `dao-proposal-mgp-8-active.webp` | same height, 0.5% (the proposal body, see Known gaps) | no reference |
+Every reference screenshot has a screen; `screens.json` lists each one with its app route and reference, and
+`baseline-check/compare.cjs` prints the current numbers. Every screen renders at exactly its reference's height.
 
-Shared parts: `Sidebar.dc.html` (DAO navigation: sidebar, and the top bar that replaces it on small screens),
-`Footer.dc.html`, `AragonLogo.dc.html`, and `app.css` (the app's page layout).
+| Canvas page | Screens | Differing pixels at 1440 px |
+|---|---|---|
+| DAO pages: explore, not-found, and each mock DAO's pages (Meridian, token voting; Atlas Grants Council, multisig; Northstar Protocol, two-stage with Safes; a Safe account) | 42 | 0.0% for most; explore 0.4%; the permissions graphs 0.3–0.6% (a still drawing of an interactive graph) |
+| Proposals: every proposal state of each DAO, plus voting with a connected wallet | 24 | 0.0% |
+| Wizards: create DAO, proposal (three DAO types), execute, governance process, workspace | 23 | 0.0–0.3% |
+| Workspaces: all accounts, one account, connected, edit | 21 | 0.0–0.1% |
+| Dialogs: wallet, asset picker, mobile navigation, the transaction dialogs | 9 | 0.0–0.5% |
+| Components: the shared parts (sidebars, footer, logo, wizard frame, permission toolbars, transaction steps) | 11 parts | (used by the screens above) |
 
-Not redrawn yet (reference screenshots exist): the other proposal states, members and member detail, assets,
-transactions, permissions, settings, the multisig DAO, the create wizards (DAO, proposal, process, workspace), the
-workspace pages, dialogs, and the not-found pages. Links to screens that do not exist yet go nowhere.
+Mock data, three DAOs and a workspace, is described in [baseline-check/README.md](baseline-check/README.md). A link
+on a screen leads to the drawn screen it opens in the app; a list of many items links every item to its one drawn
+example (all members to the member screen of that DAO).
 
 ## Footprint
 
-- Size: about 7 MB in total, of which 6.6 MB are the 95 reference screenshots (lossless WebP). A retake
-  changes only the screenshots whose page changed.
-- Code: `baseline-check/` is about 2,700 lines of plain Node scripts (a mock of the backend API and JSON-RPC, the
-  screenshot runs, the canvas comparison). It mirrors the backend's response shapes by hand, so it needs an update when
-  those change. It declares no dependencies of its own: it uses Playwright, viem and sharp from `apps/app`. Whether it
-  should move next to the app's e2e setup (`apps/app/e2e`) is an open question for the app team.
-- CI: none. `design/` is in no workspace, Turbo task, path filter or release scope. Biome lints `baseline-check/` in the
-  pre-commit hook and skips `canvas/` (written by the canvas editor, kept byte-identical) and `reference/`.
+- Size: about 10 MB in git, of which 8.6 MB are the 121 reference screenshots (lossless WebP) and 1.6 MB the screens.
+  A retake changes only the screenshots whose page changed.
+- Code: `baseline-check/` is about 5,900 lines of plain Node scripts, most of it mock data: a mock of the backend API,
+  JSON-RPC and the Safe transaction service, the screenshot runs, the canvas comparison, the route coverage check and
+  the canvas layout. It mirrors the backend's response shapes by hand, so it needs an update when those change. It
+  declares no dependencies of its own: it uses Playwright, viem and sharp from `apps/app`. Whether it should move next
+  to the app's e2e setup (`apps/app/e2e`) is an open question for the app team.
+- CI: none yet. `design/` is in no workspace, Turbo task, path filter or release scope. Biome lints `baseline-check/`
+  in the pre-commit hook and skips `canvas/` (written by the canvas editor, kept byte-identical), `reference/` and the
+  CMS snapshot.
 - Removing it: delete `design/`, the `design/` lines in `.gitattributes` and `.editorconfig`, and the bullet in the root
   `AGENTS.md`. Nothing else refers to it.
 
@@ -147,12 +160,12 @@ workspace pages, dialogs, and the not-found pages. Links to screens that do not 
 
 | Path | What |
 |---|---|
-| `canvas/canvas.json` | The board: every frame, its position and size, and the design system in use |
+| `canvas/canvas.json` | The board: pages, every frame's position and size, row titles, and the design system in use. Positions are generated from `screens.json` → `pages` |
 | `canvas/*.dc.html` | One file per screen or shared part |
 | `canvas/app.css` | The app's page layout around the kit components, transcribed from `apps/app` |
 | `canvas/assets/` | Images that exist only in designs (mock avatars and token logos) |
 | `canvases/*.json` | One file per canvas: its branch, link, last synced version, and the pinned kit version with file hashes |
-| `screens.json` | Screen ↔ app route ↔ reference screenshot, the reference time of the mock data, and app-owned images the screens use |
+| `screens.json` | Screen ↔ app route ↔ reference screenshot, the canvas pages and their rows, the reference time of the mock data, and app-owned images the screens use |
 | `reference/*.webp` | Full-page screenshots of the real app on mock data |
 | `baseline-check/` | Runs the app on mock data, takes the screenshots, renders the screens and compares them |
 | `RUNBOOK.md` | Step-by-step procedures for the Claude session (or a person) operating this |
@@ -171,8 +184,13 @@ Related, and not the same thing: `packages/gov-ui-kit/design-system/` (how the k
   window. Screens match at 1440 px and at 390 px; widths in between can differ.
 - Labels such as "3 days left" are computed by the kit from the viewer's clock. The screens give dates as offsets from
   now, so these labels always read as in the reference; absolute dates are fixed text.
-- Proposal detail: the app shows the headings of a proposal body as plain text, while the kit component styles them.
-  This is unconfirmed app behaviour on `main` (possibly from the pending stylesheet change), to be checked with the app
-  team. The screen shows the kit's styling.
-- Proposal detail: the Votes and Settings tabs of the voting block are not drawn. Explore: the Featured row is one
-  still frame of the app's moving carousel.
+- Screens are still states: a dialog's transaction steps, an open menu, a vote being cast are each drawn as the one
+  state the screenshot shows, and the canvas keeps no state between screens.
+- What the kit derives from the connected wallet (the "You" tag on a member row, "by You") cannot happen on the canvas:
+  those pieces are written out with the same kit components.
+- The app shows proposal descriptions as plain text: the kit's document component styles headings, but the app's
+  stylesheet has no typography styles for it. The screens match the app. Whether that is intended is a question for the
+  app team.
+- Not drawn: the Votes and Settings tabs of a proposal's voting block, the live permissions graph (drawn as a still
+  picture), and the moving Explore carousel (one still frame). Automations and plugin pages have no screenshot (no mock
+  DAO uses them; `baseline-check/check-routes.cjs` lists them as skipped).
