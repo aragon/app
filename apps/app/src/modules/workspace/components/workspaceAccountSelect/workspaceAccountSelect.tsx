@@ -3,7 +3,6 @@
 import {
     addressUtils,
     CardEmptyState,
-    Spinner,
     useDebouncedValue,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
@@ -12,11 +11,11 @@ import type { IDao } from '@/shared/api/daoService';
 import {
     DataListSelect,
     DataListSelectAddressView,
+    type DataListSelectMode,
     type IDataListSelectAddressViewParams,
 } from '@/shared/components/dataListSelect';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountSuggestionRole,
@@ -47,6 +46,15 @@ export interface IWorkspaceAccountSelectProps {
      * Accounts the workspace already holds: always listed, checked, not selectable and last.
      */
     workspaceAccounts?: IWorkspaceAccount[];
+    /**
+     * View shown on mount.
+     * @default list
+     */
+    initialMode?: DataListSelectMode;
+    /**
+     * Called on a switch between the list and the address view.
+     */
+    onModeChange?: (mode: DataListSelectMode) => void;
 }
 
 // Rows shown per page before "More", as in the design.
@@ -77,7 +85,13 @@ interface IAccountOption {
 export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
     props,
 ) => {
-    const { value, onChange, workspaceAccounts = [] } = props;
+    const {
+        value,
+        onChange,
+        workspaceAccounts = [],
+        initialMode,
+        onModeChange,
+    } = props;
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
@@ -182,107 +196,98 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
     };
 
     return (
-        <div className="flex flex-col gap-4">
-            {isPending && (
-                <div className="flex items-center gap-2 text-neutral-500 text-sm">
-                    <Spinner size="sm" variant="neutral" />
-                    {t('app.workspace.workspaceAccountSelect.scanning', {
-                        count: networkUtils.getSupportedNetworks().length,
-                        found: suggestions.length,
-                    })}
-                </div>
-            )}
-            <DataListSelect
-                errorState={{
-                    heading: t(
-                        'app.workspace.workspaceAccountSelect.errorState.heading',
-                    ),
-                    description: t(
-                        'app.workspace.workspaceAccountSelect.errorState.description',
-                    ),
-                }}
-                filterItem={filterOption}
-                getItemKey={(option) => option.account.id}
-                hasSearch={true}
-                isAddressSearch={isAddressOrEnsName}
-                items={options}
-                itemsCount={options.length}
-                labels={{
-                    entity: t('app.workspace.workspaceAccountSelect.entity'),
-                    searchPlaceholder: t(
-                        'app.workspace.workspaceAccountSelect.searchPlaceholder',
-                    ),
-                    addAddress: t(
-                        'app.workspace.workspaceAccountSelect.addAddress',
-                    ),
-                    addByAddress: t(
-                        'app.workspace.workspaceAccountSelect.emptyState.addByAddress',
-                    ),
-                    emptyHeading: (search) =>
-                        search === ''
+        <DataListSelect
+            errorState={{
+                heading: t(
+                    'app.workspace.workspaceAccountSelect.errorState.heading',
+                ),
+                description: t(
+                    'app.workspace.workspaceAccountSelect.errorState.description',
+                ),
+            }}
+            filterItem={filterOption}
+            getItemKey={(option) => option.account.id}
+            hasSearch={true}
+            initialMode={initialMode}
+            isAddressSearch={isAddressOrEnsName}
+            items={options}
+            itemsCount={options.length}
+            labels={{
+                entity: t('app.workspace.workspaceAccountSelect.entity'),
+                searchPlaceholder: t(
+                    'app.workspace.workspaceAccountSelect.searchPlaceholder',
+                ),
+                addAddress: t(
+                    'app.workspace.workspaceAccountSelect.addAddress',
+                ),
+                addByAddress: t(
+                    'app.workspace.workspaceAccountSelect.emptyState.addByAddress',
+                ),
+                emptyHeading: (search) =>
+                    search === ''
+                        ? t(
+                              'app.workspace.workspaceAccountSelect.emptyState.noAccounts',
+                          )
+                        : t(
+                              'app.workspace.workspaceAccountSelect.emptyState.heading',
+                              { search },
+                          ),
+                emptyDescription: t(
+                    'app.workspace.workspaceAccountSelect.emptyState.description',
+                ),
+            }}
+            onModeChange={onModeChange}
+            pageSize={accountPageSize}
+            renderAddressView={(params) => (
+                <WorkspaceAccountSelectAddressView
+                    {...params}
+                    getNote={(account) =>
+                        getNote(account) ??
+                        (isSelected(account)
                             ? t(
-                                  'app.workspace.workspaceAccountSelect.emptyState.noAccounts',
+                                  'app.workspace.workspaceAccountSelect.note.selected',
                               )
-                            : t(
-                                  'app.workspace.workspaceAccountSelect.emptyState.heading',
-                                  { search },
-                              ),
-                    emptyDescription: t(
-                        'app.workspace.workspaceAccountSelect.emptyState.description',
-                    ),
-                }}
-                pageSize={accountPageSize}
-                renderAddressView={(params) => (
-                    <WorkspaceAccountSelectAddressView
-                        {...params}
-                        getNote={(account) =>
-                            getNote(account) ??
-                            (isSelected(account)
-                                ? t(
-                                      'app.workspace.workspaceAccountSelect.note.selected',
-                                  )
-                                : undefined)
-                        }
-                        isActive={(account) =>
-                            isSelected(account) || isInWorkspace(account)
-                        }
-                        isInWorkspace={isInWorkspace}
-                        isListed={(account) =>
-                            options.some((option) =>
-                                isSameAccount(option.account, account),
-                            )
-                        }
-                        isListPending={isPending}
-                        onSelect={handleLookupSelect}
-                    />
-                )}
-                renderItem={(option) => (
-                    <WorkspaceSelectAccountDialogItem
-                        account={option.account}
-                        accountInfo={option.accountInfo}
-                        dao={option.dao}
-                        isActive={
-                            isSelected(option.account) ||
-                            isInWorkspace(option.account)
-                        }
-                        isInWorkspace={isInWorkspace(option.account)}
-                        isMultiSelect={true}
-                        note={getNote(option.account, option.role)}
-                        onClick={() => toggle(option.account)}
-                    />
-                )}
-                SkeletonElement={WorkspaceSelectAccountDialogItemSkeleton}
-                state={
-                    isError
-                        ? 'error'
-                        : isPending
-                          ? options.length > 0
-                              ? 'fetchingNextPage'
-                              : 'loading'
-                          : 'idle'
-                }
-            />
-        </div>
+                            : undefined)
+                    }
+                    isActive={(account) =>
+                        isSelected(account) || isInWorkspace(account)
+                    }
+                    isInWorkspace={isInWorkspace}
+                    isListed={(account) =>
+                        options.some((option) =>
+                            isSameAccount(option.account, account),
+                        )
+                    }
+                    isListPending={isPending}
+                    onSelect={handleLookupSelect}
+                />
+            )}
+            renderItem={(option) => (
+                <WorkspaceSelectAccountDialogItem
+                    account={option.account}
+                    accountInfo={option.accountInfo}
+                    dao={option.dao}
+                    isActive={
+                        isSelected(option.account) ||
+                        isInWorkspace(option.account)
+                    }
+                    isInWorkspace={isInWorkspace(option.account)}
+                    isMultiSelect={true}
+                    note={getNote(option.account, option.role)}
+                    onClick={() => toggle(option.account)}
+                />
+            )}
+            SkeletonElement={WorkspaceSelectAccountDialogItemSkeleton}
+            state={
+                isError
+                    ? 'error'
+                    : isPending
+                      ? options.length > 0
+                          ? 'fetchingNextPage'
+                          : 'loading'
+                      : 'idle'
+            }
+        />
     );
 };
 

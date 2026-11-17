@@ -29,7 +29,7 @@ export const workspaceStorageKey = 'aragon-workspaces';
 const sessionWorkspaceStorageKey = 'aragon-session-workspaces';
 
 /**
- * Name of the workspace seeded on an empty registry. Stored data the user can rename, so not translated.
+ * Name of the default workspace. Stored data the user can rename, so not translated.
  */
 export const defaultWorkspaceName = 'My workspace';
 
@@ -226,9 +226,20 @@ class WorkspaceService {
             return firstWorkspace;
         }
 
-        const defaultWorkspace = this.buildDefaultWorkspace();
+        return this.createDefaultWorkspace([]);
+    };
+
+    /**
+     * Persists the default workspace with the given accounts next to the stored ones.
+     *
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
+     */
+    createDefaultWorkspace = async (
+        accounts: IWorkspaceAccount[],
+    ): Promise<IWorkspace> => {
+        const defaultWorkspace = this.buildDefaultWorkspace(accounts);
         this.persistWorkspaces({
-            ...workspaces,
+            ...this.getStoredWorkspaces(),
             [defaultWorkspace.id]: defaultWorkspace,
         });
 
@@ -438,6 +449,7 @@ class WorkspaceService {
 
         return Object.values(workspaces);
     };
+
     activateSessionWorkspaceRegistry = async (
         rawRegistry: string,
     ): Promise<void> => {
@@ -472,16 +484,18 @@ class WorkspaceService {
     };
 
     /**
-     * Builds the workspace seeded on an empty registry. Its ID gets a random suffix so default workspaces of
+     * Builds the default workspace with the given accounts. Its ID gets a random suffix so default workspaces of
      * different users never share one.
      */
-    private buildDefaultWorkspace = (): IWorkspace => ({
+    private buildDefaultWorkspace = (
+        accounts: IWorkspaceAccount[],
+    ): IWorkspace => ({
         id: `${workspaceUtils.slugify(defaultWorkspaceName)}-${crypto.randomUUID().slice(0, 8)}`,
         name: defaultWorkspaceName,
         description: '',
         avatar: null,
         links: [],
-        accounts: [],
+        accounts,
         targets: [],
     });
 

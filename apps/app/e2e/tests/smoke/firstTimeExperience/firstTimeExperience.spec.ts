@@ -1,4 +1,4 @@
-import { type BrowserContext, expect, test } from '@playwright/test';
+import { type BrowserContext, expect, type Page, test } from '@playwright/test';
 import workspaceDemoFixture from '../../../../src/modules/workspace/fixtures/workspaceDemo.fixture.json';
 
 const featureFlagCookieName = 'aragon.featureFlags.overrides';
@@ -18,6 +18,28 @@ const setWorkspacesFlag = async (
             url: baseURL,
         },
     ]);
+};
+
+const seedEmptyWorkspace = async (page: Page) => {
+    await page.goto('/');
+    await page.evaluate(
+        ([key, id]) =>
+            localStorage.setItem(
+                key,
+                JSON.stringify({
+                    [id]: {
+                        id,
+                        name: 'My workspace',
+                        description: '',
+                        avatar: null,
+                        links: [],
+                        accounts: [],
+                        targets: [],
+                    },
+                }),
+            ),
+        [workspaceStorageKey, 'my-workspace-12345678'],
+    );
 };
 
 test.describe('First-time workspace experience', () => {
@@ -216,26 +238,15 @@ test.describe('First-time workspace experience', () => {
                 buffer: Buffer.from('{}'),
             });
 
-            await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
-            );
-            await expect(
-                page.getByRole('heading', {
-                    level: 1,
-                    name: 'My workspace',
-                }),
-            ).toBeVisible();
+            await expect(page).toHaveURL(/\/$/);
         });
 
         test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
             await page.goto('/workspace');
-            await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
-            );
+            await expect(page).toHaveURL(/\/$/);
 
-            await page.goto('/');
             await page
                 .getByRole('link', { name: 'Explore a demo workspace' })
                 .first()
@@ -315,6 +326,7 @@ test.describe('First-time workspace experience', () => {
                 page.getByRole('link', { name: /Polygon Safe/ }).last(),
             ).toBeVisible();
 
+            await seedEmptyWorkspace(page);
             await page.goto('/workspace');
             await expect(page).toHaveURL(
                 /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
@@ -334,9 +346,32 @@ test.describe('First-time workspace experience', () => {
             ).toHaveCount(0);
         });
 
-        test('creates an empty workspace and asks to connect a wallet before adding an account', async ({
+        test('redirects /workspace to the landing page without a workspace or a wallet', async ({
             page,
         }) => {
+            await page.goto('/workspace');
+
+            await expect(page).toHaveURL(/\/$/);
+        });
+
+        test('opens the stored workspace from /workspace without a wallet', async ({
+            page,
+        }) => {
+            await seedEmptyWorkspace(page);
+            await page.goto('/workspace');
+
+            await expect(page).toHaveURL(
+                /\/workspace\/my-workspace-12345678\/all\/overview$/,
+            );
+            await expect(
+                page.getByRole('heading', { level: 1, name: 'My workspace' }),
+            ).toBeVisible();
+        });
+
+        test('asks to connect a wallet before adding an account to an empty workspace', async ({
+            page,
+        }) => {
+            await seedEmptyWorkspace(page);
             await page.goto('/workspace');
 
             await expect(page).toHaveURL(
@@ -364,6 +399,7 @@ test.describe('First-time workspace experience', () => {
         test('opens DAO creation from the empty workspace', async ({
             page,
         }) => {
+            await seedEmptyWorkspace(page);
             await page.goto('/workspace');
             await page
                 .getByRole('button', { name: 'Create a new account' })

@@ -34,4 +34,11 @@ describe('workspaceDialogsDefinitions', () => {
                 .requiresWallet,
         ).toBe(true);
     });
+
+    it('does not require a wallet for the welcome dialog', () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.WELCOME]
+                .requiresWallet,
+        ).toBeFalsy();
+    });
 });

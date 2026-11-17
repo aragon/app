@@ -125,6 +125,49 @@ describe('<WorkspaceAccountSelect /> component', () => {
     const getCheckbox = (name: RegExp) =>
         screen.getByRole('checkbox', { name });
 
+    it('offers to add an account by address when there are no suggestions', async () => {
+        useSuggestionsSpy.mockReturnValue({
+            isPending: false,
+            isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
+            suggestions: [],
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceAccountSelect.emptyState.noAccounts',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceAccountSelect.emptyState.description',
+            ),
+        ).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.workspace.workspaceAccountSelect.emptyState.addByAddress',
+            }),
+        );
+        expect(
+            screen.getByPlaceholderText(
+                'app.workspace.workspaceAccountSelect.addressView.placeholder',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('opens on the address view when initialMode is address', () => {
+        render(createTestComponent({ initialMode: 'address' }));
+
+        expect(
+            screen.getByPlaceholderText(
+                'app.workspace.workspaceAccountSelect.addressView.placeholder',
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('suggests the accounts of the connected wallet, deployed ones first', () => {
         render(createTestComponent());
 
@@ -266,7 +309,7 @@ describe('<WorkspaceAccountSelect /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('tells how far the scan of the networks is while suggestions load', () => {
+    it('lists the suggestions found so far while the scan runs', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: true,
             isError: false,
@@ -282,9 +325,6 @@ describe('<WorkspaceAccountSelect /> component', () => {
         });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceAccountSelect.scanning/),
-        ).toHaveTextContent(/count=19.*found=1|found=1.*count=19/);
         expect(getCheckbox(/Member DAO/)).toBeInTheDocument();
     });
 

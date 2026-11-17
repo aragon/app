@@ -1,57 +1,83 @@
 'use client';
 
 import { Spinner } from '@aragon/gov-ui-kit';
-import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { Page } from '@/shared/components/page';
-import {
-    type IWorkspace,
-    useGetOrCreateDefaultWorkspace,
-    workspaceServiceKeys,
-} from '../../api/workspaceService';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { useWorkspaceList } from '../../api/workspaceService';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
 } from '../../utils/workspaceUtils';
+import { WorkspaceGettingStarted } from './workspaceGettingStarted';
 
 export interface IWorkspaceEntryPageClientProps {}
+
+type WorkspaceEntryOutcome = 'open' | 'landing' | 'gettingStarted' | 'wait';
 
 export const WorkspaceEntryPageClient: React.FC<
     IWorkspaceEntryPageClientProps
 > = () => {
     const router = useRouter();
-    const queryClient = useQueryClient();
+    const { data: workspaces, error } = useWorkspaceList();
+    const { address, isConnecting, isReconnecting } = useWalletAccount();
+    const isConnected = useWalletConnected();
+    const isMounted = useIsMounted();
 
-    const handleSuccess = async (workspace: IWorkspace) => {
-        await queryClient.invalidateQueries({
-            queryKey: workspaceServiceKeys.workspaceList(),
-        });
+    const firstWorkspaceId = workspaces?.[0]?.id;
+    // Only an empty list waits on the wallet. AppKit lags wagmi on load (see DesyncWatcher), so both must agree.
+    const isWalletSettled =
+        isMounted &&
+        !isConnecting &&
+        !isReconnecting &&
+        (isConnected || address == null);
+    const isEmptyAndSettled =
+        workspaces != null && firstWorkspaceId == null && isWalletSettled;
 
-        router.replace(
-            workspaceUtils.getAccountScopeUrl(
-                workspace.id,
-                workspaceAllAccountsSegment,
-                'overview',
-            ),
-        );
-    };
+    // Latched: once shown, Getting started owns the page until it navigates away.
+    const [hasGettingStarted, setHasGettingStarted] = useState(false);
 
-    const { mutate, error } = useGetOrCreateDefaultWorkspace({
-        onSuccess: handleSuccess,
-    });
-
-    // Make sure seeding is called only once
-    const hasSeedingRunRef = useRef(false);
-
-    useEffect(() => {
-        if (hasSeedingRunRef.current) {
-            return;
+    const getOutcome = (): WorkspaceEntryOutcome => {
+        if (hasGettingStarted) {
+            return 'gettingStarted';
         }
 
-        hasSeedingRunRef.current = true;
-        mutate();
-    }, [mutate]);
+        if (firstWorkspaceId != null) {
+            return 'open';
+        }
+
+        if (!isEmptyAndSettled) {
+            return 'wait';
+        }
+
+        return isConnected ? 'gettingStarted' : 'landing';
+    };
+    const outcome = getOutcome();
+
+    if (outcome === 'gettingStarted' && !hasGettingStarted) {
+        setHasGettingStarted(true);
+    }
+
+    useEffect(() => {
+        if (outcome === 'open' && firstWorkspaceId != null) {
+            router.replace(
+                workspaceUtils.getAccountScopeUrl(
+                    firstWorkspaceId,
+                    workspaceAllAccountsSegment,
+                    'overview',
+                ),
+            );
+        } else if (outcome === 'landing') {
+            router.replace('/');
+        }
+    }, [outcome, firstWorkspaceId, router]);
+
+    if (outcome === 'gettingStarted') {
+        return <WorkspaceGettingStarted />;
+    }
 
     if (error != null) {
         return (

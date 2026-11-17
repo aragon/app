@@ -224,13 +224,16 @@ local storage for real requests is a single-method change:
 - `getWorkspaceList()` → every stored workspace, read by the workspace switcher through `useWorkspaceList`. The
   publish dialog invalidates it after creating a workspace so the new one is listed straight away.
 - `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
-  registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
-- `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
-  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to the active browser registry, resolves with the full
-  `IWorkspace`.
+  registry is empty (`createDefaultWorkspace([])`). Only `WorkspaceGateAccountPrompt` calls it, through the
+  `useGetOrCreateDefaultWorkspace` mutation.
+- `createDefaultWorkspace(accounts)` → persists "My workspace" holding the given accounts next to the stored ones and
+  resolves with it. Called by Getting started through the `useCreateDefaultWorkspace` mutation.
 - `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
   stored workspace, keeping its ID (so its URLs keep working); rejects with
   `notFoundCode` / 404 when absent. Called by the publish dialog in update mode.
+- `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
+  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to the active browser registry, resolves with the full
+  `IWorkspace`.
 - `addWorkspaceAccount({ urlParams: { id }, body: { account } })` → appends one account to the stored workspace,
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
@@ -261,19 +264,17 @@ interactions instead of parallel demo UI.
 
 Workspace payload reads never seed or modify the selected registry. `getWorkspace` and `getWorkspaceList` return what
 is stored, so the list can be empty; the route-aware resolver only discards the disposable session fixture after
-navigation leaves its workspace IDs. Only `getOrCreateDefaultWorkspace` seeds an empty "My workspace"
-(`createWorkspace` does not either). Seeding is an explicit call because a read that writes makes the default appear
-depending on which page a user opened first, and lets two tabs reading an empty registry seed two different
-workspaces. It is also the shape a backend registry would take: a get-or-create (bootstrap) call, not a GET with a
-side effect. The seed's ID gets a random suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different
-users never share one. Unreadable storage reads as empty and are overwritten on the next write — acceptable, as only
-outside tampering can produce it.
+navigation leaves its workspace IDs. Only `createDefaultWorkspace` (and `getOrCreateDefaultWorkspace` through it)
+seeds "My workspace" (`createWorkspace` does not). Seeding is an explicit call because a read that writes makes the
+default appear depending on which page a user opened first, and lets two tabs reading an empty registry seed two
+different workspaces. It is also the shape a backend registry would take: a get-or-create (bootstrap) call, not a
+GET with a side effect. The seed's ID gets a random suffix (`my-workspace-1a2b3c4d`) so that default workspaces of
+different users never share one. Unreadable storage reads as empty and are overwritten on the next write —
+acceptable, as only outside tampering can produce it.
 
 The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
-must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list
-(a list read before the seed is cached as empty) and `router.replace`s to the workspace's aggregated overview, so
-Back does not land on the redirect again. Running it twice (Strict Mode) is harmless: the second call finds the
-workspace the first one seeded.
+must not write; the `/workspace` entry route therefore reads only, and Getting started seeds (see
+[Getting started](#getting-started)).
 
 Ids are slugs: `workspaceUtils.buildWorkspaceId('Demo Workspace')` → `demo-workspace`, `demo-workspace-2` if
 taken. Falls back to `workspace` when the name slugifies to nothing.
@@ -311,7 +312,7 @@ src/app/create/dao/layout.tsx` → existing `LayoutWizardCreateDao`
 
 ```
 src/app/workspace/
-├─ page.tsx                   WorkspaceEntryPage: opens the first workspace, seeding the default one
+├─ page.tsx                   WorkspaceEntryPage: opens the first workspace, or Getting started
 src/app/workspace/[workspaceId]/
 ├─ (workspacePage)/           route group: every page with the workspace navigation
 │  ├─ layout.tsx              LayoutWorkspace (WorkspaceGate + navigation)
@@ -327,13 +328,13 @@ src/app/workspace/[workspaceId]/
 │     ├─ proposals/page.tsx   WorkspaceProposalsPage, likewise
 │     ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
 │     ├─ members/page.tsx     WorkspaceAccountMembersPage
-│     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 └─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
    ├─ layout.tsx              LayoutWizardEditWorkspace
    └─ page.tsx                WorkspaceEditPage
+│     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
 ```
-
 The route group, as with `(daoPage)`, only decides the layout: `edit/` sits outside it to get the wizard layout.
+
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -1006,6 +1007,49 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 - The redirect lands on an account the chosen workspace may not hold, which renders as an external option (see
   "External accounts" under Account scope).
 
+## Getting started
+
+`/workspace` (`WorkspaceEntryPageClient`) reads the workspace list and decides:
+
+| Registry | Wallet | Outcome |
+| --- | --- | --- |
+| a stored workspace | any | `router.replace` to the first one's aggregated overview, so Back skips the redirect |
+| empty | none | `router.replace('/')` |
+| empty | connected | Getting started (`WorkspaceGettingStarted`) |
+
+The wallet reads as disconnected until it settles, so an empty list waits for it, behind a spinner, before deciding.
+Getting started latches once shown: it owns the page from then on, leaving on a disconnect and for the workspace it
+creates, so the entry route never redirects again after a create.
+
+The content column is 800px wide at most, with 32px between the header, the body and the actions.
+
+- **Scan status** — while the suggestions are read, "Scanning N networks, N found so far"
+  (`workspaceGettingStarted.scanning`) sits under the header, outside the card.
+- **Incomplete list** — when a source could not be read, `WorkspaceAccountSelectIncompleteAlert` warns "Some of your
+  accounts could not be loaded." above the card, with a **Retry** button that reads the suggestions again (the scan
+  status shows meanwhile).
+- **Selector** — `WorkspaceAccountSelect` in a `Card`. Its own empty state, e.g. after a search with no match, reads
+  "No accounts found" with "Add by address".
+- **Create a new account** — a button under the card, to `/create/dao` for now (returning with the account selected
+  comes with APP-1499). It is primary once the scan has found nothing and no account was added by address, secondary
+  otherwise.
+- **No accounts** — once the scan has settled with no suggestions, a standalone `CardEmptyState` ("No Safes or Aragon
+  DAOs found", wallet illustration) replaces the card, the create button and the actions. Its primary button is
+  "Create a new account"; its secondary, "Add account by address", brings the card and the actions back with the
+  selector opened on its address view (`initialMode="address"`). Going back with no account added brings the empty
+  card back; an account added by address keeps the selector, as it stays listed.
+- **Actions** — "Add accounts later" and "Add N accounts" call `createDefaultWorkspace(accounts)` (none for later),
+  then invalidate the workspace list, open `WorkspaceWelcomeDialog` (`WorkspaceDialogId.WELCOME`, "Your workspace is
+  ready") and `router.replace` to the new workspace's aggregated overview. The dialog provider sits above the routes,
+  so the dialog stays open over the workspace. A ref holds the create to one call; the buttons stay busy after success
+  until the navigation leaves the page.
+- **Mobile footer** — below `md`, the actions sit in a bar stuck to the bottom of the screen, spanning the page
+  (its negative margins cancel the padding of `Page.Main`); from `md` up they sit in the page flow.
+- **No wallet** — every disconnect, from the close button, the wallet or a dropped session, returns to the landing
+  page (`router.replace('/')` once disconnected). The close button disconnects first, as the landing page sends a
+  connected wallet back here; when the disconnect fails it leaves all the same. A switch to another account of the
+  wallet clears the selection.
+
 ## Workspace admin
 
 `/workspace/{workspaceId}/admin` (`WorkspaceAdminPage`, inside `(workspacePage)`) is where a workspace is seen and
@@ -1047,8 +1091,12 @@ through `useWorkspaceAddAccountsDialog`: the dialog requires a wallet, so the ho
 checked on every supported network in one `query/accounts` request once the list is complete; each network it is a
 DAO or a Safe on is a selectable row, "In your list" when the list already has it.
 - Adding writes the accounts one at a time with `addWorkspaceAccount`, which reads the stored workspace each time.
+- **Empty list** — the selector's empty state reads "No accounts found" / "Search for another account or add it by
+  address", with a single "Add by address" button opening the address view.
+- **Incomplete list** — the same alert as on Getting started, with Retry, sits above the selector. The dialog shows
+  no scan status line: the list's placeholder rows stand for it.
 - **Create a new account** (footer) temporarily goes to the DAO creation page (`/create/dao`) and closes the dialog.
-  Creating the account in the dialog, and returning to the selector with it selected, comes in PR 3.
+  Creating the account in the dialog, and returning to the selector with it selected, comes with APP-1499.
 
 ## Edit workspace
 
@@ -1146,6 +1194,7 @@ its initial; naming a Safe is what the optional account metadata is for.
 The row lookup follows the `manageMembershipAddressList` precedent: a React Query hook (`useWorkspaceAccounts`)
 gated with `enabled` on a well-formed address, a synchronous validator reading its data, and an effect that
 re-`trigger`s the field once the lookup resolves. `staleTime` is 5 minutes because resolving a non-DAO address costs
+│   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 a gateway round trip and on-chain reads (`getCode`, then the Safe's state) — not a Safe Transaction Service call,
 so it spends none of the hourly Safe API budget — and the backend caches only a resolved Safe, never a miss.
 
@@ -1161,6 +1210,7 @@ than storing a guessed type, which surfaces as the dialog's error state with a r
   external-link icon whenever `href` is set.
 - `src/shared/types/workspacePageParams.ts` — `IWorkspacePageParams { workspaceId: string }`, exported from
   `src/shared/types/index.ts` (ported verbatim from 1096).
+├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 - `src/assets/locales/en.json` — `app.workspace.*` (new top-level module namespace),
   `app.shared.networkInput.*`, and one new explore CTA block.
 
@@ -1179,6 +1229,7 @@ src/modules/workspace/
 │   ├── queries/useWorkspaceAccounts/{useWorkspaceAccounts.ts,index.ts}
 │   ├── queries/useWorkspaceAssetList/{useWorkspaceAssetList.ts,index.ts}
 │   ├── queries/index.ts
+├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,index.ts}
 │   └── {workspaceQueryService.ts,workspaceQueryService.api.ts,workspaceQueryServiceKeys.ts,workspaceQueryService.test.ts,index.ts}
 ├── api/workspaceService/
 │   ├── domain/{workspace.ts,workspaceAccount.ts,workspaceTarget.ts,index.ts}
@@ -1186,9 +1237,9 @@ src/modules/workspace/
 │   ├── queries/useWorkspace/{useWorkspace.ts,index.ts}
 │   ├── queries/index.ts
 │   ├── mutations/useAddWorkspaceAccount/{useAddWorkspaceAccount.ts,index.ts}
+│   ├── mutations/useCreateDefaultWorkspace/{useCreateDefaultWorkspace.ts,index.ts}
 │   ├── mutations/useCreateWorkspace/{useCreateWorkspace.ts,index.ts}
 │   ├── mutations/useGetOrCreateDefaultWorkspace/{useGetOrCreateDefaultWorkspace.ts,index.ts}
-│   ├── mutations/useUpdateWorkspace/{useUpdateWorkspace.ts,index.ts}
 │   ├── mutations/index.ts
 │   ├── {workspaceService.ts,workspaceService.api.ts,workspaceServiceKeys.ts,workspaceService.test.ts,index.ts}
 ├── components/createWorkspaceForm/
@@ -1204,12 +1255,12 @@ src/modules/workspace/
 ├── components/workspaceAccountStateCard/{workspaceAccountStateCard.tsx,index.ts}
 ├── components/workspaceSectionGuard/{workspaceSectionGuard.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
-├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
+├── dialogs/workspaceWelcomeDialog/{workspaceWelcomeDialog.tsx,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
-├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,index.ts}
+├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,workspaceGettingStarted.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
 ├── hooks/useWorkspaceAccountOptions/{useWorkspaceAccountOptions.ts,index.ts}
 ├── components/workspaceSelector/{workspaceSelector.tsx,index.ts}
@@ -1223,7 +1274,6 @@ src/modules/workspace/
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
-├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,index.ts}
 ├── utils/workspaceFormUtils/{workspaceFormUtils.ts,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
@@ -1241,6 +1291,8 @@ Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/
 `finance/hooks/useAssetListData` (uses the extracted normaliser), `finance/components/assetList/index.ts` (exposes
 `AssetList.Item`),
 `src/shared/featureFlags/{featureFlags.constants.ts,featureFlags.api.ts}`, `src/shared/testUtils/formWrapper.tsx`
+- **The edit wizard route is unreachable** (see [Edit workspace](#edit-workspace)); removing it is a separate
+  ticket.
 (gained an optional `defaultValues` prop).
 Deleted: `src/app/create/layout.tsx`.
 
@@ -1260,7 +1312,7 @@ Whichever branch lands second must reconcile:
 | `api/workspaceService/domain/enum/workspaceAccountType.ts` | identical |
 | `api/workspaceService/workspaceService.ts` | 1096 is read-only from mocks; this adds localStorage + create |
 | `api/workspaceQueryService/` vs 1096's `api/workspaceFinanceService/` | 1096 splits the query API per resource; this keeps one service for the whole `query/*` surface |
-| `constants/workspaceMocks.ts` | removed on this branch: the registry has no mock workspaces; the only seed is the empty default workspace of `getOrCreateDefaultWorkspace` |
+| `constants/workspaceMocks.ts` | removed on this branch: the registry has no mock workspaces; the only seed is the default workspace of `createDefaultWorkspace` |
 | `index.ts` | both export from the module root — additive |
 | `src/app/workspace/[workspaceId]/layout.tsx` | identical in both branches |
 | `application/components/layouts/layoutWorkspace/` | 1096 fetches and hydrates, this one cannot (local-storage registry) |
@@ -1286,11 +1338,9 @@ Keep it that way when extending this.
   - To stay under the Safe API rate limit, Safe networks are read three at a time.
   - The "N found so far" count jumps from 0 to the total, as the stand-in returns one page.
 - **"Create a new account" leaves the dialog** for the DAO creation page (`/create/dao`) until accounts can be
-  created in place (PR 3).
+  created in place (APP-1499).
 - **Search in `DataListSelect` shows the first page of matches only:** pagination is hidden while searching, as it
   was in the withdraw asset selector, so matches past it need a narrower search.
-- **The edit wizard route is unreachable** (see [Edit workspace](#edit-workspace)); removing it is a separate
-  ticket.
 - **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.
 - **Import is a stopgap.** It opens the file picker straight from the selector and reports an invalid file with a
   browser alert, as the app has no toast.
@@ -1369,7 +1419,7 @@ A new backend endpoint will bring in the account suggestions. When it lands:
 - **Remove**, if the endpoint returns the Safes: `safeTransactionService.getSafesByOwner`, its test and
   `IGetSafesByOwnerParams`, and the `v1/owners/{address}/safes` entry of the Safe proxy allowlist
   (`proxySafeUtils.isSupportedPath`) and its tests.
-- **Revisit** the "Scanning N networks, N found so far" message of `WorkspaceAccountSelect`, as the endpoint has no
+- **Revisit** the "Scanning N networks, N found so far" message of Getting started, as the endpoint has no
   per-network progress.
 - **Revisit** `isIncomplete`, the incomplete alert with its Retry (`WorkspaceAccountSelectIncompleteAlert`) and
   `incompleteSuggestionsStaleTime`: they go if the endpoint never returns partial results.

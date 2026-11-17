@@ -4798,6 +4798,25 @@
           "title": "Workspace failed to open"
         }
       },
+      "workspaceGettingStarted": {
+        "name": "Getting started",
+        "title": "Add accounts",
+        "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
+        "action": {
+          "createAccount": "Create a new account",
+          "later": "Add accounts later",
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts"
+        },
+        "emptyState": {
+          "heading": "No Safes or Aragon DAOs found",
+          "description": "This wallet didn’t create and isn’t a signer or member of an account on the networks we checked.",
+          "addByAddress": "Add account by address"
+        },
+        "error": "Unable to create your workspace. Try again.",
+        "scanning": "Scanning {{count}} networks, {{found}} found so far"
+      },
       "workspaceMemberList": {
         "emptyState": {
           "description": "The accounts of this workspace have no members yet.",
@@ -5124,8 +5143,7 @@
         "errorState": {
           "heading": "Couldn’t load your accounts",
           "description": "Something went wrong while looking up your accounts. You can still add one by address."
-        },
-        "scanning": "Scanning {{count}} networks, {{found}} found so far"
+        }
       },
       "workspaceAddAccountsDialog": {
         "title": "Add accounts",
@@ -5137,6 +5155,22 @@
           "createAccount": "Create a new account"
         },
         "error": "Unable to add the accounts. Try again."
+      },
+      "workspaceWelcomeDialog": {
+        "title": "Your workspace is ready",
+        "description": "Your accounts are now available from one place.",
+        "items": {
+          "pending": {
+            "title": "See what’s waiting for you",
+            "description": "Find transactions waiting for your signature or ready for you to execute."
+          },
+          "tracking": {
+            "title": "Keep track after you sign",
+            "description": "Check your transactions to see what’s still waiting on others."
+          }
+        },
+        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
+        "action": "Open workspace"
       }
     }
   }

@@ -3,6 +3,7 @@ import { PublishWorkspaceDialog } from '../dialogs/publishWorkspaceDialog';
 import { WorkspaceAddAccountsDialog } from '../dialogs/workspaceAddAccountsDialog';
 import { WorkspaceEditDetailsDialog } from '../dialogs/workspaceEditDetailsDialog';
 import { WorkspaceSelectAccountDialog } from '../dialogs/workspaceSelectAccountDialog';
+import { WorkspaceWelcomeDialog } from '../dialogs/workspaceWelcomeDialog';
 import { WorkspaceDialogId } from './workspaceDialogId';
 
 export const workspaceDialogsDefinitions: Record<
@@ -28,5 +29,10 @@ export const workspaceDialogsDefinitions: Record<
     // for every disconnected user, so the button would silently do nothing.
     [WorkspaceDialogId.SELECT_ACCOUNT]: {
         Component: WorkspaceSelectAccountDialog,
+    },
+    // Not `requiresWallet`: it only greets the user.
+    [WorkspaceDialogId.WELCOME]: {
+        Component: WorkspaceWelcomeDialog,
+        size: 'lg',
     },
 };

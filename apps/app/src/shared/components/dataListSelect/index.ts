@@ -1,5 +1,6 @@
 export {
     DataListSelect,
+    type DataListSelectMode,
     type IDataListSelectAddressViewParams,
     type IDataListSelectLabels,
     type IDataListSelectProps,

@@ -150,6 +150,32 @@ describe('workspace service', () => {
         });
     });
 
+    describe('createDefaultWorkspace', () => {
+        it('persists the default workspace with the given accounts next to the stored ones', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+            const accounts = buildBody().accounts;
+
+            const workspace =
+                await workspaceService.createDefaultWorkspace(accounts);
+
+            expect(workspace).toEqual({
+                id: expect.stringMatching(/^my-workspace-[a-f0-9]{8}$/),
+                name: defaultWorkspaceName,
+                description: '',
+                avatar: null,
+                links: [],
+                accounts,
+                targets: [],
+            });
+            expect(getStoredWorkspaces()).toEqual({
+                [existing.id]: existing,
+                [workspace.id]: workspace,
+            });
+        });
+    });
+
     describe('createWorkspace', () => {
         it('assigns the ID from the workspace name and persists the workspace', async () => {
             const body = buildBody();
