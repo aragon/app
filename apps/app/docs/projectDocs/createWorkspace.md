@@ -257,10 +257,11 @@ in a fresh tab. Opening the landing-page demo link resets that session registry 
 `/workspace` or a persistent workspace discards it and resumes the local registry; persistent and demo workspaces
 therefore never appear together or overwrite one another.
 
-The debug panel downloads and restores the active registry format. Imports require an explicit browser confirmation
-because replacement discards the active browser-only workspaces. The fixture contains Aragon and XMAQUINA workspaces,
-each with a standalone Polygon Safe, and uses the regular workspace layout, navigation, queries, and account
-interactions instead of parallel demo UI.
+The debug panel downloads and restores the active registry, and deletes the persistent one (`aragon-workspaces`).
+Import and deletion ask for a browser confirmation, as both discard the browser-only workspaces; deletion then opens
+`/workspace`, so a connected wallet lands on Getting started. The fixture contains Aragon and XMAQUINA
+workspaces, each with a standalone Polygon Safe, and uses the regular workspace layout, navigation, queries, and
+account interactions instead of parallel demo UI.
 
 Workspace payload reads never seed or modify the selected registry. `getWorkspace` and `getWorkspaceList` return what
 is stored, so the list can be empty; the route-aware resolver only discards the disposable session fixture after

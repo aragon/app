@@ -506,6 +506,15 @@ describe('workspace service', () => {
             ).rejects.toThrow('not a valid workspace registry');
             expect(getStoredWorkspaces()).toEqual({ existing });
         });
+
+        it('deletes the stored registry entirely', async () => {
+            await workspaceService.createWorkspace({ body: buildBody() });
+
+            await workspaceService.deleteWorkspaceRegistry();
+
+            expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
+            expect(await workspaceService.getWorkspaceList()).toEqual([]);
+        });
     });
 
     describe('updateWorkspaceDetails', () => {

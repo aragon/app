@@ -450,6 +450,21 @@ class WorkspaceService {
         return Object.values(workspaces);
     };
 
+    /**
+     * Removes the persistent registry (`aragon-workspaces`); the demo session registry is left alone.
+     *
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the removal.
+     */
+    deleteWorkspaceRegistry = async (): Promise<void> => {
+        this.requireWindow();
+
+        try {
+            localStorage.removeItem(workspaceStorageKey);
+        } catch (error: unknown) {
+            throw this.buildStorageError(error);
+        }
+    };
+
     activateSessionWorkspaceRegistry = async (
         rawRegistry: string,
     ): Promise<void> => {
