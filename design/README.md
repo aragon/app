@@ -88,9 +88,12 @@ flowchart LR
    component, moves the canvas to the re-synced kit, puts the real component back, and proves it renders as the
    stand-in did (`compare.cjs --against`). Until then the check fails.
 5. If the build ends up different from the design, change the screen to match before merging.
-6. After the merge, `design/canvas/` on `main` is the new baseline. Still to do by hand: refresh the baseline canvas
-   from `main`, remove the exploration's file from `design/canvases/`, delete its canvas, and retake the affected
-   reference screenshots at the next baseline check.
+6. Before the merge, the pull request deletes the exploration's pointer file (`design/canvases/<name>.json`), so
+   `main` keeps only the baseline's.
+7. After the merge, `design/canvas/` on `main` is the new baseline. By hand, in a Claude session: refresh the baseline
+   canvas from `main` so it shows the merged screens, and ask the owner whether to delete the exploration's canvas. The
+   reference screenshots of the changed pages are now out of date: the next baseline check retakes them from the app,
+   which by then matches the screens.
 
 Example. "Move the proposals filter into the page header": the designer asks for the exploration
 `exploration/proposals-filter`; Claude creates the branch and its canvas; the designer edits `Proposals` on the canvas
@@ -194,3 +197,21 @@ Related, and not the same thing: `packages/gov-ui-kit/design-system/` (how the k
 - Not drawn: the Votes and Settings tabs of a proposal's voting block, the live permissions graph (drawn as a still
   picture), and the moving Explore carousel (one still frame). Automations and plugin pages have no screenshot (no mock
   DAO uses them; `baseline-check/check-routes.cjs` lists them as skipped).
+
+## Room for improvement
+
+Ideas that need this flow to have run for real at least once before they are worth building.
+
+- **The design as the gate (TDD for UI).** A pull-request check that captures the app on mock data, renders the screens
+  and fails while they differ. A designed change is red until the app matches the screens; an undesigned UI change
+  is red until the code is reverted or the screens are updated to match, which shows up as a design diff in review.
+  Needs per-screen tolerances for the few screens that cannot match exactly (still drawings of moving parts), and
+  about 13 minutes of CI per run today (less once only the affected pages are captured).
+- **Design review by ownership.** A CODEOWNERS entry on `design/canvas/` for the design lead, so a screen change in
+  any pull request, including one made to follow the code, needs their approval.
+- **No screenshots in git.** With the check above comparing the app with the screens directly, the reference
+  screenshots stop being needed in the repository: CI keeps them as build artifacts. That removes 8.3 MB now and every
+  future image change (each retake adds the changed images to history).
+- **Automatic refresh.** Refreshing the baseline canvas after a merge to `main`, and the baseline check after a
+  release, are manual today; both could run from a GitHub Action.
+
