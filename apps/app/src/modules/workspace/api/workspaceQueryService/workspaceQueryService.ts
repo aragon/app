@@ -1,5 +1,6 @@
 import {
     AragonBackendService,
+    type IPaginatedResponse,
     type IPaginatedResponseMetadata,
 } from '@/shared/api/aragonBackendService';
 
@@ -7,14 +8,16 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 
 import type {
     IWorkspaceAccountInfo,
+    IWorkspaceAccountSuggestion,
     IWorkspaceAssetListResponse,
     IWorkspaceMember,
     IWorkspaceProposalListResponse,
     IWorkspaceTodoResponse,
     IWorkspaceTransaction,
 } from './domain';
-
+import { getWorkspaceAccountSuggestions } from './workspaceAccountSuggestionsStandIn';
 import type {
+    IGetWorkspaceAccountSuggestionsParams,
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
     IGetWorkspaceMemberListParams,
@@ -67,6 +70,15 @@ class WorkspaceQueryService extends AragonBackendService {
             }),
         };
     }
+
+    /**
+     * Accounts suggested to a wallet: the DAOs it deployed or is a member of and the Safes it signs for, ranked.
+     * Served by a stand-in until the backend endpoint exists; the stand-in returns everything as one page.
+     */
+    getAccountSuggestions = (
+        params: IGetWorkspaceAccountSuggestionsParams,
+    ): Promise<IPaginatedResponse<IWorkspaceAccountSuggestion>> =>
+        getWorkspaceAccountSuggestions(params);
 
     /**
      * Resolves what each of the given addresses is, i.e. an indexed DAO, a Safe or neither.

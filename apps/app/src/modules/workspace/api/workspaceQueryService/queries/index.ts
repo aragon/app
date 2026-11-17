@@ -1,4 +1,8 @@
 export {
+    useWorkspaceAccountSuggestionList,
+    workspaceAccountSuggestionListOptions,
+} from './useWorkspaceAccountSuggestionList';
+export {
     useWorkspaceAccounts,
     workspaceAccountsOptions,
 } from './useWorkspaceAccounts';
