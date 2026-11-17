@@ -121,7 +121,7 @@ class Component extends DCLogic {
     const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'AGC-2' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'MsProposals.dc.html' }, { label: 'AGC-2' }],
       statusTag: { label: 'Expired', variant: 'critical' },
       description: "<h2>Summary</h2><p>Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC).</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
       endDate: Date.now() - 2 * day,
@@ -129,7 +129,7 @@ class Component extends DCLogic {
       action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000005d21dba00", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0xdce3a01d0357efb601efac0fdd836d2e1b3bc242"}, {"name": "value", "type": "uint256", "value": "25000000000"}]}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'MsMember.dc.html', isOnchainEntity: true },
       published: "October 17, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0x873c23c998b5e1556868cd9fbbf91607b287b7392782460a1eae614c7e15b7be' }
     };

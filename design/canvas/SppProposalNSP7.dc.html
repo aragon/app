@@ -57,7 +57,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Council approval" status="ADVANCEABLE" index="{{zero}}" body-list="{{bodies0}}" min-advance="{{minAdvance}}" max-advance="{{maxAdvance}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="council.northstar.eth" copy="{{no}}"></x-import> <span style="color: var(--color-neutral-500);">not approved yet</span></p></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x566805a83e872e67a32d84596b81d16faa7ba6a2"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">Core Team <span style="color: var(--color-success-800);">approved</span></p></x-import>
-</x-import><div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Advance proposal</x-import></div></x-import></x-import>
+</x-import><div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="DialogConnectWallet.dc.html">Advance proposal</x-import></div></x-import></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Community veto" status="PENDING" index="{{one}}" body-list="{{bodies1}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">NSP Token Holders</p></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" label="guardian.northstar.eth" copy="{{no}}"></x-import></p></x-import>
@@ -127,7 +127,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-7' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-7' }],
       statusTag: { label: 'Advanceable', variant: 'info' },
       description: "<h2>Summary</h2><p>Raise the maximum Immunefi payout for critical vulnerabilities from 250,000 to 1,000,000 USDC and pre-fund the bounty Safe with 250,000 USDC.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: undefined,
@@ -140,7 +140,7 @@ class Component extends DCLogic {
       action0: {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb00000000000000000000000074323855f809f305fa897a4bf4da4f372e516f730000000000000000000000000000000000000000000000000000003a35294400", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x74323855f809f305fa897a4bf4da4f372e516f73"}, {"name": "value", "type": "uint256", "value": "250000000000"}]}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x77d320c0ddd8f6a5d8083d419796992a2ddda490f8a81c9c45171ca72575cd12' }
     };
   }

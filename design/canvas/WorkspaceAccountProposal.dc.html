@@ -57,7 +57,7 @@ body{margin:0}
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACTIVE">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="6215000" total-no="1104000" total-abstain="402000" support-threshold="{{supportThreshold}}" min-participation="{{minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
                     <div style="padding-top: 32px;">
-                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Vote on proposal</x-import>
+                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="w-fit" href="DialogConnectWallet.dc.html">Vote on proposal</x-import>
                     </div>
                   </x-import>
                 </x-import>
@@ -118,7 +118,7 @@ body{margin:0}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1988}}'>
 // Proposal detail, active proposal (apps/app: modules/governance/pages/daoProposalDetailsPage with the token-voting
-// terminal). Mock data: design/mock-backend/data.cjs (MGP-8). The Votes and Settings tabs of the voting block are not
+// terminal). Mock data: design/baseline-check/data.cjs (MGP-8). The Votes and Settings tabs of the voting block are not
 // drawn yet.
 class Component extends DCLogic {
   renderVals() {
@@ -135,7 +135,7 @@ class Component extends DCLogic {
     });
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'MGP-8' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'WorkspaceAccountProposals.dc.html' }, { label: 'MGP-8' }],
       statusTag: { label: 'Active', variant: 'info' },
       description: '<h2>Summary</h2><p>Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>',
       // The kit prints "3 days left to vote" relative to the viewer's clock, so the end date is an offset from now:
@@ -148,7 +148,7 @@ class Component extends DCLogic {
         mrd: transfer('0xc6cf3058f8fd5eb7074109b3b531364a4af59dae', 'Meridian', '0xa9059cbb00000000000000000000000031154ff59ea91264c4fd75aba7d8a2fc5a69d3680000000000000000000000000000000000000000000054b40b1f852bda000000', '400000000000000000000000')
       },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'WorkspaceAccountMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c' }
     };
   }

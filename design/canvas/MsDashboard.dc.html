@@ -63,7 +63,7 @@ body{margin:0}
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
                   <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
-                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="#"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="{{p.href}}"></x-import>
                   </sc-for>
                 </x-import>
                 <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="MsProposals.dc.html" class-name="self-start">View all</x-import>
@@ -108,7 +108,7 @@ body{margin:0}
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" link="{{addressLink}}" children="atlas-grants.dao.eth"></x-import></div>
                 <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{creationLink}}" children="March 2026"></x-import>
               </x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#" class-name="w-full">View permissions</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="MsPermissions.dc.html" class-name="w-full">View permissions</x-import>
             </x-import>
 
             <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
@@ -139,7 +139,7 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2092}}'>
-// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/mock-backend/data.cjs (Atlas Grants Council).
+// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data.cjs (Atlas Grants Council).
 class Component extends DCLogic {
   renderVals() {
     // Kit components print proposal dates relative to the viewer's clock ("3 days left"), so dates are offsets from
@@ -151,9 +151,9 @@ class Component extends DCLogic {
     return {
       yes: true, two: 2, three: 3, five: 5,
       proposals: [
-        { id: 'AGC-6', title: 'Q1 2027 council operating budget', summary: 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', status: 'PENDING', date: now + 8 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
-        { id: 'AGC-5', title: 'Grant: Wallet accessibility audit', summary: 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', status: 'ACTIVE', date: now + 6 * day + hour, publisher: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth') },
-        { id: 'AGC-4', title: 'Add a sixth council seat for research', summary: 'Expand the council with a research seat to improve technical review of grant applications.', status: 'EXECUTABLE', date: now + 4 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth') }
+        { id: 'AGC-6', href: 'MsProposalAGC6.dc.html', title: 'Q1 2027 council operating budget', summary: 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', status: 'PENDING', date: now + 8 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
+        { id: 'AGC-5', href: 'MsProposalAGC5.dc.html', title: 'Grant: Wallet accessibility audit', summary: 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', status: 'ACTIVE', date: now + 6 * day + hour, publisher: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth') },
+        { id: 'AGC-4', href: 'MsProposalAGC4.dc.html', title: 'Add a sixth council seat for research', summary: 'Expand the council with a research seat to improve technical review of grant applications.', status: 'EXECUTABLE', date: now + 4 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth') }
       ],
       members: [
         { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth' },

@@ -126,7 +126,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-3' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-3' }],
       statusTag: { label: 'Expired', variant: 'critical' },
       description: "<h2>Summary</h2><p>Add Wintermute to the designated solver set with a 500,000 NSP bond, enabling it to settle intents on all supported rollups.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: undefined,
@@ -139,7 +139,7 @@ class Component extends DCLogic {
       action0: {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xe8a40a1745a01be5986f27a8608290d9079d0c12", "data": "0x7f9ff11000000000000000000000000071c4222c8c50261950b8285686ed46bb81f9dde70000000000000000000000000000000000000000000069e10de76676d0800000", "value": "0", "inputData": {"function": "addSolver", "contract": "NorthstarSolverRegistry", "parameters": [{"name": "_solver", "type": "address", "value": "0x71c4222c8c50261950b8285686ed46bb81f9dde7"}, {"name": "_bond", "type": "uint256", "value": "500000000000000000000000"}]}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x8c6927dbd6f3c8bd3fb080ae5a0e8bfe8396a9b1d04a3cfc70cea431f7b71c06' }
     };
   }

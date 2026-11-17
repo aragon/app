@@ -38,17 +38,17 @@ body{margin:0}
 
   <div class="app-sidebar__footer">
     <sc-if value="{{disconnected}}">
-      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full">Connect</x-import>
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full" href="DialogConnectWallet.dc.html">Connect</x-import>
     </sc-if>
     <sc-if value="{{connected}}">
-      <button class="app-account" type="button">
+      <a class="app-account" href="DialogUserWallet.dc.html">
         <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
         <span class="app-account__text">
           <span class="app-account__name">{{user.name}}</span>
           <span class="app-account__address">{{user.short}}</span>
         </span>
         <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="md" class-name="shrink-0 text-neutral-400"></x-import>
-      </button>
+      </a>
     </sc-if>
     <div class="app-sidebar__meta">
       <a class="app-sidebar__governed" href="Main.dc.html">
@@ -71,15 +71,15 @@ body{margin:0}
 <nav class="app-topbar app-topbar--with-sidebar" aria-label="DAO navigation">
   <div class="app-container app-topbar__inner">
     <div class="app-topbar__row">
-      <button class="app-topbar__home" type="button" aria-label="Open DAO navigation">
+      <a class="app-topbar__home" href="DialogDaoNavigationMobile.dc.html" aria-label="Open DAO navigation">
         <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="lg"></x-import>
         <p class="app-topbar__home-name">{{daoName}}</p>
-      </button>
+      </a>
       <div class="app-topbar__actions">
         <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}"></x-import>
-        <button class="app-topbar__trigger" type="button" aria-label="Open menu">
+        <a class="app-topbar__trigger" href="DialogDaoNavigationMobile.dc.html" aria-label="Open menu">
           <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="MENU" size="lg"></x-import>
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -104,7 +104,14 @@ class Component extends DCLogic {
       atlas: { name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', avatar: 'assets/mock/avatar/atlas.svg' },
       northstar: { name: 'Northstar Protocol', address: '0xa767846912853e30403f3efb946a5250e8e6a063', avatar: 'assets/mock/avatar/northstar.svg' }
     };
-    const dao = daos[this.props.dao ?? 'meridian'] ?? daos.meridian;
+    const daoKey = daos[this.props.dao ?? 'meridian'] ? (this.props.dao ?? 'meridian') : 'meridian';
+    const dao = daos[daoKey];
+    // Each DAO's own screens (a disconnected visitor on Meridian; with a wallet the dashboard is the connected one).
+    const pages = {
+      meridian: { dashboard: user ? 'ConnectedDashboard.dc.html' : 'Dashboard.dc.html', proposals: 'Proposals.dc.html', transactions: 'Transactions.dc.html', assets: 'Assets.dc.html', members: 'Members.dc.html', permissions: 'Permissions.dc.html', settings: 'Settings.dc.html' },
+      atlas: { dashboard: 'MsDashboard.dc.html', proposals: 'MsProposals.dc.html', transactions: 'MsTransactions.dc.html', assets: 'MsAssets.dc.html', members: 'MsMembers.dc.html', permissions: 'MsPermissions.dc.html', settings: 'MsSettings.dc.html' },
+      northstar: { dashboard: 'SppDashboard.dc.html', proposals: 'SppProposals.dc.html', transactions: 'SppTransactions.dc.html', assets: 'SppAssets.dc.html', members: 'SppMembers.dc.html', permissions: 'SppPermissions.dc.html', settings: 'SppSettings.dc.html' }
+    }[daoKey];
     const link = (id, label, icon, href) => ({
       label, icon, href,
       current: id === active ? 'page' : undefined,
@@ -118,13 +125,13 @@ class Component extends DCLogic {
       daoAvatar: dao.avatar,
       explorerUrl: 'https://etherscan.io/address/' + dao.address,
       links: [
-        link('dashboard', 'Dashboard', 'APP_DASHBOARD', 'Dashboard.dc.html'),
-        link('proposals', 'Proposals', 'APP_PROPOSALS', 'Proposals.dc.html'),
-        link('transactions', 'Transactions', 'APP_TRANSACTIONS', 'Transactions.dc.html'),
-        link('assets', 'Assets', 'APP_ASSETS', 'Assets.dc.html'),
-        link('members', 'Members', 'APP_MEMBERS', 'Members.dc.html'),
-        link('permissions', 'Permissions', 'APP_PERMISSIONS', 'Permissions.dc.html'),
-        link('settings', 'Settings', 'SETTINGS', 'Settings.dc.html')
+        link('dashboard', 'Dashboard', 'APP_DASHBOARD', pages.dashboard),
+        link('proposals', 'Proposals', 'APP_PROPOSALS', pages.proposals),
+        link('transactions', 'Transactions', 'APP_TRANSACTIONS', pages.transactions),
+        link('assets', 'Assets', 'APP_ASSETS', pages.assets),
+        link('members', 'Members', 'APP_MEMBERS', pages.members),
+        link('permissions', 'Permissions', 'APP_PERMISSIONS', pages.permissions),
+        link('settings', 'Settings', 'SETTINGS', pages.settings)
       ]
     };
   }

@@ -48,19 +48,19 @@ body{margin:0}
     <div class="explore-featured__track">
       <div class="explore-featured__row" style="margin-left: -143px;">
         <div class="explore-featured__card">
-          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Lido" description="The Lido DAO governs key parameters of Ethereum's largest liquid staking protocol using the voting power of LDO." network="Ethereum" href="https://vote.lido.fi/" is-external="{{yes}}" target="_blank"></x-import>
+          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Lido" description="The Lido DAO governs key parameters of Ethereum's largest liquid staking protocol using the voting power of LDO." network="Ethereum" href="Dashboard.dc.html" is-external="{{yes}}" target="_blank"></x-import>
         </div>
         <div class="explore-featured__card">
-          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Polygon" description="The Polygon Governance Hub enables community-driven decision-making for the Polygon aggregated blockchain network." network="Ethereum" href="https://governance.polygon.technology/" is-external="{{yes}}" target="_blank"></x-import>
+          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Polygon" description="The Polygon Governance Hub enables community-driven decision-making for the Polygon aggregated blockchain network." network="Ethereum" href="Dashboard.dc.html" is-external="{{yes}}" target="_blank"></x-import>
         </div>
         <div class="explore-featured__card">
-          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Boundless" description="Boundless Governance is dedicated to bringing ZK to every blockchain, developer, and everyone in between." network="Ethereum" href="#"></x-import>
+          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Boundless" description="Boundless Governance is dedicated to bringing ZK to every blockchain, developer, and everyone in between." network="Ethereum" href="Dashboard.dc.html"></x-import>
         </div>
         <div class="explore-featured__card">
           <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Taiko DAO" description="Taiko DAO gives token holders and delegates onchain veto rights to secure the Taiko based rollup." network="Ethereum" href="https://dao.taiko.xyz/" is-external="{{yes}}" target="_blank"></x-import>
         </div>
         <div class="explore-featured__card">
-          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Zama" description="Governance in the Zama protocol covers operation and adjustment of the protocol, including the $ZAMA token." network="Ethereum" href="#"></x-import>
+          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Zama" description="Governance in the Zama protocol covers operation and adjustment of the protocol, including the $ZAMA token." network="Ethereum" href="Dashboard.dc.html"></x-import>
         </div>
         <div class="explore-featured__card">
           <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Steakhouse Financial" description="Steakhouse's MetaMorpho vaults utilize Aragon Guardian DAOs to provide transparent and trustless community oversight." network="Ethereum" href="https://app.morpho.org/ethereum/curator/steakhouse-financial" is-external="{{yes}}" target="_blank"></x-import>
@@ -75,7 +75,7 @@ body{margin:0}
           <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Mode" description="The Mode Governance Hub enables the community to participate in scaling DeFi to billions of users." network="mode" href="https://gov.mode.network/" is-external="{{yes}}" target="_blank"></x-import>
         </div>
         <div class="explore-featured__card">
-          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Aragon Foundation" description="Onchain asset management to empower developers to build open source technology for onchain governance." network="Ethereum" href="#"></x-import>
+          <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Aragon Foundation" description="Onchain asset management to empower developers to build open source technology for onchain governance." network="Ethereum" href="Dashboard.dc.html"></x-import>
         </div>
       </div>
     </div>
@@ -104,7 +104,7 @@ body{margin:0}
               <p>Easily deploy a new DAO on Aragon OSx in minutes with our simple, no-code deployment wizard.</p>
             </div>
             <div class="cta-card__actions">
-              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full md:w-auto">Create a DAO</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full md:w-auto" href="CreateDaoStep1.dc.html">Create a DAO</x-import>
             </div>
           </x-import>
           <x-import component-from-global-scope="GovUiKit.Card" class-name="relative flex flex-col gap-4 p-4 md:gap-6 md:p-6">
@@ -114,7 +114,7 @@ body{margin:0}
               <p>Group DAOs and accounts across networks into a single workspace to see their assets, transactions and members together.</p>
             </div>
             <div class="cta-card__actions">
-              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full md:w-auto">Create a workspace</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full md:w-auto" href="CreateWorkspaceStep1.dc.html">Create a workspace</x-import>
             </div>
           </x-import>
           <x-import component-from-global-scope="GovUiKit.Card" class-name="relative flex flex-col gap-4 p-4 md:gap-6 md:p-6">
@@ -141,7 +141,7 @@ body{margin:0}
             <x-import component-from-global-scope="GovUiKit.DataList.Filter" placeholder="Search by name, address, or ENS" search-value="" on-search-value-change="{{noop}}"></x-import>
             <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." address="0xc8c322384903ee8f11f511b71d0504237886bcde" ens="meridian.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/meridian.svg" href="Dashboard.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" ens="atlas-grants.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/atlas.svg" href="Dashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" ens="atlas-grants.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/atlas.svg" href="MsDashboard.dc.html"></x-import>
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Lido DAO" description="Liquid staking governance for the Lido protocol on Ethereum." address="0x612309293021ea0289246c9e5ee84c0e0cb034df" ens="lido.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/lido.svg" href="Dashboard.dc.html"></x-import>
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Polygon Village" description="Community grants and builder support for the Polygon ecosystem." address="0x5f0cfb4039b4094a7034c9e3f2035af861eeb42c" ens="polygon-village.dao.eth" network="Polygon" logo-src="assets/mock/avatar/polygon-village.svg" href="Dashboard.dc.html"></x-import>
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" description="An artist-run collective funding generative art residencies." address="0xe2f001c33fca00ad672f2a79abbcd567803178ee" ens="solace.dao.eth" network="Base" logo-src="assets/mock/avatar/solace.svg" href="Dashboard.dc.html"></x-import>
@@ -167,7 +167,7 @@ body{margin:0}
 // Explore page (apps/app: modules/explore/pages/exploreDaosPage, exploreNav, shared/components/ctaCard).
 // Featured: the app-cms featured-daos.json list (their logos are remote images, so the app shows initials when they
 // do not load, as here). The app animates this row as a carousel; the canvas shows one still frame of it.
-// Explore list: design/mock-backend/data.cjs. The list items are written out one by one at the start of the line,
+// Explore list: design/baseline-check/data.cjs. The list items are written out one by one at the start of the line,
 // not looped or indented: the kit's pagination counts the list's direct children, and the canvas runtime counts a loop
 // as one child and indentation as another.
 class Component extends DCLogic {

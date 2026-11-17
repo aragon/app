@@ -49,9 +49,9 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{three}}" page-size="{{five}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-4" proposal-title="Add a sixth council seat for research" vote-indicator="approve" date="{{dates.v4}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-2" proposal-title="Grant: Governance analytics dashboard" vote-indicator="approve" date="{{dates.v2}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-1" proposal-title="Grant: Open-source zk proving benchmarks" vote-indicator="approve" date="{{dates.v1}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-4" proposal-title="Add a sixth council seat for research" vote-indicator="approve" date="{{dates.v4}}" href="MsProposalAGC4.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-2" proposal-title="Grant: Governance analytics dashboard" vote-indicator="approve" date="{{dates.v2}}" href="MsProposalAGC2.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-1" proposal-title="Grant: Open-source zk proving benchmarks" vote-indicator="approve" date="{{dates.v1}}" href="MsProposalAGC1.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -63,7 +63,7 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{one}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{lena}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{lena}}" href="MsProposalAGC6.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -75,9 +75,9 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="Dashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="Dashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="Dashboard.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>

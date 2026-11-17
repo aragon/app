@@ -75,7 +75,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action0}}" chain-id="{{one}}" index="{{zero}}" read-only="{{yes}}"></x-import>
                 </x-import>
                 <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}">
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Execute</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="DialogConnectWallet.dc.html">Execute</x-import>
                 </x-import>
               </x-import>
             </div>
@@ -127,7 +127,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-4' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-4' }],
       statusTag: { label: 'Executable', variant: 'info' },
       description: "<h2>Summary</h2><p>Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: undefined,
@@ -140,7 +140,7 @@ class Component extends DCLogic {
       action0: {"type": "TransferNative", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xcd16b036f665f9fde7967bc3f8ed838527c0b302", "data": "0x", "value": "40000000000000000000", "inputData": {"function": "", "contract": "", "parameters": []}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x1cb03aae9f03b7978c6c0aa517da36b9194864309fe80b7162a90b9daadb7f65' }
     };
   }

@@ -66,7 +66,7 @@ body{margin:0}
                     </div>
                   </div>
                   <div class="delegation-stats__action">
-                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Delegate NSP</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="DialogConnectWallet.dc.html">Delegate NSP</x-import>
                   </div>
                 </div>
               </x-import>
@@ -85,7 +85,7 @@ body{margin:0}
               </x-import>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{one}}" page-size="{{five}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="NSP-5" proposal-title="Raise the protocol fee switch to 25 bps" vote-indicator="no" date="{{dates.v5}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="NSP-5" proposal-title="Raise the protocol fee switch to 25 bps" vote-indicator="no" date="{{dates.v5}}" href="SppProposalNSP5.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -98,7 +98,7 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{one}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-4" title="Deploy Northstar v3 settlement on Base" summary="Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch." status="EXECUTABLE" date="{{dates.nsp4}}" publisher="{{nadia}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-4" title="Deploy Northstar v3 settlement on Base" summary="Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch." status="EXECUTABLE" date="{{dates.nsp4}}" publisher="{{nadia}}" href="SppProposalNSP4.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -110,9 +110,9 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{four}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" ens="atlas-grants.dao.eth" address="{{daos.atlas}}" logo-src="assets/mock/avatar/atlas.svg" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." network="Ethereum" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="Dashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" ens="atlas-grants.dao.eth" address="{{daos.atlas}}" logo-src="assets/mock/avatar/atlas.svg" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." network="Ethereum" href="MsDashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="Dashboard.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>

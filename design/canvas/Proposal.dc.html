@@ -57,7 +57,7 @@ body{margin:0}
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACTIVE">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="6215000" total-no="1104000" total-abstain="402000" support-threshold="{{supportThreshold}}" min-participation="{{minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
                     <div style="padding-top: 32px;">
-                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Vote on proposal</x-import>
+                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="w-fit" href="DialogConnectWallet.dc.html">Vote on proposal</x-import>
                     </div>
                   </x-import>
                 </x-import>
@@ -118,7 +118,7 @@ body{margin:0}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1988}}'>
 // Proposal detail, active proposal (apps/app: modules/governance/pages/daoProposalDetailsPage with the token-voting
-// terminal). Mock data: design/mock-backend/data.cjs (MGP-8). The Votes and Settings tabs of the voting block are not
+// terminal). Mock data: design/baseline-check/data.cjs (MGP-8). The Votes and Settings tabs of the voting block are not
 // drawn yet.
 class Component extends DCLogic {
   renderVals() {

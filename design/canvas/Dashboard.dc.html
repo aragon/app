@@ -63,7 +63,7 @@ body{margin:0}
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
                   <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
-                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="Proposal.dc.html"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="{{p.href}}"></x-import>
                   </sc-for>
                 </x-import>
                 <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="Proposals.dc.html" class-name="self-start">View all</x-import>
@@ -141,7 +141,7 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2316}}'>
-// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/mock-backend/data.cjs (Meridian DAO).
+// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data.cjs (Meridian DAO).
 class Component extends DCLogic {
   renderVals() {
     // Kit components print proposal dates relative to the viewer's clock ("3 days left"), so dates are offsets from
@@ -153,9 +153,9 @@ class Component extends DCLogic {
     return {
       yes: true, two: 2, three: 3, six: 6,
       proposals: [
-        { id: 'MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
-        { id: 'MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth') },
-        { id: 'MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day - hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') }
+        { id: 'MGP-8', href: 'Proposal.dc.html', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
+        { id: 'MGP-7', href: 'ProposalMGP7.dc.html', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth') },
+        { id: 'MGP-6', href: 'ProposalMGP6.dc.html', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day - hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') }
       ],
       members: [
         { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', delegations: 214, votingPower: 4850000 },

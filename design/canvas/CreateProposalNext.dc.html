@@ -20,10 +20,10 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="wizard-actions">
   <div class="wizard-actions__buttons">
-    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT">Back</x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" href="CreateProposalStep1Filled.dc.html">Back</x-import>
     <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="Next" size="lg" variant="secondary" open="{{open}}">
-      <x-import component-from-global-scope="GovUiKit.Dropdown.Item">Simulate actions</x-import>
-      <x-import component-from-global-scope="GovUiKit.Dropdown.Item">Skip simulation</x-import>
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" href="CreateProposalStep3.dc.html">Simulate actions</x-import>
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" href="CreateProposalStep3.dc.html">Skip simulation</x-import>
     </x-import>
   </div>
 </div>

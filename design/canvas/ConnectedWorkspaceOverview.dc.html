@@ -67,7 +67,7 @@ body{margin:0}
                       <p class="ws-todo-preview__title">{{t.title}}</p>
                       <p class="ws-todo-preview__meta">{{t.meta}}</p>
                     </div>
-                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="sm" href="Proposal.dc.html" class-name="shrink-0">Vote</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="sm" href="WorkspaceAccountProposal.dc.html" class-name="shrink-0">Vote</x-import>
                   </div>
                 </sc-for>
               </x-import>
@@ -134,8 +134,8 @@ class Component extends DCLogic {
         { dao: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', title: 'AGC-5 · Grant: Wallet accessibility audit', meta: 'Vote · ends ' + GovUiKit.formatterUtils.formatDate(Date.now() + 6 * 86400000 + 3600000, { format: GovUiKit.DateFormat.RELATIVE }) }
       ],
       accounts: [
-        { name: 'Meridian DAO', meta: 'Ethereum · 0xC8C3…BCde', href: '#' },
-        { name: 'Atlas Grants Council', meta: 'Ethereum · 0x3115…d368', href: '#' }
+        { name: 'Meridian DAO', meta: 'Ethereum · 0xC8C3…BCde', href: 'WorkspaceAccountOverview.dc.html' },
+        { name: 'Atlas Grants Council', meta: 'Ethereum · 0x3115…d368', href: 'WorkspaceAccountOverview.dc.html' }
       ]
     };
   }

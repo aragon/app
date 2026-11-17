@@ -126,7 +126,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-5' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-5' }],
       statusTag: { label: 'Vetoed', variant: 'critical' },
       description: "<h2>Summary</h2><p>Increase the protocol fee on settled volume from 10 to 25 basis points and route the additional revenue to the treasury.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: undefined,
@@ -139,7 +139,7 @@ class Component extends DCLogic {
       action0: {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x794fc07fefb20e808f1e0748865222336ca8a8d8", "data": "0xe4467f350000000000000000000000000000000000000000000000000000000000000019", "value": "0", "inputData": {"function": "setProtocolFee", "contract": "NorthstarFeeController", "parameters": [{"name": "_feeBps", "type": "uint16", "value": "25"}]}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x2cf01e49ceb2e6b1b75741b755eb8f2b6513ceee7c12dfe626ac2345e3758586' }
     };
   }

@@ -63,10 +63,10 @@ body{margin:0}
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
                   <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
-                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="Proposal.dc.html"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="WorkspaceAccountProposal.dc.html"></x-import>
                   </sc-for>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="Proposals.dc.html" class-name="self-start">View all</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="WorkspaceAccountProposals.dc.html" class-name="self-start">View all</x-import>
               </x-import>
             </div>
 
@@ -77,10 +77,10 @@ body{margin:0}
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{six}}" page-size="{{six}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
                   <sc-for list="{{members}}" as="m" hint-placeholder-count="6">
-                    <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" delegation-count="{{m.delegations}}" token-amount="{{m.votingPower}}" href="Member.dc.html"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" delegation-count="{{m.delegations}}" token-amount="{{m.votingPower}}" href="WorkspaceAccountMember.dc.html"></x-import>
                   </sc-for>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="Members.dc.html" class-name="self-start">View all</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="WorkspaceAccountMembers.dc.html" class-name="self-start">View all</x-import>
               </x-import>
             </div>
 
@@ -94,7 +94,7 @@ body{margin:0}
                     <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}" logo-src="{{a.logo}}"></x-import>
                   </sc-for>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="Assets.dc.html" class-name="self-start">View all</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="WorkspaceAccountAssets.dc.html" class-name="self-start">View all</x-import>
               </x-import>
             </div>
           </main>
@@ -108,7 +108,7 @@ body{margin:0}
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0xc8c322384903ee8f11f511b71d0504237886bcde" link="{{addressLink}}" children="meridian.dao.eth"></x-import></div>
                 <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{creationLink}}" children="September 2025"></x-import>
               </x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="Permissions.dc.html" class-name="w-full">View permissions</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="WorkspaceAccountPermissions.dc.html" class-name="w-full">View permissions</x-import>
             </x-import>
 
             <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
@@ -141,7 +141,7 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2316}}'>
-// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/mock-backend/data.cjs (Meridian DAO).
+// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data.cjs (Meridian DAO).
 class Component extends DCLogic {
   renderVals() {
     // Kit components print proposal dates relative to the viewer's clock ("3 days left"), so dates are offsets from
@@ -149,7 +149,7 @@ class Component extends DCLogic {
     const hour = 3600000;
     const day = 24 * hour;
     const now = Date.now();
-    const person = (address, name) => ({ address, name, link: 'Member.dc.html' });
+    const person = (address, name) => ({ address, name, link: 'WorkspaceAccountMember.dc.html' });
     return {
       yes: true, two: 2, three: 3, six: 6,
       proposals: [

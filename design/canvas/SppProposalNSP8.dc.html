@@ -128,7 +128,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-8' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-8' }],
       statusTag: { label: 'Active', variant: 'info' },
       description: "<h2>Summary</h2><p>Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: Date.now() + 3 * day,
@@ -142,7 +142,7 @@ class Component extends DCLogic {
       action1: {"type": "TransferNative", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x88fa9a72b1ff7e345eb0d47b8f879a49de1adaf7", "data": "0x", "value": "220000000000000000000", "inputData": {"function": "", "contract": "", "parameters": []}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x2d2dee3492f460dbb21c384d7ec8ad6ebb1e55e91b2979bcd21da8401073ac09' }
     };
   }

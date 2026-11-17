@@ -66,7 +66,7 @@ body{margin:0}
                     </div>
                   </div>
                   <div class="delegation-stats__action">
-                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md">Delegate MRD</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="DialogConnectWallet.dc.html">Delegate MRD</x-import>
                   </div>
                 </div>
               </x-import>
@@ -78,11 +78,11 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{seven}}" page-size="{{five}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-8" proposal-title="Fund the Q1 2027 Ecosystem Grants Program" vote-indicator="yes" date="{{dates.v8}}" href="Proposal.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-6" proposal-title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" vote-indicator="no" date="{{dates.v6}}" href="Proposal.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-5" proposal-title="Signal: Expand the delegate compensation framework" vote-indicator="yes" date="{{dates.v5}}" href="Proposal.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-4" proposal-title="Reduce proposal threshold to 25,000 MRD" vote-indicator="no" date="{{dates.v4}}" href="Proposal.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-3" proposal-title="Update DAO metadata and website links" vote-indicator="yes" date="{{dates.v3}}" href="Proposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-8" proposal-title="Fund the Q1 2027 Ecosystem Grants Program" vote-indicator="yes" date="{{dates.v8}}" href="WorkspaceAccountProposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-6" proposal-title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" vote-indicator="no" date="{{dates.v6}}" href="WorkspaceAccountProposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-5" proposal-title="Signal: Expand the delegate compensation framework" vote-indicator="yes" date="{{dates.v5}}" href="WorkspaceAccountProposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-4" proposal-title="Reduce proposal threshold to 25,000 MRD" vote-indicator="no" date="{{dates.v4}}" href="WorkspaceAccountProposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-3" proposal-title="Update DAO metadata and website links" vote-indicator="yes" date="{{dates.v3}}" href="WorkspaceAccountProposal.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -94,8 +94,8 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{two}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-7" title="Adopt the Meridian Constitution v2" summary="Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures." status="PENDING" date="{{dates.mgp7}}" publisher="{{nadia}}" href="Proposal.dc.html"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-2" title="Q4 2026 Contributor Compensation" summary="Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe." status="EXECUTED" date="{{dates.mgp2}}" publisher="{{nadia}}" href="Proposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-7" title="Adopt the Meridian Constitution v2" summary="Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures." status="PENDING" date="{{dates.mgp7}}" publisher="{{nadia}}" href="WorkspaceAccountProposal.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-2" title="Q4 2026 Contributor Compensation" summary="Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe." status="EXECUTED" date="{{dates.mgp2}}" publisher="{{nadia}}" href="WorkspaceAccountProposal.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -107,9 +107,9 @@ body{margin:0}
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" ens="atlas-grants.dao.eth" address="{{daos.atlas}}" logo-src="assets/mock/avatar/atlas.svg" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." network="Ethereum" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" ens="atlas-grants.dao.eth" address="{{daos.atlas}}" logo-src="assets/mock/avatar/atlas.svg" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." network="Ethereum" href="MsDashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="Dashboard.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="Dashboard.dc.html"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -155,8 +155,8 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, two: 2, three: 3, five: 5, seven: 7,
-      breadcrumbs: [{ href: 'Members.dc.html', label: 'Members' }, { label: 'nadia.eth' }],
-      nadia: { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', name: 'nadia.eth', link: 'Member.dc.html' },
+      breadcrumbs: [{ href: 'WorkspaceAccountMembers.dc.html', label: 'Members' }, { label: 'nadia.eth' }],
+      nadia: { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', name: 'nadia.eth', link: 'WorkspaceAccountMember.dc.html' },
       dates: {
         v8: now - 1.875 * day,
         v6: now - 5.875 * day,

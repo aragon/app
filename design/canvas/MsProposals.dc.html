@@ -28,16 +28,16 @@ body{margin:0}
           <main class="page-main page-main--titled">
             <header class="page-main__header">
               <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposals</x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="#">Proposal</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="MsCreateProposalStep1.dc.html">Proposal</x-import>
             </header>
             <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
               <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{people.lena}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-5" title="Grant: Wallet accessibility audit" summary="Commission an accessibility audit of the five most-used governance wallets (18,500 USDC)." status="ACTIVE" date="{{dates.agc5}}" publisher="{{people.tomas}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-4" title="Add a sixth council seat for research" summary="Expand the council with a research seat to improve technical review of grant applications." status="EXECUTABLE" date="{{dates.agc4}}" publisher="{{people.nadia}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-3" title="Grant: Hackathon prize pool for Q4" summary="Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks." status="REJECTED" date="{{dates.agc3}}" publisher="{{people.chenwei}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-2" title="Grant: Governance analytics dashboard" summary="Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC)." status="EXPIRED" date="{{dates.agc2}}" publisher="{{people.sofia}}" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-1" title="Grant: Open-source zk proving benchmarks" summary="Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems." status="EXECUTED" date="{{dates.agc1}}" publisher="{{people.nadia}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{people.lena}}" href="MsProposalAGC6.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-5" title="Grant: Wallet accessibility audit" summary="Commission an accessibility audit of the five most-used governance wallets (18,500 USDC)." status="ACTIVE" date="{{dates.agc5}}" publisher="{{people.tomas}}" href="MsProposalAGC5.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-4" title="Add a sixth council seat for research" summary="Expand the council with a research seat to improve technical review of grant applications." status="EXECUTABLE" date="{{dates.agc4}}" publisher="{{people.nadia}}" href="MsProposalAGC4.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-3" title="Grant: Hackathon prize pool for Q4" summary="Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks." status="REJECTED" date="{{dates.agc3}}" publisher="{{people.chenwei}}" href="MsProposalAGC3.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-2" title="Grant: Governance analytics dashboard" summary="Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC)." status="EXPIRED" date="{{dates.agc2}}" publisher="{{people.sofia}}" href="MsProposalAGC2.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-1" title="Grant: Open-source zk proving benchmarks" summary="Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems." status="EXECUTED" date="{{dates.agc1}}" publisher="{{people.nadia}}" href="MsProposalAGC1.dc.html"></x-import>
 </x-import>
               <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
             </x-import>
@@ -52,7 +52,7 @@ body{margin:0}
                   <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" description="Multisig v1.3" link="{{pluginLink}}" children="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae"></x-import></div>
                   <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="March 2026"></x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="#">View governance process</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="MsSettingsProcess.dc.html">View governance process</x-import>
               </div>
             </x-import>
 

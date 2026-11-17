@@ -126,7 +126,7 @@ class Component extends DCLogic {
     const now = Date.now();
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
-      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-1' }],
+      breadcrumbs: [{ label: 'Proposals', href: 'SppProposals.dc.html' }, { label: 'NSP-1' }],
       statusTag: { label: 'Rejected', variant: 'critical' },
       description: "<h2>Summary</h2><p>Replace the native NSP staking module with a liquid restaking wrapper so stakers can use stNSP as collateral across integrated money markets.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
       end0: undefined,
@@ -139,7 +139,7 @@ class Component extends DCLogic {
       action0: {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x3c564aa46ecfdc642fa53ad1d79e056a1f67b8f2", "data": "0xc60b494f0000000000000000000000009aff6872f6b2529a6f6fac1096a28d4f501b5e37", "value": "0", "inputData": {"function": "setStakingModule", "contract": "NorthstarStaking", "parameters": [{"name": "_module", "type": "address", "value": "0x9aff6872f6b2529a6f6fac1096a28d4f501b5e37"}]}},
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      creatorLink: { href: 'SppMember.dc.html', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0x3780eb60784c00ebd355aafa0f82143cfa1a50b1770ebf991e8d65174bc58f62' }
     };
   }

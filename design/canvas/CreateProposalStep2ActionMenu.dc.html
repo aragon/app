@@ -19,7 +19,7 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="app-page">
-  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <dc-import name="WizardNav" exit-href="Proposals.dc.html" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
@@ -81,7 +81,7 @@ body{margin:0}
             </div>
           </div>
         </div>
-        <dc-import name="WizardActions" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
+        <dc-import name="WizardActions" back-href="CreateProposalStep1Filled.dc.html" next-href="CreateProposalStep3.dc.html" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
       </div>
     </form>
   </main>

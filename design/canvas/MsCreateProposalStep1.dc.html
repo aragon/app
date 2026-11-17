@@ -19,7 +19,7 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="app-page">
-  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Atlas Grants Council" dao-address="0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368" dao-avatar="assets/mock/avatar/atlas.svg" hint-size="100%,91px"></dc-import>
+  <dc-import name="WizardNav" exit-href="MsProposals.dc.html" wizard-name="Create proposal" dao-name="Atlas Grants Council" dao-address="0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368" dao-avatar="assets/mock/avatar/atlas.svg" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add actions" hint-size="100%,36px"></dc-import>

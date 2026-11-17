@@ -42,7 +42,7 @@ body{margin:0}
       <div class="ws-nav-group">
         <p class="ws-nav-group__label">Inbox</p>
         <div class="app-nav-links">
-          <a class="app-nav-link" href="WorkspaceTodos.dc.html" aria-current="{{todos.current}}">
+          <a class="app-nav-link" href="{{todos.href}}" aria-current="{{todos.current}}">
             <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" class-name="{{todos.iconClass}}"></x-import>
             To-dos
             <x-import component-from-global-scope="GovUiKit.Tag" label="{{todosCount}}" variant="critical" class-name="shrink-0 ml-auto"></x-import>
@@ -74,17 +74,17 @@ body{margin:0}
 
   <div class="app-sidebar__footer">
     <sc-if value="{{disconnected}}">
-      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full">Connect</x-import>
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full" href="DialogConnectWallet.dc.html">Connect</x-import>
     </sc-if>
     <sc-if value="{{connected}}">
-      <button class="app-account" type="button">
+      <a class="app-account" href="DialogUserWallet.dc.html">
         <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
         <span class="app-account__text">
           <span class="app-account__name">{{user.name}}</span>
           <span class="app-account__address">{{user.short}}</span>
         </span>
         <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="md" class-name="shrink-0 text-neutral-400"></x-import>
-      </button>
+      </a>
     </sc-if>
     <div class="app-sidebar__meta">
       <a class="app-sidebar__governed" href="Main.dc.html">
@@ -149,14 +149,25 @@ class Component extends DCLogic {
     const user = wallets[this.props.wallet];
     const active = this.props.active ?? 'overview';
     const isAccount = this.props.scope === 'account';
-    const pages = {
-      overview: 'WorkspaceOverview.dc.html',
+    const connected = user != null;
+    // Section links: the all-accounts screens, or the one-account screens (scope="account"); with a wallet the
+    // overview and the to-dos are the wallet-connected screens where one is drawn.
+    const pages = isAccount ? {
+      overview: 'WorkspaceAccountOverview.dc.html',
+      proposals: 'WorkspaceAccountProposals.dc.html',
+      transactions: 'WorkspaceAccountTransactions.dc.html',
+      assets: 'WorkspaceAccountAssets.dc.html',
+      members: 'WorkspaceAccountMembers.dc.html',
+      permissions: 'WorkspaceAccountPermissions.dc.html',
+      settings: 'WorkspaceAccountSettings.dc.html',
+      todos: connected ? 'ConnectedWorkspaceAccountTodos.dc.html' : 'WorkspaceAccountTodos.dc.html'
+    } : {
+      overview: connected ? 'ConnectedWorkspaceOverview.dc.html' : 'WorkspaceOverview.dc.html',
       proposals: 'WorkspaceProposals.dc.html',
       transactions: 'WorkspaceTransactions.dc.html',
       assets: 'WorkspaceAssets.dc.html',
       members: 'WorkspaceMembers.dc.html',
-      permissions: '#',
-      settings: '#'
+      todos: connected ? 'ConnectedWorkspaceTodos.dc.html' : 'WorkspaceTodos.dc.html'
     };
     const state = (id) => ({
       current: id === active ? 'page' : undefined,
@@ -180,7 +191,7 @@ class Component extends DCLogic {
       accountSubtitle: isAccount ? (this.props.accountAddress ?? '0xC8C3…BCde') : '2 accounts',
       accountAvatar: isAccount ? (this.props.accountAvatar ?? 'assets/mock/avatar/meridian.svg') : undefined,
       links,
-      todos: state('todos'),
+      todos: { ...state('todos'), href: pages.todos },
       todosCount: String(this.props.todos ?? (isAccount ? 1 : 2)),
       edit: state('edit')
     };

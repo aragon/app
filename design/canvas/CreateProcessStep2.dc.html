@@ -39,7 +39,7 @@ body{margin:0}
             </x-import>
           </div>
         </div>
-        <dc-import name="WizardActions" has-back="{{yes}}" hint-size="100%,48px"></dc-import>
+        <dc-import name="WizardActions" has-back="{{yes}}" back-href="CreateProcessStep1Filled.dc.html" hint-size="100%,48px"></dc-import>
       </div>
     </form>
   </main>
@@ -59,7 +59,7 @@ class Component extends DCLogic {
     const noop = () => undefined;
     return { yes: true, no: false, step: 2, total: 4, d40: 40, d5: 5, d480: 480, noop,
       illustration: { object: 'USERS' },
-      addBody: { label: 'Add voting body', iconLeft: 'PLUS', onClick: noop } };
+      addBody: { label: 'Add voting body', iconLeft: 'PLUS', onClick: noop, href: 'DialogAddVotingBody.dc.html' } };
   }
 }
 </script>

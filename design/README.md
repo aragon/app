@@ -155,9 +155,13 @@ reference's height. Figures as of 17 November 2026:
 | Dialogs: wallet, asset picker, mobile navigation, the transaction dialogs | 9 | 0.0% for most; the wallet SDK modal 0.5%; publish DAO 0.9% (the page behind it is scrolled in the screenshot) |
 | Components: the shared parts (sidebars, footer, logo, wizard frame, permission toolbars, transaction steps) | 11 parts | (used by the screens above) |
 
-Mock data, three DAOs and a workspace, is described in [baseline-check/README.md](baseline-check/README.md). A link
-on a screen leads to the drawn screen it opens in the app; a list of many items links every item to its one drawn
-example (all members to the member screen of that DAO).
+Mock data, three DAOs and a workspace, is described in [baseline-check/README.md](baseline-check/README.md). Clicking
+through the canvas in Play mode follows the app: a link or button opens the drawn screen it opens in the app, staying
+within the same DAO or workspace and the same wallet state, and buttons that open a dialog open the drawn dialog. A
+list links every item to its one drawn example (all members to the member screen of that DAO). What does not link:
+targets the canvas does not draw (the delegate and execute dialogs, the workspace governance-process page, later
+wizard steps for the multisig and multistage DAOs), and kit controls that render no link (the kit's wallet button,
+toggle tabs).
 
 ## Footprint
 
