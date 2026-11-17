@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Page not found</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <div class="not-found">
+    <x-import component-from-global-scope="GovUiKit.EmptyState" heading="Page not found" description="We couldn't find the page you're looking for." object-illustration="{{illustration}}" primary-button="{{action}}"></x-import>
+  </div>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// App-wide 404 (apps/app: app/not-found.tsx -> modules/application/components/notFound/notFoundBase), e.g. /this-page-does-not-exist.
+// Root layout without the DAO sidebar (layoutRoot.tsx): page body on neutral-50, then the app footer.
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      illustration: { object: 'MAGNIFYING_GLASS' },
+      action: { label: 'Explore DAOs', href: 'Main.dc.html' }
+    };
+  }
+}
+</script>
+</body>
+</html>

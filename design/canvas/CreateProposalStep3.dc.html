@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal: settings</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+/* AdvancedDateInput (apps/app: shared/components/forms/advancedDateInput) layout classes the kit stylesheet does not ship */
+.adi{display:flex;flex-direction:column;gap:8px}
+.adi-stack{display:flex;flex-direction:column;gap:48px}
+.adi-radios{display:flex!important;flex-direction:row!important;gap:16px}
+.adi-radios>*{width:100%}
+.adi-durations{display:flex;flex-direction:row;justify-content:space-between;gap:16px}
+.adi-durations>*{flex:0 1 auto;width:33.3333%}
+.adi-card{display:flex;flex-direction:column;gap:16px;padding:24px}
+
+/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
+.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
+.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Publish proposal" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposal settings</x-import>
+            <p class="wizard-step__description">Configure the settings for this proposal.</p>
+          </div>
+          <div class="adi-stack">
+            <div class="adi">
+              <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting start time" value="now" on-value-change="{{noop}}" class-name="adi-radios">
+                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Now" value="now"></x-import>
+                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
+              </x-import>
+            </div>
+            <div class="adi">
+              <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting duration / end time" value="duration" on-value-change="{{noop}}" class-name="adi-radios">
+                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Duration" value="duration"></x-import>
+                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
+              </x-import>
+              <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm adi-card">
+                <div class="adi-durations">
+                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Minutes" max="{{d59}}" min="{{zero}}" placeholder="0 min" suffix="min" value="{{zero}}" on-change="{{noop}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Hours" max="{{d23}}" min="{{zero}}" placeholder="0 h" suffix="h" value="{{zero}}" on-change="{{noop}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Days" min="{{zero}}" placeholder="0 d" suffix="d" value="{{five}}" on-change="{{noop}}"></x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.AlertCard" message="Voting duration / end time" variant="info">The minimum duration is 5 days, 0 hours, and 0 minutes, set by DAO governance.</x-import>
+              </x-import>
+            </div>
+          </div>
+        </div>
+        <dc-import name="WizardActions" has-back="{{yes}}" is-last="{{yes}}" submit-label="Publish proposal" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1048}}'>
+// Create proposal, step 3 "Proposal settings" (apps/app: plugins/tokenPlugin/components/tokenCreateProposalSettingsForm, shared/components/forms/advancedDateInput). The token-voting minimum duration is 5 days (data.cjs minDuration 432000 s).
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, zero: 0, one: 1, step: 3, total: 3, d128: 128, d480: 480, noop: () => {}, d59: 59, d23: 23, five: 5, };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create workspace: targets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create workspace" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add accounts" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add targets</x-import>
+            <p class="wizard-step__description">Add the addresses this workspace relates to. This step is optional and can be left empty.</p>
+          </div>
+          <div class="workspace-list">
+            <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceTargets" class-name="gap-3" label="Targets" is-optional="{{yes}}" help-text="Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically." use-custom-wrapper="{{yes}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add target</x-import>
+          </div>
+        </div>
+        <dc-import name="WizardActions" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Create workspace, step 2 "Add targets", no target added (apps/app: modules/workspace/components/createWorkspaceForm/
+// createWorkspaceFormTargets). The pointer still rests on "Next" from step 1, so it is drawn hovered.
+// Frame: WizardNav, WizardProgress, WizardActions parts + app.css "Wizards".
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, step: 2, total: 3, d128: 128, d18: 18, d480: 480, fourty: 40, maxFile: 1048576, maxDim: 1024, noop: () => {} };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Permissions toolbar</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<div class="perm-toolbar">
+  <div class="perm-toolbar__views">
+    <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{view}}">
+      <x-import component-from-global-scope="GovUiKit.Toggle" label="List" value="list"></x-import>
+      <x-import component-from-global-scope="GovUiKit.Toggle" label="Graph" value="graph"></x-import>
+    </x-import>
+  </div>
+  <div class="perm-toolbar__filters">
+    <div class="perm-filter">
+      <x-import component-from-global-scope="GovUiKit.Switch" checked="{{hideDao}}" inline-label="Hide permissions granted to DAO"></x-import>
+      <span class="perm-info" role="img" aria-label="About permissions granted to DAO: Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks." title="Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span>
+    </div>
+    <div class="perm-filter">
+      <x-import component-from-global-scope="GovUiKit.Switch" checked="{{yes}}" disabled="{{yes}}" inline-label="Hide subplugin permissions"></x-import>
+      <span class="perm-info" role="img" aria-label="About subplugin permissions: Hides permissions whose target (Where) is identified as a subplugin." title="Hides permissions whose target (Where) is identified as a subplugin."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"view":{"editor":"enum","options":["list","graph"],"default":"list"},"hideDao":{"editor":"boolean","default":true},"$preview":{"width":1104,"height":40}}'>
+// Permissions page toolbar (apps/app: modules/permissions/pages/daoPermissionsPage/daoPermissionsPageClient.tsx): the
+// List/Graph view toggle and the two filter switches, each followed by its PermissionInfoTooltip
+// (modules/settings/components/permissionInfoTooltip). The kit Tooltip is left out: its trigger slots onto a single child,
+// which the canvas wrapper breaks, and a closed tooltip draws nothing but its trigger. The Meridian DAO has no subplugins, so the second switch is
+// on and disabled (the app disables a filter that would change nothing).
+// view: which view toggle is selected. hideDao: state of "Hide permissions granted to DAO".
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      no: false,
+      view: this.props.view ?? 'list',
+      hideDao: this.props.hideDao ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

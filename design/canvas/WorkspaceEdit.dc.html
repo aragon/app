@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Edit workspace</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Edit workspace" exit-href="WorkspaceOverview.dc.html" wallet-connected="{{no}}" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onsubmit="return false">
+      <dc-import name="WizardProgress" step="{{one}}" total="{{three}}" next-step="Edit targets" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Edit details</x-import>
+            <p class="wizard-step__description">Update how your workspace is described to visitors.</p>
+          </div>
+          <div class="wizard-fields">
+              <x-import component-from-global-scope="GovUiKit.InputText" label="Workspace name" max-length="{{nameMax}}" value="Meridian Ecosystem"></x-import>
+              <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-dimension="{{maxDimension}}" max-file-size="{{maxFileSize}}" on-change="{{noop}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the workspace pages so visitors know what this workspace covers." is-optional="{{yes}}" max-length="{{descriptionMax}}" value="Treasury and governance of Meridian DAO and the Atlas Grants Council in one place."></x-import>
+              <div class="resources-input">
+                <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" help-text="These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels." is-optional="{{yes}}" use-custom-wrapper="{{yes}}"></x-import>
+                <div class="resources-input__list">
+                  <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm resources-input__item">
+                    <x-import component-from-global-scope="GovUiKit.InputText" label="URL" placeholder="https://" value="https://meridian.xyz"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.InputText" label="Link text" is-optional="{{yes}}" max-length="{{linkMax}}" placeholder="Website" value="Website"></x-import>
+                    <div class="resources-input__menu">
+                      <x-import component-from-global-scope="GovUiKit.Button" icon-left="DOTS_VERTICAL" size="lg" variant="tertiary"></x-import>
+                    </div>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
+              </div>
+            </div>
+        </div>
+        <dc-import name="WizardActions" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1488}}'>
+// Edit workspace, step 1 of 3 (apps/app: app/workspace/[workspaceId]/edit, layoutWizardEditWorkspace.tsx -> layoutWizard.tsx
+// + navigationWizard.tsx (exit link, wizard name, Wallet, supportChatTrigger.tsx), workspaceEditPage(Client).tsx ->
+// Page.Main fullWidth -> workspaceWizard.tsx -> wizardPageContainer(+Progress).tsx / wizardPageStep.tsx, step content
+// createWorkspaceFormMetadata.tsx with avatarInput.tsx and resourcesInput(Item).tsx). Values: the "Meridian Ecosystem"
+// seed of design/baseline-check/lib.cjs. No sidebar: the wizard pages use the plain page with the full footer.
+// Frame: WizardNav (wallet disconnected), WizardProgress, WizardActions parts + app.css "Wizards".
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true, no: false,
+      one: 1, three: 3,
+      nameMax: 128, descriptionMax: 480, linkMax: 40,
+      maxDimension: 1024, maxFileSize: 1048576,
+      noop: () => {}
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace to-dos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="todos" wallet="nadia" scope="account" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">To-dos</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="Proposal.dc.html"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Fund the Q1 2027 Ecosystem Grants Program</span><span class="ws-summary__identifier">MGP-8</span></div><p class="ws-summary__description">{{left3}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Vote" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Meridian DAO</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">1</x-import>
+                <p class="stat-card__label">To vote</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">0</x-import>
+                <p class="stat-card__label">To sign</p>
+              </div>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Workspace to-dos, every account (apps/app: modules/workspace/pages/workspaceTodosPage/workspaceTodosPageClient.tsx,
+// components/workspaceTodoList). The wallet is disconnected, so the list shows useWorkspaceTodoListData's connect state
+// and the aside (workspaceTodosAsideCard) renders nothing; the empty aside keeps the main column at its width.
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true, no: false,
+      count: 1, pageSize: 12,
+      // "3 days left": DURATION format of the vote end + the kit's "left" copy (workspaceTodoListItem.tsx).
+      left3: GovUiKit.formatterUtils.formatDate(Date.now() + 3 * 86400000 + 3600000, { format: GovUiKit.DateFormat.DURATION }) + ' left',
+      left6: GovUiKit.formatterUtils.formatDate(Date.now() + 6 * 86400000 + 3600000, { format: GovUiKit.DateFormat.DURATION }) + ' left'
+    };
+  }
+}
+</script>
+</body>
+</html>

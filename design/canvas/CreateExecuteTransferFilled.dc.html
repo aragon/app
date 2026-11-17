@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Execute transaction: transfer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Execute transaction" exit-href="Transactions.dc.html" dao-name="Meridian DAO" dao-address="0xc8c322384903ee8f11f511b71d0504237886bcde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{one}}" total="{{one}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
+            <p class="wizard-step__description">Add the actions to execute directly on the DAO. They will run in the order listed on this page.</p>
+          </div>
+          <div class="actions-editor">
+            <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}" actions-count="{{count}}">
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action}}" action-count="{{one}}" action-function-selector="0xa9059cbb" array-controls="{{arrayControls}}" -custom-component="{{TransferAssetAction}}" chain-id="{{one}}" edit-mode="{{yes}}" form-prefix="actions.0" index="{{zero}}" value="action-0"></x-import>
+</x-import>
+            </x-import>
+            <div class="action-composer">
+              <div class="action-composer__row">
+                <div class="action-composer__buttons">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS">Action</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-right="BLOCKCHAIN_WALLETCONNECT">Connect</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="WITHDRAW">Upload</x-import>
+                </div>
+                <div class="action-composer__trailing">
+                  <x-import component-from-global-scope="GovUiKit.Switch" checked="{{no}}" inline-label="Only show allowed actions" on-checked-changed="{{noop}}"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="DOTS_VERTICAL" class-name="aspect-square w-fit shrink-0" aria-label="More"></x-import>
+                </div>
+              </div>
+            </div>
+            <div class="action-composer__input" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div class="wizard-actions">
+          <div class="wizard-actions__buttons">
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" class-name="invisible">Back</x-import>
+            <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="Execute" size="lg" variant="primary">
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Item">Simulate</x-import>
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Item">Skip simulation</x-import>
+            </x-import>
+          </div>
+        </div>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1111}}'>
+// Execute transaction, step 1 "Add actions" with one Transfer action filled: 25000 USDC to atlas-grants.dao.eth
+// (apps/app: modules/governance/pages/createExecuteActionsPage, components/proposalActionsEditor,
+// proposalActionsEditList (kit ProposalActions.* in edit mode), actionComposer/actionComposer.tsx (with actions: the
+// "more" menu), createProposalForm/.../transferAssetAction/transferAssetAction.tsx > modules/finance/components/
+// transferAssetForm (assetInput.tsx, assetInputToken.tsx, kit AddressInput)). Values as typed by
+// design/baseline-check/capture-wizards.cjs (fillTransfer). The submit is the wizard's nextDropdownItems dropdown
+// (useSimulateActionsDropdown), closed. Generated by gen/execute.py.
+//
+// TransferAssetAction is the app's custom action view, passed to the kit item as `CustomComponent` (a React component
+// built here with React.createElement, as the kit expects a component, not markup):
+// (Tailwind classes the kit stylesheet lacks - pl-1.5 pr-4, gap-x-1.5, pr-4, outline-none - are app.css transfer-amount__*.)
+// - the amount field is assetInput.tsx: kit InputContainer + token Button + number input + USD value, then "Max";
+// - the recipient is drawn as the kit AddressInput renders it once the ENS name has resolved (avatar, name,
+//   "0x…" toggle, explorer link, copy). The kit AddressInput itself cannot be used: it resolves ENS names over RPC,
+//   which the canvas has no access to, so it would never reach that state.
+class Component extends DCLogic {
+  renderVals() {
+    const h = React.createElement;
+    const K = GovUiKit;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    const usdc = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
+    const grants = '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368';
+    const noop = () => undefined;
+    const action = {
+      type: 'Transfer', from: dao, to: usdc, value: '0',
+      data: '0xa9059cbb00000000000000000000000031154ff59ea91264c4fd75aba7d8a2fc5a69d36800000000000000000000000000000000000000000000000000000005d21dba00',
+      inputData: { function: 'transfer', contract: 'USD Coin', stateMutability: 'nonpayable', parameters: [
+        { name: '_to', type: 'address', value: grants },
+        { name: '_value', type: 'uint256', value: '25000000000' }
+      ] }
+    };
+    const amountInputClass = 'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 transfer-amount__input';
+    const addressInputClass = 'min-h-11 resize-none px-3! size-full rounded-xl bg-transparent py-3 caret-neutral-500 outline-hidden';
+    const TransferAssetAction = () => h('div', { className: 'flex w-full flex-col' },
+      h('div', { className: 'flex flex-col gap-y-3' },
+        h(K.InputContainer, { id: 'transfer-amount', label: 'Amount', wrapperClassName: 'transfer-amount__field items-center' },
+          h(K.Button, { className: 'shrink-0', iconRight: 'CHEVRON_DOWN', size: 'sm', variant: 'tertiary' },
+            h(K.InteractiveAncestorContext.Provider, { value: true },
+              h('div', { className: 'transfer-amount__token flex items-center' },
+                h(K.Avatar, { size: 'xs', src: 'assets/mock/token/usdc.svg' }),
+                h(K.AddressOutput, { address: usdc, copy: false, label: 'USDC' })))),
+          h('input', { className: amountInputClass, type: 'number', placeholder: '0', value: '25000', readOnly: true }),
+          h('p', null, '$25.00K')),
+        h('div', { className: 'transfer-amount__max flex items-center self-end' },
+          h('button', { type: 'button', className: 'text-primary-400 hover:text-primary-600 flex cursor-pointer gap-x-1' },
+            'Max', h('span', { className: 'text-neutral-500' }, '1.85M')))),
+      h(K.InputContainer, { id: 'transfer-recipient', label: 'Recipient', helpText: 'The address to transfer assets to.' },
+        h('div', { className: 'ml-3 shrink-0' }, h(K.MemberAvatar, { address: grants, chainId: 1 })),
+        h('textarea', { className: addressInputClass, rows: 1, placeholder: 'ENS or 0x…', value: 'atlas-grants.dao.eth', readOnly: true }),
+        h('div', { className: 'mr-2 flex flex-row gap-2' },
+          h(K.Button, { className: 'min-w-max', size: 'sm', variant: 'tertiary' }, '0x…'),
+          h(K.Button, { href: 'https://etherscan.io/address/' + grants, iconLeft: 'LINK_EXTERNAL', size: 'sm', target: '_blank', variant: 'tertiary' }),
+          h(K.Clipboard, { copyValue: 'atlas-grants.dao.eth', variant: 'button' }))));
+    return {
+      yes: true, no: false, zero: 0, one: 1, count: 1, noop,
+      expanded: ['action-0'],
+      action,
+      arrayControls: {
+        moveUp: { label: 'Move up', onClick: noop, disabled: true },
+        moveDown: { label: 'Move down', onClick: noop, disabled: true },
+        remove: { label: 'Remove', onClick: noop }
+      },
+      TransferAssetAction
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace members</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="members" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+          </header>
+          <div class="flex flex-col gap-2 md:gap-3">
+            <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="all">
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All members"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="meridian" label="Meridian DAO · Meridian Token Voting"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="atlas" label="Atlas Grants Council · Grants Council Multisig"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x697d04244eda05202c0c06aea0bfeced540eb42d" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8" ens-name="marcusj.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8ac8d965669201c92279ef49be1a5564b908ee27" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x6dd753d9ebc280a364354dbf6603d3f2a279a65c" ens-name="jonas-b.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xbf2656ce7e3c0e9f5098060cf873c87430751ef9" class-name="min-w-0" href="#"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </div>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All accounts</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">12</x-import>
+                <p class="stat-card__label">Total members</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">2</x-import>
+                <p class="stat-card__label">Accounts</p>
+              </div>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1126}}'>
+// Workspace members, every account (apps/app: modules/workspace/pages/workspaceMembersPage, components workspaceMemberList
+// (PluginFilterComponent tabs: "All members" + one per account body) and workspaceMemberListDefault.tsx (rows without
+// voting power), aside workspaceMembersAsideCard/workspaceAllMembersAsideCard.tsx). Members: both mock DAOs of
+// design/baseline-check/data.cjs merged by address (the Atlas signers are also Meridian members), page size 18.
+// The list items are written out one by one at the start of the line (see Proposals.dc.html).
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, count: 12, pageSize: 18 };
+  }
+}
+</script>
+</body>
+</html>

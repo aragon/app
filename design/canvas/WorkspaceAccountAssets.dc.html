@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace account assets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="assets" scope="account" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Assets</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="USD Coin" symbol="USDC" amount="1852340.55" fiat-price="1.00" hide-value="{{no}}" logo-src="assets/mock/token/usdc.svg" href="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Ether" symbol="ETH" amount="418.274" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/eth.svg" href="https://etherscan.io/token/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Meridian" symbol="MRD" amount="1100000" fiat-price="0.84" hide-value="{{no}}" logo-src="assets/mock/token/mrd.svg" href="https://etherscan.io/token/0xc6cf3058f8fd5eb7074109b3b531364a4af59dae" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Wrapped Ether" symbol="WETH" amount="152.5" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/weth.svg" href="https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Dai Stablecoin" symbol="DAI" amount="231420.18" fiat-price="0.9998" hide-value="{{no}}" logo-src="assets/mock/token/dai.svg" href="https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f" target="_blank"></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Meridian DAO</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance.</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">$4.80M</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">5</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0xc8c322384903ee8f11f511b71d0504237886bcde"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/meridianproto" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://discord.gg/meridian" is-external="{{yes}}" show-url="{{yes}}">Discord</x-import>
+            </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0xc8c322384903ee8f11f511b71d0504237886bcde" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// DAO assets (apps/app: modules/finance/pages/daoAssetsPage, aside: components/daoFilterAsideCard + daoInfoAside with the
+// linkedAccount feature flag on). Mock data: design/baseline-check/data.cjs (Meridian DAO assets).
+// The list items are written out one by one at the start of the line, not looped or indented: the kit's pagination
+// counts the list's direct children (see Proposals.dc.html).
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      no: false,
+      two: 2,
+      count: 5,
+      pageSize: 20,
+      addressLink: { href: 'https://etherscan.io/address/0xc8c322384903ee8f11f511b71d0504237886bcde', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

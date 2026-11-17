@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create workspace: describe</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create workspace" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add targets" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe your workspace</x-import>
+            <p class="wizard-step__description">Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.</p>
+          </div>
+          <div class="wizard-fields">
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Workspace name" max-length="{{d128}}" value="Meridian Ecosystem" on-change="{{noop}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{maxFile}}" max-dimension="{{maxDim}}" on-change="{{noop}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the workspace pages so visitors know what this workspace covers." is-optional="{{yes}}" max-length="{{d480}}" value="Treasury and governance of Meridian DAO and the Atlas Grants Council in one place." on-change="{{noop}}" wrapper-class-name="border-primary-400 shadow-primary"></x-import>
+          <div class="resources-input">
+            <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels." use-custom-wrapper="{{yes}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
+          </div>
+          </div>
+        </div>
+        <dc-import name="WizardActions"  hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1339}}'>
+// Create workspace, step 1 "Describe your workspace", filled: "Meridian Ecosystem" and a description that still has focus (apps/app: app/create/workspace,
+// modules/workspace/pages/createWorkspacePage, components/workspaceWizard/workspaceWizard.tsx,
+// components/createWorkspaceForm/createWorkspaceFormMetadata). Values as typed by design/baseline-check/capture-wizards.cjs.
+// Frame: WizardNav, WizardProgress, WizardActions parts + app.css "Wizards".
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, step: 1, total: 3, d128: 128, d18: 18, d480: 480, fourty: 40, maxFile: 1048576, maxDim: 1024, noop: () => {} };
+  }
+}
+</script>
+</body>
+</html>

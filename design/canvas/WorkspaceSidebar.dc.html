@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace navigation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<nav class="app-sidebar" aria-label="Workspace navigation">
+  <div class="ws-sidebar__header">
+    <button class="ws-selector" type="button">
+      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{workspaceName}}" size="md"></x-import>
+      <span class="ws-selector__text">
+        <span class="ws-selector__title">{{workspaceName}}</span>
+      </span>
+      <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="md" class-name="shrink-0"></x-import>
+    </button>
+    <button class="ws-selector" type="button">
+      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{accountLabel}}" src="{{accountAvatar}}" size="md"></x-import>
+      <span class="ws-selector__text ws-selector__text--stacked">
+        <span class="ws-selector__title">{{accountLabel}}</span>
+        <span class="ws-selector__subtitle">{{accountSubtitle}}</span>
+      </span>
+      <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="md" class-name="shrink-0"></x-import>
+    </button>
+  </div>
+
+  <div class="ws-nav-groups">
+    <sc-if value="{{connected}}">
+      <div class="ws-nav-group">
+        <p class="ws-nav-group__label">Inbox</p>
+        <div class="app-nav-links">
+          <a class="app-nav-link" href="WorkspaceTodos.dc.html" aria-current="{{todos.current}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" class-name="{{todos.iconClass}}"></x-import>
+            To-dos
+            <x-import component-from-global-scope="GovUiKit.Tag" label="{{todosCount}}" variant="critical" class-name="shrink-0 ml-auto"></x-import>
+          </a>
+        </div>
+      </div>
+    </sc-if>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">{{workspaceName}}</p>
+      <div class="app-nav-links">
+        <sc-for list="{{links}}" as="l" hint-placeholder-count="5">
+          <a class="app-nav-link" href="{{l.href}}" aria-current="{{l.current}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>
+            {{l.label}}
+          </a>
+        </sc-for>
+      </div>
+    </div>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">Workspace</p>
+      <div class="app-nav-links">
+        <a class="app-nav-link" href="WorkspaceEdit.dc.html" aria-current="{{edit.current}}">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="PEN" class-name="{{edit.iconClass}}"></x-import>
+          Edit workspace
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-sidebar__footer">
+    <sc-if value="{{disconnected}}">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full">Connect</x-import>
+    </sc-if>
+    <sc-if value="{{connected}}">
+      <button class="app-account" type="button">
+        <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
+        <span class="app-account__text">
+          <span class="app-account__name">{{user.name}}</span>
+          <span class="app-account__address">{{user.short}}</span>
+        </span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="md" class-name="shrink-0 text-neutral-400"></x-import>
+      </button>
+    </sc-if>
+    <div class="app-sidebar__meta">
+      <a class="app-sidebar__governed" href="Main.dc.html">
+        <span style="white-space: nowrap;">Governed on</span>
+        <dc-import name="AragonLogo" size="sm" hint-size="97px,24px"></dc-import>
+      </a>
+      <div class="app-sidebar__links">
+        <a href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+        <a href="https://aragon.org/privacy-policy">Privacy</a>
+        <a href="https://aragon.org/terms-and-conditions">Terms of Service</a>
+      </div>
+      <div class="app-sidebar__copyright">
+        <p>© 2026 Aragon</p>
+        <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary" class-name="shrink-0"></x-import>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="app-topbar app-topbar--with-sidebar" aria-label="Workspace navigation">
+  <div class="app-container app-topbar__inner">
+    <div class="app-topbar__row">
+      <button class="ws-topbar__trigger" type="button" aria-label="Open menu">
+        <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="MENU" size="lg"></x-import>
+      </button>
+      <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}"></x-import>
+    </div>
+  </div>
+</nav>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["overview","todos","proposals","transactions","assets","members","permissions","settings","edit"],"default":"overview"},"scope":{"editor":"enum","options":["all","account"],"default":"all"},"wallet":{"editor":"enum","options":["","nadia","jonas"],"default":""},"todos":{"editor":"text","default":""},"accountName":{"editor":"text","default":"Meridian DAO"},"accountAddress":{"editor":"text","default":"0xC8C3…BCde"},"accountAvatar":{"editor":"text","default":"assets/mock/avatar/meridian.svg"},"$preview":{"width":1024,"height":900}}'>
+// The workspace navigation of the app: the sidebar (from the lg breakpoint) and the bar that replaces it below lg.
+// Mirrors navigationWorkspace.tsx + navigationWorkspaceUtils.ts (apps/app modules/application/components/navigations/
+// navigationWorkspace), the selectors workspaceSelector.tsx / workspaceAccountSelector.tsx (modules/workspace/components),
+// navigationSidebar.tsx + navigationLinksGroup.tsx (shared/components/navigation), navigationSidebarAccount.tsx and
+// footerSidebar.tsx. Without `wallet` the wallet is disconnected, so the "Inbox" group (To-dos) is hidden, as in the app.
+//
+// Usage, by a page rendered with LayoutWorkspace:
+//   <dc-import name="WorkspaceSidebar" active="assets" hint-size="256px,900px"></dc-import>            every account
+//   <dc-import name="WorkspaceSidebar" active="assets" scope="account" hint-size="256px,900px"></dc-import>  one DAO
+// Props:
+//   active          overview | todos | proposals | transactions | assets | members | permissions | settings | edit
+//                   (todos highlights nothing: its link is hidden without a wallet)
+//   scope           all (default): the account selector reads "All accounts / 2 accounts" and the links are those of
+//                   the aggregated scope (no Permissions / Settings);
+//                   account: the selector shows the account below, and the DAO-only links Permissions and Settings.
+//   wallet          nadia | jonas | absent (disconnected, the default). Connected: the sidebar footer shows the account row
+//                   (navigationSidebarAccount.tsx), the top bar's Wallet shows the user, and the "Inbox" group (To-dos link,
+//                   critical badge) appears. `todos` sets the badge (default 2 for scope all, 1 for scope account).
+//                   `active="todos"` highlights the To-dos link.
+//   account-name, account-address (already truncated, e.g. 0xC8C3…BCde), account-avatar: the account in scope,
+//                   default Meridian DAO. For Atlas Grants Council: "0x3115…d368", assets/mock/avatar/atlas.svg.
+// Section links point at the all-accounts screens (Workspace*.dc.html); a single-account page set can change hrefs
+// in `pages` below by scope.
+class Component extends DCLogic {
+  renderVals() {
+    const wallets = {
+      nadia: { address: '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', name: 'nadia.eth', short: '0x9CB2…D98A' },
+      jonas: { address: '0x6Dd753D9eBC280a364354dBf6603D3f2A279a65C', name: 'jonas-b.eth', short: '0x6Dd7…a65C' }
+    };
+    const user = wallets[this.props.wallet];
+    const active = this.props.active ?? 'overview';
+    const isAccount = this.props.scope === 'account';
+    const pages = {
+      overview: 'WorkspaceOverview.dc.html',
+      proposals: 'WorkspaceProposals.dc.html',
+      transactions: 'WorkspaceTransactions.dc.html',
+      assets: 'WorkspaceAssets.dc.html',
+      members: 'WorkspaceMembers.dc.html',
+      permissions: '#',
+      settings: '#'
+    };
+    const state = (id) => ({
+      current: id === active ? 'page' : undefined,
+      iconClass: id === active ? 'text-neutral-800' : 'text-neutral-300'
+    });
+    const link = (id, label, icon) => ({ label, icon, href: pages[id], ...state(id) });
+    const links = [
+      link('overview', 'Dashboard', 'APP_DASHBOARD'),
+      link('proposals', 'Proposals', 'APP_PROPOSALS'),
+      link('transactions', 'Transactions', 'APP_TRANSACTIONS'),
+      link('assets', 'Assets', 'APP_ASSETS'),
+      link('members', 'Members', 'APP_MEMBERS')
+    ];
+    if (isAccount) {
+      links.push(link('permissions', 'Permissions', 'APP_PERMISSIONS'), link('settings', 'Settings', 'SETTINGS'));
+    }
+    return {
+      user, connected: user != null, disconnected: user == null,
+      workspaceName: 'Meridian Ecosystem',
+      accountLabel: isAccount ? (this.props.accountName ?? 'Meridian DAO') : 'All accounts',
+      accountSubtitle: isAccount ? (this.props.accountAddress ?? '0xC8C3…BCde') : '2 accounts',
+      accountAvatar: isAccount ? (this.props.accountAvatar ?? 'assets/mock/avatar/meridian.svg') : undefined,
+      links,
+      todos: state('todos'),
+      todosCount: String(this.props.todos ?? (isAccount ? 1 : 2)),
+      edit: state('edit')
+    };
+  }
+}
+</script>
+</body>
+</html>

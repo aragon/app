@@ -1,0 +1,974 @@
+/*
+ * App layout for the design canvas.
+ *
+ * The screens mount real @aragon/gov-ui-kit components; this file carries the layout the Aragon App adds around them
+ * (shell, sidebar, top bar, page header/content/aside, footer), transcribed from the Tailwind classes in apps/app.
+ * Each rule names the app source it mirrors. Breakpoints follow the app: 48rem (md), 64rem (lg), 80rem (xl).
+ * Inside the page column (.app-column) the app uses container queries, so rules there do the same.
+ */
+
+/* ---- Utilities the app passes to kit components by class name that the kit stylesheet does not ship ---- */
+.size-16 { width: 64px; height: 64px; }
+.top-4 { top: 16px; }
+.right-4 { right: 16px; }
+.border-primary-200 { border-color: var(--color-primary-200); }
+@media (min-width: 48rem) {
+    .md\:size-24 { width: 96px; height: 96px; }
+    .md\:top-6 { top: 24px; }
+    .md\:right-6 { right: 24px; }
+    .md\:w-auto { width: auto; }
+}
+@media (min-width: 64rem) {
+    .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container app (min-width: 64rem) {
+    .app-column .lg\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container app (max-width: 63.999rem) {
+    .app-column .lg\:grid-cols-2 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+}
+
+/* ---- Base ---- */
+.app-page {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background: var(--color-neutral-50);
+    font-family: var(--font-sans);
+}
+/* layoutRoot.tsx: <body> sets no text colour, so app text without a colour class of its own is the browser default
+   (black), not neutral-800. Do not set one here. */
+/* layoutRoot.tsx: pages with the sidebar sit on neutral-25 */
+.app-page--sidebar { background: var(--color-neutral-25); }
+
+/* shared/components/container: mx-auto max-w-screen-xl px-4 md:px-6 lg:px-10 xl:px-6 */
+.app-container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 16px;
+}
+@media (min-width: 48rem) { .app-container { padding-inline: 24px; } }
+@media (min-width: 64rem) { .app-container { padding-inline: 40px; } }
+@media (min-width: 80rem) { .app-container { padding-inline: 24px; } }
+@container app (min-width: 48rem) { .app-column .app-container { padding-inline: 24px; } }
+@container app (min-width: 64rem) { .app-column .app-container { padding-inline: 40px; } }
+@container app (min-width: 80rem) { .app-column .app-container { padding-inline: 24px; } }
+@container app (max-width: 47.999rem) { .app-column .app-container { padding-inline: 16px; } }
+@container app (min-width: 48rem) and (max-width: 63.999rem) { .app-column .app-container { padding-inline: 24px; } }
+@container app (min-width: 64rem) and (max-width: 79.999rem) { .app-column .app-container { padding-inline: 40px; } }
+
+/* ---- Shell: layoutSidebar.tsx (flex grow flex-col lg:flex-row) ---- */
+.app-shell { display: flex; flex-grow: 1; flex-direction: column; }
+@media (min-width: 64rem) { .app-shell { flex-direction: row; } }
+/* @container/app flex min-w-0 grow flex-col */
+.app-column {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex-grow: 1;
+    flex-direction: column;
+    container: app / inline-size;
+}
+
+/* ---- Sidebar: navigationSidebar.tsx (hidden … lg:flex) ---- */
+.app-sidebar {
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    display: none;
+    width: 256px;
+    height: 900px;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 24px;
+    align-self: flex-start;
+    overflow-y: auto;
+    padding: 16px 12px;
+    background: var(--color-neutral-0);
+    border-right: 1px solid var(--color-neutral-100);
+    box-shadow: 8px 0 24px -16px rgba(50, 63, 75, 0.18);
+    color: var(--color-neutral-800);
+    font-family: var(--font-sans);
+}
+@media (min-width: 64rem) { .app-sidebar { display: flex; } }
+.app-sidebar__header { display: flex; flex-direction: column; gap: 12px; padding: 8px 16px 0; }
+.app-sidebar__dao { display: flex; min-width: 0; flex-direction: column; gap: 6px; }
+.app-sidebar__dao-name {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 20px;
+    line-height: 28px;
+    color: var(--color-neutral-800);
+}
+/* navigationLinks (column): flex flex-col gap-y-1 */
+.app-nav-links { display: flex; flex-direction: column; row-gap: 4px; }
+/* navigationLinksItem.tsx */
+.app-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: var(--color-neutral-500);
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 400;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.app-nav-link:hover { background: var(--color-neutral-50); color: var(--color-neutral-800); }
+.app-nav-link[aria-current="page"] { background: var(--color-neutral-50); color: var(--color-neutral-800); }
+.app-sidebar__footer { margin-top: auto; display: flex; flex-direction: column; gap: 16px; }
+/* footerSidebar.tsx */
+.app-sidebar__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 4px 0;
+    border-top: 1px solid var(--color-neutral-100);
+    color: var(--color-neutral-500);
+    font-size: 14px;
+    line-height: 1.25;
+}
+.app-sidebar__meta a { color: var(--color-neutral-500); text-decoration: none; }
+.app-sidebar__meta a:hover { color: var(--color-neutral-800); }
+.app-sidebar__governed { display: flex; align-items: center; gap: 8px; align-self: flex-start; line-height: 20px; }
+.app-sidebar__links { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; line-height: 20px; }
+.app-sidebar__copyright { display: flex; min-width: 0; align-items: center; gap: 8px; }
+.app-sidebar__copyright > p { margin: 0; font-size: 12px; line-height: 16px; }
+
+/* ---- Top bar: navigationContainer.tsx + navigationDao.tsx (lg:hidden when the sidebar is present) ---- */
+.app-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    width: 100%;
+    background: var(--color-neutral-0);
+    border-bottom: 1px solid var(--color-neutral-100);
+    font-family: var(--font-sans);
+}
+@media (min-width: 64rem) { .app-topbar--with-sidebar { display: none; } }
+.app-topbar__inner { display: flex; flex-grow: 1; flex-direction: column; gap: 8px; padding-block: 12px; }
+@media (min-width: 48rem) { .app-topbar__inner { padding-block: 20px; } }
+.app-topbar__row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.app-topbar__actions { display: flex; align-items: center; column-gap: 8px; }
+/* navigationDaoHome.tsx */
+.app-topbar__home {
+    display: flex;
+    max-width: 224px;
+    align-items: center;
+    gap: 12px;
+    padding: 4px;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 9999px;
+    background: var(--color-neutral-0);
+    color: var(--color-neutral-500);
+    cursor: pointer;
+}
+.app-topbar__home-name { display: none; margin: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800); }
+@media (min-width: 48rem) {
+    .app-topbar__home { padding-right: 16px; }
+    .app-topbar__home-name { display: block; }
+}
+/* navigationTrigger.tsx (md:hidden) */
+.app-topbar__trigger {
+    padding: 3px;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 9999px;
+    background: var(--color-neutral-0);
+    cursor: pointer;
+}
+@media (min-width: 48rem) { .app-topbar__trigger { display: none; } }
+
+/* ---- Page: shared/components/page ---- */
+/* pageContainer.tsx: h-full. It makes the page fill the column, so the support launcher sits at the bottom of the
+   window on pages shorter than the window. */
+.page-container { height: 100%; }
+/* pageHeader.tsx: pt-6 md:pt-10; container flex flex-col gap-6 */
+.page-header { padding-top: 24px; }
+.page-header__inner { display: flex; flex-direction: column; gap: 24px; }
+.page-header__row { display: flex; width: 100%; min-width: 0; flex-direction: row; gap: 40px; }
+.page-header__text { display: flex; width: 100%; min-width: 0; flex-direction: column; gap: 24px; }
+.page-header__title { display: flex; flex-direction: column; row-gap: 8px; }
+.page-header__description { margin: 0; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+.page-header__stats { display: flex; flex-direction: row; gap: 24px; padding-block: 12px; }
+.page-header__avatar { display: none; width: 400px; flex-shrink: 0; }
+/* pageHeaderStat.tsx */
+.page-stat { display: flex; flex-direction: column; gap: 4px; }
+.page-stat__value { display: flex; flex-direction: row; align-items: baseline; gap: 4px; }
+.page-stat__value > p:first-child { margin: 0; font-size: 18px; line-height: 28px; color: var(--color-neutral-800); }
+.page-stat__value > p + p,
+.page-stat__label { margin: 0; overflow: hidden; text-overflow: ellipsis; font-size: 12px; line-height: 16px; color: var(--color-neutral-500); }
+/* pageContent.tsx: flex flex-col gap-10 pt-6 pb-20 md:gap-16 md:pt-10 lg:flex-row lg:gap-10 xl:gap-16 */
+.page-content { display: flex; flex-direction: column; gap: 40px; padding-top: 24px; padding-bottom: 80px; }
+/* pageMain.tsx: flex min-w-0 flex-col w-full gap-12 (gap-6 with a title) */
+.page-main { display: flex; width: 100%; min-width: 0; flex-direction: column; gap: 48px; }
+.page-main--titled { gap: 24px; }
+.page-main__header { display: flex; flex-direction: row; justify-content: space-between; gap: 24px; }
+/* pageMainSection.tsx */
+.page-section { display: flex; flex-direction: column; gap: 16px; }
+.page-section__header { display: flex; flex-direction: row; justify-content: space-between; gap: 4px; }
+/* pageAside.tsx: flex w-full shrink-0 flex-col gap-10 lg:w-[400px] */
+.page-aside { display: flex; width: 100%; flex-shrink: 0; flex-direction: column; gap: 40px; }
+.page-aside__text { margin: 0; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+/* A row of a kit DefinitionList that is not the last one (see README: the canvas wraps each mounted component, which
+   defeats the kit's own :last-child divider rule). */
+.dl-row { border-bottom: 1px solid var(--color-neutral-100); }
+
+@container app (min-width: 48rem) {
+    .page-header { padding-top: 40px; }
+    .page-header__row { gap: 64px; }
+    .page-header__title { row-gap: 12px; }
+    .page-header__description { font-size: 18px; }
+    .page-stat__value > p:first-child { font-size: 20px; }
+    .page-stat__value > p + p,
+    .page-stat__label { font-size: 14px; line-height: 20px; }
+    .page-content { gap: 64px; padding-top: 40px; }
+}
+@container app (min-width: 64rem) {
+    .page-header__row { gap: 40px; }
+    .page-header__stats { gap: 40px; }
+    .page-header__avatar { display: block; }
+    .page-content { flex-direction: row; gap: 40px; }
+    .page-aside { width: 400px; }
+}
+@container app (min-width: 80rem) {
+    .page-header__row { gap: 64px; }
+    .page-header__stats { gap: 64px; }
+    .page-content { gap: 64px; }
+}
+
+/* ---- Support launcher: supportChatLauncher.tsx ---- */
+.app-launcher { position: sticky; bottom: 24px; z-index: 10; height: 0; align-self: flex-end; }
+.app-launcher button {
+    position: absolute;
+    right: 24px;
+    bottom: 0;
+    display: flex;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-primary-400);
+    box-shadow: var(--shadow-neutral-xl);
+    color: var(--color-neutral-0);
+    font: 400 16px/1.25 var(--font-sans);
+    white-space: nowrap;
+    cursor: pointer;
+}
+.app-launcher button span { display: none; }
+@container app (min-width: 48rem) {
+    .app-launcher button { width: auto; padding-inline: 20px; }
+    .app-launcher button span { display: inline; }
+}
+
+/* ---- Footer: footer.tsx (hidden from lg when the sidebar is present) ---- */
+.app-footer { padding-block: 20px; background: var(--color-neutral-0); border-top: 1px solid var(--color-neutral-100); font-family: var(--font-sans); }
+@media (min-width: 64rem) { .app-footer--with-sidebar { display: none; } }
+.app-footer__inner { display: grid; align-items: center; grid-template-areas: "metadata" "links" "copyright"; }
+.app-footer__metadata { grid-area: metadata; display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0 16px; }
+.app-footer__governed { display: flex; align-items: center; gap: 10px; }
+.app-footer__governed > p { margin: 0; font-size: 14px; line-height: 1.25; white-space: nowrap; color: var(--color-neutral-800); }
+.app-footer__links { grid-area: links; display: flex; min-width: 0; flex-direction: column; }
+.app-footer__links a { overflow: hidden; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; padding-block: 16px; border-bottom: 1px solid var(--color-neutral-100); color: var(--color-neutral-500); font-size: 16px; line-height: 1.25; }
+.app-footer__links a:last-child { border-bottom: 0; }
+.app-footer__copyright { grid-area: copyright; margin: 0; padding: 24px 0 12px; color: var(--color-neutral-500); font-size: 16px; line-height: 1.25; }
+@media (min-width: 48rem) {
+    .app-footer__inner { gap: 24px; justify-items: center; grid-template-areas: "links" "metadata" "copyright"; }
+    .app-footer__metadata { justify-content: normal; padding-block: 0; }
+    .app-footer__governed > p { font-size: 16px; }
+    .app-footer__links { flex-direction: row; gap: 24px; }
+    .app-footer__links a { padding-block: 0; border-bottom: 0; }
+    .app-footer__copyright { padding-block: 0; }
+}
+@media (min-width: 64rem) {
+    .app-footer__inner { justify-items: normal; grid-template-columns: 1fr min-content 1fr; grid-template-areas: "metadata links copyright"; }
+    .app-footer__metadata { justify-self: start; }
+    .app-footer__copyright { justify-self: end; }
+}
+
+/* ---- Aragon logo: aragonLogo.tsx (sm h-6, md h-8, lg h-10; responsiveIconOnly shows the mark below md) ---- */
+.aragon-logo { display: block; width: auto; color: var(--color-primary-400); }
+.aragon-logo--white { color: var(--color-neutral-0); }
+.aragon-logo--sm { height: 24px; }
+.aragon-logo--lg { height: 40px; }
+.aragon-logo--mark { display: none; }
+@media (max-width: 47.999rem) {
+    .aragon-logo--responsive { display: none; }
+    .aragon-logo--mark-responsive { display: block; }
+}
+
+/* ---- Explore: exploreDaosPageClient.tsx, exploreNav.tsx, ctaCard.tsx ---- */
+.explore-nav { position: sticky; top: 0; z-index: 10; display: flex; width: 100%; background: linear-gradient(to bottom, var(--color-primary-400), transparent); }
+.explore-nav__inner {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    max-width: 1280px;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-inline: auto;
+    padding: 12px 16px;
+}
+.explore-nav__trailing { display: flex; align-items: center; padding: 0 12px 0 8px; }
+.explore-hero { position: relative; display: flex; flex-direction: column; align-items: center; align-self: stretch; margin-top: -72px; padding-top: 72px; background: var(--color-primary-400); }
+.explore-hero__bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.explore-hero__inner { padding-block: 40px; }
+.explore-hero__text { position: relative; display: flex; max-width: 720px; flex-direction: column; gap: 8px; }
+.explore-hero__text h1 { margin: 0; color: var(--color-neutral-0); font-size: 30px; line-height: 1.25; font-weight: 400; }
+.explore-hero__text h3 { margin: 0; color: var(--color-primary-50); font-size: 18px; line-height: 1.5; font-weight: 400; }
+.explore-featured { display: flex; flex-direction: column; gap: 16px; padding-top: 40px; }
+.explore-featured__track { display: flex; overflow-x: clip; }
+.explore-featured__row { display: flex; gap: 16px; }
+.explore-featured__card { max-width: 288px; flex: 0 0 288px; }
+.explore-main { display: flex; flex-direction: column; gap: 40px; padding-block: 40px 64px; }
+.explore-section { display: flex; flex-direction: column; gap: 16px; }
+.explore-cta-grid { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 16px; align-self: stretch; }
+.cta-card__text { display: flex; flex-direction: column; gap: 12px; }
+.cta-card__text > p { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+.cta-card__actions { margin-top: auto; display: flex; flex-direction: column; gap: 12px; }
+.explore-daos { display: flex; flex-grow: 1; flex-direction: column; gap: 12px; }
+@media (min-width: 48rem) {
+    .explore-hero { margin-top: -96px; padding-top: 96px; }
+    .explore-hero__inner { padding-block: 48px; }
+    .explore-hero__text { gap: 12px; }
+    .explore-hero__text h1 { font-size: 48px; }
+    .explore-hero__text h3 { font-size: 24px; }
+    .explore-featured { gap: 24px; padding-top: 64px; }
+    .explore-featured__card { max-width: 384px; flex-basis: 384px; }
+    .explore-main { gap: 80px; padding-block: 80px; }
+    .explore-section { gap: 24px; }
+    .explore-cta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cta-card__text > p { font-size: 16px; }
+    .cta-card__actions { flex-direction: row; }
+}
+@media (min-width: 64rem) {
+    .explore-nav__inner { gap: 48px; padding: 20px 24px; }
+    .explore-nav__trailing { padding-right: 16px; }
+    .explore-cta-grid { gap: 32px; }
+}
+@media (min-width: 80rem) {
+    .explore-cta-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* ---- Assets: modules/finance/pages/daoAssetsPage (daoInfoAside.tsx, statCard.tsx, pageAsideCard.tsx) ---- */
+/* pageAsideCard.tsx: flex items-center justify-between gap-2 */
+.aside-card__header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+/* daoInfoAside.tsx: grid w-full grid-cols-2 gap-3 */
+.stat-grid { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+/* statCard.tsx: flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4; label text-sm text-neutral-500 */
+.stat-card { display: flex; flex-direction: column; row-gap: 4px; padding: 16px; border-radius: 12px; background: var(--color-neutral-50); }
+.stat-card__label { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; }
+/* daoInfoAside.tsx: links flex flex-col gap-3 */
+.aside-links { display: flex; flex-direction: column; gap: 12px; }
+/* daoInfoAside.tsx: Octav flex flex-col items-center gap-y-3 pt-4; text-sm text-neutral-500 */
+.aside-octav { display: flex; flex-direction: column; align-items: center; row-gap: 12px; padding-top: 16px; }
+.aside-octav__text { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; }
+
+/* ---- Settings: modules/settings/pages/daoSettingsPage (daoHierarchy.tsx, daoVersionInfo.tsx, updateDaoContracts.tsx,
+   shared/components/processDataListItem, pageMainSection.tsx) ---- */
+/* pageMainSection.tsx: title wrapper flex items-center gap-2; inset={false} + className gap-3 */
+.page-section__title { display: flex; align-items: center; gap: 8px; }
+.page-section--compact { gap: 12px; }
+/* daoHierarchy.tsx DaoInfo: flex flex-col gap-1; note text-sm leading-tight text-neutral-400 */
+.settings-info__value { display: flex; flex-direction: column; gap: 4px; }
+.settings-info__value > p { margin: 0; }
+.settings-info__note { color: var(--color-neutral-400); font-size: 14px; line-height: 1.25; }
+/* daoHierarchy.tsx links: flex flex-col gap-3 */
+.settings-info__links { display: flex; flex-direction: column; gap: 12px; }
+/* processDataListItem.tsx */
+.process-item { display: flex; flex-direction: column; row-gap: 4px; }
+.process-item__title { display: flex; gap: 8px; font-size: 16px; line-height: 1.25; }
+.process-item__title > p { margin: 0; }
+.process-item__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-800); }
+.process-item__key { text-align: right; text-transform: uppercase; color: var(--color-neutral-500); }
+.process-item__description {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    color: var(--color-neutral-500);
+    font-size: 14px;
+    line-height: 1.5;
+}
+@container app (min-width: 48rem) {
+    .process-item__title { font-size: 18px; }
+    .process-item__description { font-size: 16px; }
+}
+/* updateDaoContracts.tsx: flex flex-col space-y-3; text-sm text-neutral-500 */
+.update-contracts { display: flex; flex-direction: column; gap: 12px; }
+.update-contracts__text { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; }
+
+/* ---- SettingsProcess: modules/settings/pages/daoProcessDetailsPage (governanceBodyInfo.tsx,
+   permissionsDefinitionList.tsx, daoProcessDetailsInfo.tsx) ---- */
+/* governanceBodyInfo.tsx: flex w-full flex-col items-start gap-1 */
+.body-info { display: flex; width: 100%; flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
+.body-info > p, .body-info__row > p { margin: 0; }
+.body-info__row { display: flex; width: 100%; align-items: center; justify-content: space-between; }
+.body-info__name { color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; }
+.body-info__address { color: var(--color-neutral-500); font-size: 16px; line-height: 1.25; }
+.body-info__subtitle { color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+@container app (min-width: 48rem) {
+    .body-info__name, .body-info__address { font-size: 18px; }
+    .body-info__subtitle { font-size: 16px; }
+}
+/* daoProcessDetailsPageClient.tsx: PermissionsDefinitionList className px-6 py-3 */
+.eligibility-list { padding: 12px 24px; }
+/* daoProcessDetailsInfo.tsx: flex flex-col gap-6; uninstall flex flex-col gap-3; text-center text-sm leading-normal */
+.process-details { display: flex; flex-direction: column; gap: 24px; }
+.process-details__uninstall { display: flex; flex-direction: column; gap: 12px; }
+.process-details__info { margin: 0; text-align: center; color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+
+/* ---- NotFound / DaoNotFound: modules/application/components/notFound (notFoundBase.tsx, notFoundDaoMissing.tsx)
+   inside layoutRoot.tsx (flex grow flex-col page body above the footer) ---- */
+/* flex grow items-center justify-center */
+.not-found { display: flex; flex-grow: 1; align-items: center; justify-content: center; }
+
+/* ---- Members: modules/governance/pages/daoMembersPage (tokenDelegationForm.tsx, footerInfo.tsx) ---- */
+/* footerInfo.tsx (panel mode): text-sm leading-normal font-normal text-neutral-500 text-center */
+.footer-info { margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; font-weight: 400; text-align: center; }
+/* tokenMemberListBase.tsx: grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 (xl is a container query on the column,
+   breakpoints.css; md:grid-cols-2 ships in the kit stylesheet) */
+@media (min-width: 80rem) {
+    .xl\:grid-cols-3:where(:not(.app-column *)) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container app (min-width: 80rem) {
+    .app-column .xl\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ---- Member: modules/governance/components/delegationStatsCard/delegationStatsCard.tsx ---- */
+/* Card p-4 md:p-6 > flex flex-col gap-3 md:gap-2 > flex flex-col gap-4 md:flex-row md:items-start md:gap-6 */
+.delegation-stats { padding: 16px; }
+.delegation-stats__row { display: flex; flex-direction: column; gap: 16px; }
+/* flex min-w-px flex-1 items-center justify-around gap-3 md:justify-start md:gap-4 */
+.delegation-stats__stats { display: flex; min-width: 1px; flex: 1 1 0%; align-items: center; justify-content: space-around; gap: 12px; }
+/* h-11 w-px shrink-0 bg-neutral-100 */
+.delegation-stats__divider { width: 1px; height: 44px; flex-shrink: 0; background: var(--color-neutral-100); }
+/* w-full shrink-0 md:w-auto (the button: w-full md:w-auto) */
+.delegation-stats__action { display: flex; width: 100%; flex-shrink: 0; flex-direction: column; }
+@container app (min-width: 48rem) {
+    .delegation-stats { padding: 24px; }
+    .delegation-stats__row { flex-direction: row; align-items: flex-start; gap: 24px; }
+    .delegation-stats__stats { justify-content: flex-start; gap: 16px; }
+    .delegation-stats__action { width: auto; }
+}
+
+/* ---- Permissions: modules/permissions/pages/daoPermissionsPage/daoPermissionsPageClient.tsx ---- */
+/* flex flex-col gap-6 */
+.perm-body { display: flex; flex-direction: column; gap: 24px; }
+/* toolbar (PermissionsToolbar.dc.html): flex flex-col gap-4 md:flex-row md:items-center md:justify-between */
+.perm-toolbar { display: flex; flex-direction: column; gap: 16px; }
+.perm-toolbar__views { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+/* flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-700 md:justify-end */
+.perm-toolbar__filters { display: flex; flex-wrap: wrap; align-items: center; column-gap: 16px; row-gap: 8px; color: var(--color-neutral-700); font-size: 14px; line-height: 20px; }
+.perm-filter { display: flex; align-items: center; gap: 4px; }
+/* permissionInfoTooltip.tsx: inline-flex size-5 shrink-0 cursor-help items-center justify-center leading-none text-neutral-400 */
+.perm-info { display: inline-flex; width: 20px; height: 20px; flex-shrink: 0; align-items: center; justify-content: center; line-height: 1; color: var(--color-neutral-400); cursor: help; }
+@media (min-width: 48rem) {
+    .perm-toolbar { flex-direction: row; align-items: center; justify-content: space-between; }
+    .perm-toolbar__filters { justify-content: flex-end; }
+}
+/* {isListView && showExpandAll}: flex justify-end */
+.perm-expand { display: flex; justify-content: flex-end; }
+
+/* ---- Permissions list: modules/settings/components/permissionsList (permissionsList.tsx, permissionsListHeader.tsx,
+   permissionsListHeaderLabel.tsx, permissionsListRow.tsx, permissionEntityCell.tsx) ---- */
+/* permissionsList.tsx: flex flex-col gap-3 */
+.perm-list { display: flex; flex-direction: column; gap: 12px; }
+/* permissionsListHeader.tsx: sticky top-[90px] z-20 hidden md:block */
+.perm-list__header { position: sticky; top: 90px; z-index: 20; display: none; }
+/* flex items-baseline justify-between gap-x-4 bg-gradient-to-b from-neutral-50 from-90% to-transparent px-4 pt-1 pb-4
+   text-sm text-neutral-500 md:gap-x-6 md:px-6 */
+.perm-list__header-inner {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: 16px;
+    padding: 4px 16px 16px;
+    background-image: linear-gradient(to bottom, var(--color-neutral-50) 90%, transparent);
+    color: var(--color-neutral-500);
+    font-size: 14px;
+    line-height: 20px;
+}
+.perm-list__header-spacer { display: inline-flex; flex-shrink: 0; visibility: hidden; }
+/* grid w-full grid-cols-4 gap-4 */
+.perm-grid { display: grid; width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+/* permissionsListHeaderLabel.tsx: flex min-w-0 items-center gap-1; label truncate */
+.perm-label { display: flex; min-width: 0; align-items: center; gap: 4px; }
+.perm-label__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* permissionsListRow.tsx (md and up: Accordion.Item): grid w-full grid-cols-4 items-center gap-4 text-left */
+.perm-row { display: grid; width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: 16px; text-align: left; }
+.perm-cell { min-width: 0; }
+/* permission name: block min-w-0 truncate font-mono text-neutral-800 */
+.perm-name {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-neutral-800);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+/* condition: block min-w-0 truncate text-neutral-800 */
+.perm-condition { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-800); }
+/* permissionEntityCell.tsx: flex min-w-0 items-center gap-2 text-neutral-800 */
+.perm-entity { display: flex; min-width: 0; align-items: center; gap: 8px; color: var(--color-neutral-800); }
+/* Tag: max-w-[140px] shrink-0 [&>p]:truncate */
+.perm-tag { max-width: 140px; flex-shrink: 0; }
+.perm-tag > p { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@container app (min-width: 48rem) {
+    .perm-list__header { display: block; }
+    .perm-list__header-inner { column-gap: 24px; padding-inline: 24px; }
+}
+
+/* ---- Permissions graph: modules/settings/components/permissionsGraph (permissionsGraph.tsx, permissionsGraphCanvas.tsx,
+   permissionGraphNode.tsx, permissionStackNode.tsx, permissionGraphEdge.tsx) and @xyflow/react/dist/style.css.
+   React Flow is not in the kit: the fitted graph is drawn as a static picture. Nodes and stacks keep the app's sizes and
+   are scaled by React Flow's fitted zoom; their left/top (inline) are container pixels of their top centre. ---- */
+/* permissionsGraph.tsx: bg-neutral-0 overflow-hidden border border-neutral-200 relative h-[640px] rounded-lg */
+.pg-container { position: relative; box-sizing: border-box; height: 640px; overflow: hidden; border: 1px solid var(--color-neutral-200); border-radius: 8px; background: var(--color-neutral-0); --pg-zoom: 0.6922; }
+/* permissionsGraphCanvas.tsx: size-full; .react-flow */
+.pg-flow { position: relative; width: 100%; height: 100%; overflow: hidden; }
+/* <Background /> (dots, gap 20, size 1, --xy-background-pattern-dots-color-default) */
+.pg-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; fill: #91919a; }
+/* permissionGraphEdge.tsx + getEdgeStyle: stroke neutral-300, strokeWidth 1.4 (x zoom) */
+.pg-edges { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; }
+.pg-edges path { fill: none; stroke: var(--color-neutral-300); stroke-width: calc(1.4px * 0.6922); }
+/* permissionGraphNode.tsx */
+.pg-node { position: absolute; transform: translateX(-50%) scale(var(--pg-zoom)); transform-origin: 50% 0; }
+/* bg-neutral-0 flex min-w-64 items-center justify-between gap-4 border px-4 py-3 rounded-xl shadow-neutral-sm border-neutral-300 */
+.pg-node__body {
+    box-sizing: border-box;
+    display: flex;
+    min-width: 256px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-neutral-300);
+    border-radius: 12px;
+    background: var(--color-neutral-0);
+    box-shadow: var(--shadow-neutral-sm);
+    font-size: 16px;
+    line-height: 24px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+/* flex min-w-0 flex-col gap-0.5; subtitle truncate text-sm text-neutral-500 */
+.pg-node__text { display: flex; min-width: 0; flex-direction: column; gap: 2px; }
+.pg-node__subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; }
+/* permissionStackNode.tsx: relative flex w-fit flex-col items-center gap-0.5 */
+.pg-stack { position: absolute; display: flex; width: fit-content; flex-direction: column; align-items: center; gap: 2px; transform: translateX(-50%) scale(var(--pg-zoom)); transform-origin: 50% 0; }
+/* shadow-neutral-sm flex max-w-60 flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono
+   text-[10px] text-neutral-0 border-neutral-700 bg-neutral-800 */
+.pg-stack__item {
+    box-sizing: border-box;
+    display: flex;
+    max-width: 240px;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    margin: 0;
+    padding: 2px 6px;
+    border: 1px solid var(--color-neutral-700);
+    border-radius: 4px;
+    background: var(--color-neutral-800);
+    box-shadow: var(--shadow-neutral-sm);
+    color: var(--color-neutral-0);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+.pg-stack__item > span { max-width: 224px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* <Controls showInteractive={false} />: .react-flow__panel.bottom.left (margin 15px) + .react-flow__controls */
+.pg-controls { position: absolute; bottom: 0; left: 0; z-index: 5; display: flex; flex-direction: column; margin: 15px; box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.08); }
+.pg-controls__button {
+    box-sizing: border-box;
+    display: flex;
+    width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    background: #fefefe;
+    color: inherit;
+    cursor: pointer;
+}
+.pg-controls__button:last-child { border-bottom: none; }
+.pg-controls__button svg { width: 100%; max-width: 12px; max-height: 12px; fill: currentColor; }
+/* full-screen Button: absolute right-4 bottom-4 z-10 */
+.pg-expand { position: absolute; right: 16px; bottom: 16px; z-index: 10; }
+/* permissionGraphEdge.tsx: self edges (a DAO's grants to itself) get opacity-80 */
+.pg-edges .pg-edge--self { opacity: 0.8; }
+
+/* ---- Wizards: modules/application/components/layouts/layoutWizard, navigations/navigationWizard/navigationWizard.tsx,
+   shared/components/navigation/navigationContainer, shared/components/wizards/wizardPage (wizardPageContainer,
+   wizardPageContainerProgress, wizardPageStep), shared/components/page/pageMain.tsx (fullWidth) ----
+   Frame of a full-page wizard: .app-page > WizardNav part + .wizard-main > .wizard-form > (WizardProgress part +
+   .wizard-step > (.wizard-step__content > (.wizard-step__header + fields)) + WizardActions part), then the Footer. */
+/* navigationContainer.tsx: bg-neutral-0 sticky top-0 z-10 flex w-full border-b border-neutral-100 */
+.wizard-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    width: 100%;
+    background: var(--color-neutral-0);
+    border-bottom: 1px solid var(--color-neutral-100);
+    font-family: var(--font-sans);
+}
+/* navigationWizard.tsx containerClasses: flex flex-row items-center gap-x-6 justify-between py-5 */
+.wizard-nav__inner { display: flex; flex-grow: 1; flex-direction: row; align-items: center; justify-content: space-between; column-gap: 24px; padding-block: 20px; }
+.wizard-nav__lead { display: flex; min-width: 0; flex-grow: 1; align-items: center; column-gap: 12px; }
+/* close link: rounded-full border border-neutral-100 p-4 text-neutral-300 (a flex item, so blockified) */
+.wizard-nav__close { display: block; padding: 16px; border: 1px solid var(--color-neutral-100); border-radius: 9999px; color: var(--color-neutral-300); }
+.wizard-nav__close:hover { border-color: var(--color-neutral-200); }
+.wizard-nav__title { display: flex; min-width: 0; flex-direction: column; row-gap: 2px; }
+.wizard-nav__name { margin: 0; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; white-space: nowrap; }
+.wizard-nav__dao { display: flex; align-items: center; column-gap: 8px; }
+/* supportChatTrigger.tsx: flex items-center pr-3 pl-2 lg:pr-4 */
+.wizard-nav__trailing { display: flex; align-items: center; padding: 0 12px 0 8px; }
+@media (min-width: 48rem) { .wizard-nav__lead { column-gap: 16px; } }
+@media (min-width: 64rem) { .wizard-nav__trailing { padding-right: 16px; } }
+
+/* pageMain.tsx fullWidth: m-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28 (flex flex-col gap-12).
+   h-full makes the page fill the window, which pushes the wizard buttons to the bottom on short steps. */
+.wizard-main {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    max-width: 1024px;
+    min-width: 0;
+    flex-grow: 1;
+    flex-direction: column;
+    gap: 48px;
+    margin-inline: auto;
+    padding: 24px 16px 40px;
+    font-family: var(--font-sans);
+}
+/* wizardPageContainer.tsx (form): flex h-full flex-col gap-4 md:gap-6 */
+.wizard-form { display: flex; flex-grow: 1; flex-direction: column; gap: 16px; }
+/* wizardPageContainerProgress.tsx: flex flex-col gap-1.5 md:gap-3; labels text-base leading-tight */
+.wizard-progress { display: flex; flex-direction: column; gap: 6px; }
+.wizard-progress__row { display: flex; flex-direction: row; justify-content: space-between; }
+.wizard-progress__label { display: flex; flex-direction: row; gap: 4px; font-size: 16px; line-height: 1.25; font-weight: 400; }
+.wizard-progress__step { color: var(--color-primary-400); }
+.wizard-progress__muted { color: var(--color-neutral-500); }
+.wizard-progress__next { color: var(--color-neutral-800); }
+/* wizardPageStep.tsx: flex h-full flex-col justify-between gap-10 md:gap-20 */
+.wizard-step { display: flex; flex-grow: 1; flex-direction: column; justify-content: space-between; gap: 40px; }
+/* content flex flex-col gap-6 md:gap-12; header flex flex-col gap-2 */
+.wizard-step__content { display: flex; flex-direction: column; gap: 24px; }
+.wizard-step__header { display: flex; flex-direction: column; gap: 8px; }
+/* text-base leading-normal font-normal text-neutral-500 md:text-lg */
+.wizard-step__description { margin: 0; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; font-weight: 400; }
+/* footer: flex flex-col gap-6 > flex flex-col gap-3 > flex flex-row justify-between; help text-right text-sm leading-tight */
+.wizard-actions { display: flex; flex-direction: column; gap: 12px; }
+.wizard-actions__buttons { display: flex; flex-direction: row; justify-content: space-between; }
+.wizard-actions__help { margin: 0; text-align: right; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; }
+/* Button hover states (button.tsx variants), for screenshots taken with the pointer still on the button */
+.wizard-actions__submit--hover-primary { background: var(--color-primary-500); border-color: var(--color-primary-500); box-shadow: var(--shadow-primary); }
+.wizard-actions__submit--hover-secondary { background: var(--color-primary-50); border-color: var(--color-primary-200); box-shadow: var(--shadow-primary); }
+@media (min-width: 48rem) {
+    .wizard-main { padding: 24px 24px 80px; }
+    .wizard-form { gap: 24px; }
+    .wizard-progress { gap: 12px; }
+    .wizard-step { gap: 80px; }
+    .wizard-step__content { gap: 48px; }
+    .wizard-step__description { font-size: 18px; }
+}
+@media (min-width: 64rem) { .wizard-main { padding-inline: 112px; } }
+
+/* ---- Create DAO: modules/createDao/components/createDaoForm/createDaoFormNetwork/createDaoFormNetwork.tsx ---- */
+/* flex flex-col gap-10; sections flex flex-col gap-4; lists flex flex-col gap-y-2 md:gap-y-3 */
+.create-dao-networks { display: flex; flex-direction: column; gap: 40px; }
+.create-dao-networks__section { display: flex; flex-direction: column; gap: 16px; }
+.create-dao-networks__list { display: flex; flex-direction: column; row-gap: 8px; }
+@media (min-width: 48rem) { .create-dao-networks__list { row-gap: 12px; } }
+/* createDaoFormMetadata.tsx, createWorkspaceFormMetadata.tsx: flex flex-col gap-10 */
+.wizard-fields { display: flex; flex-direction: column; gap: 40px; }
+
+/* ---- Resources input: shared/components/forms/resourcesInput (resourcesInput.tsx, resourcesInputItem.tsx) ---- */
+/* flex flex-col gap-2 md:gap-3; items flex flex-col gap-3 md:gap-2 */
+.resources-input { display: flex; flex-direction: column; gap: 8px; }
+.resources-input__list { display: flex; flex-direction: column; gap: 12px; }
+/* Card: shadow-neutral-sm flex flex-col gap-3 p-6 md:flex-row md:gap-2; menu mt-0 md:mt-9 */
+.resources-input__item { display: flex; flex-direction: column; gap: 12px; padding: 24px; }
+@media (min-width: 48rem) {
+    .resources-input { gap: 12px; }
+    .resources-input__list { gap: 8px; }
+    .resources-input__item { flex-direction: row; gap: 8px; }
+    .resources-input__menu { margin-top: 36px; }
+}
+
+/* ---- Create workspace: modules/workspace/components/createWorkspaceForm (Targets, Accounts, AccountsItem,
+   NetworkAddressFields), shared/components/forms/networkInput/networkInput.tsx ---- */
+/* createWorkspaceFormTargets/Accounts: flex flex-col gap-3 */
+.workspace-list { display: flex; flex-direction: column; gap: 12px; }
+/* AccountsItem: flex items-start gap-3; fields min-w-0 grow; menu mt-0 md:mt-9 */
+.workspace-account { display: flex; align-items: flex-start; gap: 12px; }
+.workspace-account__fields { min-width: 0; flex-grow: 1; }
+/* NetworkAddressFields: flex flex-col gap-3 md:flex-row md:gap-2; network w-full md:w-2/5 */
+.workspace-account__row { display: flex; flex-direction: column; gap: 12px; }
+.workspace-account__network { width: 100%; }
+/* networkInput.tsx trigger: bg-neutral-0 flex w-full items-center gap-3 rounded-xl border border-neutral-100 px-4 py-3 */
+.network-input {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 12px;
+    background: var(--color-neutral-0);
+    font-family: var(--font-sans);
+    text-align: left;
+    cursor: pointer;
+}
+.network-input:hover { border-color: var(--color-neutral-200); }
+.network-input__name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; }
+@media (min-width: 48rem) {
+    .workspace-account__row { flex-direction: row; gap: 8px; }
+    .workspace-account__network { width: 40%; }
+    .workspace-account__menu { margin-top: 36px; }
+}
+
+/* ---- WorkspaceSidebar: navigationWorkspace.tsx, navigationSidebar.tsx, navigationLinksGroup.tsx (shared/components/navigation),
+   workspaceSelector.tsx, workspaceAccountSelector.tsx (modules/workspace/components), navigationTrigger.tsx ---- */
+/* navigationSidebar.tsx: header flex flex-col gap-2; groups flex flex-col gap-4 */
+.ws-sidebar__header { display: flex; flex-direction: column; gap: 8px; }
+.ws-nav-groups { display: flex; flex-direction: column; gap: 16px; }
+/* navigationLinksGroup.tsx: flex flex-col gap-1; label truncate px-4 py-1 text-sm leading-tight text-neutral-500 */
+.ws-nav-group { display: flex; flex-direction: column; gap: 4px; }
+.ws-nav-group__label {
+    margin: 0;
+    overflow: hidden;
+    padding: 4px 16px;
+    color: var(--color-neutral-500);
+    font-size: 14px;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* workspaceSelector.tsx / workspaceAccountSelector.tsx trigger: flex w-full items-center gap-3 rounded-xl border
+   border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 */
+.ws-selector {
+    box-sizing: border-box;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px 8px 8px;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 12px;
+    background: var(--color-neutral-0);
+    color: var(--color-neutral-500);
+    font-family: var(--font-sans);
+    cursor: pointer;
+}
+.ws-selector:hover { border-color: var(--color-neutral-200); }
+/* flex min-w-0 grow flex-col text-left leading-tight */
+.ws-selector__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; text-align: left; line-height: 1.25; }
+.ws-selector__title { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.ws-selector__subtitle { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+/* workspaceAccountSelector.tsx: leading-tight sits on the parent, so the text-base / text-sm lines keep their own
+   line heights (24px / 20px); workspaceSelector.tsx puts leading-tight on the name itself (20px). */
+.ws-selector__text--stacked .ws-selector__title { line-height: 24px; }
+/* navigationTrigger.tsx: rounded-full border border-neutral-100 bg-neutral-0 p-[3px] (shown below lg, no md:hidden) */
+.ws-topbar__trigger {
+    flex-shrink: 0;
+    padding: 3px;
+    border: 1px solid var(--color-neutral-100);
+    border-radius: 9999px;
+    background: var(--color-neutral-0);
+    cursor: pointer;
+}
+
+/* ---- WorkspaceOverview: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx,
+   shared/components/page/pageMainSection/pageMainSection.tsx, modules/workspace/components/workspaceAccountItem ---- */
+/* pageMainSection.tsx: title + description block, flex flex-col gap-2; description text-base leading-normal text-neutral-500 */
+.ws-section__heading { display: flex; flex-direction: column; gap: 8px; }
+.ws-section__description { margin: 0; color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+/* workspaceDetailsPageClient.tsx: accounts flex flex-col gap-3 md:gap-2 */
+.ws-account-list { display: flex; flex-direction: column; gap: 12px; }
+@container app (min-width: 48rem) { .ws-account-list { gap: 8px; } }
+/* workspaceAccountItem.tsx: flex min-w-0 grow flex-col; name truncate text-base leading-tight text-neutral-800;
+   meta truncate text-sm leading-tight text-neutral-500 */
+.ws-account-item__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.ws-account-item__name { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.ws-account-item__meta { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- WorkspaceProposals: modules/workspace/components/workspaceProposalsAsideCard/workspaceAllProposalsAsideCard.tsx,
+   shared/components/statCard/statCard.tsx (suffix: text-xs text-neutral-500 md:text-sm) ---- */
+.stat-card__suffix { color: var(--color-neutral-500); font-size: 12px; line-height: 16px; }
+@media (min-width: 48rem) { .stat-card__suffix { font-size: 14px; line-height: 20px; } }
+
+/* ---- WorkspaceTransactions: modules/workspace/components/workspaceListItemSummary/workspaceListItemSummary.tsx ---- */
+/* flex min-w-0 grow items-center gap-x-3 md:gap-x-4 */
+.ws-summary { display: flex; min-width: 0; flex-grow: 1; align-items: center; column-gap: 12px; }
+/* flex min-w-0 grow flex-col items-start gap-y-0.5 md:gap-y-1 */
+.ws-summary__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; align-items: flex-start; row-gap: 2px; }
+/* flex max-w-full gap-x-1.5 text-left leading-tight text-neutral-800 md:text-lg */
+.ws-summary__title { display: flex; max-width: 100%; column-gap: 6px; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-align: left; }
+.ws-summary__title > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-summary__identifier { flex-shrink: 0; color: var(--color-neutral-500); }
+/* max-w-full truncate text-left text-sm leading-tight text-neutral-500 md:text-base */
+.ws-summary__description { max-width: 100%; margin: 0; overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; text-align: left; text-overflow: ellipsis; white-space: nowrap; }
+/* shrink-0 truncate leading-tight text-neutral-800 md:text-lg */
+.ws-summary__value { flex-shrink: 0; overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+@media (min-width: 48rem) {
+    .ws-summary { column-gap: 16px; }
+    .ws-summary__text { row-gap: 4px; }
+    .ws-summary__title, .ws-summary__value { font-size: 18px; }
+    .ws-summary__description { font-size: 16px; }
+}
+
+/* ---- Connected wallet: navigationSidebarAccount.tsx ---- */
+/* focus-ring-primary bg-neutral-0 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 p-2 text-left */
+.app-account { display: flex; width: 100%; cursor: pointer; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); font-family: var(--font-sans); text-align: left; }
+.app-account:hover { border-color: var(--color-neutral-200); }
+/* flex min-w-0 grow flex-col leading-tight; name truncate text-base text-neutral-800; address truncate text-sm text-neutral-500 */
+.app-account__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.app-account__name { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 24px; text-overflow: ellipsis; white-space: nowrap; }
+.app-account__address { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- DocumentParser content: shared/components/SafeDocumentParser ---- */
+/* The app's Tailwind build ships no typography plugin, so the `prose` wrapper the kit's DocumentParser renders styles
+   nothing there: headings and paragraphs print as plain 16px / 24px text in the inherited (black) colour. The kit
+   stylesheet does carry the typography rules, so neutralise them inside the page. */
+.app-column .prose :where(h1, h2, h3, h4, h5, h6, p, li, strong) { margin: 0; color: inherit; font-size: inherit; font-weight: 400; line-height: 24px; }
+/* Body colour of the app's prose wrapper: Tailwind neutral-700, which has no token in the kit (rgb 64 64 64). */
+.app-column .prose.prose-neutral { color: oklch(37.1% 0 none); }
+
+/* ---- Vote options: plugins/tokenPlugin/components/tokenSubmitVote (tokenSubmitVoteDefault.tsx, tokenVotingOptionToggle.tsx) ---- */
+/* tokenVotingOptionToggle.tsx (a Radix toggle in the app, a button here): flex h-[50px] items-center justify-between gap-3
+   rounded-xl border py-2 pr-3 pl-4 bg-neutral-0 cursor-pointer shadow-neutral-sm border-neutral-100 text-neutral-500;
+   `on` state: border-success-300 text-success-800 shadow-success-sm. The shadows are the kit's shadow-*-sm classes. */
+.vote-options { display: flex; flex-direction: column; gap: 12px; }
+.vote-toggle { display: flex; height: 50px; width: 100%; cursor: pointer; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px 8px 16px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); color: var(--color-neutral-500); font-family: var(--font-sans); text-align: left; }
+.vote-toggle > p { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.25; }
+.vote-toggle > p > span { color: var(--color-neutral-500); }
+.vote-toggle--on { border-color: var(--color-success-300); color: var(--color-success-800); }
+
+/* ---- Workspace to-do preview: modules/workspace/components/workspaceTodoPreview/workspaceTodoPreviewItem.tsx ---- */
+/* Card flex flex-col border border-neutral-100; row: flex items-center gap-4 border-neutral-100 border-t px-4 py-3
+   first:border-t-0 md:px-6 md:py-4; text: flex min-w-0 grow flex-col gap-1; title truncate text-base leading-tight
+   text-neutral-800; meta truncate text-sm leading-tight text-neutral-500 */
+.ws-todo-preview { display: flex; flex-direction: column; border: 1px solid var(--color-neutral-100); }
+.ws-todo-preview__row { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--color-neutral-100); }
+.ws-todo-preview__row:first-child { border-top: 0; }
+.ws-todo-preview__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; gap: 4px; }
+.ws-todo-preview__title { margin: 0; overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.ws-todo-preview__meta { margin: 0; overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+@container app (min-width: 48rem) { .ws-todo-preview__row { padding: 16px 24px; } }
+
+/* ---- Execute actions (CreateExecute*): modules/governance/components/proposalActionsEditor/proposalActionsEditor.tsx,
+   actionComposer/actionComposer/actionComposer.tsx ---- */
+/* proposalActionsEditor.tsx: flex flex-col gap-y-10 (edit list, then composer) */
+.actions-editor { display: flex; flex-direction: column; row-gap: 40px; }
+/* actionComposer.tsx: flex flex-col gap-3 > flex flex-col items-center justify-between gap-3 md:flex-row >
+   (flex w-full flex-col gap-y-2 md:flex-row md:gap-x-3) + (flex w-full shrink-0 flex-row items-center justify-end gap-3 md:w-auto) */
+.action-composer { display: flex; flex-direction: column; gap: 12px; }
+.action-composer__row { display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 12px; }
+.action-composer__buttons { display: flex; width: 100%; flex-direction: column; row-gap: 8px; }
+.action-composer__trailing { display: flex; width: 100%; flex-shrink: 0; flex-direction: row; align-items: center; justify-content: flex-end; gap: 12px; }
+@media (min-width: 48rem) {
+    .action-composer__row { flex-direction: row; }
+    .action-composer__buttons { flex-direction: row; column-gap: 12px; }
+    .action-composer__trailing { width: auto; }
+}
+/* assetInput.tsx number input: [appearance:textfield], placeholder text-base leading-tight text-neutral-300, no spin buttons */
+.transfer-amount__input { appearance: textfield; }
+.transfer-amount__input::-webkit-inner-spin-button, .transfer-amount__input::-webkit-outer-spin-button { appearance: none; }
+.transfer-amount__input::placeholder { font-size: 16px; line-height: 1.25; color: var(--color-neutral-300); }
+
+/* ---- Autocomplete menu (CreateExecuteActionMenu): shared/components/forms/autocompleteInput (autocompleteInputMenu.tsx,
+   autocompleteInputGroup.tsx, autocompleteInputItem.tsx), shared/components/keyboardShortcut/keyboardShortcut.tsx ----
+   The menu is a floating-ui portal placed under the input (placement bottom, width of the input wrapper); drawn here
+   absolutely under the input. */
+.autocomplete { position: relative; }
+/* border-primary-400 bg-neutral-0 shadow-primary-lg flex flex-col gap-3 overflow-hidden border-x; bottom placement:
+   rounded-b-xl border-b pt-1 md:pb-12 */
+.autocomplete-menu {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+    box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; overflow: hidden;
+    border: 1px solid var(--color-primary-400); border-top: 0; border-radius: 0 0 12px 12px;
+    background: var(--color-neutral-0); box-shadow: var(--shadow-primary-lg); padding-top: 4px;
+    font-family: var(--font-sans);
+}
+/* flex max-h-[268px] flex-col gap-3 overflow-auto px-3 */
+.autocomplete-menu__list { display: flex; max-height: 268px; flex-direction: column; gap: 12px; overflow: auto; padding-inline: 12px; }
+/* absolute bottom-0 left-0 hidden w-full flex-row justify-between px-6 py-4 text-base leading-tight backdrop-blur-md md:flex */
+.autocomplete-menu__footer {
+    position: absolute; bottom: 0; left: 0; box-sizing: border-box; display: none; width: 100%; flex-direction: row;
+    justify-content: space-between; padding: 16px 24px; font-size: 16px; line-height: 1.25; font-weight: 400;
+    backdrop-filter: blur(12px);
+}
+.autocomplete-menu__keys { display: flex; flex-direction: row; align-items: center; gap: 4px; }
+.autocomplete-menu__hint { margin: 0; color: var(--color-neutral-500); }
+@media (min-width: 48rem) {
+    .autocomplete-menu { padding-bottom: 48px; }
+    .autocomplete-menu__footer { display: flex; }
+}
+/* autocompleteInputGroup.tsx: flex flex-col; header flex flex-row items-center gap-3 px-3 py-2 text-base leading-tight;
+   name shrink-0 text-neutral-800; hr h-[1px] w-full text-neutral-100; info shrink-0 text-sm text-neutral-500; hr w-5 */
+.autocomplete-group { display: flex; flex-direction: column; }
+.autocomplete-group__header { display: flex; flex-direction: row; align-items: center; gap: 12px; padding: 8px 12px; font-size: 16px; line-height: 1.25; font-weight: 400; }
+.autocomplete-group__name { flex-shrink: 0; margin: 0; color: var(--color-neutral-800); }
+.autocomplete-group__info { flex-shrink: 0; margin: 0; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; }
+.autocomplete-group__rule { box-sizing: border-box; width: 100%; height: 1px; margin: 0; border: 0; border-top: 1px solid var(--color-neutral-100); }
+.autocomplete-group__rule--end { width: 20px; flex-shrink: 0; }
+/* autocompleteInputItem.tsx: flex flex-row items-center justify-between gap-4 rounded-lg px-3 py-2 leading-tight
+   text-neutral-500 (inactive); lead flex min-w-0 flex-row items-center gap-4; name text-base; info text-sm mr-7 (text-base / text-sm bring their own 24px / 20px line height, leading-tight does not reach them) */
+.autocomplete-item { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 12px; border-radius: 8px; line-height: 1.25; font-weight: 400; color: var(--color-neutral-500); cursor: pointer; }
+.autocomplete-item__lead { display: flex; min-width: 0; flex-direction: row; align-items: center; gap: 16px; }
+.autocomplete-item__name { margin: 0; font-size: 16px; line-height: 24px; }
+.autocomplete-item__trail { display: flex; align-items: center; gap: 8px; }
+.autocomplete-item__info { margin-right: 28px; font-size: 14px; line-height: 20px; }
+/* keyboardShortcut.tsx: bg-neutral-0 flex h-[18px] w-5 items-center justify-center rounded-md border border-neutral-100
+   text-xs leading-tight text-neutral-800 */
+.keyboard-shortcut { box-sizing: border-box; display: flex; width: 20px; height: 18px; align-items: center; justify-content: center; border: 1px solid var(--color-neutral-100); border-radius: 6px; background: var(--color-neutral-0); color: var(--color-neutral-800); font-size: 12px; line-height: 1.25; }
+/* actionComposer.tsx renders the composer input (ActionComposerInput > InputText) even while closed, visually hidden
+   with !sr-only on its inner wrapper: its outer container stays an empty flex item of the editor, so the editor's
+   gap-y-10 still applies below the button row (drawn as this empty block). */
+.action-composer__input { height: 0; }
+/* assetInput.tsx Tailwind classes the kit stylesheet does not ship: wrapper pl-1.5 pr-4, token gap-x-1.5,
+   max row pr-4, input outline-none */
+.transfer-amount__field { padding-left: 6px; padding-right: 16px; }
+.transfer-amount__token { column-gap: 6px; }
+.transfer-amount__max { padding-right: 16px; }
+.transfer-amount__input { outline: none; }
+/* autocompleteInput.tsx open + bottom placement on the input wrapper: rounded-b-none border-b-0 (with
+   shadow-primary-lg border-primary-400 from the kit) */
+.autocomplete__input--open { border-bottom-width: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+
+/* ---- Create process (CreateProcessStep2): modules/createDao/components/createProcessForm/createProcessFormGovernance/
+   createProcessFormGovernance.tsx ---- */
+/* flex w-full flex-col gap-4 md:gap-6 */
+.process-governance { display: flex; width: 100%; flex-direction: column; gap: 16px; }
+/* RadioGroup className: w-full gap-4 md:flex-row [&>*]:min-w-0 [&>*]:flex-1 (the direct children are the canvas
+   wrappers of the RadioCards, which take the flex-1) */
+.process-governance__types { width: 100%; gap: 16px; }
+.process-governance__types > * { min-width: 0; flex: 1 1 0%; }
+@media (min-width: 48rem) {
+    .process-governance { gap: 24px; }
+    .process-governance__types { flex-direction: row; }
+}

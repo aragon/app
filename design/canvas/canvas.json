@@ -12,32 +12,16 @@
   "boards": {
     "Main.dc.html": {
       "x": 0,
-      "y": -900,
+      "y": 0,
       "w": 1440,
       "h": 2719,
-      "title": "Explore DAOs",
+      "title": "Explore",
       "expand": "fill",
       "is_interactive": true
-    },
-    "CreateDao.dc.html": {
-      "x": 1520,
-      "y": 0,
-      "w": 1440,
-      "h": 1100,
-      "title": "Create a DAO \u2014 wizard",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "Sidebar.dc.html": {
-      "x": 3040,
-      "y": 0,
-      "w": 256,
-      "h": 900,
-      "title": "DAO sidebar (shared)"
     },
     "Dashboard.dc.html": {
-      "x": 0,
-      "y": 2280,
+      "x": 1520,
+      "y": 0,
       "w": 1440,
       "h": 2316,
       "title": "DAO dashboard",
@@ -45,8 +29,8 @@
       "is_interactive": true
     },
     "Proposals.dc.html": {
-      "x": 1520,
-      "y": 2280,
+      "x": 3040,
+      "y": 0,
       "w": 1440,
       "h": 2000,
       "title": "Proposals",
@@ -54,84 +38,947 @@
       "is_interactive": true
     },
     "Proposal.dc.html": {
-      "x": 3040,
-      "y": 2280,
+      "x": 4560,
+      "y": 0,
       "w": 1440,
-      "h": 1990,
-      "title": "Proposal detail",
+      "h": 1988,
+      "title": "Proposal detail (active)",
       "expand": "fill",
       "is_interactive": true
     },
-    "Members.dc.html": {
+    "Sidebar.dc.html": {
       "x": 0,
-      "y": 5000,
+      "y": 4300,
+      "w": 1024,
+      "h": 900,
+      "title": "DAO navigation (shared)"
+    },
+    "Footer.dc.html": {
+      "x": 1104,
+      "y": 4300,
       "w": 1440,
-      "h": 1100,
-      "title": "Members",
-      "expand": "fill",
-      "is_interactive": true
+      "h": 65,
+      "title": "Footer (shared)"
+    },
+    "AragonLogo.dc.html": {
+      "x": 2624,
+      "y": 4300,
+      "w": 162,
+      "h": 40,
+      "title": "Aragon logo (shared)"
     },
     "Assets.dc.html": {
-      "x": 1520,
-      "y": 5000,
+      "x": 6080,
+      "y": 0,
       "w": 1440,
-      "h": 1100,
+      "h": 900,
       "title": "Assets",
       "expand": "fill",
       "is_interactive": true
     },
     "Transactions.dc.html": {
-      "x": 3040,
-      "y": 5000,
+      "x": 7600,
+      "y": 0,
       "w": 1440,
-      "h": 1100,
+      "h": 1347,
       "title": "Transactions",
       "expand": "fill",
       "is_interactive": true
     },
-    "Settings.dc.html": {
-      "x": 4560,
-      "y": 5000,
+    "MsAssets.dc.html": {
+      "x": 0,
+      "y": 2900,
       "w": 1440,
-      "h": 1200,
-      "title": "Settings",
+      "h": 900,
+      "title": "Assets (multisig DAO)",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Settings.dc.html": {
+      "x": 0,
+      "y": 7000,
+      "w": 1440,
+      "h": 1194,
+      "title": "Settings: Settings",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SettingsProcess.dc.html": {
+      "x": 1520,
+      "y": 7000,
+      "w": 1440,
+      "h": 1612,
+      "title": "Settings: SettingsProcess",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "NotFound.dc.html": {
+      "x": 3040,
+      "y": 7000,
+      "w": 1440,
+      "h": 900,
+      "title": "Settings: NotFound",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DaoNotFound.dc.html": {
+      "x": 4560,
+      "y": 7000,
+      "w": 1440,
+      "h": 900,
+      "title": "Settings: DaoNotFound",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP7.dc.html": {
+      "x": 0,
+      "y": 9400,
+      "w": 1440,
+      "h": 1900,
+      "title": "Proposal states: ProposalMGP7",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP6.dc.html": {
+      "x": 1520,
+      "y": 9400,
+      "w": 1440,
+      "h": 1786,
+      "title": "Proposal states: ProposalMGP6",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP5.dc.html": {
+      "x": 3040,
+      "y": 9400,
+      "w": 1440,
+      "h": 1506,
+      "title": "Proposal states: ProposalMGP5",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP4.dc.html": {
+      "x": 4560,
+      "y": 9400,
+      "w": 1440,
+      "h": 1506,
+      "title": "Proposal states: ProposalMGP4",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP3.dc.html": {
+      "x": 6080,
+      "y": 9400,
+      "w": 1440,
+      "h": 1524,
+      "title": "Proposal states: ProposalMGP3",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ProposalMGP2.dc.html": {
+      "x": 7600,
+      "y": 9400,
+      "w": 1440,
+      "h": 1524,
+      "title": "Proposal states: ProposalMGP2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Members.dc.html": {
+      "x": 0,
+      "y": 11600,
+      "w": 1440,
+      "h": 1382,
+      "title": "Members: Members",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Member.dc.html": {
+      "x": 1520,
+      "y": 11600,
+      "w": 1440,
+      "h": 2400,
+      "title": "Members: Member",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Permissions.dc.html": {
+      "x": 0,
+      "y": 13800,
+      "w": 1440,
+      "h": 900,
+      "title": "Permissions: Permissions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PermissionsWithDaoGrants.dc.html": {
+      "x": 1520,
+      "y": 13800,
+      "w": 1440,
+      "h": 1264,
+      "title": "Permissions: PermissionsWithDaoGrants",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "PermissionsGraph.dc.html": {
+      "x": 3040,
+      "y": 13800,
+      "w": 1440,
+      "h": 942,
+      "title": "Permissions: PermissionsGraph",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDaoStep1.dc.html": {
+      "x": 0,
+      "y": 16000,
+      "w": 1440,
+      "h": 1907,
+      "title": "Create wizards: CreateDaoStep1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDaoStep2.dc.html": {
+      "x": 1520,
+      "y": 16000,
+      "w": 1440,
+      "h": 1545,
+      "title": "Create wizards: CreateDaoStep2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDaoStep2Filled.dc.html": {
+      "x": 3040,
+      "y": 16000,
+      "w": 1440,
+      "h": 1720,
+      "title": "Create wizards: CreateDaoStep2Filled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceStep1.dc.html": {
+      "x": 4560,
+      "y": 16000,
+      "w": 1440,
+      "h": 1339,
+      "title": "Create wizards: CreateWorkspaceStep1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceStep1Filled.dc.html": {
+      "x": 6080,
+      "y": 16000,
+      "w": 1440,
+      "h": 1339,
+      "title": "Create wizards: CreateWorkspaceStep1Filled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceStep2.dc.html": {
+      "x": 7600,
+      "y": 16000,
+      "w": 1440,
+      "h": 900,
+      "title": "Create wizards: CreateWorkspaceStep2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceStep3.dc.html": {
+      "x": 9120,
+      "y": 16000,
+      "w": 1440,
+      "h": 900,
+      "title": "Create wizards: CreateWorkspaceStep3",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceOverview.dc.html": {
+      "x": 0,
+      "y": 18400,
+      "w": 1440,
+      "h": 904,
+      "title": "Workspace: WorkspaceOverview",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceTodos.dc.html": {
+      "x": 1520,
+      "y": 18400,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace: WorkspaceTodos",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceProposals.dc.html": {
+      "x": 3040,
+      "y": 18400,
+      "w": 1440,
+      "h": 2519,
+      "title": "Workspace: WorkspaceProposals",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceMembers.dc.html": {
+      "x": 4560,
+      "y": 18400,
+      "w": 1440,
+      "h": 1126,
+      "title": "Workspace: WorkspaceMembers",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAssets.dc.html": {
+      "x": 6080,
+      "y": 18400,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace: WorkspaceAssets",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceTransactions.dc.html": {
+      "x": 7600,
+      "y": 18400,
+      "w": 1440,
+      "h": 1733,
+      "title": "Workspace: WorkspaceTransactions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceEdit.dc.html": {
+      "x": 9120,
+      "y": 18400,
+      "w": 1440,
+      "h": 1488,
+      "title": "Workspace: WorkspaceEdit",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC5.dc.html": {
+      "x": 0,
+      "y": 21400,
+      "w": 1440,
+      "h": 1594,
+      "title": "Multisig proposal: MsProposalAGC5",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC6.dc.html": {
+      "x": 1520,
+      "y": 21400,
+      "w": 1440,
+      "h": 1648,
+      "title": "Multisig proposal: MsProposalAGC6",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC4.dc.html": {
+      "x": 3040,
+      "y": 21400,
+      "w": 1440,
+      "h": 1522,
+      "title": "Multisig proposal: MsProposalAGC4",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC3.dc.html": {
+      "x": 4560,
+      "y": 21400,
+      "w": 1440,
+      "h": 1258,
+      "title": "Multisig proposal: MsProposalAGC3",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC2.dc.html": {
+      "x": 6080,
+      "y": 21400,
+      "w": 1440,
+      "h": 1258,
+      "title": "Multisig proposal: MsProposalAGC2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposalAGC1.dc.html": {
+      "x": 7600,
+      "y": 21400,
+      "w": 1440,
+      "h": 1258,
+      "title": "Multisig proposal: MsProposalAGC1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsDashboard.dc.html": {
+      "x": 0,
+      "y": 23500,
+      "w": 1440,
+      "h": 2092,
+      "title": "Multisig DAO: MsDashboard",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsProposals.dc.html": {
+      "x": 1520,
+      "y": 23500,
+      "w": 1440,
+      "h": 1531,
+      "title": "Multisig DAO: MsProposals",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsMembers.dc.html": {
+      "x": 3040,
+      "y": 23500,
+      "w": 1440,
+      "h": 900,
+      "title": "Multisig DAO: MsMembers",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsMember.dc.html": {
+      "x": 4560,
+      "y": 23500,
+      "w": 1440,
+      "h": 1778,
+      "title": "Multisig DAO: MsMember",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsTransactions.dc.html": {
+      "x": 6080,
+      "y": 23500,
+      "w": 1440,
+      "h": 900,
+      "title": "Multisig DAO: MsTransactions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsPermissions.dc.html": {
+      "x": 0,
+      "y": 26000,
+      "w": 1440,
+      "h": 900,
+      "title": "Multisig permissions and settings: MsPermissions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsPermissionsWithDaoGrants.dc.html": {
+      "x": 1520,
+      "y": 26000,
+      "w": 1440,
+      "h": 1186,
+      "title": "Multisig permissions and settings: MsPermissionsWithDaoGrants",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsPermissionsGraph.dc.html": {
+      "x": 3040,
+      "y": 26000,
+      "w": 1440,
+      "h": 942,
+      "title": "Multisig permissions and settings: MsPermissionsGraph",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsSettings.dc.html": {
+      "x": 4560,
+      "y": 26000,
+      "w": 1440,
+      "h": 1018,
+      "title": "Multisig permissions and settings: MsSettings",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsSettingsProcess.dc.html": {
+      "x": 6080,
+      "y": 26000,
+      "w": 1440,
+      "h": 1106,
+      "title": "Multisig permissions and settings: MsSettingsProcess",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountOverview.dc.html": {
+      "x": 0,
+      "y": 27600,
+      "w": 1440,
+      "h": 2316,
+      "title": "Workspace, one account: WorkspaceAccountOverview",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountTodos.dc.html": {
+      "x": 1520,
+      "y": 27600,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace, one account: WorkspaceAccountTodos",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountProposals.dc.html": {
+      "x": 3040,
+      "y": 27600,
+      "w": 1440,
+      "h": 2000,
+      "title": "Workspace, one account: WorkspaceAccountProposals",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountMembers.dc.html": {
+      "x": 4560,
+      "y": 27600,
+      "w": 1440,
+      "h": 1382,
+      "title": "Workspace, one account: WorkspaceAccountMembers",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountAssets.dc.html": {
+      "x": 6080,
+      "y": 27600,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace, one account: WorkspaceAccountAssets",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountTransactions.dc.html": {
+      "x": 7600,
+      "y": 27600,
+      "w": 1440,
+      "h": 1347,
+      "title": "Workspace, one account: WorkspaceAccountTransactions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountPermissions.dc.html": {
+      "x": 9120,
+      "y": 27600,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace, one account: WorkspaceAccountPermissions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WorkspaceAccountSettings.dc.html": {
+      "x": 10640,
+      "y": 27600,
+      "w": 1440,
+      "h": 1194,
+      "title": "Workspace, one account: WorkspaceAccountSettings",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedDashboard.dc.html": {
+      "x": 0,
+      "y": 30400,
+      "w": 1440,
+      "h": 2316,
+      "title": "Wallet connected: ConnectedDashboard",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedMemberSelf.dc.html": {
+      "x": 1520,
+      "y": 30400,
+      "w": 1440,
+      "h": 2575,
+      "title": "Wallet connected: ConnectedMemberSelf",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedProposalNotVoted.dc.html": {
+      "x": 3040,
+      "y": 30400,
+      "w": 1440,
+      "h": 1988,
+      "title": "Wallet connected: ConnectedProposalNotVoted",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedProposalVoteOptions.dc.html": {
+      "x": 4560,
+      "y": 30400,
+      "w": 1440,
+      "h": 2263,
+      "title": "Wallet connected: ConnectedProposalVoteOptions",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedProposalVoteYes.dc.html": {
+      "x": 6080,
+      "y": 30400,
+      "w": 1440,
+      "h": 2263,
+      "title": "Wallet connected: ConnectedProposalVoteYes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedWorkspaceOverview.dc.html": {
+      "x": 7600,
+      "y": 30400,
+      "w": 1440,
+      "h": 900,
+      "title": "Wallet connected: ConnectedWorkspaceOverview",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedWorkspaceTodos.dc.html": {
+      "x": 9120,
+      "y": 30400,
+      "w": 1440,
+      "h": 900,
+      "title": "Wallet connected: ConnectedWorkspaceTodos",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ConnectedWorkspaceAccountTodos.dc.html": {
+      "x": 10640,
+      "y": 30400,
+      "w": 1440,
+      "h": 900,
+      "title": "Wallet connected: ConnectedWorkspaceAccountTodos",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateExecute.dc.html": {
+      "x": 0,
+      "y": 33400,
+      "w": 1440,
+      "h": 900,
+      "title": "Execute and governance-process wizards: CreateExecute",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateExecuteActionMenu.dc.html": {
+      "x": 1520,
+      "y": 33400,
+      "w": 1440,
+      "h": 900,
+      "title": "Execute and governance-process wizards: CreateExecuteActionMenu",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateExecuteTransferFilled.dc.html": {
+      "x": 3040,
+      "y": 33400,
+      "w": 1440,
+      "h": 1111,
+      "title": "Execute and governance-process wizards: CreateExecuteTransferFilled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProcessStep1.dc.html": {
+      "x": 4560,
+      "y": 33400,
+      "w": 1440,
+      "h": 1351,
+      "title": "Execute and governance-process wizards: CreateProcessStep1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProcessStep1Filled.dc.html": {
+      "x": 6080,
+      "y": 33400,
+      "w": 1440,
+      "h": 1351,
+      "title": "Execute and governance-process wizards: CreateProcessStep1Filled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProcessStep2.dc.html": {
+      "x": 7600,
+      "y": 33400,
+      "w": 1440,
+      "h": 1148,
+      "title": "Execute and governance-process wizards: CreateProcessStep2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep1.dc.html": {
+      "x": 0,
+      "y": 35200,
+      "w": 1440,
+      "h": 1630,
+      "title": "Create-proposal wizard: CreateProposalStep1",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep1Filled.dc.html": {
+      "x": 1520,
+      "y": 35200,
+      "w": 1440,
+      "h": 1630,
+      "title": "Create-proposal wizard: CreateProposalStep1Filled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep2.dc.html": {
+      "x": 3040,
+      "y": 35200,
+      "w": 1440,
+      "h": 900,
+      "title": "Create-proposal wizard: CreateProposalStep2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep2ActionMenu.dc.html": {
+      "x": 4560,
+      "y": 35200,
+      "w": 1440,
+      "h": 900,
+      "title": "Create-proposal wizard: CreateProposalStep2ActionMenu",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep2Transfer.dc.html": {
+      "x": 6080,
+      "y": 35200,
+      "w": 1440,
+      "h": 1126,
+      "title": "Create-proposal wizard: CreateProposalStep2Transfer",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep2TransferFilled.dc.html": {
+      "x": 7600,
+      "y": 35200,
+      "w": 1440,
+      "h": 1138,
+      "title": "Create-proposal wizard: CreateProposalStep2TransferFilled",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep2NextMenu.dc.html": {
+      "x": 9120,
+      "y": 35200,
+      "w": 1440,
+      "h": 900,
+      "title": "Create-proposal wizard: CreateProposalStep2NextMenu",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProposalStep3.dc.html": {
+      "x": 10640,
+      "y": 35200,
+      "w": 1440,
+      "h": 1048,
+      "title": "Create-proposal wizard: CreateProposalStep3",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "MsCreateProposalStep1.dc.html": {
+      "x": 12160,
+      "y": 35200,
+      "w": 1440,
+      "h": 1630,
+      "title": "Create-proposal wizard: MsCreateProposalStep1",
       "expand": "fill",
       "is_interactive": true
     }
   },
   "order": [
     "Main.dc.html",
-    "CreateDao.dc.html",
-    "Sidebar.dc.html",
     "Dashboard.dc.html",
     "Proposals.dc.html",
     "Proposal.dc.html",
-    "Members.dc.html",
     "Assets.dc.html",
     "Transactions.dc.html",
-    "Settings.dc.html"
+    "Sidebar.dc.html",
+    "Footer.dc.html",
+    "AragonLogo.dc.html",
+    "MsAssets.dc.html",
+    "Settings.dc.html",
+    "SettingsProcess.dc.html",
+    "NotFound.dc.html",
+    "DaoNotFound.dc.html",
+    "ProposalMGP7.dc.html",
+    "ProposalMGP6.dc.html",
+    "ProposalMGP5.dc.html",
+    "ProposalMGP4.dc.html",
+    "ProposalMGP3.dc.html",
+    "ProposalMGP2.dc.html",
+    "Members.dc.html",
+    "Member.dc.html",
+    "Permissions.dc.html",
+    "PermissionsWithDaoGrants.dc.html",
+    "PermissionsGraph.dc.html",
+    "CreateDaoStep1.dc.html",
+    "CreateDaoStep2.dc.html",
+    "CreateDaoStep2Filled.dc.html",
+    "CreateWorkspaceStep1.dc.html",
+    "CreateWorkspaceStep1Filled.dc.html",
+    "CreateWorkspaceStep2.dc.html",
+    "CreateWorkspaceStep3.dc.html",
+    "WorkspaceOverview.dc.html",
+    "WorkspaceTodos.dc.html",
+    "WorkspaceProposals.dc.html",
+    "WorkspaceMembers.dc.html",
+    "WorkspaceAssets.dc.html",
+    "WorkspaceTransactions.dc.html",
+    "WorkspaceEdit.dc.html",
+    "MsProposalAGC5.dc.html",
+    "MsProposalAGC6.dc.html",
+    "MsProposalAGC4.dc.html",
+    "MsProposalAGC3.dc.html",
+    "MsProposalAGC2.dc.html",
+    "MsProposalAGC1.dc.html",
+    "MsDashboard.dc.html",
+    "MsProposals.dc.html",
+    "MsMembers.dc.html",
+    "MsMember.dc.html",
+    "MsTransactions.dc.html",
+    "MsPermissions.dc.html",
+    "MsPermissionsWithDaoGrants.dc.html",
+    "MsPermissionsGraph.dc.html",
+    "MsSettings.dc.html",
+    "MsSettingsProcess.dc.html",
+    "WorkspaceAccountOverview.dc.html",
+    "WorkspaceAccountTodos.dc.html",
+    "WorkspaceAccountProposals.dc.html",
+    "WorkspaceAccountMembers.dc.html",
+    "WorkspaceAccountAssets.dc.html",
+    "WorkspaceAccountTransactions.dc.html",
+    "WorkspaceAccountPermissions.dc.html",
+    "WorkspaceAccountSettings.dc.html",
+    "ConnectedDashboard.dc.html",
+    "ConnectedMemberSelf.dc.html",
+    "ConnectedProposalNotVoted.dc.html",
+    "ConnectedProposalVoteOptions.dc.html",
+    "ConnectedProposalVoteYes.dc.html",
+    "ConnectedWorkspaceOverview.dc.html",
+    "ConnectedWorkspaceTodos.dc.html",
+    "ConnectedWorkspaceAccountTodos.dc.html",
+    "CreateExecute.dc.html",
+    "CreateExecuteActionMenu.dc.html",
+    "CreateExecuteTransferFilled.dc.html",
+    "CreateProcessStep1.dc.html",
+    "CreateProcessStep1Filled.dc.html",
+    "CreateProcessStep2.dc.html",
+    "CreateProposalStep1.dc.html",
+    "CreateProposalStep1Filled.dc.html",
+    "CreateProposalStep2.dc.html",
+    "CreateProposalStep2ActionMenu.dc.html",
+    "CreateProposalStep2Transfer.dc.html",
+    "CreateProposalStep2TransferFilled.dc.html",
+    "CreateProposalStep2NextMenu.dc.html",
+    "CreateProposalStep3.dc.html",
+    "MsCreateProposalStep1.dc.html"
   ],
   "notes": {
-    "row1": {
+    "screens": {
       "x": 0,
-      "y": -1200,
-      "text": "Entry & onboarding",
+      "y": -300,
+      "text": "Aragon App baseline",
       "kind": "title1",
-      "maxW": 3296
+      "maxW": 9040
     },
-    "row2": {
+    "shared": {
       "x": 0,
-      "y": 1980,
-      "text": "DAO governance",
+      "y": 4020,
+      "text": "Shared parts",
+      "kind": "title1",
+      "maxW": 2786
+    },
+    "multisig": {
+      "x": 0,
+      "y": 2620,
+      "text": "Multisig DAO",
+      "kind": "title1",
+      "maxW": 1440
+    },
+    "row-Settings": {
+      "x": 0,
+      "y": 6720,
+      "text": "Settings",
+      "kind": "title1",
+      "maxW": 6000
+    },
+    "row-Proposal states": {
+      "x": 0,
+      "y": 9120,
+      "text": "Proposal states",
+      "kind": "title1",
+      "maxW": 9040
+    },
+    "row-Members": {
+      "x": 0,
+      "y": 11320,
+      "text": "Members",
+      "kind": "title1",
+      "maxW": 2960
+    },
+    "row-Permissions": {
+      "x": 0,
+      "y": 13520,
+      "text": "Permissions",
       "kind": "title1",
       "maxW": 4480
     },
-    "row3": {
+    "row-Create wizards": {
       "x": 0,
-      "y": 4700,
-      "text": "Members, treasury & settings",
+      "y": 15720,
+      "text": "Create wizards",
       "kind": "title1",
-      "maxW": 6000
+      "maxW": 10560
+    },
+    "row-Workspace": {
+      "x": 0,
+      "y": 18120,
+      "text": "Workspace",
+      "kind": "title1",
+      "maxW": 10560
+    },
+    "row-Multisig proposal": {
+      "x": 0,
+      "y": 20520,
+      "text": "Multisig proposal",
+      "kind": "title1",
+      "maxW": 9040
+    },
+    "row-Multisig DAO": {
+      "x": 0,
+      "y": 23220,
+      "text": "Multisig DAO",
+      "kind": "title1",
+      "maxW": 7520
+    },
+    "row-Multisig permissions and settings": {
+      "x": 0,
+      "y": 25720,
+      "text": "Multisig permissions and settings",
+      "kind": "title1",
+      "maxW": 7520
+    },
+    "row-Workspace, one account": {
+      "x": 0,
+      "y": 27320,
+      "text": "Workspace, one account",
+      "kind": "title1",
+      "maxW": 12080
+    },
+    "row-Wallet connected": {
+      "x": 0,
+      "y": 30120,
+      "text": "Wallet connected",
+      "kind": "title1",
+      "maxW": 12080
+    },
+    "row-Execute and governance-process wizards": {
+      "x": 0,
+      "y": 33120,
+      "text": "Execute and governance-process wizards",
+      "kind": "title1",
+      "maxW": 9040
+    },
+    "row-Create-proposal wizard": {
+      "x": 0,
+      "y": 34920,
+      "text": "Create-proposal wizard",
+      "kind": "title1",
+      "maxW": 13600
     }
   },
   "designSystems": [

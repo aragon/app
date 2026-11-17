@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MsMember</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="members" dao="atlas" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">lenaweber.eth</x-import>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting activity</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{three}}" page-size="{{five}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-4" proposal-title="Add a sixth council seat for research" vote-indicator="approve" date="{{dates.v4}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-2" proposal-title="Grant: Governance analytics dashboard" vote-indicator="approve" date="{{dates.v2}}" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-1" proposal-title="Grant: Open-source zk proving benchmarks" vote-indicator="approve" date="{{dates.v1}}" href="#"></x-import>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal creation</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{one}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{lena}}" href="#"></x-import>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Other DAO memberships</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="#"></x-import>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" link="{{addressLink}}" children="lenaweber.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="First activity" children="April 20, 2026"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Latest activity" children="4 days ago"></x-import>
+              </x-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1778}}'>
+// DAO member details (apps/app: modules/governance/pages/daoMemberDetailsPage: voteList, daoProposalList,
+// explore/daoList). Mock data: design/baseline-check/data.cjs (Atlas Grants Council, lenaweber.eth).
+// The list items are written out one by one at the start of the line, not looped or indented: the kit's pagination
+// counts the list's direct children, and the canvas runtime counts a loop as one child and indentation as another.
+class Component extends DCLogic {
+  renderVals() {
+    // Kit components print dates relative to the viewer's clock ("2 days ago"), so dates are offsets from now.
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    return {
+      yes: true, one: 1, three: 3, five: 5,
+      breadcrumbs: [{ href: 'MsMembers.dc.html', label: 'Members' }, { label: 'lenaweber.eth' }],
+      lena: { address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', name: 'lenaweber.eth', link: 'MsMember.dc.html' },
+      dates: {
+        v4: now - 3 * day,
+        v2: now - 30 * day,
+        v1: now - 34 * day,
+        agc6: now + 8 * day + hour
+      },
+      daos: { meridian: '0xc8c322384903ee8f11f511b71d0504237886bcde', solace: '0xe2f001c33fca00ad672f2a79abbcd567803178ee', harbor: '0x506b251c4cefd8a679955e7d17c8968b3d994693' },
+      addressLink: { href: 'https://etherscan.io/address/0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

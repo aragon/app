@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace proposals</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="proposals" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposals</x-import>
+            <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS">New proposal</x-import>
+          </header>
+          <div class="flex flex-col gap-2 md:gap-3">
+            <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="all">
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All proposals"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="meridian" label="Meridian DAO · Meridian Token Voting"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="atlas" label="Atlas Grants Council · Grants Council Multisig"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{people.lena}}" tag="Atlas Grants Council" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-7" title="Adopt the Meridian Constitution v2" summary="Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures." status="PENDING" date="{{dates.mgp7}}" publisher="{{people.nadia}}" tag="Meridian DAO" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-5" title="Grant: Wallet accessibility audit" summary="Commission an accessibility audit of the five most-used governance wallets (18,500 USDC)." status="ACTIVE" date="{{dates.agc5}}" publisher="{{people.tomas}}" tag="Atlas Grants Council" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-8" title="Fund the Q1 2027 Ecosystem Grants Program" summary="Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027." status="ACTIVE" date="{{dates.mgp8}}" publisher="{{people.lena}}" tag="Meridian DAO" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-4" title="Add a sixth council seat for research" summary="Expand the council with a research seat to improve technical review of grant applications." status="EXECUTABLE" date="{{dates.agc4}}" publisher="{{people.nadia}}" tag="Atlas Grants Council" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-6" title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" summary="Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook." status="EXECUTABLE" date="{{dates.mgp6}}" publisher="{{people.kofi}}" tag="Meridian DAO" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-5" title="Signal: Expand the delegate compensation framework" summary="Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget." status="ACCEPTED" date="{{dates.mgp5}}" publisher="{{people.sofia}}" tag="Meridian DAO" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-4" title="Reduce proposal threshold to 25,000 MRD" summary="Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation." status="REJECTED" date="{{dates.mgp4}}" publisher="{{people.anon}}" tag="Meridian DAO" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-3" title="Grant: Hackathon prize pool for Q4" summary="Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks." status="REJECTED" date="{{dates.agc3}}" publisher="{{people.chen}}" tag="Atlas Grants Council" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-2" title="Grant: Governance analytics dashboard" summary="Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC)." status="EXPIRED" date="{{dates.agc2}}" publisher="{{people.sofia}}" tag="Atlas Grants Council" href="#"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </div>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All accounts</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">14</x-import>
+                <p class="stat-card__label">Total proposals</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">2</x-import>
+                <p class="stat-card__label">Accounts</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">in<span class="stat-card__suffix">23 ago</span></x-import>
+                <p class="stat-card__label">Most recent</p>
+              </div>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2519}}'>
+// Workspace proposals, every account (apps/app: modules/workspace/pages/workspaceProposalsPage, components
+// workspaceProposalList (PluginFilterComponent tabs) + workspaceProposalListDefault.tsx (rows tagged with the DAO name,
+// page size 10), aside workspaceProposalsAsideCard/workspaceAllProposalsAsideCard.tsx). Proposals: both mock DAOs of
+// design/baseline-check/data.cjs, newest first; 14 in all, the first page of 10 shown.
+// "Most recent" reads "in / 23 ago" in the app: the card splits the relative date ("in 23 hours") at its first space
+// and puts the second word into "{unit} ago". Drawn as the screenshot shows it.
+// The list items are written out one by one at the start of the line (see Proposals.dc.html).
+class Component extends DCLogic {
+  renderVals() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    const person = (address, name) => ({ address, name, link: '#' });
+    return {
+      yes: true, no: false, count: 14, pageSize: 10,
+      dates: {
+        agc6: now + 8 * day + hour,
+        mgp7: now + 6 * day + hour,
+        agc5: now + 6 * day + hour,
+        mgp8: now + 3 * day + hour,
+        agc4: now + 4 * day + hour,
+        mgp6: now - 1 * day - hour,
+        mgp5: now - 6 * day - hour,
+        mgp4: now - 13 * day - hour,
+        agc3: now - 13 * day - hour,
+        agc2: now - 23 * day - hour
+      },
+      people: {
+        lena: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth'),
+        nadia: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth'),
+        kofi: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth'),
+        sofia: person('0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth'),
+        tomas: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth'),
+        chen: person('0x8a25faabbd80f71248328cf3a5867d3168210a46', 'chenwei.eth'),
+        anon: person('0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', undefined)
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

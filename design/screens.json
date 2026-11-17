@@ -1,0 +1,388 @@
+{
+    "referenceTime": "2026-11-16T18:00:00Z",
+    "appAssets": {
+        "assets/net_bg.svg": "apps/app/src/assets/images/net_bg.svg"
+    },
+    "screens": [
+        {
+            "artboard": "Main.dc.html",
+            "route": "/",
+            "reference": "explore.webp",
+            "mobileReference": "mobile-explore.webp"
+        },
+        {
+            "artboard": "Dashboard.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/dashboard",
+            "reference": "dao-dashboard.webp",
+            "mobileReference": "mobile-dao-dashboard.webp"
+        },
+        {
+            "artboard": "Proposals.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals",
+            "reference": "dao-proposals.webp"
+        },
+        {
+            "artboard": "Proposal.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-8",
+            "reference": "dao-proposal-mgp-8-active.webp",
+            "knownDifferences": [
+                "Proposal body: the app renders the headings of the description as plain text; the kit's DocumentParser styles them. Open question for engineering (see README, Known gaps)."
+            ]
+        },
+        {
+            "artboard": "Assets.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/assets",
+            "reference": "dao-assets.webp"
+        },
+        {
+            "artboard": "Transactions.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/transactions",
+            "reference": "dao-transactions.webp"
+        },
+        {
+            "artboard": "MsAssets.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/assets",
+            "reference": "ms-assets.webp"
+        },
+        {
+            "artboard": "Settings.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/settings",
+            "reference": "dao-settings.webp"
+        },
+        {
+            "artboard": "SettingsProcess.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/settings/mgp",
+            "reference": "dao-settings-process-mgp.webp"
+        },
+        {
+            "artboard": "NotFound.dc.html",
+            "reference": "not-found-404.webp"
+        },
+        {
+            "artboard": "DaoNotFound.dc.html",
+            "reference": "dao-not-found.webp"
+        },
+        {
+            "artboard": "ProposalMGP7.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-7",
+            "reference": "dao-proposal-mgp-7-pending.webp"
+        },
+        {
+            "artboard": "ProposalMGP6.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-6",
+            "reference": "dao-proposal-mgp-6-executable.webp"
+        },
+        {
+            "artboard": "ProposalMGP5.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-5",
+            "reference": "dao-proposal-mgp-5-accepted.webp"
+        },
+        {
+            "artboard": "ProposalMGP4.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-4",
+            "reference": "dao-proposal-mgp-4-rejected.webp"
+        },
+        {
+            "artboard": "ProposalMGP3.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-3",
+            "reference": "dao-proposal-mgp-3-executed.webp"
+        },
+        {
+            "artboard": "ProposalMGP2.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/proposals/MGP-2",
+            "reference": "dao-proposal-mgp-2-executed.webp"
+        },
+        {
+            "artboard": "Members.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/members",
+            "reference": "dao-members.webp"
+        },
+        {
+            "artboard": "Member.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/",
+            "reference": "dao-member-detail.webp"
+        },
+        {
+            "artboard": "Permissions.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/permissions",
+            "reference": "dao-permissions.webp"
+        },
+        {
+            "artboard": "PermissionsWithDaoGrants.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/permissions",
+            "reference": "dao-permissions-including-dao-grants.webp"
+        },
+        {
+            "artboard": "PermissionsGraph.dc.html",
+            "route": "/dao/ethereum-mainnet/meridian.dao.eth/permissions",
+            "reference": "dao-permissions-graph.webp"
+        },
+        {
+            "artboard": "CreateDaoStep1.dc.html",
+            "route": "/create/dao",
+            "reference": "create-dao-step1-chain.webp"
+        },
+        {
+            "artboard": "CreateDaoStep2.dc.html",
+            "route": "/create/dao",
+            "reference": "create-dao-step2-describe-empty.webp"
+        },
+        {
+            "artboard": "CreateDaoStep2Filled.dc.html",
+            "route": "/create/dao",
+            "reference": "create-dao-step2-describe-filled.webp"
+        },
+        {
+            "artboard": "CreateWorkspaceStep1.dc.html",
+            "route": "/create/workspace",
+            "reference": "create-workspace-step1-empty.webp"
+        },
+        {
+            "artboard": "CreateWorkspaceStep1Filled.dc.html",
+            "route": "/create/workspace",
+            "reference": "create-workspace-step1-filled.webp"
+        },
+        {
+            "artboard": "CreateWorkspaceStep2.dc.html",
+            "route": "/create/workspace",
+            "reference": "create-workspace-step2.webp"
+        },
+        {
+            "artboard": "CreateWorkspaceStep3.dc.html",
+            "route": "/create/workspace",
+            "reference": "create-workspace-step3.webp"
+        },
+        {
+            "artboard": "WorkspaceOverview.dc.html",
+            "reference": "workspace-all-overview.webp"
+        },
+        {
+            "artboard": "WorkspaceTodos.dc.html",
+            "reference": "workspace-all-todos.webp"
+        },
+        {
+            "artboard": "WorkspaceProposals.dc.html",
+            "reference": "workspace-all-proposals.webp"
+        },
+        {
+            "artboard": "WorkspaceMembers.dc.html",
+            "reference": "workspace-all-members.webp"
+        },
+        {
+            "artboard": "WorkspaceAssets.dc.html",
+            "reference": "workspace-all-assets.webp"
+        },
+        {
+            "artboard": "WorkspaceTransactions.dc.html",
+            "reference": "workspace-all-transactions.webp"
+        },
+        {
+            "artboard": "WorkspaceEdit.dc.html",
+            "reference": "workspace-edit.webp"
+        },
+        {
+            "artboard": "MsProposalAGC5.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-5",
+            "reference": "ms-proposal-agc-5-active.webp"
+        },
+        {
+            "artboard": "MsProposalAGC6.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-6",
+            "reference": "ms-proposal-agc-6-pending.webp"
+        },
+        {
+            "artboard": "MsProposalAGC4.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-4",
+            "reference": "ms-proposal-agc-4-executable.webp"
+        },
+        {
+            "artboard": "MsProposalAGC3.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-3",
+            "reference": "ms-proposal-agc-3-rejected.webp"
+        },
+        {
+            "artboard": "MsProposalAGC2.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-2",
+            "reference": "ms-proposal-agc-2-expired.webp"
+        },
+        {
+            "artboard": "MsProposalAGC1.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals/AGC-1",
+            "reference": "ms-proposal-agc-1-executed.webp"
+        },
+        {
+            "artboard": "MsDashboard.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/dashboard",
+            "reference": "ms-dashboard.webp"
+        },
+        {
+            "artboard": "MsProposals.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/proposals",
+            "reference": "ms-proposals.webp"
+        },
+        {
+            "artboard": "MsMembers.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/members",
+            "reference": "ms-members.webp"
+        },
+        {
+            "artboard": "MsMember.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/members/0x826e7eb63d237333d9063dc74e7ce8e222b0fc05",
+            "reference": "ms-member-detail.webp"
+        },
+        {
+            "artboard": "MsTransactions.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/transactions",
+            "reference": "ms-transactions.webp"
+        },
+        {
+            "artboard": "MsPermissions.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/permissions",
+            "reference": "ms-permissions.webp"
+        },
+        {
+            "artboard": "MsPermissionsWithDaoGrants.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/permissions",
+            "reference": "ms-permissions-including-dao-grants.webp"
+        },
+        {
+            "artboard": "MsPermissionsGraph.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/permissions",
+            "reference": "ms-permissions-graph.webp"
+        },
+        {
+            "artboard": "MsSettings.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/settings",
+            "reference": "ms-settings.webp"
+        },
+        {
+            "artboard": "MsSettingsProcess.dc.html",
+            "route": "/dao/ethereum-mainnet/atlas-grants.dao.eth/settings/agc",
+            "reference": "ms-settings-process-agc.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountOverview.dc.html",
+            "reference": "workspace-account-overview.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountTodos.dc.html",
+            "reference": "workspace-account-todos.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountProposals.dc.html",
+            "reference": "workspace-account-proposals.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountMembers.dc.html",
+            "reference": "workspace-account-members.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountAssets.dc.html",
+            "reference": "workspace-account-assets.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountTransactions.dc.html",
+            "reference": "workspace-account-transactions.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountPermissions.dc.html",
+            "reference": "workspace-account-permissions.webp"
+        },
+        {
+            "artboard": "WorkspaceAccountSettings.dc.html",
+            "reference": "workspace-account-settings.webp"
+        },
+        {
+            "artboard": "ConnectedDashboard.dc.html",
+            "reference": "connected-dao-dashboard.webp"
+        },
+        {
+            "artboard": "ConnectedMemberSelf.dc.html",
+            "reference": "connected-dao-member-detail-self.webp"
+        },
+        {
+            "artboard": "ConnectedProposalNotVoted.dc.html",
+            "reference": "connected-dao-proposal-mgp-8-not-voted.webp"
+        },
+        {
+            "artboard": "ConnectedProposalVoteOptions.dc.html",
+            "reference": "connected-dao-proposal-vote-options.webp"
+        },
+        {
+            "artboard": "ConnectedProposalVoteYes.dc.html",
+            "reference": "connected-dao-proposal-vote-yes-selected.webp"
+        },
+        {
+            "artboard": "ConnectedWorkspaceOverview.dc.html",
+            "reference": "connected-workspace-all-overview.webp"
+        },
+        {
+            "artboard": "ConnectedWorkspaceTodos.dc.html",
+            "reference": "connected-workspace-all-todos.webp"
+        },
+        {
+            "artboard": "ConnectedWorkspaceAccountTodos.dc.html",
+            "reference": "connected-workspace-account-todos.webp"
+        },
+        {
+            "artboard": "CreateExecute.dc.html",
+            "reference": "create-execute-step1.webp"
+        },
+        {
+            "artboard": "CreateExecuteActionMenu.dc.html",
+            "reference": "create-execute-action-menu.webp"
+        },
+        {
+            "artboard": "CreateExecuteTransferFilled.dc.html",
+            "reference": "create-execute-transfer-filled.webp"
+        },
+        {
+            "artboard": "CreateProcessStep1.dc.html",
+            "reference": "create-process-step1-empty.webp"
+        },
+        {
+            "artboard": "CreateProcessStep1Filled.dc.html",
+            "reference": "create-process-step1-filled.webp"
+        },
+        {
+            "artboard": "CreateProcessStep2.dc.html",
+            "reference": "create-process-step2-governance-design.webp"
+        },
+        {
+            "artboard": "CreateProposalStep1.dc.html",
+            "reference": "create-proposal-step1-empty.webp"
+        },
+        {
+            "artboard": "CreateProposalStep1Filled.dc.html",
+            "reference": "create-proposal-step1-filled.webp"
+        },
+        {
+            "artboard": "CreateProposalStep2.dc.html",
+            "reference": "create-proposal-step2-actions.webp"
+        },
+        {
+            "artboard": "CreateProposalStep2ActionMenu.dc.html",
+            "reference": "create-proposal-step2-action-menu.webp"
+        },
+        {
+            "artboard": "CreateProposalStep2Transfer.dc.html",
+            "reference": "create-proposal-step2-transfer-empty.webp"
+        },
+        {
+            "artboard": "CreateProposalStep2TransferFilled.dc.html",
+            "reference": "create-proposal-step2-transfer-filled.webp"
+        },
+        {
+            "artboard": "CreateProposalStep2NextMenu.dc.html",
+            "reference": "create-proposal-step2-next-menu.webp"
+        },
+        {
+            "artboard": "CreateProposalStep3.dc.html",
+            "reference": "create-proposal-step3-settings.webp"
+        },
+        {
+            "artboard": "MsCreateProposalStep1.dc.html",
+            "reference": "ms-create-proposal-step1-empty.webp"
+        }
+    ]
+}

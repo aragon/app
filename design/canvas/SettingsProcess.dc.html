@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Governance process</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="settings" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Meridian Token Voting</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>8</p></div>
+                    <p class="page-stat__label">Proposals</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>{{lastValue}}</p><p>{{lastUnit}}</p></div>
+                    <p class="page-stat__label">Last proposal</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance process</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{openBodies}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="mgp">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="body-info">
+                      <div class="body-info__row">
+                        <p class="body-info__name">Meridian Token Voting</p>
+                        <p class="body-info__address">0xa147…8fda</p>
+                      </div>
+                      <p class="body-info__subtitle">TokenVoting v1.3</p>
+                    </div>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" description="Token Voting v1.3" link="{{pluginLink}}" children="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="October 2025"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Token" description="Meridian (MRD)" link="{{tokenLink}}" children="0xc6cf3058f8fd5eb7074109b3b531364a4af59dae"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Members" link="{{membersLink}}" children="12 delegates"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Supply" children="50,000,000 (MRD)"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Support threshold" children="&gt; 50%"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Minimum participation" children="≥ 15.00%"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Minimum duration" children="5 days 0 hours 0 minutes"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Early execution">
+                        <x-import component-from-global-scope="GovUiKit.Tag" label="Enabled" variant="primary" class-name="max-w-fit"></x-import>
+                      </x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Vote change">
+                        <x-import component-from-global-scope="GovUiKit.Tag" label="Disabled" variant="neutral" class-name="max-w-fit"></x-import>
+                      </x-import>
+                    </x-import>
+                  </x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section" id="proposal-creation-eligibility">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal creation eligibility</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Card">
+                <div class="eligibility-list">
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Name" children="Meridian Token Voting"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposal creation" children="≥100K MRD"></x-import>
+                  </x-import>
+                </div>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Authorized actions</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardEmptyState" is-stacked="{{no}}" heading="Unrestricted execution" description="This process has permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract." object-illustration="{{settingsIllustration}}"></x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              </div>
+              <div class="process-details">
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin name" children="Meridian Token Voting"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Process key" children="MGP"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" description="Token Voting v1.3" link="{{pluginLink}}" children="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="October 2025"></x-import>
+                </x-import>
+                <div class="process-details__uninstall">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md">Uninstall process</x-import>
+                  <p class="process-details__info">Proposals of this type can't be executed once this process is uninstalled.</p>
+                </div>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Governance process details (apps/app: modules/settings/pages/daoProcessDetailsPage/daoProcessDetailsPageClient.tsx).
+// Governance process: createProcessForm GovernanceBodyField (readOnly, open accordion) with GovernanceBodyInfo in the
+// header and the token plugin's TokenProcessBodyField; eligibility: PermissionsDefinitionList; actions:
+// The app gives ItemContent open-state flex/gap classes the kit stylesheet lacks; with one child they change nothing, so
+// they are left out. DaoProcessAllowedActions (no condition = unrestricted empty state); aside: DaoProcessDetailsInfo.
+// Mock data: design/baseline-check/data.cjs (Meridian DAO, plugin MGP).
+class Component extends DCLogic {
+  renderVals() {
+    const day = 24 * 60 * 60 * 1000;
+    // The last proposal is two days old (stat "2 days ago", formatted like the app: value + unit suffix).
+    const rel = GovUiKit.formatterUtils.formatDate(Date.now() - 2 * day, { format: GovUiKit.DateFormat.RELATIVE }) || '';
+    const [lastValue, unit] = rel.split(' ');
+    return {
+      yes: true,
+      no: false,
+      two: 2,
+      lastValue,
+      lastUnit: unit ? unit + ' ago' : '',
+      openBodies: ['mgp'],
+      breadcrumbs: [{ href: 'Settings.dc.html', label: 'Settings' }, { label: 'MGP' }],
+      pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isExternal: true, isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x45bb30f18a31d380003fb757d247a11ddae38c7ca421a7fb18abc972ff7fc412' },
+      tokenLink: { href: 'https://etherscan.io/token/0xc6cf3058f8fd5eb7074109b3b531364a4af59dae', isOnchainEntity: true },
+      membersLink: { href: '#', isExternal: false },
+      settingsIllustration: { object: 'SETTINGS' }
+    };
+  }
+}
+</script>
+</body>
+</html>

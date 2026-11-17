@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace to-dos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="todos" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">To-dos</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Connect a wallet to see your to-dos" description="To-dos are what your wallet can vote on or sign right now across the accounts of this workspace." object-illustration="{{walletIllustration}}" is-stacked="{{no}}" primary-button="{{connectButton}}"></x-import>
+        </main>
+
+        <aside class="page-aside"></aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Workspace to-dos, every account (apps/app: modules/workspace/pages/workspaceTodosPage/workspaceTodosPageClient.tsx,
+// components/workspaceTodoList). The wallet is disconnected, so the list shows useWorkspaceTodoListData's connect state
+// and the aside (workspaceTodosAsideCard) renders nothing; the empty aside keeps the main column at its width.
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true, no: false,
+      walletIllustration: { object: 'WALLET' },
+      connectButton: { label: 'Connect wallet', iconLeft: 'BLOCKCHAIN_WALLET' }
+    };
+  }
+}
+</script>
+</body>
+</html>

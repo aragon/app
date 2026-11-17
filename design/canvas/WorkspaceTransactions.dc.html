@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace transactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="transactions" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="all">
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="executions" label="Executions"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="deposits" label="Deposits"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="withdrawals" label="Withdrawals"></x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-0"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 14, 2026 at 18:18</p></div><span class="ws-summary__value">250K USDC</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-1"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 12, 2026 at 18:18</p></div><span class="ws-summary__value">500K USDC</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-2"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>proposal</span></div><p class="ws-summary__description">October 21, 2026 at 18:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-3"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 15, 2026 at 18:18</p></div><span class="ws-summary__value">40K USDC</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-4"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 9, 2026 at 18:18</p></div><span class="ws-summary__value">180K USDC</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-5"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>proposal</span></div><p class="ws-summary__description">October 9, 2026 at 06:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-6"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 2, 2026 at 18:18</p></div><span class="ws-summary__value">75 ETH</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-7"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 17, 2026 at 18:18</p></div><span class="ws-summary__value">1.1M MRD</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-8"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 7, 2026 at 18:18</p></div><span class="ws-summary__value">120K DAI</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-9"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">September 5, 2026 at 18:18</p></div><span class="ws-summary__value">42K DAI</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-10"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">August 20, 2026 at 18:18</p></div><span class="ws-summary__value">152.5 WETH</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-11"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">July 19, 2026 at 18:18</p></div><span class="ws-summary__value">273.42K DAI</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-12"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">June 19, 2026 at 18:18</p></div><span class="ws-summary__value">25.32 ETH</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-13"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">May 20, 2026 at 18:18</p></div><span class="ws-summary__value">1.78M USDC</span></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-14"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">March 21, 2026 at 18:18</p></div><span class="ws-summary__value">343.27 ETH</span></div></x-import></x-import>
+</x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All transactions</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">15</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{lastActivity}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1733}}'>
+// Workspace transactions, every account (apps/app: modules/workspace/pages/workspaceTransactionsPage, components
+// workspaceTransactionList (type filters, Accordion.Container around the DataList.Container) +
+// workspaceTransactionListItem.tsx (Accordion.Item; header = workspaceListItemSummary.tsx: AvatarIcon, title, date,
+// short amount or status tag), aside workspaceTransactionsAsideCard/workspaceAllTransactionsAsideCard.tsx).
+// Rows: both mock DAOs of design/baseline-check/data.cjs, newest first; dates copied from the screenshot.
+// Collapsed rows only (the screenshot opens none), so no Accordion.ItemContent is drawn.
+// The list items are written out one per line at the start of the line (see Proposals.dc.html).
+class Component extends DCLogic {
+  renderVals() {
+    const day = 24 * 3600000;
+    return {
+      yes: true, no: false, count: 15, pageSize: 20,
+      mdSize: { md: 'md' },
+      lastActivity: GovUiKit.formatterUtils.formatDate(Date.now() - 2 * day, { format: GovUiKit.DateFormat.RELATIVE })
+    };
+  }
+}
+</script>
+</body>
+</html>

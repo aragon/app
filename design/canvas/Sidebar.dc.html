@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>DAO sidebar</title>
+<title>DAO navigation</title>
 <script src="./support.js"></script>
 <link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
 <link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
 <script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
 <script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
 </head>
@@ -17,77 +18,112 @@ body{margin:0}
 </style>
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
-<nav aria-label="DAO navigation" style="box-sizing: border-box; width: 256px; min-height: 900px; display: flex; flex-direction: column; gap: 24px; padding: 16px 12px; background: var(--color-neutral-0); border-right: 1px solid var(--color-neutral-100); box-shadow: 8px 0 24px -16px rgba(50,63,75,0.18); font-family: Manrope, sans-serif; color: var(--color-neutral-800);">
-  <div style="display: flex; flex-direction: column; gap: 12px; padding: 8px 16px 0;">
-    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" size="xl"></x-import>
-    <div style="display: flex; min-width: 0; flex-direction: column; gap: 6px; line-height: 1.25;">
-      <p style="margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 20px; color: var(--color-neutral-800);">{{daoName}}</p>
-      <x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xc8c3A1f0E9b2d4C6a8B0e2D4f6A8c0E2b4D6bcde" href="https://etherscan.io" is-external="{{yes}}" copy="{{no}}" class-name="w-full text-base text-neutral-500"></x-import>
+<nav class="app-sidebar" aria-label="DAO navigation">
+  <div class="app-sidebar__header">
+    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="xl"></x-import>
+    <div class="app-sidebar__dao">
+      <p class="app-sidebar__dao-name">{{daoName}}</p>
+      <x-import component-from-global-scope="GovUiKit.AddressOutput" address="{{daoAddress}}" href="{{explorerUrl}}" is-external="{{yes}}" copy="{{no}}" class-name="w-full text-sm text-neutral-500 sm:text-base"></x-import>
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column;">
+  <div class="app-nav-links">
     <sc-for list="{{links}}" as="l" hint-placeholder-count="7">
-      <a href="{{l.href}}" aria-current="{{l.current}}" style="{{l.style}}">
-        <sc-if value="{{l.kitIcon}}" hint-placeholder-val="{{true}}">
-          <x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" style="{{l.iconStyle}}"></x-import>
-        </sc-if>
-        <sc-if value="{{l.permIcon}}" hint-placeholder-val="{{false}}">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style="{{l.iconStyle}} flex-shrink: 0;"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m8 1.125 5.9 1.925v3.96c0 3.382-2.394 6.353-5.9 7.865-3.507-1.512-5.9-4.483-5.9-7.865V3.05z"></path><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m5 7.875 1.95 1.95 4.05-4.05"></path></svg>
-        </sc-if>
-        <span>{{l.label}}</span>
+      <a class="app-nav-link" href="{{l.href}}" aria-current="{{l.current}}">
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>
+        {{l.label}}
       </a>
     </sc-for>
   </div>
 
-  <div style="margin-top: auto; display: flex; flex-direction: column; gap: 16px;">
-    <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full">Connect</x-import>
-    <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px 4px 0; border-top: 1px solid var(--color-neutral-100); font-size: 14px; line-height: 1.25; color: var(--color-neutral-500);">
-      <a href="Main.dc.html" style="display: flex; align-items: center; gap: 8px; align-self: flex-start; color: var(--color-neutral-500); text-decoration: none;">
+  <div class="app-sidebar__footer">
+    <sc-if value="{{disconnected}}">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full">Connect</x-import>
+    </sc-if>
+    <sc-if value="{{connected}}">
+      <button class="app-account" type="button">
+        <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
+        <span class="app-account__text">
+          <span class="app-account__name">{{user.name}}</span>
+          <span class="app-account__address">{{user.short}}</span>
+        </span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="md" class-name="shrink-0 text-neutral-400"></x-import>
+      </button>
+    </sc-if>
+    <div class="app-sidebar__meta">
+      <a class="app-sidebar__governed" href="Main.dc.html">
         <span style="white-space: nowrap;">Governed on</span>
-        <svg role="img" aria-label="Aragon logo" viewBox="0 0 162 40" fill="none" style="height: 24px; width: auto; color: var(--color-primary-400);"><path clip-rule="evenodd" d="M16.704 2.334 14.66.108c3.08-.407 11.202.115 19.066 5.458.102.738.08 1.474.08 1.474l.206.114c.375.516.807 1.484 1.064 2.683.257 1.196.328 2.567.031 3.873a9.202 9.202 0 0 1-1.428 3.21c-.571.816-1.095 1.277-1.26 1.376l-.053.032c-.971.18-2.312.893-2.857 2.685-1.594.992-4.287 2.08-7.948 2.08-3.245 0-6.549-.94-9.025-2.749-2.462-1.798-4.108-4.452-4.108-7.948 0-2.774 1.243-4.944 2.831-6.547 1.6-1.616 3.79-2.923 5.042-3.352l.31-.106-.018-.016.113-.04ZM30.24 6.697c-.62.693-1.198 1.025-1.363 1.115-3.615-.826-4.918-2.834-4.918-2.834 3.41-.022 6.488.848 8.74 2.321 0 0-1.22-.424-2.46-.602Z" fill="currentColor" fill-rule="evenodd"></path><path d="M13.445 2.713C5.776 4.544 0 11.563 0 20.005 0 30.954 9.254 40 20.67 40c8.524 0 15.62-5.212 19.33-12.185-4.826 1.144-10.569-.821-10.852-5.164l.026-.103c-1.801.917-4.372 1.72-7.614 1.72-3.452 0-7.009-.996-9.718-2.975-2.725-1.99-4.59-4.979-4.59-8.897 0-3.159 1.425-5.61 3.171-7.374h.001c.815-.815 1.868-1.592 2.836-2.195l.185-.114Z" fill="currentColor"></path><path d="M7.44 12.396c0-3.097 1.395-5.504 3.117-7.242.996-.996 2.361-1.94 3.483-2.571-1.122.63-2.487 1.575-3.483 2.571C8.835 6.892 7.44 9.3 7.44 12.396ZM33.95 18.469c.352.144.567.334.68.453.271.287.95 1.15.136 2.514 1.694-.287 4.34-2.011 4.54-6.392.133-2.912-1.39-5.037-3.398-6.617.121.366.228.756.316 1.164.283 1.32.372 2.869.028 4.38a10.377 10.377 0 0 1-1.611 3.622 9.425 9.425 0 0 1-.692.876ZM115.27 10.263c2.928 0 4.768.828 6.511 2.313l-1.888 2.265c-1.307-1.12-2.614-1.802-4.744-1.802-3.098 0-5.495 2.728-5.495 5.99l.002.204c.066 3.428 2.349 5.934 5.759 5.934 1.622 0 3.05-.512 4.091-1.291V20.71l2.88-2.63v7.16c-1.694 1.436-4.066 2.654-7.068 2.654-5.301 0-8.786-3.799-8.786-8.767l.001-.204c.078-4.705 3.661-8.66 8.737-8.66Zm19.169 0c5.203 0 8.834 3.97 8.834 8.767l-.001.202c-.078 4.706-3.734 8.662-8.882 8.662-5.204 0-8.834-3.97-8.834-8.767l.001-.202c.078-4.706 3.734-8.662 8.882-8.662Zm-75.034.17 7.455 17.169h-3.03l-5.853-13.589-5.81 13.589h-2.976l7.455-17.169h2.76Zm38.398 0 7.455 17.169h-3.031l-5.852-13.589-5.81 13.589H87.59l7.455-17.169h2.759Zm51.442.122 9.076 11.787V10.555h2.929v17.047h-2.493l-9.343-12.128v12.128h-2.929V10.555h2.76ZM134.39 13.04c-3.364 0-5.712 2.679-5.712 5.99l.001.195c.069 3.246 2.421 5.894 5.76 5.894 3.364 0 5.712-2.679 5.712-5.99l-.002-.195c-.068-3.246-2.42-5.894-5.759-5.894ZM78.017 10.263c2.135 0 3.808.644 4.9 1.733.897.965 1.406 2.228 1.406 3.738v.142c-.036 2.73-1.627 4.395-3.873 5.108l-.153.047 4.584 6.56H81.34l-4.171-6.04h-2.19l1.537-2.699h1.283c2.086 0 3.43-1.063 3.49-2.775l.002-.12v-.116c-.03-1.839-1.311-2.806-3.516-2.806h-4.341v5.357h-.003v3.864l.003-.002v5.337h-2.983V10.263h7.567Z" fill="currentColor"></path></svg>
+        <dc-import name="AragonLogo" size="sm" hint-size="97px,24px"></dc-import>
       </a>
-      <div style="display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px;">
-        <a href="https://aragon.org" style="color: var(--color-neutral-500); text-decoration: none;">Support</a>
-        <a href="https://aragon.org" style="color: var(--color-neutral-500); text-decoration: none;">Privacy</a>
-        <a href="https://aragon.org" style="color: var(--color-neutral-500); text-decoration: none;">Terms of Service</a>
+      <div class="app-sidebar__links">
+        <a href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+        <a href="https://aragon.org/privacy-policy">Privacy</a>
+        <a href="https://aragon.org/terms-and-conditions">Terms of Service</a>
       </div>
-      <div style="display: flex; min-width: 0; align-items: center; gap: 8px;">
-        <p style="margin: 0; font-size: 12px;">© 2026 Aragon</p>
-        <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary"></x-import>
+      <div class="app-sidebar__copyright">
+        <p>© 2026 Aragon</p>
+        <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary" class-name="shrink-0"></x-import>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="app-topbar app-topbar--with-sidebar" aria-label="DAO navigation">
+  <div class="app-container app-topbar__inner">
+    <div class="app-topbar__row">
+      <button class="app-topbar__home" type="button" aria-label="Open DAO navigation">
+        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="lg"></x-import>
+        <p class="app-topbar__home-name">{{daoName}}</p>
+      </button>
+      <div class="app-topbar__actions">
+        <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}"></x-import>
+        <button class="app-topbar__trigger" type="button" aria-label="Open menu">
+          <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="MENU" size="lg"></x-import>
+        </button>
       </div>
     </div>
   </div>
 </nav>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"daoName":{"editor":null,"default":"Meridian DAO"},"$preview":{"width":256,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","nadia","jonas"],"default":""},"dao":{"editor":"enum","options":["meridian","atlas"],"default":"meridian"},"$preview":{"width":1024,"height":900}}'>
+// The DAO navigation of the app: the sidebar (from the lg breakpoint) and the top bar that replaces it below lg.
+// Prop `wallet` (nadia | jonas | absent = disconnected): footer shows the account row of navigationSidebarAccount.tsx, the top bar's Wallet the user.
+// Mirrors navigationDao.tsx, navigationSidebar.tsx, navigationLinksItem.tsx and footerSidebar.tsx in apps/app.
 class Component extends DCLogic {
   renderVals() {
-    const active = this.props.active ?? 'dashboard';
-    const base = 'display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 12px; font-size: 16px; line-height: 1.25; font-weight: 400; text-decoration: none; white-space: nowrap;';
-    const mk = (id, label, icon, href) => {
-      const on = id === active;
-      return {
-        label, icon, href,
-        kitIcon: true,
-        permIcon: false,
-        current: on ? 'page' : undefined,
-        style: base + (on ? ' background: #f5f7fa; color: #323f4b;' : ' color: #616e7c;'),
-        iconStyle: on ? 'color: #323f4b;' : 'color: #9aa5b1;'
-      };
+    const wallets = {
+      nadia: { address: '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', name: 'nadia.eth', short: '0x9CB2…D98A' },
+      jonas: { address: '0x6Dd753D9eBC280a364354dBf6603D3f2A279a65C', name: 'jonas-b.eth', short: '0x6Dd7…a65C' }
     };
+    const user = wallets[this.props.wallet];
+    const active = this.props.active ?? 'dashboard';
+    // The two mock DAOs (design/baseline-check/data.cjs): token voting (Meridian) and multisig (Atlas Grants Council).
+    const daos = {
+      meridian: { name: 'Meridian DAO', address: '0xc8c322384903ee8f11f511b71d0504237886bcde', avatar: 'assets/mock/avatar/meridian.svg' },
+      atlas: { name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', avatar: 'assets/mock/avatar/atlas.svg' }
+    };
+    const dao = daos[this.props.dao ?? 'meridian'] ?? daos.meridian;
+    const link = (id, label, icon, href) => ({
+      label, icon, href,
+      current: id === active ? 'page' : undefined,
+      iconClass: id === active ? 'text-neutral-800' : 'text-neutral-300'
+    });
     return {
+      user, connected: user != null, disconnected: user == null,
       yes: true, no: false,
-      daoName: this.props.daoName ?? 'Meridian DAO',
+      daoName: dao.name,
+      daoAddress: dao.address,
+      daoAvatar: dao.avatar,
+      explorerUrl: 'https://etherscan.io/address/' + dao.address,
       links: [
-        mk('dashboard', 'Dashboard', 'APP_DASHBOARD', 'Dashboard.dc.html'),
-        mk('proposals', 'Proposals', 'APP_PROPOSALS', 'Proposals.dc.html'),
-        mk('transactions', 'Transactions', 'APP_TRANSACTIONS', 'Transactions.dc.html'),
-        mk('assets', 'Assets', 'APP_ASSETS', 'Assets.dc.html'),
-        mk('members', 'Members', 'APP_MEMBERS', 'Members.dc.html'),
-        mk('permissions', 'Permissions', 'APP_PERMISSIONS', 'Permissions.dc.html'),
-        mk('settings', 'Settings', 'SETTINGS', 'Settings.dc.html')
+        link('dashboard', 'Dashboard', 'APP_DASHBOARD', 'Dashboard.dc.html'),
+        link('proposals', 'Proposals', 'APP_PROPOSALS', 'Proposals.dc.html'),
+        link('transactions', 'Transactions', 'APP_TRANSACTIONS', 'Transactions.dc.html'),
+        link('assets', 'Assets', 'APP_ASSETS', 'Assets.dc.html'),
+        link('members', 'Members', 'APP_MEMBERS', 'Members.dc.html'),
+        link('permissions', 'Permissions', 'APP_PERMISSIONS', 'Permissions.dc.html'),
+        link('settings', 'Settings', 'SETTINGS', 'Settings.dc.html')
       ]
     };
   }

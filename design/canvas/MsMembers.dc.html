@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MsMembers</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="members" dao="atlas" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" class-name="min-w-0" href="#"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Grants Council Multisig</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <p class="page-aside__text">Five elected council members approve grant disbursements. Three approvals are required to execute.</p>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" description="Multisig v1.3" link="{{pluginLink}}" children="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="March 2026"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="#">View governance process</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// DAO members of the multisig DAO (apps/app: modules/governance/pages/daoMembersPage; the multisig plugin registers no
+// member list or member panel slot, so the default list and the plugin-info aside card render).
+// The list items are written out one by one at the start of the line (the kit's pagination counts direct children).
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      count: 5,
+      pageSize: 5,
+      pluginLink: { href: 'https://etherscan.io/address/0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x145a7ae04cba403de6e76cd3eb13de56deb884cdfb97af3e9de4f224aa7952c3' }
+    };
+  }
+}
+</script>
+</body>
+</html>

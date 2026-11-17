@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MsTransactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" active="transactions" dao="atlas" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <div class="flex flex-col items-start gap-2 md:gap-3">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="all">
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="received" label="Deposits"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="sent" label="Withdrawals"></x-import>
+              </x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="500000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-11-12T18:18:00" hash="0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="WITHDRAW" token-amount="40000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-15T18:18:00" hash="0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="120000" token-symbol="DAI" chain-id="{{chainId}}" date="2026-09-07T18:18:00" hash="0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="25.32" token-symbol="ETH" chain-id="{{chainId}}" date="2026-06-19T18:18:00" hash="0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" target="_blank"></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Atlas Grants Council</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council.</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">4</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{lastActivity}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/apply" is-external="{{yes}}" show-url="{{yes}}">Apply for a grant</x-import>
+            </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// DAO transactions (apps/app: modules/finance/pages/daoTransactionsPage, list: components/transactionList, aside:
+// components/daoFilterAsideCard + daoInfoAside with the linkedAccount feature flag on). Mock data:
+// design/baseline-check/data.cjs (Atlas Grants Council txs). The list items are written out one by one at the start of the line,
+// not looped or indented: the kit's pagination counts the list's direct children (see Proposals.dc.html).
+// Transaction dates are absolute ("November 14, 2026 at 18:18"), so they are fixed local times copied from the reference.
+// "Last activity" is relative to now in the app (DateFormat.RELATIVE of the latest transaction), so it is an offset
+// from now: it reads "4 days ago" like the reference on any day.
+class Component extends DCLogic {
+  renderVals() {
+    const day = 24 * 3600000;
+    const kit = window.GovUiKit;
+    const lastActivity = kit.formatterUtils.formatDate(Date.now() - 4 * day, { format: kit.DateFormat.RELATIVE }) ?? '-';
+    return {
+      yes: true,
+      no: false,
+      one: 1,
+      two: 2,
+      chainId: 1,
+      count: 4,
+      pageSize: 20,
+      lastActivity,
+      addressLink: { href: 'https://etherscan.io/address/0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace assets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="assets" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Assets</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="USD Coin" symbol="USDC" amount="2265220.70" fiat-price="1.00" hide-value="{{no}}" logo-src="assets/mock/token/usdc.svg" href="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Ether" symbol="ETH" amount="443.594" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/eth.svg" href="https://etherscan.io/token/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Meridian" symbol="MRD" amount="1100000" fiat-price="0.84" hide-value="{{no}}" logo-src="assets/mock/token/mrd.svg" href="https://etherscan.io/token/0xc6cf3058f8fd5eb7074109b3b531364a4af59dae" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Wrapped Ether" symbol="WETH" amount="152.5" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/weth.svg" href="https://etherscan.io/token/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Dai Stablecoin" symbol="DAI" amount="351420.18" fiat-price="0.9998" hide-value="{{no}}" logo-src="assets/mock/token/dai.svg" href="https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f" target="_blank"></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All assets</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">$5.42M</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">5</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Workspace assets, every account (apps/app: modules/workspace/pages/workspaceAssetsPage, components workspaceAssetList and
+// workspaceAssetsAsideCard/workspaceAllAssetsAsideCard.tsx; StatCard as in Assets.dc.html). Amounts are the sums of both
+// mock DAOs in design/baseline-check/data.cjs (Meridian DAO + Atlas Grants Council), same prices.
+// The list items are written out one by one at the start of the line, not looped or indented: the kit's pagination
+// counts the list's direct children (see Proposals.dc.html).
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, count: 5, pageSize: 20 };
+  }
+}
+</script>
+</body>
+</html>

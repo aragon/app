@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal: actions, action menu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+/* ActionComposer (apps/app: modules/governance/components/actionComposer/actionComposer.tsx): its md:flex-row layout and the
+   autocomplete menu (shared/components/forms/autocompleteInput) as classes; the kit stylesheet does not ship them. */
+.ac-stack{display:flex;flex-direction:column;row-gap:40px}
+.ac-row{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+.ac-buttons{display:flex;flex-direction:row;width:100%;column-gap:12px}
+.ac-end{display:flex;flex-direction:row;flex-shrink:0;align-items:center;justify-content:flex-end;column-gap:12px}
+.ac-input{position:relative}
+.ac-menu{position:absolute;top:100%;left:0;width:100%;z-index:10;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;overflow:hidden;padding-top:4px;padding-bottom:48px;border:1px solid var(--color-primary-400);border-top:0;border-radius:0 0 12px 12px;background:var(--color-neutral-0);box-shadow:var(--shadow-primary-lg)}
+.ac-menu__list{display:flex;flex-direction:column;gap:12px;padding:0 12px}
+.ac-group{display:flex;flex-direction:column}
+.ac-group__head{display:flex;flex-direction:row;align-items:center;gap:12px;padding:8px 12px;font-size:16px;line-height:1.25}
+.ac-group__head p{margin:0}
+.ac-group__name{flex-shrink:0;color:var(--color-neutral-800)}
+.ac-group__info{flex-shrink:0;font-size:14px;color:var(--color-neutral-500)}
+.ac-group__head hr{height:1px;width:100%;margin:0;border:0;background:var(--color-neutral-100)}
+.ac-group__head hr.ac-short{width:20px}
+.ac-item{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;padding:8px 12px;border-radius:8px;font-size:16px;line-height:1.25;color:var(--color-neutral-500)}
+.ac-item p{margin:0;font-size:16px;line-height:24px}
+.ac-input .ac-open{border-color:var(--color-primary-400)!important;border-bottom-width:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;box-shadow:var(--shadow-primary-lg)}
+.ac-item__name{display:flex;flex-direction:row;align-items:center;gap:16px;min-width:0;color:var(--color-neutral-500)}
+.ac-item__icon{color:var(--color-neutral-300);display:flex}
+.ac-item__info{margin-right:28px;font-size:14px}
+.ac-menu__footer{position:absolute;bottom:0;left:0;width:100%;box-sizing:border-box;display:flex;flex-direction:row;justify-content:space-between;padding:16px 24px;font-size:16px;line-height:1.25;backdrop-filter:blur(12px)}
+.ac-menu__footer p{margin:0;color:var(--color-neutral-500)}
+.ac-menu__keys{display:flex;flex-direction:row;align-items:center;gap:4px}
+.ac-key{display:flex;align-items:center;justify-content:center;box-sizing:border-box;height:18px;width:20px;border:1px solid var(--color-neutral-100);border-radius:6px;background:var(--color-neutral-0);font-size:12px;line-height:1.25;color:var(--color-neutral-800)}
+/* AssetInput (modules/finance/components/assetInput): the amount <input> */
+.ai-input{width:100%;height:100%;box-sizing:border-box;padding:12px 16px;border:0;border-radius:12px;outline:0;background:transparent;font:inherit;font-size:16px;line-height:1.25;color:inherit;caret-color:var(--color-neutral-500);appearance:textfield}
+.ai-input::placeholder{color:var(--color-neutral-500)}
+.ai-wrap{align-items:center;padding-left:6px;padding-right:16px}
+.ai-amount{margin:0;font-size:16px;line-height:1.25}
+.ai-max{display:flex;align-items:center;align-self:flex-end;padding-right:16px}
+.ai-max button{display:flex;gap:4px;padding:0;border:0;background:none;font:inherit;font-size:16px;line-height:24px;color:var(--color-primary-400);cursor:pointer}
+.ai-max span{color:var(--color-neutral-500)}
+.ai-token{display:flex;align-items:center;column-gap:6px}
+.ta-form{display:flex;width:100%;flex-direction:column}
+.ta-form--gap{row-gap:24px}
+
+/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
+.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
+.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
+            <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
+          </div>
+          <div class="ac-stack">
+            <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{zero}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
+            </x-import>
+      <div class="ac-input">
+        <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="" on-change="{{noop}}" wrapper-class-name="ac-open"></x-import>
+        <div class="ac-menu">
+          <div class="ac-menu__list">
+            <div class="ac-group">
+              <div class="ac-item"><span class="ac-item__name"><span class="ac-item__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS"></x-import></span><p>Add contract address</p></span></div>
+              <div class="ac-item"><span class="ac-item__name"><span class="ac-item__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_TRANSACTIONS"></x-import></span><p>Transfer</p></span></div>
+            </div>
+            <div class="ac-group">
+              <div class="ac-group__head"><p class="ac-group__name">DAO</p><hr><p class="ac-group__info">0xc8c3…bcde</p><hr class="ac-short"></div>
+              <div class="ac-item"><span class="ac-item__name"><span class="ac-item__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS"></x-import></span><p>Set metadata</p></span><span class="ac-item__info">0xee57e36f</span></div>
+            </div>
+            <div class="ac-group">
+              <div class="ac-group__head"><p class="ac-group__name">Meridian</p><hr><p class="ac-group__info">0xc6cf…9dae</p><hr class="ac-short"></div>
+              <div class="ac-item"><span class="ac-item__name"><span class="ac-item__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS"></x-import></span><p>Mint</p></span><span class="ac-item__info">0x40c10f19</span></div>
+            </div>
+          </div>
+          <div class="ac-menu__footer">
+            <div class="ac-menu__keys"><div class="ac-key">↑</div><div class="ac-key">↓</div><p>Select</p></div>
+            <div class="ac-menu__keys"><p>Add action</p><div class="ac-key">↵</div></div>
+          </div>
+        </div>
+      </div>
+          </div>
+        </div>
+        <dc-import name="WizardActions" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Create proposal, step 2, the "Action" autocomplete menu open (drawn as markup: the app renders it in a floating portal). (apps/app: createProposalPageClientSteps.tsx (step 2), components/createProposalForm/createProposalFormActions, governance/components/actionComposer, proposalActionsEditList).
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, d128: 128, d480: 480, noop: () => {}, };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace overview</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WorkspaceSidebar" active="overview" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Meridian Ecosystem</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Treasury and governance of Meridian DAO and the Atlas Grants Council in one place.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>2</p></div>
+                    <p class="page-stat__label">Accounts</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>0</p></div>
+                    <p class="page-stat__label">Targets</p>
+                  </div>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="ws-section__heading">
+                <div class="page-section__header">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">To-dos</x-import>
+                </div>
+                <p class="ws-section__description">Across every account in Meridian Ecosystem. To-dos belong to your wallet; the workspace only filters them.</p>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Connect a wallet to see your to-dos" description="To-dos are what your wallet can vote on or sign right now across the accounts of this workspace." object-illustration="{{walletIllustration}}" is-stacked="{{no}}" primary-button="{{connectButton}}"></x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="ws-section__heading">
+                <div class="page-section__header">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Accounts</x-import>
+                </div>
+              </div>
+              <div class="ws-account-list">
+                <sc-for list="{{accounts}}" as="a" hint-placeholder-count="2">
+                  <x-import component-from-global-scope="GovUiKit.DataList.Item" href="{{a.href}}" class-name="flex items-center gap-3 p-4 md:p-6">
+                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" size="md" class-name="shrink-0"></x-import>
+                    <div class="ws-account-item__text">
+                      <span class="ws-account-item__name">{{a.name}}</span>
+                      <span class="ws-account-item__meta">{{a.meta}}</span>
+                    </div>
+                    <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
+                  </x-import>
+                </sc-for>
+              </div>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Resources</x-import>
+              </div>
+              <div class="aside-links">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":904}}'>
+// Workspace overview, every account (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx,
+// components workspaceTodoPreview (disconnected wallet: useWorkspaceTodoListData's connect state), workspaceAccountItem,
+// workspaceAccountAvatar; layout LayoutWorkspace = WorkspaceSidebar.dc.html). Workspace: the "Meridian Ecosystem" seed of
+// design/baseline-check/lib.cjs (no avatar, so initials; DAO accounts are drawn with initials too, as in the app).
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true, no: false, two: 2,
+      walletIllustration: { object: 'WALLET' },
+      connectButton: { label: 'Connect wallet', iconLeft: 'BLOCKCHAIN_WALLET' },
+      accounts: [
+        { name: 'Meridian DAO', meta: 'Ethereum · 0xC8C3…BCde', href: '#' },
+        { name: 'Atlas Grants Council', meta: 'Ethereum · 0x3115…d368', href: '#' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

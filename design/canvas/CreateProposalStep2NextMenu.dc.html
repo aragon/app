@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal: next menu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+/* ActionComposer (apps/app: modules/governance/components/actionComposer/actionComposer.tsx): its md:flex-row layout and the
+   autocomplete menu (shared/components/forms/autocompleteInput) as classes; the kit stylesheet does not ship them. */
+.ac-stack{display:flex;flex-direction:column;row-gap:40px}
+.ac-row{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:12px}
+.ac-buttons{display:flex;flex-direction:row;width:100%;column-gap:12px}
+.ac-end{display:flex;flex-direction:row;flex-shrink:0;align-items:center;justify-content:flex-end;column-gap:12px}
+.ac-input{position:relative}
+.ac-menu{position:absolute;top:100%;left:0;width:100%;z-index:10;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;overflow:hidden;padding-top:4px;padding-bottom:48px;border:1px solid var(--color-primary-400);border-top:0;border-radius:0 0 12px 12px;background:var(--color-neutral-0);box-shadow:var(--shadow-primary-lg)}
+.ac-menu__list{display:flex;flex-direction:column;gap:12px;padding:0 12px}
+.ac-group{display:flex;flex-direction:column}
+.ac-group__head{display:flex;flex-direction:row;align-items:center;gap:12px;padding:8px 12px;font-size:16px;line-height:1.25}
+.ac-group__head p{margin:0}
+.ac-group__name{flex-shrink:0;color:var(--color-neutral-800)}
+.ac-group__info{flex-shrink:0;font-size:14px;color:var(--color-neutral-500)}
+.ac-group__head hr{height:1px;width:100%;margin:0;border:0;background:var(--color-neutral-100)}
+.ac-group__head hr.ac-short{width:20px}
+.ac-item{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;padding:8px 12px;border-radius:8px;font-size:16px;line-height:1.25;color:var(--color-neutral-500)}
+.ac-item p{margin:0;font-size:16px;line-height:24px}
+.ac-input .ac-open{border-color:var(--color-primary-400)!important;border-bottom-width:0!important;border-bottom-left-radius:0!important;border-bottom-right-radius:0!important;box-shadow:var(--shadow-primary-lg)}
+.ac-item__name{display:flex;flex-direction:row;align-items:center;gap:16px;min-width:0;color:var(--color-neutral-500)}
+.ac-item__icon{color:var(--color-neutral-300);display:flex}
+.ac-item__info{margin-right:28px;font-size:14px}
+.ac-menu__footer{position:absolute;bottom:0;left:0;width:100%;box-sizing:border-box;display:flex;flex-direction:row;justify-content:space-between;padding:16px 24px;font-size:16px;line-height:1.25;backdrop-filter:blur(12px)}
+.ac-menu__footer p{margin:0;color:var(--color-neutral-500)}
+.ac-menu__keys{display:flex;flex-direction:row;align-items:center;gap:4px}
+.ac-key{display:flex;align-items:center;justify-content:center;box-sizing:border-box;height:18px;width:20px;border:1px solid var(--color-neutral-100);border-radius:6px;background:var(--color-neutral-0);font-size:12px;line-height:1.25;color:var(--color-neutral-800)}
+/* AssetInput (modules/finance/components/assetInput): the amount <input> */
+.ai-input{width:100%;height:100%;box-sizing:border-box;padding:12px 16px;border:0;border-radius:12px;outline:0;background:transparent;font:inherit;font-size:16px;line-height:1.25;color:inherit;caret-color:var(--color-neutral-500);appearance:textfield}
+.ai-input::placeholder{color:var(--color-neutral-500)}
+.ai-wrap{align-items:center;padding-left:6px;padding-right:16px}
+.ai-amount{margin:0;font-size:16px;line-height:1.25}
+.ai-max{display:flex;align-items:center;align-self:flex-end;padding-right:16px}
+.ai-max button{display:flex;gap:4px;padding:0;border:0;background:none;font:inherit;font-size:16px;line-height:24px;color:var(--color-primary-400);cursor:pointer}
+.ai-max span{color:var(--color-neutral-500)}
+.ai-token{display:flex;align-items:center;column-gap:6px}
+.ta-form{display:flex;width:100%;flex-direction:column}
+.ta-form--gap{row-gap:24px}
+
+/* TextAreaRichText: no typography plugin in the kit css, so the editor text is coloured here (the app renders neutral-700); .pw-focus draws focus-within */
+.pw-rich .tiptap p{color:rgb(64,64,64);margin:0}
+.pw-focus div:has(> div > div > .tiptap){border-color:var(--color-primary-400);box-shadow:var(--shadow-primary)}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page" style="height:900px;overflow:hidden">
+  <dc-import name="WizardNav" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <div style="display:flex;flex-direction:column;flex-grow:1;margin-top:-238px">
+  <main class="wizard-main">
+    <form class="wizard-form">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
+            <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
+          </div>
+          <div class="ac-stack">
+            <x-import component-from-global-scope="PwFormScope"><x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action}}" action-count="{{one}}" action-function-selector="{{selector}}" array-controls="{{arrayControls}}" chain-id="{{one}}" dc-props="{{itemProps}}" edit-mode="{{yes}}" form-prefix="actions.0" index="{{zero}}" value="action-0"></x-import>
+</x-import>
+            </x-import></x-import>
+      <div class="ac-row">
+        <div class="ac-buttons">
+          <x-import component-from-global-scope="GovUiKit.Button" icon-left="PLUS" size="md" variant="primary">Action</x-import>
+          <x-import component-from-global-scope="GovUiKit.Button" icon-right="BLOCKCHAIN_WALLETCONNECT" size="md" variant="secondary">Connect</x-import>
+          <x-import component-from-global-scope="GovUiKit.Button" icon-left="WITHDRAW" size="md" variant="tertiary">Upload</x-import>
+        </div>
+        <div class="ac-end">
+          <x-import component-from-global-scope="GovUiKit.Switch" inline-label="Only show allowed actions" on-checked-changed="{noop}"></x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" class-name="aspect-square w-fit shrink-0" icon-left="DOTS_VERTICAL" size="md" variant="tertiary" aria-label="More"></x-import>
+        </div>
+      </div>
+            <div></div><!-- the composer autocomplete input stays mounted (sr-only): an empty flex child that adds one more 40px gap -->
+          </div>
+        </div>
+        <dc-import name="CreateProposalNext" open="{{yes}}" hint-size="100%,48px"></dc-import>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Create proposal, step 2, "Next" dropdown open (Dropdown.Container open prop). (apps/app: createProposalPageClientSteps.tsx (step 2), components/createProposalForm/createProposalFormActions, governance/components/actionComposer, proposalActionsEditList).
+
+// TransferAssetAction -> TransferAssetForm -> AssetInput + AddressInput (apps/app: modules/finance/components/transferAssetForm,
+// assetInput), built from the same kit parts; the ProposalActions item needs it as a React component.
+// The kit's action item reads the react-hook-form context of the wizard form; the canvas has none, so scope one.
+window.PwFormScope = (props) => { const m = ReactHookForm.useForm(); return React.createElement(ReactHookForm.FormProvider, m, props.children); };
+const TransferForm = (() => {
+  const h = React.createElement, K = GovUiKit;
+  return function TransferForm() {
+    const token = true;
+    const amount = h(K.InputContainer, { id: 'amountInput', label: 'Amount', wrapperClassName: 'ai-wrap' },
+      h(K.Button, { className: 'shrink-0', iconRight: 'CHEVRON_DOWN', size: 'sm', variant: 'tertiary' },
+        token ? h('div', { className: 'ai-token' }, h(K.Avatar, { size: 'xs', src: 'assets/mock/token/usdc.svg' }), h(K.AddressOutput, { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', copy: false, label: 'USDC' })) : 'Select'),
+      h('input', { className: 'ai-input', disabled: !token, placeholder: '0', type: 'number', value: token ? '300000' : '', onChange: () => undefined }),
+      h('p', { className: 'ai-amount' }, token ? '$300.00K' : '$0.00'));
+    const max = token ? h('div', { className: 'ai-max' }, h('button', { type: 'button' }, 'Max ', h('span', null, '1.85M'))) : null;
+    return h('div', { className: 'ta-form' + (token ? '' : ' ta-form--gap') },
+      h('div', { className: 'flex flex-col gap-y-3' }, amount, max),
+      h(K.InputContainer, { id: 'recipientInput', label: 'Recipient', helpText: 'The address to transfer assets to.' },
+        h('div', { style: { marginLeft: 12, flexShrink: 0 } }, h(K.MemberAvatar, { address: '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368', chainId: 1 })),
+        h('textarea', { className: 'size-full rounded-xl bg-transparent py-3 caret-neutral-500 outline-hidden', style: { minHeight: 44, resize: 'none', padding: '12px 12px', font: 'inherit', border: 0, outline: 0, background: 'transparent' }, rows: 1, readOnly: true, value: 'atlas-grants.dao.eth' }),
+        h('div', { style: { marginRight: 8, display: 'flex', gap: 8 } },
+          h(K.Button, { className: 'min-w-max', size: 'sm', variant: 'tertiary' }, '0x…'),
+          h(K.Button, { href: 'https://etherscan.io/address/0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368', iconLeft: 'LINK_EXTERNAL', size: 'sm', target: '_blank', variant: 'tertiary' }),
+          h(K.Clipboard, { copyValue: 'atlas-grants.dao.eth', variant: 'button' }))));
+  };
+})();
+class Component extends DCLogic {
+  renderVals() {
+    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, d128: 128, d480: 480, noop: () => {},
+      expanded: ['action-0'],
+      selector: '0xa9059cbb',
+      action: { type: 'Transfer', from: '0xC8C322384903eE8f11F511b71d0504237886BCde', to: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', value: '0', data: '0xa9059cbb' + '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368'.slice(2).toLowerCase().padStart(64, '0') + (300000000000).toString(16).padStart(64, '0'),
+        inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: '_to', type: 'address', value: '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368' }, { name: '_value', type: 'uint256', value: '300000000000' }] } },
+      arrayControls: { remove: { label: 'Remove', onClick: () => undefined, disabled: false }, moveUp: { label: 'Move up', onClick: () => undefined, disabled: true }, moveDown: { label: 'Move down', onClick: () => undefined, disabled: true } },
+      itemProps: { CustomComponent: TransferForm },
+ };
+  }
+}
+</script>
+</body>
+</html>
