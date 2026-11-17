@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishWorkspaceDialog } from '../dialogs/publishWorkspaceDialog';
+import { WorkspaceAddAccountsDialog } from '../dialogs/workspaceAddAccountsDialog';
 import { WorkspaceEditDetailsDialog } from '../dialogs/workspaceEditDetailsDialog';
 import { WorkspaceSelectAccountDialog } from '../dialogs/workspaceSelectAccountDialog';
 import { WorkspaceDialogId } from './workspaceDialogId';
@@ -8,6 +9,11 @@ export const workspaceDialogsDefinitions: Record<
     WorkspaceDialogId,
     IDialogComponentDefinitions
 > = {
+    // Opened through `useWorkspaceAddAccountsDialog`, which asks for a wallet first: the suggestions are the wallet's.
+    [WorkspaceDialogId.ADD_ACCOUNTS]: {
+        Component: WorkspaceAddAccountsDialog,
+        requiresWallet: true,
+    },
     // Not `requiresWallet`: workspaces are stored locally.
     [WorkspaceDialogId.EDIT_DETAILS]: {
         Component: WorkspaceEditDetailsDialog,

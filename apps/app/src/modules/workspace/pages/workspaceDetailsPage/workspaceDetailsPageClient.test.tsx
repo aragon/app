@@ -18,6 +18,7 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
 import * as useWorkspaceTodoDataModule from '../../hooks/useWorkspaceTodoData';
 import {
     type IWorkspaceDetailsPageClientProps,
@@ -213,7 +214,12 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('links a workspace with no account to its edit wizard to add some', async () => {
+    it('opens the add accounts dialog from a workspace with no account', async () => {
+        const openAddAccounts = jest.fn();
+        jest.spyOn(
+            useWorkspaceAddAccountsDialogModule,
+            'useWorkspaceAddAccountsDialog',
+        ).mockReturnValue(openAddAccounts);
         const workspace = buildWorkspace({ accounts: [] });
         renderWorkspace(workspace);
 
@@ -222,14 +228,12 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
                 /workspaceDetailsPage\.emptyAccounts\.heading$/,
             ),
         ).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', {
+        await userEvent.click(
+            screen.getByRole('button', {
                 name: /workspaceDetailsPage\.emptyAccounts\.action$/,
             }),
-        ).toHaveAttribute(
-            'href',
-            `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
         );
+        expect(openAddAccounts).toHaveBeenCalled();
     });
 
     it('opens DAO creation from a workspace with no account', async () => {

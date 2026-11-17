@@ -13,15 +13,14 @@ import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
-import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspace, WorkspaceAccountType } from '../../api/workspaceService';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceAccountOption,
     useWorkspaceAccountOptions,
 } from '../../hooks/useWorkspaceAccountOptions';
+import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -102,11 +101,7 @@ export const WorkspaceAccountSelector: React.FC<
         [options, workspaceId, section],
     );
 
-    // Exiting the wizard lands back on the page the account was added from.
-    const addAccountUrl = `${workspaceUtils.getWorkspaceEditUrl(
-        workspaceId,
-        WorkspaceWizardStep.ACCOUNTS,
-    )}&${wizardReturnToParam}=${encodeURIComponent(pathname)}`;
+    const handleAddAccounts = useWorkspaceAddAccountsDialog(workspaceId);
 
     // Hidden while nothing is known yet — before the workspace read only the aggregated option exists — then shown
     // even for a workspace holding no account: its Add account item is how one gets added from here.
@@ -251,9 +246,9 @@ export const WorkspaceAccountSelector: React.FC<
                 </Dropdown.Item>
             ))}
             <Dropdown.Item
-                href={addAccountUrl}
                 icon={IconType.PLUS}
                 iconPosition="left"
+                onSelect={handleAddAccounts}
             >
                 {t('app.workspace.workspaceAccountSelector.addAccount')}
             </Dropdown.Item>

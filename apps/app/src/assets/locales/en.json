@@ -5124,6 +5124,17 @@
           "description": "Something went wrong while looking up your accounts. You can still add one by address."
         },
         "scanning": "Scanning {{count}} networks, {{found}} found so far"
+      },
+      "workspaceAddAccountsDialog": {
+        "title": "Add accounts",
+        "description": "Safes and Aragon DAOs your wallet created or belongs to.",
+        "action": {
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts",
+          "createAccount": "Create a new account"
+        },
+        "error": "Unable to add the accounts. Try again."
       }
     }
   }
