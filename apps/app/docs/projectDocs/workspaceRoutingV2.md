@@ -38,6 +38,10 @@ Today every page sits under `/workspace/{workspaceId}/{accountId | all}/{section
 | Account page | `/dao/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/safe/{network}/{address}/members` |
 | Workspace page | `/workspace/{workspaceId}/settings` (the workspace is the subject, so it stays in the path) |
 
+- **Note:** legacy routes (`/`, `/dao/…`, `/safe/…`) must stay unchanged for now, so we must consider prefixing the
+  new routes.
+- The current `/workspace/{workspaceId}/…` routes are removed without redirects. They sit behind the workspace
+  feature flag, which has never been on in production.
 - A page account that is not in the workspace renders normally; the banner offers to add it (as external accounts
   do today).
 
@@ -87,11 +91,9 @@ then writes the resolved params into the URL (`router.replace`).
 ## Open questions
 
 1. **Account type in account URLs.** Keep `/dao/…` and `/safe/…`, or use one `/{network}/{address}/…`?
-   - Keep: existing `/dao/…` links and SEO keep working, and the route picks the layout without a lookup.
+   - Keep: the route picks the layout without a lookup, and mirrors the legacy `/dao/…` shape.
      A `/safe/…` URL with a DAO address must be redirected or rejected.
    - Drop: one route tree. The type comes from `POST /v2/workspaces/query/accounts` (one request per server render,
-     already paid today by `LayoutWorkspaceAccount`); `/dao/…` redirects.
-2. **Existing DAO pages.** `/dao/{network}/{address}/…` is also the current DAO page. Does the workspace layout
-   replace it, or is the layout picked by the workspace feature flag?
-3. **Scope values.** One account, or several (`scope=a,b`)?
-4. **ENS** in account URLs (carried over from v1).
+     already paid today by `LayoutWorkspaceAccount`).
+2. **Scope values.** One account, or several (`scope=a,b`)?
+3. **ENS** in account URLs (carried over from v1).
