@@ -162,6 +162,16 @@ test.describe('First-time workspace experience', () => {
                 debugHeadings.indexOf('Simulation'),
             );
 
+            // Scoped to the debug panel: the workspace selector has a file input of its own (Import workspace).
+            const registryFileInput = page
+                .locator('section')
+                .filter({
+                    has: page.getByRole('heading', {
+                        name: 'Workspace registry',
+                    }),
+                })
+                .locator('input[type="file"]');
+
             const downloadPromise = page.waitForEvent('download');
             await page.getByRole('button', { name: 'Export JSON' }).click();
             const download = await downloadPromise;
@@ -170,7 +180,7 @@ test.describe('First-time workspace experience', () => {
             );
 
             page.once('dialog', (dialog) => dialog.accept());
-            await page.locator('input[type="file"]').setInputFiles({
+            await registryFileInput.setInputFiles({
                 name: 'aragon-workspaces.json',
                 mimeType: 'application/json',
                 buffer: Buffer.from(
@@ -200,7 +210,7 @@ test.describe('First-time workspace experience', () => {
 
             await page.locator('button[class*="bottom-18"]').click();
             page.once('dialog', (dialog) => dialog.accept());
-            await page.locator('input[type="file"]').setInputFiles({
+            await registryFileInput.setInputFiles({
                 name: 'blank-aragon-workspaces.json',
                 mimeType: 'application/json',
                 buffer: Buffer.from('{}'),
