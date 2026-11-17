@@ -134,7 +134,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
         (transaction == null && isTransactionError)
     ) {
         return (
-            <Card className="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+            <Card className="shadow-neutral-sm flex w-full flex-col border border-neutral-100 p-4 md:p-6">
                 <AlertInline
                     message={t(`${translationKey}.loadError`)}
                     variant="critical"
@@ -343,7 +343,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     const actions = renderActions();
 
     return (
-        <Card className="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+        <Card className="shadow-neutral-sm flex w-full flex-col border border-neutral-100 p-4 md:p-6">
             <Tabs.Root
                 className="flex w-full flex-col gap-4 md:gap-6"
                 defaultValue={ProposalVotingTab.BREAKDOWN}

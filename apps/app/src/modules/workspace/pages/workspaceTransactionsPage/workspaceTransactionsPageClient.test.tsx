@@ -6,11 +6,7 @@ import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.
 import * as NextNavigation from 'next/navigation';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
-import {
-    generateDao,
-    generateDialogContext,
-    ReactQueryWrapper,
-} from '@/shared/testUtils';
+import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
@@ -31,7 +27,6 @@ import type {
 } from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountOptionsModule from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAccountsExecutePermissionModule from '../../hooks/useWorkspaceAccountsExecutePermission';
-import * as useWorkspaceDaosModule from '../../hooks/useWorkspaceDaos';
 import {
     type IWorkspaceTransactionsPageClientProps,
     WorkspaceTransactionsPageClient,
@@ -60,13 +55,9 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         useWorkspaceAccountsExecutePermissionModule,
         'useWorkspaceAccountsExecutePermission',
     );
-    const useWorkspaceDaosSpy = jest.spyOn(
-        useWorkspaceDaosModule,
-        'useWorkspaceDaos',
-    );
+    const useParamsSpy = jest.spyOn(NextNavigation, 'useParams');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
-    const useParamsSpy = jest.spyOn(NextNavigation, 'useParams');
 
     const openMock = jest.fn();
     const closeMock = jest.fn();
@@ -202,34 +193,22 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         getWorkspaceSpy.mockResolvedValue(buildWorkspace());
         mockAccountOptions();
         mockExecutePermissions();
-        useWorkspaceDaosSpy.mockReturnValue({
-            daos: {
-                [daoAccount.id]: generateDao({
-                    id: daoAccount.id,
-                    address: daoAddress,
-                    network: daoAccount.network,
-                    ens: null,
-                }),
-            },
-            isPending: false,
-        });
+        useParamsSpy.mockReturnValue({ workspaceId: 'demo' });
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ open: openMock, close: closeMock }),
         );
         useRouterSpy.mockReturnValue({
             push: pushMock,
         } as unknown as AppRouterInstance);
-        useParamsSpy.mockReturnValue({ workspaceId: 'demo' });
     });
 
     afterEach(() => {
         getWorkspaceSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
         useWorkspaceAccountsExecutePermissionSpy.mockReset();
-        useWorkspaceDaosSpy.mockReset();
+        useParamsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useRouterSpy.mockReset();
-        useParamsSpy.mockReset();
         asideCardMock.mockClear();
         listMock.mockClear();
         openMock.mockClear();
@@ -388,17 +367,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('offers no create action while the DAOs of the accounts are still being read', async () => {
-        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: true });
-        mockExecutePermissions({ [daoAccount.id]: true });
-        render(createTestComponent());
-
-        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
-        expect(
-            screen.queryByRole('button', { name: createActionName }),
-        ).not.toBeInTheDocument();
-    });
-
     it('offers no create action under an account scope while the reads are in flight', async () => {
         mockAccountOptions({
             accountId: daoAccount.id,
@@ -451,47 +419,8 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             WorkspaceDialogId.SELECT_ACCOUNT,
         );
         expect(pushMock).toHaveBeenCalledWith(
-            `/dao/${daoAccount.network}/${daoAddress}/create/execute`,
+            `/workspace/demo/${daoAccount.id}/create/execute`,
         );
-    });
-
-    // The permission and the DAO come from different services, so holding the permission is not enough: an account
-    // whose DAO could not be read has no destination and must not be offered.
-    it('does not offer an account the wallet may execute on but whose DAO could not be read', async () => {
-        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
-        mockExecutePermissions({ [daoAccount.id]: true });
-        render(createTestComponent());
-
-        await waitFor(() => expect(lastListProps()?.accounts).toHaveLength(2));
-        expect(
-            screen.queryByRole('button', { name: createActionName }),
-        ).not.toBeInTheDocument();
-    });
-
-    it('disables an account without a destination in the selection it opens', async () => {
-        const otherAddress = '0xB941b1C1D9aDC88C9241aA3ACA59E8B8f0386420';
-        const unreadableAccount: IWorkspaceAccount = {
-            id: `${Network.ETHEREUM_SEPOLIA}-${otherAddress}`,
-            type: WorkspaceAccountType.DAO,
-            address: otherAddress,
-            network: Network.ETHEREUM_SEPOLIA,
-        };
-        getWorkspaceSpy.mockResolvedValue(
-            buildWorkspace({ accounts: [daoAccount, unreadableAccount] }),
-        );
-        mockExecutePermissions({
-            [daoAccount.id]: true,
-            [unreadableAccount.id]: true,
-        });
-        render(createTestComponent());
-
-        await userEvent.click(
-            await screen.findByRole('button', { name: createActionName }),
-        );
-
-        expect(lastDialogParams()?.disabledAccountIds).toEqual([
-            unreadableAccount.id,
-        ]);
     });
 
     // The account is on the path already, so there is nothing to ask and the action is a plain link.
@@ -510,7 +439,7 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
 
         expect(action).toHaveAttribute(
             'href',
-            `/dao/${daoAccount.network}/${daoAddress}/create/execute`,
+            `/workspace/demo/${daoAccount.id}/create/execute`,
         );
         // A link rather than the button the aggregated scope renders, so there is no selection step to open.
         expect(
@@ -634,7 +563,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
             buildWorkspace({ accounts: [safeAccount] }),
         );
         mockAccountOptions({ options: [allAccountsOption] });
-        useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
         mockExecutePermissions({ [safeAccount.id]: true });
         render(createTestComponent());
 

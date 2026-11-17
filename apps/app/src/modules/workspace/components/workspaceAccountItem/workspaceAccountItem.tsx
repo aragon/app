@@ -66,10 +66,10 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
                 type={type}
             />
             <div className="flex min-w-0 grow flex-col">
-                <span className="truncate text-base text-neutral-800 leading-tight">
+                <span className="truncate text-base leading-tight text-neutral-800">
                     {name ?? truncatedAddress}
                 </span>
-                <span className="truncate text-neutral-500 text-sm leading-tight">
+                <span className="truncate text-sm leading-tight text-neutral-500">
                     {name != null
                         ? `${networkName} · ${truncatedAddress}`
                         : networkName}

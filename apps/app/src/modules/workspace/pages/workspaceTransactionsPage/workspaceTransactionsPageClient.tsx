@@ -5,7 +5,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWorkspacePageParams } from '@/shared/types';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
@@ -17,7 +16,6 @@ import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { IWorkspaceSelectAccountDialogParams } from '../../dialogs/workspaceSelectAccountDialog';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAccountsExecutePermission } from '../../hooks/useWorkspaceAccountsExecutePermission';
-import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceTransactionsPageClientProps {
@@ -61,23 +59,21 @@ export const WorkspaceTransactionsPageClient: React.FC<
 
     const selectedAccount = activeOption?.account;
 
-    const { daos, isPending: isDaosPending } =
-        useWorkspaceDaos(accountsToDisplay);
-    const { permissions, isPending: isPermissionsPending } =
+    const { permissions, isPending } =
         useWorkspaceAccountsExecutePermission(accountsToDisplay);
 
-    const isPending = isDaosPending || isPermissionsPending;
-
-    // A DAO account creates its transactions through the direct-execute wizard of the DAO itself; a Safe account has
-    // no page outside the workspace, so its wizard is a workspace route.
     const getCreateTransactionUrl = (account: IWorkspaceAccount) =>
-        account.type === WorkspaceAccountType.SAFE
+        account.type === WorkspaceAccountType.DAO
             ? workspaceUtils.getAccountScopeUrl(
                   workspaceId,
                   account.id,
-                  'create/transaction',
+                  'create/execute',
               )
-            : daoUtils.getDaoUrl(daos[account.id], 'create/execute');
+            : workspaceUtils.getAccountScopeUrl(
+                  workspaceId,
+                  account.id,
+                  'create/transaction',
+              );
 
     const canCreateTransactionFor = (account: IWorkspaceAccount) =>
         permissions[account.id] === true &&

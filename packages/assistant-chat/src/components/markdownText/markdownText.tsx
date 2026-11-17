@@ -53,7 +53,7 @@ const CodeHeader: React.FC<CodeHeaderProps> = ({ language, code }) => {
     };
 
     return (
-        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-neutral-100 border-b-0 bg-neutral-50 px-3.5 py-1.5 text-xs">
+        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-b-0 border-neutral-100 bg-neutral-50 px-3.5 py-1.5 text-xs">
             <span className="font-medium text-neutral-500 lowercase">
                 {language}
             </span>
@@ -91,7 +91,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h1: ({ className, ...props }) => (
         <h1
             className={classNames(
-                'mt-5 mb-2 font-semibold text-xl first:mt-0 last:mb-0',
+                'mt-5 mb-2 text-xl font-semibold first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -100,7 +100,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h2: ({ className, ...props }) => (
         <h2
             className={classNames(
-                'mt-5 mb-2 font-semibold text-lg first:mt-0 last:mb-0',
+                'mt-5 mb-2 text-lg font-semibold first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -109,7 +109,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h3: ({ className, ...props }) => (
         <h3
             className={classNames(
-                'mt-4 mb-1.5 font-semibold text-base first:mt-0 last:mb-0',
+                'mt-4 mb-1.5 text-base font-semibold first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -118,7 +118,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h4: ({ className, ...props }) => (
         <h4
             className={classNames(
-                'mt-3.5 mb-1 font-medium text-base first:mt-0 last:mb-0',
+                'mt-3.5 mb-1 text-base font-medium first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -127,7 +127,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h5: ({ className, ...props }) => (
         <h5
             className={classNames(
-                'mt-3 mb-1 font-semibold text-sm first:mt-0 last:mb-0',
+                'mt-3 mb-1 text-sm font-semibold first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -136,7 +136,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h6: ({ className, ...props }) => (
         <h6
             className={classNames(
-                'mt-3 mb-1 font-medium text-sm first:mt-0 last:mb-0',
+                'mt-3 mb-1 text-sm font-medium first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -154,7 +154,7 @@ const defaultComponents = memoizeMarkdownComponents({
     a: ({ className, ...props }) => (
         <a
             className={classNames(
-                'text-primary-400 underline underline-offset-2 hover:text-primary-500',
+                'text-primary-400 hover:text-primary-500 underline underline-offset-2',
                 className,
             )}
             rel="noreferrer"
@@ -165,7 +165,7 @@ const defaultComponents = memoizeMarkdownComponents({
     blockquote: ({ className, ...props }) => (
         <blockquote
             className={classNames(
-                'my-3 border-neutral-200 border-s-2 ps-4 text-neutral-500',
+                'my-3 border-s-2 border-neutral-200 ps-4 text-neutral-500',
                 className,
             )}
             {...props}
@@ -213,7 +213,7 @@ const defaultComponents = memoizeMarkdownComponents({
     pre: ({ className, ...props }) => (
         <pre
             className={classNames(
-                'overflow-x-auto rounded-t-none rounded-b-xl border border-neutral-100 border-t-0 bg-neutral-50 p-3.5 text-[13px] leading-relaxed',
+                'overflow-x-auto rounded-t-none rounded-b-xl border border-t-0 border-neutral-100 bg-neutral-50 p-3.5 text-[13px] leading-relaxed',
                 className,
             )}
             {...props}

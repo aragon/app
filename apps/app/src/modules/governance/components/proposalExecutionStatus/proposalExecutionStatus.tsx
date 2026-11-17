@@ -93,7 +93,7 @@ export const ProposalExecutionStatus: React.FC<
 
     if (!buttonConfig) {
         return (
-            <p className="text-neutral-500 text-sm leading-normal">
+            <p className="text-sm leading-normal text-neutral-500">
                 {t('app.governance.proposalExecutionStatus.notExecutable')}
             </p>
         );

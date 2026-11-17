@@ -36,14 +36,14 @@ export const CapitalDistributorCampaignListItem: React.FC<
             {...otherProps}
         >
             <div className="flex items-center justify-between gap-12">
-                <div className="flex flex-col gap-1 font-normal leading-tight">
+                <div className="flex flex-col gap-1 leading-tight font-normal">
                     <p className="text-lg text-neutral-800">
                         {campaign.title}{' '}
                         <span className="text-neutral-500">
                             #{campaign.campaignId}
                         </span>
                     </p>
-                    <p className="line-clamp-1 text-neutral-500 text-sm">
+                    <p className="line-clamp-1 text-sm text-neutral-500">
                         {campaign.description}
                     </p>
                 </div>

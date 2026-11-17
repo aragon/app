@@ -94,7 +94,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
     showFallbackAddress,
 }) => (
     <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="min-w-full overflow-hidden text-ellipsis whitespace-nowrap text-base text-neutral-800 leading-tight">
+        <p className="min-w-full overflow-hidden text-base leading-tight text-ellipsis whitespace-nowrap text-neutral-800">
             {item.label}
         </p>
 
@@ -109,7 +109,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
         )}
 
         {showFallbackAddress && (
-            <p className="text-neutral-500 text-sm leading-tight">
+            <p className="text-sm leading-tight text-neutral-500">
                 <AddressOutput address={item.address} />
             </p>
         )}
@@ -131,7 +131,7 @@ const ItemTokenDeltas: React.FC<IItemTokenDeltasProps> = ({ item }) => {
     return (
         <div
             className={classNames(
-                'flex h-full flex-col items-end text-right text-base text-neutral-800 leading-tight',
+                'flex h-full flex-col items-end text-right text-base leading-tight text-neutral-800',
                 sortedTokens.length > 1 ? 'gap-1' : 'gap-0',
             )}
         >
@@ -170,7 +170,7 @@ export const SimulationFlowVisualizationItem: React.FC<
     const showFallbackAddress = addressHref == null && !compact;
 
     return (
-        <div className="w-full rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral-sm">
+        <div className="bg-neutral-0 shadow-neutral-sm w-full rounded-xl border border-neutral-100 p-6">
             <div className="flex items-center gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                     <ItemIcon groupKind={groupKind} item={item} />

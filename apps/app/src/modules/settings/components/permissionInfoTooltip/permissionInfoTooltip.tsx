@@ -29,7 +29,7 @@ export const PermissionInfoTooltip: React.FC<IPermissionInfoTooltipProps> = ({
         <Tooltip content={tooltip} triggerAsChild={true}>
             <span
                 aria-label={`${t(tooltipLabelKey)}: ${tooltip}`}
-                className="inline-flex size-5 shrink-0 cursor-help items-center justify-center text-neutral-400 leading-none"
+                className="inline-flex size-5 shrink-0 cursor-help items-center justify-center leading-none text-neutral-400"
                 role="img"
             >
                 <Icon icon={IconType.INFO} size="sm" />

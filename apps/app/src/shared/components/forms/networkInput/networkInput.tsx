@@ -84,7 +84,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                 customTrigger={
                     <button
                         aria-label={label ?? t('app.shared.networkInput.label')}
-                        className="focus-ring-primary flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 text-left hover:border-neutral-200 focus:outline-hidden"
+                        className="focus-ring-primary bg-neutral-0 flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 px-4 py-3 text-left hover:border-neutral-200 focus:outline-hidden"
                         type="button"
                     >
                         <Avatar
@@ -95,7 +95,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                         />
                         {/* The testnet/beta tag is only rendered on the dropdown items: on the trigger it competes
                          * with the network name for the little width the field has, and truncates it. */}
-                        <span className="grow truncate text-base text-neutral-800 leading-tight">
+                        <span className="grow truncate text-base leading-tight text-neutral-800">
                             {selectedName}
                         </span>
                         <Icon

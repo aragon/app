@@ -9,34 +9,15 @@
     },
     "linter": {
         "rules": {
-            "nursery": {
-                "useSortedClasses": {
-                    "fix": "safe",
-                    "level": "error",
-                    "options": {
-                        "attributes": [
-                            "className"
-                        ],
-                        "functions": [
-                            "classNames",
-                            "clsx",
-                            "cva",
-                            "tw",
-                            "twMerge",
-                            "cn",
-                            "twJoin",
-                            "tv"
-                        ]
-                    }
-                }
-            },
             "performance": {
                 // Component library rendered by any React host, not only Next.
                 "noImgElement": "off"
             },
             "suspicious": {
                 // 25 public components still take refs through forwardRef; migrating them is a separate change.
-                "noReactForwardRef": "off"
+                "noReactForwardRef": "off",
+                // Biome compares nested selectors across separate Tailwind @utility blocks.
+                "noDuplicateSelectors": "off"
             }
         }
     },
@@ -74,6 +55,7 @@
             "linter": {
                 "rules": {
                     "correctness": {
+                        "noComponentHookFactories": "off",
                         "useHookAtTopLevel": "off"
                     },
                     "suspicious": {

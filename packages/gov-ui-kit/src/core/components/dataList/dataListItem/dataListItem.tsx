@@ -28,11 +28,11 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
 
     const actionItemClasses = classNames(
         'w-full rounded-xl px-4 text-left transition-all', // Default all
-        { 'border border-neutral-100 bg-neutral-0 shadow-neutral-sm': variant === 'primary' }, // Default primary
+        { 'bg-neutral-0 shadow-neutral-sm border border-neutral-100': variant === 'primary' }, // Default primary
         { 'bg-transparent': variant === 'select' }, // Default select
         { 'focus-ring-primary cursor-pointer': isInteractiveElement }, // Interactive default state
         {
-            'hover:border-neutral-200 hover:shadow-neutral active:border-neutral-300':
+            'hover:shadow-neutral hover:border-neutral-200 active:border-neutral-300':
                 isInteractiveElement && variant === 'primary',
         }, // Interactive hover state (primary)
         {

@@ -202,7 +202,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 {...qiTokenAddressField}
             />
             <RadioGroup
-                className="md:!flex-row flex gap-4"
+                className="flex gap-4 md:!flex-row"
                 helpText={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.helpText',
                 )}

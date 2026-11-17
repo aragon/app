@@ -362,10 +362,10 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                     </AreaChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute top-3 right-3 text-right">
-                    <span className="block font-semibold text-lg text-neutral-800">
+                    <span className="block text-lg font-semibold text-neutral-800">
                         {activeFeeDisplay}
                     </span>
-                    <span className="block text-neutral-500 text-sm">
+                    <span className="block text-sm text-neutral-500">
                         {activeLabel}
                     </span>
                 </div>

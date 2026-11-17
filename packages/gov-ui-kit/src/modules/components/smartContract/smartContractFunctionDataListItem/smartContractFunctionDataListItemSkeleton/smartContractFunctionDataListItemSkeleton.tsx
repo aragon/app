@@ -20,7 +20,7 @@ export const SmartContractFunctionDataListItemSkeleton: React.FC<ISmartContractF
             className={classNames(
                 'flex w-full flex-col gap-3 py-4',
                 { 'min-h-[67.5px] md:min-h-[88.5px]': !asChild },
-                { '!p-0 min-h-[35.5px] border-none shadow-none md:min-h-[56.5px]': asChild },
+                { 'min-h-[35.5px] border-none !p-0 shadow-none md:min-h-[56.5px]': asChild },
                 className,
             )}
             tabIndex={asChild ? undefined : 0}

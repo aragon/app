@@ -116,7 +116,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
                 className="flex flex-col gap-4"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
-                <p className="font-normal text-base text-neutral-500 leading-normal">
+                <p className="text-base leading-normal font-normal text-neutral-500">
                     {t('app.plugins.lockToVote.lockToVoteLockForm.info', {
                         symbol: token.symbol,
                     })}

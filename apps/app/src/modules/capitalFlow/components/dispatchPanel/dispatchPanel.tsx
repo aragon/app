@@ -73,7 +73,7 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
                             {t('app.capitalFlow.dispatchPanel.routingTitle')}
                         </span>
                     </div>
-                    <p className="pl-9 text-neutral-500 text-sm">
+                    <p className="pl-9 text-sm text-neutral-500">
                         {t('app.capitalFlow.dispatchPanel.routingDescription')}
                     </p>
                 </div>

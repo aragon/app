@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { unstable_rethrow } from 'next/navigation-server';
+import type { ReactNode } from 'react';
 import {
     type ILayoutWizardProps,
     LayoutWizard,
@@ -15,6 +16,14 @@ export interface ILayoutWizardCreateExecuteActionsProps {
      * URL parameters of the create execute actions page.
      */
     params: Promise<IDaoPageParams>;
+    /**
+     * Exit of the wizard and link of its error state. Defaults to the transactions of the DAO.
+     */
+    exitPath?: string;
+    /**
+     * Children of the layout.
+     */
+    children?: ReactNode;
 }
 
 const wizardName: ILayoutWizardProps['name'] =
@@ -23,11 +32,12 @@ const wizardName: ILayoutWizardProps['name'] =
 export const LayoutWizardCreateExecuteActions: React.FC<
     ILayoutWizardCreateExecuteActionsProps
 > = async (props) => {
-    const { params } = props;
+    const { params, exitPath, children } = props;
     const { addressOrEns, network } = await params;
 
     const queryClient = new QueryClient();
-    const transactionsPageUrl = `/dao/${network}/${addressOrEns}/transactions/`;
+    const transactionsPageUrl =
+        exitPath ?? `/dao/${network}/${addressOrEns}/transactions/`;
 
     let dao: IDao;
 
@@ -57,9 +67,11 @@ export const LayoutWizardCreateExecuteActions: React.FC<
         <LayoutWizard
             exitPath={transactionsPageUrl}
             name={wizardName}
+            params={params}
             queryClient={queryClient}
             targetDaoAddress={dao.address}
-            {...props}
-        />
+        >
+            {children}
+        </LayoutWizard>
     );
 };

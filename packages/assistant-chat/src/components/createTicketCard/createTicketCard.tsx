@@ -76,12 +76,12 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 <div className="flex items-center gap-2">
                     <Tag label={result.identifier} variant="primary" />
                     {args.title != null && (
-                        <span className="min-w-0 truncate text-neutral-500 text-sm">
+                        <span className="min-w-0 truncate text-sm text-neutral-500">
                             {args.title}
                         </span>
                     )}
                 </div>
-                <p className="text-neutral-500 text-sm leading-normal">
+                <p className="text-sm leading-normal text-neutral-500">
                     {chatCopy.ticketCard.contactUpdates}
                 </p>
             </div>
@@ -114,7 +114,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         {chatCopy.ticketCard.errorTitle}
                     </Heading>
                 </div>
-                <p className="text-neutral-500 text-sm leading-normal">
+                <p className="text-sm leading-normal text-neutral-500">
                     {chatCopy.ticketCard.errorFallback}
                 </p>
                 <Button
@@ -153,7 +153,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         return (
             <div className={cardClassName}>
                 <div
-                    className="flex items-center gap-2 text-neutral-500 text-sm"
+                    className="flex items-center gap-2 text-sm text-neutral-500"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />
@@ -181,16 +181,16 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 </Heading>
             )}
             {args.description != null && (
-                <p className="whitespace-pre-wrap text-neutral-600 text-sm leading-normal">
+                <p className="text-sm leading-normal whitespace-pre-wrap text-neutral-600">
                     {args.description}
                 </p>
             )}
             {steps.length > 0 && (
                 <div className="flex flex-col gap-1">
-                    <p className="font-semibold text-neutral-800 text-sm leading-normal">
+                    <p className="text-sm leading-normal font-semibold text-neutral-800">
                         {chatCopy.ticketCard.stepsLabel}
                     </p>
-                    <ol className="list-decimal pl-5 text-neutral-600 text-sm leading-normal">
+                    <ol className="list-decimal pl-5 text-sm leading-normal text-neutral-600">
                         {steps.map((step, index) => (
                             // biome-ignore lint/suspicious/noArrayIndexKey: steps are positional and may repeat verbatim
                             <li key={`step-${index}`}>{step}</li>
@@ -202,15 +202,15 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 <>
                     {/* Deterministic invite to enrich the request: the model does not reliably
                         narrate around its tool call, so the card itself carries the nudge. */}
-                    <p className="text-neutral-400 text-xs leading-normal">
+                    <p className="text-xs leading-normal text-neutral-400">
                         {chatCopy.ticketCard.addMore}
                     </p>
                     {args.contact != null && args.contact.length > 0 && (
-                        <p className="text-neutral-400 text-xs leading-normal">
+                        <p className="text-xs leading-normal text-neutral-400">
                             {`${chatCopy.ticketCard.contactPrefix} ${args.contact}`}
                         </p>
                     )}
-                    <div className="flex items-center gap-3 border-neutral-100 border-t pt-3.5">
+                    <div className="flex items-center gap-3 border-t border-neutral-100 pt-3.5">
                         <Button
                             onClick={() =>
                                 respondToApproval({ approved: true })
@@ -238,7 +238,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 </>
             ) : (
                 <div
-                    className="flex items-center gap-2 text-neutral-400 text-xs"
+                    className="flex items-center gap-2 text-xs text-neutral-400"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />

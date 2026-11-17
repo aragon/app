@@ -64,7 +64,7 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                 />
                 <div className="flex items-center gap-4">
                     <div className="h-px flex-1 bg-neutral-100" />
-                    <span className="text-neutral-300 text-sm">
+                    <span className="text-sm text-neutral-300">
                         {t('app.dashboard.dashboardOnboarding.admin.divider')}
                     </span>
                     <div className="h-px flex-1 bg-neutral-100" />
