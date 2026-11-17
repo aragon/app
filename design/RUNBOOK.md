@@ -86,11 +86,16 @@ Never reformat a canvas file. Biome and editors are configured to leave `design/
    - mock values come from `baseline-check/data.cjs`. Dates that a kit component prints relative to now are written as
      offsets from `Date.now()`; absolute dates are fixed text matching the reference;
    - link only to screens that exist; use `#` until the target is drawn;
+   - a kit component cannot be edited on the canvas. To explore a change to one, draw it as markup (kit tokens,
+     smaller kit components) in its place and mark the outermost element `data-stands-in-for="GovUiKit.<Component>"`
+     (e.g. `GovUiKit.ProposalDataListItem.Structure`). Stand-ins exist on exploration branches only: `compare.cjs`
+     fails on any unless run with `--allow-stand-ins`;
    - a new screen gets an entry in `screens.json` → `screens` and its name on a row of `screens.json` → `pages`;
      then `node design/baseline-check/layout-canvas.cjs` places it in `canvas.json`. Set its board's `h` to its
      rendered height at 1440 px.
 3. Check: `node design/baseline-check/compare.cjs` (see its README; it needs the canvas runtime and the kit copy
-   downloaded from the canvas). Every screen must render without errors and match its reference.
+   downloaded from the canvas; on an exploration branch add `--allow-stand-ins`). Every screen must render without
+   errors and match its reference.
 4. Refresh, then commit screens and pointer together.
 
 ## Starting an exploration
@@ -110,7 +115,19 @@ baseline, so restore them (`git checkout <baseline> -- design/canvas/<file>`) be
 ## Handover and after the merge
 
 Before handover: the chosen version sits in the original screen files, variants are deleted, raw values introduced by
-hand edits are replaced by kit tokens where one exists, and `compare.cjs` renders every screen without errors.
+hand edits are replaced by kit tokens where one exists, and `compare.cjs --allow-stand-ins` renders every screen
+without errors.
+
+The pull request that implements the design resolves every stand-in, in this order:
+
+1. Save the design: `node design/baseline-check/render-canvas.cjs <each screen holding a stand-in>` writes the
+   renders to `design/baseline-check/out/canvas/`; copy that folder somewhere outside `out/`.
+2. Change the kit component in `packages/gov-ui-kit` to match, with its `@aragon/gov-ui-kit` changeset.
+3. Re-sync the Governance UI Kit design system from that kit (`packages/gov-ui-kit/design-system/SYNC.md`) and move
+   the canvas to it ("Updating the kit", below).
+4. Replace each stand-in with the real component.
+5. `node design/baseline-check/compare.cjs --against <saved folder>` must pass: the real component renders as the
+   design did. Then plain `compare.cjs` must pass too: no stand-in is left.
 
 After the pull request merged:
 

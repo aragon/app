@@ -76,7 +76,7 @@ node design/baseline-check/capture-pages.cjs [--update] [part of a shot name]   
 node design/baseline-check/capture-wizards.cjs [--update] [createDao|createWorkspace|createProposal|msCreateProposal|execute|createProcess|sppCreateProposal|workspaceExecute]
 node design/baseline-check/capture-dialogs.cjs [--update] [connectDialog|connected|vote|mobileNav]
 node design/baseline-check/render-canvas.cjs [--mobile] [Main.dc.html ...]      # artboards only, no comparison
-node design/baseline-check/compare.cjs [--threshold <percent>]                  # default 1
+node design/baseline-check/compare.cjs [--threshold <percent>] [--allow-stand-ins] [--against <folder>]
 ```
 
 With `--update` a single script copies the screenshots it produced into `design/reference/` (when none failed); it
@@ -93,8 +93,12 @@ what it expects, or when the mock backend received a request it has no route for
 `compare.cjs` reads `design/screens.json`. For each screen it renders the artboard at 1440 px wide (and at 390 px
 when the screen has a `mobileReference`), and prints the reference height, the canvas height and the share of pixels
 that differ by more than 25/255 in a channel. It exits 1 when a height differs, when more than the threshold of
-pixels differ, when a render reports a page error or a missing file, or when a screen uses a class that neither the
-kit stylesheet nor `design/canvas/app.css` defines.
+pixels differ, when a render reports a page error or a missing file, when a screen uses a class that neither the
+kit stylesheet nor `design/canvas/app.css` defines, or when a screen holds a stand-in: markup an exploration drew in
+place of a kit component, marked `data-stands-in-for` (see `RUNBOOK.md`, Editing screens). `--allow-stand-ins` lists
+them without failing, for exploration branches. `--against <folder>` compares with renders that `render-canvas.cjs`
+saved earlier instead of the references: the handover uses it to prove the changed kit component renders as the
+stand-in did.
 
 ### Canvas layout
 

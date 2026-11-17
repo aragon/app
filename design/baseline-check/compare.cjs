@@ -1,11 +1,28 @@
 'use strict';
 // Compares every screen of design/screens.json, rendered from design/canvas, with its reference screenshot.
-// Usage: node compare.cjs [--threshold <percent>]   (default 1)
+// Usage: node compare.cjs [--threshold <percent>] [--allow-stand-ins] [--against <folder>]
+//   --threshold        share of differing pixels that fails a screen, in percent (default 1)
+//   --allow-stand-ins  report stand-ins without failing (exploration branches only, see below)
+//   --against          compare with renders saved by render-canvas.cjs (<artboard>-1440.png, <artboard>-390.png) in
+//                      <folder> instead of design/reference; screens without a saved render are skipped
 // Prints one row per comparison and writes reference | canvas | difference images to out/compare/. Exits 1 when a
-// height differs, more than the threshold of pixels differ, a render has problems, or a screen uses an undefined class.
+// height differs, more than the threshold of pixels differ, a render has problems, a screen uses an undefined class,
+// or a screen holds a stand-in.
+//
+// A stand-in is markup that an exploration draws in place of a kit component it wants to change, marked with
+// data-stands-in-for="GovUiKit.<Component>". It may exist on an exploration branch only: the pull request that
+// implements the design changes the kit component and puts the real one back (RUNBOOK.md, Handover).
 const fs = require('node:fs');
 const path = require('node:path');
-const { CANVAS, REFERENCE, OUT, SCREENS, deps, die, launch } = require('./lib.cjs');
+const {
+    CANVAS,
+    REFERENCE,
+    OUT,
+    SCREENS,
+    deps,
+    die,
+    launch,
+} = require('./lib.cjs');
 const { KIT_DIR, checkInputs, renderArtboard } = require('./render-canvas.cjs');
 
 const CHANNEL_TOLERANCE = 25; // a pixel differs when one of its channels is off by more than this (of 255)
@@ -13,15 +30,20 @@ const CHANNEL_TOLERANCE = 25; // a pixel differs when one of its channels is off
 // Classes used in the screens that neither the kit stylesheet nor the canvas's app.css defines do nothing, silently.
 const undefinedClasses = () => {
     const css =
-        fs.readFileSync(path.join(KIT_DIR, 'components', 'bundle.css'), 'utf8') +
-        fs.readFileSync(path.join(CANVAS, 'app.css'), 'utf8');
+        fs.readFileSync(
+            path.join(KIT_DIR, 'components', 'bundle.css'),
+            'utf8',
+        ) + fs.readFileSync(path.join(CANVAS, 'app.css'), 'utf8');
     const defined = new Set(
         [...css.matchAll(/\.((?:[a-zA-Z0-9_-]|\\.)+)/g)].map((m) =>
             m[1].replace(/\\(.)/g, '$1'),
         ),
     );
     const found = [];
-    for (const file of fs.readdirSync(CANVAS).filter((f) => f.endsWith('.dc.html')).sort()) {
+    for (const file of fs
+        .readdirSync(CANVAS)
+        .filter((f) => f.endsWith('.dc.html'))
+        .sort()) {
         const source = fs.readFileSync(path.join(CANVAS, file), 'utf8');
         const used = new Set();
         for (const m of source.matchAll(
@@ -40,6 +62,20 @@ const undefinedClasses = () => {
     }
     return found;
 };
+
+// Kit components drawn as hand-made markup by an exploration (see the header).
+const standIns = () =>
+    fs
+        .readdirSync(CANVAS)
+        .filter((f) => f.endsWith('.dc.html'))
+        .sort()
+        .flatMap((file) =>
+            [
+                ...fs
+                    .readFileSync(path.join(CANVAS, file), 'utf8')
+                    .matchAll(/data-stands-in-for="([^"]+)"/g),
+            ].map((m) => `${file}: ${m[1]}`),
+        );
 
 const pixels = async (input) => {
     const { data, info } = await deps
@@ -105,23 +141,57 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
 };
 
 (async () => {
+    const usage =
+        'Usage: node compare.cjs [--threshold <percent>] [--allow-stand-ins] [--against <folder>]';
     const args = process.argv.slice(2);
-    const threshold = args.length === 0 ? 1 : Number(args[1]);
-    if (
-        (args.length > 0 && (args.length !== 2 || args[0] !== '--threshold')) ||
-        !(threshold >= 0)
-    ) {
-        die('Usage: node compare.cjs [--threshold <percent>]');
+    let threshold = 1;
+    let allowStandIns = false;
+    let against = null;
+    while (args.length > 0) {
+        const arg = args.shift();
+        if (arg === '--threshold') {
+            threshold = Number(args.shift());
+        } else if (arg === '--allow-stand-ins') {
+            allowStandIns = true;
+        } else if (arg === '--against') {
+            against = path.resolve(args.shift() ?? '');
+        } else {
+            die(usage);
+        }
+    }
+    if (!(threshold >= 0) || (against && !fs.existsSync(against))) {
+        die(usage);
     }
     console.log(checkInputs());
 
     const failures = undefinedClasses().map(
         (line) => `classes that no stylesheet defines, ${line}`,
     );
+    const foundStandIns = standIns();
+    for (const line of foundStandIns) {
+        console.log(`stand-in: ${line}`);
+    }
+    if (!allowStandIns) {
+        failures.push(
+            ...foundStandIns.map(
+                (line) =>
+                    `stand-in left in place of the kit component, ${line}`,
+            ),
+        );
+    }
     const outDir = path.join(OUT, 'compare');
     fs.mkdirSync(outDir, { recursive: true });
     const browser = await launch();
-    const rows = [['artboard', 'reference', 'ref height', 'canvas height', 'differing', '']];
+    const rows = [
+        [
+            'artboard',
+            'reference',
+            'ref height',
+            'canvas height',
+            'differing',
+            '',
+        ],
+    ];
     const notes = [];
     for (const screen of SCREENS.screens) {
         for (const [reference, mobile] of [
@@ -131,13 +201,26 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
             if (!reference) {
                 continue;
             }
-            const referenceFile = path.join(REFERENCE, reference);
-            if (!fs.existsSync(referenceFile)) {
-                failures.push(`${screen.artboard}: design/reference/${reference} does not exist`);
+            const referenceFile = against
+                ? path.join(
+                      against,
+                      `${screen.artboard.replace('.dc.html', '')}-${mobile ? 390 : 1440}.png`,
+                  )
+                : path.join(REFERENCE, reference);
+            if (against && !fs.existsSync(referenceFile)) {
                 continue;
             }
-            const render = await renderArtboard(browser, screen.artboard, { mobile });
-            const referenceHeight = (await deps.sharp(referenceFile).metadata()).height;
+            if (!fs.existsSync(referenceFile)) {
+                failures.push(
+                    `${screen.artboard}: design/reference/${reference} does not exist`,
+                );
+                continue;
+            }
+            const render = await renderArtboard(browser, screen.artboard, {
+                mobile,
+            });
+            const referenceHeight = (await deps.sharp(referenceFile).metadata())
+                .height;
             const differing = await compareImages(
                 referenceFile,
                 render.png,
@@ -147,9 +230,13 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
                 ...render.problems,
                 ...(render.height === referenceHeight
                     ? []
-                    : [`height ${render.height} instead of ${referenceHeight}`]),
+                    : [
+                          `height ${render.height} instead of ${referenceHeight}`,
+                      ]),
                 ...(differing > threshold
-                    ? [`${differing.toFixed(2)}% of pixels differ (threshold ${threshold}%)`]
+                    ? [
+                          `${differing.toFixed(2)}% of pixels differ (threshold ${threshold}%)`,
+                      ]
                     : []),
             ];
             rows.push([
@@ -160,7 +247,11 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
                 `${differing.toFixed(2)}%`,
                 problems.length > 0 ? 'FAIL' : 'ok',
             ]);
-            failures.push(...problems.map((p) => `${screen.artboard} vs ${reference}: ${p}`));
+            failures.push(
+                ...problems.map(
+                    (p) => `${screen.artboard} vs ${reference}: ${p}`,
+                ),
+            );
         }
         notes.push(
             ...(screen.knownDifferences ?? []).map(
@@ -174,14 +265,20 @@ const compareImages = async (referenceFile, canvasPng, outFile) => {
         Math.max(...rows.map((row) => row[column].length)),
     );
     for (const row of rows) {
-        console.log(row.map((cell, column) => cell.padEnd(widths[column])).join('  '));
+        console.log(
+            row.map((cell, column) => cell.padEnd(widths[column])).join('  '),
+        );
     }
     for (const note of notes) {
         console.log(note);
     }
-    console.log(`Side-by-side images (reference | canvas | difference): ${path.relative(process.cwd(), outDir)}/`);
+    console.log(
+        `Side-by-side images (reference | canvas | difference): ${path.relative(process.cwd(), outDir)}/`,
+    );
     if (failures.length > 0) {
-        console.error(`\n${failures.length} failure(s):\n${failures.map((f) => `  - ${f}`).join('\n')}`);
+        console.error(
+            `\n${failures.length} failure(s):\n${failures.map((f) => `  - ${f}`).join('\n')}`,
+        );
         process.exit(1);
     }
 })();
