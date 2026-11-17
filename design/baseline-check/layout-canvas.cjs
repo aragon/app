@@ -76,12 +76,16 @@ for (const page of pages) {
             x += board.w + GAP_X;
             height = Math.max(height, board.h);
         }
-        notes[noteId(page.id, row.title)] = {
+        const id = noteId(page.id, row.title);
+        notes[id] = {
+            // Keys the canvas editor added to the note (its measured width) are kept.
+            ...canvas.notes?.[id],
             x: 0,
             y,
             text: row.title,
             kind: 'title1',
-            maxW: Math.max(x - GAP_X, 1440),
+            // The canvas caps a title's width at 8000 px.
+            maxW: Math.min(Math.max(x - GAP_X, 1440), 8000),
             page: page.id,
         };
         y += TITLE + height + GAP_Y;
