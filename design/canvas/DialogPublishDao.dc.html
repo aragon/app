@@ -19,22 +19,13 @@ body{margin:0}
 </helmet>
 <div class="dlg-stage">
 <dc-import name="CreateDaoStep2Filled" hint-size="1440px,900px"></dc-import>
-<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" >
-  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Publish DAO" description="To publish the DAO, confirm the onchain transaction in your wallet."></x-import>
-  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
-    <div class="tx-dialog__body">
-      <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian Labs" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury and fund public goods." network="Ethereum"></x-import>
-      <dc-import name="TxDialogSteps" with-ipfs="{{yes}}" hint-size="100%,218px"></dc-import>
-    </div>
-  </x-import>
-  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}" ></x-import>
-</x-import>
+<dc-import name="TxFlowDialog" open="{{yes}}" title="Publish DAO" description="To publish the DAO, confirm the onchain transaction in your wallet." steps="{{txSteps}}" submit-label="Publish DAO" summary="{{txSummary}}" hint-size="100%,0px"></dc-import>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, noFocus: (e) => e.preventDefault(), primary: { label: 'Sign transaction' }, secondary: { label: 'Close' } };
+    return { yes: true, txSteps: ['Pin data on IPFS'], txSummary: { type: 'dao', name: 'Meridian Labs', description: 'Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury and fund public goods.', network: 'Ethereum' } };
   }
 }
 </script>

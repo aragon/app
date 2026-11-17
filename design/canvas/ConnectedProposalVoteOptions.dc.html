@@ -57,30 +57,7 @@ body{margin:0}
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACTIVE">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="6215000" total-no="1104000" total-abstain="402000" support-threshold="{{supportThreshold}}" min-participation="{{minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
                     <div style="padding-top: 32px;">
-                      <div class="flex flex-col gap-4">
-                        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm p-6">
-                          <x-import component-from-global-scope="GovUiKit.InputContainer" id="vote-options" label="Do you want to approve this proposal?" use-custom-wrapper="{{yes}}">
-                            <div class="vote-options" role="radiogroup">
-                            <button type="button" role="radio" aria-checked="false" class="vote-toggle shadow-neutral-sm">
-                              <p>Yes<span>, I approve</span></p>
-                              <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="neutral"></x-import>
-                            </button>
-                            <button type="button" role="radio" aria-checked="false" class="vote-toggle shadow-neutral-sm">
-                              <p>Abstain</p>
-                              <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="RADIO" size="sm" variant="neutral"></x-import>
-                            </button>
-                            <button type="button" role="radio" aria-checked="false" class="vote-toggle shadow-neutral-sm">
-                              <p>No<span>, I don’t approve</span></p>
-                              <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CLOSE" size="sm" variant="neutral"></x-import>
-                            </button>
-                            </div>
-                          </x-import>
-                        </x-import>
-                        <div class="flex w-full items-center gap-4">
-                          <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" disabled="{{yes}}">Submit vote</x-import>
-                          <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" href="ConnectedProposalNotVoted.dc.html">Cancel</x-import>
-                        </div>
-                      </div>
+                      <dc-import name="FlowVoteOptions" mode="options" selected="" hint-size="100%,300px"></dc-import>
                     </div>
                   </x-import>
                 </x-import>

@@ -1096,3 +1096,12 @@
 .advanced-date-input__duration { display: flex; flex-direction: column; gap: 16px; padding: 24px; }
 .advanced-date-input__fields { display: flex; flex-direction: row; justify-content: space-between; gap: 16px; }
 .advanced-date-input__fields > * { flex: 0 1 auto; width: 33.3333%; }
+
+/* ---- TxFlowDialog: shared/components/transactionStatus/transactionStatusStep (stateToLabelClassName) ---- */
+.tx-step__label--pending { color: var(--color-primary-400); }
+.tx-step__label--error { color: var(--color-critical-800); }
+.tx-step__label--warning { color: var(--color-warning-800); }
+
+/* ---- FlowVote: plugins/tokenPlugin/components/tokenSubmitVote/components/tokenVotingOptionToggle.tsx (selected neutral / critical) ---- */
+.vote-toggle--on-neutral { border-color: var(--color-primary-300); color: var(--color-neutral-800); }
+.vote-toggle--on-critical { border-color: var(--color-critical-300); color: var(--color-critical-800); }

@@ -25,6 +25,18 @@
     },
     "pages": [
         {
+            "id": "prototypes",
+            "name": "Prototypes",
+            "rows": [
+                {
+                    "title": "Interactive flows (click through in Play)",
+                    "artboards": [
+                        "FlowVote.dc.html"
+                    ]
+                }
+            ]
+        },
+        {
             "id": "dao",
             "name": "DAO pages",
             "rows": [
@@ -306,6 +318,13 @@
                         "PermissionsToolbar.dc.html",
                         "SppPermissionsToolbar.dc.html",
                         "TxDialogSteps.dc.html"
+                    ]
+                },
+                {
+                    "title": "Flow parts",
+                    "artboards": [
+                        "TxFlowDialog.dc.html",
+                        "FlowVoteOptions.dc.html"
                     ]
                 }
             ]
@@ -853,6 +872,13 @@
         {
             "artboard": "WorkspaceCreateExecute.dc.html",
             "reference": "workspace-create-execute-step1.webp"
+        },
+        {
+            "artboard": "FlowVote.dc.html",
+            "reference": "connected-dao-proposal-mgp-8-not-voted.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
         }
     ]
 }
