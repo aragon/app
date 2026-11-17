@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Proposal NSP-6</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="Sidebar" dao="northstar" active="proposals" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="page-container">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}" tag="{{statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Launch the Northstar Ecosystem Grants round 3</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{description}}" immediately-render="{{no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.StageContainer" active-stage="1">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Council approval" status="ACCEPTED" index="{{zero}}" body-list="{{bodies0}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="council.northstar.eth" copy="{{no}}"></x-import> <span style="color: var(--color-success-800);">approved</span></p></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x566805a83e872e67a32d84596b81d16faa7ba6a2"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">Core Team <span style="color: var(--color-success-800);">approved</span></p></x-import>
+</x-import><div style="display:flex;flex-direction:column;gap:8px;"></div></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Community veto" status="ACTIVE" index="{{one}}" body-list="{{bodies1}}" end-date="{{end1}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"><div style="display:flex;flex-direction:column;gap:12px;width:100%;"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">NSP Token Holders <span style="color: var(--color-neutral-500);">veto support</span></p><x-import component-from-global-scope="GovUiKit.Progress" value="78.4" threshold-indicator="50" variant="primary"></x-import><p style="margin: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800);">2.62M <span style="color: var(--color-neutral-500);">of 3.34M NSP</span></p></div></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" label="guardian.northstar.eth" copy="{{no}}"></x-import> <span style="color: var(--color-neutral-500);">not vetoed yet</span></p></x-import>
+</x-import><div style="display:flex;flex-direction:column;gap:8px;"><p style="margin: 0; font-size: 16px; line-height: 24px; text-align: right; color: var(--color-neutral-500);"><span style="color: var(--color-neutral-800);">1 body</span> required to veto</p></div></x-import></x-import>
+</x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{two}}" is-enabled="{{yes}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{two}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action0}}" action-function-selector="0xa9059cbb" chain-id="{{one}}" index="{{zero}}" read-only="{{yes}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action1}}" action-function-selector="0xa9059cbb" chain-id="{{one}}" index="{{one}}" read-only="{{yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="27904762354123389736564897761116485658695661967848084367577258502516091099789"><p class="truncate text-neutral-500">27904762354123389736564897761116485658695661967848084367577258502516091099789</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">NSP-6</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" link="{{creatorLink}}" children="ines-alvarez.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{publishedLink}}" children="November 7, 2026"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi/t/nsp-6" is-external="{{yes}}" show-url="{{yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi/risk/nsp-6" is-external="{{yes}}" show-url="{{yes}}">Risk assessment</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2000}}'>
+// Proposal detail, NSP-6 (active), Northstar Protocol (SPP, two stages). apps/app: modules/governance/pages/daoProposalDetailsPage
+// with the staged voting terminal (plugins/sppPlugin/components/sppVotingTerminal/*). Mock data: design/baseline-check/data-spp.cjs
+// (PROPOSALS, ACTIONS). Safe bodies render through the generic external-body fallback. Generated by gen/gen.py from NSP-8.
+class Component extends DCLogic {
+  renderVals() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: 'Proposals.dc.html' }, { label: 'NSP-6' }],
+      statusTag: { label: 'Active', variant: 'info' },
+      description: "<h2>Summary</h2><p>Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>",
+      end0: undefined,
+      end1: Date.now() + 4 * day,
+      minAdvance: now - 3 * day,
+      maxAdvance: now + 8 * day,
+      bodies0: ["0x515fec2e8f6553948b1d57c14c1243a1405c02e2", "0x566805a83e872e67a32d84596b81d16faa7ba6a2"],
+      bodies1: ["0x65bcf0e7d2a74d45fe702135d19f954d59658f36", "0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e"],
+      safeBrand: { logo: 'assets/safeWallet.png', label: 'Safe{Wallet}' },
+      action0: {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb0000000000000000000000002a7c5259125b1491dc318d1142e9529357dcaaa000000000000000000000000000000000000000000000000000000045d964b800", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x2a7c5259125b1491dc318d1142e9529357dcaaa0"}, {"name": "value", "type": "uint256", "value": "300000000000"}]}},
+      action1: {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x384915d45e1807d6d3875540263d2801b9309e70", "data": "0xa9059cbb0000000000000000000000002a7c5259125b1491dc318d1142e9529357dcaaa0000000000000000000000000000000000000000000013da329b6336471800000", "value": "0", "inputData": {"function": "transfer", "contract": "Northstar", "parameters": [{"name": "to", "type": "address", "value": "0x2a7c5259125b1491dc318d1142e9529357dcaaa0"}, {"name": "value", "type": "uint256", "value": "1500000000000000000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: 'Member.dc.html', isOnchainEntity: true },
+      publishedLink: { href: 'https://etherscan.io/tx/0xe803061fe9de97a0acd202d732cca61bef65a9e9a4d0bc8441eacfbc482f1046' }
+    };
+  }
+}
+</script>
+</body>
+</html>

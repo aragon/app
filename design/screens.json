@@ -1,7 +1,8 @@
 {
     "referenceTime": "2026-11-16T18:00:00Z",
     "appAssets": {
-        "assets/net_bg.svg": "apps/app/src/assets/images/net_bg.svg"
+        "assets/net_bg.svg": "apps/app/src/assets/images/net_bg.svg",
+        "assets/safeWallet.png": "apps/app/src/assets/images/safeWallet.png"
     },
     "screens": [
         {
@@ -380,6 +381,46 @@
         {
             "artboard": "MsCreateProposalStep1.dc.html",
             "reference": "ms-create-proposal-step1-empty.webp"
+        },
+        {
+            "artboard": "SppProposalNSP8.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-8",
+            "reference": "spp-proposal-nsp-8-approval-active.webp"
+        },
+        {
+            "artboard": "SppProposalNSP7.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-7",
+            "reference": "spp-proposal-nsp-7-advanceable.webp"
+        },
+        {
+            "artboard": "SppProposalNSP6.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-6",
+            "reference": "spp-proposal-nsp-6-veto-active.webp"
+        },
+        {
+            "artboard": "SppProposalNSP5.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-5",
+            "reference": "spp-proposal-nsp-5-vetoed.webp"
+        },
+        {
+            "artboard": "SppProposalNSP4.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-4",
+            "reference": "spp-proposal-nsp-4-executable.webp"
+        },
+        {
+            "artboard": "SppProposalNSP3.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-3",
+            "reference": "spp-proposal-nsp-3-expired.webp"
+        },
+        {
+            "artboard": "SppProposalNSP2.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-2",
+            "reference": "spp-proposal-nsp-2-executed.webp"
+        },
+        {
+            "artboard": "SppProposalNSP1.dc.html",
+            "route": "/dao/ethereum-mainnet/northstar.dao.eth/proposals/NSP-1",
+            "reference": "spp-proposal-nsp-1-rejected.webp"
         }
     ]
 }

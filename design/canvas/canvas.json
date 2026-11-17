@@ -777,6 +777,78 @@
       "title": "Create-proposal wizard: MsCreateProposalStep1",
       "expand": "fill",
       "is_interactive": true
+    },
+    "SppProposalNSP8.dc.html": {
+      "x": 0,
+      "y": 37300,
+      "w": 1440,
+      "h": 1799,
+      "title": "Multistage proposal: SppProposalNSP8",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP7.dc.html": {
+      "x": 1520,
+      "y": 37300,
+      "w": 1440,
+      "h": 1683,
+      "title": "Multistage proposal: SppProposalNSP7",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP6.dc.html": {
+      "x": 3040,
+      "y": 37300,
+      "w": 1440,
+      "h": 1801,
+      "title": "Multistage proposal: SppProposalNSP6",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP5.dc.html": {
+      "x": 4560,
+      "y": 37300,
+      "w": 1440,
+      "h": 1351,
+      "title": "Multistage proposal: SppProposalNSP5",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP4.dc.html": {
+      "x": 6080,
+      "y": 37300,
+      "w": 1440,
+      "h": 1641,
+      "title": "Multistage proposal: SppProposalNSP4",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP3.dc.html": {
+      "x": 7600,
+      "y": 37300,
+      "w": 1440,
+      "h": 1375,
+      "title": "Multistage proposal: SppProposalNSP3",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP2.dc.html": {
+      "x": 9120,
+      "y": 37300,
+      "w": 1440,
+      "h": 1379,
+      "title": "Multistage proposal: SppProposalNSP2",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SppProposalNSP1.dc.html": {
+      "x": 10640,
+      "y": 37300,
+      "w": 1440,
+      "h": 1403,
+      "title": "Multistage proposal: SppProposalNSP1",
+      "expand": "fill",
+      "is_interactive": true
     }
   },
   "order": [
@@ -865,7 +937,15 @@
     "CreateProposalStep2TransferFilled.dc.html",
     "CreateProposalStep2NextMenu.dc.html",
     "CreateProposalStep3.dc.html",
-    "MsCreateProposalStep1.dc.html"
+    "MsCreateProposalStep1.dc.html",
+    "SppProposalNSP8.dc.html",
+    "SppProposalNSP7.dc.html",
+    "SppProposalNSP6.dc.html",
+    "SppProposalNSP5.dc.html",
+    "SppProposalNSP4.dc.html",
+    "SppProposalNSP3.dc.html",
+    "SppProposalNSP2.dc.html",
+    "SppProposalNSP1.dc.html"
   ],
   "notes": {
     "screens": {
@@ -979,6 +1059,13 @@
       "text": "Create-proposal wizard",
       "kind": "title1",
       "maxW": 13600
+    },
+    "row-Multistage proposal": {
+      "x": 0,
+      "y": 37020,
+      "text": "Multistage proposal",
+      "kind": "title1",
+      "maxW": 12080
     }
   },
   "designSystems": [
