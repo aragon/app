@@ -8,8 +8,9 @@ diff.
 - The files live here in git, which is the source of truth. People view and edit them on a claude.ai **canvas**, a
   board with one frame per screen. The canvas cannot read from or write to GitHub: a Claude Code session copies files
   in either direction when asked.
-- A design idea is a branch that changes only `design/canvas/`. If it is dropped, delete the branch and nothing else
-  changed. If it is picked, its diff against the baseline is what engineering builds, in the same pull request.
+- A design idea is a branch that changes the screens (`design/canvas/`, plus `screens.json` when it adds a screen)
+  and nothing in the app. If it is dropped, delete the branch and nothing else changed. If it is picked, its diff
+  against the baseline is what engineering builds, adding the app code to the same branch and pull request.
 
 `design/` is not a workspace. Nothing in it is built, deployed or released, and no CI job reads it.
 
@@ -42,13 +43,16 @@ flowchart LR
 
 | Term | Meaning |
 |---|---|
-| Screen | One app page redrawn as a `.dc.html` file; one frame on the canvas |
+| Screen | One app page or state (a wizard step, an open dialog) redrawn as a `.dc.html` file; one frame on the canvas (a "board" or "artboard" in the files) |
+| Shared part | A `.dc.html` file that screens mount, such as the sidebar or the footer. Changing it changes every screen that uses it |
 | Canvas | The claude.ai page where screens are viewed, edited by hand, commented on and shared |
 | Baseline | The screens that mirror the app as it is. Lives on `main` once merged |
 | Exploration | A branch off the baseline, with its own canvas, where a design idea is tried |
 | Sync | Canvas → repo: hand edits made on the canvas are committed to the branch |
 | Refresh | Repo → canvas: the branch's files are published to its canvas |
 | The kit | `@aragon/gov-ui-kit`. Its claude.ai copy is "the design system"; a canvas uses a pinned version of it |
+| Pointer file | `design/canvases/<name>.json`: which canvas belongs to which branch, its last synced version, and its kit pin |
+| Stand-in | Markup an exploration draws in place of a kit component it wants to change (kit components cannot be edited on a canvas) |
 
 ## Who does what
 
@@ -63,16 +67,20 @@ flowchart LR
 
 1. Tell Claude what you want to explore and from which screens ("new exploration: proposals filter, from the Proposals
    screen"). With your OK it creates the branch `exploration/<name>` and a canvas for it.
-2. Change the screens: edit on the canvas yourself (retype text, restyle, move, duplicate a frame to try a variant), or
-   ask Claude in the session or in a canvas comment.
+2. Change the screens: edit on the canvas yourself (retype text, restyle, duplicate a frame to try a variant), or
+   ask Claude in the session or in a canvas comment. A duplicated frame is a new screen file; Claude gives it a row
+   when it syncs. Arranging frames is done in `screens.json` → `pages`: frames moved by hand go back to their rows
+   at the next layout run, unless you ask Claude to keep the new arrangement.
 3. Say "sync" whenever you want the canvas state kept in git. Any earlier state can be restored from git.
-4. When it is ready: keep the chosen version in the original screen file and delete the variants, then sync. The
+4. When it is ready: keep the chosen version in the original screen file and delete the variants, then sync. Claude
+   replaces raw values from hand edits with kit tokens where one exists and checks every screen still renders. The
    branch diff is now the design.
 
 ## Handing a design to engineering
 
 1. The engineer gets the branch name, the exploration's canvas link (shared with them), and
-   `git diff <baseline>...exploration/<name> -- design/canvas`.
+   `git diff <baseline>...exploration/<name> -- design/canvas`, where `<baseline>` is the branch the baseline lives on
+   (`main` once this is merged).
 2. Reading the diff:
    - `<x-import component-from-global-scope="GovUiKit.Button" variant="primary">` is `<Button variant="primary">` from
      the kit; attributes are the props in kebab case.
@@ -82,11 +90,12 @@ flowchart LR
 3. The diff does not show loading, empty or error states, widths that were not drawn, translation keys or behaviour.
    Ask the designer.
 4. Build in `apps/app` on the same branch, or one based on it. One pull request carries the screens and the code. The
-   app needs its changeset as usual; a change to a kit component is a kit change with its own changeset (root
-   `AGENTS.md`, Releases) and is listed in the pull request.
+   app needs its changeset as usual; a change to a kit component is a kit change with its own changeset and a
+   refreshed component registry (root `AGENTS.md`, Releases) and is listed in the pull request.
    If the design changed a kit component, the screens hold stand-ins for it. The same pull request changes the kit
-   component, moves the canvas to the re-synced kit, puts the real component back, and proves it renders as the
-   stand-in did (`compare.cjs --against`). Until then the check fails.
+   component, moves the canvas (and the baseline's kit pin) to the re-synced kit, puts the real component back, and
+   proves it renders as the stand-in did (`compare.cjs --against`). Until then `compare.cjs` fails; it is run by
+   hand today, not in CI.
 5. If the build ends up different from the design, change the screen to match before merging.
 6. Before the merge, the pull request deletes the exploration's pointer file (`design/canvases/<name>.json`), so
    `main` keeps only the baseline's.
@@ -103,7 +112,9 @@ baseline canvas is refreshed from `main`.
 
 ## Rules
 
-- An exploration changes only `design/canvas/` and its own file in `design/canvases/`.
+- An exploration changes only `design/canvas/`, `screens.json` (screens it adds, and their rows) and its own pointer
+  file. It may delete screens it does not need on its canvas, but restores them before handover, or the merge would
+  delete them from the baseline.
 - Reference screenshots change only in a baseline check, never in a feature pull request (binary files cannot be
   merged).
 - Never upload an image to a canvas. Images are files: app-owned ones are listed in `screens.json`, design-only ones
@@ -111,33 +122,37 @@ baseline canvas is refreshed from `main`.
 - A canvas is only refreshed after it has been synced, so hand edits are never overwritten.
 - The kit version of a canvas changes only on purpose, in a commit that says so.
 - Kit components cannot be edited on a canvas. An exploration that changes one draws a marked stand-in in its place
-  (`data-stands-in-for`); the check fails while any stand-in is left, so the pull request that implements the design
-  must change the kit component and put the real one back ([RUNBOOK.md](RUNBOOK.md), Handover).
-- Board positions are not edited by hand in `canvas.json`: a screen goes on a row of `screens.json` → `pages`, and
+  (`data-stands-in-for`); `compare.cjs` fails while any stand-in is left, so the pull request that implements the
+  design must change the kit component and put the real one back ([RUNBOOK.md](RUNBOOK.md), Handover).
+- Frame positions in `canvas.json` come from `screens.json` → `pages`: a screen goes on a row there, and
   `baseline-check/layout-canvas.cjs` places it.
 
 ## Checking the baseline against the app
 
-Owner: the design lead. When: before an exploration starts from a screen, and after a release that changed the UI. Manual for now.
+Owner: the design lead. When: before an exploration starts from a screen, and after a release that changed the UI.
+Manual for now; a Claude session runs it ([RUNBOOK.md](RUNBOOK.md), Checking the baseline).
 
-1. Run the app on mock data and retake the screenshots into a scratch folder ([baseline-check](baseline-check/README.md)).
-2. Compare the new screenshots with the committed ones; with the fixed clock an unchanged app gives byte-identical
-   files, so every file that differs is a change in the app (`compare.cjs` then shows the screen against it). A difference means either the app changed on purpose (update the screen and
-   the reference) or the app is wrong (file a bug; leave both as they are).
-3. Commit the updated references together with the screen fixes.
+1. Run the app on mock data and retake every screenshot ([baseline-check](baseline-check/README.md)).
+2. With the fixed clock, an unchanged app gives byte-identical files on the same machine and browser build, so git
+   shows exactly the screenshots whose page changed.
+3. For each one, the owner decides: the app changed on purpose (keep the new screenshot, update the screen until
+   `compare.cjs` passes) or the app is wrong (file a bug, restore the old screenshot).
+4. Commit the screenshots and the screen fixes together.
 
 ## Status
 
-Every reference screenshot has a screen; `screens.json` lists each one with its app route and reference, and
-`baseline-check/compare.cjs` prints the current numbers. Every screen renders at exactly its reference's height.
+Every reference screenshot has a screen; `screens.json` lists each one with its reference (and its app route where
+the route alone opens it: 64 of 119; wizard steps, dialogs and seeded workspace pages are reached as described in the
+capture scripts), and `baseline-check/compare.cjs` prints the current numbers. Every screen renders at exactly its
+reference's height. Figures as of 17 November 2026:
 
-| Canvas page | Screens | Differing pixels at 1440 px |
+| Canvas page | Screens | Differing pixels (at 1440 px; the phone-only dialog at 390 px) |
 |---|---|---|
-| DAO pages: explore, not-found, and each mock DAO's pages (Meridian, token voting; Atlas Grants Council, multisig; Northstar Protocol, two-stage with Safes; a Safe account) | 42 | 0.0% for most; explore 0.4%; the permissions graphs 0.3–0.6% (a still drawing of an interactive graph) |
+| DAO pages: explore, not-found, and each mock DAO's pages (Meridian, token voting; Atlas Grants Council, multisig; Northstar Protocol, two-stage with Safes; a Safe account) | 42 | 0.0–0.1% for most; explore 0.5%; the permissions graphs 0.3–0.6% (a still drawing of an interactive graph) |
 | Proposals: every proposal state of each DAO, plus voting with a connected wallet | 24 | 0.0% |
 | Wizards: create DAO, proposal (three DAO types), execute, governance process, workspace | 23 | 0.0–0.3% |
 | Workspaces: all accounts, one account, connected, edit | 21 | 0.0–0.1% |
-| Dialogs: wallet, asset picker, mobile navigation, the transaction dialogs | 9 | 0.0–0.5% |
+| Dialogs: wallet, asset picker, mobile navigation, the transaction dialogs | 9 | 0.0% for most; the wallet SDK modal 0.5%; publish DAO 0.9% (the page behind it is scrolled in the screenshot) |
 | Components: the shared parts (sidebars, footer, logo, wizard frame, permission toolbars, transaction steps) | 11 parts | (used by the screens above) |
 
 Mock data, three DAOs and a workspace, is described in [baseline-check/README.md](baseline-check/README.md). A link
@@ -146,18 +161,20 @@ example (all members to the member screen of that DAO).
 
 ## Footprint
 
-- Size: about 10 MB in git, of which 8.6 MB are the 121 reference screenshots (lossless WebP) and 1.6 MB the screens.
+- Size: about 10 MB in git, of which 8.7 MB are the 121 reference screenshots (lossless WebP) and 1.2 MB the canvas
+  (1.0 MB of it the 130 screen and part files).
   A retake changes only the screenshots whose page changed.
 - Code: `baseline-check/` is about 5,900 lines of plain Node scripts, most of it mock data: a mock of the backend API,
   JSON-RPC and the Safe transaction service, the screenshot runs, the canvas comparison, the route coverage check and
   the canvas layout. It mirrors the backend's response shapes by hand, so it needs an update when those change. It
-  declares no dependencies of its own: it uses Playwright, viem and sharp from `apps/app`. Whether it should move next
+  declares no dependencies of its own: it uses Playwright and viem from `apps/app`, and sharp from the copy Next.js
+  ships. Whether it should move next
   to the app's e2e setup (`apps/app/e2e`) is an open question for the app team.
 - CI: none yet. `design/` is in no workspace, Turbo task, path filter or release scope. Biome lints `baseline-check/`
   in the pre-commit hook and skips `canvas/` (written by the canvas editor, kept byte-identical), `reference/` and the
   CMS snapshot.
-- Removing it: delete `design/`, the `design/` lines in `.gitattributes` and `.editorconfig`, and the bullet in the root
-  `AGENTS.md`. Nothing else refers to it.
+- Removing it: delete `design/`, the `design/` lines in `.gitattributes` and `.editorconfig`, and in the root
+  `AGENTS.md` the `design/` bullet and `design` in the list of nested Biome configs. Nothing else refers to it.
 
 ## Folder layout
 
@@ -166,7 +183,7 @@ example (all members to the member screen of that DAO).
 | `canvas/canvas.json` | The board: pages, every frame's position and size, row titles, and the design system in use. Positions are generated from `screens.json` → `pages` |
 | `canvas/*.dc.html` | One file per screen or shared part |
 | `canvas/app.css` | The app's page layout around the kit components, transcribed from `apps/app` |
-| `canvas/assets/` | Images that exist only in designs (mock avatars and token logos) |
+| `canvas/assets/` | Images that exist only in designs (mock avatars and token logos); app-owned images are published from the app (`screens.json` → `appAssets`) |
 | `canvases/*.json` | One file per canvas: its branch, link, last synced version, and the pinned kit version with file hashes |
 | `screens.json` | Screen ↔ app route ↔ reference screenshot, the canvas pages and their rows, the reference time of the mock data, and app-owned images the screens use |
 | `reference/*.webp` | Full-page screenshots of the real app on mock data |
@@ -184,7 +201,7 @@ Related, and not the same thing: `packages/gov-ui-kit/design-system/` (how the k
 - `app.css` is a hand-kept copy of the app's page layout. It is checked against the app by the comparison, not
   generated from it.
 - Inside a page, the app sizes components by the width of the content column; on the canvas the kit sizes them by the
-  window. Screens match at 1440 px and at 390 px; widths in between can differ.
+  window. Screens are checked at 1440 px; three also at 390 px (the only phone screenshots). Other widths can differ.
 - Labels such as "3 days left" are computed by the kit from the viewer's clock. The screens give dates as offsets from
   now, so these labels always read as in the reference; absolute dates are fixed text.
 - Screens are still states: a dialog's transaction steps, an open menu, a vote being cast are each drawn as the one
@@ -205,12 +222,13 @@ Ideas that need this flow to have run for real at least once before they are wor
 - **The design as the gate (TDD for UI).** A pull-request check that captures the app on mock data, renders the screens
   and fails while they differ. A designed change is red until the app matches the screens; an undesigned UI change
   is red until the code is reverted or the screens are updated to match, which shows up as a design diff in review.
-  Needs per-screen tolerances for the few screens that cannot match exactly (still drawings of moving parts), and
-  about 13 minutes of CI per run today (less once only the affected pages are captured).
+  Needs per-screen tolerances for the few screens that cannot match exactly (still drawings of moving parts). It is
+  slow today: starting the app, about 12 minutes of capture, and rendering and comparing the 121 screens took over
+  half an hour together on a 4-core machine; capturing only the affected pages would cut most of it.
 - **Design review by ownership.** A CODEOWNERS entry on `design/canvas/` for the design lead, so a screen change in
   any pull request, including one made to follow the code, needs their approval.
 - **No screenshots in git.** With the check above comparing the app with the screens directly, the reference
-  screenshots stop being needed in the repository: CI keeps them as build artifacts. That removes 8.3 MB now and every
+  screenshots stop being needed in the repository: CI keeps them as build artifacts. That removes 8.7 MB now and every
   future image change (each retake adds the changed images to history).
 - **Automatic refresh.** Refreshing the baseline canvas after a merge to `main`, and the baseline check after a
   release, are manual today; both could run from a GitHub Action.

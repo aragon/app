@@ -50,6 +50,9 @@ Run it when asked, at the start of a session that will touch the canvas, and bef
      (`git merge-file <repo file> <file at that commit> <canvas file>`). On a conflict, stop and show the owner both
      versions. After a clean merge, publish the merged files to the canvas (a refresh).
 6. Set `canvasVersion` to the canvas's version, commit `design/canvas/` and the pointer together, and push.
+7. If boards were moved or added on the canvas, `canvas.json` now holds positions that `screens.json` → `pages` does
+   not: the next `layout-canvas.cjs` run puts them back on their rows. Tell the owner, and if they want to keep the
+   arrangement, change `pages` to match (a new frame, e.g. a duplicated variant, needs a row in any case).
 
 Never reformat a canvas file. Biome and editors are configured to leave `design/canvas/` alone.
 
@@ -67,7 +70,8 @@ Never reformat a canvas file. Biome and editors are configured to leave `design/
      (`baseline-check/render-canvas.cjs` does this for a downloaded copy). On a mismatch, or if the pinned version
      cannot be fetched, stop and report. Do not fall back to the latest version.
    - Remove any other folder under `project/ds/`.
-5. Set `canvasVersion` to the version the publish reports, commit the pointer, and push.
+5. Set `canvasVersion` to the version the publish reports, commit the pointer, and push. On `main`, which takes no
+   direct pushes, the pointer change goes in a pull request; ask the owner to open or approve it.
 
 ## Editing screens
 
@@ -102,7 +106,8 @@ Never reformat a canvas file. Biome and editors are configured to leave `design/
 
 Needs the owner's OK for the branch name.
 
-1. From the baseline branch: `git switch -c exploration/<name>`.
+1. If the screens it starts from have not been checked against the app since the last UI release, run the baseline
+   check first (below). Then, from the baseline branch: `git switch -c exploration/<name>`.
 2. Create a new canvas from the Design type, titled after the exploration. Read its `SKILL.md`.
 3. Add `design/canvases/<name>.json`: `name`, `branch`, the new canvas link, and the `kit` block copied from
    `baseline.json`.
@@ -122,31 +127,37 @@ The pull request that implements the design resolves every stand-in, in this ord
 
 1. Save the design: `node design/baseline-check/render-canvas.cjs <each screen holding a stand-in>` writes the
    renders to `design/baseline-check/out/canvas/`; copy that folder somewhere outside `out/`.
-2. Change the kit component in `packages/gov-ui-kit` to match, with its `@aragon/gov-ui-kit` changeset.
+2. Change the kit component in `packages/gov-ui-kit` to match, with its `@aragon/gov-ui-kit` changeset and a
+   refreshed component registry (root `AGENTS.md`, Releases; CI checks both).
 3. Re-sync the Governance UI Kit design system from that kit (`packages/gov-ui-kit/design-system/SYNC.md`) and move
-   the canvas to it ("Updating the kit", below).
+   the exploration's canvas to it ("Updating the kit", below). Copy the new `kit` block into `baseline.json` as well:
+   the exploration's pointer is deleted before the merge, so the baseline must carry the new pin.
 4. Replace each stand-in with the real component.
 5. `node design/baseline-check/compare.cjs --against <saved folder>` must pass: the real component renders as the
    design did. Then plain `compare.cjs` must pass too: no stand-in is left.
 
+Before the merge, the pull request also deletes `design/canvases/<name>.json`, so `main` keeps only the baseline's
+pointer.
+
 After the pull request merged:
 
-1. On the baseline branch, refresh the baseline canvas.
-2. Delete `design/canvases/<name>.json` (if the pull request did not already) and commit.
-3. Ask the owner whether to delete the exploration's canvas.
-4. Note the screens whose reference screenshots are now out of date for the next baseline check.
+1. On the baseline branch, refresh the baseline canvas (the pointer change goes in a pull request, see Refresh).
+2. Ask the owner whether to delete the exploration's canvas.
+3. Note the screens whose reference screenshots are now out of date for the next baseline check.
+
+When this baseline branch itself is merged, `baseline.json` → `branch` becomes `main` in the same pull request.
 
 ## Checking the baseline against the app
 
 Tooling and commands: [baseline-check/README.md](baseline-check/README.md).
 
-1. Start the mock backend and the app, capture into the scratch output folder.
-2. Compare the new screenshots with `design/reference/`. With the fixed clock and the CMS snapshot, an unchanged app
-   gives identical files; a file that differs is a real change in the app.
-3. For each changed page, show the owner the before and after. They decide:
-   - intended change: update the screen until `compare.cjs` passes against the new screenshot, then retake that
-     reference with `--update`;
-   - app bug: file it; leave reference and screen as they are.
+1. Start the mock backend and the app, and retake every reference: `capture.sh --update`.
+2. `git status design/reference` lists the changed screenshots. With the fixed clock and the CMS snapshot, an
+   unchanged app gives byte-identical files on the same machine and browser build, so a file that differs is a real
+   change in the app.
+3. For each changed page, show the owner the before (`git show HEAD:design/reference/<file>`) and after. They decide:
+   - intended change: keep the new reference and update the screen until `compare.cjs` passes against it;
+   - app bug: file it, and restore the old reference (`git checkout -- design/reference/<file>`).
 4. Commit references and screen changes together. Say in the commit which app commit the references were taken from.
 
 ## Updating the kit

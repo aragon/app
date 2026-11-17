@@ -4,7 +4,7 @@
     "v": 1,
     "at": "2026-11-16T12:00:00Z"
   },
-  "title": "Aragon App Recreation",
+  "title": "Aragon App baseline",
   "launch": {
     "view": "canvas",
     "page": "dao"
