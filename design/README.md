@@ -15,7 +15,7 @@ diff.
 
 **Status (17 November 2026): baseline complete, not yet merged.** All 121 reference screenshots of the app are redrawn
 (118 desktop screens, 2 of them also at phone width, and one phone-only dialog: 119 screens), plus 11 shared parts. The baseline
-lives on the branch `claude/eloquent-cori-mv7xrx` until it is merged to `main`. See [Status](#status).
+lives on the branch `docs/design-canvas` until it is merged to `main`. See [Status](#status).
 
 ## Links and access
 
