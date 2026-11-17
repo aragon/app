@@ -62,8 +62,6 @@ export const WorkspaceTransactionsPageClient: React.FC<
     const { permissions, isPending } =
         useWorkspaceAccountsExecutePermission(accountsToDisplay);
 
-    // A DAO goes to the workspace's direct-execute wizard, which guards the account itself.
-    // TODO(APP-1140): a Safe has no create wizard in the workspace yet.
     const getCreateTransactionUrl = (account: IWorkspaceAccount) =>
         account.type === WorkspaceAccountType.DAO
             ? workspaceUtils.getAccountScopeUrl(
@@ -71,7 +69,11 @@ export const WorkspaceTransactionsPageClient: React.FC<
                   account.id,
                   'create/execute',
               )
-            : undefined;
+            : workspaceUtils.getAccountScopeUrl(
+                  workspaceId,
+                  account.id,
+                  'create/transaction',
+              );
 
     const canCreateTransactionFor = (account: IWorkspaceAccount) =>
         permissions[account.id] === true &&

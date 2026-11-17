@@ -200,6 +200,21 @@ describe('<SafeTransactionReviewContent /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('warns that a transaction with a gas price pays a refund out of the Safe', () => {
+        const gasRefund = 'app.safe.safeTransactionReviewDialog.gasRefund';
+        const { rerender } = render(createTestComponent());
+
+        expect(screen.queryByText(gasRefund)).not.toBeInTheDocument();
+
+        rerender(
+            createTestComponent({
+                transaction: { ...generateSignedTransaction(), gasPrice: '1' },
+            }),
+        );
+
+        expect(screen.getByText(gasRefund)).toBeInTheDocument();
+    });
+
     it('keeps security warnings visible while verification details stay collapsed', async () => {
         mockDelegateCode(undefined);
         render(
@@ -390,6 +405,38 @@ describe('<SafeTransactionReviewContent /> component', () => {
                     to: getAddress(
                         '0x38869bf66a61cF6bDB996A6aE40D5853Fd43B526',
                     ),
+                }),
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                'app.safe.safeTransactionReviewDialog.unrecognisedDelegateCall',
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    // The protocol kit batches through the deployment `safe-deployments` lists first for a chain, which is not
+    // always the canonical one, so a batch the app built itself must pass without comment too.
+    it.each([
+        {
+            label: 'v1.3.0 eip155 MultiSendCallOnly',
+            to: '0xA1dabEF33b3B82c7814B6D82A79e50F4AC44102B',
+        },
+        {
+            label: 'v1.4.1 zkSync MultiSendCallOnly',
+            to: '0x0408EF011960d02349d50286D20531229BCef773',
+        },
+        {
+            label: 'v1.5.0 MultiSendCallOnly',
+            to: '0xA83c336B20401Af773B6219BA5027174338D1836',
+        },
+    ])('accepts a delegate call to the $label without comment', ({ to }) => {
+        render(
+            createTestComponent({
+                transaction: generateSignedTransaction({
+                    operation: 1,
+                    to: getAddress(to),
                 }),
             }),
         );

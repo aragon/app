@@ -109,6 +109,7 @@ const workspaceSectionScopes = {
         subsections: {
             execute: [WorkspaceAccountType.DAO],
             proposal: [WorkspaceAccountType.DAO],
+            transaction: [WorkspaceAccountType.SAFE],
         },
     },
 } satisfies Readonly<
