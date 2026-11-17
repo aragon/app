@@ -16,7 +16,8 @@ together with reference screenshots of the real app and the mock backend used to
 |---|---|
 | `canvas/canvas.json` | The canvas index: every artboard, its frame, notes and the design-system version in use |
 | `canvas/*.dc.html` | One file per screen. Screens mount real kit components (`GovUiKit.*`); app-only layout (sidebar, page header, aside cards) is markup copied from `apps/app` |
-| `canvas/assets/` | Images the screens use, linked by relative path (`assets/net_bg.svg`) and published with the screens |
+| `canvas-assets.json` | Images the screens use: the path a screen links (`assets/net_bg.svg`) → the app's own file in the repo |
+| `canvas/assets/` | Only images that exist just in designs (none yet) |
 | `reference/*.webp` | Full-page screenshots of the real app running on mock data (lossless WebP). What "correct" looks like |
 | `mock-backend/` | Mock Aragon backend + JSON-RPC, app launcher and screenshot scripts. See its README |
 
@@ -50,8 +51,10 @@ What keeps a refresh deterministic, so the same files always give the same canva
 
 - **Pin the kit.** Copy the design system's files at the version recorded in `canvas.json` → `designSystems[].version`,
   never its latest. Moving to a newer kit is a deliberate change (see Kit updates).
-- **Images are files, not uploads.** Put them in `canvas/assets/` and link them by relative path. An upload gets an id
-  that exists only in the canvas it was uploaded to, so a new canvas built from this folder would show it broken.
+- **Images are files, not uploads.** Screens link images by relative path (`assets/net_bg.svg`). Images the app owns
+  (logos, textures, illustrations) are published straight from the app's own files, as mapped in `canvas-assets.json`,
+  so there is one copy; images that exist only in designs live in `canvas/assets/`. Never upload an image to the canvas:
+  an upload gets an id that exists only in that canvas, so a canvas built from this folder would show it broken.
 - **Fixed "now".** Mock dates are computed from a fixed timestamp (when the reference screenshots were taken), never
   `Date.now()`. Relative labels drawn by kit components themselves ("3 days left") still use the viewer's clock, as in
   the app.
