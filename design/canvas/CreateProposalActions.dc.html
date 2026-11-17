@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal: actions step</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
+    <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
+  </div>
+  <div class="actions-editor">
+    <sc-if value="{{hasActions}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="PwFormScope"><x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{count}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
+      <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<sc-for list="{{items}}" as="it">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{it.action}}" action-count="{{count}}" action-function-selector="{{it.selector}}" array-controls="{{it.arrayControls}}" chain-id="{{one}}" dc-props="{{itemProps}}" edit-mode="{{yes}}" form-prefix="{{it.prefix}}" index="{{it.index}}" value="{{it.value}}"></x-import>
+</sc-for>
+</x-import>
+    </x-import></x-import>
+    </sc-if>
+    <sc-if value="{{noActions}}" hint-placeholder-val="{{yes}}">
+    <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{zero}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
+      <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
+    </x-import>
+    </sc-if>
+    <sc-if value="{{menuOpen}}" hint-placeholder-val="{{no}}">
+    <div class="autocomplete">
+      <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="{{query}}" on-change="{{changeQuery}}" on-blur="{{blurQuery}}" on-key-down="{{keyQuery}}" auto-focus="{{yes}}" auto-complete="off" wrapper-class-name="shadow-primary-lg border-primary-400 autocomplete__input--open"></x-import>
+      <div class="autocomplete-menu" role="listbox">
+        <div class="autocomplete-menu__list">
+          <sc-for list="{{groups}}" as="group">
+          <div class="autocomplete-group">
+            <sc-if value="{{group.hasName}}" hint-placeholder-val="{{no}}">
+              <div class="autocomplete-group__header"><p class="autocomplete-group__name">{{group.name}}</p><hr class="autocomplete-group__rule"><p class="autocomplete-group__info">{{group.info}}</p><hr class="autocomplete-group__rule autocomplete-group__rule--end"></div>
+            </sc-if>
+            <sc-for list="{{group.items}}" as="item">
+              <div class="autocomplete-item" role="option" aria-selected="false" onMouseDown="{{item.pick}}">
+                <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="{{item.icon}}" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">{{item.name}}</p></span>
+                <span class="autocomplete-item__trail"><sc-if value="{{item.hasInfo}}" hint-placeholder-val="{{no}}"><span class="autocomplete-item__info">{{item.info}}</span></sc-if></span>
+              </div>
+            </sc-for>
+          </div>
+          </sc-for>
+        </div>
+        <div class="autocomplete-menu__footer">
+          <div class="autocomplete-menu__keys"><span class="keyboard-shortcut">↑</span><span class="keyboard-shortcut">↓</span><p class="autocomplete-menu__hint">Select</p></div>
+          <div class="autocomplete-menu__keys"><p class="autocomplete-menu__hint">Add action</p><span class="keyboard-shortcut">↵</span></div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+    <sc-if value="{{menuClosed}}" hint-placeholder-val="{{yes}}">
+    <div class="action-composer">
+      <div class="action-composer__row">
+        <div class="action-composer__buttons">
+          <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" on-click="{{openMenu}}">Action</x-import>
+          <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-right="BLOCKCHAIN_WALLETCONNECT">Connect</x-import>
+          <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="WITHDRAW">Upload</x-import>
+        </div>
+        <div class="action-composer__trailing">
+          <x-import component-from-global-scope="GovUiKit.Switch" checked="{{no}}" inline-label="Only show allowed actions" on-checked-changed="{{noop}}"></x-import>
+          <sc-if value="{{hasActions}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{moreTrigger}}" constrain-content-width="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{noop}}">Download as JSON</x-import>
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{removeAll}}">Remove all actions</x-import>
+            </x-import>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+    <div class="action-composer__input" aria-hidden="true"></div>
+    </sc-if>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"actions":{"editor":null},"menuOpen":{"editor":null},"menuQuery":{"editor":null},"callbacks":{"editor":null},"$preview":{"width":1216,"height":700}}'>
+// Step 2 body of the create-proposal wizard, "Add actions" (apps/app: modules/governance/components/createProposalForm/
+// createProposalFormActions, proposalActionsEditor, actionComposer, modules/finance/components/transferAssetForm + assetInput).
+// The .wizard-step__content block: heading, description, the list of actions, then the composer (buttons) or its open menu.
+//   <dc-import name="CreateProposalActions" actions="{{actions}}" menu-open="{{no}}" menu-query="" callbacks="{{cb}}" hint-size="100%,500px"></dc-import>
+// Props (no callbacks = a static drawing):
+//   actions    [{ asset, amount, recipient, recipientAddress, recipientResolved, recipientEdit, errors }]: one Transfer each.
+//              asset = { symbol, name, logo, address, balance, price, decimals } | null; amount / recipient: the typed strings;
+//              recipientResolved draws the resolved-ENS card; errors = { asset: bool, amount: msg, recipient: msg } (messages shown in red).
+//   menuOpen   boolean: the "Action" autocomplete is open (replaces the buttons).   menuQuery: its search text.
+//   callbacks  { openMenu, closeMenu, query(v), pick(kind), openAsset(i), amount(i, v), max(i), recipient(i, v), accept(i, resolved),
+//              blur(i, field), edit(i), remove(i), move(i, dir), removeAll() }.
+// The kit's action item reads a react-hook-form context the canvas has none of: PwFormScope provides one. The Transfer form is a
+// React component (the item takes it as a prop) that reads the part's current props through window.__CPA.
+window.PwFormScope = (props) => { const m = ReactHookForm.useForm(); return React.createElement(ReactHookForm.FormProvider, m, props.children); };
+const KNOWN_ENS = { 'atlas-grants.dao.eth': '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368' };
+const TransferForm = (() => {
+  const h = React.createElement, K = GovUiKit;
+  return function TransferForm(props) {
+    const S = window.__CPA || {}, a = (S.actions || [])[props.index], cb = S.cb || {};
+    if (!a) return null;
+    const i = props.index, asset = a.asset, err = a.errors || {};
+    const fiat = asset ? K.formatterUtils.formatNumber((Number(a.amount) || 0) * Number(asset.price), { format: K.NumberFormat.FIAT_TOTAL_SHORT }) : '$0.00';
+    const assetBtn = h(K.Button, { className: 'shrink-0', iconRight: 'CHEVRON_DOWN', size: 'sm', variant: err.asset ? 'critical' : 'tertiary', onClick: () => cb.openAsset && cb.openAsset(i), onMouseDown: (e) => e.preventDefault() },
+      asset ? h(K.InteractiveAncestorContext.Provider, { value: true }, h('div', { className: 'transfer-amount__token flex items-center' }, h(K.Avatar, { size: 'xs', src: asset.logo }), h(K.AddressOutput, { address: asset.address, copy: false, label: asset.symbol }))) : 'Select');
+    const amount = h(K.InputContainer, { id: 'amountInput', label: 'Amount', wrapperClassName: 'transfer-amount__field items-center', alert: err.amount ? { message: err.amount, variant: 'critical' } : undefined, variant: err.amount ? 'critical' : 'default' },
+      assetBtn,
+      h('input', { className: 'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 transfer-amount__input', disabled: !asset, placeholder: '0', type: 'number', value: a.amount ?? '', onChange: (e) => cb.amount && cb.amount(i, e.target.value), onBlur: () => cb.blur && cb.blur(i, 'amount') }),
+      h('p', null, fiat));
+    const max = asset ? h('div', { className: 'transfer-amount__max flex items-center self-end' }, h('button', { type: 'button', className: 'text-primary-400 hover:text-primary-600 flex cursor-pointer gap-x-1', onClick: (e) => { e.preventDefault(); cb.max && cb.max(i); } }, 'Max', h('span', { className: 'text-neutral-500' }, K.formatterUtils.formatNumber(asset.balance, { format: K.NumberFormat.TOKEN_AMOUNT_SHORT })))) : null;
+    const addr = a.recipientAddress;
+    const recipient = a.recipientResolved
+      ? h(K.InputContainer, { id: 'recipientInput', label: 'Recipient', helpText: 'The address to transfer assets to.' },
+          h('div', { className: 'ml-3 shrink-0' }, h(K.MemberAvatar, { address: addr, chainId: 1 })),
+          h('textarea', { className: 'min-h-11 resize-none px-3! size-full rounded-xl bg-transparent py-3 caret-neutral-500 outline-hidden', rows: 1, placeholder: 'ENS or 0x…', value: a.recipient, readOnly: true, onFocus: () => cb.edit && cb.edit(i) }),
+          h('div', { className: 'mr-2 flex flex-row gap-2' },
+            h(K.Button, { className: 'min-w-max', size: 'sm', variant: 'tertiary' }, '0x…'),
+            h(K.Button, { href: 'https://etherscan.io/address/' + addr, iconLeft: 'LINK_EXTERNAL', size: 'sm', target: '_blank', variant: 'tertiary' }),
+            h(K.Clipboard, { copyValue: a.recipient, variant: 'button' })))
+      : h(K.AddressInput, { chainId: 1, helpText: 'The address to transfer assets to.', label: 'Recipient', placeholder: 'ENS or 0x…', value: a.recipient ?? '', autoFocus: !!a.recipientEdit,
+          onChange: (v) => cb.recipient && cb.recipient(i, v ?? ''), onAccept: (v) => cb.accept && cb.accept(i, v), onBlur: () => cb.blur && cb.blur(i, 'recipient'),
+          alert: err.recipient ? { message: err.recipient, variant: 'critical' } : undefined, variant: err.recipient ? 'critical' : 'default' });
+    return h('div', { className: 'transfer-form' + (asset ? '' : ' transfer-form--no-asset') }, h('div', { className: 'flex flex-col gap-y-3' }, amount, max), recipient);
+  };
+})();
+const MENU = [
+  { name: null, items: [{ name: 'Add contract address', icon: 'PLUS', kind: 'contract' }, { name: 'Transfer', icon: 'APP_TRANSACTIONS', kind: 'transfer' }] },
+  { name: 'DAO', info: '0xc8c3…bcde', items: [{ name: 'Set metadata', icon: 'SETTINGS', info: '0xee57e36f', kind: 'dao-metadata' }] },
+  { name: 'Meridian', info: '0xc6cf…9dae', items: [{ name: 'Mint', icon: 'SETTINGS', info: '0x40c10f19', kind: 'mint' }] },
+  { name: 'Meridian Token Voting', info: '0xa147…8fda', items: [{ name: 'Update settings', icon: 'SETTINGS', kind: 'settings' }, { name: 'Set metadata', icon: 'SETTINGS', kind: 'plugin-metadata' }] },
+];
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, cb = p.callbacks || {}, h = React.createElement, K = GovUiKit;
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const list = p.actions || [];
+    window.__CPA = { actions: list, cb };
+    const items = list.map((a, i) => {
+      const asset = a.asset;
+      const isToken = asset && asset.symbol !== 'ETH';
+      const to = isToken ? asset.address : '0x0000000000000000000000000000000000000000';
+      const recipientAddr = a.recipientAddress || '0x0000000000000000000000000000000000000000';
+      const data = isToken ? '0xa9059cbb' + recipientAddr.slice(2).toLowerCase().padStart(64, '0') : '0x';
+      return {
+        index: i, value: 'action-' + i, prefix: 'actions.' + i,
+        selector: isToken ? '0xa9059cbb' : undefined,
+        action: { type: 'Transfer', from: '0xC8C322384903eE8f11F511b71d0504237886BCde', to, value: '0', data,
+          inputData: { function: 'transfer', contract: asset ? asset.name : 'Ether', parameters: isToken ? [{ name: '_to', type: 'address', value: recipientAddr }, { name: '_value', type: 'uint256', value: '0' }] : [] } },
+        arrayControls: {
+          remove: { label: 'Remove', onClick: () => call(cb.remove, i), disabled: false },
+          moveUp: { label: 'Move up', onClick: () => call(cb.move, i, -1), disabled: i === 0 },
+          moveDown: { label: 'Move down', onClick: () => call(cb.move, i, 1), disabled: i === list.length - 1 },
+        },
+      };
+    });
+    const q = (p.menuQuery || '').trim().toLowerCase();
+    const groups = MENU.map((g) => ({
+      name: g.name, hasName: g.name != null, info: g.info,
+      items: g.items.filter((it) => g.name == null || q === '' || it.name.toLowerCase().includes(q) || g.name.toLowerCase().includes(q))
+        .map((it) => ({ ...it, hasInfo: !!it.info, pick: (e) => { if (e && e.preventDefault) e.preventDefault(); call(cb.pick, it.kind); } })),
+    })).filter((g) => g.items.length > 0);
+    return {
+      yes: true, no: false, one: 1, zero: 0, noActions: list.length === 0, noop: () => {},
+      items, count: list.length, hasActions: list.length > 0,
+      expanded: list.map((a, i) => 'action-' + i),
+      itemProps: { CustomComponent: TransferForm },
+      menuOpen: !!p.menuOpen, menuClosed: !p.menuOpen, query: p.menuQuery ?? '', groups,
+      openMenu: () => call(cb.openMenu), removeAll: () => call(cb.removeAll),
+      changeQuery: (e) => call(cb.query, e.target.value),
+      blurQuery: () => call(cb.closeMenu),
+      keyQuery: (e) => { if (e.key === 'Escape') call(cb.closeMenu); },
+      moreTrigger: h(K.Button, { className: 'aspect-square w-fit shrink-0', iconLeft: 'DOTS_VERTICAL', size: 'md', variant: 'tertiary', 'aria-label': 'More' }),
+    };
+  }
+}
+</script>
+</body>
+</html>

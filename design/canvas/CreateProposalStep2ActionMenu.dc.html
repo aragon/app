@@ -24,63 +24,7 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
-            <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
-          </div>
-          <div class="actions-editor">
-            <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{zero}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
-              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
-            </x-import>
-            <div class="autocomplete">
-              <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="" on-change="{{noop}}" auto-complete="off" wrapper-class-name="shadow-primary-lg border-primary-400 autocomplete__input--open"></x-import>
-              <div class="autocomplete-menu" role="listbox">
-                <div class="autocomplete-menu__list">
-                <div class="autocomplete-group">
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Add contract address</p></span>
-                    <span class="autocomplete-item__trail"></span>
-                  </div>
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="APP_TRANSACTIONS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Transfer</p></span>
-                    <span class="autocomplete-item__trail"></span>
-                  </div>
-                </div>
-                <div class="autocomplete-group">
-                  <div class="autocomplete-group__header"><p class="autocomplete-group__name">DAO</p><hr class="autocomplete-group__rule"><p class="autocomplete-group__info">0xc8c3…bcde</p><hr class="autocomplete-group__rule autocomplete-group__rule--end"></div>
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Set metadata</p></span>
-                    <span class="autocomplete-item__trail"><span class="autocomplete-item__info">0xee57e36f</span></span>
-                  </div>
-                </div>
-                <div class="autocomplete-group">
-                  <div class="autocomplete-group__header"><p class="autocomplete-group__name">Meridian</p><hr class="autocomplete-group__rule"><p class="autocomplete-group__info">0xc6cf…9dae</p><hr class="autocomplete-group__rule autocomplete-group__rule--end"></div>
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Mint</p></span>
-                    <span class="autocomplete-item__trail"><span class="autocomplete-item__info">0x40c10f19</span></span>
-                  </div>
-                </div>
-                <div class="autocomplete-group">
-                  <div class="autocomplete-group__header"><p class="autocomplete-group__name">Meridian Token Voting</p><hr class="autocomplete-group__rule"><p class="autocomplete-group__info">0xa147…8fda</p><hr class="autocomplete-group__rule autocomplete-group__rule--end"></div>
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Update settings</p></span>
-                    <span class="autocomplete-item__trail"></span>
-                  </div>
-                  <div class="autocomplete-item" role="option" aria-selected="false">
-                    <span class="autocomplete-item__lead"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import><p class="autocomplete-item__name">Set metadata</p></span>
-                    <span class="autocomplete-item__trail"></span>
-                  </div>
-                </div>
-                </div>
-                <div class="autocomplete-menu__footer">
-                  <div class="autocomplete-menu__keys"><span class="keyboard-shortcut">↑</span><span class="keyboard-shortcut">↓</span><p class="autocomplete-menu__hint">Select</p></div>
-                  <div class="autocomplete-menu__keys"><p class="autocomplete-menu__hint">Add action</p><span class="keyboard-shortcut">↵</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <dc-import name="CreateProposalActions" actions="{{actions}}" menu-open="{{menu}}" menu-query="" hint-size="100%,500px"></dc-import>
         <dc-import name="WizardActions" back-href="CreateProposalStep1Filled.dc.html" next-href="CreateProposalStep3.dc.html" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
       </div>
     </form>
@@ -93,7 +37,7 @@ body{margin:0}
 // Create proposal, step 2, the "Action" autocomplete menu open (drawn as markup: the app renders it in a floating portal). (apps/app: createProposalPageClientSteps.tsx (step 2), components/createProposalForm/createProposalFormActions, governance/components/actionComposer, proposalActionsEditList).
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, d128: 128, d480: 480, noop: () => {}, };
+    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, menu: true, actions: [] };
   }
 }
 </script>

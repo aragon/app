@@ -2,7 +2,7 @@
     "name": "baseline",
     "branch": "docs/design-canvas",
     "canvas": "https://claude.ai/artifact/9gVpqYZDyCe6ksmjvvkA54",
-    "canvasVersion": "1794940638-118b",
+    "canvasVersion": "1794941206-e95f",
     "kit": {
         "package": "@aragon/gov-ui-kit",
         "version": "3.0.0",

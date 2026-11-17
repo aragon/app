@@ -34,7 +34,8 @@
                         "FlowVote.dc.html",
                         "FlowCreateDao.dc.html",
                         "FlowCreateWorkspace.dc.html",
-                        "FlowWorkspaceEdit.dc.html"
+                        "FlowWorkspaceEdit.dc.html",
+                        "FlowCreateProposal.dc.html"
                     ]
                 }
             ]
@@ -337,7 +338,12 @@
                         "WorkspaceFormAccounts.dc.html",
                         "WorkspaceFormNetworkAddress.dc.html",
                         "WorkspaceFormAccountIdentity.dc.html",
-                        "PublishWorkspaceDialog.dc.html"
+                        "PublishWorkspaceDialog.dc.html",
+                        "CreateProposalMetadata.dc.html",
+                        "CreateProposalActions.dc.html",
+                        "CreateProposalSettings.dc.html",
+                        "AssetSelectionDialog.dc.html",
+                        "SimulateActionsDialog.dc.html"
                     ]
                 }
             ]
@@ -910,6 +916,13 @@
         {
             "artboard": "FlowWorkspaceEdit.dc.html",
             "reference": "workspace-edit.webp",
+            "knownDifferences": [
+                "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
+            ]
+        },
+        {
+            "artboard": "FlowCreateProposal.dc.html",
+            "reference": "create-proposal-step1-empty.webp",
             "knownDifferences": [
                 "Interactive flow: only the first state is compared with the app; later states are drawn from the app source."
             ]

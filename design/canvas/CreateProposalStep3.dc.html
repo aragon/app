@@ -24,34 +24,7 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Publish proposal" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposal settings</x-import>
-            <p class="wizard-step__description">Configure the settings for this proposal.</p>
-          </div>
-          <div class="advanced-date-input-stack">
-            <div class="advanced-date-input">
-              <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting start time" value="now" on-value-change="{{noop}}" class-name="advanced-date-input__modes">
-                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Now" value="now"></x-import>
-                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
-              </x-import>
-            </div>
-            <div class="advanced-date-input">
-              <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting duration / end time" value="duration" on-value-change="{{noop}}" class-name="advanced-date-input__modes">
-                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Duration" value="duration"></x-import>
-                <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
-              </x-import>
-              <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm advanced-date-input__duration">
-                <div class="advanced-date-input__fields">
-                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Minutes" max="{{d59}}" min="{{zero}}" placeholder="0 min" suffix="min" value="{{zero}}" on-change="{{noop}}"></x-import>
-                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Hours" max="{{d23}}" min="{{zero}}" placeholder="0 h" suffix="h" value="{{zero}}" on-change="{{noop}}"></x-import>
-                  <x-import component-from-global-scope="GovUiKit.InputNumber" label="Days" min="{{zero}}" placeholder="0 d" suffix="d" value="{{five}}" on-change="{{noop}}"></x-import>
-                </div>
-                <x-import component-from-global-scope="GovUiKit.AlertCard" message="Voting duration / end time" variant="info">The minimum duration is 5 days, 0 hours, and 0 minutes, set by DAO governance.</x-import>
-              </x-import>
-            </div>
-          </div>
-        </div>
+        <dc-import name="CreateProposalSettings" hint-size="100%,800px"></dc-import>
         <dc-import name="WizardActions" back-href="CreateProposalStep2TransferFilled.dc.html" next-href="DialogPublishProposal.dc.html" has-back="{{yes}}" is-last="{{yes}}" submit-label="Publish proposal" hint-size="100%,48px"></dc-import>
       </div>
     </form>

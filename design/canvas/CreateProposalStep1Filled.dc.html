@@ -24,22 +24,7 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Add actions" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe proposal</x-import>
-            <p class="wizard-step__description">Describe the proposal so voters have the information they need to understand it and make a decision.</p>
-          </div>
-          <div class="wizard-fields">
-            <x-import component-from-global-scope="GovUiKit.InputText" label="Proposal title" max-length="{{d128}}" value="Fund the Q2 2027 Ecosystem Grants Program" on-change="{{noop}}"></x-import>
-            <x-import component-from-global-scope="GovUiKit.TextArea" label="Summary" help-text="This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about." is-optional="{{yes}}" max-length="{{d480}}" value="Allocate 300,000 USDC to the Ecosystem Grants Program to fund integrations, tooling and research during Q2 2027." on-change="{{noop}}"></x-import>
-            <div class="rich-text rich-text--focused"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="<p>Over the last two quarters Meridian has grown routed volume by 38%. This proposal continues the grants program ratified in MGP-8.</p>" on-change="{{noop}}"></x-import></div>
-            <div class="resources-input">
-              <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the proposal page. They can be used to help members understand the proposal." use-custom-wrapper="{{yes}}"></x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit">Add</x-import>
-            </div>
-            <x-import component-from-global-scope="GovUiKit.Switch" label="Add actions" help-text="Actions are onchain transactions that can be executed if the proposal passes." inline-label="Yes" checked="{{yes}}" on-checked-changed="{{noop}}"></x-import>
-          </div>
-        </div>
+        <dc-import name="CreateProposalMetadata" title="Fund the Q2 2027 Ecosystem Grants Program" summary="Allocate 300,000 USDC to the Ecosystem Grants Program to fund integrations, tooling and research during Q2 2027." body="&lt;p&gt;Over the last two quarters Meridian has grown routed volume by 38%. This proposal continues the grants program ratified in MGP-8.&lt;/p&gt;" body-focused="{{yes}}" hint-size="100%,1400px"></dc-import>
 <dc-import name="WizardActions" next-href="CreateProposalStep2.dc.html" has-back="{{no}}" hint-size="100%,48px"></dc-import>
       </div>
     </form>

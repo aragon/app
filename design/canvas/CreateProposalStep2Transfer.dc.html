@@ -24,33 +24,7 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
-            <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
-          </div>
-          <div class="actions-editor">
-            <x-import component-from-global-scope="PwFormScope"><x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
-              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
-<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action}}" action-count="{{one}}" action-function-selector="{{selector}}" array-controls="{{arrayControls}}" chain-id="{{one}}" dc-props="{{itemProps}}" edit-mode="{{yes}}" form-prefix="actions.0" index="{{zero}}" value="action-0"></x-import>
-</x-import>
-            </x-import></x-import>
-            <div class="action-composer">
-              <div class="action-composer__row">
-                <div class="action-composer__buttons">
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS">Action</x-import>
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-right="BLOCKCHAIN_WALLETCONNECT">Connect</x-import>
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="WITHDRAW">Upload</x-import>
-                </div>
-                <div class="action-composer__trailing">
-                  <x-import component-from-global-scope="GovUiKit.Switch" checked="{{no}}" inline-label="Only show allowed actions" on-checked-changed="{{noop}}"></x-import>
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="DOTS_VERTICAL" class-name="aspect-square w-fit shrink-0" aria-label="More"></x-import>
-                </div>
-              </div>
-            </div>
-            <div class="action-composer__input" aria-hidden="true"></div>
-          </div>
-        </div>
+        <dc-import name="CreateProposalActions" actions="{{actions}}" menu-open="{{menu}}" menu-query="" hint-size="100%,500px"></dc-import>
         <dc-import name="CreateProposalNext" open="{{no}}" hint-size="100%,48px"></dc-import>
       </div>
     </form>
@@ -61,37 +35,9 @@ body{margin:0}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1126}}'>
 // Create proposal, step 2 with an empty transfer action. (apps/app: createProposalPageClientSteps.tsx (step 2), components/createProposalForm/createProposalFormActions, governance/components/actionComposer, proposalActionsEditList).
-
-// TransferAssetAction -> TransferAssetForm -> AssetInput + AddressInput (apps/app: modules/finance/components/transferAssetForm,
-// assetInput), built from the same kit parts; the ProposalActions item needs it as a React component.
-// The kit's action item reads the react-hook-form context of the wizard form; the canvas has none, so scope one.
-// (Tailwind classes the kit stylesheet lacks are app.css transfer-amount__* / transfer-form*.)
-window.PwFormScope = (props) => { const m = ReactHookForm.useForm(); return React.createElement(ReactHookForm.FormProvider, m, props.children); };
-const TransferForm = (() => {
-  const h = React.createElement, K = GovUiKit;
-  return function TransferForm() {
-    const token = false;
-    const amount = h(K.InputContainer, { id: 'amountInput', label: 'Amount', wrapperClassName: 'transfer-amount__field items-center' },
-      h(K.Button, { className: 'shrink-0', iconRight: 'CHEVRON_DOWN', size: 'sm', variant: 'tertiary' },
-        token ? h(K.InteractiveAncestorContext.Provider, { value: true }, h('div', { className: 'transfer-amount__token flex items-center' }, h(K.Avatar, { size: 'xs', src: 'assets/mock/token/usdc.svg' }), h(K.AddressOutput, { address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', copy: false, label: 'USDC' }))) : 'Select'),
-      h('input', { className: 'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 transfer-amount__input', disabled: !token, placeholder: '0', type: 'number', value: token ? '300000' : '', readOnly: true }),
-      h('p', null, token ? '$300.00K' : '$0.00'));
-    const max = token ? h('div', { className: 'transfer-amount__max flex items-center self-end' }, h('button', { type: 'button', className: 'text-primary-400 hover:text-primary-600 flex cursor-pointer gap-x-1' }, 'Max', h('span', { className: 'text-neutral-500' }, '1.85M'))) : null;
-    return h('div', { className: 'transfer-form' + (token ? '' : ' transfer-form--no-asset') },
-      h('div', { className: 'flex flex-col gap-y-3' }, amount, max),
-      h(K.AddressInput, { chainId: 1, helpText: 'The address to transfer assets to.', label: 'Recipient', onChange: () => undefined, placeholder: 'ENS or 0x…', value: '' }));
-  };
-})();
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, d128: 128, d480: 480, noop: () => {},
-      expanded: ['action-0'],
-      selector: undefined,
-      action: { type: 'Transfer', from: '0xC8C322384903eE8f11F511b71d0504237886BCde', to: '0x0000000000000000000000000000000000000000', value: '0', data: '0x',
-        inputData: { function: 'transfer', contract: 'Ether', parameters: [] } },
-      arrayControls: { remove: { label: 'Remove', onClick: () => undefined, disabled: false }, moveUp: { label: 'Move up', onClick: () => undefined, disabled: true }, moveDown: { label: 'Move down', onClick: () => undefined, disabled: true } },
-      itemProps: { CustomComponent: TransferForm },
- };
+    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, menu: false, actions: [{ asset: null, amount: '', recipient: '', errors: {} }] };
   }
 }
 </script>

@@ -1150,3 +1150,7 @@
 .workspace-publish__title { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
 .workspace-publish__summary { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500); }
 .workspace-publish__description { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-neutral-500); }
+
+/* ---- FlowCreateProposal: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx ---- */
+/* footer block of a step: flex flex-col gap-6 > (step alert when the step was submitted invalid) + the buttons */
+.wizard-step__footer { display: flex; flex-direction: column; gap: 24px; }

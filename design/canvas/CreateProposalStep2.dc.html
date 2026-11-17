@@ -24,30 +24,7 @@ body{margin:0}
     <form class="wizard-form">
       <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="Proposal settings" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
-        <div class="wizard-step__content">
-          <div class="wizard-step__header">
-            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add actions</x-import>
-            <p class="wizard-step__description">Add actions to govern the DAO, interact with smart contracts, or connect to other applications. They will execute in the order listed on this page.</p>
-          </div>
-          <div class="actions-editor">
-            <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{zero}}" edit-mode="{{yes}}" expanded-actions="{{expanded}}" on-expanded-actions-change="{{noop}}">
-              <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
-            </x-import>
-            <div class="action-composer">
-              <div class="action-composer__row">
-                <div class="action-composer__buttons">
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS">Action</x-import>
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-right="BLOCKCHAIN_WALLETCONNECT">Connect</x-import>
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="WITHDRAW">Upload</x-import>
-                </div>
-                <div class="action-composer__trailing">
-                  <x-import component-from-global-scope="GovUiKit.Switch" checked="{{no}}" inline-label="Only show allowed actions" on-checked-changed="{{noop}}"></x-import>
-                </div>
-              </div>
-            </div>
-            <div class="action-composer__input" aria-hidden="true"></div>
-          </div>
-        </div>
+        <dc-import name="CreateProposalActions" actions="{{actions}}" menu-open="{{menu}}" menu-query="" hint-size="100%,500px"></dc-import>
         <dc-import name="WizardActions" back-href="CreateProposalStep1Filled.dc.html" next-href="CreateProposalStep3.dc.html" has-back="{{yes}}" hover="{{yes}}" hint-size="100%,48px"></dc-import>
       </div>
     </form>
@@ -60,7 +37,7 @@ body{margin:0}
 // Create proposal, step 2 "Add actions", no action added. (apps/app: createProposalPageClientSteps.tsx (step 2), components/createProposalForm/createProposalFormActions, governance/components/actionComposer, proposalActionsEditList).
 class Component extends DCLogic {
   renderVals() {
-    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, d128: 128, d480: 480, noop: () => {}, };
+    return { yes: true, no: false, zero: 0, one: 1, step: 2, total: 3, menu: false, actions: [] };
   }
 }
 </script>

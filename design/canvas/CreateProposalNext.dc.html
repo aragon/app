@@ -20,23 +20,32 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="wizard-actions">
   <div class="wizard-actions__buttons">
-    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" href="CreateProposalStep1Filled.dc.html">Back</x-import>
-    <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="Next" size="lg" variant="secondary" open="{{open}}">
-      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" href="CreateProposalStep3.dc.html">Simulate actions</x-import>
-      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" href="CreateProposalStep3.dc.html">Skip simulation</x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" dc-props="{{backProps}}">Back</x-import>
+    <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="Next" size="lg" variant="{{variant}}" open="{{open}}">
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" dc-props="{{simulateProps}}">Simulate actions</x-import>
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" dc-props="{{skipProps}}">Skip simulation</x-import>
     </x-import>
   </div>
 </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":false},"$preview":{"width":800,"height":48}}'>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":false},"variant":{"editor":null},"onBack":{"editor":null},"onSimulate":{"editor":null},"onSkip":{"editor":null},"$preview":{"width":800,"height":48}}'>
 // Back button and dropdown "Next" of the create-proposal actions step once it holds actions
 // (apps/app: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx, nextDropdownItems from
 // modules/governance/hooks/useSimulateActionsDropdown). Same slot as the WizardActions part: last child of `.wizard-step`.
 // Props: open  draws the menu open (the kit Dropdown.Container's own `open` prop).
+//   variant 'secondary' (default) | 'critical' (the wizard's invalid-step state); onBack / onSimulate / onSkip: callbacks of an interactive flow
+//   (without them the buttons are links to the static screens).
 class Component extends DCLogic {
   renderVals() {
-    return { open: this.props.open === true || this.props.open === 'true' };
+    const p = this.props;
+    return {
+      open: p.open == null ? undefined : (p.open === true || p.open === 'true'),
+      variant: p.variant ?? 'secondary',
+      backProps: p.onBack ? { onClick: p.onBack } : { href: 'CreateProposalStep1Filled.dc.html' },
+      simulateProps: p.onSimulate ? { onClick: p.onSimulate } : { href: 'CreateProposalStep3.dc.html' },
+      skipProps: p.onSkip ? { onClick: p.onSkip } : { href: 'CreateProposalStep3.dc.html' },
+    };
   }
 }
 </script>
