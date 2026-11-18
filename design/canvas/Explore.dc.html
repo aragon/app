@@ -20,7 +20,7 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="app-page">
-  <nav class="explore-nav" aria-label="Main">
+  <nav class="explore-nav {{navState}}" aria-label="Main">
     <div class="explore-nav__inner">
       <a href="Explore.dc.html" aria-label="Aragon home" style="display: block; height: 40px;">
         <dc-import name="AragonLogo" size="lg" variant="white" responsive="{{yes}}" hint-size="162px,40px"></dc-import>
@@ -190,13 +190,25 @@ body{margin:0}
 // not looped or indented: the kit's pagination counts the list's direct children, and the canvas runtime counts a loop
 // as one child and indentation as another.
 class Component extends DCLogic {
-  state = { search: '' };
+  state = { search: '', postHero: false };
+  // exploreNav.tsx: the bar is a gradient over the hero and turns solid once the hero has scrolled under it.
+  checkHero = () => {
+    const hero = document.getElementById('explore-page-hero');
+    if (!hero) return;
+    const postHero = hero.getBoundingClientRect().bottom <= 90;
+    if (postHero !== this.state.postHero) this.setState({ postHero });
+  };
+  componentDidMount() {
+    this.checkHero();
+    window.addEventListener('scroll', this.checkHero, true);
+  }
+  componentWillUnmount() { window.removeEventListener('scroll', this.checkHero, true); }
   renderVals() {
     const q = (this.state.search || '').toLowerCase().trim();
     const D = { meridian: 'Meridian DAO meridian.dao.eth 0xc8c322384903ee8f11f511b71d0504237886bcde', atlas: 'Atlas Grants Council atlas-grants.dao.eth 0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', lido: 'Lido DAO lido.dao.eth 0x612309293021ea0289246c9e5ee84c0e0cb034df', polygon: 'Polygon Village polygon-village.dao.eth 0x5f0cfb4039b4094a7034c9e3f2035af861eeb42c', solace: 'Solace Collective solace.dao.eth 0xe2f001c33fca00ad672f2a79abbcd567803178ee', harbor: 'Harbor Protocol harbor.dao.eth 0x506b251c4cefd8a679955e7d17c8968b3d994693', greenfield: 'Greenfield Climate DAO greenfield.dao.eth 0x8fbfe35944a15b4aedfe95d04194b6667a98f094', nexus: 'Nexus Research Guild nexus.dao.eth 0x2bb42aad9340728612feabf3be9b5b7fee8b96b9', orbit: 'Orbit Gaming DAO orbit.dao.eth 0x86f9e0f117f631ac91c6a32005817e8350e19435' };
     const show = {}; let n = 0;
     for (const k in D) { show[k] = !q || D[k].toLowerCase().includes(q); if (show[k]) n++; }
-    return { yes: true, no: false, daoCount: n, pageSize: 20, show, search: this.state.search || '', filter: 'all',
+    return { navState: this.state.postHero ? 'explore-nav--solid' : '', yes: true, no: false, daoCount: n, pageSize: 20, show, search: this.state.search || '', filter: 'all',
       onSearch: (v) => this.setState({ search: v || '' }) };
   }
 }

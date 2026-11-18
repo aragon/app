@@ -115,3 +115,6 @@
 /* assetInputToken.tsx (disabled asset field): flex items-center gap-x-1.5 px-2 cursor-default */
 .wf-token { display: flex; align-items: center; flex-shrink: 0; gap: 6px; padding: 0 8px; cursor: default; font-size: 16px; line-height: 1.25; }
 .wf-fiat { margin: 0; flex-shrink: 0; font-size: 16px; line-height: 1.25; }
+
+/* Explore: exploreNav.tsx turns the bar solid (bg-primary-400) once the hero has scrolled under it. */
+.explore-nav--solid { background: var(--color-primary-400); }
