@@ -1,0 +1,28 @@
+/* Prototype glue: a page part mounted in the DAO shell. The canvas wraps every <dc-import> in an extra element;
+   make the slot and that wrapper transparent to layout so the part's root sits in .app-column as in the app. */
+.dao-slot, .dao-slot > *:not(.page-container) { display: contents; }
+
+/* DAO prototype shell (Dao.dc.html): page parts are mounted in .dao-slot (see proto.css); nothing else needed yet. */
+
+/* ---- CreateDaoFlow: apps/app modules/createDao/components/createDaoForm (createDaoFormNetwork, createDaoFormMetadata) ---- */
+/* createDaoFormNetwork: sections `flex flex-col gap-10`, section `gap-4`, list `gap-y-2 md:gap-y-3` */
+.cdf-sections { display: flex; flex-direction: column; gap: 40px; }
+.cdf-section { display: flex; flex-direction: column; gap: 16px; }
+.cdf-list { display: flex; flex-direction: column; gap: 8px; }
+@media (min-width: 48rem) { .cdf-list { gap: 12px; } }
+/* ENS input wrapperClassName "w-full md:w-1/2" */
+.cdf-ens { width: 100%; }
+@media (min-width: 48rem) { .cdf-ens { width: 50%; } }
+.cdf-self-start { align-self: flex-start; }
+.cdf-hidden-link { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* CreateWorkspaceFlow prototype (agent F): glue only; the form layout classes live in app.css ("Create workspace"). */
+/* AccountsItem Card: shadow-neutral-sm flex flex-col gap-4 p-6 */
+.cwf-account-card { box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 24px; }
+/* canvas wraps every <dc-import>: keep the wrapper from collapsing the flex children */
+.cwf-fill { min-width: 0; flex-grow: 1; }
+.cwf-fill > * { min-width: 0; }
+/* InputContainer children of the targets / accounts lists: flex flex-col gap-3 (className="gap-3") */
+.cwf-rows { display: flex; flex-direction: column; gap: 12px; }
+/* the part wrappers of the flow must not add layout of their own */
+.cwf-flow { display: contents; }

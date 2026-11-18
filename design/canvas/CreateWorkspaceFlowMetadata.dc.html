@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace flow: details</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe your workspace</x-import>
+    <p class="wizard-step__description">Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.</p>
+  </div>
+  <div class="wizard-fields">
+    <x-import component-from-global-scope="GovUiKit.InputText" label="Workspace name" max-length="{{d128}}" value="{{name}}" alert="{{nameAlert}}" on-change="{{changeName}}" on-blur="{{blurName}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the workspace pages so visitors know what this workspace covers." is-optional="{{yes}}" max-length="{{d480}}" value="{{description}}" on-change="{{changeDescription}}"></x-import>
+    <dc-import name="ResourcesInput" vm="{{resourcesVm}}" hint-size="100%,110px"></dc-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null},"$preview":{"width":800,"height":1100}}'>
+// Step 1 body of the create-workspace wizard, "Describe your workspace" (apps/app: createWorkspaceFormMetadata, shared/components/forms/
+// avatarInput, resourcesInput). Prop `vm` (all fields optional): name, nameAlert {message, variant}, avatar {url, file, error}, avatarAlert,
+// description, resources [{ url, name, urlAlert }]; callbacks onName(v) onNameBlur() onAvatar(v) onDescription(v) onAddResource()
+// onResourceUrl(i, v) onResourceUrlBlur(i) onResourceName(i, v) onRemoveResource(i).
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props.vm || {};
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const resourcesVm = {
+      helpText: 'These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels.',
+      onAdd: () => call(p.onAddResource),
+      resources: (p.resources || []).map((r, i) => ({
+        url: r.url ?? '', name: r.name ?? '', urlAlert: r.urlAlert, namePlaceholder: r.url ? r.url : undefined,
+        onUrl: (e) => call(p.onResourceUrl, i, e.target.value),
+        onUrlBlur: () => call(p.onResourceUrlBlur, i),
+        onName: (e) => call(p.onResourceName, i, e.target.value),
+        onRemove: () => call(p.onRemoveResource, i)
+      }))
+    };
+    return {
+      yes: true, d128: 128, d480: 480, oneMb: 1048576, d1024: 1024,
+      name: p.name ?? '', nameAlert: p.nameAlert, avatar: p.avatar, avatarAlert: p.avatarAlert, description: p.description ?? '',
+      resourcesVm,
+      changeName: (e) => call(p.onName, e.target.value),
+      blurName: () => call(p.onNameBlur),
+      changeAvatar: (v) => call(p.onAvatar, v),
+      changeDescription: (e) => call(p.onDescription, e.target.value)
+    };
+  }
+}
+</script>
+</body>
+</html>

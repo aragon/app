@@ -1,0 +1,356 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-18T12:30:27Z"
+  },
+  "title": "Aragon App prototypes",
+  "launch": {
+    "view": "canvas",
+    "page": "prototypes"
+  },
+  "pages": [
+    {
+      "id": "prototypes",
+      "name": "Prototypes"
+    },
+    {
+      "id": "parts",
+      "name": "Parts"
+    }
+  ],
+  "boards": {
+    "Explore.dc.html": {
+      "x": 0,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Explore",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Dao.dc.html": {
+      "x": 1520,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Meridian DAO",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDaoFlow.dc.html": {
+      "x": 3040,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Create a DAO",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceFlow.dc.html": {
+      "x": 4560,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Create a workspace",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "ExploreMobile.dc.html": {
+      "x": 0,
+      "y": 1700,
+      "w": 390,
+      "h": 844,
+      "title": "Explore \u00b7 phone",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DaoMobile.dc.html": {
+      "x": 470,
+      "y": 1700,
+      "w": 390,
+      "h": 844,
+      "title": "Meridian DAO \u00b7 phone",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateDaoFlowMobile.dc.html": {
+      "x": 940,
+      "y": 1700,
+      "w": 390,
+      "h": 844,
+      "title": "Create a DAO \u00b7 phone",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateWorkspaceFlowMobile.dc.html": {
+      "x": 1410,
+      "y": 1700,
+      "w": 390,
+      "h": 844,
+      "title": "Create a workspace \u00b7 phone",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "AragonLogo.dc.html": {
+      "x": 0,
+      "y": 300,
+      "w": 162,
+      "h": 40,
+      "title": "AragonLogo",
+      "page": "parts"
+    },
+    "Footer.dc.html": {
+      "x": 242,
+      "y": 300,
+      "w": 1440,
+      "h": 65,
+      "title": "Footer",
+      "page": "parts"
+    },
+    "DaoNav.dc.html": {
+      "x": 1762,
+      "y": 300,
+      "w": 1024,
+      "h": 900,
+      "title": "DaoNav",
+      "page": "parts"
+    },
+    "DaoDashboard.dc.html": {
+      "x": 2866,
+      "y": 300,
+      "w": 1100,
+      "h": 2300,
+      "title": "DaoDashboard",
+      "page": "parts"
+    },
+    "DaoProposals.dc.html": {
+      "x": 4046,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "DaoProposals",
+      "page": "parts"
+    },
+    "DaoProposal.dc.html": {
+      "x": 5566,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "DaoProposal",
+      "page": "parts"
+    },
+    "DaoMembers.dc.html": {
+      "x": 7086,
+      "y": 300,
+      "w": 1440,
+      "h": 1382,
+      "title": "DaoMembers",
+      "page": "parts"
+    },
+    "DaoMember.dc.html": {
+      "x": 0,
+      "y": 2720,
+      "w": 1440,
+      "h": 2400,
+      "title": "DaoMember",
+      "page": "parts"
+    },
+    "DaoAssets.dc.html": {
+      "x": 1520,
+      "y": 2720,
+      "w": 1440,
+      "h": 900,
+      "title": "DaoAssets",
+      "page": "parts"
+    },
+    "DaoTransactions.dc.html": {
+      "x": 3040,
+      "y": 2720,
+      "w": 1440,
+      "h": 1347,
+      "title": "DaoTransactions",
+      "page": "parts"
+    },
+    "DaoSettings.dc.html": {
+      "x": 4560,
+      "y": 2720,
+      "w": 1100,
+      "h": 900,
+      "title": "DaoSettings",
+      "page": "parts"
+    },
+    "WizardNav.dc.html": {
+      "x": 5740,
+      "y": 2720,
+      "w": 1440,
+      "h": 91,
+      "title": "WizardNav",
+      "page": "parts"
+    },
+    "WizardProgress.dc.html": {
+      "x": 7260,
+      "y": 2720,
+      "w": 800,
+      "h": 40,
+      "title": "WizardProgress",
+      "page": "parts"
+    },
+    "CreateDaoFlowNetwork.dc.html": {
+      "x": 8140,
+      "y": 2720,
+      "w": 800,
+      "h": 1600,
+      "title": "CreateDaoFlowNetwork",
+      "page": "parts"
+    },
+    "CreateDaoFlowMetadata.dc.html": {
+      "x": 0,
+      "y": 5240,
+      "w": 800,
+      "h": 1500,
+      "title": "CreateDaoFlowMetadata",
+      "page": "parts"
+    },
+    "WizardActions.dc.html": {
+      "x": 880,
+      "y": 5240,
+      "w": 800,
+      "h": 48,
+      "title": "WizardActions",
+      "page": "parts"
+    },
+    "TxFlowDialog.dc.html": {
+      "x": 1760,
+      "y": 5240,
+      "w": 1440,
+      "h": 900,
+      "title": "TxFlowDialog",
+      "page": "parts"
+    },
+    "CreateWorkspaceFlowMetadata.dc.html": {
+      "x": 3280,
+      "y": 5240,
+      "w": 800,
+      "h": 1100,
+      "title": "CreateWorkspaceFlowMetadata",
+      "page": "parts"
+    },
+    "ResourcesInput.dc.html": {
+      "x": 4160,
+      "y": 5240,
+      "w": 1440,
+      "h": 900,
+      "title": "ResourcesInput",
+      "page": "parts"
+    },
+    "CreateWorkspaceFlowTargets.dc.html": {
+      "x": 5680,
+      "y": 5240,
+      "w": 800,
+      "h": 420,
+      "title": "CreateWorkspaceFlowTargets",
+      "page": "parts"
+    },
+    "CreateWorkspaceFlowAddressFields.dc.html": {
+      "x": 6560,
+      "y": 5240,
+      "w": 760,
+      "h": 120,
+      "title": "CreateWorkspaceFlowAddressFields",
+      "page": "parts"
+    },
+    "CreateWorkspaceFlowAccounts.dc.html": {
+      "x": 7400,
+      "y": 5240,
+      "w": 800,
+      "h": 520,
+      "title": "CreateWorkspaceFlowAccounts",
+      "page": "parts"
+    },
+    "CreateWorkspaceFlowPublishDialog.dc.html": {
+      "x": 0,
+      "y": 6860,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateWorkspaceFlowPublishDialog",
+      "page": "parts"
+    }
+  },
+  "order": [
+    "Explore.dc.html",
+    "Dao.dc.html",
+    "CreateDaoFlow.dc.html",
+    "CreateWorkspaceFlow.dc.html",
+    "ExploreMobile.dc.html",
+    "DaoMobile.dc.html",
+    "CreateDaoFlowMobile.dc.html",
+    "CreateWorkspaceFlowMobile.dc.html",
+    "AragonLogo.dc.html",
+    "Footer.dc.html",
+    "DaoNav.dc.html",
+    "DaoDashboard.dc.html",
+    "DaoProposals.dc.html",
+    "DaoProposal.dc.html",
+    "DaoMembers.dc.html",
+    "DaoMember.dc.html",
+    "DaoAssets.dc.html",
+    "DaoTransactions.dc.html",
+    "DaoSettings.dc.html",
+    "WizardNav.dc.html",
+    "WizardProgress.dc.html",
+    "CreateDaoFlowNetwork.dc.html",
+    "CreateDaoFlowMetadata.dc.html",
+    "WizardActions.dc.html",
+    "TxFlowDialog.dc.html",
+    "CreateWorkspaceFlowMetadata.dc.html",
+    "ResourcesInput.dc.html",
+    "CreateWorkspaceFlowTargets.dc.html",
+    "CreateWorkspaceFlowAddressFields.dc.html",
+    "CreateWorkspaceFlowAccounts.dc.html",
+    "CreateWorkspaceFlowPublishDialog.dc.html"
+  ],
+  "notes": {
+    "proto-desktop": {
+      "x": 0,
+      "y": 0,
+      "text": "Prototypes \u00b7 desktop",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "prototypes"
+    },
+    "proto-phone": {
+      "x": 0,
+      "y": 1400,
+      "text": "Prototypes \u00b7 phone",
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "prototypes"
+    },
+    "parts-title": {
+      "x": 0,
+      "y": 0,
+      "text": "Parts the prototypes are built from",
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts"
+    }
+  },
+  "designSystems": [
+    {
+      "title": "Aragon Governance UI Kit",
+      "namespace": "aragon-gov-ui-kit",
+      "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
+      "version": "1794906150-8cdd",
+      "copiedAt": "2026-11-18T12:30:27Z"
+    }
+  ]
+}

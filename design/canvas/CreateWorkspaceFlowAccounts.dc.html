@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace flow: accounts</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add accounts</x-import>
+    <p class="wizard-step__description">Add the accounts belonging to this workspace. Each one is identified by its network and address. This step is optional and accounts can be added later.</p>
+  </div>
+  <div class="workspace-list">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceAccounts" label="Accounts" is-optional="{{yes}}" help-text="The accounts whose assets, transactions and members this workspace brings together." use-custom-wrapper="{{yes}}" class-name="gap-3">
+      <div class="cwf-rows">
+        <sc-for list="{{rows}}" as="row" hint-placeholder-count="1">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm cwf-account-card">
+            <div class="workspace-account">
+              <div class="workspace-account__fields"><dc-import name="CreateWorkspaceFlowAddressFields" row="{{row}}" hint-size="100%,100px"></dc-import></div>
+              <div class="workspace-account__menu">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{menuTrigger}}" constrain-content-width="{{no}}" size="md">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{row.remove}}">Remove account</x-import>
+                </x-import>
+              </div>
+            </div>
+            <sc-if value="{{row.showMeta}}" hint-placeholder-val="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="CLOSE" class-name="w-fit" on-click="{{row.toggleMeta}}">Remove metadata</x-import>
+            </sc-if>
+            <sc-if value="{{row.hideMeta}}" hint-placeholder-val="{{yes}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="PLUS" class-name="w-fit" on-click="{{row.toggleMeta}}">Add metadata</x-import>
+            </sc-if>
+            <sc-if value="{{row.showMeta}}" hint-placeholder-val="{{no}}">
+              <div class="workspace-account-meta">
+                <x-import component-from-global-scope="GovUiKit.Heading" as="h4" size="h5">Metadata</x-import>
+                <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{row.meta.avatar}}" alert="{{row.meta.avatarAlert}}" on-change="{{row.changeAvatar}}"></x-import>
+                <x-import component-from-global-scope="GovUiKit.InputText" label="Account name" max-length="{{d128}}" value="{{row.meta.name}}" alert="{{row.meta.nameAlert}}" on-change="{{row.changeName}}" on-blur="{{row.blurName}}"></x-import>
+                <x-import component-from-global-scope="GovUiKit.TextArea" label="Account description" is-optional="{{yes}}" max-length="{{d480}}" value="{{row.meta.description}}" on-change="{{row.changeDescription}}"></x-import>
+              </div>
+            </sc-if>
+          </x-import>
+        </sc-for>
+      </div>
+    </x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{onAdd}}">Add account</x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"rows":{"editor":null},"onAdd":{"editor":null},"$preview":{"width":800,"height":520}}'>
+// Step 3 body of the create-workspace wizard, "Add accounts" (apps/app: createWorkspaceFormAccounts, createWorkspaceFormAccountsItem,
+// createWorkspaceFormAccountsItemMetadata).
+//   rows  [{ ...row of CreateWorkspaceFlowAddressFields, remove(), showMeta, toggleMeta(),
+//            meta: { avatar, avatarAlert, name, nameAlert, description }, changeAvatar(v), changeName(e), blurName(), changeDescription(e) }]
+//   onAdd()  appends an empty row.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const rows = (p.rows || []).map((r) => ({ ...r, hideMeta: !r.showMeta, meta: r.meta || {} }));
+    return {
+      yes: true, no: false, rows, onAdd: p.onAdd || (() => undefined),
+      oneMb: 1048576, d1024: 1024, d128: 128, d480: 480,
+      menuTrigger: React.createElement(GovUiKit.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' })
+    };
+  }
+}
+</script>
+</body>
+</html>
