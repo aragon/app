@@ -19,6 +19,8 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { SafeDialogId } from '@/modules/safe/constants';
 import type { ISafeProposalTransactionDialogParams } from '@/modules/safe/dialogs/safeProposalTransactionDialog';
+import { SafeTransactionState } from '@/modules/safe/types';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
@@ -32,8 +34,6 @@ import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
-import { SafeTransactionState } from '../../types';
-import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
 
 export interface ISafeMultisigSubmitVoteProps
     extends ISppVotingTerminalBodyVoteDefaultProps {}
@@ -114,7 +114,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             : undefined;
     const thresholdReached =
         liveReport != null &&
-        safeMultisigProposalUtils.isThresholdReached(liveReport.transaction);
+        safeTransactionUtils.isThresholdReached(liveReport.transaction);
 
     /**
      * Whether this owner's confirmation is the one that reaches the threshold, so execution can

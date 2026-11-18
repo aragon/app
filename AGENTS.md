@@ -1,6 +1,6 @@
 # Aragon App monorepo
 
-pnpm workspaces + Turborepo monorepo. Node >=24.22.1, pnpm. The main package is `apps/app` (`@aragon/app`) — a Next.js 16 + React 19 + TypeScript plugin-based DAO governance platform.
+pnpm workspaces + Turborepo monorepo. Node >=24.22.3, pnpm. The main package is `apps/app` (`@aragon/app`) — a Next.js 16 + React 19 + TypeScript plugin-based DAO governance platform.
 
 This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGENTS.md` so Claude Code picks up the same content. Personal/IC-local agent context lives under `.agents/local/` and `.claude/` (both gitignored) and **supplements** — never replaces — what's here.
 
@@ -96,4 +96,4 @@ There are two deliberate execution paths in CI, and they must stay that way:
 - **Graph tasks** (`type-check`, `lint:check`, `test:coverage`) run **from the repo root** via `turbo run …`. Turbo owns their cache/ordering, so they benefit from local caching and (later) the package graph.
 - **`vercel build` and Playwright** run from the repo root via the `deploy-vercel.yml` and `e2e.yml` reusable workflows of `aragon/github-templates` (workspace selected by input); Vercel builds the artifact on the GH runner and uploads it with `deploy --prebuilt` (Vercel never builds from git here). `turbo run build` stays a non-caching passthrough at the root (`cache: false`) because app/assistant artifacts are produced by `vercel build`, not Turbo — except workspace libraries that ship `dist/` (e.g. `@aragon/assistant-contracts`), which override `build` in their package `turbo.json` with `outputs: ["dist/**"]` and `cache: true`. `type-check` / `dev` depend on `^build` so those libraries are compiled before dependents run. `deploy-vercel.yml` also runs `pnpm --filter "{<workspace>}^..." build` before `vercel build`.
 
-Turbo caching is **local only** right now — no remote cache is wired (no `TURBO_TOKEN`/`TURBO_TEAM`). Task inputs are intentionally left at Turbo's default (hash all package files) rather than hand-narrowed globs — correctness over cache-hit-rate — and the root `biome.json` is listed in `globalDependencies` so lint caches invalidate when lint rules change.
+Turbo caching is **local only** right now — no remote cache is wired (no `TURBO_TOKEN`/`TURBO_TEAM`). Task inputs are intentionally left at Turbo's default (hash all package files) rather than hand-narrowed globs — correctness over cache-hit-rate — and the root `biome.json` is listed in `globalDependencies` so lint caches invalidate when lint rules change. `lint` itself (`biome check --write`) is not cached: a cache hit only replays the logs and would skip the fixes.

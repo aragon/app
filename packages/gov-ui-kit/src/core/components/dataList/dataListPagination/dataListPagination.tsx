@@ -54,7 +54,7 @@ export const DataListPagination: React.FC<IDataListPaginationProps> = (props) =>
                         value={progressValue}
                         variant={hasMore ? 'primary' : 'neutral'}
                     />
-                    <p className="shrink-0 font-normal text-base text-neutral-500 leading-tight">
+                    <p className="shrink-0 text-base leading-tight font-normal text-neutral-500">
                         <span className="text-neutral-800">{currentlyDisplayed} </span>
                         <span>
                             {copy.dataListPagination.outOf({

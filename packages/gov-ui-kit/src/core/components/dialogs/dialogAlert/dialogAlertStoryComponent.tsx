@@ -30,7 +30,7 @@ export const DialogAlertStoryComponent = (
                         {'children' in props && props.children != null ? (
                             (props.children as ReactNode)
                         ) : (
-                            <div className="flex h-60 w-full items-center justify-center border border-info-300 border-dashed bg-info-100">
+                            <div className="flex h-60 w-full items-center justify-center border border-dashed border-info-300 bg-info-100">
                                 Dialog alert content
                             </div>
                         )}

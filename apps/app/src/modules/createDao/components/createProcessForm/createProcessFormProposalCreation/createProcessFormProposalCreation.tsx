@@ -127,7 +127,7 @@ export const CreateProcessFormProposalCreation: React.FC<
     return (
         <>
             <RadioGroup
-                className="md:!flex-row flex gap-4"
+                className="flex gap-4 md:!flex-row"
                 onValueChange={onModeChange}
                 value={mode}
                 {...modeField}
@@ -203,7 +203,7 @@ export const CreateProcessFormProposalCreation: React.FC<
                     </>
                 )}
                 {showBasicNotSupported && (
-                    <p className="text-neutral-500 text-sm">
+                    <p className="text-sm text-neutral-500">
                         {t(
                             'app.createDao.createProcessForm.proposalCreation.existingCondition.basicNotSupported',
                         )}

@@ -198,8 +198,9 @@ describe('monitoring utils', () => {
         });
 
         it('tags injection/scanner URLs as security-probe and keeps them', () => {
-            // SSTI probe payload; built by concatenation to avoid a literal `${}`.
-            const probeUrl = `https://app.aragon.org/dao/ethereum-mainnet/dfb__$${'{98991*97996}'}__::.x/dashboard`;
+            const probeUrl =
+                // biome-ignore lint/suspicious/noTemplateCurlyInString: literal SSTI probe payload
+                'https://app.aragon.org/dao/ethereum-mainnet/dfb__${98991*97996}__::.x/dashboard';
             const result = monitoringUtils.beforeSend(
                 buildEvent('Error: Bad parameters', probeUrl),
             );

@@ -78,6 +78,29 @@ describe('<WorkspaceSectionGuard /> component', () => {
         expect(redirectMock).not.toHaveBeenCalled();
     });
 
+    it('renders a subsection page for the account type it is restricted to', async () => {
+        mockAccount(WorkspaceAccountType.DAO);
+
+        render(
+            await createTestComponent({
+                section: 'create',
+                subsection: 'execute',
+            }),
+        );
+
+        expect(screen.getByTestId('page-mock')).toBeInTheDocument();
+        expect(redirectMock).not.toHaveBeenCalled();
+    });
+
+    it('redirects an account type the subsection is not restricted to, although it has the section', async () => {
+        mockAccount(WorkspaceAccountType.SAFE);
+
+        await expect(
+            createTestComponent({ section: 'create', subsection: 'execute' }),
+        ).rejects.toThrow('NEXT_REDIRECT');
+        expect(redirectMock).toHaveBeenCalledWith(overviewUrl);
+    });
+
     it('looks up the account of the route', async () => {
         mockAccount(WorkspaceAccountType.DAO);
 

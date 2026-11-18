@@ -1,10 +1,14 @@
 import * as GovUiKit from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import * as transactionExecutionDetails from '@/modules/finance/components/transactionExecutionDetails';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as safeExecutionDetails from '@/modules/safe/components/safeExecutionDetails';
+import * as safeTransactionSimulation from '@/modules/safe/components/safeTransactionSimulation';
+import * as safeTransactionVoting from '@/modules/safe/components/safeTransactionVoting';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
@@ -29,7 +33,18 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeExecutionDetails,
         'SafeExecutionDetails',
     );
+    const safeTransactionVotingSpy = jest.spyOn(
+        safeTransactionVoting,
+        'SafeTransactionVoting',
+    );
+    const safeTransactionSimulationSpy = jest.spyOn(
+        safeTransactionSimulation,
+        'SafeTransactionSimulation',
+    );
+    const isRejectionSpy = jest.spyOn(safeTransactionUtils, 'isRejection');
+
     beforeEach(() => {
+        isRejectionSpy.mockReturnValue(false);
         assetTransferSpy.mockReturnValue(<div>asset-transfer</div>);
         transactionExecutionDetailsSpy.mockReturnValue(
             <div>execution-detail</div>,
@@ -37,12 +52,21 @@ describe('<WorkspaceTransactionListItem /> component', () => {
         safeExecutionDetailsSpy.mockReturnValue(
             <div>safe-execution-detail</div>,
         );
+        safeTransactionVotingSpy.mockReturnValue(
+            <div>safe-transaction-voting</div>,
+        );
+        safeTransactionSimulationSpy.mockReturnValue(
+            <div>safe-transaction-simulation</div>,
+        );
     });
 
     afterEach(() => {
+        isRejectionSpy.mockReset();
         assetTransferSpy.mockReset();
         transactionExecutionDetailsSpy.mockReset();
         safeExecutionDetailsSpy.mockReset();
+        safeTransactionVotingSpy.mockReset();
+        safeTransactionSimulationSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -258,6 +282,7 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
             {
+                isRejection: false,
                 safeAddress: transaction.account.address,
                 safeTxHash: '0x2632',
                 transaction,
@@ -265,6 +290,98 @@ describe('<WorkspaceTransactionListItem /> component', () => {
             undefined,
         );
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
+    });
+
+    it('lists the rejection of a Safe nonce as one, with no simulation and no actions to read', async () => {
+        isRejectionSpy.mockReturnValue(true);
+        const transaction = generateWorkspacePendingTransaction({
+            network: Network.ETHEREUM_SEPOLIA,
+            safeTxHash: '0x2632',
+            nonce: '22',
+        });
+
+        render(createTestComponent({ transaction }));
+
+        expect(isRejectionSpy).toHaveBeenCalledWith({
+            safeTxHash: '0x2632',
+            nonce: '22',
+            safeAddress: transaction.account.address,
+            chainId: networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+        });
+
+        const header = screen.getByRole('button');
+        expect(header).toHaveTextContent(
+            /workspaceTransactionList.item.rejection \(date=/,
+        );
+
+        await userEvent.click(header);
+
+        expect(screen.getByText('safe-transaction-voting')).toBeInTheDocument();
+        expect(
+            screen.queryByText('safe-transaction-simulation'),
+        ).not.toBeInTheDocument();
+        expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isRejection: true }),
+            undefined,
+        );
+    });
+
+    it('renders the voting card of a pending Safe transaction above its actions', async () => {
+        const transaction = generateWorkspacePendingTransaction({
+            safeTxHash: '0x2632',
+        });
+
+        render(createTestComponent({ transaction }));
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const votingCard = screen.getByText('safe-transaction-voting');
+        expect(
+            votingCard.compareDocumentPosition(
+                screen.getByText('safe-execution-detail'),
+            ),
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        expect(safeTransactionVotingSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                network: transaction.network,
+                safeAddress: transaction.account.address,
+                safeTxHash: '0x2632',
+                onSafeStateChange: expect.any(Function),
+            }),
+            undefined,
+        );
+    });
+
+    it('renders the simulation of a pending Safe transaction between its voting card and its actions', async () => {
+        const transaction = generateWorkspacePendingTransaction({
+            safeTxHash: '0x2632',
+            actionCount: 3,
+        });
+
+        render(createTestComponent({ transaction }));
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const simulation = screen.getByText('safe-transaction-simulation');
+        expect(
+            screen
+                .getByText('safe-transaction-voting')
+                .compareDocumentPosition(simulation),
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        expect(
+            simulation.compareDocumentPosition(
+                screen.getByText('safe-execution-detail'),
+            ),
+        ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        expect(safeTransactionSimulationSpy).toHaveBeenCalledWith(
+            {
+                actionCount: 3,
+                network: transaction.network,
+                safeAddress: transaction.account.address,
+                safeTxHash: '0x2632',
+            },
+            undefined,
+        );
     });
 
     it('expands an execution to its detail in the context of its DAO', async () => {
@@ -325,10 +442,17 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(screen.getByText('safe-execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).toHaveBeenCalledWith(
-            { safeAddress, safeTxHash: '0xff54', transaction },
+            {
+                isRejection: false,
+                safeAddress,
+                safeTxHash: '0xff54',
+                transaction,
+            },
             undefined,
         );
         expect(transactionExecutionDetailsSpy).not.toHaveBeenCalled();
+        expect(safeTransactionVotingSpy).not.toHaveBeenCalled();
+        expect(safeTransactionSimulationSpy).not.toHaveBeenCalled();
     });
 
     it('renders an execution of a Safe account without a Safe transaction hash as a block-explorer row', () => {
@@ -372,5 +496,103 @@ describe('<WorkspaceTransactionListItem /> component', () => {
 
         expect(screen.getByText('execution-detail')).toBeInTheDocument();
         expect(safeExecutionDetailsSpy).not.toHaveBeenCalled();
+    });
+
+    describe('after a Safe state change', () => {
+        const invalidateQueriesSpy = jest.spyOn(
+            QueryClient.prototype,
+            'invalidateQueries',
+        );
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            invalidateQueriesSpy.mockResolvedValue();
+        });
+
+        afterEach(() => {
+            jest.useRealTimers();
+            invalidateQueriesSpy.mockReset();
+        });
+
+        const expandAndChangeSafeState = async (
+            change:
+                | 'onSafeStateChange'
+                | 'onRejectionSigned' = 'onSafeStateChange',
+        ) => {
+            const user = userEvent.setup({
+                advanceTimers: jest.advanceTimersByTime,
+            });
+            await user.click(screen.getByRole('button'));
+            const votingProps = safeTransactionVotingSpy.mock.calls[0][0];
+            act(() => votingProps[change]?.());
+            invalidateQueriesSpy.mockClear();
+        };
+
+        it('refreshes the transactions until the row reflects the change', async () => {
+            const transaction = generateWorkspacePendingTransaction({
+                confirmations: 1,
+            });
+            const { rerender } = render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState();
+
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            rerender(
+                createTestComponent({
+                    transaction: { ...transaction, confirmations: 2 },
+                }),
+            );
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('keeps refreshing after a confirmation or an execution when only the nonce rivals of the row change', async () => {
+            const transaction = generateWorkspacePendingTransaction();
+            const { rerender } = render(
+                createTestComponent({
+                    transaction,
+                    nonceRivalsState: '0xdef:1',
+                }),
+            );
+            await expandAndChangeSafeState();
+
+            // The Safe sync drops the rival before the execution of the row is indexed.
+            rerender(createTestComponent({ transaction }));
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('refreshes the transactions after a rejection until the nonce rivals of the row reflect it', async () => {
+            const transaction = generateWorkspacePendingTransaction();
+            const { rerender } = render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState('onRejectionSigned');
+
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            rerender(
+                createTestComponent({
+                    transaction,
+                    nonceRivalsState: '0xdef:1',
+                }),
+            );
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+
+            // The rival leaving the list brings the row back to the state it was awaited from.
+            rerender(createTestComponent({ transaction }));
+            act(() => jest.advanceTimersByTime(10_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+        });
+
+        it('stops refreshing the transactions when the row never reflects the change', async () => {
+            const transaction = generateWorkspacePendingTransaction();
+            render(createTestComponent({ transaction }));
+            await expandAndChangeSafeState();
+
+            act(() => jest.advanceTimersByTime(5 * 60_000));
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(24);
+        });
     });
 });

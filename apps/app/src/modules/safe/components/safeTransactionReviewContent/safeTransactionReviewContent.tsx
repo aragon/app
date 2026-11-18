@@ -9,6 +9,10 @@ import {
     Link as KitLink,
     Tag,
 } from '@aragon/gov-ui-kit';
+import {
+    getMultiSendCallOnlyDeployments,
+    getMultiSendDeployments,
+} from '@safe-global/safe-deployments';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
@@ -134,15 +138,21 @@ const collectCalls = (
 };
 
 /**
- * Canonical MultiSend and MultiSendCallOnly deployments for Safe 1.3.0 and 1.4.1, lowercased for
- * comparison. Deterministic across the standard EVM chains this app supports.
+ * Every MultiSend and MultiSendCallOnly deployment of `safe-deployments` for Safe 1.3.0, 1.4.1 and 1.5.0 (canonical,
+ * eip155 and zkSync), lowercased for comparison. The protocol kit batches through whichever deployment the registry
+ * lists first for a chain, which is not always the canonical one (e.g. eip155 on Sepolia), so a batch the app built
+ * itself must not be reported as an unrecognised delegate target.
  */
-const knownDelegateTargets: Record<string, true> = {
-    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
-    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
-    '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
-    '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
-};
+const knownDelegateTargets = new Set(
+    ['1.3.0', '1.4.1', '1.5.0'].flatMap((version) =>
+        [getMultiSendDeployments, getMultiSendCallOnlyDeployments].flatMap(
+            (getDeployments) =>
+                Object.values(
+                    getDeployments({ version })?.deployments ?? {},
+                ).map(({ address }) => address.toLowerCase()),
+        ),
+    ),
+);
 
 /**
  * The reviewable payload of a Safe transaction: its fields, the device-comparison hashes, every
@@ -273,7 +283,7 @@ export const SafeTransactionReviewContent: React.FC<
      */
     const delegateCalls = calls.filter(({ call }) => call.operation === 1);
     const hasUnrecognisedDelegateTarget = delegateCalls.some(
-        ({ call }) => knownDelegateTargets[call.to.toLowerCase()] !== true,
+        ({ call }) => !knownDelegateTargets.has(call.to.toLowerCase()),
     );
 
     /**
@@ -332,6 +342,14 @@ export const SafeTransactionReviewContent: React.FC<
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
 
     /**
+     * With a gas price above zero the Safe pays for its own execution, whatever its calls do: the
+     * refund goes to the refund receiver, or to whoever executes, in the gas token. The fields
+     * sit in the collapsed details, so the refund is said out loud. Disclosed rather than refused,
+     * as relayed transactions use it legitimately.
+     */
+    const hasGasRefund = !/^0+$/.test(envelope.gasPrice);
+
+    /**
      * Refused rather than disclosed, because in these states what this surface *says* is wrong, not
      * merely incomplete. An unverifiable hash and an undecodable call stay signable on purpose:
      * both are honest about themselves and a gate there would lock owners out of legitimately
@@ -352,7 +370,7 @@ export const SafeTransactionReviewContent: React.FC<
     return (
         <>
             {intent != null && (
-                <p className="pb-4 text-neutral-500 text-sm md:text-base">
+                <p className="pb-4 text-sm text-neutral-500 md:text-base">
                     {intent}
                 </p>
             )}
@@ -413,12 +431,18 @@ export const SafeTransactionReviewContent: React.FC<
                     variant="warning"
                 />
             )}
+            {hasGasRefund && (
+                <AlertInline
+                    message={t(`${translationKey}.gasRefund`)}
+                    variant="warning"
+                />
+            )}
             <dl className="flex flex-col gap-3 pt-4">
                 <div className="flex flex-row items-center justify-between gap-4">
-                    <dt className="text-neutral-500 text-sm md:text-base">
+                    <dt className="text-sm text-neutral-500 md:text-base">
                         {t(`${translationKey}.fields.safe`)}
                     </dt>
-                    <dd className="text-neutral-800 text-sm md:text-base">
+                    <dd className="text-sm text-neutral-800 md:text-base">
                         <AddressOutput
                             address={safeAddress}
                             href={safeAppAccountUrl({
@@ -435,7 +459,7 @@ export const SafeTransactionReviewContent: React.FC<
                 />
             </dl>
             {costNote != null && (
-                <p className="pt-3 text-neutral-500 text-sm md:text-base">
+                <p className="pt-3 text-sm text-neutral-500 md:text-base">
                     {costNote}
                 </p>
             )}
@@ -500,7 +524,7 @@ export const SafeTransactionReviewContent: React.FC<
                          * match. Deliberately never labelled verified: a self-consistent malicious payload
                          * produces hashes that match the device perfectly.
                          */}
-                        <p className="text-neutral-500 text-sm">
+                        <p className="text-sm text-neutral-500">
                             {t(`${translationKey}.hashComparison`)}
                         </p>
                         {/* Only once the version is known: while the read is in flight the pair is
@@ -508,7 +532,7 @@ export const SafeTransactionReviewContent: React.FC<
                          * derive it, and the same suppression applies to `hashUnverifiable`. */}
                         {!isVersionPending &&
                             (domainHash == null || messageHash == null) && (
-                                <p className="text-neutral-500 text-sm">
+                                <p className="text-sm text-neutral-500">
                                     {t(
                                         `${translationKey}.hashComparisonPartial`,
                                     )}
@@ -545,7 +569,7 @@ export const SafeTransactionReviewContent: React.FC<
                         {/* The tool is named, not generic: an unnamed "external tool" leaves a signer to
                          * pick one, and a tool that fetches from the same service the app does would
                          * make the comparison pass by construction. */}
-                        <div className="text-neutral-500 text-sm">
+                        <div className="text-sm text-neutral-500">
                             {t(`${translationKey}.hashTool`)}{' '}
                             <KitLink
                                 href="https://github.com/Cyfrin/safe-hash-rs"
@@ -560,7 +584,7 @@ export const SafeTransactionReviewContent: React.FC<
                         <ol className="flex flex-col gap-3">
                             {calls.map(({ call, depth }, index) => (
                                 <li
-                                    className="flex flex-col gap-1 border-neutral-100 border-t pt-3"
+                                    className="flex flex-col gap-1 border-t border-neutral-100 pt-3"
                                     // Position identifies a call: the same target can legitimately appear
                                     // more than once in a batch.
                                     key={`${index.toString()}-${call.to}`}
@@ -579,7 +603,7 @@ export const SafeTransactionReviewContent: React.FC<
                                                     : 'info'
                                             }
                                         />
-                                        <span className="truncate text-neutral-800 text-sm md:text-base">
+                                        <span className="truncate text-sm text-neutral-800 md:text-base">
                                             {/* Local decode wins; a blank remote type is the service
                                              * saying it could not decode, not a name. */}
                                             {localNames[index] ||
@@ -602,7 +626,7 @@ export const SafeTransactionReviewContent: React.FC<
                                                 variant="critical"
                                             />
                                         )}
-                                    <span className="text-neutral-500 text-sm">
+                                    <span className="text-sm text-neutral-500">
                                         {t(`${translationKey}.callTarget`, {
                                             target: addressUtils.truncateAddress(
                                                 call.to,
@@ -610,7 +634,7 @@ export const SafeTransactionReviewContent: React.FC<
                                             value: call.value.toString(),
                                         })}
                                     </span>
-                                    <span className="break-all font-mono text-neutral-500 text-xs">
+                                    <span className="font-mono text-xs break-all text-neutral-500">
                                         {call.data ?? '0x'}
                                     </span>
                                 </li>
@@ -631,8 +655,8 @@ const SafeTransactionReviewRow: React.FC<{
 
     return (
         <div className="flex flex-row items-center justify-between gap-4">
-            <dt className="text-neutral-500 text-sm md:text-base">{label}</dt>
-            <dd className="truncate text-neutral-800 text-sm md:text-base">
+            <dt className="text-sm text-neutral-500 md:text-base">{label}</dt>
+            <dd className="truncate text-sm text-neutral-800 md:text-base">
                 {value}
             </dd>
         </div>
@@ -652,8 +676,8 @@ const SafeTransactionReviewHash: React.FC<{
 
     return (
         <div className="flex flex-col gap-1">
-            <dt className="text-neutral-500 text-sm md:text-base">{label}</dt>
-            <dd className="break-all font-mono text-neutral-800 text-xs">
+            <dt className="text-sm text-neutral-500 md:text-base">{label}</dt>
+            <dd className="font-mono text-xs break-all text-neutral-800">
                 {value}
             </dd>
         </div>

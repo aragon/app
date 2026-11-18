@@ -59,7 +59,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             <RadixCheckbox.Root
                 checked={checked}
                 className={classNames(
-                    'group/checkbox peer focus-ring-primary cursor-pointer rounded-md disabled:cursor-default',
+                    'group/checkbox peer cursor-pointer rounded-md focus-ring-primary disabled:cursor-default',
                 )}
                 disabled={disabled}
                 id={randomId}
@@ -90,9 +90,9 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             </RadixCheckbox.Root>
             <label
                 className={classNames(
-                    'cursor-pointer font-normal text-neutral-500 text-sm leading-tight md:text-base',
+                    'cursor-pointer text-sm leading-tight font-normal text-neutral-500 md:text-base',
                     'group-hover/root:text-neutral-800',
-                    'peer-data-[state=unchecked]:peer-data-disabled:text-neutral-300 peer-data-disabled:cursor-default peer-data-disabled:text-neutral-500',
+                    'peer-data-disabled:cursor-default peer-data-disabled:text-neutral-500 peer-data-[state=unchecked]:peer-data-disabled:text-neutral-300',
                     { 'pl-2 md:pl-3': labelPosition === 'right' },
                     { 'pr-2 md:pr-3': labelPosition === 'left' },
                 )}

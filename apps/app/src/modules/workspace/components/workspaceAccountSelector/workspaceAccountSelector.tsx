@@ -154,7 +154,7 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'group focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800',
+                        'group flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800',
                         className,
                     )}
                     type="button"
@@ -232,7 +232,7 @@ export const WorkspaceAccountSelector: React.FC<
                                     addressUtils.truncateAddress(
                                         option.account.address,
                                     ) && (
-                                    <span className="truncate text-neutral-500 text-sm">
+                                    <span className="truncate text-sm text-neutral-500">
                                         {addressUtils.truncateAddress(
                                             option.account.address,
                                         )}
@@ -240,7 +240,7 @@ export const WorkspaceAccountSelector: React.FC<
                                 )}
                         </span>
                         {option.isExternal && (
-                            <span className="shrink-0 text-neutral-500 text-sm">
+                            <span className="shrink-0 text-sm text-neutral-500">
                                 {t(
                                     'app.workspace.workspaceAccountSelector.notInWorkspace',
                                 )}

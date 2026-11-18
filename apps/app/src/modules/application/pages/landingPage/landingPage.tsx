@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
 
     const demoLink = (
         <Link
-            className="relative inline-flex h-12 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-neutral-0/55 px-5 text-base text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
+            className="relative inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-neutral-0/55 px-5 text-base whitespace-nowrap text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
         >
@@ -126,10 +126,10 @@ export const LandingPage: React.FC = () => {
 
                 <div className="flex w-full max-w-[560px] flex-col items-center gap-6 md:items-start md:gap-8">
                     <div className="flex flex-col items-center gap-3 md:items-start">
-                        <h1 className="text-balance font-normal text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] tracking-[-0.01em] md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
+                        <h1 className="text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] font-normal tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
                             {t('app.application.landingPage.hero.title')}
                         </h1>
-                        <p className="text-pretty text-base text-neutral-500 leading-normal">
+                        <p className="text-base leading-normal text-pretty text-neutral-500">
                             {t('app.application.landingPage.hero.description')}
                         </p>
                     </div>
@@ -148,7 +148,7 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="flex items-center gap-3 pt-2 text-neutral-500 text-sm leading-tight">
+                        <div className="flex items-center gap-3 pt-2 text-sm leading-tight text-neutral-500">
                             <span className="h-px grow bg-neutral-100" />
                             {t('app.application.landingPage.signIn.comingSoon')}
                             <span className="h-px grow bg-neutral-100" />

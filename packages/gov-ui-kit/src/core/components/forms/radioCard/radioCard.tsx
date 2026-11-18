@@ -52,7 +52,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group focus-ring-primary flex w-full flex-col gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3', // default
+        'group flex w-full flex-col gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 focus-ring-primary', // default
         'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl md:px-6 md:py-4', // default
         'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // checked
         'hover:border-neutral-200 hover:shadow-neutral hover:data-[state=checked]:shadow-primary-md', // hover
@@ -81,7 +81,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                 <div
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 font-normal text-sm leading-tight md:gap-y-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 text-sm leading-tight font-normal md:gap-y-1">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>

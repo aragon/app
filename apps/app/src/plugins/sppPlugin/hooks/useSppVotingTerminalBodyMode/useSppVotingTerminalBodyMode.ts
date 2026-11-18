@@ -1,9 +1,9 @@
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import {
     SafeSettledReportOutcome,
     useSafeSettledReport,
 } from '@/plugins/safeMultisigPlugin/hooks/useSafeSettledReport';
-import { safeMultisigProposalUtils } from '@/plugins/safeMultisigPlugin/utils/safeMultisigProposalUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useSafeInfo } from '@/shared/api/safeService';
 import { SppProposalType } from '../../types';
@@ -27,7 +27,7 @@ export const useSppVotingTerminalBodyMode = (
     const isUnsupportedSafe =
         isSafe &&
         safeInfo?.version != null &&
-        !safeMultisigProposalUtils.supportsEip1271Signatures(safeInfo.version);
+        !safeTransactionUtils.supportsEip1271Signatures(safeInfo.version);
     const bodyResult = sppStageUtils.getBodyResult(
         proposal,
         plugin.address,

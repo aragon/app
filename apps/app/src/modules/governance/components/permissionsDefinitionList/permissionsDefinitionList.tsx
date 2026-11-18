@@ -78,13 +78,13 @@ export const PermissionsDefinitionList: React.FC<
                     </DefinitionList.Container>
                     {hasSettingsGroups && groupIndex < settings.length - 1 && (
                         <div className="my-2 flex items-center">
-                            <div className="grow border-neutral-100 border-t" />
+                            <div className="grow border-t border-neutral-100" />
                             <span className="mx-2 text-neutral-500">
                                 {t(
                                     'app.governance.permissionsDefinitionList.or',
                                 )}
                             </span>
-                            <div className="grow border-neutral-100 border-t" />
+                            <div className="grow border-t border-neutral-100" />
                         </div>
                     )}
                 </div>

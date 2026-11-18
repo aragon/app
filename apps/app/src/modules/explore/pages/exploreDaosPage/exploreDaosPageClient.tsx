@@ -57,10 +57,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
 
                     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
-                            <h1 className="font-normal text-3xl text-neutral-0 leading-tight md:text-5xl">
+                            <h1 className="text-3xl leading-tight font-normal text-neutral-0 md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="font-normal text-lg text-primary-50 leading-normal md:text-2xl">
+                            <h3 className="text-lg leading-normal font-normal text-primary-50 md:text-2xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>

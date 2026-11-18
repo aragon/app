@@ -3,6 +3,7 @@ import { checksumSafeAddress } from './safeAddressUtils';
 import type {
     IGetSafeBalancesParams,
     IGetSafeInfoParams,
+    IGetSafePendingTransactionParams,
     IGetSafePendingTransactionsParams,
     IGetSafeTransactionActionsParams,
     IGetSafeTransactionHistoryParams,
@@ -63,6 +64,12 @@ export const safeServiceKeys = {
         SafeServiceKey.SAFE_PENDING_TRANSACTIONS,
         apiVersionUtils.getApiVersion(),
         withChecksummedAddress(params),
+    ],
+    // Shares the queue's root key, so invalidating the queue also refreshes a transaction read from it.
+    safePendingTransaction: (params: IGetSafePendingTransactionParams) => [
+        SafeServiceKey.SAFE_PENDING_TRANSACTIONS,
+        apiVersionUtils.getApiVersion(),
+        withSafeHash(params),
     ],
     safeTransactionHistory: (params: IGetSafeTransactionHistoryParams) => [
         SafeServiceKey.SAFE_TRANSACTION_HISTORY,

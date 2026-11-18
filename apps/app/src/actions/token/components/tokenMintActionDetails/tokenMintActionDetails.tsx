@@ -7,6 +7,7 @@ import {
     MemberDataListItemStructure,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { useEnsName } from '@/modules/ens';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { ITokenActionTokenMint } from '@/plugins/tokenPlugin/types';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -22,7 +23,9 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
     const { action, chainId } = props;
 
     const { token, receivers } = action as unknown as ITokenActionTokenMint;
-    const { address, ens, currentBalance, newBalance } = receivers;
+    const { address, currentBalance, newBalance } = receivers;
+
+    const { data: ensName } = useEnsName(address);
 
     const { buildEntityUrl } = useDaoChain({ chainId, daoId: action.daoId });
     const receiverUrl = buildEntityUrl({
@@ -41,7 +44,7 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
             <MemberDataListItemStructure
                 address={address}
                 className="w-full"
-                ensName={ens}
+                ensName={ensName ?? undefined}
                 hideLabelTokenVoting={true}
                 href={receiverUrl}
                 target="_blank"

@@ -96,11 +96,11 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                     </p>
                 </div>
             </div>
-            <div className="w-full border-neutral-100 border-t sm:hidden" />
+            <div className="w-full border-t border-neutral-100 sm:hidden" />
             <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
                 <div className="flex grow items-center gap-4">
                     <div className="flex min-w-20 flex-col gap-1">
-                        <h3 className="text-neutral-500 text-sm sm:text-base">
+                        <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount',
                             )}
@@ -110,7 +110,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                         </p>
                     </div>
                     <div className="flex min-w-20 flex-col gap-1">
-                        <h3 className="text-neutral-500 text-sm sm:text-base">
+                        <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value',
                             )}

@@ -40,7 +40,7 @@ export const AragonProfilePreviewCard: React.FC<
                         />
                     </div>
                 </div>
-                <p className="truncate text-neutral-800 text-xl leading-tight">
+                <p className="truncate text-xl leading-tight text-neutral-800">
                     {label}
                 </p>
             </div>

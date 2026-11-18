@@ -36,10 +36,10 @@ export const SupportChatLauncher: React.FC = () => {
     }
     // delay-300 waits out the closing panel's 300ms width transition (supportChatPanel).
     return (
-        <div className="sticky bottom-6 z-10 h-0 starting:translate-y-2 self-end starting:opacity-0 transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none">
+        <div className="sticky bottom-6 z-10 h-0 self-end transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none starting:translate-y-2 starting:opacity-0">
             <button
                 aria-label={t('app.application.supportChat.launcher.label')}
-                className="group focus-ring-primary absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-1 whitespace-nowrap rounded-xl border border-primary-100 bg-neutral-0 text-primary-400 shadow-primary-sm transition-all hover:border-primary-200 hover:bg-primary-50 hover:shadow-primary active:border-primary-400 active:bg-neutral-0 active:shadow-none md:w-auto md:px-3"
+                className="group absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-1 rounded-xl border border-primary-100 bg-neutral-0 whitespace-nowrap text-primary-400 shadow-primary-sm transition-all focus-ring-primary hover:border-primary-200 hover:bg-primary-50 hover:shadow-primary active:border-primary-400 active:bg-neutral-0 active:shadow-none md:w-auto md:px-3"
                 onClick={open}
                 ref={buttonRef}
                 type="button"

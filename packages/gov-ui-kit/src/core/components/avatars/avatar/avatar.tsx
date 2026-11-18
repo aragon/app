@@ -81,7 +81,7 @@ export const Avatar: React.FC<IAvatarProps> = (props) => {
     const [imgLoading, setImgLoading] = useState(false);
 
     const containerClassNames = classNames(
-        'flex shrink-0 items-center justify-center overflow-hidden rounded-full leading-none [position:var(--guk-avatar-container-position)]',
+        '[position:var(--guk-avatar-container-position)] flex shrink-0 items-center justify-center overflow-hidden rounded-full leading-none',
         responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
         className,
     );

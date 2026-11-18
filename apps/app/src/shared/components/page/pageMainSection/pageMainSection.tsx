@@ -93,7 +93,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                     )}
                 </div>
                 {description && (
-                    <p className="font-normal text-base text-neutral-500 leading-normal">
+                    <p className="text-base leading-normal font-normal text-neutral-500">
                         {description}
                     </p>
                 )}

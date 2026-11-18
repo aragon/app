@@ -52,9 +52,9 @@ export const GaugeVoterGaugeListItem: React.FC<
                         size="lg"
                         src={avatarSrc}
                     />
-                    <div className="flex flex-col gap-1 font-normal leading-tight">
+                    <div className="flex flex-col gap-1 leading-tight font-normal">
                         <p className="text-lg text-neutral-800">{gauge.name}</p>
-                        <p className="text-neutral-500 text-sm">
+                        <p className="text-sm text-neutral-500">
                             <AddressOutput
                                 address={gauge.address}
                                 copy={false}

@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { DateTime } from 'luxon';
 import * as permissionCheckGuardApi from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { SafeDialogId } from '@/modules/safe/constants';
+import { SafeTransactionState } from '@/modules/safe/types';
 import {
     generateSppPluginSettings,
     generateSppProposal,
@@ -37,7 +38,6 @@ import {
     generateSafeInfo,
     generateSafeMultisigTransaction,
 } from '../../testUtils';
-import { SafeTransactionState } from '../../types';
 import {
     type ISafeMultisigSubmitVoteProps,
     SafeMultisigSubmitVote,

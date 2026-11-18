@@ -68,7 +68,7 @@ export const SupportChatPanel: React.FC = () => {
         isOpen
             ? classNames(
                   'fixed inset-0 z-[var(--guk-dialog-content-z-index)] flex',
-                  'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-neutral-100 screen-lg:border-l screen-lg:shadow-neutral-lg',
+                  'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-l screen-lg:border-neutral-100 screen-lg:shadow-neutral-lg',
                   panelWidthClassName,
               )
             : 'hidden screen-lg:flex screen-lg:w-0',

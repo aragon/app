@@ -59,7 +59,7 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (
                         copy={false}
                     />
                 </div>
-                <p className="text-neutral-500 text-sm md:text-base">
+                <p className="text-sm text-neutral-500 md:text-base">
                     {t('app.settings.updateDaoContractsCard.versionUpdate', {
                         from: fromVersion,
                         to: toVersion,

@@ -1,6 +1,6 @@
 {
     "name": "@aragon/aragon-domain",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "description": "Aragon governance business logic package — domain model, use cases, and infrastructure adapters",
     "homepage": "https://github.com/aragon/app/tree/main/packages/aragon-domain#readme",
     "bugs": {
@@ -62,6 +62,6 @@
         "vitest": "catalog:"
     },
     "engines": {
-        "node": ">=24.22.1"
+        "node": ">=24.22.3"
     }
 }

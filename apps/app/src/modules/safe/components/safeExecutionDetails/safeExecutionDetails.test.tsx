@@ -6,6 +6,7 @@ import { generateTransaction } from '@/modules/finance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import * as safeService from '@/shared/api/safeService';
 import {
+    generateReactQueryResultError,
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
@@ -89,8 +90,26 @@ describe('<SafeExecutionDetails /> component', () => {
                     safeTxHash: '0xff54',
                 },
             },
-            { refetchInterval: expect.any(Function) },
+            { enabled: true, refetchInterval: expect.any(Function) },
         );
+    });
+
+    it('says a rejection is one instead of reading and listing its actions', () => {
+        mockActions({
+            rawActions: [{ to: safeAddress, data: '0x', value: '0' }],
+        });
+        render(createTestComponent({ isRejection: true }));
+
+        expect(
+            screen.getByText(/safeExecutionDetails.rejection.heading/),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('execution-actions')).not.toBeInTheDocument();
+        expect(useSafeTransactionActionsSpy).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({ enabled: false }),
+        );
+        // The summary counts no action either.
+        expect(screen.getByText('0')).toBeInTheDocument();
     });
 
     it('renders the executor and no proposal', () => {
@@ -153,6 +172,44 @@ describe('<SafeExecutionDetails /> component', () => {
         expect(screen.getByText('4')).toBeInTheDocument();
         expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
             expect.objectContaining({ actionCount: 4, isLoading: true }),
+            undefined,
+        );
+    });
+
+    it('reports the actions as not loaded when they could not be read', () => {
+        useSafeTransactionActionsSpy.mockReturnValue(
+            generateReactQueryResultError({
+                error: new Error('error'),
+            }) as ReturnType<typeof safeService.useSafeTransactionActions>,
+        );
+
+        render(createTestComponent());
+
+        expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isError: true }),
+            undefined,
+        );
+    });
+
+    it('keeps the actions already read when a later read fails', () => {
+        useSafeTransactionActionsSpy.mockReturnValue({
+            ...generateReactQueryResultSuccess<
+                safeService.ISafeTransactionActions,
+                Error
+            >({
+                data: { decoding: true, actions: [], rawActions: [] },
+            }),
+            error: new Error('error'),
+            isError: true,
+            isRefetchError: true,
+            isSuccess: false,
+            status: 'error',
+        });
+
+        render(createTestComponent());
+
+        expect(transactionExecutionActionsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ isError: false }),
             undefined,
         );
     });

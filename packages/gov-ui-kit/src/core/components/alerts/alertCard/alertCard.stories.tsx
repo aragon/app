@@ -31,7 +31,7 @@ export const WithCustomChildren: Story = {
     args: {
         message: 'Alert message',
         children: (
-            <div className="flex h-24 w-full items-center justify-center border border-info-300 border-dashed bg-info-100">
+            <div className="flex h-24 w-full items-center justify-center border border-dashed border-info-300 bg-info-100">
                 Customisable content
             </div>
         ),

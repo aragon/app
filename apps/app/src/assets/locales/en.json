@@ -453,30 +453,6 @@
           "termsOfService": "Terms of Service"
         }
       },
-      "landingPage": {
-        "copyright": "© {{year}} Aragon",
-        "demo": {
-          "action": "Explore a demo workspace",
-          "desktopPreviewAlt": "My Workspace dashboard with four accounts and open to-dos",
-          "mobilePreviewAlt": "My Workspace dashboard on a phone, with open to-dos",
-          "previewLabel": "Explore the demo workspace"
-        },
-        "hero": {
-          "description": "Bring your existing Safes and Aragon DAOs into one shared workspace. Review and sign transactions, track pending approvals, and see what needs your team’s attention. Free to use.",
-          "title": "Your team’s onchain finances, in one place"
-        },
-        "legal": "Legal",
-        "openingWorkspace": "Opening your workspace…",
-        "privacy": "Privacy",
-        "signIn": {
-          "comingSoon": "coming soon",
-          "email": "Email",
-          "google": "Google",
-          "passkey": "Passkey",
-          "walletAction": "Continue with wallet"
-        },
-        "terms": "Terms"
-      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -505,18 +481,20 @@
         },
         "group": {
           "inbox": "Inbox",
+          "workspace": "Workspace",
           "settings": "Settings"
         },
         "link": {
           "accountSettings": "Settings",
           "assets": "Assets",
           "dashboard": "Dashboard",
-          "admin": "Workspace admin",
+          "edit": "Edit workspace",
           "members": "Members",
           "permissions": "Permissions",
           "proposals": "Proposals",
           "todos": "To-dos",
-          "transactions": "Transactions"
+          "transactions": "Transactions",
+          "admin": "Workspace admin"
         }
       },
       "notFoundBase": {
@@ -782,6 +760,30 @@
         "a11y": {
           "description": "Warning that retrying an unconfirmed transaction may execute the action twice."
         }
+      },
+      "landingPage": {
+        "copyright": "© {{year}} Aragon",
+        "demo": {
+          "action": "Explore a demo workspace",
+          "desktopPreviewAlt": "My Workspace dashboard with four accounts and open to-dos",
+          "mobilePreviewAlt": "My Workspace dashboard on a phone, with open to-dos",
+          "previewLabel": "Explore the demo workspace"
+        },
+        "hero": {
+          "description": "Bring your existing Safes and Aragon DAOs into one shared workspace. Review and sign transactions, track pending approvals, and see what needs your team’s attention. Free to use.",
+          "title": "Your team’s onchain finances, in one place"
+        },
+        "legal": "Legal",
+        "openingWorkspace": "Opening your workspace…",
+        "privacy": "Privacy",
+        "signIn": {
+          "comingSoon": "coming soon",
+          "email": "Email",
+          "google": "Google",
+          "passkey": "Passkey",
+          "walletAction": "Continue with wallet"
+        },
+        "terms": "Terms"
       }
     },
     "capitalFlow": {
@@ -1987,6 +1989,9 @@
         "links": "Resources",
         "transactions": "Transactions",
         "value": "Value"
+      },
+      "transactionExecutionActions": {
+        "loadError": "The actions of this transaction could not be loaded. Try again later."
       },
       "transferAssetForm": {
         "amount": {
@@ -3978,6 +3983,7 @@
         "callRunsNothing": "The address this delegate call targets holds no code, so this call executes nothing while the rest of the transaction still runs.",
         "decoderDisagreement": "Two independent readings of this transaction's calls disagree about what it does - one of them is the remote decoder, which may be the wrong one - so it cannot be signed here.",
         "delegateTargetUnresolved": "The code at this delegate call's target could not be read, so whether the calls below would actually run is unknown. Nothing can be signed until that read succeeds — refresh to try again.",
+        "gasRefund": "This transaction pays a gas refund out of the Safe when it is executed. Check its gas price, gas token and refund receiver in the details before signing.",
         "hashMismatch": "This transaction's fields do not match the hash it is stored under, so it cannot be signed.",
         "hashUnverifiable": "The transaction hash could not be recomputed, so its fields could not be checked against it.",
         "incompleteBatch": "Part of this transaction could not be read. The calls below are not the whole transaction, so it cannot be signed here. Review it in the Safe app if you intend to approve it.",
@@ -4027,6 +4033,112 @@
           "result_verification": "Verifying Safe execution and proposal result",
           "execute": "Execute"
         }
+      },
+      "safeTransactionDialog": {
+        "title": "Review Safe transaction",
+        "description": "Review the exact Safe transaction before approving or executing it.",
+        "loading": "Preparing the Safe transaction…",
+        "signing": "Approving the Safe transaction…",
+        "executing": "Executing the Safe transaction…",
+        "confirmed": "Your approval was added to the Safe transaction.",
+        "executed": "Safe transaction executed successfully.",
+        "failed": "The Safe transaction could not be processed.",
+        "walletRequired": "Connect an owner wallet on the Safe's network to approve or execute this transaction.",
+        "signatureRejected": "The approval was rejected in your wallet. Nothing was submitted.",
+        "executionRejected": "The execution was rejected in your wallet. Nothing was sent.",
+        "networkSwitchRejected": "The network switch was rejected. Switch to the Safe's network to continue.",
+        "transactionUnavailable": "This Safe transaction is no longer available from the service.",
+        "alreadyExecuted": "This Safe transaction has already been executed.",
+        "nonceConsumed": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "executionUnavailable": "This Safe transaction is no longer ready to execute.",
+        "executionFailed": "The Safe transaction could not be executed.",
+        "uncertain": "The result is not confirmed yet. Re-check before trying again.",
+        "actions": {
+          "confirm": "Approve transaction",
+          "execute": "Execute",
+          "recheck": "Re-check",
+          "done": "Done",
+          "close": "Close"
+        }
+      },
+      "safeTransactionSimulation": {
+        "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
+        "limitReached": "Simulation limit reached for now. Try again later.",
+        "simulationError": "There was an error simulating the transaction. Please try again later.",
+        "unavailable": "Simulation is not available right now. Try again later."
+      },
+      "safeTransactionVoting": {
+        "approve": "Approve transaction",
+        "approved": "Approved",
+        "execute": "Execute Safe transaction",
+        "loadError": "The Safe transaction could not be loaded. Try again later.",
+        "reject": "Reject transaction",
+        "rejected": "Rejection signed",
+        "rejectionQueued": {
+          "title": "A rejection of this transaction is queued.",
+          "description": "It has {{approvals}} of {{threshold}} approvals. Nonce {{nonce}} can be used once, so this transaction can no longer be executed after the rejection is."
+        },
+        "superseded": "Another transaction already used this Safe nonce, so this one can no longer be executed.",
+        "waitingForNonce": {
+          "title": "This transaction is queued behind nonce {{currentNonce}}.",
+          "description": "It can be executed once the Safe reaches nonce {{nonce}}."
+        }
+      },
+      "safeCreateTransactionWizard": {
+        "steps": {
+          "ACTIONS": {
+            "name": "Add actions",
+            "title": "Add actions",
+            "description": "Add the actions the Safe executes. They run in the order listed on this page, batched into one Safe transaction when there is more than one."
+          }
+        },
+        "submitLabel": "Create transaction"
+      },
+      "safeCreateTransactionDialog": {
+        "title": "Create Safe transaction",
+        "description": "Review the exact Safe transaction, then sign it to queue it on the Safe for the other owners' approvals.",
+        "loading": "Preparing the Safe transaction…",
+        "signing": "Creating the Safe transaction…",
+        "created": "Safe transaction created. It is queued on the Safe and waits for the other owners' approvals.",
+        "createdReadyToExecute": "Safe transaction created. It is queued on the Safe and can be executed from the transactions list.",
+        "failed": "The Safe transaction could not be created.",
+        "walletRequired": "Connect an owner wallet on the Safe's network to create this transaction.",
+        "invalidNonce": "The Safe returned an invalid nonce.",
+        "queueChanged": "Another transaction was queued on the Safe since you reviewed this one, so it was rebuilt on the next free nonce. Review it again before signing.",
+        "signatureRejected": "The signature was rejected in your wallet. Nothing was submitted.",
+        "networkSwitchRejected": "The network switch was rejected. Switch to the Safe's network to continue.",
+        "uncertain": "The result is not confirmed yet. Re-check before trying again.",
+        "actions": {
+          "create": "Sign and create",
+          "recheck": "Re-check",
+          "done": "Done",
+          "close": "Close"
+        },
+        "networkUnavailable": "The Safe's network can't be reached right now. Try again later.",
+        "rejection": {
+          "title": "Reject Safe transaction",
+          "description": "A rejection is an empty Safe transaction on the same nonce as the one it rejects. Review it, then sign it. Once it has enough approvals and is executed, the rejected transaction can never be executed.",
+          "created": "Rejection signed. It is queued on the Safe. Once it has enough approvals, execute it from the transactions list to reject the transaction.",
+          "createdReadyToExecute": "Rejection signed and queued on the Safe. Execute it from the transactions list to reject the transaction.",
+          "nonceUsed": "The Safe has already used this nonce, so there is nothing left to reject.",
+          "actions": {
+            "create": "Sign rejection"
+          }
+        }
+      },
+      "safeExecutionDetails": {
+        "rejection": {
+          "heading": "Onchain rejection",
+          "description": "This transaction performs no action. Executing it uses up its Safe nonce, so any other transaction queued on that nonce can no longer be executed."
+        }
+      },
+      "safeOwnerSigning": {
+        "walletRequired": "Connect an owner wallet on the Safe's network to continue.",
+        "providerUnavailable": "The connected wallet provider is unavailable.",
+        "notOwner": "The connected wallet is not a current Safe owner.",
+        "invalidThreshold": "The Safe returned an invalid owner threshold.",
+        "unsupportedContractOwner": "This Safe version cannot verify signatures from a smart contract wallet. Connect an owner wallet that is not a contract.",
+        "hashMismatch": "The transaction fields do not match the Safe transaction hash."
       }
     },
     "settings": {
@@ -4656,22 +4768,6 @@
         },
         "submitLabel": "Create workspace"
       },
-      "demo": {
-        "error": "The demo workspace could not be installed. Reload the page to try again.",
-        "settingUp": "Setting up your Aragon demo workspace…"
-      },
-      "gettingStartedPage": {
-        "name": "Getting started",
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
-            "name": "Add accounts",
-            "title": "Add accounts"
-          }
-        },
-        "submitLabel": "Add accounts",
-        "addAccountsLater": "Add accounts later"
-      },
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
@@ -4765,8 +4861,9 @@
         },
         "emptyAccounts": {
           "action": "Add an existing account",
-          "createAction": "Create a new account",
-          "heading": "Add a Safe or an Aragon account"
+          "description": "This workspace has no accounts yet. Add the DAOs and Safes it should bring together.",
+          "heading": "Add a Safe or an Aragon account",
+          "createAction": "Create a new account"
         },
         "section": {
           "accounts": "Accounts",
@@ -4846,6 +4943,7 @@
           "heading": "Error loading transactions"
         },
         "item": {
+          "rejection": "Onchain rejection · {{date}}",
           "status": {
             "active": "Active",
             "executable": "Executable",
@@ -4938,24 +5036,6 @@
         "addToOther": "Add to another workspace",
         "error": "The account could not be added to the workspace. Please try again.",
         "message": "{{account}} isn't part of {{workspace}}."
-      },
-      "workspaceWelcomeDialog": {
-        "action": {
-          "openWorkspace": "Open workspace"
-        },
-        "description": "Your accounts are now available from one place.",
-        "feature": {
-          "track": {
-            "description": "Check your transactions to see what’s still waiting on others.",
-            "title": "Keep track after you sign"
-          },
-          "waiting": {
-            "description": "Find transactions waiting for your signature or ready for you to execute.",
-            "title": "See what’s waiting for you"
-          }
-        },
-        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
-        "title": "Your workspace is ready"
       },
       "workspaceSelector": {
         "create": "Create workspace",
@@ -5076,6 +5156,50 @@
         "main": {
           "title": "To-dos"
         }
+      },
+      "layoutWizardCreateWorkspaceTransaction": {
+        "name": "Create transaction"
+      },
+      "workspaceCreateTransactionPage": {
+        "action": "View transactions",
+        "unsupported": {
+          "title": "Transaction creation unavailable",
+          "description": "Transactions can only be created here for a Safe account of the workspace."
+        }
+      },
+      "demo": {
+        "error": "The demo workspace could not be installed. Reload the page to try again.",
+        "settingUp": "Setting up your Aragon demo workspace…"
+      },
+      "gettingStartedPage": {
+        "name": "Getting started",
+        "steps": {
+          "ACCOUNTS": {
+            "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
+            "name": "Add accounts",
+            "title": "Add accounts"
+          }
+        },
+        "submitLabel": "Add accounts",
+        "addAccountsLater": "Add accounts later"
+      },
+      "workspaceWelcomeDialog": {
+        "action": {
+          "openWorkspace": "Open workspace"
+        },
+        "description": "Your accounts are now available from one place.",
+        "feature": {
+          "track": {
+            "description": "Check your transactions to see what’s still waiting on others.",
+            "title": "Keep track after you sign"
+          },
+          "waiting": {
+            "description": "Find transactions waiting for your signature or ready for you to execute.",
+            "title": "See what’s waiting for you"
+          }
+        },
+        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
+        "title": "Your workspace is ready"
       },
       "workspaceAdminPage": {
         "title": "Workspace admin",

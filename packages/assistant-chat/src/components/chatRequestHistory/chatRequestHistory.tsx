@@ -22,24 +22,24 @@ export const ChatRequestHistory: React.FC = () => {
 
     if (requestHistory.length === 0) {
         return (
-            <p className="flex flex-1 items-center justify-center p-6 text-center text-neutral-400 text-sm">
+            <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-neutral-400">
                 {chatCopy.requestHistory.empty}
             </p>
         );
     }
 
     return (
-        <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex min-h-0 flex-1 [scrollbar-width:none] flex-col gap-2 overflow-y-auto overscroll-contain p-4 [&::-webkit-scrollbar]:hidden">
             {requestHistory.map((entry) => (
                 <div
                     className="flex flex-none items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral"
                     key={entry.identifier}
                 >
                     <Tag label={entry.identifier} variant="primary" />
-                    <span className="min-w-0 flex-1 truncate text-neutral-800 text-sm">
+                    <span className="min-w-0 flex-1 truncate text-sm text-neutral-800">
                         {entry.summary}
                     </span>
-                    <span className="flex-none text-neutral-400 text-sm">
+                    <span className="flex-none text-sm text-neutral-400">
                         {formatCreatedAt(entry.createdAt)}
                     </span>
                 </div>

@@ -9,6 +9,7 @@
         "ASSISTANT_RATE_LIMIT_SESSIONS_PER_DAY",
         "BLOB_READ_WRITE_TOKEN",
         "CI",
+        "COREPACK_HOME",
         "CRON_SECRET",
         "DOCS_CORPUS_DIR",
         "DOCS_ENV",
@@ -60,8 +61,7 @@
             "cache": false
         },
         "lint": {
-            "cache": true,
-            "outputs": []
+            "cache": false
         },
         "lint:check": {
             "cache": true,

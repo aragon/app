@@ -32,9 +32,9 @@
     "dependencies": {
         "@aragon/docs-corpus": "workspace:*",
         "@aragon/gov-ui-kit": "workspace:*",
-        "fumadocs-core": "16.17.7",
-        "fumadocs-mdx": "15.4.9",
-        "fumadocs-ui": "16.17.7",
+        "fumadocs-core": "16.18.3",
+        "fumadocs-mdx": "15.5.3",
+        "fumadocs-ui": "16.18.3",
         "next": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
@@ -42,7 +42,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
-        "@playwright/test": "^1.63.0",
+        "@playwright/test": "^1.65.0",
         "@tailwindcss/postcss": "catalog:",
         "@types/jest": "catalog:",
         "@types/mdast": "catalog:",

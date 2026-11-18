@@ -2,6 +2,9 @@
     "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
     "root": false,
     "extends": "//",
+    "tailwind": {
+        "stylesheet": "src/modules/application/components/layouts/layoutRoot/layoutRoot.css"
+    },
     "files": {
         // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
         "includes": [
@@ -47,6 +50,21 @@
         }
     },
     "overrides": [
+        {
+            // Biome reads tsconfig path aliases shaped like package names (@e2e/*, @aragon/gov-ui-kit-original) as packages.
+            "includes": [
+                "e2e/**",
+                "src/shared/lib/@aragon/gov-ui-kit.ts",
+                "src/plugins/tokenPlugin/components/tokenSetupMembership/components/tokenSetupMembershipImportToken/tokenSetupMembershipImportToken.tsx"
+            ],
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noUndeclaredDependencies": "off"
+                    }
+                }
+            }
+        },
         {
             "includes": [
                 "e2e/scripts/**/*.mjs",
