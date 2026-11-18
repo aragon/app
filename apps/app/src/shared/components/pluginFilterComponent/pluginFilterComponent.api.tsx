@@ -59,10 +59,15 @@ export interface IPluginFilterComponentProps<
      */
     onValueChange?: (value: IFilterComponentPlugin<TMeta, TProps>) => void;
     /**
-     * Name of the search parameter to be used on the URL when selecting a tab.
+     * Name of the search parameter to be used on the URL when selecting a plugin.
      * @default plugin
      */
     searchParamName?: string;
+    /**
+     * UI variant of the plugin selector.
+     * @default tab
+     */
+    variant?: 'tab' | 'dropdown';
     /**
      * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
