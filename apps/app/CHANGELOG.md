@@ -12,6 +12,8 @@
 
 ### Patch Changes
 
+- Resolve `ipfs://` ENS avatars through ipfs.filebase.io: viem's default ipfs.io gateway no longer serves content, so member avatars fell back to the ENS metadata service and could show a stale image after a change, and the Aragon profile dialog showed no avatar. Avatar URLs keyed by name (ENS metadata service, euc.li) skip the image optimizer, whose 7-day cache kept the previous image.
+
 - [#1569](https://github.com/aragon/app/pull/1569) [`a0e0cad`](https://github.com/aragon/app/commit/a0e0cadd7a1d677ecf3d9fbf27955fb82e9ac932) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Resolve member ENS names in the app for the SPP advance stage dialog, the multisig add and remove members action and the token mint action.
 
 - [#1567](https://github.com/aragon/app/pull/1567) [`aca3a35`](https://github.com/aragon/app/commit/aca3a35f6deb442cddbcbeb93646862e2ab88b14) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix profile updates, profile renames and delegate statements for ENS names after the ENSv2 launch: records are written to the resolver that stores them (ENSv1 or ENSv2), and names without a writable resolver show an error instead of sending a reverting transaction.
