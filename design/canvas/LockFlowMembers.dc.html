@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock-to-vote members</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{count}}" state="idle">
+              <sc-if value="{{showCard}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="{{cardHeading}}" description="Lock more tokens to increase your voting power." is-stacked="{{no}}" object-illustration="{{walletIllustration}}" primary-button="{{cardButton}}"></x-import>
+              </sc-if>
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<sc-for list="{{members}}" as="mem">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{mem.address}}" ens-name="{{mem.ens}}" token-amount="{{mem.power}}" class-name="min-w-0"></x-import>
+</sc-for>
+</x-import>
+            </x-import>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Orbit Token (ORB)</x-import>
+              <dc-import name="LockFlowLockForm" mode="panel" wallet="{{wallet}}" symbol="{{symbol}}" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-submit="{{onLock}}" on-unlock="{{onUnlock}}" on-connect="{{onConnect}}" hint-size="100%,380px"></dc-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"symbol":{"editor":"text","default":"ORB"},"balance":{"editor":"float","default":25000},"locked":{"editor":"float","default":0},"allowance":{"editor":"float","default":0},"on-connect":{"editor":null},"on-lock":{"editor":null},"on-unlock":{"editor":null},"on-onboard":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Members page of a lock-to-vote DAO (apps/app: modules/governance/pages/daoMembersPage + plugins/lockToVotePlugin:
+// LockToVoteMemberList = token member list with the "You have unlocked ORB" card, LockToVoteMemberPanel = aside card with the lock form).
+// Props: wallet ('connected' | ''), symbol, balance (unlocked ORB), locked (ORB), allowance, on-connect(), on-lock(amount), on-unlock(),
+// on-onboard() (the list card's "Lock tokens"). The connected user (nadia.eth) is pinned first once tokens are locked (voting power = locked).
+// Source-only: lock-to-vote has no mock DAO or screenshot; the member rows are sample data.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const connected = p.wallet === 'connected';
+    const symbol = p.symbol || 'ORB';
+    const balance = Number(p.balance) || 0;
+    const locked = Number(p.locked) || 0;
+    const others = [
+      ['0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth', 1840000], ['0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth', 1215000],
+      ['0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth', 760000], ['0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', '', 512000],
+      ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth', 305500], ['0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', 'marcusj.eth', 96000]
+    ].map((r) => ({ address: r[0], ens: r[1], power: r[2] }));
+    const me = { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', power: locked };
+    const members = connected && locked > 0 ? [me].concat(others) : others;
+    const call = (f, a) => (...args) => { if (typeof f === 'function') f(...args); };
+    return {
+      yes: true, no: false, members, count: members.length,
+      wallet: p.wallet || '', symbol, balance, locked, allowance: Number(p.allowance) || 0,
+      showCard: connected && locked === 0 && balance > 0,
+      cardHeading: 'You have unlocked ' + symbol,
+      walletIllustration: { object: 'WALLET' },
+      cardButton: { label: 'Lock tokens', onClick: () => { if (typeof p.onOnboard === 'function') p.onOnboard(); } },
+      onLock: call(p.onLock), onUnlock: call(p.onUnlock), onConnect: call(p.onConnect)
+    };
+  }
+}
+</script>
+</body>
+</html>

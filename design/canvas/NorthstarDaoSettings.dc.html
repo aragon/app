@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Settings</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Settings</x-import>
+          </header>
+
+          <div class="page-section">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Account</x-import>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Blockchain">
+                  <div class="settings-info__value">
+                    <p class="text-neutral-500">Ethereum</p>
+                    <p class="settings-info__note">Not changeable</p>
+                  </div>
+                </x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS name" copy-value="0xA767846912853E30403f3efb946A5250e8E6A063" description="Not changeable" link="{{daoLink}}" children="northstar.dao.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Summary">
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{four}}"><p class="text-neutral-500">Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.</p></x-import>
+                </x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Links">
+                  <div class="settings-info__links">
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Docs</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/northstar_fi" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+                  </div>
+                </x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permissions" description="Get an overview of all permissions related to this account and its actors" link="{{permissionsLink}}" children="View all permissions"></x-import>
+              </x-import>
+            </x-import>
+          </div>
+
+          <div class="page-section page-section--compact" id="governance">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS">Process</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DataList.Item" href="#nav:process:nsp" class-name="px-4 py-3 md:p-6">
+              <div class="process-item">
+                <div class="process-item__title">
+                  <p class="process-item__name">Northstar Staged Governance</p>
+                  <p class="process-item__key">NSP</p>
+                </div>
+                <p class="process-item__description">Proposals are approved by the Council Safe or the Core Team, then pass a 7-day community veto window in which NSP holders or the Security Guardian can block them.</p>
+              </div>
+            </x-import>
+          </div>
+
+          <div class="page-section page-section--compact">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Automation</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS">Policy</x-import>
+            </div>
+          </div>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contracts</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Operating system" description="Aragon OSx v1.4.0" link="{{link_a767}}" children="0xa767846912853e30403f3efb946a5250e8e6a063"></x-import></div>
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="NSP Token Holders" description="Token Voting v1.3" link="{{link_65bc}}" children="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"></x-import></div>
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Core Team" description="Multisig v1.3" link="{{link_5668}}" children="0x566805a83e872e67a32d84596b81d16faa7ba6a2"></x-import></div>
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Northstar Staged Governance" description="Spp v1.3" link="{{link_ff1f}}" children="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09"></x-import></div>
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe 0x515f…02e2" description="Safe v0.0" link="{{link_515f}}" children="0x515fec2e8f6553948b1d57c14c1243a1405c02e2"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe 0xf361…465e" description="Safe v0.0" link="{{link_f361}}" children="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e"></x-import>
+            </x-import>
+            <div class="update-contracts">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="RELOAD">Upgrade contracts</x-import>
+              <p class="update-contracts__text">There are updates available for Aragon OSx and its plugin contracts.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet, onConnect. Links carry href="#nav:<target>": the Governance process item opens the process detail, "View all permissions" the permissions page.
+// DAO settings (apps/app: modules/settings/pages/daoSettingsPage/daoSettingsPageClient.tsx). linkedAccount flag on, so
+// the Account section is DaoHierarchy (a Card with DaoInfo; Northstar has no linked accounts); Automation is shown
+// (capitalFlowAutomation on) with no policies. Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
+// Process item: shared/components/processDataListItem. Mock data: design/baseline-check/data.cjs (Northstar Protocol, SPP DAO: data-spp.cjs).
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    return {
+      click: this.click,
+      yes: true,
+      four: 4,
+      daoLink: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isExternal: true, isOnchainEntity: true },
+      permissionsLink: { href: '#nav:permissions', isExternal: false },
+      link_a767: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isOnchainEntity: true },
+      link_65bc: { href: 'https://etherscan.io/address/0x65bcf0e7d2a74d45fe702135d19f954d59658f36', isOnchainEntity: true },
+      link_5668: { href: 'https://etherscan.io/address/0x566805a83e872e67a32d84596b81d16faa7ba6a2', isOnchainEntity: true },
+      link_ff1f: { href: 'https://etherscan.io/address/0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', isOnchainEntity: true },
+      link_515f: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isOnchainEntity: true },
+      link_f361: { href: 'https://etherscan.io/address/0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

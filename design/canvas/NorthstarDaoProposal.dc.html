@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Proposal</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}" tag="{{p.tag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">{{p.title}}</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">{{p.summary}}</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less"><x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p.description}}" immediately-render="{{no}}"></x-import></x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.StageContainer" active-stage="{{activeStage}}" on-stage-click="{{onStageClick}}">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Council approval" status="{{s0.status}}" index="{{zero}}" body-list="{{bodies0}}" end-date="{{s0.end}}" min-advance="{{s0.minAdv}}" max-advance="{{s0.maxAdv}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="council.northstar.eth" copy="{{no}}"></x-import> <span style="{{council.sumStyle}}">{{council.sumText}}</span></p></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x566805a83e872e67a32d84596b81d16faa7ba6a2"><sc-if value="{{core.progress}}" hint-placeholder-val="{{no}}"><div style="display:flex;flex-direction:column;gap:12px;width:100%;"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">Core Team <span style="color: var(--color-neutral-500);">approval</span></p><x-import component-from-global-scope="GovUiKit.Progress" value="{{core.value}}" threshold-indicator="66.67" variant="neutral"></x-import><p style="margin: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800);">{{core.approvals}} <span style="color: var(--color-neutral-500);">of 3 members</span></p></div></sc-if><sc-if value="{{core.plain}}" hint-placeholder-val="{{yes}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">Core Team <span style="{{core.sumStyle}}">{{core.sumText}}</span></p></sc-if></x-import>
+</x-import><div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;"><sc-if value="{{s0.fRequired}}" hint-placeholder-val="{{no}}"><p style="margin: 0; font-size: 16px; line-height: 24px; text-align: right; color: var(--color-neutral-500);"><span style="color: var(--color-neutral-800);">1 body</span> required to approve</p></sc-if><sc-if value="{{s0.fAdvance}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" on-click="{{act.advance}}">Advance proposal</x-import></sc-if><sc-if value="{{s0.fExpired}}" hint-placeholder-val="{{no}}"><span style="margin: 0; font-size: 16px; line-height: 24px; text-align: right; color: var(--color-neutral-500); display:block;">Proposal not advanced in time</span></sc-if></div></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="council.northstar.eth" status="{{s0.status}}" body-id="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" hide-tabs="{{hideVotes}}" body-brand="{{safeBrand}}">
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<div class="flex w-full min-w-fit flex-row justify-between gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral-sm md:px-6 md:py-5" style="{{council.cardStyle}}">{{council.cardLabel}}<sc-if value="{{council.cardIcon}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="{{council.cardIcon}}" variant="{{council.cardVariant}}"></x-import></sc-if></div>
+<sc-if value="{{council.showAction}}" hint-placeholder-val="{{no}}">
+<div class="flex w-full flex-col gap-6 pt-6 md:pt-8">
+<sc-if value="{{council.canAct}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="If you are an owner of this address you can connect with WalletConnect to vote on this proposal." variant="info"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full md:w-fit" size="md" variant="{{council.btnVariant}}" icon-left="{{council.btnIcon}}" on-click="{{council.btnClick}}">{{council.btnLabel}}</x-import>
+</div>
+</sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{council.settings}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="Core Team" status="{{s0.status}}" body-id="0x566805a83e872e67a32d84596b81d16faa7ba6a2">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{core.approvals}}" min-approvals="{{two}}" members-count="{{three}}">
+<sc-if value="{{core.showAction}}" hint-placeholder-val="{{no}}"><div class="flex flex-col gap-y-4 pt-6 md:pt-8"><div class="w-full"><x-import component-from-global-scope="GovUiKit.Button" class-name="w-full md:w-fit" size="md" variant="{{core.btnVariant}}" icon-left="{{core.btnIcon}}" on-click="{{core.btnClick}}">{{core.btnLabel}}</x-import></div></div></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+<x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{cv.count}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{cv.show.r0}}" hint-placeholder-val="{{yes}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{cv.r0.voter}}" vote-indicator="approve" href="{{cv.r0.href}}"></x-import></sc-if>
+<sc-if value="{{cv.show.r1}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{cv.r1.voter}}" vote-indicator="approve" href="{{cv.r1.href}}"></x-import></sc-if>
+<sc-if value="{{cv.show.r2}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{cv.r2.voter}}" vote-indicator="approve" href="{{cv.r2.href}}"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+</x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{core.settings}}"></x-import>
+</x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Stage" name="Community veto" status="{{s1.status}}" index="{{one}}" body-list="{{bodies1}}" end-date="{{s1.end}}"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummary"><x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryList">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"><sc-if value="{{tv.progress}}" hint-placeholder-val="{{no}}"><div style="display:flex;flex-direction:column;gap:12px;width:100%;"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">NSP Token Holders <span style="color: var(--color-neutral-500);">veto support</span></p><x-import component-from-global-scope="GovUiKit.Progress" value="{{tv.value}}" threshold-indicator="50" variant="primary"></x-import><p style="margin: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800);">{{tv.yesText}} <span style="color: var(--color-neutral-500);">of {{tv.totalText}} NSP</span></p></div></sc-if><sc-if value="{{tv.plain}}" hint-placeholder-val="{{yes}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);">NSP Token Holders <span style="{{tv.sumStyle}}">{{tv.sumText}}</span></p></sc-if></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodySummaryListItem" id="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" body-brand="{{safeBrand}}"><p style="margin: 0; font-size: 18px; line-height: 1.25; color: var(--color-neutral-800);"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" label="guardian.northstar.eth" copy="{{no}}"></x-import> <span style="{{guardian.sumStyle}}">{{guardian.sumText}}</span></p></x-import>
+</x-import><div style="display:flex;flex-direction:column;gap:8px;"><sc-if value="{{s1.fRequired}}" hint-placeholder-val="{{no}}"><p style="margin: 0; font-size: 16px; line-height: 24px; text-align: right; color: var(--color-neutral-500);"><span style="color: var(--color-neutral-800);">1 body</span> required to veto</p></sc-if></div></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="NSP Token Holders" status="{{s1.status}}" body-id="0x65bcf0e7d2a74d45fe702135d19f954d59658f36">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" is-veto="{{yes}}" total-yes="{{tv.yes}}" total-no="{{tv.no}}" total-abstain="{{tv.abstain}}" support-threshold="{{fifty}}" min-participation="{{five}}" token-symbol="NSP" token-total-supply="{{supply}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+<x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{tvv.count}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{tvv.show.r0}}" hint-placeholder-val="{{yes}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r0.voter}}" vote-indicator="{{tvv.r0.ind}}" vote-indicator-description="{{tvv.r0.desc}}" voting-power="{{tvv.r0.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r0.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r1}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r1.voter}}" vote-indicator="{{tvv.r1.ind}}" vote-indicator-description="{{tvv.r1.desc}}" voting-power="{{tvv.r1.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r1.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r2}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r2.voter}}" vote-indicator="{{tvv.r2.ind}}" vote-indicator-description="{{tvv.r2.desc}}" voting-power="{{tvv.r2.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r2.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r3}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r3.voter}}" vote-indicator="{{tvv.r3.ind}}" vote-indicator-description="{{tvv.r3.desc}}" voting-power="{{tvv.r3.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r3.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r4}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r4.voter}}" vote-indicator="{{tvv.r4.ind}}" vote-indicator-description="{{tvv.r4.desc}}" voting-power="{{tvv.r4.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r4.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r5}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r5.voter}}" vote-indicator="{{tvv.r5.ind}}" vote-indicator-description="{{tvv.r5.desc}}" voting-power="{{tvv.r5.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r5.href}}"></x-import></sc-if>
+<sc-if value="{{tvv.show.r6}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{tvv.r6.voter}}" vote-indicator="{{tvv.r6.ind}}" vote-indicator-description="{{tvv.r6.desc}}" voting-power="{{tvv.r6.vp}}" token-symbol="NSP" is-veto="{{yes}}" href="{{tvv.r6.href}}"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+</x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{tv.settings}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="guardian.northstar.eth" status="{{s1.status}}" body-id="0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e" hide-tabs="{{hideVotes}}" body-brand="{{safeBrand}}">
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<div class="flex w-full min-w-fit flex-row justify-between gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral-sm md:px-6 md:py-5" style="{{guardian.cardStyle}}">{{guardian.cardLabel}}<sc-if value="{{guardian.cardIcon}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="{{guardian.cardIcon}}" variant="{{guardian.cardVariant}}"></x-import></sc-if></div>
+<sc-if value="{{guardian.showAction}}" hint-placeholder-val="{{no}}">
+<div class="flex w-full flex-col gap-6 pt-6 md:pt-8">
+<sc-if value="{{guardian.canAct}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="If you are an owner of this address you can connect with WalletConnect to vote on this proposal." variant="info"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full md:w-fit" size="md" variant="{{guardian.btnVariant}}" icon-left="{{guardian.btnIcon}}" on-click="{{guardian.btnClick}}">{{guardian.btnLabel}}</x-import>
+</div>
+</sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{guardian.settings}}"></x-import>
+</x-import>
+</x-import>
+</x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <sc-if value="{{p.showSim}}" hint-placeholder-val="{{yes}}"><x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p.actionCount}}" is-enabled="{{yes}}"></x-import></sc-if>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p.actionCount}}">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p.action0}}" action-function-selector="{{p.selector0}}" chain-id="{{one}}" index="{{zero}}" read-only="{{yes}}"></x-import>
+<sc-if value="{{p.hasAction1}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p.action1}}" action-function-selector="{{p.selector1}}" chain-id="{{one}}" index="{{one}}" read-only="{{yes}}"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}">
+<sc-if value="{{p.footHint}}" hint-placeholder-val="{{yes}}"><p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p></sc-if>
+<sc-if value="{{p.footExecute}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" on-click="{{act.execute}}">Execute</x-import></sc-if>
+<sc-if value="{{p.footExecuted}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p.executedLink}}" target="_blank">Executed</x-import></sc-if>
+</x-import>
+</x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6"><x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import><x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="{{p.onchainId}}"><p class="truncate text-neutral-500">{{p.onchainId}}</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">{{p.id}}</p></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="{{p.creatorAddress}}" link="{{p.creatorLink}}" children="{{p.creatorName}}"></x-import></div>
+<div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p.publishedLink}}" children="{{p.published}}"></x-import></div>
+<x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p.tag.label}}" variant="{{p.tag.variant}}" class-name="w-fit"></x-import></x-import>
+</x-import></x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6"><x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import><div style="display: flex; flex-direction: column; gap: 16px;"><x-import component-from-global-scope="GovUiKit.Link" href="{{p.forum}}" is-external="{{yes}}" show-url="{{yes}}">Forum discussion</x-import><x-import component-from-global-scope="GovUiKit.Link" href="{{p.risk}}" is-external="{{yes}}" show-url="{{yes}}">Risk assessment</x-import></div></x-import>
+          </aside>
+        </div>
+        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="{{tx.title}}" description="{{tx.description}}" steps="{{noSteps}}" submit-label="{{tx.submitLabel}}" success-label="{{tx.successLabel}}" summary="{{tx.summary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"proposal":{"editor":"text","default":"NSP-8"}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: proposal (slug NSP-1 ... NSP-8; unknown slugs show NSP-8), onNav(target),
+// wallet ('connected' | ''), onConnect() opens the connect dialog. One template, driven by the data of the eight proposals (data-spp.cjs), draws the staged voting
+// terminal of apps/app (plugins/sppPlugin/components/sppVotingTerminal): ProposalVoting.StageContainer (accordion, one stage open) > Stage > BodySummary
+// (one row per body) and one BodyContent per body that opens when its row is clicked, with the tabs Breakdown / Votes / Settings. A pending or unreached
+// stage has Breakdown and Votes disabled and opens on Settings, as in the kit.
+// Bodies: stage 1 "Council approval" = Northstar Council Safe (external Safe) or Core Team (multisig, 2 of 3); stage 2 "Community veto" = NSP Token Holders
+// (token voting in veto mode) or Security Guardian Safe (external Safe). External Safe bodies render in the app's "external" mode (generic card with
+// "Not approved yet" / "Approved" / "Vetoed", no Votes tab, help text + button); see the notes under act below.
+// Acting (all simulated with TxFlowDialog, the wallet being nadia.eth, a Core Team member): NSP-8 "Approve proposal" (Core Team, or the Council Safe button),
+// NSP-7 / NSP-8 "Advance proposal", NSP-6 "Veto proposal" (Guardian Safe), NSP-4 "Execute". Disconnected, each calls onConnect(). What was done is kept on
+// window.__nspState, so the dashboard and the proposal list show the new status too.
+const NSPP_DATA = {"1": {"title": "Migrate NSP staking to liquid restaking", "summary": "Replace the native NSP staking module with a liquid restaking wrapper so stakers can use stNSP as collateral across integrated money markets.", "description": "<h2>Summary</h2><p>Replace the native NSP staking module with a liquid restaking wrapper so stakers can use stNSP as collateral across integrated money markets.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x3c564aa46ecfdc642fa53ad1d79e056a1f67b8f2", "data": "0xc60b494f0000000000000000000000009aff6872f6b2529a6f6fac1096a28d4f501b5e37", "value": "0", "inputData": {"function": "setStakingModule", "contract": "NorthstarStaking", "parameters": [{"name": "_module", "type": "address", "value": "0x9aff6872f6b2529a6f6fac1096a28d4f501b5e37"}]}}, "selector": "0xc60b494f"}], "sim": false, "onchainId": "61343508012345991189613697747599313480792196824120992090257276225286013059052", "published": "October 13, 2026", "publishedHref": "https://etherscan.io/tx/0x3780eb60784c00ebd355aafa0f82143cfa1a50b1770ebf991e8d65174bc58f62", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0x7331c334835fd8c5d6a351f67a517e6b0f452f63", "name": "dmitri.eth"}}, "2": {"title": "Fund the Q4 2026 security audit program", "summary": "Allocate 240,000 USDC to the audit program covering the v3 settlement contracts, the solver registry and the cross-rollup bridge adapters.", "description": "<h2>Summary</h2><p>Allocate 240,000 USDC to the audit program covering the v3 settlement contracts, the solver registry and the cross-rollup bridge adapters.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000981fd5d26674aecdb6d65d1038cc3921eeb4619a00000000000000000000000000000000000000000000000000000037e11d6000", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x981fd5d26674aecdb6d65d1038cc3921eeb4619a"}, {"name": "value", "type": "uint256", "value": "240000000000"}]}}, "selector": "0xa9059cbb"}], "sim": false, "onchainId": "93059559675248447092916959237390772648046965024867770566702355455944031852553", "published": "October 17, 2026", "publishedHref": "https://etherscan.io/tx/0x33bf72a0aba4284cef55e7e3b3471270d3b1ee551fe2c9b76f71d304baa52f60", "executedLink": "https://etherscan.io/tx/0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83", "creator": {"address": "0xac6399087027f972e6d2ab830dc9b33cda035642", "name": "kofi-mensah.eth"}}, "3": {"title": "Onboard Wintermute as a designated solver", "summary": "Add Wintermute to the designated solver set with a 500,000 NSP bond, enabling it to settle intents on all supported rollups.", "description": "<h2>Summary</h2><p>Add Wintermute to the designated solver set with a 500,000 NSP bond, enabling it to settle intents on all supported rollups.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xe8a40a1745a01be5986f27a8608290d9079d0c12", "data": "0x7f9ff11000000000000000000000000071c4222c8c50261950b8285686ed46bb81f9dde70000000000000000000000000000000000000000000069e10de76676d0800000", "value": "0", "inputData": {"function": "addSolver", "contract": "NorthstarSolverRegistry", "parameters": [{"name": "_solver", "type": "address", "value": "0x71c4222c8c50261950b8285686ed46bb81f9dde7"}, {"name": "_bond", "type": "uint256", "value": "500000000000000000000000"}]}}, "selector": "0x7f9ff110"}], "sim": false, "onchainId": "69060012873979505467377669290190359206954426384307163279499484459428307376494", "published": "October 25, 2026", "publishedHref": "https://etherscan.io/tx/0x8c6927dbd6f3c8bd3fb080ae5a0e8bfe8396a9b1d04a3cfc70cea431f7b71c06", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a", "name": "sofiaruiz.eth"}}, "4": {"title": "Deploy Northstar v3 settlement on Base", "summary": "Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch.", "description": "<h2>Summary</h2><p>Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "TransferNative", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xcd16b036f665f9fde7967bc3f8ed838527c0b302", "data": "0x", "value": "40000000000000000000", "inputData": {"function": "", "contract": "", "parameters": []}}, "selector": null}], "sim": true, "onchainId": "5764518813952898364845561146786951093475536129658587647934687710370851713928", "published": "October 30, 2026", "publishedHref": "https://etherscan.io/tx/0x1cb03aae9f03b7978c6c0aa517da36b9194864309fe80b7162a90b9daadb7f65", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a", "name": "nadia.eth"}}, "5": {"title": "Raise the protocol fee switch to 25 bps", "summary": "Increase the protocol fee on settled volume from 10 to 25 basis points and route the additional revenue to the treasury.", "description": "<h2>Summary</h2><p>Increase the protocol fee on settled volume from 10 to 25 basis points and route the additional revenue to the treasury.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Unknown", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x794fc07fefb20e808f1e0748865222336ca8a8d8", "data": "0xe4467f350000000000000000000000000000000000000000000000000000000000000019", "value": "0", "inputData": {"function": "setProtocolFee", "contract": "NorthstarFeeController", "parameters": [{"name": "_feeBps", "type": "uint16", "value": "25"}]}}, "selector": "0xe4467f35"}], "sim": false, "onchainId": "114352286312439364123209118808013586951777095330408203966431178561927526109724", "published": "November 1, 2026", "publishedHref": "https://etherscan.io/tx/0x2cf01e49ceb2e6b1b75741b755eb8f2b6513ceee7c12dfe626ac2345e3758586", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0x826e7eb63d237333d9063dc74e7ce8e222b0fc05", "name": "lenaweber.eth"}}, "6": {"title": "Launch the Northstar Ecosystem Grants round 3", "summary": "Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.", "description": "<h2>Summary</h2><p>Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb0000000000000000000000002a7c5259125b1491dc318d1142e9529357dcaaa000000000000000000000000000000000000000000000000000000045d964b800", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x2a7c5259125b1491dc318d1142e9529357dcaaa0"}, {"name": "value", "type": "uint256", "value": "300000000000"}]}}, "selector": "0xa9059cbb"}, {"action": {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x384915d45e1807d6d3875540263d2801b9309e70", "data": "0xa9059cbb0000000000000000000000002a7c5259125b1491dc318d1142e9529357dcaaa0000000000000000000000000000000000000000000013da329b6336471800000", "value": "0", "inputData": {"function": "transfer", "contract": "Northstar", "parameters": [{"name": "to", "type": "address", "value": "0x2a7c5259125b1491dc318d1142e9529357dcaaa0"}, {"name": "value", "type": "uint256", "value": "1500000000000000000000000"}]}}, "selector": "0xa9059cbb"}], "sim": true, "onchainId": "27904762354123389736564897761116485658695661967848084367577258502516091099789", "published": "November 7, 2026", "publishedHref": "https://etherscan.io/tx/0xe803061fe9de97a0acd202d732cca61bef65a9e9a4d0bc8441eacfbc482f1046", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81", "name": "ines-alvarez.eth"}}, "7": {"title": "Increase the bug bounty ceiling to 1M USDC", "summary": "Raise the maximum Immunefi payout for critical vulnerabilities from 250,000 to 1,000,000 USDC and pre-fund the bounty Safe with 250,000 USDC.", "description": "<h2>Summary</h2><p>Raise the maximum Immunefi payout for critical vulnerabilities from 250,000 to 1,000,000 USDC and pre-fund the bounty Safe with 250,000 USDC.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb00000000000000000000000074323855f809f305fa897a4bf4da4f372e516f730000000000000000000000000000000000000000000000000000003a35294400", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x74323855f809f305fa897a4bf4da4f372e516f73"}, {"name": "value", "type": "uint256", "value": "250000000000"}]}}, "selector": "0xa9059cbb"}], "sim": true, "onchainId": "74966473495171658861730164413770203396332601939897043608096098745986398939416", "published": "November 12, 2026", "publishedHref": "https://etherscan.io/tx/0x77d320c0ddd8f6a5d8083d419796992a2ddda490f8a81c9c45171ca72575cd12", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0xb8616ba616766bd8fbdc69ded1b02e41b482b98e", "name": "tomas.eth"}}, "8": {"title": "Seed NSP/ETH liquidity on Uniswap v4", "summary": "Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook.", "description": "<h2>Summary</h2><p>Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook.</p><h2>Motivation</h2><p>The proposal was discussed on the Northstar forum for two weeks and presented on the monthly governance call. Feedback from delegates and the Security Guardian has been incorporated into the final scope.</p><h2>Specification</h2><ul><li>The Council Safe or the Core Team approve the proposal in the council stage.</li><li>NSP holders and the Security Guardian may veto it during the 7-day community window.</li><li>If no veto is reached, anyone can execute the actions below.</li></ul><h2>Risks</h2><p>Execution risk is limited to the actions listed. The Security Guardian retains its veto for the full community window.</p>", "actions": [{"action": {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x384915d45e1807d6d3875540263d2801b9309e70", "data": "0xa9059cbb00000000000000000000000088fa9a72b1ff7e345eb0d47b8f879a49de1adaf700000000000000000000000000000000000000000001a784379d99db42000000", "value": "0", "inputData": {"function": "transfer", "contract": "Northstar", "parameters": [{"name": "to", "type": "address", "value": "0x88fa9a72b1ff7e345eb0d47b8f879a49de1adaf7"}, {"name": "value", "type": "uint256", "value": "2000000000000000000000000"}]}}, "selector": "0xa9059cbb"}, {"action": {"type": "TransferNative", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0x88fa9a72b1ff7e345eb0d47b8f879a49de1adaf7", "data": "0x", "value": "220000000000000000000", "inputData": {"function": "", "contract": "", "parameters": []}}, "selector": null}], "sim": true, "onchainId": "39886782296679778159379467143585950876035210624994909244901924888262305534294", "published": "November 14, 2026", "publishedHref": "https://etherscan.io/tx/0x2d2dee3492f460dbb21c384d7ec8ad6ebb1e55e91b2979bcd21da8401073ac09", "executedLink": "https://etherscan.io/tx/0x", "creator": {"address": "0xac6399087027f972e6d2ab830dc9b33cda035642", "name": "kofi-mensah.eth"}}};
+const NSPP_PEOPLE = {
+  nadia: { name: 'nadia.eth', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', vp: 3200000 },
+  kofi: { name: 'kofi-mensah.eth', address: '0xac6399087027f972e6d2ab830dc9b33cda035642', vp: 2450000 },
+  lena: { name: 'lenaweber.eth', address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', vp: 1980000 },
+  ines: { name: 'ines-alvarez.eth', address: '0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81', vp: 1640000 },
+  sofia: { name: 'sofiaruiz.eth', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', vp: 1210000 },
+  ravi: { name: undefined, address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', vp: 980000 },
+  dmitri: { name: 'dmitri.eth', address: '0x7331c334835fd8c5d6a351f67a517e6b0f452f63', vp: 860000 },
+  tomas: { name: 'tomas.eth', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', vp: 720000 },
+  yuki: { name: undefined, address: '0x66b7d87059d8d1cf9da8842075250fd8a2e20805', vp: 550000 },
+  chen: { name: 'chenwei.eth', address: '0x8a25faabbd80f71248328cf3a5867d3168210a46', vp: 430000 }
+};
+// Core Team approvals and token veto votes per proposal (data-spp.cjs DEFS; NSP-5 and NSP-6 approvals completed to the 2 of 3 the summary shows)
+const NSPP_MS = { 1: ['tomas'], 2: ['nadia', 'sofia'], 3: ['sofia', 'tomas'], 4: ['nadia', 'tomas'], 5: ['sofia', 'tomas'], 6: ['sofia', 'tomas'], 7: ['sofia', 'tomas'], 8: ['sofia'] };
+const NSPP_TV = { 2: { yes: ['dmitri'], no: ['kofi'], abstain: [] }, 4: { yes: ['ravi', 'yuki'], no: ['lena', 'sofia'], abstain: ['chen'] }, 5: { yes: ['kofi', 'ines', 'ravi', 'dmitri', 'yuki', 'chen'], no: ['nadia'], abstain: [] }, 6: { yes: ['ines', 'ravi'], no: ['tomas'], abstain: [] } };
+const NSPP_COUNCIL = { 2: 1, 4: 1, 5: 1, 6: 1 };
+const NSPP_BASE = { 1: ['REJECTED', 'UNREACHED'], 2: ['ACCEPTED', 'ACCEPTED'], 3: ['EXPIRED', 'UNREACHED'], 4: ['ACCEPTED', 'ACCEPTED'], 5: ['ACCEPTED', 'VETOED'], 6: ['ACCEPTED', 'ACTIVE'], 7: ['ADVANCEABLE', 'PENDING'], 8: ['ACTIVE', 'PENDING'] };
+const NSPP_COLOR = { success: 'color: var(--color-success-800);', neutral: 'color: var(--color-neutral-500);', critical: 'color: var(--color-critical-800);' };
+const NSPP_FMT = (n) => n >= 1e6 ? String(Math.round(n / 1e4) / 100) + 'M' : n >= 1e3 ? String(Math.round(n / 1e3)) + 'K' : String(n);
+const NSPP_LINK = (a) => ({ href: 'https://etherscan.io/address/' + a, isOnchainEntity: true });
+const NSPP_TX = (h) => ({ href: 'https://etherscan.io/tx/' + h });
+const NSPP_SAFE = (addr, short) => [
+  { term: 'Plugin address', definition: addr, description: 'Safe ' + short, link: NSPP_LINK(addr) },
+  { term: 'Launched', definition: 'December 2025', link: NSPP_TX('0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f') },
+  { term: 'ENS name', definition: short === '0x515f…02e2' ? 'council.northstar.eth' : 'guardian.northstar.eth', link: { href: 'https://etherscan.io/address/' + addr } },
+  { term: 'Address', definition: addr, link: NSPP_LINK(addr) }
+];
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  constructor(props) {
+    super(props);
+    this.state = { active: null, tx: '', ov: Object.assign({}, window.__nspState || {}) };
+  }
+  patch(p) {
+    const ov = Object.assign({}, this.state.ov, p);
+    window.__nspState = ov;
+    this.setState({ ov });
+  }
+  renderVals() {
+    const hour = 3600000, day = 24 * hour, now = Date.now();
+    const m = /^(?:NSP-)?(\d+)$/i.exec(String(this.props.proposal || '').trim());
+    let n = m ? Number(m[1]) : 8;
+    if (n < 1 || n > 8) n = 8;
+    const ov = this.state.ov;
+    const connected = this.props.wallet === 'connected';
+    const D = NSPP_DATA[n];
+    const noop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const gate = (kind) => (e) => {
+      noop(e);
+      if (!connected) { if (typeof this.props.onConnect === 'function') this.props.onConnect(); return; }
+      this.setState({ tx: kind });
+    };
+
+    // ---- state of the stages, after what the visitor did
+    let [s0, s1] = NSPP_BASE[n];
+    const coreKeys = NSPP_MS[n].concat(ov['core' + n] ? ['nadia'] : []);
+    const councilApproved = !!NSPP_COUNCIL[n] || !!ov['council' + n];
+    const coreReached = coreKeys.length >= 2;
+    const advanced = !!ov['adv' + n];
+    if (n === 8) { if (advanced) s0 = 'ACCEPTED'; else if (coreReached || councilApproved) s0 = 'ADVANCEABLE'; }
+    if (n === 7 && advanced) s0 = 'ACCEPTED';
+    if ((n === 7 || n === 8) && advanced) s1 = 'ACTIVE';
+    const vetoed = !!ov['veto' + n];
+    if (vetoed) s1 = 'VETOED';
+    const executed = n === 2 || (n === 4 && !!ov.exec4);
+    const stageOpen = (s) => s === 'ACTIVE';
+    const derivedActive = String(advanced || n === 2 || n >= 4 && n <= 6 ? 1 : 0);
+    const activeStage = this.state.active === null ? (n === 4 || n === 5 || n === 6 || n === 2 || advanced ? '1' : '0') : this.state.active;
+    const tagOf = () => {
+      if (executed) return { label: 'Executed', variant: 'success' };
+      if (vetoed) return { label: 'Vetoed', variant: 'critical' };
+      if (n === 1) return { label: 'Rejected', variant: 'critical' };
+      if (n === 3) return { label: 'Expired', variant: 'critical' };
+      if (n === 5) return { label: 'Vetoed', variant: 'critical' };
+      if (n === 4) return { label: 'Executable', variant: 'info' };
+      if (s1 === 'ACTIVE') return { label: 'Active', variant: 'info' };
+      if (s0 === 'ADVANCEABLE') return { label: 'Advanceable', variant: 'info' };
+      return { label: 'Active', variant: 'info' };
+    };
+    const tag = tagOf();
+
+    // ---- bodies
+    const person = (k) => ({ voter: { address: NSPP_PEOPLE[k].address, name: NSPP_PEOPLE[k].name }, href: '#nav:member:' + NSPP_PEOPLE[k].address, vp: NSPP_PEOPLE[k].vp });
+    const council = (() => {
+      const canAct = !councilApproved && (s0 === 'ACTIVE' || s0 === 'ADVANCEABLE') && !advanced;
+      const sum = councilApproved ? ['approved', 'success'] : (n === 1 || n === 3 || advanced) ? ['did not approve', 'neutral'] : ['not approved yet', 'neutral'];
+      const card = councilApproved ? ['Approved', 'success', 'CHECKMARK'] : canAct ? ['Not approved yet', 'neutral', ''] : ['Did not approve', 'neutral', ''];
+      return {
+        sumText: sum[0], sumStyle: NSPP_COLOR[sum[1]],
+        cardLabel: card[0], cardStyle: NSPP_COLOR[card[1]], cardIcon: card[2], cardVariant: 'success',
+        canAct, showAction: canAct || councilApproved,
+        btnVariant: canAct ? 'primary' : 'secondary', btnIcon: canAct ? undefined : 'CHECKMARK', btnLabel: canAct ? 'Approve proposal' : 'Approved',
+        btnClick: canAct ? gate('council') : noop,
+        settings: NSPP_SAFE('0x515fec2e8f6553948b1d57c14c1243a1405c02e2', '0x515f…02e2')
+      };
+    })();
+    const guardian = (() => {
+      const canAct = s1 === 'ACTIVE' && !vetoed;
+      const sum = vetoed ? ['vetoed', 'critical'] : s1 === 'ACTIVE' ? ['not vetoed yet', 'neutral'] : (s1 === 'ACCEPTED' || s1 === 'VETOED') ? ['did not veto', 'neutral'] : ['', 'neutral'];
+      const card = vetoed ? ['Vetoed', 'critical', 'CLOSE', 'critical'] : s1 === 'ACTIVE' ? ['Not vetoed yet', 'neutral', '', 'success'] : ['Did not veto', 'neutral', '', 'success'];
+      return {
+        sumText: sum[0], sumStyle: NSPP_COLOR[sum[1]],
+        cardLabel: card[0], cardStyle: NSPP_COLOR[card[1]], cardIcon: card[2], cardVariant: card[3],
+        canAct, showAction: canAct || vetoed,
+        btnVariant: canAct ? 'primary' : 'secondary', btnIcon: canAct ? undefined : 'CHECKMARK', btnLabel: canAct ? 'Veto proposal' : 'Vetoed',
+        btnClick: canAct ? gate('guardian') : noop,
+        settings: NSPP_SAFE('0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e', '0xf361…465e')
+      };
+    })();
+    const core = (() => {
+      const a = coreKeys.length;
+      const progress = !coreReached && s0 === 'ACTIVE';
+      const userDone = !!ov['core' + n];
+      const canAct = n === 8 && !advanced && !userDone;
+      return {
+        approvals: a, value: a / 3 * 100, progress, plain: !progress,
+        sumText: coreReached ? 'approved' : 'did not approve', sumStyle: coreReached ? NSPP_COLOR.success : NSPP_COLOR.neutral,
+        showAction: n === 8 && !advanced,
+        btnVariant: canAct ? 'primary' : 'secondary', btnIcon: canAct ? undefined : 'CHECKMARK', btnLabel: canAct ? 'Approve proposal' : 'Approved',
+        btnClick: canAct ? gate('core') : noop,
+        settings: [
+          { term: 'Plugin address', definition: '0x566805a83e872e67a32d84596b81d16faa7ba6a2', description: 'Multisig v1.3', link: NSPP_LINK('0x566805a83e872e67a32d84596b81d16faa7ba6a2') },
+          { term: 'Launched', definition: 'January 2026', link: NSPP_TX('0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f') },
+          { term: 'Minimum approval', definition: '2 of 3 members' },
+          { term: 'Proposal creation', definition: 'Multisig members' }
+        ]
+      };
+    })();
+    const tvVotes = advanced && (n === 7 || n === 8) ? { yes: [], no: [], abstain: [] } : (NSPP_TV[n] || { yes: [], no: [], abstain: [] });
+    const sumVp = (ks) => ks.reduce((s, k) => s + NSPP_PEOPLE[k].vp, 0);
+    const tvYes = sumVp(tvVotes.yes), tvNo = sumVp(tvVotes.no), tvAbs = sumVp(tvVotes.abstain);
+    const tvTotal = tvYes + tvNo + tvAbs;
+    const tv = (() => {
+      const progress = s1 === 'ACTIVE' || n === 6;
+      const sum = s1 === 'VETOED' && n === 5 ? ['vetoed', 'critical'] : s1 === 'ACCEPTED' ? ['did not veto', 'neutral'] : ['', 'neutral'];
+      return {
+        yes: tvYes, no: tvNo, abstain: tvAbs, progress, plain: !progress,
+        value: tvYes + tvNo > 0 ? tvYes / (tvYes + tvNo) * 100 : 0, yesText: tvYes ? NSPP_FMT(tvYes) : '0', totalText: tvTotal ? NSPP_FMT(tvTotal) : '0',
+        sumText: sum[0], sumStyle: NSPP_COLOR[sum[1]],
+        settings: [
+          { term: 'Plugin address', definition: '0x65bcf0e7d2a74d45fe702135d19f954d59658f36', description: 'Token Voting v1.3', link: NSPP_LINK('0x65bcf0e7d2a74d45fe702135d19f954d59658f36') },
+          { term: 'Launched', definition: 'January 2026', link: NSPP_TX('0x3995ecdb4ac48b1d2129986ea48b2668d1fc8f8f4cb3fb59dad4f99f4e868c6e') },
+          { term: 'Veto support threshold', definition: '> 50%' },
+          { term: 'Minimum participation', definition: '≥ 5.00%  (≥ 5M NSP)' },
+          { term: 'Minimum duration', definition: '7 days 0 hours 0 minutes' },
+          { term: 'Early execution', definition: 'Disabled' },
+          { term: 'Vote change', definition: 'Disabled' }
+        ]
+      };
+    })();
+    // vote rows (one <sc-if> per row in the markup)
+    const rowsOf = (list, max, withVp) => {
+      const show = {}, o = {};
+      for (let i = 0; i < max; i++) {
+        const r = list[i];
+        show['r' + i] = !!r;
+        o['r' + i] = r || { voter: { address: NSPP_PEOPLE.nadia.address }, href: '#', vp: 0, ind: 'yes', desc: undefined };
+      }
+      o.show = show; o.count = list.length;
+      return o;
+    };
+    const cvList = coreKeys.map((k) => Object.assign(person(k), { ind: 'approve' }));
+    const tvList = [].concat(
+      tvVotes.yes.map((k) => Object.assign(person(k), { ind: 'yes', desc: 'to veto' })),
+      tvVotes.no.map((k) => Object.assign(person(k), { ind: 'no', desc: 'to veto' })),
+      tvVotes.abstain.map((k) => Object.assign(person(k), { ind: 'abstain', desc: undefined }))
+    ).sort((a, b) => b.vp - a.vp);
+
+    // ---- stages
+    const s0o = {
+      status: s0,
+      end: s0 === 'ACTIVE' ? now + 3 * day : undefined,
+      minAdv: s0 === 'ADVANCEABLE' ? now - (n === 7 ? 3 : 1) * day : undefined,
+      maxAdv: s0 === 'ADVANCEABLE' ? now + (n === 7 ? 8 : 7) * day : undefined,
+      fRequired: s0 === 'ACTIVE' || s0 === 'REJECTED', fAdvance: s0 === 'ADVANCEABLE', fExpired: s0 === 'EXPIRED'
+    };
+    const s1o = {
+      status: s1,
+      end: s1 === 'ACTIVE' ? now + (advanced ? 7 : 4) * day : undefined,
+      fRequired: s1 === 'ACTIVE' || s1 === 'PENDING'
+    };
+
+    // ---- the page
+    const hash = n === 4 && ov.exec4 ? '0x5c1f0be91a2d7e4f3a86c9d015b7e2c4a9f83d6e1b05c7a2d94e8f3160b7a5c2' : '';
+    const p = {
+      id: 'NSP-' + n, title: D.title, summary: D.summary, description: D.description, tag,
+      onchainId: D.onchainId, published: D.published, publishedLink: NSPP_TX(D.publishedHref.replace('https://etherscan.io/tx/', '')),
+      creatorName: D.creator.name, creatorAddress: D.creator.address, creatorLink: { href: '#nav:member:' + D.creator.address, isOnchainEntity: true },
+      forum: 'https://forum.northstar.fi/t/nsp-' + n, risk: 'https://docs.northstar.fi/risk/nsp-' + n,
+      showSim: D.sim && !executed, actionCount: D.actions.length,
+      action0: D.actions[0].action, selector0: D.actions[0].selector || undefined,
+      hasAction1: D.actions.length > 1, action1: (D.actions[1] || D.actions[0]).action, selector1: (D.actions[1] || {}).selector || undefined,
+      footHint: !executed && n !== 4, footExecute: n === 4 && !ov.exec4, footExecuted: executed,
+      executedLink: n === 2 ? D.executedLink : 'https://etherscan.io/tx/' + hash
+    };
+
+    // ---- transaction dialog
+    const kind = this.state.tx;
+    const voteTx = (ind) => ({ title: 'Submit vote', description: 'To submit your vote, confirm the onchain transaction in your wallet.', submitLabel: 'Submit vote', successLabel: 'View proposal', summary: { type: 'vote', proposalId: 'NSP-' + n, proposalTitle: D.title, voteIndicator: ind, voteIndicatorDescription: undefined } });
+    const tx = kind === 'guardian' ? voteTx('veto')
+      : kind === 'core' || kind === 'council' ? voteTx('approve')
+      : kind === 'advance' ? { title: 'Advance proposal', description: 'To advance the proposal to the next stage, confirm the onchain transaction in your wallet.', submitLabel: 'Advance', successLabel: 'View proposal', summary: null }
+      : { title: 'Execute proposal', description: 'To execute the proposal, confirm the onchain transaction in your wallet.', submitLabel: 'Execute proposal', successLabel: 'View proposal', summary: null };
+    const txDone = () => {
+      const k = this.state.tx;
+      const patch = k === 'core' ? { ['core' + n]: true } : k === 'council' ? { ['council' + n]: true } : k === 'guardian' ? { ['veto' + n]: true } : k === 'advance' ? { ['adv' + n]: true } : k === 'execute' ? { exec4: true } : {};
+      this.patch(patch);
+      this.setState({ tx: '', active: k === 'advance' ? null : this.state.active });
+    };
+    return {
+      click: this.click,
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5, six: 6, fifty: 50, supply: 100000000, noSteps: [],
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'NSP-' + n }],
+      p, s0: s0o, s1: s1o, council, guardian, core, tv, cv: rowsOf(cvList, 3), tvv: rowsOf(tvList, 7),
+      hideVotes: ['VOTES'],
+      safeBrand: { logo: 'assets/safeWallet.png', label: 'Safe{Wallet}' },
+      bodies0: ['0x515fec2e8f6553948b1d57c14c1243a1405c02e2', '0x566805a83e872e67a32d84596b81d16faa7ba6a2'],
+      bodies1: ['0x65bcf0e7d2a74d45fe702135d19f954d59658f36', '0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e'],
+      activeStage, onStageClick: (v) => this.setState({ active: v == null ? '' : String(v) }),
+      act: { advance: gate('advance'), execute: gate('execute') },
+      emptyVotes: { heading: 'No votes found', description: 'No votes have been cast yet.' },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      txOpen: !!kind, tx, closeTx: () => this.setState({ tx: '' }), txDone
+    };
+  }
+}
+</script>
+</body>
+</html>

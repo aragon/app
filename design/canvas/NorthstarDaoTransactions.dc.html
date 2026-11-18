@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Transactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <div class="flex flex-col items-start gap-2 md:gap-3">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{filter}}" on-change="{{setFilter}}">
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="executions" label="Executions"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="received" label="Deposits"></x-import>
+                <x-import component-from-global-scope="GovUiKit.Toggle" value="sent" label="Withdrawals"></x-import>
+              </x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{show.r0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="EXECUTION" label="proposal" action-count="{{one}}" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" hide-value="{{yes}}" status="SUCCESS" on-click="{{open.nsp2}}"></x-import></sc-if>
+<sc-if value="{{show.r1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="WITHDRAW" token-amount="240000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x29e139b26b0b22eecd4c348132ee4170e458abf8718413c2594d55f91bb82809" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x29e139b26b0b22eecd4c348132ee4170e458abf8718413c2594d55f91bb82809" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="400000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-24T18:00:00" hash="0x2fbe5ca6e50ac810bc1a136eee6f1535296a07445f9900f00e0397a297f9ef15" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x2fbe5ca6e50ac810bc1a136eee6f1535296a07445f9900f00e0397a297f9ef15" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="85" token-symbol="ETH" chain-id="{{chainId}}" date="2026-10-06T18:00:00" hash="0x3a1abe6039f07d04be8a3ee4822b0e933f8b5280c0dc2e210e9a1db6a4ad2477" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x3a1abe6039f07d04be8a3ee4822b0e933f8b5280c0dc2e210e9a1db6a4ad2477" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="8500000" token-symbol="NSP" chain-id="{{chainId}}" date="2026-08-12T18:00:00" hash="0x13b3f70335360b06e15f0edca17de5ef224c293b05772e972453d3db7e6e817e" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x13b3f70335360b06e15f0edca17de5ef224c293b05772e972453d3db7e6e817e" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="384210.07" token-symbol="DAI" chain-id="{{chainId}}" date="2026-06-29T18:00:00" hash="0xa2f152b6312eb231e16b6e244ea8099c2d639e9ea5f77805f4e25000161d4189" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0xa2f152b6312eb231e16b6e244ea8099c2d639e9ea5f77805f4e25000161d4189" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r6}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="2255380.42" token-symbol="USDC" chain-id="{{chainId}}" date="2026-04-20T18:00:00" hash="0x3a855dcde0bfdb20484799a80cd9d090fbc1950c0686099487888035d9ed9e87" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x3a855dcde0bfdb20484799a80cd9d090fbc1950c0686099487888035d9ed9e87" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r7}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="527.48" token-symbol="ETH" chain-id="{{chainId}}" date="2026-03-01T18:00:00" hash="0xaf26991d395b1aef24395c724f89cecc5d7e5d4ec4fe82773c62b0c457d6d7a7" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0xaf26991d395b1aef24395c724f89cecc5d7e5d4ec4fe82773c62b0c457d6d7a7" target="_blank"></x-import></sc-if>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Northstar Protocol</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">8</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{lastActivity}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0xa767846912853e30403f3efb946a5250e8e6a063"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Docs</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/northstar_fi" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+              </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0xa767846912853e30403f3efb946a5250e8e6a063" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      
+      <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{false}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Executed" hidden-description="Details of the execution transaction">
+<x-import component-from-global-scope="GovUiKit.TransactionDetail.Root" on-close="{{closeDialog}}" on-click="{{dialogClick}}">
+<x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{one}}" date="2026-10-30T18:00:00" executed-by="{{executedBy}}" proposal-href="#nav:proposal:NSP-2" proposal-id="NSP-2" total-actions="{{one}}" transaction-hash="0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{action}}" action-function-selector="0xa9059cbb" chain-id="{{one}}" index="{{zero}}" read-only="{{yes}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import>
+</x-import>
+</x-import>
+</x-import>
+      </sc-if>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet, onConnect (the wallet is not needed on this page).
+// DAO transactions (apps/app: modules/finance/pages/daoTransactionsPage, list: components/transactionList, aside: daoFilterAsideCard + daoInfoAside).
+// Mock data: data-spp.cjs (Northstar). The app has no search or sort here: only the type toggle (All / Executions / Deposits / Withdrawals).
+// It is state and decides which rows render. Rows are written out one by one at the start of the line, each in its own <sc-if> (a false
+// <sc-if> renders nothing, a true one is one child): the kit's pagination counts the list's direct children, so the "x of y" text
+// follows the filter. Clicking the execution row (NSP-2) opens the transaction detail dialog, as in the app; the other rows are
+// links to the block explorer. Dates are absolute, so they are fixed local times copied from the reference.
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  state = { filter: 'all', open: '' };
+  closeDialog = () => this.setState({ open: '' });
+  setFilter = (v) => { if (typeof v === 'string' && v) this.setState({ filter: v }); };
+  renderVals() {
+    const f = this.state.filter;
+    // row index -> kind, in the order the rows are written out below
+    const kinds = ["execution", "withdraw", "deposit", "deposit", "deposit", "deposit", "deposit", "deposit"];
+    const match = { all: () => true, executions: (k) => k === 'execution', received: (k) => k === 'deposit', sent: (k) => k === 'withdraw' }[f] || (() => true);
+    const show = {};
+    let count = 0;
+    kinds.forEach((k, i) => { const on = match(k); show['r' + i] = on; if (on) count++; });
+    const day = 24 * 3600000;
+    const kit = window.GovUiKit;
+    const lastActivity = kit.formatterUtils.formatDate(Date.now() - 17 * day, { format: kit.DateFormat.RELATIVE }) ?? '-';
+    const close = () => this.closeDialog();
+    return {
+      click: this.click,
+      yes: true, no: false, one: 1, zero: 0, two: 2, chainId: 1,
+      count, pageSize: 20, show, filter: f, setFilter: this.setFilter, lastActivity,
+      open: { nsp2: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ open: 'nsp2' }); } },
+      dialogOpen: this.state.open === 'nsp2',
+      closeDialog: close,
+      dialogClick: (e) => {
+        const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+        if (!a) return;
+        e.preventDefault();
+        close();
+        if (this.props.onNav) this.props.onNav(a.getAttribute('href').slice(5));
+      },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) close(); } },
+      executedBy: { address: '0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', helptext: 'Spp v1.3' },
+      action: {"type": "Transfer", "from": "0xa767846912853e30403f3efb946a5250e8e6a063", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000981fd5d26674aecdb6d65d1038cc3921eeb4619a00000000000000000000000000000000000000000000000000000037e11d6000", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0x981fd5d26674aecdb6d65d1038cc3921eeb4619a"}, {"name": "value", "type": "uint256", "value": "240000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      addressLink: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

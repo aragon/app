@@ -92,3 +92,26 @@
 .sf-signers { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
 .sf-signer { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; font-size: 14px; }
 .sf-card .sf-alert { margin-top: 0; }
+
+/* Lock-to-vote prototype (LockFlow*.dc.html) */
+.l2v-info { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-info-sm { margin: 0; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-footer-info { margin: 0; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-footer-info--center { text-align: center; }
+.l2v-footer-info--left { text-align: left; }
+.l2v-form { display: flex; flex-direction: column; gap: 16px; }
+.l2v-form__col { display: flex; flex-direction: column; gap: 12px; }
+.l2v-form__col--tall { gap: 36px; }
+.l2v-form__row { display: flex; justify-content: space-between; gap: 12px; }
+.l2v-amount { display: flex; flex-direction: column; gap: 12px; }
+.l2v-token { display: flex; align-items: center; column-gap: 6px; padding: 0 8px; flex-shrink: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800); }
+.l2v-vote-area { display: flex; flex-direction: column; gap: 16px; }
+.l2v-vote-actions { display: flex; width: 100%; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.l2v-vote-actions > * { max-width: 100%; }
+@media (max-width: 767px) { .l2v-vote-actions > * { width: 100%; } }
+
+/* WrapFlow: plugins/tokenPlugin/components/tokenMemberPanel/tokenWrap/tokenWrapForm.tsx + modules/finance/components/assetInput */
+.wf-info { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+/* assetInputToken.tsx (disabled asset field): flex items-center gap-x-1.5 px-2 cursor-default */
+.wf-token { display: flex; align-items: center; flex-shrink: 0; gap: 6px; padding: 0 8px; cursor: default; font-size: 16px; line-height: 1.25; }
+.wf-fiat { margin: 0; flex-shrink: 0; font-size: 16px; line-height: 1.25; }

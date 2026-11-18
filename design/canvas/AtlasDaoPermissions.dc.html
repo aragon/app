@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO permissions page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Permissions</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">All permissions configured in this DAO — who has access, to which contract, and under what conditions.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="perm-body">
+              <div class="perm-toolbar">
+                <div class="perm-toolbar__views">
+                  <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{view}}" on-change="{{setView}}">
+                    <x-import component-from-global-scope="GovUiKit.Toggle" label="List" value="list"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.Toggle" label="Graph" value="graph"></x-import>
+                  </x-import>
+                </div>
+                <div class="perm-toolbar__filters">
+                  <div class="perm-filter">
+                    <x-import component-from-global-scope="GovUiKit.Switch" checked="{{hideDao}}" on-checked-changed="{{setHideDao}}" inline-label="Hide permissions granted to DAO"></x-import>
+                    <span class="perm-info" role="img" aria-label="About permissions granted to DAO: Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks." title="Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span>
+                  </div>
+                  <div class="perm-filter">
+                    <x-import component-from-global-scope="GovUiKit.Switch" checked="{{yes}}" disabled="{{yes}}" inline-label="Hide subplugin permissions"></x-import>
+                    <span class="perm-info" role="img" aria-label="About subplugin permissions: Hides permissions whose target (Where) is identified as a subplugin." title="Hides permissions whose target (Where) is identified as a subplugin."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span>
+                  </div>
+                </div>
+              </div>
+
+              <sc-if value="{{isList}}" hint-placeholder-val="{{yes}}">
+              <div class="perm-list">
+                <div class="perm-list__header">
+                  <div class="perm-list__header-inner">
+                    <div class="perm-grid">
+                      <span class="perm-label"><span class="perm-label__text">Who</span><span class="perm-info" role="img" aria-label="About Who: The actor that receives the permission and can call the target contract." title="The actor that receives the permission and can call the target contract."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span></span>
+                      <span class="perm-label"><span class="perm-label__text">Where</span><span class="perm-info" role="img" aria-label="About Where: The contract where the permission applies." title="The contract where the permission applies."><x-import component-from-global-scope="GovUiKit.Icon" icon="INFO" size="sm"></x-import></span></span>
+                      <span>Permission</span>
+                      <span>Condition</span>
+                    </div>
+                    <span aria-hidden="true" class="perm-list__header-spacer"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm"></x-import></span>
+                  </div>
+                </div>
+                <sc-if value="{{hideDao}}" hint-placeholder-val="{{yes}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-0">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">EXECUTE_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                </x-import>
+                </sc-if>
+                <sc-if value="{{showDao}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-0">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">EXECUTE_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-1">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">ROOT_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-2">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">UPGRADE_DAO_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-3">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">SET_METADATA_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-4">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">REGISTER_STANDARD_CALLBACK_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-5">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <span class="perm-name">SET_TRUSTED_FORWARDER_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-6">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <span class="perm-name">UPDATE_MULTISIG_SETTINGS_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-7">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <span class="perm-name">UPGRADE_PLUGIN_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-8">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <span class="perm-name">SET_TARGET_CONFIG_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-9">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="perm-row">
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
+                      <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
+                      <span class="perm-name">SET_METADATA_PERMISSION</span>
+                      <span class="perm-condition">-</span>
+                    </div>
+                  </x-import>
+                </x-import>
+                </x-import>
+                </sc-if>
+              </div>
+              <div class="perm-expand">
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" href="#">Expand all</x-import>
+              </div>
+              </sc-if>
+
+              <sc-if value="{{isGraph}}" hint-placeholder-val="{{no}}">
+              <div class="pg-container" data-testid="permissions-graph-container">
+                <div class="pg-flow">
+                  <svg class="pg-background" aria-hidden="true"><defs><pattern id="pg-dots" x="9.35" y="4.15" width="13.844" height="13.844" patternUnits="userSpaceOnUse"><circle cx="0.346" cy="0.346" r="0.346"></circle></pattern></defs><rect x="0" y="0" width="100%" height="100%" fill="url(#pg-dots)"></rect></svg>
+                  <svg class="pg-edges" aria-hidden="true">
+                    <path class="pg-edge--self" d="M567.5,104.3 V133"></path>
+                    <path d="M567.5,185.8 V252.7 Q567.5,261 559.2,261 H505.8 Q497.5,261 497.5,269.3 V474.7 Q497.5,483 505.8,483 H559.2 Q567.5,483 567.5,491.3 V566.5"></path>
+                    <path d="M567.5,185.8 V265 Q567.5,273.3 575.8,273.3 H629.2 Q637.5,273.3 637.5,281.6 V462.7 Q637.5,471 629.2,471 H575.8 Q567.5,471 567.5,479.3 V566.5"></path>
+                  </svg>
+                  <div class="pg-stack" style="left:567.5px;top:24.3px"><button type="button" class="pg-stack__item" title="ROOT_PERMISSION"><span>Root</span></button><button type="button" class="pg-stack__item" title="UPGRADE_DAO_PERMISSION"><span>Upgrade dao</span></button><button type="button" class="pg-stack__item" title="SET_METADATA_PERMISSION"><span>Set metadata</span></button><button type="button" class="pg-stack__item" title="REGISTER_STANDARD_CALLBACK_PERMISSION"><span>Register standard callback</span></button><button type="button" class="pg-stack__item" title="SET_TRUSTED_FORWARDER_PERMISSION"><span>Set trusted forwarder</span></button></div>
+                  <div class="pg-stack" style="left:497.5px;top:337px"><button type="button" class="pg-stack__item" title="UPDATE_MULTISIG_SETTINGS_PERMISSION"><span>Update multisig settings</span></button><button type="button" class="pg-stack__item" title="UPGRADE_PLUGIN_PERMISSION"><span>Upgrade plugin</span></button><button type="button" class="pg-stack__item" title="SET_TARGET_CONFIG_PERMISSION"><span>Set target config</span></button><button type="button" class="pg-stack__item" title="SET_METADATA_PERMISSION"><span>Set metadata</span></button></div>
+                  <div class="pg-stack" style="left:637.5px;top:361.8px"><button type="button" class="pg-stack__item" title="EXECUTE_PERMISSION"><span>Execute</span></button></div>
+                  <div class="pg-node" style="left:567.5px;top:136px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" label="Atlas Grants Council" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Primary DAO</span></div>
+                      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" size="sm" src="assets/mock/avatar/atlas.svg"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-node" style="left:567.5px;top:566.5px">
+                    <div class="pg-node__body">
+                      <div class="pg-node__text"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" label="Grants Council Multisig" has-interactive-ancestor="{{yes}}" class-name="text-neutral-800"></x-import><span class="pg-node__subtitle">Multisig v1.3</span></div>
+                      <x-import component-from-global-scope="GovUiKit.Tag" label="OSx" variant="primary" class-name="self-start"></x-import>
+                    </div>
+                  </div>
+                  <div class="pg-controls" aria-label="Control Panel">
+                    <button type="button" class="pg-controls__button" title="Zoom In" aria-label="Zoom In"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M32 18.133H18.133V32h-4.266V18.133H0v-4.266h13.867V0h4.266v13.867H32z"></path></svg></button>
+                    <button type="button" class="pg-controls__button" title="Zoom Out" aria-label="Zoom Out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 5"><path d="M0 0h32v4.2H0z"></path></svg></button>
+                    <button type="button" class="pg-controls__button" title="Fit View" aria-label="Fit View"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 30"><path d="M3.692 4.63c0-.53.4-.938.939-.938h5.215V0H4.708C2.13 0 0 2.054 0 4.63v5.216h3.692V4.631zM27.354 0h-5.2v3.692h5.17c.53 0 .984.4.984.939v5.215H32V4.631A4.624 4.624 0 0027.354 0zm.954 24.83c0 .532-.4.94-.939.94h-5.215v3.768h5.215c2.577 0 4.631-2.13 4.631-4.707v-5.139h-3.692v5.139zm-23.677.94c-.531 0-.939-.4-.939-.94v-5.138H0v5.139c0 2.577 2.13 4.707 4.708 4.707h5.138V25.77H4.631z"></path></svg></button>
+                  </div>
+                </div>
+                <div class="pg-expand">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-left="EXPAND" aria-label="Expand graph" class-name="shadow-neutral-sm"></x-import>
+                </div>
+              </div>
+              </sc-if>
+            </div>
+          </main>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// Atlas DAO permissions page (apps/app: modules/permissions/pages/daoPermissionsPage/daoPermissionsPageClient.tsx).
+// Lifted from MsPermissions / MsPermissionsWithDaoGrants / MsPermissionsGraph. State in the part: view (list | graph) and
+// "Hide permissions granted to DAO" (on = the single grant to the Multisig plugin, off = all grants). The graph is the static
+// picture of the grants-included graph (React Flow is not in the kit bundle), shown whichever filter state is set.
+// Props: on-nav, wallet, on-connect (the page needs neither the wallet nor navigation, links use href="#nav:<target>").
+class Component extends DCLogic {
+  state = { view: 'list', hideDao: true };
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    const s = this.state;
+    return {
+      click: this.click,
+      yes: true,
+      no: false,
+      two: 2,
+      view: s.view,
+      hideDao: s.hideDao,
+      showDao: !s.hideDao,
+      isList: s.view !== 'graph',
+      isGraph: s.view === 'graph',
+      setView: (v) => this.setState({ view: v === 'graph' ? 'graph' : 'list' }),
+      setHideDao: (c) => this.setState({ hideDao: !!c })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -35,14 +35,14 @@ body{margin:0}
   </sc-if>
   <sc-if value="{{isPanel}}" hint-placeholder-val="{{yes}}">
     <div class="flex flex-col gap-3">
-      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" disabled="{{disabled}}" on-click="{{press}}">Delegate MRD</x-import>
+      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" disabled="{{disabled}}" on-click="{{press}}">{{submitLabel}}</x-import>
       <p class="footer-info">Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.</p>
     </div>
   </sc-if>
 </form>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["panel","dialog"],"default":"panel"},"wallet":{"editor":"text","default":"connected"},"current":{"editor":"text","default":""},"initial":{"editor":"text","default":""},"on-submit":{"editor":null},"on-cancel":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":380,"height":520}}'>
+<script type="text/x-dc" data-dc-script data-props='{"tokenSymbol":{"editor":null},"mode":{"editor":"enum","options":["panel","dialog"],"default":"panel"},"wallet":{"editor":"text","default":"connected"},"current":{"editor":"text","default":""},"initial":{"editor":"text","default":""},"on-submit":{"editor":null},"on-cancel":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":380,"height":520}}'>
 // Delegation form (apps/app: plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation/tokenDelegationForm.tsx).
 // Used by DaoMembers (mode "panel", aside card) and DaoDelegateDialog (mode "dialog").
 // Props: mode panel|dialog; wallet ('connected' or ''); current (address the connected wallet delegates to now, '' = none);
@@ -96,6 +96,7 @@ class Component extends DCLogic {
       if (typeof p.onSubmit === 'function') p.onSubmit(resolved);
     };
     return {
+      submitLabel: 'Delegate ' + (this.props.tokenSymbol || 'MRD'),
       yes: true, no: false, chainId: 1,
       isPanel: p.mode !== 'dialog', isDialog: p.mode === 'dialog',
       sel, isSelf, text: shown,

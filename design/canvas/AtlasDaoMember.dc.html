@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO member page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">{{title}}</x-import>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{m.address}}" ens-name="{{m.ens}}" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting activity</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{voteCount}}" page-size="{{five}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{votes.a5}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-5" proposal-title="{{votes.t5}}" vote-indicator="approve" date="{{votes.d5}}" href="#nav:proposal:AGC-5"></x-import></sc-if>
+<sc-if value="{{votes.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-4" proposal-title="{{votes.t4}}" vote-indicator="approve" date="{{votes.d4}}" href="#nav:proposal:AGC-4"></x-import></sc-if>
+<sc-if value="{{votes.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-3" proposal-title="{{votes.t3}}" vote-indicator="approve" date="{{votes.d3}}" href="#nav:proposal:AGC-3"></x-import></sc-if>
+<sc-if value="{{votes.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-2" proposal-title="{{votes.t2}}" vote-indicator="approve" date="{{votes.d2}}" href="#nav:proposal:AGC-2"></x-import></sc-if>
+<sc-if value="{{votes.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="AGC-1" proposal-title="{{votes.t1}}" vote-indicator="approve" date="{{votes.d1}}" href="#nav:proposal:AGC-1"></x-import></sc-if>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal creation</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{createdCount}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{created.c6}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="{{created.t6}}" summary="{{created.s6}}" status="{{created.st6}}" date="{{created.d6}}" publisher="{{created.person}}" href="#nav:proposal:AGC-6"></x-import></sc-if>
+<sc-if value="{{created.c5}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-5" title="{{created.t5}}" summary="{{created.s5}}" status="{{created.st5}}" date="{{created.d5}}" publisher="{{created.person}}" href="#nav:proposal:AGC-5"></x-import></sc-if>
+<sc-if value="{{created.c4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-4" title="{{created.t4}}" summary="{{created.s4}}" status="{{created.st4}}" date="{{created.d4}}" publisher="{{created.person}}" href="#nav:proposal:AGC-4"></x-import></sc-if>
+<sc-if value="{{created.c3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-3" title="{{created.t3}}" summary="{{created.s3}}" status="{{created.st3}}" date="{{created.d3}}" publisher="{{created.person}}" href="#nav:proposal:AGC-3"></x-import></sc-if>
+<sc-if value="{{created.c2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-2" title="{{created.t2}}" summary="{{created.s2}}" status="{{created.st2}}" date="{{created.d2}}" publisher="{{created.person}}" href="#nav:proposal:AGC-2"></x-import></sc-if>
+<sc-if value="{{created.c1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-1" title="{{created.t1}}" summary="{{created.s1}}" status="{{created.st1}}" date="{{created.d1}}" publisher="{{created.person}}" href="#nav:proposal:AGC-1"></x-import></sc-if>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Other DAO memberships</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="Dao.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="#"></x-import>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="{{m.checksum}}"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="{{m.address}}" link="{{addressLink}}" children="{{title}}"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="First activity" children="{{m.first}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Latest activity" children="{{m.latest}}"></x-import>
+              </x-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"member":{"editor":"text","default":"0x826e7eb63d237333d9063dc74e7ce8e222b0fc05"},"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":1778}}'>
+// PART of the Atlas Grants Council prototype. Props: member (address, lowercase), onNav(target), wallet, onConnect.
+// DAO member details (apps/app: modules/governance/pages/daoMemberDetailsPage: voteList, daoProposalList, explore/daoList).
+// Mock data: data.cjs (Atlas Grants Council): five council members; a member approved the proposals whose approver list holds them.
+// The list items are written out one by one at the start of the line, each in its own <sc-if> (the kit's pagination counts the
+// list's direct children). A multisig member has no delegation, so there is no delegation section.
+// Shared state of the prototype (parts remount when you navigate): the mock user nadia.eth approved AGC-5, AGC-4 was executed.
+const atlasState = () => (window.__atlasDao = window.__atlasDao || { approved5: false, executed4: false });
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    // Kit components print dates relative to the viewer's clock ("2 days ago"), so dates are offsets from now.
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    const st = atlasState();
+    // address, checksum, ens, first activity (absolute, from data.cjs: 220 - 10 * i days before the reference time), latest activity (days ago: 2 * (i + 1))
+    const table = [
+      ['0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', 'nadia.eth', 'April 10, 2026', 2],
+      ['0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', '0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05', 'lenaweber.eth', 'April 20, 2026', 4],
+      ['0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', '0xd7AE7a08d86bdd5c6d4d95961f6af3264351aE7a', 'sofiaruiz.eth', 'April 30, 2026', 6],
+      ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', '0xb8616bA616766BD8fbdc69deD1B02E41b482b98E', 'tomas.eth', 'May 10, 2026', 8],
+      ['0x8a25faabbd80f71248328cf3a5867d3168210a46', '0x8a25fAaBBD80f71248328cf3A5867D3168210A46', 'chenwei.eth', 'May 20, 2026', 10]
+    ];
+    const row = table.find((r) => r[0] === String(this.props.member || '').toLowerCase()) || table[1];
+    const kit = window.GovUiKit;
+    const m = { address: row[0], checksum: row[1], ens: row[2], first: row[3], latest: kit.formatterUtils.formatDate(now - row[4] * day, { format: kit.DateFormat.RELATIVE }) || '' };
+    // proposals: id -> [title, summary, start offset (days), creator, approvers (data.cjs MULTISIG_SIGNERS order; AGC-5 is approved by chenwei.eth here so that the mock user can still approve it), end offset]
+    const A = { n: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', l: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', s: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', t: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', c: '0x8a25faabbd80f71248328cf3a5867d3168210a46' };
+    const props = {
+      1: ['Grant: Open-source zk proving benchmarks', 'Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems.', -40, A.n, [A.n, A.l, A.s, A.t], now - 34 * day - hour, 'EXECUTED'],
+      2: ['Grant: Governance analytics dashboard', 'Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC).', -30, A.s, [A.n, A.l, A.s], now - 23 * day - hour, 'EXPIRED'],
+      3: ['Grant: Hackathon prize pool for Q4', 'Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks.', -20, A.c, [A.n], now - 13 * day - hour, 'REJECTED'],
+      4: ['Add a sixth council seat for research', 'Expand the council with a research seat to improve technical review of grant applications.', -3, A.n, [A.n, A.l, A.s], now + 4 * day + hour, st.executed4 ? 'EXECUTED' : 'EXECUTABLE'],
+      5: ['Grant: Wallet accessibility audit', 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', -1, A.t, [A.c].concat(st.approved5 ? [A.n] : []), now + 6 * day + hour, 'ACTIVE'],
+      6: ['Q1 2027 council operating budget', 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', 1, A.l, [], now + 8 * day + hour, 'PENDING']
+    };
+    const names = { [A.n]: 'nadia.eth', [A.l]: 'lenaweber.eth', [A.s]: 'sofiaruiz.eth', [A.t]: 'tomas.eth', [A.c]: 'chenwei.eth' };
+    const votes = {};
+    let voteCount = 0;
+    [5, 4, 3, 2, 1].forEach((n) => {
+      const p = props[n];
+      const i = p[4].indexOf(m.address);
+      votes['a' + n] = i >= 0;
+      votes['t' + n] = p[0];
+      votes['d' + n] = Math.min(now - hour, now + p[2] * day + (i + 1) * 5 * hour);
+      if (i >= 0) voteCount++;
+    });
+    const created = { person: { address: m.address, name: m.ens, link: '#nav:member:' + m.address } };
+    let createdCount = 0;
+    [6, 5, 4, 3, 2, 1].forEach((n) => {
+      const p = props[n];
+      created['c' + n] = p[3] === m.address;
+      created['t' + n] = p[0];
+      created['s' + n] = p[1];
+      created['d' + n] = p[5];
+      created['st' + n] = p[6];
+      if (p[3] === m.address) createdCount++;
+    });
+    return {
+      click: this.click, yes: true, one: 1, three: 3, five: 5,
+      m, title: m.ens, votes, voteCount, created, createdCount,
+      breadcrumbs: [{ href: '#nav:members', label: 'Members' }, { label: m.ens }],
+      daos: { meridian: '0xc8c322384903ee8f11f511b71d0504237886bcde', solace: '0xe2f001c33fca00ad672f2a79abbcd567803178ee', harbor: '0x506b251c4cefd8a679955e7d17c8968b3d994693' },
+      addressLink: { href: 'https://etherscan.io/address/' + m.address, isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

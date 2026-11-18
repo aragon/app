@@ -407,6 +407,384 @@
       "h": 900,
       "title": "SafeFlowTxDialog",
       "page": "parts"
+    },
+    "AtlasDao.dc.html": {
+      "x": 0,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Atlas Grants Council (multisig DAO)",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "NorthstarDao.dc.html": {
+      "x": 1520,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Northstar Protocol (multi-stage DAO)",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "CreateProcessFlow.dc.html": {
+      "x": 3040,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Create a governance process",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WrapFlow.dc.html": {
+      "x": 4560,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Wrap tokens",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "LockFlow.dc.html": {
+      "x": 6080,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Lock to vote",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "AtlasDaoDashboard.dc.html": {
+      "x": 0,
+      "y": 12540,
+      "w": 1100,
+      "h": 2100,
+      "title": "AtlasDaoDashboard",
+      "page": "parts"
+    },
+    "AtlasDaoProposals.dc.html": {
+      "x": 1180,
+      "y": 12540,
+      "w": 1100,
+      "h": 1531,
+      "title": "AtlasDaoProposals",
+      "page": "parts"
+    },
+    "AtlasDaoProposal.dc.html": {
+      "x": 2360,
+      "y": 12540,
+      "w": 1440,
+      "h": 900,
+      "title": "AtlasDaoProposal",
+      "page": "parts"
+    },
+    "AtlasDaoMembers.dc.html": {
+      "x": 3880,
+      "y": 12540,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoMembers",
+      "page": "parts"
+    },
+    "AtlasDaoMember.dc.html": {
+      "x": 5060,
+      "y": 12540,
+      "w": 1100,
+      "h": 1778,
+      "title": "AtlasDaoMember",
+      "page": "parts"
+    },
+    "AtlasDaoAssets.dc.html": {
+      "x": 6240,
+      "y": 12540,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoAssets",
+      "page": "parts"
+    },
+    "AtlasDaoTransactions.dc.html": {
+      "x": 7420,
+      "y": 12540,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoTransactions",
+      "page": "parts"
+    },
+    "AtlasDaoSettings.dc.html": {
+      "x": 0,
+      "y": 14760,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoSettings",
+      "page": "parts"
+    },
+    "AtlasDaoPermissions.dc.html": {
+      "x": 1180,
+      "y": 14760,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoPermissions",
+      "page": "parts"
+    },
+    "AtlasDaoProcess.dc.html": {
+      "x": 2360,
+      "y": 14760,
+      "w": 1100,
+      "h": 900,
+      "title": "AtlasDaoProcess",
+      "page": "parts"
+    },
+    "NorthstarDaoDashboard.dc.html": {
+      "x": 3540,
+      "y": 14760,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoDashboard",
+      "page": "parts"
+    },
+    "NorthstarDaoProposals.dc.html": {
+      "x": 5060,
+      "y": 14760,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoProposals",
+      "page": "parts"
+    },
+    "NorthstarDaoProposal.dc.html": {
+      "x": 6580,
+      "y": 14760,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoProposal",
+      "page": "parts"
+    },
+    "NorthstarDaoMembers.dc.html": {
+      "x": 0,
+      "y": 15780,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoMembers",
+      "page": "parts"
+    },
+    "NorthstarDaoMember.dc.html": {
+      "x": 1520,
+      "y": 15780,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoMember",
+      "page": "parts"
+    },
+    "NorthstarDaoAssets.dc.html": {
+      "x": 3040,
+      "y": 15780,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoAssets",
+      "page": "parts"
+    },
+    "NorthstarDaoTransactions.dc.html": {
+      "x": 4560,
+      "y": 15780,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoTransactions",
+      "page": "parts"
+    },
+    "NorthstarDaoSettings.dc.html": {
+      "x": 6080,
+      "y": 15780,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoSettings",
+      "page": "parts"
+    },
+    "NorthstarDaoPermissions.dc.html": {
+      "x": 0,
+      "y": 16800,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoPermissions",
+      "page": "parts"
+    },
+    "NorthstarDaoProcess.dc.html": {
+      "x": 1520,
+      "y": 16800,
+      "w": 1440,
+      "h": 900,
+      "title": "NorthstarDaoProcess",
+      "page": "parts"
+    },
+    "CreateProcessFlowMetadata.dc.html": {
+      "x": 3040,
+      "y": 16800,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowMetadata",
+      "page": "parts"
+    },
+    "CreateProcessFlowDesigner.dc.html": {
+      "x": 4560,
+      "y": 16800,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowDesigner",
+      "page": "parts"
+    },
+    "CreateProcessFlowBodyCard.dc.html": {
+      "x": 6080,
+      "y": 16800,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowBodyCard",
+      "page": "parts"
+    },
+    "CreateProcessFlowProposalCreation.dc.html": {
+      "x": 0,
+      "y": 17820,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowProposalCreation",
+      "page": "parts"
+    },
+    "CreateProcessFlowPermissions.dc.html": {
+      "x": 1520,
+      "y": 17820,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowPermissions",
+      "page": "parts"
+    },
+    "CreateProcessFlowBodyDialog.dc.html": {
+      "x": 3040,
+      "y": 17820,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowBodyDialog",
+      "page": "parts"
+    },
+    "TransactionStatus.dc.html": {
+      "x": 4560,
+      "y": 17820,
+      "w": 1440,
+      "h": 900,
+      "title": "TransactionStatus",
+      "page": "parts"
+    },
+    "CreateProcessFlowNumberInput.dc.html": {
+      "x": 6080,
+      "y": 17820,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowNumberInput",
+      "page": "parts"
+    },
+    "CreateProcessFlowDuration.dc.html": {
+      "x": 0,
+      "y": 18840,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowDuration",
+      "page": "parts"
+    },
+    "CreateProcessFlowStageDialog.dc.html": {
+      "x": 1520,
+      "y": 18840,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProcessFlowStageDialog",
+      "page": "parts"
+    },
+    "WrapFlowMembers.dc.html": {
+      "x": 3040,
+      "y": 18840,
+      "w": 1440,
+      "h": 1000,
+      "title": "WrapFlowMembers",
+      "page": "parts"
+    },
+    "WrapFlowForm.dc.html": {
+      "x": 4560,
+      "y": 18840,
+      "w": 380,
+      "h": 520,
+      "title": "WrapFlowForm",
+      "page": "parts"
+    },
+    "WrapFlowOnboardDialog.dc.html": {
+      "x": 5020,
+      "y": 18840,
+      "w": 600,
+      "h": 500,
+      "title": "WrapFlowOnboardDialog",
+      "page": "parts"
+    },
+    "WrapFlowTxDialog.dc.html": {
+      "x": 5700,
+      "y": 18840,
+      "w": 1440,
+      "h": 900,
+      "title": "WrapFlowTxDialog",
+      "page": "parts"
+    },
+    "LockFlowMembers.dc.html": {
+      "x": 7220,
+      "y": 18840,
+      "w": 1440,
+      "h": 900,
+      "title": "LockFlowMembers",
+      "page": "parts"
+    },
+    "LockFlowLockForm.dc.html": {
+      "x": 0,
+      "y": 19960,
+      "w": 400,
+      "h": 420,
+      "title": "LockFlowLockForm",
+      "page": "parts"
+    },
+    "LockFlowAmountField.dc.html": {
+      "x": 480,
+      "y": 19960,
+      "w": 400,
+      "h": 150,
+      "title": "LockFlowAmountField",
+      "page": "parts"
+    },
+    "LockFlowProposal.dc.html": {
+      "x": 960,
+      "y": 19960,
+      "w": 1440,
+      "h": 1500,
+      "title": "LockFlowProposal",
+      "page": "parts"
+    },
+    "LockFlowLockDialog.dc.html": {
+      "x": 2480,
+      "y": 19960,
+      "w": 480,
+      "h": 420,
+      "title": "LockFlowLockDialog",
+      "page": "parts"
+    },
+    "LockFlowFeedbackDialog.dc.html": {
+      "x": 3040,
+      "y": 19960,
+      "w": 480,
+      "h": 420,
+      "title": "LockFlowFeedbackDialog",
+      "page": "parts"
+    },
+    "LockFlowBlockedDialog.dc.html": {
+      "x": 3600,
+      "y": 19960,
+      "w": 480,
+      "h": 380,
+      "title": "LockFlowBlockedDialog",
+      "page": "parts"
     }
   },
   "order": [
@@ -456,7 +834,53 @@
     "SafeFlowPage.dc.html",
     "SafeFlowReviewDialog.dc.html",
     "SafeFlowReviewContent.dc.html",
-    "SafeFlowTxDialog.dc.html"
+    "SafeFlowTxDialog.dc.html",
+    "AtlasDao.dc.html",
+    "NorthstarDao.dc.html",
+    "CreateProcessFlow.dc.html",
+    "WrapFlow.dc.html",
+    "LockFlow.dc.html",
+    "AtlasDaoDashboard.dc.html",
+    "AtlasDaoProposals.dc.html",
+    "AtlasDaoProposal.dc.html",
+    "AtlasDaoMembers.dc.html",
+    "AtlasDaoMember.dc.html",
+    "AtlasDaoAssets.dc.html",
+    "AtlasDaoTransactions.dc.html",
+    "AtlasDaoSettings.dc.html",
+    "AtlasDaoPermissions.dc.html",
+    "AtlasDaoProcess.dc.html",
+    "NorthstarDaoDashboard.dc.html",
+    "NorthstarDaoProposals.dc.html",
+    "NorthstarDaoProposal.dc.html",
+    "NorthstarDaoMembers.dc.html",
+    "NorthstarDaoMember.dc.html",
+    "NorthstarDaoAssets.dc.html",
+    "NorthstarDaoTransactions.dc.html",
+    "NorthstarDaoSettings.dc.html",
+    "NorthstarDaoPermissions.dc.html",
+    "NorthstarDaoProcess.dc.html",
+    "CreateProcessFlowMetadata.dc.html",
+    "CreateProcessFlowDesigner.dc.html",
+    "CreateProcessFlowBodyCard.dc.html",
+    "CreateProcessFlowProposalCreation.dc.html",
+    "CreateProcessFlowPermissions.dc.html",
+    "CreateProcessFlowBodyDialog.dc.html",
+    "TransactionStatus.dc.html",
+    "CreateProcessFlowNumberInput.dc.html",
+    "CreateProcessFlowDuration.dc.html",
+    "CreateProcessFlowStageDialog.dc.html",
+    "WrapFlowMembers.dc.html",
+    "WrapFlowForm.dc.html",
+    "WrapFlowOnboardDialog.dc.html",
+    "WrapFlowTxDialog.dc.html",
+    "LockFlowMembers.dc.html",
+    "LockFlowLockForm.dc.html",
+    "LockFlowAmountField.dc.html",
+    "LockFlowProposal.dc.html",
+    "LockFlowLockDialog.dc.html",
+    "LockFlowFeedbackDialog.dc.html",
+    "LockFlowBlockedDialog.dc.html"
   ],
   "notes": {
     "proto-desktop": {
@@ -474,6 +898,14 @@
       "kind": "title1",
       "maxW": 8000,
       "page": "parts"
+    },
+    "proto-more": {
+      "x": 0,
+      "y": 1400,
+      "text": "More DAO types and governance flows",
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "prototypes"
     }
   },
   "designSystems": [

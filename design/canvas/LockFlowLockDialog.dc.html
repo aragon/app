@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock tokens dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="{{title}}" hidden-description="{{hiddenDescription}}">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="{{title}}" on-close="{{onClose}}"></x-import>
+  <sc-if value="{{isBefore}}" hint-placeholder-val="{{yes}}">
+    <dc-import name="LockFlowLockForm" mode="before" wallet="{{wallet}}" symbol="{{symbol}}" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-submit="{{onSubmit}}" on-cancel="{{onClose}}" on-connect="{{onConnect}}" hint-size="100%,300px"></dc-import>
+  </sc-if>
+  <sc-if value="{{isOnboarding}}" hint-placeholder-val="{{no}}">
+    <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="flex w-full flex-col gap-4 pt-4 pb-6">
+      <dc-import name="LockFlowLockForm" mode="dialog" wallet="{{wallet}}" symbol="{{symbol}}" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-submit="{{onSubmit}}" on-cancel="{{onClose}}" on-connect="{{onConnect}}" hint-size="100%,380px"></dc-import>
+    </x-import>
+  </sc-if>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"variant":{"editor":"enum","options":["before","onboarding"],"default":"before"},"wallet":{"editor":"text","default":"connected"},"symbol":{"editor":"text","default":"ORB"},"balance":{"editor":"float","default":25000},"locked":{"editor":"float","default":0},"allowance":{"editor":"float","default":0},"on-close":{"editor":null},"on-submit":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":480,"height":420}}'>
+// The app's lock dialogs of the lock-to-vote plugin, one part with two variants (mount only while open):
+//  before     LOCK_BEFORE_VOTE (dialogs/lockToVoteLockBeforeVoteDialog): title "Lock tokens", amount, info text, Cancel / "Lock now".
+//  onboarding LOCK_ONBOARDING_FORM_L2V: title "Join token holders", the lock form in dialog mode. The one-step intro dialog
+//             ("You have unlocked ORB", "Lock tokens") that precedes it in the app is not drawn: the member list card opens this form.
+// Props: variant, wallet, symbol, balance, locked, allowance, on-close() (Cancel, X, Esc, overlay), on-submit(amount), on-connect().
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const before = (p.variant || 'before') !== 'onboarding';
+    const close = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    return {
+      yes: true, no: false,
+      isBefore: before, isOnboarding: !before,
+      title: before ? 'Lock tokens' : 'Join token holders',
+      hiddenDescription: before ? 'Lock tokens before voting on the proposal' : 'Lock tokens to join token holders',
+      wallet: p.wallet || '', symbol: p.symbol || 'ORB', balance: Number(p.balance) || 0, locked: Number(p.locked) || 0, allowance: Number(p.allowance) || 0,
+      onClose: close,
+      onSubmit: (a) => { if (typeof p.onSubmit === 'function') p.onSubmit(a); },
+      onConnect: () => { if (typeof p.onConnect === 'function') p.onConnect(); },
+      noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

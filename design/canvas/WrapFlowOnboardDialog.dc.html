@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wrap onboarding dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isIntro}}" hint-placeholder-val="{{yes}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Wrap tokens onboarding" hidden-description="Wrap tokens onboarding">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="flex flex-col items-center gap-4">
+    <x-import component-from-global-scope="GovUiKit.EmptyState" heading="You have unlocked HBR" description="Wrap your tokens to participate in governance." object-illustration="{{illustration}}" primary-button="{{primaryButton}}" secondary-button="{{secondaryButton}}"></x-import>
+  </x-import>
+</x-import>
+</sc-if>
+<sc-if value="{{isForm}}" hint-placeholder-val="{{no}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Wrap tokens" hidden-description="Wrap tokens form">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Wrap tokens" on-close="{{close}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="flex w-full flex-col gap-4 pt-4 pb-6">
+    <dc-import name="WrapFlowForm" mode="dialog" wallet="connected" underlying="{{underlying}}" wrapped="{{wrapped}}" allowance="{{allowance}}" on-submit="{{onSubmit}}" on-cancel="{{close}}" hint-size="100%,420px"></dc-import>
+  </x-import>
+</x-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"step":{"editor":"enum","options":["intro","form"],"default":"intro"},"underlying":{"editor":"float","default":12500},"wrapped":{"editor":"float","default":0},"allowance":{"editor":"float","default":0},"on-next":{"editor":null},"on-close":{"editor":null},"on-submit":{"editor":null},"$preview":{"width":600,"height":500}}'>
+// The wrap onboarding dialogs (apps/app: plugins/tokenPlugin/dialogs/tokenWrapOnboardingIntroDialog and
+// tokenWrapOnboardingFormDialog). Intro: "You have unlocked HBR" / "Wrap your tokens to participate in governance."
+// with "Wrap tokens" and "Cancel"; the form step is the wrap form in dialog mode (WrapFlowForm).
+// Props: step intro|form; underlying, wrapped, allowance (passed to the form); on-next() (intro "Wrap tokens");
+// on-close() (Cancel, Esc, overlay); on-submit(amount) (form submitted and valid).
+// Source-only: no screenshot of either dialog exists. Mount only while open.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const close = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    return {
+      yes: true, no: false, isIntro: p.step !== 'form', isForm: p.step === 'form',
+      illustration: { object: 'WALLET' },
+      primaryButton: { label: 'Wrap tokens', onClick: () => { if (typeof p.onNext === 'function') p.onNext(); } },
+      secondaryButton: { label: 'Cancel', onClick: close },
+      underlying: p.underlying, wrapped: p.wrapped, allowance: p.allowance,
+      onSubmit: (a) => { if (typeof p.onSubmit === 'function') p.onSubmit(a); },
+      close, noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

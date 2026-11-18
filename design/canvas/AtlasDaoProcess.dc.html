@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO governance process page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Grants Council Multisig</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Five elected council members approve grant disbursements. Three approvals are required to execute.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>6</p></div>
+                    <p class="page-stat__label">Proposals</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>{{lastValue}}</p><p>{{lastUnit}}</p></div>
+                    <p class="page-stat__label">Last proposal</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance process</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" default-value="{{openBodies}}">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="agc">
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
+                    <div class="body-info">
+                      <div class="body-info__row">
+                        <p class="body-info__name">Grants Council Multisig</p>
+                        <p class="body-info__address">0x2c50…a5ae</p>
+                      </div>
+                      <p class="body-info__subtitle">Multisig v1.3</p>
+                    </div>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Container" class-name="w-full">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Members" children="5 members"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Multisig threshold" children="3 of 5"></x-import>
+                    </x-import>
+                  </x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section" id="proposal-creation-eligibility">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal creation eligibility</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Card">
+                <div class="eligibility-list">
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Name" children="Grants Council Multisig"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposal creation" children="Multisig member"></x-import>
+                  </x-import>
+                </div>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <div class="page-section__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Authorized actions</x-import>
+                </div>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardEmptyState" is-stacked="{{no}}" heading="Unrestricted execution" description="This process has permission to execute on behalf of the DAO. It could, for example, withdraw funds, modify governance contracts, and call any function on any smart contract." object-illustration="{{settingsIllustration}}"></x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              </div>
+              <div class="process-details">
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin name" children="Grants Council Multisig"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Process key" children="AGC"></x-import></div>
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" description="Multisig v1.3" link="{{pluginLink}}" children="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="March 2026"></x-import>
+                </x-import>
+                <div class="process-details__uninstall">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md">Uninstall process</x-import>
+                  <p class="process-details__info">Proposals of this type can't be executed once this process is uninstalled.</p>
+                </div>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// PART of the Atlas Grants Council prototype (AtlasDao.dc.html). Props: onNav(target), wallet, onConnect. Lifted from MsSettingsProcess (process agc; the process prop is ignored, the DAO has one process).
+// Governance process details (apps/app: modules/settings/pages/daoProcessDetailsPage/daoProcessDetailsPageClient.tsx).
+// Governance process: createProcessForm GovernanceBodyField (readOnly, open accordion) with GovernanceBodyInfo in the
+// header and the multisig plugin's MultisigProcessBodyField; eligibility: PermissionsDefinitionList; actions:
+// The app gives ItemContent open-state flex/gap classes the kit stylesheet lacks; with one child they change nothing, so
+// they are left out. DaoProcessAllowedActions (no condition = unrestricted empty state); aside: DaoProcessDetailsInfo.
+// Mock data: design/baseline-check/data.cjs (Atlas Grants Council, plugin AGC).
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  baseVals() {
+    const day = 24 * 60 * 60 * 1000;
+    // The last proposal is two days old (stat "2 days ago", formatted like the app: value + unit suffix).
+    const rel = GovUiKit.formatterUtils.formatDate(Date.now() + 23.3 * 3600 * 1000, { format: GovUiKit.DateFormat.RELATIVE }) || '';
+    const [lastValue, unit] = rel.split(' ');
+    return {
+      yes: true,
+      no: false,
+      two: 2,
+      lastValue,
+      lastUnit: unit ? unit + ' ago' : '',
+      openBodies: ['agc'],
+      breadcrumbs: [{ href: '#nav:settings', label: 'Settings' }, { label: 'AGC' }],
+      pluginLink: { href: 'https://etherscan.io/address/0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', isExternal: true, isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x145a7ae04cba403de6e76cd3eb13de56deb884cdfb97af3e9de4f224aa7952c3' },
+      tokenLink: { href: 'https://etherscan.io/token/0xc6cf3058f8fd5eb7074109b3b531364a4af59dae', isOnchainEntity: true },
+      membersLink: { href: '#nav:members', isExternal: false },
+      settingsIllustration: { object: 'SETTINGS' }
+    };
+  }
+  renderVals() { return Object.assign({ click: this.click }, this.baseVals()); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO dashboard page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Atlas Grants Council</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>6</p></div>
+                    <p class="page-stat__label">Proposals</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>5</p></div>
+                    <p class="page-stat__label">Members</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>$612.48K</p><p>USD</p></div>
+                    <p class="page-stat__label">Treasury</p>
+                  </div>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Latest proposals</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+                  <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="{{p.href}}"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:proposals" class-name="self-start">View all</x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Members</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{five}}" page-size="{{five}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+                  <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
+                  <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex min-w-fit flex-col items-start justify-center gap-y-3 py-4 md:min-w-44 md:py-6" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a">
+                    <div class="mb-1 flex w-full items-center justify-between">
+                      <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" responsive-size="{{mdSize}}" size="sm"></x-import>
+                      <x-import component-from-global-scope="GovUiKit.Tag" label="You" variant="neutral"></x-import>
+                    </div>
+                    <x-import component-from-global-scope="GovUiKit.Heading" as="h2" class-name="inline-block w-full truncate" size="h3">
+                      <x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" class-name="truncate" label="nadia.eth"></x-import>
+                    </x-import>
+                  </x-import>
+                  </sc-if>
+                  <sc-for list="{{members}}" as="m" hint-placeholder-count="5">
+                    <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" href="{{m.href}}"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:members" class-name="self-start">View all</x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Assets</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{three}}" page-size="{{three}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container">
+                  <sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+                    <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}" logo-src="{{a.logo}}"></x-import>
+                  </sc-for>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:assets" class-name="self-start">View all</x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contract</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain"><p class="text-neutral-500">Ethereum</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="DAO address" link="{{addressLink}}" children="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" link="{{addressLink}}" children="atlas-grants.dao.eth"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{creationLink}}" children="March 2026"></x-import>
+              </x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:permissions" class-name="w-full">View permissions</x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Resources</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/apply" is-external="{{yes}}" show-url="{{yes}}">Apply for a grant</x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Notifications</x-import>
+              <p class="page-aside__text">Get notified on Telegram about new proposals and other activity.</p>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="SOCIAL_TELEGRAM" href="https://t.me/aragon_test_bot" target="_blank" class-name="w-full">Subscribe</x-import>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":2100}}'>
+// PART of the Atlas Grants Council prototype. Props: onNav(target), wallet, onConnect.
+// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: data.cjs (Atlas Grants Council).
+// Connected (mock user nadia.eth, a council member): AGC-4 is published by You, nadia.eth is first in Members with the You tag.
+// Shared state of the prototype (parts remount when you navigate): the mock user nadia.eth approved AGC-5, AGC-4 was executed.
+const atlasState = () => (window.__atlasDao = window.__atlasDao || { approved5: false, executed4: false });
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    // Kit components print proposal dates relative to the viewer's clock ("3 days left"), so dates are offsets from now.
+    const hour = 3600000;
+    const day = 24 * hour;
+    const now = Date.now();
+    const connected = this.props.wallet === 'connected';
+    const st = atlasState();
+    const person = (address, name) => ({ address, name, link: '#nav:member:' + address });
+    return {
+      click: this.click, connected, mdSize: { md: 'md' },
+      yes: true, two: 2, three: 3, five: 5,
+      proposals: [
+        { id: 'AGC-6', href: '#nav:proposal:AGC-6', title: 'Q1 2027 council operating budget', summary: 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', status: 'PENDING', date: now + 8 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
+        { id: 'AGC-5', href: '#nav:proposal:AGC-5', title: 'Grant: Wallet accessibility audit', summary: 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', status: 'ACTIVE', date: now + 6 * day + hour, publisher: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth') },
+        { id: 'AGC-4', href: '#nav:proposal:AGC-4', title: 'Add a sixth council seat for research', summary: 'Expand the council with a research seat to improve technical review of grant applications.', status: st.executed4 ? 'EXECUTED' : 'EXECUTABLE', date: now + 4 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', connected ? 'You' : 'nadia.eth') }
+      ],
+      members: [
+        { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth' },
+        { href: '#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', ens: 'lenaweber.eth' },
+        { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', ens: 'sofiaruiz.eth' },
+        { href: '#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', ens: 'tomas.eth' },
+        { href: '#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46', address: '0x8a25faabbd80f71248328cf3a5867d3168210a46', ens: 'chenwei.eth' }
+      ].filter((m, i) => !(connected && i === 0)),
+      assets: [
+        { name: 'USD Coin', symbol: 'USDC', amount: 412880.15, price: 1, logo: 'assets/mock/token/usdc.svg' },
+        { name: 'Dai Stablecoin', symbol: 'DAI', amount: 120000, price: 0.9998, logo: 'assets/mock/token/dai.svg' },
+        { name: 'Ether', symbol: 'ETH', amount: 25.32, price: 3148.62, logo: 'assets/mock/token/eth.svg' }
+      ],
+      addressLink: { href: 'https://etherscan.io/address/0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', isOnchainEntity: true },
+      creationLink: { href: 'https://etherscan.io/tx/0x8a247a67443c98b218c7828d9e14446e46b3ba84636c33f4498a8d8270f77281' }
+    };
+  }
+}
+</script>
+</body>
+</html>

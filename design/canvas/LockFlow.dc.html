@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orbit lock to vote</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="DaoNav" active="{{active}}" wallet="{{wallet}}" dao-name="Orbit Commons" dao-avatar="assets/mock/avatar/orbit.svg" dao-address="0x4b3a1f0c2d9e8a7b6c5d4e3f2a1b0c9d8e7f6a5b" on-nav="{{nav}}" on-connect="{{connect}}" on-user="{{openUser}}" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="dao-slot">
+        <sc-if value="{{is.members}}" hint-placeholder-val="{{true}}">
+          <dc-import name="LockFlowMembers" on-nav="{{nav}}" wallet="{{wallet}}" symbol="ORB" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-connect="{{connect}}" on-lock="{{lockFromPanel}}" on-unlock="{{unlock}}" on-onboard="{{openOnboarding}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.proposal}}" hint-placeholder-val="{{false}}">
+          <dc-import name="LockFlowProposal" on-nav="{{nav}}" wallet="{{wallet}}" locked="{{locked}}" voted="{{voted}}" options="{{options}}" selected="{{selected}}" on-vote="{{vote}}" on-update="{{update}}" on-select="{{select}}" on-submit="{{submit}}" on-cancel="{{cancel}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+<sc-if value="{{dlg.connect}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletConnect" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dlg.user}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletUser" on-close="{{closeDialog}}" on-disconnect="{{disconnect}}" on-nav="{{nav}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dlg.lockBefore}}" hint-placeholder-val="{{false}}">
+  <dc-import name="LockFlowLockDialog" variant="before" wallet="{{wallet}}" symbol="ORB" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-close="{{closeDialog}}" on-submit="{{lockFromVote}}" on-connect="{{connect}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dlg.onboarding}}" hint-placeholder-val="{{false}}">
+  <dc-import name="LockFlowLockDialog" variant="onboarding" wallet="{{wallet}}" symbol="ORB" balance="{{balance}}" locked="{{locked}}" allowance="{{allowance}}" on-close="{{closeDialog}}" on-submit="{{lockFromOnboarding}}" on-connect="{{connect}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dlg.feedback}}" hint-placeholder-val="{{false}}">
+  <dc-import name="LockFlowFeedbackDialog" symbol="ORB" locked="{{locked}}" can-vote="{{yes}}" on-lock="{{feedbackLock}}" on-vote="{{feedbackVote}}" on-close="{{closeDialog}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dlg.blocked}}" hint-placeholder-val="{{false}}">
+  <dc-import name="LockFlowBlockedDialog" on-close="{{closeDialog}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<dc-import name="TxFlowDialog" open="{{txOpen}}" title="{{tx.title}}" description="{{tx.description}}" steps="{{tx.steps}}" submit-label="{{tx.submitLabel}}" success-label="{{tx.successLabel}}" summary="{{tx.summary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="1px,1px"></dc-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Lock-to-vote DAO prototype (apps/app: plugins/lockToVotePlugin). One artboard, two pages: Members (lock panel in the aside) and a Proposal
+// (lock-to-vote voting block). Sample DAO "Orbit Commons", token ORB; the connected user is nadia.eth with 25,000 unlocked ORB.
+// state = { page, wallet, dialog, balance, locked, allowance, voted, options, selected, txOpen, txKind, pend }.
+//   page: 'members' | 'proposal'. wallet: '' | 'connected'. dialog: '' | connect | user | lockBefore | onboarding | feedback | blocked.
+//   txKind: approve | lock | unlock | vote (TxFlowDialog, simulated signing). pend = { amount, ctx, option, approved }.
+// Flow, as in the source: lock needs an allowance (approve first, then lock); "Vote on proposal" opens the options; submitting a vote while
+// tokens remain unlocked shows SUBMIT_VOTE_FEEDBACK ("Lock now" opens LOCK_BEFORE_VOTE, then approve and a lock-and-vote transaction);
+// unlocking after voting is blocked (UNLOCK_BLOCKED_INFO).
+// Source-only: lock-to-vote has no mock DAO or screenshot, every state is drawn from the source and strings.
+class Component extends DCLogic {
+  state = { page: 'members', wallet: '', dialog: '', balance: 25000, locked: 0, allowance: 0, voted: '', options: false, selected: '', txOpen: false, txKind: '', pend: { amount: 0, ctx: '', option: '', approved: false }, pendingVote: false };
+  timers = [];
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
+  connect = () => this.setState({ dialog: 'connect' });
+  openUser = () => this.setState({ dialog: 'user' });
+  closeDialog = () => this.setState({ dialog: '' });
+  pickWallet = () => {
+    const pv = this.state.pendingVote;
+    this.setState({ wallet: 'connected', dialog: '', pendingVote: false }, () => { if (pv) this.vote(); });
+  };
+  disconnect = () => this.setState({ wallet: '', dialog: '', txOpen: false, options: false, selected: '' });
+  nav = (target) => {
+    const t = String(target || '');
+    const page = t === 'members' ? 'members' : (t === 'proposals' || t.indexOf('proposal:') === 0) ? 'proposal' : '';
+    if (!page) return;
+    this.setState({ page, dialog: '' }, () => {
+      try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {}
+      try { document.querySelectorAll('.app-page, .app-column').forEach((el) => { el.scrollTop = 0; }); } catch (e) {}
+    });
+  };
+  // Opens the transaction dialog for a kind; a dialog that is already open is closed first so that it starts again at "Sign transaction".
+  openTx = (kind, pend) => {
+    const st = { txKind: kind, dialog: '' };
+    if (pend) st.pend = pend;
+    if (this.state.txOpen) {
+      this.setState({ txOpen: false });
+      this.timers.push(setTimeout(() => this.setState(Object.assign({ txOpen: true }, st)), 80));
+    } else this.setState(Object.assign({ txOpen: true }, st));
+  };
+  requestLock = (amount, ctx, option) => {
+    const pend = { amount, ctx, option: option || '', approved: false };
+    if (amount > this.state.allowance) this.openTx('approve', pend);
+    else this.openTx(option ? 'vote' : 'lock', pend);
+  };
+  lockFromPanel = (amount) => this.requestLock(amount, 'panel', '');
+  lockFromOnboarding = (amount) => this.requestLock(amount, 'onboarding', '');
+  lockFromVote = (amount) => this.requestLock(amount, 'beforeVote', this.state.pend.option);
+  openOnboarding = () => this.setState({ dialog: 'onboarding' });
+  unlock = () => {
+    // The app simulates the unlock call first; it reverts while the user has voted on an active proposal.
+    if (this.state.voted) { this.setState({ dialog: 'blocked' }); return; }
+    this.openTx('unlock', { amount: this.state.locked, ctx: 'unlock', option: '', approved: false });
+  };
+  vote = () => {
+    const st = this.state;
+    if (st.wallet !== 'connected') { this.setState({ pendingVote: true, dialog: 'connect' }); return; }
+    this.setState({ options: true, selected: st.voted });
+  };
+  update = () => this.setState({ options: true, selected: this.state.voted });
+  select = (k) => this.setState({ selected: k });
+  cancel = () => this.setState({ options: false, selected: '' });
+  submit = () => {
+    const st = this.state;
+    if (!st.selected) return;
+    if (st.balance > 0) this.setState({ dialog: 'feedback' });
+    else this.startVote(st.selected);
+  };
+  startVote = (option) => this.openTx('vote', { amount: 0, ctx: 'vote', option, approved: false });
+  feedbackLock = () => this.setState({ dialog: 'lockBefore', pend: { amount: 0, ctx: 'beforeVote', option: this.state.selected, approved: false } });
+  feedbackVote = () => this.startVote(this.state.selected);
+  closeTx = () => this.setState({ txOpen: false });
+  txDone = () => {
+    const st = this.state;
+    const pend = st.pend;
+    if (st.txKind === 'approve') {
+      this.setState({ allowance: Math.max(st.allowance, pend.amount) });
+      this.openTx(pend.option ? 'vote' : 'lock', Object.assign({}, pend, { approved: true }));
+      return;
+    }
+    if (st.txKind === 'lock') {
+      this.setState({ txOpen: false, balance: st.balance - pend.amount, locked: st.locked + pend.amount, allowance: Math.max(0, st.allowance - pend.amount) });
+      if (pend.ctx === 'beforeVote') this.setState({ page: 'proposal', options: true, selected: '' });
+      return;
+    }
+    if (st.txKind === 'unlock') {
+      this.setState({ txOpen: false, balance: st.balance + st.locked, locked: 0 });
+      return;
+    }
+    // vote (a lock-and-vote transaction when pend.amount > 0)
+    this.setState({ txOpen: false, options: false, selected: '', voted: pend.option,
+      balance: st.balance - pend.amount, locked: st.locked + pend.amount, allowance: Math.max(0, st.allowance - pend.amount) });
+  };
+  renderVals() {
+    const st = this.state;
+    const connected = st.wallet === 'connected';
+    const fmt = (v) => GovUiKit.formatterUtils.formatNumber(v, { format: GovUiKit.NumberFormat.TOKEN_AMOUNT_SHORT });
+    const k = st.txKind;
+    const pend = st.pend || {};
+    const amountTxt = fmt(pend.amount || 0) + ' ORB';
+    const txs = {
+      approve: { title: 'Approve locking', description: 'To lock your tokens, confirm the two onchain transactions in your wallet.', submitLabel: 'Approve tokens', successLabel: 'Continue', steps: [], summary: null },
+      lock: { title: 'Lock tokens', description: 'To lock your tokens, confirm the onchain transaction in your wallet.', submitLabel: 'Lock tokens', successLabel: 'View members', steps: pend.approved ? ['Approve ORB'] : [], summary: null },
+      unlock: { title: 'Unlock tokens', description: 'To unlock your tokens, confirm the onchain transaction in your wallet.', submitLabel: 'Unlock tokens', successLabel: 'View members', steps: [], summary: null },
+      vote: { title: 'Submit vote', description: 'To submit your vote, confirm the onchain transaction in your wallet.', submitLabel: 'Submit vote', successLabel: 'View proposal', steps: pend.approved ? ['Approve ORB'] : [],
+        summary: { type: 'vote', proposalId: 'ORB-4', proposalTitle: 'Fund the Orbit Community Grants round 2', voteIndicator: pend.option || 'yes', voteIndicatorDescription: pend.option === 'abstain' ? undefined : 'to approve' } }
+    };
+    return {
+      yes: true, no: false,
+      is: { members: st.page === 'members', proposal: st.page === 'proposal' },
+      active: st.page === 'proposal' ? 'proposals' : 'members',
+      wallet: st.wallet, balance: connected ? st.balance : 0, locked: connected ? st.locked : 0, allowance: st.allowance,
+      voted: connected ? st.voted : '', options: st.options && connected, selected: st.selected,
+      connect: this.connect, openUser: this.openUser, closeDialog: this.closeDialog, pickWallet: this.pickWallet, disconnect: this.disconnect, nav: this.nav,
+      dlg: { connect: st.dialog === 'connect', user: st.dialog === 'user', lockBefore: st.dialog === 'lockBefore', onboarding: st.dialog === 'onboarding', feedback: st.dialog === 'feedback', blocked: st.dialog === 'blocked' },
+      lockFromPanel: this.lockFromPanel, lockFromVote: this.lockFromVote, lockFromOnboarding: this.lockFromOnboarding, openOnboarding: this.openOnboarding,
+      unlock: this.unlock, vote: this.vote, update: this.update, select: this.select, submit: this.submit, cancel: this.cancel,
+      feedbackLock: this.feedbackLock, feedbackVote: this.feedbackVote,
+      txOpen: st.txOpen, tx: txs[k] || txs.lock, closeTx: this.closeTx, txDone: this.txDone
+    };
+  }
+}
+</script>
+</body>
+</html>

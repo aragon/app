@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas Grants Council prototype</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="DaoNav" dao-name="Atlas Grants Council" dao-avatar="assets/mock/avatar/atlas.svg" dao-address="0x31154ff59eA91264C4fd75aBA7d8a2Fc5a69d368" active="{{active}}" wallet="{{wallet}}" on-nav="{{nav}}" on-connect="{{connect}}" on-user="{{openUser}}" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="dao-slot">
+        <sc-if value="{{is.dashboard}}" hint-placeholder-val="{{true}}">
+          <dc-import name="AtlasDaoDashboard" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.proposals}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProposals" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.proposal}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProposal" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" proposal="{{param}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.members}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoMembers" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.member}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoMember" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" member="{{param}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.assets}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoAssets" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.transactions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoTransactions" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.settings}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoSettings" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.permissions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoPermissions" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{is.process}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProcess" process="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+<sc-if value="{{dialog.connect}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletConnect" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dialog.user}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletUser" on-close="{{closeDialog}}" on-disconnect="{{disconnect}}" on-nav="{{nav}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Atlas Grants Council (multisig DAO) prototype: the whole DAO area of the app as one artboard. state = { page, param, wallet, dialog }.
+// Pages: dashboard | proposals | proposal (param = slug) | members | member (param = address) | assets | transactions | settings | permissions | process (param = slug).
+// wallet: '' | 'connected' (mock user nadia.eth); dialog: '' | 'connect' | 'user'. Every page part also gets wallet and onConnect().
+// Every page part gets onNav(target), target = 'dashboard' | 'proposals' | 'proposal:<slug>' | 'members' | 'member:<address>' | 'assets' | 'transactions' | 'settings' | 'permissions' | 'process:<slug>'.
+class Component extends DCLogic {
+  state = { page: 'dashboard', param: '', wallet: '', dialog: '' };
+  connect = () => this.setState({ dialog: 'connect' });
+  openUser = () => this.setState({ dialog: 'user' });
+  closeDialog = () => this.setState({ dialog: '' });
+  pickWallet = () => this.setState({ wallet: 'connected', dialog: '' });
+  disconnect = () => this.setState({ wallet: '', dialog: '' });
+  nav = (target) => {
+    const t = String(target || 'dashboard');
+    const i = t.indexOf(':');
+    const page = i < 0 ? t : t.slice(0, i);
+    const param = i < 0 ? '' : t.slice(i + 1);
+    this.setState({ page, param }, () => {
+      try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {}
+      try { document.querySelectorAll('.app-page, .app-column').forEach((el) => { el.scrollTop = 0; }); } catch (e) {}
+    });
+  };
+  renderVals() {
+    const page = this.state.page;
+    const is = {};
+    ['dashboard', 'proposals', 'proposal', 'members', 'member', 'assets', 'transactions', 'settings', 'permissions', 'process'].forEach((p) => { is[p] = p === page; });
+    const active = page === 'proposal' ? 'proposals' : page === 'member' ? 'members' : page === 'process' ? 'settings' : page;
+    return {
+      yes: true, nav: this.nav, is, active, param: this.state.param,
+      wallet: this.state.wallet, connect: this.connect, openUser: this.openUser,
+      dialog: { connect: this.state.dialog === 'connect', user: this.state.dialog === 'user' },
+      closeDialog: this.closeDialog, pickWallet: this.pickWallet, disconnect: this.disconnect
+    };
+  }
+}
+</script>
+</body>
+</html>

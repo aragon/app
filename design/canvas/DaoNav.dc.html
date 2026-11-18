@@ -106,14 +106,14 @@
 </sc-if>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"daoName":{"editor":null},"daoAvatar":{"editor":null},"daoAddress":{"editor":null},"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
 // Props: active (highlighted item), onNav(target), wallet ('connected' | ''), onConnect() opens the connect dialog, onUser() opens the user dialog. Sidebar from lg, top bar + navigation dialog below lg (state navOpen is local).
-// Mirrors navigationDao.tsx, navigationSidebar.tsx, navigationDialog in apps/app. Meridian DAO; the visitor is nadia.eth when wallet is connected.
+// Mirrors navigationDao.tsx, navigationSidebar.tsx, navigationDialog in apps/app. Props dao-name, dao-avatar, dao-address pick the DAO (default: Meridian DAO); the visitor is nadia.eth when wallet is connected.
 class Component extends DCLogic {
   state = { navOpen: false };
   renderVals() {
     const active = this.props.active ?? 'dashboard';
-    const address = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    const address = this.props.daoAddress || '0xc8c322384903ee8f11f511b71d0504237886bcde';
     const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
     const link = (id, label, icon) => ({
       label, icon,
@@ -136,9 +136,9 @@ class Component extends DCLogic {
       yes: true, no: false, stop, openNav: open,
       navOpen: this.state.navOpen,
       rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) this.setState({ navOpen: false }); } },
-      daoName: 'Meridian DAO',
+      daoName: this.props.daoName || 'Meridian DAO',
       daoAddress: address,
-      daoAvatar: 'assets/mock/avatar/meridian.svg',
+      daoAvatar: this.props.daoAvatar || 'assets/mock/avatar/meridian.svg',
       explorerUrl: 'https://etherscan.io/address/' + address,
       links: [
         link('dashboard', 'Dashboard', 'APP_DASHBOARD'),
