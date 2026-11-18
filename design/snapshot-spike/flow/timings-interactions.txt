@@ -1,0 +1,6 @@
+start 1795001065
+interactions-first-draft 1795001207
+all-acceptance-pass 1795001723
+end 1795001898
+scope-cut-received 1795001895 (estimated: when the second verify run was stopped, last write to verify-flow.log; the message arrived during that run)
+verify-seconds-before-scope-cut 372 (measured: run 1 = 199.7 s by verify.cjs's own timer, ended 1795001471; run 2 = ~172 s, 1795001723 to 1795001895 by timestamps, stopped before it finished)

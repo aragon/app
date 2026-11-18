@@ -1,0 +1,20 @@
+T0 start 1794992706
+app-start-begin 1794992717
+app-start-end 1794992736 rc=0
+T1 journey-written 1794992929
+debug-iter1 1794992933
+debug-iter2 1794993016
+debug-iter3 1794993084
+debug-iter4 1794993168
+debug-iter5 1794993307
+debug-iter6 1794993369
+debug-iter7 1794993461
+T2 clean-end-to-end rc=0 run=122s 1794993670
+tooling-fix-links-begin 1794993706
+tooling-fix-links-end 1794993706
+T3 board-files-ready 1794993944
+tooling-fix-viewport-compare-begin 1794993968
+tooling-fix-viewport-compare-end 1794993968
+WARM regenerate: journey rc=0 126s states=40; assemble 0s (1794994099)
+verify (render+compare 40 states, incl. board.json heights) 198s (1794994305)
+END report 1794994358

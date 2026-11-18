@@ -1,0 +1,67 @@
+{
+ "$comment": "Hand-written interactions of the governance-designer flow, applied by assemble.cjs. Per state -> controls. Control: kind button (kit Button, by text or aria-label) | action (action object of a kit, e.g. Dialog.Footer primaryAction, by its label) | close (Dialog.Header X) | radios (RadioGroup holding an option with this value); scope page | dialog. Behaviour: go <state> | go {ifFilled, else (null = stay), fields} | go {byRadio {value: state}} | onPick {value: state} (radios) | selectable (radios: let the choice change, read by a byRadio). Targets are state ids; navigation = hidden anchor clicked from the handler (mechanism B).",
+ "GD_1_01_step1-empty": [
+  { "kind": "button", "label": "Next", "scope": "page", "go": { "ifFilled": "GD_1_03_designer-basic-empty", "else": "GD_4_01_step1-errors", "fields": ["Process name", "Key"] } }
+ ],
+ "GD_1_02_step1-filled": [
+  { "kind": "button", "label": "Next", "scope": "page", "go": { "ifFilled": "GD_1_03_designer-basic-empty", "else": "GD_4_01_step1-errors", "fields": ["Process name", "Key"] } }
+ ],
+ "GD_4_01_step1-errors": [
+  { "kind": "button", "label": "Next", "scope": "page", "go": { "ifFilled": "GD_1_03_designer-basic-empty", "else": null, "fields": ["Process name", "Key"] } }
+ ],
+ "GD_1_03_designer-basic-empty": [
+  { "kind": "action", "label": "Add voting body", "scope": "page", "go": "GD_1_04_body-type" },
+  { "kind": "button", "label": "Back", "scope": "page", "go": "GD_1_02_step1-filled" },
+  { "kind": "button", "label": "Next", "scope": "page", "go": "GD_4_03_body-required" },
+  { "kind": "radios", "option": "ADVANCED", "scope": "page", "onPick": { "ADVANCED": "GD_2_01_advanced-empty" } }
+ ],
+ "GD_4_03_body-required": [
+  { "kind": "action", "label": "Add voting body", "scope": "page", "go": "GD_1_04_body-type" },
+  { "kind": "button", "label": "Back", "scope": "page", "go": "GD_1_02_step1-filled" },
+  { "kind": "radios", "option": "ADVANCED", "scope": "page", "onPick": { "ADVANCED": "GD_2_01_advanced-empty" } }
+ ],
+ "GD_1_04_body-type": [
+  { "kind": "close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "action", "label": "Close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "radios", "option": "tokenVoting", "scope": "dialog", "selectable": true },
+  { "kind": "action", "label": "Next", "scope": "dialog", "go": { "byRadio": { "multisig": "GD_3_03_multisig-members", "tokenVoting": "GD_1_05_body-token-membership", "lockToVote": "GD_3_05_lock-to-vote-membership" } } }
+ ],
+ "GD_1_05_body-token-membership": [
+  { "kind": "close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "action", "label": "Back", "scope": "dialog", "go": "GD_1_04_body-type" },
+  { "kind": "radios", "option": "imported", "scope": "dialog", "onPick": { "imported": "GD_3_01_token-import-empty" } },
+  { "kind": "action", "label": "Next", "scope": "dialog", "go": { "ifFilled": "GD_1_07_body-token-governance", "else": "GD_4_04_body-token-errors", "fields": ["Token name", "Token symbol"] } }
+ ],
+ "GD_1_06_body-token-membership-filled": [
+  { "kind": "close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "action", "label": "Back", "scope": "dialog", "go": "GD_1_04_body-type" },
+  { "kind": "radios", "option": "imported", "scope": "dialog", "onPick": { "imported": "GD_3_01_token-import-empty" } },
+  { "kind": "action", "label": "Next", "scope": "dialog", "go": { "ifFilled": "GD_1_07_body-token-governance", "else": "GD_4_04_body-token-errors", "fields": ["Token name", "Token symbol"] } }
+ ],
+ "GD_4_04_body-token-errors": [
+  { "kind": "close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "action", "label": "Back", "scope": "dialog", "go": "GD_1_04_body-type" },
+  { "kind": "radios", "option": "imported", "scope": "dialog", "onPick": { "imported": "GD_3_01_token-import-empty" } },
+  { "kind": "action", "label": "Next", "scope": "dialog", "go": { "ifFilled": "GD_1_07_body-token-governance", "else": null, "fields": ["Token name", "Token symbol"] } }
+ ],
+ "GD_1_07_body-token-governance": [
+  { "kind": "close", "scope": "dialog", "go": "GD_1_03_designer-basic-empty" },
+  { "kind": "action", "label": "Back", "scope": "dialog", "go": "GD_1_06_body-token-membership-filled" },
+  { "kind": "action", "label": "Save", "scope": "dialog", "go": "GD_1_08_designer-basic-body" }
+ ],
+ "GD_1_08_designer-basic-body": [
+  { "kind": "button", "label": "Back", "scope": "page", "go": "GD_1_02_step1-filled" },
+  { "kind": "button", "label": "Next", "scope": "page", "go": "GD_1_09_step3-proposal-creation" }
+ ],
+ "GD_1_09_step3-proposal-creation": [
+  { "kind": "button", "label": "Back", "scope": "page", "go": "GD_1_08_designer-basic-body" },
+  { "kind": "button", "label": "Next", "scope": "page", "go": "GD_1_10_step4-permissions" }
+ ],
+ "GD_1_10_step4-permissions": [
+  { "kind": "button", "label": "Back", "scope": "page", "go": "GD_1_09_step3-proposal-creation" },
+  { "kind": "button", "label": "Publish process", "scope": "page", "go": "GD_1_11_publish-dialog" }
+ ],
+ "GD_1_11_publish-dialog": [
+  { "kind": "action", "label": "Close", "scope": "dialog", "go": "GD_1_10_step4-permissions" }
+ ]
+}

@@ -1,0 +1,315 @@
+{
+ "flow": "Governance designer · Create governance process (Meridian, nadia.eth)",
+ "rows": [
+  {
+   "row": 1,
+   "title": "Main path · Basic",
+   "frames": [
+    {
+     "file": "canvas/GD_1_01_step1-empty.dc.html",
+     "title": "Step 1 · empty",
+     "w": 1440,
+     "h": 1351
+    },
+    {
+     "file": "canvas/GD_1_02_step1-filled.dc.html",
+     "title": "Step 1 · filled",
+     "w": 1440,
+     "h": 1351
+    },
+    {
+     "file": "canvas/GD_1_03_designer-basic-empty.dc.html",
+     "title": "Designer · Basic, no body",
+     "w": 1440,
+     "h": 1148
+    },
+    {
+     "file": "canvas/GD_1_04_body-type.dc.html",
+     "title": "Add voting body · choose type",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_1_05_body-token-membership.dc.html",
+     "title": "Token voting · membership (new token)",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_1_06_body-token-membership-filled.dc.html",
+     "title": "Token voting · membership filled",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_1_07_body-token-governance.dc.html",
+     "title": "Token voting · governance",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_1_08_designer-basic-body.dc.html",
+     "title": "Designer · Basic with body",
+     "w": 1440,
+     "h": 900
+    },
+    {
+     "file": "canvas/GD_1_09_step3-proposal-creation.dc.html",
+     "title": "Step 3 · proposal creation",
+     "w": 1440,
+     "h": 982
+    },
+    {
+     "file": "canvas/GD_1_10_step4-permissions.dc.html",
+     "title": "Step 4 · permissions",
+     "w": 1440,
+     "h": 913
+    },
+    {
+     "file": "canvas/GD_1_11_publish-dialog.dc.html",
+     "title": "Publish process · tx 1 of 2",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 913,
+     "note": "dialog: frame is the 1440x900 viewport"
+    }
+   ]
+  },
+  {
+   "row": 2,
+   "title": "Advanced path",
+   "frames": [
+    {
+     "file": "canvas/GD_2_01_advanced-empty.dc.html",
+     "title": "Designer · Advanced, no stages",
+     "w": 1440,
+     "h": 1168
+    },
+    {
+     "file": "canvas/GD_2_02_stage-added.dc.html",
+     "title": "Stage 1 added",
+     "w": 1440,
+     "h": 1656
+    },
+    {
+     "file": "canvas/GD_2_03_sub-body-type.dc.html",
+     "title": "Add body · type (stage)",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1656,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_04_sub-body-metadata.dc.html",
+     "title": "Add body · name and description",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1656,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_05_sub-body-proposal-type.dc.html",
+     "title": "Add body · approval or veto",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1656,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_06_sub-body-multisig-members.dc.html",
+     "title": "Multisig · members",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1656,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_07_sub-body-multisig-governance.dc.html",
+     "title": "Multisig · threshold",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1656,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_08_stage-one-body.dc.html",
+     "title": "Stage with one body",
+     "w": 1440,
+     "h": 1765
+    },
+    {
+     "file": "canvas/GD_2_09_stage-two-bodies.dc.html",
+     "title": "Stage with two bodies",
+     "w": 1440,
+     "h": 1861
+    },
+    {
+     "file": "canvas/GD_2_10_stage-settings.dc.html",
+     "title": "Stage settings dialog",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1861,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_2_11_veto-stage.dc.html",
+     "title": "Second stage · veto body",
+     "w": 1440,
+     "h": 2785
+    },
+    {
+     "file": "canvas/GD_2_12_timelock-stage.dc.html",
+     "title": "Third stage · timelock (no bodies)",
+     "w": 1440,
+     "h": 3657
+    },
+    {
+     "file": "canvas/GD_2_13_step3-advanced.dc.html",
+     "title": "Step 3 · proposal creation (advanced)",
+     "w": 1440,
+     "h": 1111
+    }
+   ]
+  },
+  {
+   "row": 3,
+   "title": "Voting body variants",
+   "frames": [
+    {
+     "file": "canvas/GD_3_01_token-import-empty.dc.html",
+     "title": "Token voting · import token",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_02_token-import-checked.dc.html",
+     "title": "Token voting · imported token checks",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_03_multisig-members.dc.html",
+     "title": "Multisig · members (basic)",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_04_multisig-governance.dc.html",
+     "title": "Multisig · threshold (basic)",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_05_lock-to-vote-membership.dc.html",
+     "title": "Lock to vote · membership",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_06_lock-to-vote-token.dc.html",
+     "title": "Lock to vote · token checks",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1180,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_08_external-empty.dc.html",
+     "title": "Any address · address step",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1659,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_09_external-address.dc.html",
+     "title": "Any address · address type detected",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1659,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_3_10_external-safe.dc.html",
+     "title": "Any address · Safe",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1659,
+     "note": "dialog: frame is the 1440x900 viewport"
+    }
+   ]
+  },
+  {
+   "row": 4,
+   "title": "Errors and edge states",
+   "frames": [
+    {
+     "file": "canvas/GD_4_01_step1-errors.dc.html",
+     "title": "Step 1 · required errors",
+     "w": 1440,
+     "h": 1470
+    },
+    {
+     "file": "canvas/GD_4_02_step1-key-format.dc.html",
+     "title": "Step 1 · invalid key",
+     "w": 1440,
+     "h": 1468
+    },
+    {
+     "file": "canvas/GD_4_03_body-required.dc.html",
+     "title": "Step 2 · a body must be added",
+     "w": 1440,
+     "h": 1294
+    },
+    {
+     "file": "canvas/GD_4_04_body-token-errors.dc.html",
+     "title": "Token voting · field errors",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1294,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_4_05_body-multisig-errors.dc.html",
+     "title": "Multisig · member errors",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1294,
+     "note": "dialog: frame is the 1440x900 viewport"
+    },
+    {
+     "file": "canvas/GD_4_06_stage-errors.dc.html",
+     "title": "Advanced · stage name required",
+     "w": 1440,
+     "h": 1773
+    },
+    {
+     "file": "canvas/GD_4_07_stage-duration-min.dc.html",
+     "title": "Stage settings · duration minimum",
+     "w": 1440,
+     "h": 900,
+     "pageHeight": 1773,
+     "note": "dialog: frame is the 1440x900 viewport"
+    }
+   ]
+  }
+ ]
+}

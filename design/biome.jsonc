@@ -1,0 +1,14 @@
+{
+    "$schema": "../node_modules/@biomejs/biome/configuration_schema.json",
+    "root": false,
+    "extends": "//",
+    "files": {
+        // files.includes of a nested config replaces the root list, so the shared exclusions repeat here.
+        // snapshot-spike/ is experiment code kept exactly as it ran, for reading. It is not maintained.
+        "includes": [
+            "**",
+            "!**/*.svg",
+            "!snapshot-spike"
+        ]
+    }
+}

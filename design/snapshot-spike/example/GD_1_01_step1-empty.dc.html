@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Step 1 · empty</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="app-export.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<!-- Exported from the running app (GD_1_01_step1-empty): http://localhost:3000/dao/ethereum-mainnet/meridian.dao.eth/create/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda/process -->
+<div class="h-full has-[[data-app-sidebar]]:bg-neutral-25 flex h-full flex-col bg-neutral-50">
+	<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+		<div class="flex grow flex-row">
+			<div class="group/app @container/app flex min-w-0 grow flex-col">
+				<div class="flex grow flex-col">
+					<nav class="bg-neutral-0 sticky top-0 z-10 flex w-full border-b border-neutral-100">
+						<div class="mx-auto max-w-screen-xl px-4 md:px-6 lg:px-10 xl:px-6 w-full grow flex flex-row items-center gap-x-6 justify-between py-5">
+							<div class="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
+								<a class="items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800" rel="" href="Settings.dc.html">
+									<x-import component-from-global-scope="GovUiKit.Icon" icon="CLOSE" size="md"></x-import>
+								</a>
+								<div class="flex min-w-0 flex-col gap-y-0.5">
+									<p class="text-base leading-tight text-nowrap text-neutral-800">Create process</p>
+									<div class="flex items-center gap-x-2">
+										<x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xc8c322384903ee8f11f511b71d0504237886bcde" class-name="text-sm leading-tight text-nowrap text-neutral-500" copy="{{copy0}}" label="Meridian DAO"></x-import>
+										<x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" size="sm" src="assets/mock/avatar/meridian.svg"></x-import>
+									</div>
+								</div>
+							</div>
+							<x-import component-from-global-scope="GovUiKit.Wallet" on-click="{{onClick1}}" user="{{user2}}"></x-import>
+						</div>
+						<div class="flex items-center pr-3 pl-2 lg:pr-4">
+							<x-import component-from-global-scope="GovUiKit.Button" aria-label="Open support chat" icon-left="FEEDBACK" on-click="{{onClick3}}" ref="{{ref4}}" size="md" variant="tertiary"></x-import>
+						</div>
+					</nav>
+					<div class="h-full">
+						<main class="flex min-w-0 flex-col m-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28 gap-12">
+							<x-import component-from-global-scope="ExportFormProvider">
+								<form class="flex h-full flex-col gap-4 md:gap-6" onSubmit="{{preventSubmit}}">
+									<div class="flex flex-col gap-1.5 md:gap-3">
+										<div class="flex flex-row justify-between">
+											<div class="flex flex-row gap-1 text-base leading-tight font-normal">
+												<span class="text-primary-400">Step 1</span>
+												<span class="text-neutral-500">of 4</span>
+											</div>
+											<div class="flex flex-row gap-1 text-base leading-tight font-normal">
+												<span class="text-neutral-500">Next:</span>
+												<span class="text-neutral-800">Governance design</span>
+											</div>
+										</div>
+										<x-import component-from-global-scope="GovUiKit.Progress" size="sm" value="{{value5}}" variant="primary"></x-import>
+									</div>
+									<div class="flex flex h-full flex-col justify-between gap-10 md:gap-20">
+										<div class="flex flex-col gap-6 md:gap-12">
+											<div class="flex flex-col gap-2">
+												<x-import component-from-global-scope="GovUiKit.Heading" size="h1" children="Describe new proposal type"></x-import>
+												<p class="text-base leading-normal font-normal text-neutral-500 md:text-lg">Describe the governance process so visitors understand its purpose and how decisions are made. Any of these fields can be changed later via governance.</p>
+											</div>
+											<div class="flex w-full flex-col gap-10">
+												<x-import component-from-global-scope="GovUiKit.InputText" max-length="{{maxLength6}}" name="name" default-value="" on-change="{{onChange7}}" on-blur="{{onBlur8}}" variant="default" label="Process name"></x-import>
+												<x-import component-from-global-scope="GovUiKit.InputText" help-text="The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal." max-length="{{maxLength9}}" on-change="{{onChange10}}" name="processKey" default-value="" on-blur="{{onBlur11}}" variant="default" label="Key"></x-import>
+												<x-import component-from-global-scope="GovUiKit.TextArea" help-text="This is shown on the proposals list to help users understand the governance for proposals of this type." is-optional="{{isOptional12}}" max-length="{{maxLength13}}" name="description" default-value="" on-change="{{onChange14}}" on-blur="{{onBlur15}}" variant="default" label="Description"></x-import>
+												<div class="flex flex-col gap-2 md:gap-3">
+													<x-import component-from-global-scope="GovUiKit.InputContainer" help-text="These are shown as links on the proposal list under the description as additional external resources." id="resourcesInput" is-optional="{{isOptional16}}" label="Resources" use-custom-wrapper="{{useCustomWrapper17}}"></x-import>
+													<x-import component-from-global-scope="GovUiKit.Button" class-name="w-fit" icon-left="PLUS" on-click="{{onClick18}}" size="md" variant="tertiary" children="Add"></x-import>
+												</div>
+											</div>
+										</div>
+										<div class="flex flex-col gap-6">
+											<div class="flex flex-col gap-3">
+												<div class="flex flex-row justify-between">
+													<x-import component-from-global-scope="GovUiKit.Button" class-name="invisible" icon-left="CHEVRON_LEFT" on-click="{{onClick19}}" size="lg" variant="tertiary" children="Back"></x-import>
+													<x-import component-from-global-scope="GovUiKit.Button" disabled="{{disabled20}}" icon-right="CHEVRON_RIGHT" size="lg" type="submit" variant="secondary" on-click="{{onClick21}}" children="Next"></x-import>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</x-import>
+						</main>
+					</div>
+				</div>
+				<footer class="bg-neutral-0 border-t border-neutral-100 py-5 lg:group-has-[[data-app-sidebar]]/app:hidden">
+					<div class="mx-auto max-w-screen-xl px-4 md:px-6 lg:px-10 xl:px-6 grid items-center md:gap-6 [grid-template-areas:'metadata''links''copyright'] md:[grid-template-areas:'links''metadata''copyright'] md:justify-items-center lg:grid-cols-[1fr_min-content_1fr] lg:[grid-template-areas:'metadata_links_copyright']">
+						<div class="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
+							<div class="flex items-center gap-2.5">
+								<p class="text-sm leading-tight text-nowrap text-neutral-800 md:text-base">Governed on</p>
+								<div class="text-primary-400 h-6">
+									<svg aria-label="Aragon logo" class="h-full w-auto" fill="none" role="img" viewBox="0 0 162 40" xmlns="http://www.w3.org/2000/svg" style="">
+										<path clip-rule="evenodd" d="M16.704 2.334 14.66.108c3.08-.407 11.202.115 19.066 5.458.102.738.08 1.474.08 1.474l.206.114c.375.516.807 1.484 1.064 2.683.257 1.196.328 2.567.031 3.873a9.202 9.202 0 0 1-1.428 3.21c-.571.816-1.095 1.277-1.26 1.376l-.053.032c-.971.18-2.312.893-2.857 2.685-1.594.992-4.287 2.08-7.948 2.08-3.245 0-6.549-.94-9.025-2.749-2.462-1.798-4.108-4.452-4.108-7.948 0-2.774 1.243-4.944 2.831-6.547 1.6-1.616 3.79-2.923 5.042-3.352l.31-.106-.018-.016.113-.04ZM30.24 6.697c-.62.693-1.198 1.025-1.363 1.115-3.615-.826-4.918-2.834-4.918-2.834 3.41-.022 6.488.848 8.74 2.321 0 0-1.22-.424-2.46-.602Z" fill="currentColor" fill-rule="evenodd"></path>
+										<path d="M13.445 2.713C5.776 4.544 0 11.563 0 20.005 0 30.954 9.254 40 20.67 40c8.524 0 15.62-5.212 19.33-12.185-4.826 1.144-10.569-.821-10.852-5.164l.026-.103c-1.801.917-4.372 1.72-7.614 1.72-3.452 0-7.009-.996-9.718-2.975-2.725-1.99-4.59-4.979-4.59-8.897 0-3.159 1.425-5.61 3.171-7.374h.001c.815-.815 1.868-1.592 2.836-2.195l.185-.114Z" fill="currentColor"></path>
+										<path d="M7.44 12.396c0-3.097 1.395-5.504 3.117-7.242.996-.996 2.361-1.94 3.483-2.571-1.122.63-2.487 1.575-3.483 2.571C8.835 6.892 7.44 9.3 7.44 12.396ZM33.95 18.469c.352.144.567.334.68.453.271.287.95 1.15.136 2.514 1.694-.287 4.34-2.011 4.54-6.392.133-2.912-1.39-5.037-3.398-6.617.121.366.228.756.316 1.164.283 1.32.372 2.869.028 4.38a10.377 10.377 0 0 1-1.611 3.622 9.425 9.425 0 0 1-.692.876ZM115.27 10.263c2.928 0 4.768.828 6.511 2.313l-1.888 2.265c-1.307-1.12-2.614-1.802-4.744-1.802-3.098 0-5.495 2.728-5.495 5.99l.002.204c.066 3.428 2.349 5.934 5.759 5.934 1.622 0 3.05-.512 4.091-1.291V20.71l2.88-2.63v7.16c-1.694 1.436-4.066 2.654-7.068 2.654-5.301 0-8.786-3.799-8.786-8.767l.001-.204c.078-4.705 3.661-8.66 8.737-8.66Zm19.169 0c5.203 0 8.834 3.97 8.834 8.767l-.001.202c-.078 4.706-3.734 8.662-8.882 8.662-5.204 0-8.834-3.97-8.834-8.767l.001-.202c.078-4.706 3.734-8.662 8.882-8.662Zm-75.034.17 7.455 17.169h-3.03l-5.853-13.589-5.81 13.589h-2.976l7.455-17.169h2.76Zm38.398 0 7.455 17.169h-3.031l-5.852-13.589-5.81 13.589H87.59l7.455-17.169h2.759Zm51.442.122 9.076 11.787V10.555h2.929v17.047h-2.493l-9.343-12.128v12.128h-2.929V10.555h2.76ZM134.39 13.04c-3.364 0-5.712 2.679-5.712 5.99l.001.195c.069 3.246 2.421 5.894 5.76 5.894 3.364 0 5.712-2.679 5.712-5.99l-.002-.195c-.068-3.246-2.42-5.894-5.759-5.894ZM78.017 10.263c2.135 0 3.808.644 4.9 1.733.897.965 1.406 2.228 1.406 3.738v.142c-.036 2.73-1.627 4.395-3.873 5.108l-.153.047 4.584 6.56H81.34l-4.171-6.04h-2.19l1.537-2.699h1.283c2.086 0 3.43-1.063 3.49-2.775l.002-.12v-.116c-.03-1.839-1.311-2.806-3.516-2.806h-4.341v5.357h-.003v3.864l.003-.002v5.337h-2.983V10.263h7.567Z" fill="currentColor"></path>
+									</svg>
+								</div>
+							</div>
+							<x-import component-from-global-scope="GovUiKit.Tag" class-name="shrink-0" label="v1.44.0 (LOC)" variant="primary"></x-import>
+						</div>
+						<div class="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
+							<a class="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0" rel="" href="Main.dc.html">Explore</a>
+							<a class="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0" rel="noopener noreferrer " target="_blank" href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+							<a class="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0" rel="noopener noreferrer " target="_blank" href="https://aragon.org/privacy-policy">Privacy</a>
+							<a class="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0" rel="noopener noreferrer " target="_blank" href="https://aragon.org/terms-and-conditions">Terms of Service</a>
+						</div>
+						<p class="truncate pt-6 pb-3 text-base leading-tight font-normal text-neutral-500 [grid-area:copyright] md:py-0 lg:justify-self-end">© 2026 Aragon</p>
+					</div>
+				</footer>
+			</div>
+			<aside aria-hidden="true" aria-label="Support chat" class="bg-neutral-0 justify-end overflow-hidden screen-lg:sticky screen-lg:top-0 screen-lg:h-dvh screen-lg:shrink-0 screen-lg:self-start screen-lg:transition-[width] screen-lg:duration-300 screen-lg:ease-in-out screen-lg:flex screen-lg:w-0 hidden" inert="">
+				<div class="screen-lg:shrink-0 h-full w-full screen-lg:w-[clamp(500px,30vw,640px)]"></div>
+			</aside>
+		</div>
+		<div class="tsqd-parent-container" style="--tsqd-panel-height: 500px; --tsqd-panel-width: 500px; --tsqd-font-size: 16px;"></div>
+	</x-import>
+</div>
+<!-- Navigation targets of this screen's interactions (interactions.gd.json), clicked by its handlers -->
+<a id="x-nav-GD_1_03_designer-basic-empty" href="GD_1_03_designer-basic-empty.dc.html" style="display:none">GD_1_03_designer-basic-empty</a>
+<a id="x-nav-GD_4_01_step1-errors" href="GD_4_01_step1-errors.dc.html" style="display:none">GD_4_01_step1-errors</a>
+<!-- State stepping (not part of the app UI) -->
+<div class="x-state-pill" style="position:fixed;top:8px;right:8px;z-index:2147483647;display:flex;gap:6px;opacity:.9;pointer-events:auto"><a href="GD_1_02_step1-filled.dc.html" data-x-pill="next" style="display:inline-block;padding:6px 10px;border-radius:999px;background:#111827;color:#fff;font:600 12px/1 system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.3)">Next state →</a></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// The app's react-hook-form FormProvider, replaced by one with its own form (kit inputs call useFormContext).
+window.ExportFormProvider = window.ExportFormProvider || ((p) => { const m = ReactHookForm.useForm(); return React.createElement(ReactHookForm.FormProvider, m, p.children); });
+// GENERATED by spike3/assemble.cjs from exports of the running app. States: GD_1_01_step1-empty.
+class Component extends DCLogic {
+	state = { view: "GD_1_01_step1-empty" };
+	// Interactions (spike3/interactions.gd.json): navigation = click on a hidden anchor of this screen.
+	xRoot(scope) { const d = [...document.querySelectorAll('[role=dialog]')].pop(); return scope === 'dialog' && d ? d : document; }
+	xField(root, label) {
+		const norm = (t) => String(t || '').replace(/\s+/g, ' ').trim();
+		for (const l of root.querySelectorAll('label')) {
+			// the kit's label also holds help text and "Optional": match the element whose own text is the label
+			if (![l, ...l.querySelectorAll('*')].some((x) => norm(x.textContent) === label)) continue;
+			const byFor = l.htmlFor && document.getElementById(l.htmlFor);
+			if (byFor && /^(INPUT|TEXTAREA)$/.test(byFor.tagName)) return byFor;
+			for (let p = l; p && p !== root; p = p.parentElement) { const f = p.querySelector('input:not([type=hidden]),textarea'); if (f) return f; }
+		}
+		return null;
+	}
+	xTarget(go, scope) {
+		if (typeof go === 'string') return go;
+		const root = this.xRoot(scope);
+		if (go.byRadio) {
+			const r = [...root.querySelectorAll('[role=radio]')].find((x) => x.getAttribute('aria-checked') === 'true' && x.getAttribute('value') in go.byRadio);
+			return r ? go.byRadio[r.getAttribute('value')] : null;
+		}
+		const filled = go.fields.every((label) => { const f = this.xField(root, label); return !!f && f.value.trim() !== ''; });
+		return filled ? go.ifFilled : go.else;
+	}
+	xNav(target) { const a = target && document.getElementById('x-nav-' + target); if (a) a.click(); }
+	xGo(e, spec) { this.xNav(this.xTarget(spec.go, spec.scope)); }
+	xPick(v, map) { this.xNav(map[v]); }
+	renderVals() {
+		const h = React.createElement;
+		const noop = () => undefined;
+		const now = Date.now();
+		const hour = 3600000;
+		const day = 24 * hour;
+		const view = this.state.view;
+		const pick = (m) => (view in m ? m[view] : Object.values(m)[0]);
+		const go = (m) => (e) => {
+			if (e && e.preventDefault) e.preventDefault();
+			const t = m[this.state.view];
+			if (t && /.dc.html$/.test(t)) { const a = document.createElement('a'); a.href = t; document.body.appendChild(a); a.click(); a.remove(); return; }
+			if (t) this.setState({ view: t });
+		};
+		const preventSubmit = (e) => e.preventDefault();
+		const memo = (k, f) => { this.__c = this.__c || {}; return this.__c[k] || (this.__c[k] = f); };
+		return {
+			preventSubmit,
+			copy0: false,
+			onClick1: noop,
+			user2: { address: "0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A", name: "nadia.eth" },
+			onClick3: noop,
+			ref4: {  },
+			value5: 25,
+			maxLength6: 40,
+			onChange7: noop,
+			onBlur8: noop,
+			maxLength9: 5,
+			onChange10: noop,
+			onBlur11: noop,
+			isOptional12: true,
+			maxLength13: 480,
+			onChange14: noop,
+			onBlur15: noop,
+			isOptional16: true,
+			useCustomWrapper17: true,
+			onClick18: noop,
+			onClick19: noop,
+			disabled20: false,
+			onClick21: (e) => this.xGo(e, {"scope":"page","go":{"ifFilled":"GD_1_03_designer-basic-empty","else":"GD_4_01_step1-errors","fields":["Process name","Key"]}}),
+		};
+	}
+}
+</script>
+</body>
+</html>
