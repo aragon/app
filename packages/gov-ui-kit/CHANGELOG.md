@@ -4,6 +4,8 @@
 
 ### Patch Changes
 
+- `MemberAvatar` resolves `ipfs://` ENS avatars through `ensUtils.avatarGatewayUrls` (ipfs.filebase.io): viem's default ipfs.io gateway no longer serves content, so these avatars fell back to the ENS metadata service. The metadata fallback now waits for the avatar lookup, so a changed avatar no longer flashes the previous image.
+
 - [`c56915d`](https://github.com/aragon/app/commit/c56915db420284269d4bff0b0f6c14ce4c014359) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (tiptap 3.33, framer-motion 14.10, Storybook 10.6.6, vite 8.3.6, rollup 4.68)
 
 - [#1565](https://github.com/aragon/app/pull/1565) [`dc6bf34`](https://github.com/aragon/app/commit/dc6bf340ffd69c39dea40ff9799724119dbceb52) Thanks [@tyhonchik](https://github.com/tyhonchik)! - `build.css` compiles class names from the kit source only, dropping the stray `table`, `ring`, `outline`, `p-[17px]` and `w-[42%]` utilities picked up from the package's docs and config.

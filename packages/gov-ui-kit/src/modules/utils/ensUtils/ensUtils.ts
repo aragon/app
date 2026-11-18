@@ -6,6 +6,12 @@ class EnsUtils {
     private ensPattern = /^(?:[a-z0-9]+(?:[-_][a-z0-9]+)*\.)*[a-z0-9]+(?:[-_][a-z0-9]+)*\.eth$/;
 
     /**
+     * Gateways for resolving ENS avatar records (`assetGatewayUrls` of wagmi's `useEnsAvatar`). viem defaults to
+     * ipfs.io, which no longer serves content, so `ipfs://` avatars would resolve to null.
+     */
+    avatarGatewayUrls = { ipfs: 'https://ipfs.filebase.io' } as const;
+
+    /**
      * Checks if the given value is a valid ENS name or not.
      * @param value The value to be checked.
      * @returns True when the given value is a valid ENS name, false otherwise.
