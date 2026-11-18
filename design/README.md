@@ -23,7 +23,8 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 | `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (109 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
-| `canvas/canvas.json` | The canvas layout: which frames exist and where they sit |
+| `canvas/canvas.json` | The canvas layout: which frames exist and where they sit. Written by `publish/layout-canvas.cjs`, not by hand |
+| `canvas-layout.json` | The source of the layout: the prototypes, in rows. Which part goes on which parts page is worked out from what each prototype mounts |
 | `canvas/assets/mock/` | Mock DAO avatars and token logos |
 | `app-assets.json` | Images the prototypes show that belong to the app (chain logos), by path in the repo |
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
@@ -71,6 +72,14 @@ about 28 minutes from start to canvas. A third added the governance designer, th
 wrapping and lock-to-vote: five agents, about 31 minutes. A fourth added the workspace and creating a Safe
 transaction: three agents. Create proposal and voting were ported from older prototypes on
 `docs/design-canvas`.
+
+## Layout of the canvas
+
+The first page, Prototypes, has one frame per prototype in five rows: Start here, A DAO (one per governance type),
+Workspace and Safe, Creating things, Token mechanics. The other pages hold the parts, one page per group of
+prototypes plus one for the parts several prototypes share, each with pages and steps in one row and dialogs in
+another. After adding or removing a canvas file, run `node design/publish/layout-canvas.cjs`: it rewrites
+`canvas/canvas.json` and fails if a file is mounted by no prototype.
 
 ## Publishing
 
