@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace account to-dos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+  <div class="app-container page-content">
+    <main class="page-main page-main--titled">
+      <header class="page-main__header">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h1">To-dos</x-import>
+      </header>
+      <sc-if value="{{disconnected}}" hint-placeholder-val="{{false}}">
+        <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Connect a wallet to see your to-dos" description="To-dos are what your wallet can vote on or sign right now across the accounts of this workspace." object-illustration="{{walletIllustration}}" is-stacked="{{no}}" primary-button="{{connectButton}}"></x-import>
+      </sc-if>
+      <sc-if value="{{showMeridian}}" hint-placeholder-val="{{true}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{one}}" page-size="{{twelve}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="#nav:proposal:MGP-8"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Fund the Q1 2027 Ecosystem Grants Program</span><span class="ws-summary__identifier">MGP-8</span></div><p class="ws-summary__description">{{left3}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Vote" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+          </x-import>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{showAtlas}}" hint-placeholder-val="{{false}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{one}}" page-size="{{twelve}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="#nav:proposal:AGC-5"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Grant: Wallet accessibility audit</span><span class="ws-summary__identifier">AGC-5</span></div><p class="ws-summary__description">{{left6}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Vote" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+          </x-import>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{showNorthstar}}" hint-placeholder-val="{{false}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{one}}" page-size="{{twelve}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="#nav:proposal:NSP-8"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Northstar Protocol" src="assets/mock/avatar/northstar.svg" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Seed NSP/ETH liquidity on Uniswap v4</span><span class="ws-summary__identifier">NSP-8</span></div><p class="ws-summary__description">{{left3}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Vote" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+          </x-import>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{showSafe}}" hint-placeholder-val="{{false}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{two}}" page-size="{{twelve}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="#nav:transactions"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Northstar Council Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Increase the bug bounty ceiling to 1M USDC</span><span class="ws-summary__identifier">NSP-7</span></div><p class="ws-summary__description">2 of 3 signatures</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Sign" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="#nav:transactions"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Northstar Council Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Seed NSP/ETH liquidity on Uniswap v4</span><span class="ws-summary__identifier">NSP-8</span></div><p class="ws-summary__description">2 of 3 signatures</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Sign" variant="primary" class-name="shrink-0"></x-import></div></x-import>
+          </x-import>
+        </x-import>
+      </sc-if>
+    </main>
+
+    <aside class="page-aside">
+      <sc-if value="{{connected}}" hint-placeholder-val="{{true}}">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <div class="aside-card__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{name}}</x-import>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{toVote}}</x-import>
+              <p class="stat-card__label">To vote</p>
+            </div>
+            <div class="stat-card">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{toSign}}</x-import>
+              <p class="stat-card__label">To sign</p>
+            </div>
+          </div>
+        </x-import>
+      </sc-if>
+    </aside>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"account":{"editor":"enum","options":["meridian","atlas","northstar","safe"],"default":"meridian"},"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":700}}'>
+// To-dos of one account of the workspace (apps/app: workspaceTodosPage in account scope; static screens WorkspaceAccountTodos / ConnectedWorkspaceAccountTodos).
+// Props: account (meridian | atlas | northstar | safe), onNav(target) (bare account targets), wallet, onConnect().
+// Without a wallet: the connect card (the aside is empty). Connected (nadia.eth): that account's rows and the aside card with To vote / To sign.
+// Sample: Meridian MGP-8 (vote), Atlas AGC-5 (vote), Northstar NSP-8 (vote), Northstar Council Safe NSP-7 and NSP-8 (sign, 2 of 3).
+class Component extends DCLogic {
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const account = this.props.account || 'meridian';
+    const connected = this.props.wallet === 'connected';
+    const names = { meridian: 'Meridian DAO', atlas: 'Atlas Grants Council', northstar: 'Northstar Protocol', safe: 'Northstar Council Safe' };
+    const day = 86400000;
+    const left = (d) => GovUiKit.formatterUtils.formatDate(Date.now() + d * day + 3600000, { format: GovUiKit.DateFormat.DURATION }) + ' left';
+    const isSafe = account === 'safe';
+    return {
+      yes: true, no: false, one: 1, two: 2, twelve: 12,
+      click: this.click,
+      connected, disconnected: !connected,
+      showMeridian: connected && account === 'meridian', showAtlas: connected && account === 'atlas',
+      showNorthstar: connected && account === 'northstar', showSafe: connected && isSafe,
+      name: names[account] || names.meridian,
+      toVote: isSafe ? 0 : 1, toSign: isSafe ? 2 : 0,
+      left3: left(3), left6: left(6),
+      walletIllustration: { object: 'WALLET' },
+      connectButton: { label: 'Connect wallet', iconLeft: 'BLOCKCHAIN_WALLET', onClick: () => { if (typeof this.props.onConnect === 'function') this.props.onConnect(); } }
+    };
+  }
+}
+</script>
+</body>
+</html>

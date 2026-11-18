@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace account overview</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isMeridian}}" hint-placeholder-val="{{true}}">
+  <dc-import name="DaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isAtlas}}" hint-placeholder-val="{{false}}">
+  <dc-import name="AtlasDaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isNorthstar}}" hint-placeholder-val="{{false}}">
+  <dc-import name="NorthstarDaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isSafe}}" hint-placeholder-val="{{false}}">
+<div class="page-container" onClick="{{click}}">
+  <header class="page-header">
+    <div class="app-container page-header__inner">
+      <div class="page-header__row">
+        <div class="page-header__text">
+          <div class="page-header__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Northstar Council Safe</x-import>
+          </div>
+          <div class="page-header__stats">
+            <div class="page-stat"><div class="page-stat__value"><p>3</p></div><p class="page-stat__label">Threshold</p></div>
+            <div class="page-stat"><div class="page-stat__value"><p>5</p></div><p class="page-stat__label">Owners</p></div>
+            <div class="page-stat"><div class="page-stat__value"><p>5</p></div><p class="page-stat__label">Nonce</p></div>
+          </div>
+        </div>
+        <div class="page-header__avatar">
+          <x-import component-from-global-scope="GovUiKit.Avatar" size="2xl" src="assets/safeWallet.png"></x-import>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container page-content">
+    <main class="page-main">
+      <div class="page-section">
+        <div class="ws-section__heading">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Pending transactions</x-import>
+          <p class="ws-section__description">Transactions waiting for the signatures of the owners of this Safe.</p>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{three}}" page-size="{{six}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><x-import component-from-global-scope="GovUiKit.Tag" label="NSP-7" variant="neutral"></x-import><span class="safe-pending__name">Increase the bug bounty ceiling to 1M USDC</span></div><span class="sf-muted">{{queued4}}</span></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> 2 of 3</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" href="#nav:transactions">Review</x-import></div></x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><x-import component-from-global-scope="GovUiKit.Tag" label="NSP-8" variant="neutral"></x-import><span class="safe-pending__name">Seed NSP/ETH liquidity on Uniswap v4</span></div><span class="sf-muted">{{queued2}}</span></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> 2 of 3</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" href="#nav:transactions">Review</x-import></div></x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><span class="safe-pending__name">Safe transaction</span></div><span class="sf-muted">{{queued1}}</span><span class="sf-muted">Fully signed. It executes once the Safe reaches this nonce; nonce 5 is next.</span></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> 3 of 3</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" href="#nav:transactions">Review</x-import></div></x-import>
+</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+        </x-import>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Members</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{five}}" page-size="{{six}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" ens-name="nadia.eth" href="#nav:transactions"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xAC6399087027F972e6D2AB830dC9b33CDa035642" ens-name="kofi-mensah.eth" href="#nav:transactions"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05" ens-name="lenaweber.eth" href="#nav:transactions"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81" ens-name="ines-alvarez.eth" href="#nav:transactions"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fD8C5D6a351F67a517E6b0F452F63" ens-name="dmitri.eth" href="#nav:transactions"></x-import>
+</x-import>
+        </x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:members" class-name="self-start">View all</x-import>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Assets</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{three}}" page-size="{{three}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+            <sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+              <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}" logo-src="{{a.logo}}"></x-import>
+            </sc-for>
+          </x-import>
+        </x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:assets" class-name="self-start">View all</x-import>
+      </div>
+    </main>
+
+    <aside class="page-aside">
+      <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Northstar Council Safe</x-import>
+        <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+          <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain"><p class="text-neutral-500">Ethereum</p></x-import></div>
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" link="{{addressLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import>
+        </x-import>
+        <div class="flex flex-col items-center gap-y-3 pt-4">
+          <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0x515feC2E8F6553948b1D57C14c1243a1405C02e2" target="_blank" class-name="w-full">View on Octav</x-import>
+          <p class="text-sm text-neutral-500" style="margin:0;line-height:20px">Octav provides advanced treasury analytics.</p>
+        </div>
+      </x-import>
+    </aside>
+  </div>
+</div>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"account":{"editor":"enum","options":["meridian","atlas","northstar","safe"],"default":"meridian"},"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":2100}}'>
+// Overview of one account of the workspace (apps/app: modules/workspace/pages/workspaceAccountOverviewPage). Props: account (meridian | atlas |
+// northstar | safe), onNav(target) with the account's own bare targets, wallet, onConnect().
+// As in the app, a DAO account shows the DAO dashboard as is (DaoDashboard, AtlasDaoDashboard, NorthstarDaoDashboard are mounted unchanged);
+// a Safe shows workspaceSafeDashboardPageClient: header with threshold / owners / nonce, pending transactions, owners, assets, Safe card.
+// The Safe's Review buttons and "View all" open the Safe's pages (nav 'transactions' / 'members' / 'assets').
+class Component extends DCLogic {
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const account = this.props.account || 'meridian';
+    const day = 24 * 3600000;
+    const rel = (d) => 'Queued ' + GovUiKit.formatterUtils.formatDate(Date.now() - d * day, { format: GovUiKit.DateFormat.RELATIVE });
+    const nav = (t) => { if (typeof this.props.onNav === 'function') this.props.onNav(t); };
+    return {
+      yes: true, three: 3, five: 5, six: 6,
+      isMeridian: account === 'meridian', isAtlas: account === 'atlas', isNorthstar: account === 'northstar', isSafe: account === 'safe',
+      onNav: nav, wallet: this.props.wallet || '', onConnect: this.props.onConnect,
+      click: this.click,
+      queued4: rel(4), queued2: rel(2), queued1: rel(1),
+      assets: [
+        { name: 'USD Coin', symbol: 'USDC', amount: 1185000, price: 1, logo: 'assets/mock/token/usdc.svg' },
+        { name: 'Ether', symbol: 'ETH', amount: 42.5, price: 3148.62, logo: 'assets/mock/token/eth.svg' },
+        { name: 'Northstar', symbol: 'NSP', amount: 750000, price: 0.42, logo: 'assets/mock/token/nsp.svg' }
+      ],
+      addressLink: { href: 'https://app.safe.global/home?safe=eth:0x515feC2E8F6553948b1D57C14c1243a1405C02e2', isExternal: true, isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -20,7 +20,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Eleven prototypes and the parts they are built from (93 files, about 14,000 lines) |
+| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (109 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit |
@@ -46,6 +46,11 @@ The prototypes:
   stages, approve, veto, advance and execute, with Safes as voting bodies.
 - `CreateProcessFlow.dc.html`: the create governance process wizard with the governance designer: voting bodies,
   stages, stage settings, proposal creation rules, permissions, publish.
+- `Workspace.dc.html`: a workspace holding the three mock DAOs and a Safe. All-accounts overview, to-dos, proposals,
+  members, assets and transactions; the account selector; each account's pages, which are the same part files the
+  DAO prototypes use; the Safe's dashboard and pending transactions.
+- `SafeTransactionFlow.dc.html`: creating a Safe transaction from the workspace: add a contract, add an action,
+  review, sign.
 - `WrapFlow.dc.html`: wrapping and unwrapping a governance token, on the members page of a sample DAO.
 - `LockFlow.dc.html`: lock-to-vote on a sample DAO: locking, unlocking, voting, and the dialogs between them.
 
@@ -63,7 +68,8 @@ the app's source and reference screenshots.
 
 A second batch the same day added create proposal, the Safe page and most of the DAO's interactions: eight agents,
 about 28 minutes from start to canvas. A third added the governance designer, the multisig and multi-stage DAOs,
-wrapping and lock-to-vote: five agents, about 31 minutes. Create proposal and voting were ported from older prototypes on
+wrapping and lock-to-vote: five agents, about 31 minutes. A fourth added the workspace and creating a Safe
+transaction: three agents. Create proposal and voting were ported from older prototypes on
 `docs/design-canvas`.
 
 ## Publishing
@@ -92,7 +98,6 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 
 ## Known gaps in the prototypes
 
-- **Finishing create workspace exits to Explore.** The workspace pages have no prototype yet.
 - **The Safe account page has no entry point** from the other prototypes; it is a frame of its own.
 - **Safe review dialog.** It carries Approve and Execute buttons in its footer. In the app the review is read-only and
   those actions live on the voting card. Its warning states, rejecting a transaction and error states are not drawn.
@@ -121,8 +126,13 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - **Governance designer:** the import-token, lock-to-vote and external-address body variants, the inner states of
   steps 3 and 4, and "Remove stage" were carried over from an older prototype and only checked to render.
 - **Create proposal draws part of its form by script** (`CreateProposalFlowActions.dc.html`), as the vote list does.
-- **The workspace pages, the three-DAOs-and-a-Safe workspace, and the other Safe flows have no prototype yet.** They are
-  held until the open workspace pull requests merge.
+- **Workspace:** "Add account" and "Edit workspace" do nothing. A Safe account's Transactions, Assets, Members and
+  Settings sections all show the same Safe page. "New proposal" skips the app's pick-a-process step and always opens
+  the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
+- **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
+  Only a token `transfer` on one sample contract can be added.
+- **Not built, because open pull requests are changing them:** editing a workspace, suggested accounts in the create
+  workspace wizard, creating a Safe, and the governance designer inside a workspace.
 - **Checks.** Each prototype loads without errors at 1440 and 390 px wide, and each flow's main path was clicked through
   once by the agent that built it. Nothing compares a prototype with the app. The delegation dialogs and most dialogs
   of the create proposal wizard were not looked at at phone width.

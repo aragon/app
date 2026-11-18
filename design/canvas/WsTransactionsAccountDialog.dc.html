@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Select account dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" dc-props="{{rootProps}}" hidden-title="Select an account" hidden-description="Select the account you want to create a transaction for.">
+<x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Select an account" description="Select the account you want to create a transaction for." on-close="{{close}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Content">
+<div class="ws-acc-list">
+<sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.itemClass}}" on-click="{{a.pick}}">
+  <div class="ws-acc-item">
+    <div class="{{a.leadClass}}">
+      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md"></x-import>
+      <div class="ws-acc-item__text">
+        <span class="ws-acc-item__name">{{a.name}}</span>
+        <span class="ws-acc-item__meta">{{a.meta}}</span>
+      </div>
+      <x-import component-from-global-scope="GovUiKit.Tag" label="{{a.type}}" variant="{{a.tagVariant}}" class-name="shrink-0"></x-import>
+    </div>
+    <sc-if value="{{a.disabled}}" hint-placeholder-val="{{false}}"><p class="ws-acc-item__help">Not eligible</p></sc-if>
+  </div>
+</x-import>
+</sc-for>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+<a id="wstx-create-link" class="cdf-hidden-link" href="SafeTransactionFlow.dc.html" tabindex="-1" aria-hidden="true">Create transaction</a>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onClose":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Select-account dialog of "New transaction" on the workspace transactions page (apps/app: modules/workspace/dialogs/workspaceSelectAccountDialog +
+// workspaceSelectAccountDialogItem, variant 'transaction'). PART of WsTransactions. Props: onClose().
+// Rows: every account of the workspace, those the connected wallet cannot execute on dimmed, sorted last, with "Not eligible". The mock wallet
+// owns the Northstar Council Safe and holds no execute permission on a DAO, so only the Safe can be picked. "Next" goes to
+// SafeTransactionFlow.dc.html (the app routes a Safe to create/transaction; a DAO would go to create/execute), through a hidden real link.
+const ACCOUNTS = [
+  { id: 'safe', name: 'Northstar Council Safe', avatar: 'assets/safeWallet.png', type: 'Safe', meta: 'Ethereum · 0x515f…02e2', eligible: true },
+  { id: 'meridian', name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg', type: 'DAO', meta: 'Ethereum · 0xc8c3…bcde', eligible: false },
+  { id: 'atlas', name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', type: 'DAO', meta: 'Ethereum · 0x3115…d368', eligible: false },
+  { id: 'northstar', name: 'Northstar Protocol', avatar: 'assets/mock/avatar/northstar.svg', type: 'DAO', meta: 'Ethereum · 0xa767…a063', eligible: false },
+];
+class Component extends DCLogic {
+  state = { selected: '' };
+  close = () => { if (typeof this.props.onClose === 'function') this.props.onClose(); };
+  next = () => {
+    if (this.state.selected !== 'safe') return;
+    const a = document.getElementById('wstx-create-link');
+    if (a) a.click();
+  };
+  renderVals() {
+    const sel = this.state.selected;
+    return {
+      yes: true,
+      accounts: ACCOUNTS.map((a) => ({
+        ...a,
+        disabled: !a.eligible,
+        tagVariant: a.type === 'DAO' ? 'primary' : 'neutral',
+        itemClass: !a.eligible ? 'ws-acc-item--disabled' : sel === a.id ? 'ws-acc-item--active' : '',
+        leadClass: a.eligible ? 'ws-acc-item__lead' : 'ws-acc-item__lead ws-acc-item__lead--dimmed',
+        pick: () => { if (a.eligible) this.setState({ selected: a.id }); },
+      })),
+      primary: { label: 'Next', onClick: this.next, disabled: sel === '' },
+      secondary: { label: 'Cancel', onClick: this.close },
+      close: this.close,
+      openChange: (o) => { if (!o) this.close(); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault() },
+    };
+  }
+}
+</script>
+</body>
+</html>

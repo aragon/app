@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace overview, all accounts</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Meridian Ecosystem</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Treasury and governance of Meridian DAO, the Atlas Grants Council, Northstar Protocol and the Northstar Council Safe in one place.</x-import>
+                </div>
+                <div class="page-header__stats">
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>4</p></div>
+                    <p class="page-stat__label">Accounts</p>
+                  </div>
+                  <div class="page-stat">
+                    <div class="page-stat__value"><p>0</p></div>
+                    <p class="page-stat__label">Targets</p>
+                  </div>
+                </div>
+              </div>
+              <div class="page-header__avatar">
+                <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="2xl"></x-import>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="ws-section__heading">
+                <div class="page-section__header">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">To-dos</x-import>
+                </div>
+                <p class="ws-section__description">Across every account in Meridian Ecosystem. To-dos belong to your wallet; the workspace only filters them.</p>
+              </div>
+              <sc-if value="{{disconnected}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Connect a wallet to see your to-dos" description="To-dos are what your wallet can vote on or sign right now across the accounts of this workspace." object-illustration="{{walletIllustration}}" is-stacked="{{no}}" primary-button="{{connectButton}}"></x-import>
+              </sc-if>
+              <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Nothing is waiting for you" description="Active proposals you can vote on and Safe transactions you can sign will show up here." object-illustration="{{checkIllustration}}" is-stacked="{{no}}"></x-import>
+              </sc-if>
+              <sc-if value="{{hasTodos}}" hint-placeholder-val="{{true}}">
+                <x-import component-from-global-scope="GovUiKit.Card" class-name="ws-todo-preview">
+                  <sc-for list="{{preview}}" as="t" hint-placeholder-count="3">
+                    <div class="ws-todo-preview__row">
+                      <sc-if value="{{t.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t.account}}" src="{{t.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
+                      <sc-if value="{{t.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+                      <div class="ws-todo-preview__text">
+                        <p class="ws-todo-preview__title">{{t.title}}</p>
+                        <p class="ws-todo-preview__meta">{{t.meta}}</p>
+                      </div>
+                      <x-import component-from-global-scope="GovUiKit.Button" variant="{{t.variant}}" size="sm" href="{{t.href}}" class-name="shrink-0">{{t.action}}</x-import>
+                    </div>
+                  </sc-for>
+                </x-import>
+              </sc-if>
+              <sc-if value="{{hasMore}}" hint-placeholder-val="{{true}}">
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:all:todos" class-name="self-start">View all</x-import>
+              </sc-if>
+            </div>
+
+            <div class="page-section">
+              <div class="ws-section__heading">
+                <div class="page-section__header">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Accounts</x-import>
+                </div>
+              </div>
+              <div class="ws-account-list">
+                <sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
+                  <x-import component-from-global-scope="GovUiKit.DataList.Item" href="{{a.href}}" class-name="flex items-center gap-3 p-4 md:p-6">
+                    <sc-if value="{{a.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
+                    <sc-if value="{{a.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+                    <div class="ws-account-item__text">
+                      <span class="ws-account-item__name">{{a.name}}</span>
+                      <span class="ws-account-item__meta">{{a.meta}}</span>
+                    </div>
+                    <x-import component-from-global-scope="GovUiKit.Tag" label="{{a.tag}}" variant="{{a.tagVariant}}" class-name="shrink-0"></x-import>
+                  </x-import>
+                </sc-for>
+              </div>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Resources</x-import>
+              </div>
+              <div class="aside-links">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"onConnect":{"editor":null},"scope":{"editor":null},"$preview":{"width":1100,"height":1100}}'>
+// PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (unused, 'all').
+// All-accounts overview (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx, components
+// workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more),
+// the accounts list (each row -> account:<id>:overview), Resources aside. 0 targets, so no Targets section (as in the app).
+// To-dos follow the app's rules: ACTIVE proposals the wallet can vote on, then Safe transactions it can sign. Their state is
+// derived from the DAO prototypes' shared state (window.__atlasDao /
+// window.__nspState (what the visitor did on the proposal pages).
+// Links: href="#nav:<target>" and one delegated click handler on the root.
+class Component extends DCLogic {
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  todos() {
+    const day = 86400000, hour = 3600000, now = Date.now();
+    const ov = window.__nspState || {}, at = window.__atlasDao || {};
+    const rel = (ms) => GovUiKit.formatterUtils.formatDate(ms, { format: GovUiKit.DateFormat.RELATIVE });
+    const list = [];
+    const prop = (id, account, avatar, slug, title, end) => list.push({
+      isDao: true, isSafe: false, account, avatar, action: 'Vote', variant: 'primary',
+      title: slug + ' · ' + title, meta: 'Vote · ends ' + rel(end), href: '#nav:account:' + id + ':proposal:' + slug
+    });
+    prop('meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
+    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
+    if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', now + (ov.adv8 ? 7 : 3) * day + hour);
+    if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', now + 4 * day + hour);
+    [[5, 'NSP-7'], [6, 'NSP-8']].forEach((r) => list.push({
+      isDao: false, isSafe: true, account: 'Northstar Council Safe', avatar: '', action: 'Sign', variant: 'secondary',
+      title: 'Safe transaction #' + r[0], meta: 'Sign · Northstar Council Safe · 2 of 3 signatures', href: '#nav:account:safe:transactions'
+    }));
+    return list;
+  }
+  renderVals() {
+    const connected = this.props.wallet === 'connected';
+    const all = connected ? this.todos() : [];
+    return {
+      onClick: this.click, yes: true, no: false, two: 2,
+      walletIllustration: { object: 'WALLET' }, checkIllustration: { object: 'CHAIN' },
+      connectButton: { label: 'Connect wallet', iconLeft: 'BLOCKCHAIN_WALLET', onClick: () => { if (typeof this.props.onConnect === 'function') this.props.onConnect(); } },
+      disconnected: !connected, empty: connected && all.length === 0, hasTodos: all.length > 0,
+      preview: all.slice(0, 3), hasMore: all.length > 3,
+      accounts: [
+        { name: 'Meridian DAO', meta: 'Ethereum · 0xC8C3…BCde', href: '#nav:account:meridian:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/meridian.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Atlas Grants Council', meta: 'Ethereum · 0x3115…d368', href: '#nav:account:atlas:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/atlas.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Northstar Protocol', meta: 'Ethereum · 0xA767…A063', href: '#nav:account:northstar:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/northstar.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Northstar Council Safe', meta: 'Ethereum · 0x515f…02e2', href: '#nav:account:safe:overview', isDao: false, isSafe: true, avatar: '', tag: 'Safe', tagVariant: 'neutral' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

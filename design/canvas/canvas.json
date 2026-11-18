@@ -409,7 +409,7 @@
       "page": "parts"
     },
     "AtlasDao.dc.html": {
-      "x": 0,
+      "x": 1520,
       "y": 1700,
       "w": 1440,
       "h": 900,
@@ -419,7 +419,7 @@
       "is_interactive": true
     },
     "NorthstarDao.dc.html": {
-      "x": 1520,
+      "x": 3040,
       "y": 1700,
       "w": 1440,
       "h": 900,
@@ -429,7 +429,7 @@
       "is_interactive": true
     },
     "CreateProcessFlow.dc.html": {
-      "x": 3040,
+      "x": 4560,
       "y": 1700,
       "w": 1440,
       "h": 900,
@@ -439,7 +439,7 @@
       "is_interactive": true
     },
     "WrapFlow.dc.html": {
-      "x": 4560,
+      "x": 6080,
       "y": 1700,
       "w": 1440,
       "h": 900,
@@ -449,7 +449,7 @@
       "is_interactive": true
     },
     "LockFlow.dc.html": {
-      "x": 6080,
+      "x": 7600,
       "y": 1700,
       "w": 1440,
       "h": 900,
@@ -785,6 +785,138 @@
       "h": 380,
       "title": "LockFlowBlockedDialog",
       "page": "parts"
+    },
+    "Workspace.dc.html": {
+      "x": 0,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Workspace (three DAOs and a Safe)",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SafeTransactionFlow.dc.html": {
+      "x": 9120,
+      "y": 1700,
+      "w": 1440,
+      "h": 900,
+      "title": "Create a Safe transaction",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "WsNav.dc.html": {
+      "x": 0,
+      "y": 21580,
+      "w": 1024,
+      "h": 900,
+      "title": "WsNav",
+      "page": "parts"
+    },
+    "WsOverview.dc.html": {
+      "x": 1104,
+      "y": 21580,
+      "w": 1100,
+      "h": 1100,
+      "title": "WsOverview",
+      "page": "parts"
+    },
+    "WsTodos.dc.html": {
+      "x": 2284,
+      "y": 21580,
+      "w": 1100,
+      "h": 900,
+      "title": "WsTodos",
+      "page": "parts"
+    },
+    "WsProposals.dc.html": {
+      "x": 3464,
+      "y": 21580,
+      "w": 1100,
+      "h": 1300,
+      "title": "WsProposals",
+      "page": "parts"
+    },
+    "WsMembers.dc.html": {
+      "x": 4644,
+      "y": 21580,
+      "w": 1100,
+      "h": 1100,
+      "title": "WsMembers",
+      "page": "parts"
+    },
+    "WsAssets.dc.html": {
+      "x": 5824,
+      "y": 21580,
+      "w": 1440,
+      "h": 900,
+      "title": "WsAssets",
+      "page": "parts"
+    },
+    "WsTransactions.dc.html": {
+      "x": 7344,
+      "y": 21580,
+      "w": 1440,
+      "h": 1900,
+      "title": "WsTransactions",
+      "page": "parts"
+    },
+    "WsTransactionsAccountDialog.dc.html": {
+      "x": 0,
+      "y": 23600,
+      "w": 1440,
+      "h": 900,
+      "title": "WsTransactionsAccountDialog",
+      "page": "parts"
+    },
+    "WsAccountOverview.dc.html": {
+      "x": 1520,
+      "y": 23600,
+      "w": 1100,
+      "h": 2100,
+      "title": "WsAccountOverview",
+      "page": "parts"
+    },
+    "WsAccountTodos.dc.html": {
+      "x": 2700,
+      "y": 23600,
+      "w": 1100,
+      "h": 700,
+      "title": "WsAccountTodos",
+      "page": "parts"
+    },
+    "WsAccountSafe.dc.html": {
+      "x": 3880,
+      "y": 23600,
+      "w": 1100,
+      "h": 1900,
+      "title": "WsAccountSafe",
+      "page": "parts"
+    },
+    "SafeTransactionFlowActions.dc.html": {
+      "x": 5060,
+      "y": 23600,
+      "w": 1216,
+      "h": 700,
+      "title": "SafeTransactionFlowActions",
+      "page": "parts"
+    },
+    "SafeTransactionFlowContractDialog.dc.html": {
+      "x": 6356,
+      "y": 23600,
+      "w": 1440,
+      "h": 900,
+      "title": "SafeTransactionFlowContractDialog",
+      "page": "parts"
+    },
+    "SafeTransactionFlowDialog.dc.html": {
+      "x": 0,
+      "y": 25820,
+      "w": 1440,
+      "h": 900,
+      "title": "SafeTransactionFlowDialog",
+      "page": "parts"
     }
   },
   "order": [
@@ -880,7 +1012,23 @@
     "LockFlowProposal.dc.html",
     "LockFlowLockDialog.dc.html",
     "LockFlowFeedbackDialog.dc.html",
-    "LockFlowBlockedDialog.dc.html"
+    "LockFlowBlockedDialog.dc.html",
+    "Workspace.dc.html",
+    "SafeTransactionFlow.dc.html",
+    "WsNav.dc.html",
+    "WsOverview.dc.html",
+    "WsTodos.dc.html",
+    "WsProposals.dc.html",
+    "WsMembers.dc.html",
+    "WsAssets.dc.html",
+    "WsTransactions.dc.html",
+    "WsTransactionsAccountDialog.dc.html",
+    "WsAccountOverview.dc.html",
+    "WsAccountTodos.dc.html",
+    "WsAccountSafe.dc.html",
+    "SafeTransactionFlowActions.dc.html",
+    "SafeTransactionFlowContractDialog.dc.html",
+    "SafeTransactionFlowDialog.dc.html"
   ],
   "notes": {
     "proto-desktop": {
@@ -902,7 +1050,7 @@
     "proto-more": {
       "x": 0,
       "y": 1400,
-      "text": "More DAO types and governance flows",
+      "text": "Workspace, more DAO types and governance flows",
       "kind": "title1",
       "maxW": 8000,
       "page": "prototypes"

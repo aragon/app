@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace transactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+            <sc-if value="{{createLink}}" hint-placeholder-val="{{false}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="SafeTransactionFlow.dc.html">New transaction</x-import>
+            </sc-if>
+            <sc-if value="{{createDialog}}" hint-placeholder-val="{{false}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" on-click="{{openDialog}}">New transaction</x-import>
+            </sc-if>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <sc-if value="{{showToggles}}" hint-placeholder-val="{{true}}">
+            <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{filter}}" on-change="{{setFilter}}">
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+              <sc-if value="{{hasExecutions}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="executions" label="Executions"></x-import></sc-if>
+              <sc-if value="{{hasReceived}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="received" label="Deposits"></x-import></sc-if>
+              <sc-if value="{{hasSent}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="sent" label="Withdrawals"></x-import></sc-if>
+            </x-import>
+            </sc-if>
+            <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{show.t0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" href="#nav:account:safe:overview"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">NCS-5</span></div><p class="ws-summary__description">November 12, 2026 at 18:00</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" href="#nav:account:safe:overview"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">NCS-6</span></div><p class="ws-summary__description">November 14, 2026 at 18:00</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" href="#nav:account:safe:overview"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">NCS-7</span></div><p class="ws-summary__description">November 15, 2026 at 18:00</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executable" variant="info" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-3"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 14, 2026 at 18:18</p></div><span class="ws-summary__value">250K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="250000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-4"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 12, 2026 at 18:18</p></div><span class="ws-summary__value">500K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="500000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.atl}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="EXECUTION" label="Northstar Staged Governance" action-count="{{one}}" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.t6}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-6"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 30, 2026 at 18:00</p></div><span class="ws-summary__value">240K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="240000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.nor}}" recipient="{{a.x2}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t7}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-7"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">NCS-4</span></div><p class="ws-summary__description">October 28, 2026 at 11:40</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="100000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.saf}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t8}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-8"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 24, 2026 at 18:00</p></div><span class="ws-summary__value">400K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="400000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.nor}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t9}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" on-click="{{open.mgp3}}"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Meridian Token Voting</span><span class="ws-summary__identifier">MGP-3</span></div><p class="ws-summary__description">October 21, 2026 at 18:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t10}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-10"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 20, 2026 at 10:30</p></div><span class="ws-summary__value">42.5 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="42.5" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x2}}" recipient="{{a.saf}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t11}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-11"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 15, 2026 at 18:18</p></div><span class="ws-summary__value">40K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="40000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.atl}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t12}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-12"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 9, 2026 at 18:18</p></div><span class="ws-summary__value">180K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="180000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t13}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" on-click="{{open.mgp2}}"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Meridian Token Voting</span><span class="ws-summary__identifier">MGP-2</span></div><p class="ws-summary__description">October 9, 2026 at 06:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t14}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-14"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 6, 2026 at 18:00</p></div><span class="ws-summary__value">85 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="85" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.nor}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t15}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-15"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 2, 2026 at 18:18</p></div><span class="ws-summary__value">75 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="75" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x2}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t16}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-16"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 17, 2026 at 18:18</p></div><span class="ws-summary__value">1.1M MRD</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Meridian" asset-symbol="MRD" asset-address="0xc6cf3058f8fd5eb7074109b3b531364a4af59dae" asset-amount="1100000" asset-fiat-price="0.84" asset-icon-src="assets/mock/token/mrd.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t17}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-17"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 7, 2026 at 18:18</p></div><span class="ws-summary__value">120K DAI</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Dai Stablecoin" asset-symbol="DAI" asset-address="0x6b175474e89094c44da98b954eedeac495271d0f" asset-amount="120000" asset-fiat-price="0.9998" asset-icon-src="assets/mock/token/dai.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.atl}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t18}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-18"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">September 5, 2026 at 18:18</p></div><span class="ws-summary__value">42K DAI</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Dai Stablecoin" asset-symbol="DAI" asset-address="0x6b175474e89094c44da98b954eedeac495271d0f" asset-amount="42000" asset-fiat-price="0.9998" asset-icon-src="assets/mock/token/dai.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+</x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <sc-if value="{{isAll}}" hint-placeholder-val="{{true}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All transactions</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isDao}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <sc-for list="{{aside.links}}" as="l" hint-placeholder-count="3">
+              <x-import component-from-global-scope="GovUiKit.Link" href="{{l.href}}" is-external="{{yes}}" show-url="{{yes}}" children="{{l.label}}"></x-import>
+              </sc-for>
+            </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isSafe}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="{{aside.address}}" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+        </aside>
+      </div>
+      <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{false}}">
+        <dc-import name="DaoTransactionDetailDialog" tx="{{openTx}}" on-close="{{closeTx}}" on-nav="{{navMeridian}}" hint-size="0px,0px"></dc-import>
+      </sc-if>
+      <sc-if value="{{accountDialogOpen}}" hint-placeholder-val="{{false}}">
+        <dc-import name="WsTransactionsAccountDialog" on-close="{{closeDialog}}" hint-size="0px,0px"></dc-import>
+      </sc-if>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":"text","default":"all"},"$preview":{"width":1440,"height":1900}}'>
+// Workspace transactions (apps/app: modules/workspace/pages/workspaceTransactionsPage, components workspaceTransactionList +
+// workspaceTransactionListItem (accordion rows headed by workspaceListItemSummary), workspaceTransactionsAsideCard (All / DAO / Safe),
+// utils/workspaceTransactionUtils). PART of the workspace prototype. Props: onNav(target), wallet, onConnect, scope ('all' or an account id:
+// meridian | atlas | northstar | safe). The app has no account filter on the page itself: the account is the one the workspace's account
+// selector set, so the list, the count, the toggles and the aside card follow `scope`.
+// Rows (newest first, pending Safe transactions first as the app lists them): the type toggle (All / Executions / Deposits / Withdrawals)
+// and the account decide which rows render. Each row is written out at the start of the line in its own <sc-if> (a false <sc-if>
+// renders nothing, a true one is one child): the kit's pagination counts the list's direct children, so "x of y" follows the filters.
+// The toggles that would lead to an empty list are hidden, as the app does (and the whole group with fewer than two types).
+// Rows: a transfer is an accordion item that expands to the transferred asset; a DAO execution of Meridian opens the transaction detail
+// dialog (DaoTransactionDetailDialog); the Northstar execution is the block-explorer row the app draws when it has no DAO to decode it
+// with; a pending transaction of the Northstar Council Safe opens that Safe's page (nav 'account:safe:overview', where its review dialog
+// lives); the executed Safe transaction expands to its transfer. Mock data: data.cjs, data-spp.cjs, SafeFlow.dc.html (queue nonce 5-7).
+// "New transaction" (Page.Main action) is shown as the app shows it: only when the connected wallet can execute on an account. The mock
+// wallet (nadia.eth) owns the Safe and holds no execute permission on a DAO, so: all accounts -> opens the select-account dialog
+// (WsTransactionsAccountDialog, only the Safe is eligible); the Safe's own scope -> a link to SafeTransactionFlow.dc.html; a DAO's scope or
+// no wallet -> no button.
+const ROWS = [
+  // id, account, kind (exec | received | sent), days ago (for "Last activity")
+  ['t0', 'safe', 'exec', 4], ['t1', 'safe', 'exec', 2], ['t2', 'safe', 'exec', 1],
+  ['t3', 'meridian', 'received', 2], ['t4', 'atlas', 'received', 4], ['t5', 'northstar', 'exec', 17], ['t6', 'northstar', 'sent', 17],
+  ['t7', 'safe', 'exec', 19], ['t8', 'northstar', 'received', 23], ['t9', 'meridian', 'exec', 26], ['t10', 'safe', 'received', 27],
+  ['t11', 'atlas', 'sent', 32], ['t12', 'meridian', 'sent', 38], ['t13', 'meridian', 'exec', 38], ['t14', 'northstar', 'received', 41],
+  ['t15', 'meridian', 'received', 45], ['t16', 'meridian', 'received', 60], ['t17', 'atlas', 'received', 70], ['t18', 'meridian', 'sent', 72],
+];
+const ACCOUNTS = {
+  meridian: {
+    name: 'Meridian DAO', address: '0xc8c322384903ee8f11f511b71d0504237886bcde',
+    desc: 'Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance.',
+    links: [{ label: 'Website', href: 'https://meridian.xyz' }, { label: 'Forum', href: 'https://forum.meridian.xyz' }, { label: 'X', href: 'https://x.com/meridianproto' }, { label: 'Discord', href: 'https://discord.gg/meridian' }],
+  },
+  atlas: {
+    name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368',
+    desc: 'The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council.',
+    links: [{ label: 'Website', href: 'https://atlasgrants.org' }, { label: 'Apply for a grant', href: 'https://atlasgrants.org/apply' }],
+  },
+  northstar: {
+    name: 'Northstar Protocol', address: '0xa767846912853e30403f3efb946a5250e8e6a063',
+    desc: 'Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.',
+    links: [{ label: 'Website', href: 'https://northstar.fi' }, { label: 'Forum', href: 'https://forum.northstar.fi' }, { label: 'Docs', href: 'https://docs.northstar.fi' }, { label: 'X', href: 'https://x.com/northstar_fi' }],
+  },
+  safe: {
+    name: 'Northstar Council Safe', address: '0x515feC2E8F6553948b1D57C14c1243a1405C02e2',
+    desc: 'The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.',
+    links: [],
+  },
+};
+const addr = (a) => ({ address: a });
+class Component extends DCLogic {
+  state = { filter: 'all', openTx: '', accountDialog: false };
+  // Links to other pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (this.props.onNav) this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  setFilter = (v) => { if (typeof v === 'string' && v) this.setState({ filter: v }); };
+  openDialog = () => this.setState({ accountDialog: true });
+  closeDialog = () => this.setState({ accountDialog: false });
+  closeTx = () => this.setState({ openTx: '' });
+  openTxFn = (id) => (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ openTx: id }); };
+  renderVals() {
+    const kit = window.GovUiKit;
+    const scope = ACCOUNTS[this.props.scope] ? this.props.scope : 'all';
+    const inScope = ROWS.filter((r) => scope === 'all' || r[1] === scope);
+    const has = (k) => inScope.some((r) => r[2] === k);
+    const available = ['exec', 'received', 'sent'].filter(has);
+    const showToggles = available.length > 1;
+    const map = { all: null, executions: 'exec', received: 'received', sent: 'sent' };
+    let filter = this.state.filter;
+    if (filter !== 'all' && !available.includes(map[filter])) filter = 'all';
+    const show = {};
+    let count = 0;
+    ROWS.forEach((r) => {
+      const on = (scope === 'all' || r[1] === scope) && (filter === 'all' || r[2] === map[filter]);
+      show[r[0]] = on;
+      if (on) count++;
+    });
+    const wallet = this.props.wallet === 'connected';
+    const acc = ACCOUNTS[scope];
+    const first = inScope[0];
+    const aside = {
+      count: String(inScope.length),
+      last: first ? kit.formatterUtils.formatDate(Date.now() - first[3] * 86400000, { format: kit.DateFormat.RELATIVE }) ?? '-' : '-',
+      name: acc ? acc.name : 'All transactions',
+      desc: acc ? acc.desc : '',
+      address: acc ? acc.address : '',
+      links: acc ? acc.links : [],
+      octav: acc ? 'https://pro.octav.fi/?addresses=' + acc.address : '',
+      addressLink: acc ? { href: scope === 'safe' ? 'https://app.safe.global/home?safe=eth:' + acc.address : 'https://etherscan.io/address/' + acc.address, isExternal: true, isOnchainEntity: true } : undefined,
+    };
+    return {
+      yes: true, no: false, one: 1, two: 2, chainId: 1, pageSize: 20, click: this.click,
+      mdSize: { md: 'md' },
+      count, show, filter, setFilter: this.setFilter,
+      showToggles, hasExecutions: has('exec'), hasReceived: has('received'), hasSent: has('sent'),
+      createLink: wallet && scope === 'safe',
+      createDialog: wallet && scope === 'all',
+      openDialog: this.openDialog, closeDialog: this.closeDialog,
+      accountDialogOpen: this.state.accountDialog,
+      isAll: scope === 'all', isDao: !!acc && scope !== 'safe', isSafe: scope === 'safe',
+      aside,
+      a: {
+        mer: addr('0xc8c322384903ee8f11f511b71d0504237886bcde'), atl: addr('0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368'),
+        nor: addr('0xa767846912853e30403f3efb946a5250e8e6a063'), saf: addr('0x515feC2E8F6553948b1D57C14c1243a1405C02e2'),
+        x1: addr('0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05'), x2: addr('0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81'), x3: addr('0xdce3a01d0357efb601efac0fdd836d2e1b3bc242'),
+      },
+      open: { mgp3: this.openTxFn('mgp3'), mgp2: this.openTxFn('mgp2') },
+      dialogOpen: !!this.state.openTx, openTx: this.state.openTx, closeTx: this.closeTx,
+      // the proposal link of the detail dialog is a bare target of the DAO that owns it (Meridian)
+      navMeridian: (t) => { this.closeTx(); if (this.props.onNav) this.props.onNav('account:meridian:' + t); },
+    };
+  }
+}
+</script>
+</body>
+</html>

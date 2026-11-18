@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace members, all accounts</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <div class="flex flex-col gap-2 md:gap-3">
+              <div>
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="{{filterLabel}}">
+                  <sc-for list="{{tabs}}" as="tab" hint-placeholder-count="7">
+                    <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{tab.selected}}" on-select="{{tab.pick}}">{{tab.label}}</x-import>
+                  </sc-for>
+                </x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+<sc-if value="{{show.r0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="{{m0.href}}" target="{{m0.target}}"></x-import></sc-if>
+<sc-if value="{{show.r1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" class-name="min-w-0" href="{{m1.href}}" target="{{m1.target}}"></x-import></sc-if>
+<sc-if value="{{show.r2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="{{m2.href}}" target="{{m2.target}}"></x-import></sc-if>
+<sc-if value="{{show.r3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089" ens-name="" class-name="min-w-0" href="{{m3.href}}" target="{{m3.target}}"></x-import></sc-if>
+<sc-if value="{{show.r4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" class-name="min-w-0" href="{{m4.href}}" target="{{m4.target}}"></x-import></sc-if>
+<sc-if value="{{show.r5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" class-name="min-w-0" href="{{m5.href}}" target="{{m5.target}}"></x-import></sc-if>
+<sc-if value="{{show.r6}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x697d04244eda05202c0c06aea0bfeced540eb42d" ens-name="" class-name="min-w-0" href="{{m6.href}}" target="{{m6.target}}"></x-import></sc-if>
+<sc-if value="{{show.r7}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8" ens-name="marcusj.eth" class-name="min-w-0" href="{{m7.href}}" target="{{m7.target}}"></x-import></sc-if>
+<sc-if value="{{show.r8}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" class-name="min-w-0" href="{{m8.href}}" target="{{m8.target}}"></x-import></sc-if>
+<sc-if value="{{show.r9}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8ac8d965669201c92279ef49be1a5564b908ee27" ens-name="" class-name="min-w-0" href="{{m9.href}}" target="{{m9.target}}"></x-import></sc-if>
+<sc-if value="{{show.r10}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x6dd753d9ebc280a364354dbf6603d3f2a279a65c" ens-name="jonas-b.eth" class-name="min-w-0" href="{{m10.href}}" target="{{m10.target}}"></x-import></sc-if>
+<sc-if value="{{show.r11}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xbf2656ce7e3c0e9f5098060cf873c87430751ef9" ens-name="" class-name="min-w-0" href="{{m11.href}}" target="{{m11.target}}"></x-import></sc-if>
+<sc-if value="{{show.r12}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" ens-name="ines-alvarez.eth" class-name="min-w-0" href="{{m12.href}}" target="{{m12.target}}"></x-import></sc-if>
+<sc-if value="{{show.r13}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fd8c5d6a351f67a517e6b0f452f63" ens-name="dmitri.eth" class-name="min-w-0" href="{{m13.href}}" target="{{m13.target}}"></x-import></sc-if>
+<sc-if value="{{show.r14}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x66b7d87059d8d1cf9da8842075250fd8a2e20805" ens-name="" class-name="min-w-0" href="{{m14.href}}" target="{{m14.target}}"></x-import></sc-if>
+<sc-if value="{{show.r15}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xde0da1b2c117fda1a3e2dc30bc213d3b6baf40ec" ens-name="oren.eth" class-name="min-w-0" href="{{m15.href}}" target="{{m15.target}}"></x-import></sc-if>
+<sc-if value="{{show.r16}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x78084649f806810005aca274afe28cd141a74124" ens-name="priya-n.eth" class-name="min-w-0" href="{{m16.href}}" target="{{m16.target}}"></x-import></sc-if>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{asideTitle}}</x-import>
+              </div>
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{count}}</x-import>
+                  <p class="stat-card__label">Total members</p>
+                </div>
+                <div class="stat-card">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{accountsCount}}</x-import>
+                  <p class="stat-card__label">Accounts</p>
+                </div>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":null},"$preview":{"width":1100,"height":1100}}'>
+// PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet, onConnect (unused), scope (unused, 'all').
+// All-accounts members (apps/app: modules/workspace/pages/workspaceMembersPage, components workspaceMemberList (PluginFilterComponent, variant "dropdown": "All members" +
+// one entry per body, "<DAO> · <body>", and a Safe account's own entry), workspaceMemberListDefault (rows without voting power; page size 18), workspaceMembersAsideCard).
+// 17 distinct members of the four accounts (data.cjs / data-spp.cjs), merged by address. A row opens account:<id>:member:<address> of the first DAO that has the member
+// (under a body's filter, of that body's DAO). Safe owners are members of the workspace too: under the Safe account's own entry their rows link to the block explorer, as in the
+// app (only DAO accounts have a member page). Rows sit one per line at column 0, each in its own <sc-if>: the kit's pagination counts the direct children.
+class Component extends DCLogic {
+  state = { filter: 'all' };
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const f = this.state.filter;
+    const ADDR = ["0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a", "0xac6399087027f972e6d2ab830dc9b33cda035642", "0x826e7eb63d237333d9063dc74e7ce8e222b0fc05", "0x865f1f2c83b0ee4a9116da01bcc1e2661086e089", "0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a", "0xb8616ba616766bd8fbdc69ded1b02e41b482b98e", "0x697d04244eda05202c0c06aea0bfeced540eb42d", "0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8", "0x8a25faabbd80f71248328cf3a5867d3168210a46", "0x8ac8d965669201c92279ef49be1a5564b908ee27", "0x6dd753d9ebc280a364354dbf6603d3f2a279a65c", "0xbf2656ce7e3c0e9f5098060cf873c87430751ef9", "0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81", "0x7331c334835fd8c5d6a351f67a517e6b0f452f63", "0x66b7d87059d8d1cf9da8842075250fd8a2e20805", "0xde0da1b2c117fda1a3e2dc30bc213d3b6baf40ec", "0x78084649f806810005aca274afe28cd141a74124"];
+    const ix = (list) => list.map((a) => ADDR.indexOf(a));
+    const A = ADDR;
+    // bodies: key, dropdown label, account id, member indexes
+    const BODIES = [
+      { key: 'mer', label: 'Meridian DAO · Meridian Token Voting', acc: 'meridian', idx: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+      { key: 'atl', label: 'Atlas Grants Council · Grants Council Multisig', acc: 'atlas', idx: [0, 2, 4, 5, 8] },
+      { key: 'nstv', label: 'Northstar Protocol · NSP Token Holders', acc: 'northstar', idx: [0, 1, 2, 12, 4, 3, 13, 5, 14, 8] },
+      { key: 'nscore', label: 'Northstar Protocol · Core Team', acc: 'northstar', idx: [0, 4, 5] },
+      { key: 'nscouncil', label: 'Northstar Protocol · Safe 0x515f…02e2', acc: 'northstar', idx: [0, 1, 2, 12, 13] },
+      { key: 'nsguard', label: 'Northstar Protocol · Safe 0xf361…465e', acc: 'northstar', idx: [8, 15, 16, 2] },
+      { key: 'safe', label: 'Northstar Council Safe', acc: 'safe', idx: [0, 1, 2, 12, 13], explorer: true }
+    ];
+    const cur = BODIES.find((b) => b.key === f);
+    const show = {}; const vals = {};
+    let count = 0;
+    A.forEach((addr, i) => {
+      const inBody = cur ? cur.idx.indexOf(i) >= 0 : true;
+      show['r' + i] = inBody; if (inBody) count++;
+      let href, target;
+      if (cur && cur.explorer) { href = 'https://etherscan.io/address/' + addr; target = '_blank'; }
+      else {
+        const home = cur ? cur.acc : (BODIES.find((b) => b.acc !== 'safe' && b.idx.indexOf(i) >= 0) || BODIES[0]).acc;
+        href = '#nav:account:' + home + ':member:' + addr;
+      }
+      vals['m' + i] = { href, target };
+    });
+    return Object.assign({
+      onClick: this.click, show, count, pageSize: 18,
+      filterLabel: cur ? cur.label : 'All members',
+      asideTitle: cur ? cur.label : 'All members',
+      accountsCount: cur ? 1 : 4,
+      tabs: [{ key: 'all', label: 'All members' }].concat(BODIES).map((b) => ({ label: b.label, selected: (b.key === f), pick: () => this.setState({ filter: b.key }) }))
+    }, vals);
+  }
+}
+</script>
+</body>
+</html>

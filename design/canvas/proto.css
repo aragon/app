@@ -27,6 +27,9 @@
 /* the part wrappers of the flow must not add layout of their own */
 .cwf-flow { display: contents; }
 
+/* Explore: exploreNav.tsx turns the bar solid (bg-primary-400) once the hero has scrolled under it. */
+.explore-nav--solid { background: var(--color-primary-400); }
+
 /* Agent D: DAO shell + wallet. Connect-wallet SDK modal (Reown AppKit look, third-party markup). */
 .wc-scrim { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(235,235,235,.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .wc-modal { width: 100%; max-width: 368px; box-sizing: border-box; padding: 20px 14px 18px; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.08); color: #141414; font-family: var(--font-sans), sans-serif; }
@@ -116,5 +119,52 @@
 .wf-token { display: flex; align-items: center; flex-shrink: 0; gap: 6px; padding: 0 8px; cursor: default; font-size: 16px; line-height: 1.25; }
 .wf-fiat { margin: 0; flex-shrink: 0; font-size: 16px; line-height: 1.25; }
 
-/* Explore: exploreNav.tsx turns the bar solid (bg-primary-400) once the hero has scrolled under it. */
-.explore-nav--solid { background: var(--color-primary-400); }
+/* Workspace prototype (agent X): WsNav menus (workspace and account selectors, drawn like the kit's Dropdown) */
+.ws-menu-wrap { position: relative; width: 100%; }
+.ws-menu__scrim { position: fixed; inset: 0; z-index: 60; background: transparent; }
+.ws-menu {
+    position: absolute; top: calc(100% + 4px); left: 0; z-index: 61;
+    box-sizing: border-box; display: flex; width: 100%; min-width: 232px; flex-direction: column; gap: 2px;
+    padding: 8px; border: 1px solid var(--color-neutral-100); border-radius: 12px;
+    background: var(--color-neutral-0); box-shadow: 0 8px 24px -8px rgba(50, 63, 75, 0.28);
+    font-family: var(--font-sans);
+}
+.ws-menu__item {
+    box-sizing: border-box; display: flex; width: 100%; min-width: 0; align-items: center; gap: 12px;
+    padding: 8px 12px; border-radius: 8px; color: var(--color-neutral-500);
+    font-size: 16px; line-height: 1.25; text-decoration: none; text-align: left; cursor: pointer;
+}
+.ws-menu__item:hover, .ws-menu__item[aria-current="true"] { background: var(--color-neutral-50); color: var(--color-neutral-800); }
+.ws-menu__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; line-height: 1.25; }
+.ws-menu__name { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 24px; text-overflow: ellipsis; white-space: nowrap; }
+.ws-menu__meta { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+.ws-menu__sep { height: 1px; margin: 4px 0; background: var(--color-neutral-100); }
+.ws-nav-dialog { display: flex; flex-direction: column; gap: 16px; padding: 32px 0 16px; }
+.ws-nav-dialog__selectors { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+.ws-nav-dialog__groups { display: flex; flex-direction: column; gap: 16px; padding: 0 16px; }
+/* Workspace shell: the account pages keep their own shell classes */
+.ws-shell-slot, .ws-shell-slot > *:not(.page-container) { display: contents; }
+
+/* Workspace prototype (agent Y): all-accounts pages */
+/* workspaceSelectAccountDialogItem: DataList.Item with px-4 py-3 md:p-6, active: border-primary-400 shadow-primary */
+.wsy-pick-list { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.wsy-pick { padding: 12px 16px; text-align: left; }
+@container app (min-width: 48rem) { .wsy-pick { padding: 24px; } }
+.wsy-pick--active, .wsy-pick--active:hover { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary) !important; }
+
+/* Agent Z: select-account dialog of the workspace transactions page (WsTransactionsAccountDialog) */
+.ws-acc-list { display: flex; flex-direction: column; gap: 8px; padding-block: 8px; }
+.ws-acc-item { display: flex; flex-direction: column; gap: 12px; }
+.ws-acc-item__lead { display: flex; align-items: center; gap: 12px; }
+.ws-acc-item__lead--dimmed { opacity: .6; }
+.ws-acc-item__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.ws-acc-item__name, .ws-acc-item__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25; }
+.ws-acc-item__name { font-size: 16px; color: var(--color-neutral-800); }
+.ws-acc-item__meta { font-size: 14px; color: var(--color-neutral-500); }
+.ws-acc-item__help { margin: 0; font-size: 14px; line-height: 20px; color: var(--color-neutral-300); }
+.ws-acc-item--active { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary); }
+.ws-acc-item--disabled { border-color: var(--color-neutral-100) !important; background-color: var(--color-neutral-50); cursor: default; }
+@media (min-width: 768px) { .ws-acc-item__name { font-size: 18px; } .ws-acc-item__meta, .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
+/* Agent Z: data-list rows of the workspace transactions page that are not accordion items (pending Safe, DAO execution), padded as the app's px-4 py-3 md:p-6 */
+.ws-dli { padding: 12px 16px; }
+@media (min-width: 768px) { .ws-dli { padding: 24px; } }

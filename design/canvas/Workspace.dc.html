@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace prototype</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page app-page--sidebar">
+  <div class="app-shell">
+    <dc-import name="WsNav" scope="{{scope}}" active="{{active}}" wallet="{{wallet}}" on-nav="{{nav}}" on-connect="{{connect}}" on-user="{{openUser}}" hint-size="256px,900px"></dc-import>
+
+    <div class="app-column">
+      <div class="dao-slot">
+        <sc-if value="{{show.all_overview}}" hint-placeholder-val="{{true}}">
+          <dc-import name="WsOverview"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.all_todos}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsTodos"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.all_proposals}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsProposals"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.all_members}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsMembers"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.all_assets}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsAssets"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.all_transactions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsTransactions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.acct_overview}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsAccountOverview" account="{{scope}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.acct_todos}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsAccountTodos" account="{{scope}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_proposals}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoProposals"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_proposal}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoProposal" proposal="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_members}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoMembers"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_member}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoMember" member="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_assets}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoAssets"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_transactions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoTransactions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_permissions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoPermissions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_settings}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoSettings"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.meridian_process}}" hint-placeholder-val="{{false}}">
+          <dc-import name="DaoProcess" process="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_proposals}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProposals"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_proposal}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProposal" proposal="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_members}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoMembers"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_member}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoMember" member="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_assets}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoAssets"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_transactions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoTransactions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_permissions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoPermissions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_settings}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoSettings"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.atlas_process}}" hint-placeholder-val="{{false}}">
+          <dc-import name="AtlasDaoProcess" process="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_proposals}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoProposals"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_proposal}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoProposal" proposal="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_members}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoMembers"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_member}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoMember" member="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_assets}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoAssets"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_transactions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoTransactions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_permissions}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoPermissions"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_settings}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoSettings"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.northstar_process}}" hint-placeholder-val="{{false}}">
+          <dc-import name="NorthstarDaoProcess" process="{{param}}" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+        <sc-if value="{{show.safe_page}}" hint-placeholder-val="{{false}}">
+          <dc-import name="WsAccountSafe"  on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" scope="{{scope}}" hint-size="100%,900px"></dc-import>
+        </sc-if>
+      </div>
+
+      <div class="app-launcher">
+        <button type="button" aria-label="Ask Aragon">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="FEEDBACK" size="md"></x-import>
+          <span>Ask Aragon</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <dc-import name="Footer" with-sidebar="{{yes}}" hint-size="100%,65px"></dc-import>
+</div>
+<sc-if value="{{dialog.connect}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletConnect" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dialog.user}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletUser" on-close="{{closeDialog}}" on-disconnect="{{disconnect}}" on-nav="{{nav}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Workspace prototype: a workspace of four accounts as one artboard. state = { scope, page, param, wallet, dialog }.
+// scope: 'all' | 'meridian' | 'atlas' | 'northstar' | 'safe'. page: overview | todos | proposals | proposal (param = slug) | members | member (param = address)
+//   | assets | transactions | permissions | settings | process (param = slug). wallet: '' | 'connected' (nadia.eth). dialog: '' | 'connect' | 'user'.
+// nav(target), given to every page part as onNav:
+//   'all:<section>'                 all-accounts page (overview, todos, proposals, members, assets, transactions)
+//   'account:<id>:<target>'         page of one account; <target> = overview | todos | proposals | proposal:<slug> | members | member:<address> | assets |
+//                                   transactions | permissions | settings | process:<slug>
+//   '<target>' (no prefix)          the same scope: inside an account it stays in that account ('dashboard' = overview). Bare proposal:/member: targets
+//                                   from the all-accounts scope open in the account the slug belongs to (MGP- Meridian, AGC- Atlas, NSP- Northstar; members: Meridian).
+// Every page part also gets wallet, onConnect() and scope. Pages by account: DAOs use the Dao* / AtlasDao* / NorthstarDao* parts, the overview and to-dos
+// use WsAccountOverview / WsAccountTodos, the Safe (id 'safe') shows WsAccountSafe (SafeFlowPage + review and sign dialogs) for all its pages but overview and to-dos.
+class Component extends DCLogic {
+  state = { scope: 'all', page: 'overview', param: '', wallet: '', dialog: '' };
+  connect = () => this.setState({ dialog: 'connect' });
+  openUser = () => this.setState({ dialog: 'user' });
+  closeDialog = () => this.setState({ dialog: '' });
+  pickWallet = () => this.setState({ wallet: 'connected', dialog: '' });
+  disconnect = () => this.setState({ wallet: '', dialog: '' });
+  nav = (target) => {
+    const ACCOUNTS = ['meridian', 'atlas', 'northstar', 'safe'];
+    let t = String(target || 'overview');
+    let scope = this.state.scope;
+    if (t.indexOf('all:') === 0) { scope = 'all'; t = t.slice(4); }
+    else if (t.indexOf('account:') === 0) {
+      const rest = t.slice(8);
+      const i = rest.indexOf(':');
+      scope = i < 0 ? rest : rest.slice(0, i);
+      t = i < 0 ? 'overview' : rest.slice(i + 1);
+    }
+    const i = t.indexOf(':');
+    let page = i < 0 ? t : t.slice(0, i);
+    const param = i < 0 ? '' : t.slice(i + 1);
+    if (page === 'dashboard' || page === '') page = 'overview';
+    if (scope === 'all' && (page === 'proposal' || page === 'member' || page === 'process' || page === 'permissions' || page === 'settings')) {
+      scope = page === 'proposal' && /^AGC-/.test(param) ? 'atlas' : page === 'proposal' && /^NSP-/.test(param) ? 'northstar' : 'meridian';
+    }
+    if (scope !== 'all' && ACCOUNTS.indexOf(scope) < 0) scope = 'meridian';
+    this.setState({ scope, page, param }, () => {
+      try { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; } catch (e) {}
+      try { document.querySelectorAll('.app-page, .app-column').forEach((el) => { el.scrollTop = 0; }); } catch (e) {}
+    });
+  };
+  renderVals() {
+    const { scope, page } = this.state;
+    const show = {};
+    ['overview', 'todos', 'proposals', 'members', 'assets', 'transactions'].forEach((p) => { show['all_' + p] = scope === 'all' && page === p; });
+    show.acct_overview = scope !== 'all' && page === 'overview';
+    show.acct_todos = scope !== 'all' && page === 'todos';
+    ['meridian', 'atlas', 'northstar'].forEach((a) => {
+      ['proposals', 'proposal', 'members', 'member', 'assets', 'transactions', 'permissions', 'settings', 'process'].forEach((p) => { show[a + '_' + p] = scope === a && page === p; });
+    });
+    show.safe_page = scope === 'safe' && page !== 'overview' && page !== 'todos';
+    const active = page === 'proposal' ? 'proposals' : page === 'member' ? 'members' : page === 'process' ? 'settings' : page;
+    return {
+      yes: true, nav: this.nav, show, scope, active, param: this.state.param,
+      wallet: this.state.wallet, connect: this.connect, openUser: this.openUser,
+      dialog: { connect: this.state.dialog === 'connect', user: this.state.dialog === 'user' },
+      closeDialog: this.closeDialog, pickWallet: this.pickWallet, disconnect: this.disconnect
+    };
+  }
+}
+</script>
+</body>
+</html>
