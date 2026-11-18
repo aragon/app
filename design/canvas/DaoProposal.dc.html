@@ -47,11 +47,15 @@
               </div>
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="ACTIVE" end-date="{{p8.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACTIVE">
-                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="6215000" total-no="1104000" total-abstain="402000" support-threshold="{{p8.supportThreshold}}" min-participation="{{p8.minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="{{p8.totalYes}}" total-no="{{p8.totalNo}}" total-abstain="{{p8.totalAbstain}}" support-threshold="{{p8.supportThreshold}}" min-participation="{{p8.minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
                     <div style="padding-top: 32px;">
-                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="w-fit" href="#">Vote on proposal</x-import>
+                      <dc-import name="DaoProposalVote" mode="{{p8.voteMode}}" selected="{{p8.selected}}" voted-as="{{p8.votedAs}}" on-open="{{p8.onOpen}}" on-select="{{p8.onSelect}}" on-submit="{{p8.onSubmit}}" on-cancel="{{p8.onCancel}}" hint-size="100%,40px"></dc-import>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p8.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -60,7 +64,7 @@
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p8.two}}" is-enabled="{{p8.yes}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p8.two}}" is-enabled="{{p8.yes}}" is-loading="{{p8.simLoading}}" last-simulation="{{p8.simLast}}" on-simulate="{{p8.onSimulate}}"></x-import>
               <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p8.two}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
 <x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p8.actions.usdc}}" action-function-selector="0xa9059cbb" chain-id="{{p8.one}}" index="{{p8.zero}}" read-only="{{p8.yes}}"></x-import>
@@ -130,7 +134,10 @@
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="PENDING" end-date="{{p7.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="PENDING">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="0" total-no="0" total-abstain="0" support-threshold="{{p7.supportThreshold}}" min-participation="{{p7.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
-                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p7.settings}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p7.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -139,7 +146,7 @@
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p7.one}}" is-enabled="{{p7.yes}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p7.one}}" is-enabled="{{p7.yes}}" is-loading="{{p7.simLoading}}" last-simulation="{{p7.simLast}}" on-simulate="{{p7.onSimulate}}"></x-import>
               <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p7.one}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
 <x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p7.action}}" action-function-selector="0xee57e36f" chain-id="{{p7.one}}" index="{{p7.zero}}" read-only="{{p7.yes}}"></x-import>
@@ -205,9 +212,13 @@
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="EXECUTABLE" end-date="{{p6.endDate}}">
-                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="EXECUTABLE">
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p6.votingStatus}}" end-date="{{p6.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="{{p6.votingStatus}}">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="9810000" total-no="910000" total-abstain="330000" support-threshold="{{p6.supportThreshold}}" min-participation="{{p6.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p6.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -216,14 +227,21 @@
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p6.one}}" is-enabled="{{p6.yes}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p6.one}}" is-enabled="{{p6.yes}}" is-loading="{{p6.simLoading}}" last-simulation="{{p6.simLast}}" on-simulate="{{p6.onSimulate}}"></x-import>
               <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p6.one}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
 <x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p6.action}}" chain-id="{{p6.one}}" index="{{p6.zero}}" read-only="{{p6.yes}}"></x-import>
                 </x-import>
+                <sc-if value="{{p6.canExecute}}" hint-placeholder-val="{{true}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p6.dropdownItems}}">
-                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="#">Execute</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" on-click="{{p6.onExecute}}">Execute</x-import>
                 </x-import>
+                </sc-if>
+                <sc-if value="{{p6.isExecuted}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p6.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p6.executedLink}}" target="_blank">View execution</x-import>
+                </x-import>
+                </sc-if>
               </x-import>
             </div>
           </main>
@@ -236,7 +254,7 @@
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-6</p></x-import></div>
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xac6399087027f972e6d2ab830dc9b33cda035642" link="{{p6.creatorLink}}" children="kofi-mensah.eth"></x-import></div>
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p6.publishedLink}}" children="{{p6.published}}"></x-import></div>
-                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Executable" variant="info" class-name="w-fit"></x-import></x-import>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p6.tagLabel}}" variant="{{p6.tagVariant}}" class-name="w-fit"></x-import></x-import>
               </x-import>
             </x-import>
 
@@ -285,6 +303,10 @@
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="ACCEPTED" end-date="{{p5.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACCEPTED">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="8240000" total-no="2130000" total-abstain="540000" support-threshold="{{p5.supportThreshold}}" min-participation="{{p5.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p5.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -357,6 +379,10 @@
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="REJECTED" end-date="{{p4.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="REJECTED">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="3140000" total-no="5420000" total-abstain="760000" support-threshold="{{p4.supportThreshold}}" min-participation="{{p4.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p4.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -429,6 +455,10 @@
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="EXECUTED" end-date="{{p3.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="EXECUTED">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="9870000" total-no="120000" total-abstain="400000" support-threshold="{{p3.supportThreshold}}" min-participation="{{p3.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p3.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -505,6 +535,10 @@
               <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="EXECUTED" end-date="{{p2.endDate}}">
                 <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="EXECUTED">
                   <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="11420000" total-no="640000" total-abstain="210000" support-threshold="{{p2.supportThreshold}}" min-participation="{{p2.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p2.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
                 </x-import>
               </x-import>
             </div>
@@ -547,29 +581,154 @@
         </div>
       </div>
 </sc-if>
+<dc-import name="TxFlowDialog" open="{{txOpen}}" title="{{tx.title}}" description="{{tx.description}}" steps="{{tx.steps}}" submit-label="{{tx.submitLabel}}" success-label="View proposal" summary="{{tx.summary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,0px"></dc-import>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"proposal":{"editor":"text","default":"MGP-8"},"onNav":{"editor":null}}'>
+<script type="text/x-dc" data-dc-script data-props='{"proposal":{"editor":"text","default":"MGP-8"},"onNav":{"editor":null},"wallet":{"editor":"text","default":""},"onConnect":{"editor":null}}'>
+// Global kit component for the Votes tab: the token plugin's vote list (apps/app: plugins/tokenPlugin/components/tokenVoteList)
+// is a DataList of VoteDataListItem rows. Built with createElement so the pagination counts real children (page size 6).
+window.DaoVoteList = (props) => {
+  const h = React.createElement, K = GovUiKit;
+  const votes = props.votes || [];
+  const rows = votes.map((v) => h(K.VoteDataListItem.Structure, {
+    key: v.address,
+    voter: { address: v.address, name: v.name || undefined },
+    voteIndicator: v.indicator,
+    voteIndicatorDescription: v.indicator === 'abstain' ? undefined : 'to approve',
+    votingPower: String(v.vp),
+    tokenSymbol: 'MRD',
+    href: '#nav:member:' + v.address
+  }));
+  return h(K.DataList.Root, { entityLabel: 'Votes', itemsCount: votes.length, pageSize: 6, state: 'idle' },
+    h(K.DataList.Container, { emptyState: { heading: 'No votes found', description: 'No votes found.' } }, rows),
+    h(K.DataList.Pagination));
+};
+
+// Voters of the Meridian mock data (design/baseline-check/data.cjs PEOPLE[0..9]) and the vote choice rule of its VOTES table.
+const VOTERS = [
+  { name: 'nadia.eth', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', vp: 4850000 },
+  { name: 'kofi-mensah.eth', address: '0xac6399087027f972e6d2ab830dc9b33cda035642', vp: 3920000 },
+  { name: 'lenaweber.eth', address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', vp: 2740000 },
+  { name: '', address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', vp: 2115000 },
+  { name: 'sofiaruiz.eth', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', vp: 1680000 },
+  { name: 'tomas.eth', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', vp: 1245500 },
+  { name: '', address: '0x697d04244eda05202c0c06aea0bfeced540eb42d', vp: 980200 },
+  { name: 'marcusj.eth', address: '0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', vp: 760000 },
+  { name: 'chenwei.eth', address: '0x8a25faabbd80f71248328cf3a5867d3168210a46', vp: 512340 },
+  { name: '', address: '0x8ac8d965669201c92279ef49be1a5564b908ee27', vp: 388000 }
+];
+const VOTE_CYCLE = [2, 2, 3, 2, 1, 2, 3, 2, 2, 1, 2, 3]; // 1 abstain, 2 yes, 3 no
+const INDICATOR = { 1: 'abstain', 2: 'yes', 3: 'no' };
+
 // PART of the DAO prototype (mounted by Dao.dc.html). Props: proposal (slug MGP-1 ... MGP-8; unknown slugs show MGP-8),
+// onNav(target) - navigation, wallet ('connected' | ''), onConnect() - opens the connect dialog (Vote / Execute while disconnected).
+// Own parts: DaoProposalVote (vote area). Voting, simulation and execute (MGP-6) are simulated in this part's state.
 // onNav(target) - navigation only. The seven Meridian proposal screens (Proposal / ProposalMGP2..7) are lifted in, one
 // <sc-if> each; every hole is prefixed p<N>. (v<N>() below = that screen's renderVals). MGP-1 shows MGP-4 (the only
 // rejected-proposal screen). Links carry href="#nav:<target>"; one delegated click handler on each root calls onNav.
 class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { options: false, selected: '', txOpen: false, txKind: '', voted: '', executed: false, pendingVote: false, sim: {} };
+    this.timers = [];
+  }
+  componentDidUpdate(prev) {
+    // "Vote on proposal" clicked while disconnected: once the wallet connects, continue to the options (as the app's guard does).
+    if (this.state.pendingVote && prev.wallet !== 'connected' && this.props.wallet === 'connected') {
+      this.setState({ pendingVote: false, options: true });
+    }
+  }
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
   renderVals() {
     const nav = (t) => { if (this.props.onNav) this.props.onNav(t); };
     const m = /^(?:MGP-)?(\d+)$/i.exec(String(this.props.proposal || '').trim());
     let n = m ? Number(m[1]) : 8;
     if (n === 1) n = 4;
     if (n < 2 || n > 8) n = 8;
-    return {
+    const st = this.state;
+    const up = (k, v) => this.setState({ [k]: v });
+    const connected = this.props.wallet === 'connected';
+    const mine = connected ? st.voted : '';
+    const settings = this.v7().settings;
+    const votesOf = (k, extra) => {
+      if (k === 7) return [];
+      let list = VOTERS.map((m, i) => ({ name: m.name, address: m.address, vp: m.vp,
+        indicator: INDICATOR[k === 4 && i < 3 ? 3 : VOTE_CYCLE[(i + k) % 12]] }));
+      if (k === 8) list = list.filter((v) => v.address !== VOTERS[0].address); // nadia (the mock wallet) has not voted on MGP-8 yet
+      return extra ? [extra].concat(list) : list;
+    };
+    const sim = (k) => {
+      const x = (st.sim || {})[k] || {};
+      return { simLoading: !!x.loading, simLast: x.last, onSimulate: () => this.simulate(k) };
+    };
+    const p = {
+      p8: this.v8(), p7: this.v7(), p6: this.v6(), p5: this.v5(), p4: this.v4(), p3: this.v3(), p2: this.v2()
+    };
+    [2, 3, 4, 5, 6, 7].forEach((k) => { p['p' + k].votes = votesOf(k); });
+    [6, 7, 8].forEach((k) => Object.assign(p['p' + k], sim(k)));
+    // MGP-8: voting
+    const me = { name: 'nadia.eth', address: VOTERS[0].address, vp: VOTERS[0].vp, indicator: mine };
+    const base = { yes: 6215000, no: 1104000, abstain: 402000 };
+    if (mine) base[mine] += VOTERS[0].vp;
+    Object.assign(p.p8, {
+      votes: votesOf(8, mine ? me : null),
+      totalYes: base.yes, totalNo: base.no, totalAbstain: base.abstain,
+      voteMode: mine ? 'voted' : st.options && connected ? 'options' : 'start',
+      selected: st.selected, votedAs: mine || 'yes',
+      onOpen: () => {
+        if (!connected) { this.setState({ pendingVote: true }); if (this.props.onConnect) this.props.onConnect(); }
+        else this.setState({ options: true });
+      },
+      onSelect: (k) => up('selected', k),
+      onCancel: () => this.setState({ options: false, selected: '' }),
+      onSubmit: () => { if (st.selected) this.setState({ txOpen: true, txKind: 'vote' }); }
+    });
+    // MGP-6: execute
+    const done = !!st.executed;
+    Object.assign(p.p6, {
+      votingStatus: done ? 'EXECUTED' : 'EXECUTABLE',
+      statusTag: { label: done ? 'Executed' : 'Executable', variant: done ? 'success' : 'info' },
+      tagLabel: done ? 'Executed' : 'Executable', tagVariant: done ? 'success' : 'info',
+      canExecute: !done, isExecuted: done,
+      onExecute: () => {
+        if (!connected) { if (this.props.onConnect) this.props.onConnect(); return; }
+        this.setState({ txOpen: true, txKind: 'execute' });
+      }
+    });
+    const isVote = st.txKind === 'vote';
+    const tx = isVote ? {
+      title: 'Submit vote', description: 'To submit your vote, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Submit vote', steps: [],
+      summary: { type: 'vote', proposalId: 'MGP-8', proposalTitle: 'Fund the Q1 2027 Ecosystem Grants Program', voteIndicator: st.selected || 'yes', voteIndicatorDescription: st.selected === 'abstain' ? undefined : 'to approve' }
+    } : {
+      title: 'Execute proposal', description: 'To execute the proposal, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Execute proposal', steps: [], summary: null
+    };
+    return Object.assign({
       onClick: (e) => {
         const a = e.target && e.target.closest ? e.target.closest('a') : null;
         const h = a && a.getAttribute('href');
         if (h && h.indexOf('#nav:') === 0) { e.preventDefault(); nav(h.slice(5)); }
       },
       is8: n === 8, is7: n === 7, is6: n === 6, is5: n === 5, is4: n === 4, is3: n === 3, is2: n === 2,
-      p8: this.v8(), p7: this.v7(), p6: this.v6(), p5: this.v5(), p4: this.v4(), p3: this.v3(), p2: this.v2()
-    };
+      settings, tx, txOpen: st.txOpen,
+      closeTx: () => this.setState({ txOpen: false }),
+      txDone: () => {
+        if (this.state.txKind === 'vote') this.setState({ txOpen: false, voted: this.state.selected, options: false });
+        else this.setState({ txOpen: false, executed: true });
+      }
+    }, p);
+  }
+
+  simulate(k) {
+    const cur = Object.assign({}, this.state.sim);
+    cur[k] = Object.assign({}, cur[k], { loading: true });
+    this.setState({ sim: cur });
+    this.timers.push(setTimeout(() => {
+      const nxt = Object.assign({}, this.state.sim);
+      nxt[k] = { loading: false, last: { timestamp: Date.now(), url: 'https://dashboard.tenderly.co/explorer', status: 'success' } };
+      this.setState({ sim: nxt });
+    }, 1600));
   }
 
   v8() {

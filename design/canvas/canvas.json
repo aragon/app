@@ -243,6 +243,170 @@
       "h": 900,
       "title": "CreateWorkspaceFlowPublishDialog",
       "page": "parts"
+    },
+    "CreateProposalFlow.dc.html": {
+      "x": 6080,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Create a proposal",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "SafeFlow.dc.html": {
+      "x": 7600,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Safe account",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "DaoProposalVote.dc.html": {
+      "x": 0,
+      "y": 7880,
+      "w": 1440,
+      "h": 900,
+      "title": "DaoProposalVote",
+      "page": "parts"
+    },
+    "DaoDelegateForm.dc.html": {
+      "x": 1520,
+      "y": 7880,
+      "w": 380,
+      "h": 520,
+      "title": "DaoDelegateForm",
+      "page": "parts"
+    },
+    "DaoDelegateDialog.dc.html": {
+      "x": 1980,
+      "y": 7880,
+      "w": 600,
+      "h": 600,
+      "title": "DaoDelegateDialog",
+      "page": "parts"
+    },
+    "DaoTransactionDetailDialog.dc.html": {
+      "x": 2660,
+      "y": 7880,
+      "w": 1440,
+      "h": 900,
+      "title": "DaoTransactionDetailDialog",
+      "page": "parts"
+    },
+    "DaoPermissions.dc.html": {
+      "x": 4180,
+      "y": 7880,
+      "w": 1100,
+      "h": 900,
+      "title": "DaoPermissions",
+      "page": "parts"
+    },
+    "DaoProcess.dc.html": {
+      "x": 5360,
+      "y": 7880,
+      "w": 1100,
+      "h": 900,
+      "title": "DaoProcess",
+      "page": "parts"
+    },
+    "DaoWalletConnect.dc.html": {
+      "x": 6540,
+      "y": 7880,
+      "w": 480,
+      "h": 400,
+      "title": "DaoWalletConnect",
+      "page": "parts"
+    },
+    "DaoWalletUser.dc.html": {
+      "x": 7100,
+      "y": 7880,
+      "w": 480,
+      "h": 400,
+      "title": "DaoWalletUser",
+      "page": "parts"
+    },
+    "CreateProposalFlowMetadata.dc.html": {
+      "x": 7660,
+      "y": 7880,
+      "w": 1216,
+      "h": 1500,
+      "title": "CreateProposalFlowMetadata",
+      "page": "parts"
+    },
+    "CreateProposalFlowActions.dc.html": {
+      "x": 0,
+      "y": 9500,
+      "w": 1216,
+      "h": 700,
+      "title": "CreateProposalFlowActions",
+      "page": "parts"
+    },
+    "CreateProposalFlowSettings.dc.html": {
+      "x": 1296,
+      "y": 9500,
+      "w": 1216,
+      "h": 800,
+      "title": "CreateProposalFlowSettings",
+      "page": "parts"
+    },
+    "CreateProposalFlowNext.dc.html": {
+      "x": 2592,
+      "y": 9500,
+      "w": 800,
+      "h": 48,
+      "title": "CreateProposalFlowNext",
+      "page": "parts"
+    },
+    "CreateProposalFlowAssetDialog.dc.html": {
+      "x": 3472,
+      "y": 9500,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProposalFlowAssetDialog",
+      "page": "parts"
+    },
+    "CreateProposalFlowSimulateDialog.dc.html": {
+      "x": 4992,
+      "y": 9500,
+      "w": 1440,
+      "h": 900,
+      "title": "CreateProposalFlowSimulateDialog",
+      "page": "parts"
+    },
+    "SafeFlowPage.dc.html": {
+      "x": 6512,
+      "y": 9500,
+      "w": 1440,
+      "h": 1900,
+      "title": "SafeFlowPage",
+      "page": "parts"
+    },
+    "SafeFlowReviewDialog.dc.html": {
+      "x": 0,
+      "y": 11520,
+      "w": 1440,
+      "h": 900,
+      "title": "SafeFlowReviewDialog",
+      "page": "parts"
+    },
+    "SafeFlowReviewContent.dc.html": {
+      "x": 1520,
+      "y": 11520,
+      "w": 432,
+      "h": 520,
+      "title": "SafeFlowReviewContent",
+      "page": "parts"
+    },
+    "SafeFlowTxDialog.dc.html": {
+      "x": 2032,
+      "y": 11520,
+      "w": 1440,
+      "h": 900,
+      "title": "SafeFlowTxDialog",
+      "page": "parts"
     }
   },
   "order": [
@@ -272,7 +436,27 @@
     "CreateWorkspaceFlowTargets.dc.html",
     "CreateWorkspaceFlowAddressFields.dc.html",
     "CreateWorkspaceFlowAccounts.dc.html",
-    "CreateWorkspaceFlowPublishDialog.dc.html"
+    "CreateWorkspaceFlowPublishDialog.dc.html",
+    "CreateProposalFlow.dc.html",
+    "SafeFlow.dc.html",
+    "DaoProposalVote.dc.html",
+    "DaoDelegateForm.dc.html",
+    "DaoDelegateDialog.dc.html",
+    "DaoTransactionDetailDialog.dc.html",
+    "DaoPermissions.dc.html",
+    "DaoProcess.dc.html",
+    "DaoWalletConnect.dc.html",
+    "DaoWalletUser.dc.html",
+    "CreateProposalFlowMetadata.dc.html",
+    "CreateProposalFlowActions.dc.html",
+    "CreateProposalFlowSettings.dc.html",
+    "CreateProposalFlowNext.dc.html",
+    "CreateProposalFlowAssetDialog.dc.html",
+    "CreateProposalFlowSimulateDialog.dc.html",
+    "SafeFlowPage.dc.html",
+    "SafeFlowReviewDialog.dc.html",
+    "SafeFlowReviewContent.dc.html",
+    "SafeFlowTxDialog.dc.html"
   ],
   "notes": {
     "proto-desktop": {
@@ -280,7 +464,7 @@
       "y": 0,
       "text": "Prototypes",
       "kind": "title1",
-      "maxW": 6000,
+      "maxW": 8000,
       "page": "prototypes"
     },
     "parts-title": {

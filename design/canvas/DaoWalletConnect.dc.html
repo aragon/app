@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Connect wallet dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isDialog}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Connect wallet" hidden-description="Connect your wallet to Aragon">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:24px;padding:32px 24px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<dc-import name="AragonLogo" size="lg" hint-size="123px,40px"></dc-import>
+<p style="margin:0;font-size:20px;line-height:1.25;font-weight:400;color:var(--color-neutral-500)">wants to connect to your wallet</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;font-size:14px;line-height:1.25;font-weight:400;color:var(--color-neutral-500)">
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px">
+<x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="primary"></x-import>
+<p style="margin:0;font-size:14px;line-height:1.25">View-only permissions</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="APP_MEMBERS" size="sm" variant="primary"></x-import>
+<p style="margin:0;font-size:14px;line-height:1.25">Trusted by 7,500+ DAOs and $27B+</p>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:12px"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" size="sm" variant="primary"></x-import>
+<x-import component-from-global-scope="GovUiKit.Link" href="https://github.com/aragon/osx/blob/main/audits/Halborn_AragonOSx_v1_4_Smart_Contract_Security_Assessment_Report_2025_01_03.pdf" is-external="{{yes}}"><span style="font-size:14px">Audited smart contracts</span></x-import>
+</div>
+</div>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Footer" dc-props="{{footerProps}}"></x-import>
+</x-import>
+</sc-if>
+
+<sc-if value="{{isAppkit}}" hint-placeholder-val="{{false}}">
+<div class="wc-scrim" onClick="{{close}}">
+  <div class="wc-modal" role="dialog" aria-label="Connect Wallet" onClick="{{stop}}">
+    <div class="wc-modal__head">
+      <span class="wc-modal__help">?</span>
+      <span class="wc-modal__title">Connect Wallet</span>
+      <button type="button" class="wc-modal__close" aria-label="Close" onClick="{{close}}">&times;</button>
+    </div>
+    <label class="wc-modal__terms"><span class="wc-modal__check"></span>I agree to our terms of service and privacy policy</label>
+    <div class="wc-modal__list">
+      <sc-for list="{{wallets}}" as="w" hint-placeholder-count="4">
+        <button type="button" class="wc-row" onClick="{{w.pick}}">
+          <span class="wc-row__icon" style="background:{{w.color}}"></span>
+          <span class="wc-row__name">{{w.name}}</span>
+          <span class="wc-row__tag" style="background:{{w.tagBg}};color:{{w.tagFg}}">{{w.tag}}</span>
+          <span class="wc-row__chev">&rsaquo;</span>
+        </button>
+      </sc-for>
+    </div>
+    <p class="wc-modal__foot">UX by <b>reown</b></p>
+  </div>
+</div>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"on-pick":{"editor":null},"$preview":{"width":480,"height":400}}'>
+// Props: onClose() (dismiss without connecting), onPick() (a wallet was chosen: the shell sets wallet to connected).
+// Step 1 = the app's connect wallet dialog (connectWalletDialog.tsx); "Connect" opens step 2 = the wallet SDK modal
+// (Reown AppKit, third-party markup) where choosing any wallet connects. Mount only while open.
+class Component extends DCLogic {
+  state = { step: 'dialog' };
+  renderVals() {
+    const step = this.state.step;
+    const close = () => { if (this.props.onClose) this.props.onClose(); };
+    const pick = () => { if (this.props.onPick) this.props.onPick(); };
+    const w = (name, color, tag, tagBg, tagFg) => ({ name, color, tag, tagBg, tagFg, pick });
+    return {
+      yes: true,
+      isDialog: step === 'dialog', isAppkit: step === 'appkit',
+      close, stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) close(); } },
+      footerProps: {
+        primaryAction: { iconLeft: 'BLOCKCHAIN_WALLET', label: 'Connect', onClick: () => this.setState({ step: 'appkit' }) },
+        secondaryAction: { label: 'Cancel', onClick: close }
+      },
+      wallets: [
+        w('MetaMask', '#f9a870', 'INSTALLED', '#bfe8cf', '#26b562'),
+        w('WalletConnect', '#3b99fc', 'QR CODE', '#d6e4ff', '#3396ff'),
+        w('Coinbase Wallet', '#0052ff', '', 'transparent', 'inherit'),
+        w('Rabby Wallet', '#8697ff', '', 'transparent', 'inherit'),
+        w('Rainbow', '#9a5ce6', '', 'transparent', 'inherit')
+      ]
+    };
+  }
+}
+</script>
+</body></html>

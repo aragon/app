@@ -1,7 +1,7 @@
 {
     "canvas": "https://claude.ai/artifact/NnpGqxhynigQPwVyKgsc5p",
     "branch": "docs/design-prototypes",
-    "canvasVersion": "1795025106-4774",
+    "canvasVersion": "1795026852-70c0",
     "appCommit": "041dc089dc666832f310ffb6a39922e4404871d5",
     "kit": {
         "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
@@ -10,60 +10,68 @@
     },
     "assets": {
         "assets/mock/avatar/atlas.svg": {
-            "url": "/_blob/327095789fd313e8a8c8bfac40906cba",
-            "sha256": "5953a8853b752ed0dcbb35a74cd1c52153788472ac55e1b15cd63251951022a6"
+            "url": "/_blob/5354c4f13c8f44c888b1d1f21f1991fe",
+            "sha256": "c53516c2bbd2acee1d7e1379932a0ed65e4dded61fd4dae4850db0c42b12bf1a"
         },
         "assets/mock/avatar/greenfield.svg": {
-            "url": "/_blob/1062bb2213ec5ad0ad61ccc59d67d5e5",
-            "sha256": "3e1763cc67dc3dbfbc7714452c5b98b54a78ad3bad899219528f36c32ab6113b"
+            "url": "/_blob/7251c6da95fa16a20a30e0b33adfbf3a",
+            "sha256": "40c2fd9dfc50fe04b11e29e55a4a3150ec751e7ca5502eeee1b4ed1132d7c7df"
         },
         "assets/mock/avatar/harbor.svg": {
-            "url": "/_blob/c5a472271d9e0cf0ea5d81cb8a62bea7",
-            "sha256": "45ae7b5849eefe58fb0eaf66251ee663b1de1dea219b3488c4c83eb0ddaa8aa1"
+            "url": "/_blob/9191c90077250bf886f0012e1cf16b6c",
+            "sha256": "e3f6e52fe1b680c605aae527385a6647b867b5f6b3ff213879e237eb14a1fc58"
         },
         "assets/mock/avatar/lido.svg": {
-            "url": "/_blob/d2052ac1a02e5055f65977b11d9372c6",
-            "sha256": "adaeee1a8e3ecbb3e325c0881def253e50b9cb4683c12be1336a3cec34e96423"
+            "url": "/_blob/0cf25461f7c7868740df05214176494f",
+            "sha256": "6cb25304d0a1d2551227cf47968d280cde3e26efddea027f46c34437e6bdd947"
         },
         "assets/mock/avatar/meridian.svg": {
-            "url": "/_blob/1f18f5de305cdcabab769025661fa995",
-            "sha256": "021f8a0a70fd96861e6da6fd0de8b2004f7e2589707ef97afcc9015844613f07"
+            "url": "/_blob/f0df274ff588ec803487cb6389e67618",
+            "sha256": "e706b1e54dfc3857857c2916b901e87d891566c3ca9a16e44726bd1bca26ae07"
         },
         "assets/mock/avatar/nexus.svg": {
-            "url": "/_blob/3166b033d0b8ad38ba628e23b8c29237",
-            "sha256": "cf989dec0a2557dd2a5b4e595ac0464485837e7cdcb77439c78e19ebbf5ccc31"
+            "url": "/_blob/198ff99c9c414e2f229794cf1d231d1c",
+            "sha256": "135e9485a2a7f1b006aca03e63d69daf1cd981d61bdd99727f1ae7c5c3b488e7"
+        },
+        "assets/mock/avatar/northstar.svg": {
+            "url": "/_blob/3d2a492e0e0b529282b159c6a5446dc2",
+            "sha256": "a812f0a7e21f5479f4c3967bd255659a757cbcc8f9a40c54ed7f67af0ebadc7f"
         },
         "assets/mock/avatar/orbit.svg": {
-            "url": "/_blob/3eccbfc63fe997b4676b2f67e9737e2e",
-            "sha256": "f75e24694b68310b2590ee8c600eacf6a31599e4249e85f25ea20c318c75e5ed"
+            "url": "/_blob/a628fbfa65dd9b5bd113be02f8ba4903",
+            "sha256": "419de4a6586971513bffd66e91d96ce2643edb682e913ac66abb9dc473270661"
         },
         "assets/mock/avatar/polygon-village.svg": {
-            "url": "/_blob/4cc0c57c62df1187673c3772fdbd3327",
-            "sha256": "3dbc4093bafeb84c9dfed3a5b65f1efb2bb7021fde02b2c4999aa9e91a2b0aef"
+            "url": "/_blob/b30a7acfe9698b6f4385c10302251246",
+            "sha256": "67eaddb4af023af434b36eb87213995c7dbb9644ba680902daa5c10a65d6dff7"
         },
         "assets/mock/avatar/solace.svg": {
-            "url": "/_blob/6bb04dc8b6b4b6fb7c3f9b0f99471340",
-            "sha256": "a917242144bb5c899c159f9232864058577a3b27a9dbebd809e8329b106f43d3"
+            "url": "/_blob/da1ca34160217f3fa4d39e7aa4b1b10c",
+            "sha256": "f08d7f8be1d87c0ec47bd6c89a80343d6b09363ce2eace70a99dec4f6b373415"
         },
         "assets/mock/token/dai.svg": {
-            "url": "/_blob/1cfa7a36a98866c7d210f4f9bf8f711b",
-            "sha256": "e2554fb091fdd1b7f5d541d1b8a873bb5b0280b635ea0f9dbf742695a327bc6f"
+            "url": "/_blob/d202ef21547c019047e1227ee79e13b3",
+            "sha256": "928c29056aedbf72e0e4270b9f7e95db1e75fc3eaa702fc076f9181acbfcca4b"
         },
         "assets/mock/token/eth.svg": {
-            "url": "/_blob/94df6bea65af4bc0f307eb73a0c126b5",
-            "sha256": "291aeda6dfb4d61135fabdc88c6095b397a5f738c316f915e366c3856666130c"
+            "url": "/_blob/1945136c7ef7384842f8402f6f9b4f65",
+            "sha256": "20079b9f60b56832eb139d0f9689765d658fb010830e53675b9d6b2e67378e0e"
         },
         "assets/mock/token/mrd.svg": {
-            "url": "/_blob/8a47b6f7e0461ce4c254ac3913671f3a",
-            "sha256": "f11d4117bf177ea3d3a7e398ec8f07864489e0069d9a4ad107fc3da9dc736915"
+            "url": "/_blob/89a204384158984dd1fbe4d4bda548ac",
+            "sha256": "07c35f5de6f47aeb12aa5baeaf4124f6a5ea298ede2043092e9c87aac574134b"
+        },
+        "assets/mock/token/nsp.svg": {
+            "url": "/_blob/8ae44b82b19b8a6ea7c365b4648ba347",
+            "sha256": "bbace8b1e2384a7d8ec9c54590f10e2ff72988329d07ca1943baa49fb5acc2ad"
         },
         "assets/mock/token/usdc.svg": {
-            "url": "/_blob/ae47d2ed056b251c34f2b5335b12c5b0",
-            "sha256": "cea56fe7d39d37c1497bb50c37410e6e8d16b5ba02771e98c57a70bc1969277b"
+            "url": "/_blob/73af205814001280f6d51e102f4d631a",
+            "sha256": "99f2456c8b18bece286e8c55fa395c6a7c7854c20a13849424238023d064b807"
         },
         "assets/mock/token/weth.svg": {
-            "url": "/_blob/10a7f6c2c2e0073ac1fa53cb3a80ccb6",
-            "sha256": "2e1c4c928926233170f89eff346e63058c23a15f74d0eb74e96b5394aad1ccc6"
+            "url": "/_blob/fe665abbe8bbe793ea4bea40c5c687c3",
+            "sha256": "e5a506c1ee289e99c9b64d99cceee93d2bacd3840d9e2cda89b5808920f9c52e"
         },
         "assets/net_bg.svg": {
             "url": "/_blob/36167d8fe160d8f9546fc1d1417b5fec",
@@ -77,21 +85,21 @@
             "url": "/_blob/fad3b74d345f1fdccca2f494cd9a2353",
             "sha256": "75436a46bc587f7bcf037ba6e1df3d409cae5e24ce9a59458f412501ebcc25ea"
         },
-        "assets/networks/base.svg": {
-            "url": "/_blob/58a921953e94863afce690674cf44190",
-            "sha256": "ed0e3769159d82c07c6e18a8e3c9d416dfb52e1e948afefe4f21c1be0ecfc3f4"
-        },
         "assets/networks/base_sepolia.svg": {
             "url": "/_blob/8bc263a26d2726b2480ab1879159b600",
             "sha256": "03c2a764222cb9a64ee154c6f7f5f305648d52a45ab36d53e42bf7fcd39625ba"
         },
-        "assets/networks/bnb.svg": {
-            "url": "/_blob/1d849fc17b1ebb6e620f226d979ec2b2",
-            "sha256": "d068cbf5169368d3e27992d205e7891f2a376908fb6d6f5edbacf11a3f058c61"
+        "assets/networks/base.svg": {
+            "url": "/_blob/58a921953e94863afce690674cf44190",
+            "sha256": "ed0e3769159d82c07c6e18a8e3c9d416dfb52e1e948afefe4f21c1be0ecfc3f4"
         },
         "assets/networks/bnb_testnet.svg": {
             "url": "/_blob/8528723c86b6cac6799e3c007946756f",
             "sha256": "50aa96fe0927b8631bde4c0bdd52693b55ed9381e395d45f8db561f34b281829"
+        },
+        "assets/networks/bnb.svg": {
+            "url": "/_blob/1d849fc17b1ebb6e620f226d979ec2b2",
+            "sha256": "d068cbf5169368d3e27992d205e7891f2a376908fb6d6f5edbacf11a3f058c61"
         },
         "assets/networks/chiliz.svg": {
             "url": "/_blob/aac17480e8446c82df9d5518741e9fbd",
@@ -125,13 +133,13 @@
             "url": "/_blob/7a6bc230d1575fd80ee06707ee6c4811",
             "sha256": "e8e723342ac2ba34ed7b6375f24418f1c503cea659debe42535b1162976ce52f"
         },
-        "assets/networks/polygon.svg": {
-            "url": "/_blob/87b075b1c5b91eb7291ab49005cc9ee0",
-            "sha256": "f839a5ab5d8e401be89bc4d283156001c09f489bf7419da3c34e209569943cdf"
-        },
         "assets/networks/polygon_amoy.svg": {
             "url": "/_blob/8b09f80a6cdf86edcbaaae4a5f7c36b6",
             "sha256": "ee20c1c8278f4d7ffd7f11a8072694a5ddf0ab169c5989f5b19638a20ec7e396"
+        },
+        "assets/networks/polygon.svg": {
+            "url": "/_blob/87b075b1c5b91eb7291ab49005cc9ee0",
+            "sha256": "f839a5ab5d8e401be89bc4d283156001c09f489bf7419da3c34e209569943cdf"
         },
         "assets/networks/robinhood.svg": {
             "url": "/_blob/885c5c6fe60c3973462d29e52f65502a",

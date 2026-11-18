@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Safe review dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Review transaction" hidden-description="Review the Safe transaction">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Review transaction" on-close="{{close}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <div class="sf-dialog-body">
+      <dc-import name="SafeFlowReviewContent" tx="{{tx}}" hint-size="100%,300px"></dc-import>
+
+      <div class="sf-sim">
+        <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{one}}" is-enabled="{{yes}}" is-loading="{{simulating}}" last-simulation="{{lastSimulation}}" on-simulate="{{simulate}}"></x-import>
+      </div>
+
+      <div class="sf-card">
+        <x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container">
+          <x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{progressDescription}}" show-status="{{showStatus}}" threshold-indicator="{{threshold}}" value="{{progress}}" variant="neutral"></x-import>
+        </x-import>
+        <ul class="sf-signers">
+          <sc-for list="{{tx.ownerRows}}" as="o" hint-placeholder-count="5">
+            <li class="sf-signer">
+              <x-import component-from-global-scope="GovUiKit.AddressOutput" address="{{o.address}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.Tag" label="{{o.label}}" variant="{{o.variant}}"></x-import>
+            </li>
+          </sc-for>
+        </ul>
+        <sc-if value="{{tx.waiting}}" hint-placeholder-val="{{false}}">
+          <div class="sf-alert">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{waitingTitle}}" variant="warning">
+              <p>{{waitingText}}</p>
+            </x-import>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"tx":{"editor":null},"connected":{"editor":"boolean","default":false},"onClose":{"editor":null},"onAction":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Review dialog of a pending Safe transaction. Source: modules/safe/dialogs/safeTransactionReviewDialog (title "Review transaction",
+// SafeTransactionReviewContent) + the simulation card (components/safeTransactionSimulation, ActionSimulation) + the approvals and
+// actions of components/safeTransactionVoting (breakdown, "queued behind nonce" alert, Approve / Approved / Execute buttons).
+// The app shows these on different surfaces (review dialog from the list; voting card + SafeTransactionDialog elsewhere); the
+// prototype puts the actions in this dialog's footer so the sign flow is reachable from the page.
+// Props: open, tx (entry derived by SafeFlow: count, required, ready, waiting, confirmed, ownerRows...), connected,
+//   onClose(), onAction('approve' | 'execute') (the flow opens SafeFlowTxDialog, connecting the wallet first when needed).
+// Footer: ready -> "Execute Safe transaction"; waiting for nonce -> same, disabled; not yet approved -> "Approve transaction";
+// approved by the connected owner -> "Approved" (disabled, checkmark). Simulation: success, "Simulate again" re-runs for ~1.2 s.
+// Source-only: no screenshot exists for any state of this dialog.
+class Component extends DCLogic {
+  state = { simulating: false, simAt: 0 };
+  timer = null;
+  componentWillUnmount() { if (this.timer) clearTimeout(this.timer); }
+  simulate = () => {
+    if (this.timer) clearTimeout(this.timer);
+    this.setState({ simulating: true });
+    this.timer = setTimeout(() => this.setState({ simulating: false, simAt: Date.now() }), 1200);
+  };
+  renderVals() {
+    const p = this.props;
+    const tx = p.tx || { ownerRows: [], count: 0, required: 3 };
+    const onClose = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    const act = (mode) => () => { if (typeof p.onAction === 'function') p.onAction(mode); };
+    let primary;
+    if (tx.ready) primary = { label: 'Execute Safe transaction', onClick: act('execute') };
+    else if (tx.waiting) primary = { label: 'Execute Safe transaction', disabled: true };
+    else if (tx.confirmed) primary = { label: 'Approved', iconLeft: 'CHECKMARK', disabled: true };
+    else primary = { label: 'Approve transaction', onClick: act('approve') };
+    const owners = 5;
+    const simAt = this.state.simAt || (Date.now() - 20 * 60000);
+    return {
+      yes: true, one: 1, tx,
+      isOpen: p.open === undefined ? true : !!p.open,
+      close: onClose,
+      openChange: (o) => { if (!o) onClose(); },
+      noFocus: (e) => e.preventDefault(),
+      simulating: this.state.simulating,
+      lastSimulation: { status: 'success', timestamp: simAt, url: 'https://dashboard.tenderly.co/' },
+      simulate: this.simulate,
+      progress: (tx.count / owners) * 100, threshold: (tx.required / owners) * 100,
+      showStatus: tx.count < tx.required,
+      progressDescription: { value: tx.count, text: 'of ' + owners + ' members' },
+      waitingTitle: 'This transaction is queued behind nonce ' + (tx.currentNonce || '') + '.',
+      waitingText: 'It can be executed once the Safe reaches nonce ' + (tx.nonceText || '') + '.',
+      primary,
+      secondary: { label: 'Close', onClick: onClose }
+    };
+  }
+}
+</script>
+</body>
+</html>

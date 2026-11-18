@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Transaction detail dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Executed" hidden-description="Details of the execution transaction">
+<x-import component-from-global-scope="GovUiKit.TransactionDetail.Root" on-close="{{close}}" on-click="{{click}}">
+<x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{one}}" date="{{tx.date}}" executed-by="{{tx.executedBy}}" proposal-href="{{tx.proposalHref}}" proposal-id="{{tx.proposalId}}" total-actions="{{one}}" transaction-hash="{{tx.hash}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{tx.action}}" action-function-selector="{{tx.selector}}" chain-id="{{one}}" index="{{zero}}" read-only="{{yes}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import>
+</x-import>
+</x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tx":{"editor":"text","default":"mgp3"},"onClose":{"editor":null},"onNav":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// PART of the DAO transactions page (mounted by DaoTransactions.dc.html while a row is open).
+// Props: tx ('mgp3' = Oct 21 metadata update | 'mgp2' = Oct 9 contributor-compensation transfer), onClose(), onNav(target).
+// Mirrors apps/app modules/finance/dialogs/transactionDetailDialog: TransactionDetail.Root (header "Executed" + close)
+// around TransactionDetailSummary (executed by plugin, proposal link, total actions, hash, date) and the read-only
+// ProposalActions list with "Download as JSON". The proposal link is href="#nav:proposal:<slug>"; it closes the dialog.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    const executedBy = { address: '0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', helptext: 'Token Voting v1.3' };
+    const txs = {
+      mgp3: {
+        date: '2026-10-21T18:18:00',
+        hash: '0xfee8380103b3036d0e3c2b4374353944b31cfda4336f02373f45b27574128e0f',
+        proposalId: 'MGP-3', proposalHref: '#nav:proposal:MGP-3', executedBy,
+        selector: '0xee57e36f',
+        action: { type: 'MetadataUpdate', from: dao, to: dao, data: '0xee57e36f', value: '0', inputData: { function: 'setMetadata', contract: 'DAO', parameters: [{ name: '_metadata', type: 'bytes', value: '0x697066733a2f2f62616679' }] } }
+      },
+      mgp2: {
+        date: '2026-10-09T06:18:00',
+        hash: '0x2fd72a3336796dc29d754442bbb87c555954e7bb9a1d7024065ac10698bc7717',
+        proposalId: 'MGP-2', proposalHref: '#nav:proposal:MGP-2', executedBy,
+        selector: '0xa9059cbb',
+        action: { type: 'Transfer', from: dao, to: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', value: '0', data: '0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000029e8d60800', inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: 'to', type: 'address', value: '0xdce3a01d0357efb601efac0fdd836d2e1b3bc242' }, { name: 'value', type: 'uint256', value: '180000000000' }] } }
+      }
+    };
+    const close = () => call(p.onClose);
+    return {
+      yes: true, zero: 0, one: 1,
+      tx: txs[p.tx] || txs.mgp3,
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      close,
+      click: (e) => {
+        const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+        if (!a) return;
+        e.preventDefault();
+        close();
+        call(p.onNav, a.getAttribute('href').slice(5));
+      },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) close(); } }
+    };
+  }
+}
+</script>
+</body>
+</html>

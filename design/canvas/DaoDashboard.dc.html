@@ -49,11 +49,12 @@
             <div class="page-section">
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Latest proposals</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS" href="CreateProposalFlow.dc.html">Proposal</x-import>
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{three}}" page-size="{{three}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container">
                   <sc-for list="{{proposals}}" as="p" hint-placeholder-count="3">
-                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" href="{{p.href}}"></x-import>
+                    <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{p.id}}" title="{{p.title}}" summary="{{p.summary}}" status="{{p.status}}" date="{{p.date}}" publisher="{{p.publisher}}" voted="{{p.voted}}" href="{{p.href}}"></x-import>
                   </sc-for>
                 </x-import>
                 <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:proposals" class-name="self-start">View all</x-import>
@@ -66,6 +67,21 @@
               </div>
               <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{six}}" page-size="{{six}}" state="idle">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+                  <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
+                  <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex min-w-fit flex-col items-start justify-center gap-y-3 py-4 md:min-w-44 md:py-6" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a">
+                    <div class="mb-1 flex w-full items-center justify-between">
+                      <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" responsive-size="{{mdSize}}" size="sm"></x-import>
+                      <x-import component-from-global-scope="GovUiKit.Tag" label="You" variant="neutral"></x-import>
+                    </div>
+                    <x-import component-from-global-scope="GovUiKit.Heading" as="h2" class-name="inline-block w-full truncate" size="h3">
+                      <x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" class-name="truncate" label="nadia.eth"></x-import>
+                    </x-import>
+                    <div class="flex flex-col gap-y-2">
+                      <x-import component-from-global-scope="GovUiKit.Heading" as="h3" class-name="text-sm leading-tight md:text-base" size="h5"><span class="text-neutral-800">214</span> <span class="text-neutral-500">Delegations</span></x-import>
+                      <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h5"><span class="text-neutral-800">4.85M</span><span class="text-neutral-500"> Voting Power</span></x-import>
+                    </div>
+                  </x-import>
+                  </sc-if>
                   <sc-for list="{{members}}" as="m" hint-placeholder-count="6">
                     <x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m.address}}" ens-name="{{m.ens}}" delegation-count="{{m.delegations}}" token-amount="{{m.votingPower}}" href="{{m.href}}"></x-import>
                   </sc-for>
@@ -98,7 +114,7 @@
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS" copy-value="0xc8c322384903ee8f11f511b71d0504237886bcde" link="{{addressLink}}" children="meridian.dao.eth"></x-import></div>
                 <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{creationLink}}" children="September 2025"></x-import>
               </x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#" class-name="w-full">View permissions</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:permissions" class-name="w-full">View permissions</x-import>
             </x-import>
 
             <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
@@ -119,8 +135,9 @@
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"$preview":{"width":1100,"height":2300}}'>
-// DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data.cjs (Meridian DAO).
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":2300}}'>
+// Props: onNav(target), wallet ('connected' | ''), onConnect(). Connected variant (ConnectedDashboard.dc.html): MGP-8 shows voted, MGP-7 published by You, nadia.eth first in Members with the You tag.
+  // DAO dashboard (apps/app: modules/dashboard/pages/daoDashboardPage). Mock data: design/baseline-check/data.cjs (Meridian DAO).
 class Component extends DCLogic {
   // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
   click = (e) => {
@@ -136,13 +153,14 @@ class Component extends DCLogic {
     const hour = 3600000;
     const day = 24 * hour;
     const now = Date.now();
+    const connected = this.props.wallet === 'connected';
     const person = (address, name) => ({ address, name, link: '#nav:member:' + address });
     return {
-      click: this.click,
+      click: this.click, connected, mdSize: { md: 'md' },
       yes: true, two: 2, three: 3, six: 6,
       proposals: [
-        { id: 'MGP-8', href: '#nav:proposal:MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
-        { id: 'MGP-7', href: '#nav:proposal:MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth') },
+        { id: 'MGP-8', href: '#nav:proposal:MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, voted: connected, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
+        { id: 'MGP-7', href: '#nav:proposal:MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', connected ? 'You' : 'nadia.eth') },
         { id: 'MGP-6', href: '#nav:proposal:MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day - hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') }
       ],
       members: [
@@ -152,7 +170,7 @@ class Component extends DCLogic {
         { href: '#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', ens: undefined, delegations: 0, votingPower: 2115000 },
         { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', ens: 'sofiaruiz.eth', delegations: 54, votingPower: 1680000 },
         { href: '#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', ens: 'tomas.eth', delegations: 21, votingPower: 1245500 }
-      ],
+      ].filter((m, i) => !(connected && i === 0)),
       assets: [
         { name: 'USD Coin', symbol: 'USDC', amount: 1852340.55, price: 1, logo: 'assets/mock/token/usdc.svg' },
         { name: 'Ether', symbol: 'ETH', amount: 418.274, price: 3148.62, logo: 'assets/mock/token/eth.svg' },

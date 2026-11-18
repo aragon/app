@@ -49,7 +49,7 @@ body{margin:0}
 //   <dc-import name="WizardNav" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
 // Props:
 //   wizardName    the wizard's name (layoutWizard `name`, e.g. "Create DAO", "Create proposal").
-//   exitHref      where the close button goes (default Main.dc.html, the app's "/").
+//   exitHref      where the close button goes (default Explore.dc.html, the app's "/").
 //   daoName, daoAddress, daoAvatar
 //                 the DAO line under the name, shown by wizards opened inside a DAO (create proposal, create process);
 //                 leave daoAddress unset for create DAO / create workspace, which have no DAO.
@@ -62,7 +62,7 @@ class Component extends DCLogic {
     return {
       no: false,
       wizardName: p.wizardName ?? 'Create DAO',
-      exitHref: p.exitHref ?? 'Main.dc.html',
+      exitHref: p.exitHref ?? 'Explore.dc.html',
       hasDao: p.daoAddress != null,
       daoName: p.daoName,
       daoAddress: p.daoAddress,

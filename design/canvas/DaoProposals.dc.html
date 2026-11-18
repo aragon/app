@@ -19,7 +19,7 @@
           <main class="page-main page-main--titled">
             <header class="page-main__header">
               <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposals</x-import>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="#">Proposal</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="CreateProposalFlow.dc.html">Proposal</x-import>
             </header>
             <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
               <x-import component-from-global-scope="GovUiKit.DataList.Container">
@@ -62,8 +62,9 @@
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null}}'>
-// PART of the DAO prototype (mounted by Dao.dc.html). Props: onNav(target) - navigation only.
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
+// PART of the DAO prototype (mounted by Dao.dc.html). Props: onNav(target), wallet, onConnect (unused here). "+ Proposal" is a real link to CreateProposalFlow.dc.html.
+// The app shows no status tabs, search or sort on this page for a one-process DAO (Meridian): process tabs only appear with 2+ processes, so the list is static, as in the app.
 // Every link on the page has href="#nav:<target>"; one delegated click handler on the root turns it into onNav(target)
 // (kit Breadcrumbs / AddressOutput / list items take no onClick, only href).
 // Proposals list (apps/app: modules/governance/pages/daoProposalsPage). Mock data: design/baseline-check/data.cjs.

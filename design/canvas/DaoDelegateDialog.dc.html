@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Delegation dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Set up your delegation" hidden-description="Delegation form">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Set up your delegation"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pb-4">
+    <dc-import name="DaoDelegateForm" mode="dialog" wallet="{{wallet}}" current="{{current}}" initial="{{initial}}" on-submit="{{onSubmit}}" on-cancel="{{onClose}}" on-connect="{{onConnect}}" hint-size="100%,420px"></dc-import>
+  </x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"wallet":{"editor":"text","default":"connected"},"current":{"editor":"text","default":""},"initial":{"editor":"text","default":""},"on-close":{"editor":null},"on-submit":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":600,"height":600}}'>
+// The app's delegation onboarding form dialog (plugins/tokenPlugin/dialogs/tokenDelegationOnboardingFormDialog): title
+// "Set up your delegation", the delegation form in dialog mode. Opened by the "Delegate" button of a member page, prefilled.
+// Props: open; wallet; current (the wallet's present delegate); initial (prefilled address); on-close (Cancel, Esc, overlay);
+// on-submit(address) -> the host closes this and opens TxFlowDialog; on-connect.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const close = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    return {
+      isOpen: p.open === undefined ? true : !!p.open,
+      wallet: p.wallet || '', current: p.current || '', initial: p.initial || '',
+      onClose: close, onSubmit: (a) => { if (typeof p.onSubmit === 'function') p.onSubmit(a); },
+      onConnect: () => { if (typeof p.onConnect === 'function') p.onConnect(); },
+      noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

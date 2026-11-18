@@ -18,7 +18,7 @@ body{margin:0}
 </style>
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
-      <div class="page-container" onClick="{{click}}">
+      <div class="page-container" onClick="{{onClick}}">
         <header class="page-header">
           <div class="app-container page-header__inner">
             <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}"></x-import>
@@ -41,6 +41,7 @@ body{margin:0}
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Delegation</x-import>
               </div>
+              <div class="flex flex-col gap-4">
               <x-import component-from-global-scope="GovUiKit.Card" class-name="delegation-stats">
                 <div class="delegation-stats__row">
                   <div class="delegation-stats__stats">
@@ -60,10 +61,14 @@ body{margin:0}
                     </div>
                   </div>
                   <div class="delegation-stats__action">
-                    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" href="#">Delegate MRD</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Button" variant="{{btn.variant}}" size="md" on-click="{{btn.click}}">{{btn.label}}</x-import>
                   </div>
                 </div>
               </x-import>
+              <sc-if value="{{self}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="You don't have a delegate statement" description="Explain how you plan to participate in governance for this token so token holders can decide whether to delegate to you." object-illustration="{{usersIllustration}}" is-stacked="{{no}}" primary-button="{{statementButton}}"></x-import>
+              </sc-if>
+              </div>
             </div>
 
             <div class="page-section">
@@ -122,11 +127,17 @@ body{margin:0}
             </x-import>
           </aside>
         </div>
+        <dc-import name="DaoDelegateDialog" open="{{formOpen}}" wallet="{{wallet}}" current="{{current}}" initial="{{initial}}" on-close="{{closeForm}}" on-submit="{{startTx}}" on-connect="{{connect}}" hint-size="100%,1px"></dc-import>
+        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"member":{"editor":"text","default":"0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"},"on-nav":{"editor":null},"$preview":{"width":1440,"height":2400}}'>
-// Page part of Dao.dc.html. Props: member (address, lowercase), on-nav (function(target)).
+<script type="text/x-dc" data-dc-script data-props='{"member":{"editor":"text","default":"0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"},"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"on-connect":{"editor":null},"$preview":{"width":1440,"height":2400}}'>
+// Page part of Dao.dc.html. Props: member (address, lowercase), on-nav (function(target)), wallet ("connected" or ""), on-connect.
+// The Delegate button opens DaoDelegateDialog prefilled with this member, then TxFlowDialog (simulated); success stores the
+// delegate on window.__daoDelegate (shared with DaoMembers). Wallet connected + member nadia.eth = the "self" variant
+// (ConnectedMemberSelf.dc.html): "Manage delegation", delegate statement card, "by You". Disconnected click -> on-connect and,
+// once the wallet connects, the dialog opens as the app does.
 // Header, details aside and the three stats follow the member prop; the activity lists are always nadia.eth's.
 // DAO member details (apps/app: modules/governance/pages/daoMemberDetailsPage: delegationSection, voteList, daoProposalList,
 // explore/daoList). Mock data: design/baseline-check/data.cjs (Meridian DAO, nadia.eth).
@@ -141,6 +152,18 @@ class Component extends DCLogic {
     e.preventDefault();
     if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
   };
+  constructor(props) {
+    super(props);
+    this.state = { formOpen: false, txOpen: false, pending: '', afterConnect: false };
+  }
+  componentDidUpdate(prev) {
+    if (this.state.afterConnect && prev.wallet !== 'connected' && this.props.wallet === 'connected') this.setState({ afterConnect: false, formOpen: true });
+  }
+  closeForm = () => this.setState({ formOpen: false });
+  startTx = (address) => this.setState({ formOpen: false, txOpen: true, pending: address });
+  closeTx = () => this.setState({ txOpen: false });
+  txDone = () => { window.__daoDelegate = this.state.pending; this.setState({ txOpen: false }); };
+  connect = () => { if (typeof this.props.onConnect === 'function') this.props.onConnect(); };
   renderVals() {
     // Kit components print dates relative to the viewer's clock ("2 days ago"), so dates are offsets from now.
     const hour = 3600000;
@@ -150,12 +173,28 @@ class Component extends DCLogic {
     const row = table.find((r) => r[0] === String(this.props.member || '').toLowerCase()) || table[0];
     const checksum = row[1];
     const m = { address: row[0], checksum, ens: row[2] || '', vpText: row[3], balText: row[4], deleg: row[5] };
+    const SELF = '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a';
+    const connected = this.props.wallet === 'connected';
+    const self = connected && row[0] === SELF;
+    const cur = connected ? (window.__daoDelegate || '') : '';
+    const passive = self || (connected && cur === row[0]);
+    const btn = {
+      variant: passive ? 'secondary' : 'primary',
+      label: passive ? 'Manage delegation' : 'Delegate MRD',
+      click: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (!connected) { this.setState({ afterConnect: true }); this.connect(); return; }
+        this.setState({ formOpen: true });
+      }
+    };
     const title = row[2] || checksum.slice(0, 6) + '…' + checksum.slice(-4);
     return {
-      m, title,
+      onClick: this.click, m, title, btn, self, no: false, wallet: this.props.wallet || '', current: cur, initial: passive ? '' : row[0], noSteps: [],
+      usersIllustration: { object: 'USERS' }, statementButton: { label: 'Add delegate statement' },
+      formOpen: this.state.formOpen, txOpen: this.state.txOpen, closeForm: this.closeForm, startTx: this.startTx, closeTx: this.closeTx, txDone: this.txDone, connect: this.connect,
       yes: true, two: 2, three: 3, five: 5, seven: 7,
       breadcrumbs: [{ href: '#nav:members', label: 'Members' }, { label: title }],
-      nadia: { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', name: 'nadia.eth', link: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a' },
+      nadia: { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', name: self ? 'You' : 'nadia.eth', link: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a' },
       dates: {
         v8: now - 1.875 * day,
         v6: now - 5.875 * day,

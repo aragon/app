@@ -26,3 +26,69 @@
 .cwf-rows { display: flex; flex-direction: column; gap: 12px; }
 /* the part wrappers of the flow must not add layout of their own */
 .cwf-flow { display: contents; }
+
+/* Agent D: DAO shell + wallet. Connect-wallet SDK modal (Reown AppKit look, third-party markup). */
+.wc-scrim { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(235,235,235,.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.wc-modal { width: 100%; max-width: 368px; box-sizing: border-box; padding: 20px 14px 18px; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.08); color: #141414; font-family: var(--font-sans), sans-serif; }
+.wc-modal__head { position: relative; display: flex; align-items: center; justify-content: center; height: 32px; margin-bottom: 14px; }
+.wc-modal__title { font-size: 16px; line-height: 24px; letter-spacing: -.2px; }
+.wc-modal__help { position: absolute; left: 10px; top: 6px; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1.4px solid #141414; border-radius: 50%; font-size: 11px; line-height: 1; }
+.wc-modal__close { position: absolute; right: 8px; top: 0; width: 32px; height: 32px; border: 0; background: transparent; cursor: pointer; font-size: 24px; line-height: 32px; color: #141414; }
+.wc-modal__terms { display: flex; align-items: center; gap: 8px; padding: 0 12px 14px; font-size: 12px; line-height: 20px; letter-spacing: -.3px; color: #3a3a3a; }
+.wc-modal__check { flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.2px solid #8a8a8a; border-radius: 5px; }
+.wc-modal__list { display: flex; flex-direction: column; gap: 4px; }
+.wc-row { display: flex; width: 100%; align-items: center; gap: 12px; padding: 10px 12px; border: 0; border-radius: 14px; background: transparent; cursor: pointer; font: inherit; text-align: left; }
+.wc-row:hover { background: #f1f1f1; }
+.wc-row__icon { flex: none; width: 32px; height: 32px; border-radius: 8px; }
+.wc-row__name { flex: 1; font-size: 17px; line-height: 32px; letter-spacing: -.3px; color: #141414; }
+.wc-row__tag { padding: 0 8px; border-radius: 6px; font-size: 12px; line-height: 20px; letter-spacing: -.3px; }
+.wc-row__tag:empty { display: none; }
+.wc-row__chev { font-size: 22px; line-height: 1; color: #9a9a9a; }
+.wc-modal__foot { margin: 14px 0 0; text-align: center; font-size: 12px; line-height: 24px; color: #666; }
+
+/* proto-e.css: SafeFlow (Safe account prototype). Sources: modules/safe/components/safeTransactionReviewContent,
+   safeTransactionVoting, safePendingTransactionList, safeTransactionDialog. */
+
+/* Top bar: the app's navigation on non-DAO routes (logo + wallet), over the page header's white-to-grey gradient. */
+.sf-nav { position: sticky; top: 0; z-index: 10; display: flex; width: 100%; background: var(--color-neutral-0, #fff); border-bottom: 1px solid var(--color-neutral-100); }
+.sf-nav__inner { box-sizing: border-box; display: flex; width: 100%; max-width: 1280px; align-items: center; justify-content: space-between; gap: 24px; margin-inline: auto; padding: 12px 16px; }
+@media (min-width: 64rem) { .sf-nav__inner { padding: 16px 24px; } }
+
+.sf-muted { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+
+/* Dialog bodies */
+.sf-dialog-body { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; min-width: 0; }
+@media (min-width: 48rem) { .sf-dialog-body { padding-bottom: 24px; } }
+.sf-status { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-neutral-500); }
+.sf-review { display: flex; flex-direction: column; min-width: 0; }
+
+/* safeTransactionReviewContent: dl flex flex-col gap-3 pt-4; rows flex justify-between gap-4 */
+.sf-dl { display: flex; flex-direction: column; gap: 12px; margin: 0; padding-top: 16px; }
+.sf-dl--flush { padding-top: 0; }
+.sf-dl--tight { gap: 8px; padding-top: 0; }
+.sf-row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+.sf-row dt { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+.sf-row dd { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 1.25; color: var(--color-neutral-800); }
+@media (min-width: 48rem) { .sf-row dt, .sf-row dd { font-size: 16px; } }
+.sf-alert { margin-top: 16px; }
+.sf-box { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; border-radius: 12px; background: var(--color-neutral-50); padding: 16px; min-width: 0; }
+.sf-details { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.sf-hash { display: flex; flex-direction: column; gap: 4px; }
+.sf-hash dt { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+.sf-hash dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 16px; word-break: break-all; color: var(--color-neutral-800); }
+.sf-calls { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sf-call { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--color-neutral-100); padding-top: 12px; min-width: 0; }
+.sf-call__head { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
+.sf-call__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 1.25; color: var(--color-neutral-800); }
+@media (min-width: 48rem) { .sf-call__name { font-size: 16px; } }
+.sf-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 16px; word-break: break-all; color: var(--color-neutral-500); }
+
+/* Simulation card: kit ActionSimulation (a DataList.Item) */
+.sf-sim { min-width: 0; }
+
+/* safeTransactionVoting card: Card border border-neutral-100 p-4 shadow-neutral-sm md:p-6 */
+.sf-card { display: flex; flex-direction: column; gap: 16px; min-width: 0; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0, #fff); padding: 16px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
+@media (min-width: 48rem) { .sf-card { padding: 24px; } }
+.sf-signers { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sf-signer { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; font-size: 14px; }
+.sf-card .sf-alert { margin-top: 0; }

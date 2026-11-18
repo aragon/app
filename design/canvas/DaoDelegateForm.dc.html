@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Delegation form</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<form class="flex flex-col gap-4" onSubmit="{{submit}}">
+  <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Who would you like to delegate to?" name="selection" value="{{sel}}" on-value-change="{{onSel}}">
+    <x-import component-from-global-scope="GovUiKit.RadioCard" label="Yourself" value="YOURSELF"></x-import>
+    <x-import component-from-global-scope="GovUiKit.RadioCard" label="Someone else" value="OTHER"></x-import>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.AddressInput" label="Your delegation" help-text="Enter the address where you want to delegate your current or future token balance's voting power." placeholder="ENS or 0x…" disabled="{{isSelf}}" value="{{text}}" on-change="{{onText}}" enforce-checksum="{{no}}" alert="{{alert}}" variant="{{inputVariant}}" chain-id="{{chainId}}"></x-import>
+  <sc-if value="{{isDialog}}" hint-placeholder-val="{{no}}">
+    <div class="flex flex-col gap-9">
+      <p class="footer-info">Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.</p>
+      <div class="flex gap-3 justify-between">
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{cancel}}">Cancel</x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-right="CHEVRON_RIGHT" disabled="{{disabled}}" on-click="{{press}}">Delegate now</x-import>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{isPanel}}" hint-placeholder-val="{{yes}}">
+    <div class="flex flex-col gap-3">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" disabled="{{disabled}}" on-click="{{press}}">Delegate MRD</x-import>
+      <p class="footer-info">Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.</p>
+    </div>
+  </sc-if>
+</form>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["panel","dialog"],"default":"panel"},"wallet":{"editor":"text","default":"connected"},"current":{"editor":"text","default":""},"initial":{"editor":"text","default":""},"on-submit":{"editor":null},"on-cancel":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":380,"height":520}}'>
+// Delegation form (apps/app: plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation/tokenDelegationForm.tsx).
+// Used by DaoMembers (mode "panel", aside card) and DaoDelegateDialog (mode "dialog").
+// Props: mode panel|dialog; wallet ('connected' or ''); current (address the connected wallet delegates to now, '' = none);
+// initial (address to prefill as "Someone else"); on-connect (no args; used when wallet is empty); on-submit(address)
+// called with the resolved lowercase address; on-cancel (dialog mode).
+// No backend: a 0x address or an ENS-looking name (name.eth) always resolves; known member names map to their address.
+const SELF = '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a';
+const ENS = { 'nadia.eth': SELF, 'kofi-mensah.eth': '0xac6399087027f972e6d2ab830dc9b33cda035642', 'lenaweber.eth': '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'sofiaruiz.eth': '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'tomas.eth': '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'marcusj.eth': '0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', 'chenwei.eth': '0x8a25faabbd80f71248328cf3a5867d3168210a46', 'jonas-b.eth': '0x6dd753d9ebc280a364354dbf6603d3f2a279a65c' };
+function resolveDelegate(s) {
+  s = String(s || '').trim();
+  if (/^0x[0-9a-fA-F]{40}$/.test(s)) return s.toLowerCase();
+  const k = s.toLowerCase();
+  if (ENS[k]) return ENS[k];
+  if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(k)) {
+    let h = 7, out = '';
+    for (let i = 0; i < 40; i++) { h = (h * 31 + k.charCodeAt(i % k.length) + i) >>> 0; out += (h % 16).toString(16); }
+    return '0x' + out;
+  }
+  return '';
+}
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = Object.assign(this.initialState(props), { touched: false });
+  }
+  initialState(p) {
+    const cur = String(p.current || '').toLowerCase();
+    if (p.initial) return { sel: 'OTHER', text: p.initial };
+    if (cur && cur !== SELF) return { sel: 'OTHER', text: cur };
+    return { sel: 'YOURSELF', text: '' };
+  }
+  componentDidUpdate(prev) {
+    const p = this.props;
+    if (prev.current !== p.current || prev.initial !== p.initial || prev.wallet !== p.wallet) {
+      this.setState(Object.assign(this.initialState(p), { touched: false }));
+    }
+  }
+  renderVals() {
+    const p = this.props;
+    const connected = p.wallet === 'connected';
+    const { sel, text, touched } = this.state;
+    const isSelf = sel === 'YOURSELF';
+    const shown = isSelf ? (connected ? SELF : '') : text;
+    const resolved = resolveDelegate(shown);
+    const cur = String(p.current || '').toLowerCase();
+    const unchanged = connected && !!resolved && resolved === cur;
+    const invalid = connected && touched && !isSelf && !resolved;
+    const submit = () => {
+      if (!connected) { if (typeof p.onConnect === 'function') p.onConnect(); return; }
+      if (!resolved) { this.setState({ touched: true }); return; }
+      if (typeof p.onSubmit === 'function') p.onSubmit(resolved);
+    };
+    return {
+      yes: true, no: false, chainId: 1,
+      isPanel: p.mode !== 'dialog', isDialog: p.mode === 'dialog',
+      sel, isSelf, text: shown,
+      disabled: connected && unchanged,
+      alert: invalid ? { message: 'Your delegation is invalid.', variant: 'critical' } : undefined,
+      inputVariant: invalid ? 'critical' : 'default',
+      onSel: (v) => this.setState({ sel: v, text: v === 'YOURSELF' ? '' : (cur && cur !== SELF ? cur : ''), touched: false }),
+      onText: (v) => this.setState({ text: v || '', touched: false }),
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); submit(); },
+      press: (e) => { if (e && e.preventDefault) e.preventDefault(); submit(); },
+      cancel: (e) => { if (e && e.preventDefault) e.preventDefault(); if (typeof p.onCancel === 'function') p.onCancel(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -22,7 +22,7 @@ body{margin:0}
 <div class="app-page">
   <dc-import name="WizardNav" exit-href="Explore.dc.html" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
-    <form class="wizard-form" on-submit="{{submit}}" novalidate="{{yes}}">
+    <form class="wizard-form" onSubmit="{{submit}}" noValidate="{{yes}}">
       <dc-import name="WizardProgress" step="{{step}}" total="{{two}}" next-step="{{nextStep}}" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
         <sc-if value="{{isNetwork}}" hint-placeholder-val="{{yes}}">

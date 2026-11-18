@@ -20,7 +20,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Four prototypes and the parts they are built from (27 files, about 3,700 lines) |
+| `canvas/*.dc.html` | Six prototypes and the parts they are built from (47 files, about 6,500 lines) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit |
@@ -30,13 +30,17 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 | `publish/` | Two scripts that prepare the files for a canvas (see Publishing) |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
 
-The four prototypes:
+The prototypes:
 
-- `Explore.dc.html`: the explore / landing page. The entry point; it links to the other three.
-- `Dao.dc.html`: the main pages of one mock DAO (dashboard, proposals, proposal detail, members, member detail, assets,
-  transactions, settings). Navigation only: filters, tabs and dialogs on these pages do not respond.
+- `Explore.dc.html`: the explore / landing page. The entry point; it links to the DAO and the two creation wizards.
+- `Dao.dc.html`: one mock DAO (Meridian, token voting). Pages: dashboard, proposals, proposal detail, members, member
+  detail, assets, transactions, settings, permissions, governance process detail. Connect wallet and the user menu;
+  voting, simulating and executing a proposal; delegation; transaction type tabs and the transaction detail dialog.
 - `CreateDaoFlow.dc.html`: the create DAO wizard, with validation and a simulated publish transaction.
 - `CreateWorkspaceFlow.dc.html`: the create workspace wizard, including adding accounts.
+- `CreateProposalFlow.dc.html`: the create proposal wizard for the token-voting DAO: describe, add a transfer action,
+  simulate, settings, publish.
+- `SafeFlow.dc.html`: a Safe account page: balances, owners, pending transactions, review, approve and execute.
 
 Every other file is a part. Each prototype is responsive: the phone layout is the same file at a narrow width, so there are no separate phone frames.
 
@@ -45,13 +49,14 @@ owner for access.
 
 ## How they were made
 
-On 18 November, six Claude Sonnet agents built them in parallel from `BRIEF.md`. The first version was on the canvas
+On 18 November, six Claude Sonnet agents built the first four in parallel from `BRIEF.md`. The first version was on the canvas
 12.8 minutes after the start and the set was complete at 14.8 minutes. The DAO pages and the explore page were made
 by lifting the matching static screen from `docs/design-canvas` and making it live. The two wizards were built from
 the app's source and reference screenshots.
 
-They were checked by loading each at 1440 and 390 px wide: no page errors, no sideways overflow. Nothing compares
-them with the app, and nobody has reviewed the phone layouts.
+A second batch the same day added create proposal, the Safe page and most of the DAO's interactions: eight agents,
+about 28 minutes from start to canvas. Create proposal and voting were ported from older prototypes on
+`docs/design-canvas`.
 
 ## Publishing
 
@@ -79,12 +84,30 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 
 ## Known gaps in the prototypes
 
-- Controls that lead outside the four prototypes do nothing: Permissions, Vote on proposal, "+ Proposal", Delegate.
-- One proposal (MGP-1) shows another proposal's page: no screenshot of it was ever captured.
-- Member pages show the right header per member, but the activity lists are always the same member's, and some
+- **Finishing create workspace exits to Explore.** The workspace pages have no prototype yet.
+- **"+ Process" in DAO settings links to `CreateProcessFlow.dc.html`,** which does not exist yet.
+- **The Safe account page has no entry point** from the other prototypes; it is a frame of its own.
+- **Safe review dialog.** It carries Approve and Execute buttons in its footer. In the app the review is read-only and
+  those actions live on the voting card. Its warning states, rejecting a transaction and error states are not drawn.
+  Everything on the Safe page except the page itself was built from source with no screenshot to compare.
+- **Vote amounts do not reconcile.** On a proposal, the individual votes in the Votes tab do not add up to the totals in
+  the Breakdown tab; the mismatch comes from the mock data.
+- **The vote list is drawn by script.** `DaoProposal.dc.html` defines a small component in code for the Votes tab, so
+  that list cannot be selected or edited on the canvas like the rest.
+- **Create proposal:** only the Transfer action can be added; the other action types are listed and do nothing.
+  Simulation always succeeds. "View proposal" lands on the DAO's dashboard, not on the new proposal.
+- **Permissions:** the graph view is a still picture. "Expand all" and "Uninstall process" do nothing.
+- **Delegation:** the signing dialog does not show the delegate's row. "Add delegate statement" does nothing.
+- **Proposals, members and assets have no filters, search or sort,** because the app shows none for a DAO with one
+  governance process and no linked accounts.
+- **One proposal (MGP-1) shows another proposal's page:** no screenshot of it was ever captured.
+- **Member pages** show the right header per member, but the activity lists are always the same member's, and some
   balances are approximated.
-- Only one of the three mock DAOs is covered. Creating a proposal, voting, the governance designer and the workspace
-  pages have no prototype here. `docs/design-canvas` has older prototypes for four of those flows.
+- **Only one of the three mock DAOs is covered.** The governance designer, locking and wrapping, the multisig and
+  multi-stage DAOs, and the workspace pages have no prototype here yet.
+- **Checks.** Each prototype loads without errors at 1440 and 390 px wide, and each flow's main path was clicked through
+  once by the agent that built it. Nothing compares a prototype with the app. The delegation dialogs and most dialogs
+  of the create proposal wizard were not looked at at phone width.
 
 ## Open questions
 

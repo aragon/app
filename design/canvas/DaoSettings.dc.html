@@ -56,9 +56,9 @@
               <div class="page-section__title">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS" href="#">Process</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS" href="CreateProcessFlow.dc.html">Process</x-import>
             </div>
-            <x-import component-from-global-scope="GovUiKit.DataList.Item" href="#" class-name="px-4 py-3 md:p-6">
+            <x-import component-from-global-scope="GovUiKit.DataList.Item" href="#nav:process:mgp" class-name="px-4 py-3 md:p-6">
               <div class="process-item">
                 <div class="process-item__title">
                   <p class="process-item__name">Meridian Token Voting</p>
@@ -98,7 +98,8 @@
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// Props: onNav(target), wallet, onConnect(). Permissions item -> permissions page; process row -> process:mgp; + Process -> CreateProcessFlow.dc.html.
 // DAO settings (apps/app: modules/settings/pages/daoSettingsPage/daoSettingsPageClient.tsx). linkedAccount flag on, so
 // the Account section is DaoHierarchy (a Card with DaoInfo; Meridian has no linked accounts); Automation is shown
 // (capitalFlowAutomation on) with no policies. Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
@@ -118,7 +119,7 @@ class Component extends DCLogic {
       yes: true,
       four: 4,
       daoLink: { href: 'https://etherscan.io/address/0xc8c322384903ee8f11f511b71d0504237886bcde', isExternal: true, isOnchainEntity: true },
-      permissionsLink: { href: '#', isExternal: false },
+      permissionsLink: { href: '#nav:permissions', isExternal: false },
       osLink: { href: 'https://etherscan.io/address/0xc8c322384903ee8f11f511b71d0504237886bcde', isExternal: false, isOnchainEntity: true },
       pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isOnchainEntity: true }
     };
