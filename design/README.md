@@ -1,4 +1,18 @@
-# Design canvas
+# Design canvas (idea 1 of 3: static screens)
+
+This branch is an experiment and is not ready to merge. It is one of three ideas that were tried for getting the
+Aragon App onto a claude.ai design canvas:
+
+| Idea | Branch | Status |
+| --- | --- | --- |
+| 1. Static screens: every app page drawn by hand as a still frame | `docs/design-canvas` (this one) | Works, but nothing responds, so flows cannot be designed on it |
+| 2. Exported snapshots: a script copies each state of the running app into a frame | `docs/design-snapshots` | Exact, but frozen frames at one width; rejected for design |
+| 3. Live prototypes: one frame per flow that holds state and redraws on each click | `docs/design-prototypes` | The only one found acceptable for design |
+
+The spec that compares them is
+[Design canvas for the Aragon App: options and tradeoffs](https://claude.ai/artifact/5u6yDMkYhF7bM3Ctf6msWE).
+This branch also holds the mock backend, the reference screenshots and the checks that the other two ideas drew on,
+and six earlier prototypes. Everything below describes the workflow as it was built for this idea.
 
 A way to try visual changes to the Aragon App without touching app code, and to hand the chosen one to engineering as a
 diff.
