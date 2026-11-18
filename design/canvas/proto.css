@@ -30,6 +30,13 @@
 /* Explore: exploreNav.tsx turns the bar solid (bg-primary-400) once the hero has scrolled under it. */
 .explore-nav--solid { background: var(--color-primary-400); }
 
+/* A sticky bar inside an imported part: the canvas wraps each part in an element only as tall as the part, which leaves
+   the bar nothing to stick within. Make that wrapper transparent to layout, so the bar sticks in the page as in the app
+   (navigationContainer.tsx: sticky top-0). */
+.sc-host:has(> .sc-host-x > .wizard-nav), .sc-host:has(> .sc-host-x > .app-topbar) { display: contents; }
+/* navigationSidebar.tsx: the sidebar is as tall as the window (h-dvh), not a fixed 900 px. */
+.app-sidebar { height: 100dvh; }
+
 /* Agent D: DAO shell + wallet. Connect-wallet SDK modal (Reown AppKit look, third-party markup). */
 .wc-scrim { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(235,235,235,.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .wc-modal { width: 100%; max-width: 368px; box-sizing: border-box; padding: 20px 14px 18px; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.08); color: #141414; font-family: var(--font-sans), sans-serif; }

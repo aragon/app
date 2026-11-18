@@ -758,7 +758,7 @@ class Component extends DCLogic {
         mrd: transfer('0xc6cf3058f8fd5eb7074109b3b531364a4af59dae', 'Meridian', '0xa9059cbb00000000000000000000000031154ff59ea91264c4fd75aba7d8a2fc5a69d3680000000000000000000000000000000000000000000054b40b1f852bda000000', '400000000000000000000000')
       },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
-      creatorLink: { href: '#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', isOnchainEntity: true },
       publishedLink: { href: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c' }
     };
   }
@@ -788,7 +788,7 @@ class Component extends DCLogic {
       action: { type: 'MetadataUpdate', from: dao, to: dao, data: '0xee57e36f', value: '0', inputData: { function: 'setMetadata', contract: 'DAO', parameters: [{ name: '_metadata', type: 'bytes', value: '0x697066733a2f2f62616679' }] } },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
       published: (() => { const t = GovUiKit.formatterUtils.formatDate(Date.now() + 22 * hour, { format: GovUiKit.DateFormat.YEAR_MONTH_DAY }); return t.charAt(0).toUpperCase() + t.slice(1); })(),
       publishedLink: { href: 'https://etherscan.io/tx/0xab6d82ee9d2765c7c239ae1cbd5689e116dbe2e759b0796fbe61091a7e99bb1f' }
     };
@@ -810,7 +810,7 @@ class Component extends DCLogic {
       action: { type: 'TransferNative', from: dao, to: '0xd35945d0b4d4a6f6f4d2f902cf0cf3e970e8e551', data: '0x', value: '120000000000000000000', inputData: { function: '', contract: '', parameters: [] } },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
       published: "November 10, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0xd766c4a7e9750f51b940227e2749c5997f7a947d0f419189f22621bafc66b860' }
     };
@@ -832,7 +832,7 @@ class Component extends DCLogic {
       action: undefined,
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isOnchainEntity: true },
       published: "November 5, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0xdf19ec2ddc9916c7045e4710d3c839a9fb1eec162743e12beb3d68dcd0a41479' }
     };
@@ -854,7 +854,7 @@ class Component extends DCLogic {
       action: undefined,
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: '#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', isOnchainEntity: true },
       published: "October 29, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0x912f406bab4c48d03e1b94456d8504b2a30975ec83ff18ba72e397958b2a03ff' }
     };
@@ -876,7 +876,7 @@ class Component extends DCLogic {
       action: { type: 'MetadataUpdate', from: dao, to: dao, data: '0xee57e36f', value: '0', inputData: { function: 'setMetadata', contract: 'DAO', parameters: [{ name: '_metadata', type: 'bytes', value: '0x697066733a2f2f62616679' }] } },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x16df34ecd492fa69b80b0ed6d5b2a2c9f41f4cdf2c2ffc8f1dda86e6058569b0',
-      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
       published: "October 16, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0xc9bcc5f67114b2d1e36f26516d8f72031069325c31699a328154b47b272b3573' }
     };
@@ -898,7 +898,7 @@ class Component extends DCLogic {
       action: { type: 'Transfer', from: dao, to: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', value: '0', data: '0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000029e8d60800', inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: 'to', type: 'address', value: '0xdce3a01d0357efb601efac0fdd836d2e1b3bc242' }, { name: 'value', type: 'uint256', value: '180000000000' }] } },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
-      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isExternal: false, isOnchainEntity: true },
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
       published: "October 3, 2026",
       publishedLink: { href: 'https://etherscan.io/tx/0x2a011ced91eb99998338a160332d85541408e9ecf928b780a2a52d2730e1028d' }
     };

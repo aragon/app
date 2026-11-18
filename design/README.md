@@ -134,7 +134,13 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - **Not built, because open pull requests are changing them:** editing a workspace, suggested accounts in the create
   workspace wizard, creating a Safe, and the governance designer inside a workspace.
 - **Checks.** Each prototype loads without errors at 1440 and 390 px wide, and each flow's main path was clicked through
-  once by the agent that built it. Nothing compares a prototype with the app. The delegation dialogs and most dialogs
+  once by the agent that built it. On 18 November, 66 states (Explore, the three DAOs' pages and proposals, the first
+  steps of the wizards, the Safe page) were compared once with the reference screenshots on `docs/design-canvas`: 30
+  matched, and nine distinct mistakes were found, of which seven were fixed. Left as they are: transaction times
+  that read 18:18 where the app shows 18:00, and one Safe transaction's signature count, changed on purpose so that
+  one approval reaches the threshold. That comparison was run by hand; nothing repeats it. It cannot see what
+  changes on scroll or hover: the sticky bars were checked separately by reading the app's source. The workspace,
+  wrapping, lock-to-vote, dialogs and later wizard steps have no screenshot and were not compared. The delegation dialogs and most dialogs
   of the create proposal wizard were not looked at at phone width.
 
 ## Open questions
