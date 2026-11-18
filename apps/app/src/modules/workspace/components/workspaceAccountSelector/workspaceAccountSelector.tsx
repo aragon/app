@@ -154,7 +154,7 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800',
+                        'group focus-ring-primary flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800',
                         className,
                     )}
                     type="button"
@@ -192,13 +192,12 @@ export const WorkspaceAccountSelector: React.FC<
                                 </span>
                             )}
                     </span>
-                    <span
+                    <Icon
                         aria-hidden={true}
-                        className="flex shrink-0 flex-col items-center -space-y-1"
-                    >
-                        <Icon icon={IconType.CHEVRON_UP} size="sm" />
-                        <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
-                    </span>
+                        className="shrink-0 transition-transform group-data-[state=open]:rotate-180"
+                        icon={IconType.CHEVRON_DOWN}
+                        size="sm"
+                    />
                 </button>
             }
         >
