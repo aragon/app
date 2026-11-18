@@ -82,7 +82,7 @@
     "partPages": [
         {
             "id": "parts-dao",
-            "name": "Parts · Meridian DAO",
+            "name": "Meridian DAO",
             "prototypes": [
                 "Explore.dc.html",
                 "Dao.dc.html"
@@ -90,21 +90,21 @@
         },
         {
             "id": "parts-atlas",
-            "name": "Parts · Atlas (multisig)",
+            "name": "Atlas (multisig)",
             "prototypes": [
                 "AtlasDao.dc.html"
             ]
         },
         {
             "id": "parts-northstar",
-            "name": "Parts · Northstar (multi-stage)",
+            "name": "Northstar (multi-stage)",
             "prototypes": [
                 "NorthstarDao.dc.html"
             ]
         },
         {
             "id": "parts-workspace",
-            "name": "Parts · Workspace",
+            "name": "Workspace",
             "prototypes": [
                 "Workspace.dc.html"
             ],
@@ -112,7 +112,7 @@
         },
         {
             "id": "parts-safe",
-            "name": "Parts · Safe",
+            "name": "Safe",
             "prototypes": [
                 "SafeFlow.dc.html",
                 "SafeTransactionFlow.dc.html"
@@ -120,7 +120,7 @@
         },
         {
             "id": "parts-create",
-            "name": "Parts · Create DAO and workspace",
+            "name": "Create DAO and workspace",
             "prototypes": [
                 "CreateDaoFlow.dc.html",
                 "CreateWorkspaceFlow.dc.html"
@@ -128,21 +128,21 @@
         },
         {
             "id": "parts-proposal",
-            "name": "Parts · Create proposal",
+            "name": "Create proposal",
             "prototypes": [
                 "CreateProposalFlow.dc.html"
             ]
         },
         {
             "id": "parts-process",
-            "name": "Parts · Governance designer",
+            "name": "Governance designer",
             "prototypes": [
                 "CreateProcessFlow.dc.html"
             ]
         },
         {
             "id": "parts-token",
-            "name": "Parts · Wrap and lock",
+            "name": "Wrap and lock",
             "prototypes": [
                 "WrapFlow.dc.html",
                 "LockFlow.dc.html"

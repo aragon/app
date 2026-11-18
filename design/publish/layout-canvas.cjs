@@ -5,9 +5,10 @@
 // The layout file lists only the prototypes, in rows, on the first page. Everything else is derived, so no part can
 // be left off the canvas or listed twice:
 //   - a prototype's parts are the files it mounts with <dc-import>, followed recursively;
-//   - a part used by prototypes of more than one part page goes on the "Parts · shared" page (a page marked
+//   - a part used by prototypes of more than one group goes in the "Shared" row (a page marked
 //     "reuses" does not count: the workspace mounts the DAOs' own pages);
-//   - every other part goes on the page of its prototypes, pages and steps in one row, dialogs in another.
+//   - every part goes on the one Parts page, in a titled row per group of prototypes, shared parts first, with
+//     pages and steps before dialogs.
 // The script fails if a .dc.html file in design/canvas is reached by no prototype, or a listed prototype is missing.
 //
 //   node design/publish/layout-canvas.cjs
@@ -18,7 +19,7 @@ const { CANVAS, die } = require('./paths.cjs');
 const GAP_X = 80; // between frames in a row
 const TITLE = 300; // a row's title sits this far above its frames (the canvas asks for at least 223)
 const GAP_Y = 200; // between the tallest frame of a row and the next row's title
-const PER_ROW = 6; // parts per row before wrapping
+const PER_ROW = 8; // parts per row before wrapping
 
 const layout = JSON.parse(
     fs.readFileSync(path.join(CANVAS, '..', 'canvas-layout.json'), 'utf8'),
@@ -87,7 +88,7 @@ if (unreached.length > 0) {
 
 const isDialog = (file) => /Dialog|Wallet(Connect|User)/.test(file);
 const partPages = [
-    { id: 'parts-shared', name: 'Parts · shared by several prototypes' },
+    { id: 'parts-shared', name: 'Shared by several prototypes' },
     ...layout.partPages,
 ].map((page) => {
     const parts = Object.keys(pagesOfPart)
@@ -98,15 +99,13 @@ const partPages = [
                   pagesOfPart[part].has(page.id),
         )
         .sort();
+    // One row per group on the single Parts page: pages and steps first, then dialogs.
     return {
-        ...page,
-        rows: [
-            {
-                title: 'Pages, steps and pieces',
-                files: parts.filter((part) => !isDialog(part)),
-            },
-            { title: 'Dialogs', files: parts.filter(isDialog) },
-        ].filter((row) => row.files.length > 0),
+        title: page.name,
+        files: [
+            ...parts.filter((part) => !isDialog(part)),
+            ...parts.filter(isDialog),
+        ],
     };
 });
 
@@ -169,46 +168,42 @@ if (layout.note) {
     };
 }
 
-// The part pages.
-for (const page of partPages) {
-    let top = 0;
-    for (const row of page.rows) {
-        notes[`${page.id}-${slug(row.title)}`] = {
-            x: 0,
-            y: top,
-            text: row.title,
-            kind: 'title1',
-            maxW: 8000,
-            page: page.id,
-        };
-        let rowTop = top + TITLE;
-        for (let i = 0; i < row.files.length; i += PER_ROW) {
-            let x = 0;
-            let height = 0;
-            for (const file of row.files.slice(i, i + PER_ROW)) {
-                const size = previewSize(file);
-                boards[file] = {
-                    x,
-                    y: rowTop,
-                    ...size,
-                    title: file.replace(/\.dc\.html$/, ''),
-                    page: page.id,
-                };
-                order.push(file);
-                x += size.w + GAP_X;
-                height = Math.max(height, size.h);
-            }
-            rowTop += height + 120;
+// The Parts page: one titled row per group of prototypes.
+let top = 0;
+for (const group of partPages.filter((entry) => entry.files.length > 0)) {
+    notes[`parts-${slug(group.title)}`] = {
+        x: 0,
+        y: top,
+        text: group.title,
+        kind: 'title1',
+        maxW: 8000,
+        page: 'parts',
+    };
+    let rowTop = top + TITLE;
+    for (let i = 0; i < group.files.length; i += PER_ROW) {
+        let x = 0;
+        let height = 0;
+        for (const file of group.files.slice(i, i + PER_ROW)) {
+            const size = previewSize(file);
+            boards[file] = {
+                x,
+                y: rowTop,
+                ...size,
+                title: file.replace(/\.dc\.html$/, ''),
+                page: 'parts',
+            };
+            order.push(file);
+            x += size.w + GAP_X;
+            height = Math.max(height, size.h);
         }
-        top = rowTop + GAP_Y;
+        rowTop += height + 120;
     }
+    top = rowTop + GAP_Y;
 }
 
 canvas.pages = [
     { id: 'prototypes', name: 'Prototypes' },
-    ...partPages
-        .filter((page) => page.rows.length > 0)
-        .map(({ id, name }) => ({ id, name })),
+    { id: 'parts', name: 'Parts' },
 ];
 canvas.boards = boards;
 canvas.order = order;

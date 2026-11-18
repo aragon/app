@@ -76,9 +76,9 @@ transaction: three agents. Create proposal and voting were ported from older pro
 ## Layout of the canvas
 
 The first page, Prototypes, has one frame per prototype in five rows: Start here, A DAO (one per governance type),
-Workspace and Safe, Creating things, Token mechanics. The other pages hold the parts, one page per group of
-prototypes plus one for the parts several prototypes share, each with pages and steps in one row and dialogs in
-another. After adding or removing a canvas file, run `node design/publish/layout-canvas.cjs`: it rewrites
+Workspace and Safe, Creating things, Token mechanics. The second page, Parts, holds the files the prototypes are
+built from, in a titled row per group of prototypes with the shared parts first. The canvas shows every file as a
+frame, so the parts have to sit somewhere; they are also where a page or dialog is edited. After adding or removing a canvas file, run `node design/publish/layout-canvas.cjs`: it rewrites
 `canvas/canvas.json` and fails if a file is mounted by no prototype.
 
 ## Publishing
