@@ -4660,6 +4660,18 @@
         "error": "The demo workspace could not be installed. Reload the page to try again.",
         "settingUp": "Setting up your Aragon demo workspace…"
       },
+      "gettingStartedPage": {
+        "addAccountsLater": "Add accounts later",
+        "name": "Getting started",
+        "steps": {
+          "ACCOUNTS": {
+            "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
+            "name": "Add accounts",
+            "title": "Add accounts"
+          }
+        },
+        "submitLabel": "Add accounts"
+      },
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },

@@ -8,6 +8,7 @@ import { Page } from '@/shared/components/page';
 import {
     type IWorkspace,
     useGetOrCreateDefaultWorkspace,
+    useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import {
@@ -17,6 +18,12 @@ import {
 
 export interface IWorkspaceEntryPageClientProps {}
 
+const gettingStartedUrl = '/getting-started';
+
+/**
+ * FTUE entry of a connected user: the first workspace of the registry, or the Getting started wizard when the
+ * registry holds none.
+ */
 export const WorkspaceEntryPageClient: React.FC<
     IWorkspaceEntryPageClientProps
 > = () => {
@@ -41,17 +48,26 @@ export const WorkspaceEntryPageClient: React.FC<
         onSuccess: handleSuccess,
     });
 
-    // Make sure seeding is called only once
+    // Write the registry only once, and only when it already holds a workspace: an empty registry sends the user to
+    // Getting started instead of seeding an empty workspace they did not ask for.
     const hasSeedingRunRef = useRef(false);
 
+    const { data: workspaces } = useWorkspaceList();
+
     useEffect(() => {
-        if (hasSeedingRunRef.current) {
+        if (hasSeedingRunRef.current || workspaces == null) {
             return;
         }
 
         hasSeedingRunRef.current = true;
+
+        if (workspaces.length === 0) {
+            router.replace(gettingStartedUrl);
+            return;
+        }
+
         mutate();
-    }, [mutate]);
+    }, [workspaces, mutate, router]);
 
     if (error != null) {
         return (

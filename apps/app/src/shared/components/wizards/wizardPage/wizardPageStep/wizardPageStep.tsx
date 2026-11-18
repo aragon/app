@@ -6,6 +6,7 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import type { ReactNode } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     type IWizardStepProps,
@@ -46,6 +47,10 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      * Disables the next button when set to true.
      */
     disableNext?: boolean;
+    /**
+     * Action rendered beside the submit button, e.g. skipping an optional step. It owns its own submit behaviour.
+     */
+    secondaryAction?: ReactNode;
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
@@ -56,6 +61,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         className,
         nextDropdownItems,
         disableNext = false,
+        secondaryAction,
         ...otherProps
     } = props;
 
@@ -133,15 +139,18 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                                 )}
                             </Dropdown.Container>
                         ) : (
-                            <Button
-                                disabled={disableNext}
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                size="lg"
-                                type="submit"
-                                variant={submitVariant}
-                            >
-                                {submitLabel}
-                            </Button>
+                            <div className="flex items-center gap-3">
+                                {secondaryAction}
+                                <Button
+                                    disabled={disableNext}
+                                    iconRight={IconType.CHEVRON_RIGHT}
+                                    size="lg"
+                                    type="submit"
+                                    variant={submitVariant}
+                                >
+                                    {submitLabel}
+                                </Button>
+                            </div>
                         )}
                     </div>
                     {submitHelpText && (
