@@ -60,46 +60,6 @@
       "expand": "fill",
       "is_interactive": true
     },
-    "ExploreMobile.dc.html": {
-      "x": 0,
-      "y": 1700,
-      "w": 390,
-      "h": 844,
-      "title": "Explore \u00b7 phone",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "DaoMobile.dc.html": {
-      "x": 470,
-      "y": 1700,
-      "w": 390,
-      "h": 844,
-      "title": "Meridian DAO \u00b7 phone",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateDaoFlowMobile.dc.html": {
-      "x": 940,
-      "y": 1700,
-      "w": 390,
-      "h": 844,
-      "title": "Create a DAO \u00b7 phone",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateWorkspaceFlowMobile.dc.html": {
-      "x": 1410,
-      "y": 1700,
-      "w": 390,
-      "h": 844,
-      "title": "Create a workspace \u00b7 phone",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
     "AragonLogo.dc.html": {
       "x": 0,
       "y": 300,
@@ -290,10 +250,6 @@
     "Dao.dc.html",
     "CreateDaoFlow.dc.html",
     "CreateWorkspaceFlow.dc.html",
-    "ExploreMobile.dc.html",
-    "DaoMobile.dc.html",
-    "CreateDaoFlowMobile.dc.html",
-    "CreateWorkspaceFlowMobile.dc.html",
     "AragonLogo.dc.html",
     "Footer.dc.html",
     "DaoNav.dc.html",
@@ -322,15 +278,7 @@
     "proto-desktop": {
       "x": 0,
       "y": 0,
-      "text": "Prototypes \u00b7 desktop",
-      "kind": "title1",
-      "maxW": 6000,
-      "page": "prototypes"
-    },
-    "proto-phone": {
-      "x": 0,
-      "y": 1400,
-      "text": "Prototypes \u00b7 phone",
+      "text": "Prototypes",
       "kind": "title1",
       "maxW": 6000,
       "page": "prototypes"

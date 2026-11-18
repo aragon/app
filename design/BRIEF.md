@@ -59,8 +59,8 @@ read with the Artifact tool).
 
 Every prototype works at 390 px wide as well as at 1440: nothing overflowing sideways, and the app's own mobile
 layout. The app's responsive classes are in its source (`md:`, `lg:` …); inside the DAO page column they are container
-queries (pitfall 7). Where the app swaps navigation on small screens, so does the prototype (`DaoNav.dc.html`). The
-`*Mobile.dc.html` files are not separate designs: each mounts the same prototype in a 390 px frame.
+queries (pitfall 7). Where the app swaps navigation on small screens, so does the prototype (`DaoNav.dc.html`).
+There are no separate phone frames: a prototype is checked at phone width by narrowing the same file.
 
 ## Ground truth
 

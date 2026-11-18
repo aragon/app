@@ -20,7 +20,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Four prototypes and the parts they are built from (31 files, about 3,700 lines) |
+| `canvas/*.dc.html` | Four prototypes and the parts they are built from (27 files, about 3,700 lines) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit |
@@ -38,8 +38,7 @@ The four prototypes:
 - `CreateDaoFlow.dc.html`: the create DAO wizard, with validation and a simulated publish transaction.
 - `CreateWorkspaceFlow.dc.html`: the create workspace wizard, including adding accounts.
 
-Each `*Mobile.dc.html` file mounts the same prototype in a 390 px frame, so the phone layout shows on the canvas.
-Every other file is a part.
+Every other file is a part. Each prototype is responsive: the phone layout is the same file at a narrow width, so there are no separate phone frames.
 
 The canvas is [Aragon App prototypes](https://claude.ai/artifact/NnpGqxhynigQPwVyKgsc5p). It is private; ask its
 owner for access.
@@ -84,7 +83,6 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - One proposal (MGP-1) shows another proposal's page: no screenshot of it was ever captured.
 - Member pages show the right header per member, but the activity lists are always the same member's, and some
   balances are approximated.
-- A link from a phone frame to another prototype opens that prototype's desktop frame.
 - Only one of the three mock DAOs is covered. Creating a proposal, voting, the governance designer and the workspace
   pages have no prototype here. `docs/design-canvas` has older prototypes for four of those flows.
 
