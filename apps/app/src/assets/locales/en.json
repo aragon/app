@@ -4661,7 +4661,6 @@
         "settingUp": "Setting up your Aragon demo workspace…"
       },
       "gettingStartedPage": {
-        "addAccountsLater": "Add accounts later",
         "name": "Getting started",
         "steps": {
           "ACCOUNTS": {
@@ -4670,7 +4669,8 @@
             "title": "Add accounts"
           }
         },
-        "submitLabel": "Add accounts"
+        "submitLabel": "Add accounts",
+        "addAccountsLater": "Add accounts later"
       },
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
@@ -4938,6 +4938,24 @@
         "addToOther": "Add to another workspace",
         "error": "The account could not be added to the workspace. Please try again.",
         "message": "{{account}} isn't part of {{workspace}}."
+      },
+      "workspaceWelcomeDialog": {
+        "action": {
+          "openWorkspace": "Open workspace"
+        },
+        "description": "Your accounts are now available from one place.",
+        "feature": {
+          "track": {
+            "description": "Check your transactions to see what’s still waiting on others.",
+            "title": "Keep track after you sign"
+          },
+          "waiting": {
+            "description": "Find transactions waiting for your signature or ready for you to execute.",
+            "title": "See what’s waiting for you"
+          }
+        },
+        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
+        "title": "Your workspace is ready"
       },
       "workspaceSelector": {
         "create": "Create workspace",

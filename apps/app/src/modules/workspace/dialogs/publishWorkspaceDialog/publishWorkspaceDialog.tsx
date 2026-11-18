@@ -30,6 +30,7 @@ import {
     workspaceAllAccountsSegment,
     workspaceUtils,
 } from '../../utils/workspaceUtils';
+import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 export interface IPublishWorkspaceDialogParams {
@@ -137,6 +138,11 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
             ]);
 
             setStatus('success');
+            // The user enters a workspace they just created: owe them the welcome dialog once (see
+            // `workspaceWelcomeUtils`). An update is not a creation, so it owes nothing.
+            if (!isUpdate) {
+                workspaceWelcomeUtils.markPendingWelcome();
+            }
         } catch {
             setStatus('error');
         }

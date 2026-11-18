@@ -6,10 +6,13 @@ import type { ReactNode } from 'react';
 import * as WorkspaceServiceModule from '@/modules/workspace/api/workspaceService';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 import type { IWorkspaceGateProps } from '@/modules/workspace/components/workspaceGate';
+import { WorkspaceDialogId } from '@/modules/workspace/constants/workspaceDialogId';
+import { workspaceWelcomeUtils } from '@/modules/workspace/utils/workspaceWelcomeUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import { featureFlags } from '@/shared/featureFlags';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import type { INavigationWorkspaceProps } from '../../navigations/navigationWorkspace';
 import { type ILayoutWorkspaceProps, LayoutWorkspace } from './layoutWorkspace';
 
@@ -55,6 +58,8 @@ describe('<LayoutWorkspace /> component', () => {
         'activateSessionWorkspaceRegistry',
     );
     const notFoundMock = notFound as jest.MockedFunction<typeof notFound>;
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const openMock = jest.fn();
 
     beforeEach(() => {
         fetchQuerySpy.mockResolvedValue({});
@@ -64,6 +69,9 @@ describe('<LayoutWorkspace /> component', () => {
             error: null,
         } as ReturnType<typeof WorkspaceServiceModule.useWorkspace>);
         activateSessionRegistrySpy.mockResolvedValue();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: openMock }),
+        );
     });
 
     afterEach(() => {
@@ -73,6 +81,9 @@ describe('<LayoutWorkspace /> component', () => {
         useWorkspaceSpy.mockReset();
         notFoundMock.mockClear();
         activateSessionRegistrySpy.mockReset();
+        useDialogContextSpy.mockReset();
+        openMock.mockReset();
+        localStorage.clear();
     });
 
     // Query options carry a fresh queryFn per call, so the key is what identifies the read. `prefetchQuery` passes
@@ -238,5 +249,64 @@ describe('<LayoutWorkspace /> component', () => {
         render(await createTestComponent());
 
         expect(screen.getByTestId('hydration-mock')).toBeInTheDocument();
+    });
+
+    describe('welcome dialog', () => {
+        it('opens the welcome dialog once when a workspace was just created, keeping it owed until acknowledged', async () => {
+            workspaceWelcomeUtils.markPendingWelcome();
+
+            render(await createTestComponent());
+
+            await waitFor(() =>
+                expect(openMock).toHaveBeenCalledWith(
+                    WorkspaceDialogId.WORKSPACE_WELCOME,
+                    expect.objectContaining({ disableOutsideClick: true }),
+                ),
+            );
+            expect(openMock).toHaveBeenCalledTimes(1);
+            expect(workspaceWelcomeUtils.isWelcomePending()).toBe(true);
+        });
+
+        it('does not open the welcome dialog on a workspace the user returns to', async () => {
+            render(await createTestComponent());
+
+            await waitFor(() =>
+                expect(
+                    screen.getByTestId('workspace-gate-mock'),
+                ).toBeInTheDocument(),
+            );
+            expect(openMock).not.toHaveBeenCalled();
+        });
+
+        it('does not open the welcome dialog again once it was acknowledged', async () => {
+            workspaceWelcomeUtils.markWelcomeSeen();
+
+            render(await createTestComponent());
+
+            await waitFor(() =>
+                expect(
+                    screen.getByTestId('workspace-gate-mock'),
+                ).toBeInTheDocument(),
+            );
+            expect(openMock).not.toHaveBeenCalled();
+        });
+
+        it('does not greet the demo workspace, keeping the welcome owed', async () => {
+            workspaceWelcomeUtils.markPendingWelcome();
+
+            render(
+                await createTestComponent({
+                    params: Promise.resolve({ workspaceId: 'aragon-demo' }),
+                }),
+            );
+
+            await waitFor(() =>
+                expect(
+                    screen.getByTestId('workspace-gate-mock'),
+                ).toBeInTheDocument(),
+            );
+            expect(openMock).not.toHaveBeenCalled();
+            expect(workspaceWelcomeUtils.isWelcomePending()).toBe(true);
+        });
     });
 });
