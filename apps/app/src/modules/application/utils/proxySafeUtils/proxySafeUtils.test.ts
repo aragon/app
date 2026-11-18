@@ -7,6 +7,7 @@ import type { NextURL } from 'next/dist/server/web/next-url';
 import { NextResponse } from 'next/server';
 import { SafeServiceErrorCode } from '@/shared/api/safeService/domain';
 import { generateNextRequest, generateResponse } from '@/shared/testUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { testLogger } from '@/test/utils';
 import { type ISafeRequestOptions, ProxySafeUtils } from './proxySafeUtils';
 
@@ -18,6 +19,8 @@ describe('proxySafe utils', () => {
     const fetchSpy = jest.spyOn(global, 'fetch');
     const nextResponseJsonSpy = jest.spyOn(NextResponse, 'json');
     const revalidateTagSpy = jest.mocked(revalidateTag);
+    const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
+    const logMessageSpy = jest.spyOn(monitoringUtils, 'logMessage');
 
     beforeEach(() => {
         process.env.NEXT_SECRET_SAFE_API_KEY = 'test-safe-key';
@@ -30,6 +33,8 @@ describe('proxySafe utils', () => {
         fetchSpy.mockReset();
         nextResponseJsonSpy.mockReset();
         revalidateTagSpy.mockReset();
+        logErrorSpy.mockReset();
+        logMessageSpy.mockReset();
     });
 
     const safeAddress = `0x${'a'.repeat(40)}`;
@@ -400,6 +405,44 @@ describe('proxySafe utils', () => {
                 }),
                 expect.objectContaining({ status: 503 }),
             );
+            expect(logErrorSpy).toHaveBeenCalled();
+        });
+
+        it('logs a rejected payload as expected noise, not as an error', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ ok: false, status: 422 }),
+            );
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1'),
+            );
+
+            expect(logErrorSpy).not.toHaveBeenCalled();
+            expect(logMessageSpy).toHaveBeenCalledWith(
+                'Safe transaction service rejected the request',
+                expect.objectContaining({
+                    context: expect.objectContaining({ status: 422 }),
+                    noiseClass: 'expected',
+                }),
+            );
+        });
+
+        it('logs a refused API key as an error', async () => {
+            testLogger.suppressErrors();
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ ok: false, status: 401 }),
+            );
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1'),
+            );
+
+            expect(logErrorSpy).toHaveBeenCalled();
+            expect(logMessageSpy).not.toHaveBeenCalled();
         });
 
         it('returns a typed connection-error response when the upstream cannot be reached', async () => {

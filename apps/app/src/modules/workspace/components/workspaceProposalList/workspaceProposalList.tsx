@@ -81,6 +81,7 @@ export const WorkspaceProposalList: React.FC<IWorkspaceProposalListProps> = (
             plugins={filterTabs}
             renderContent={(plugin) => renderList(plugin.props.filters)}
             searchParamName={daoProposalListFilterParam}
+            variant="dropdown"
         />
     );
 };
