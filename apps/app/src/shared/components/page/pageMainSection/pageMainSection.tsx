@@ -8,7 +8,7 @@ import {
     type IconType,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 
 export interface IPageMainSectionActionProps
     extends Omit<IButtonProps, 'variant' | 'size' | 'children'> {
@@ -31,7 +31,7 @@ export interface IPageMainSectionProps extends ComponentProps<'div'> {
     /**
      * Description of the section.
      */
-    description?: string;
+    description?: ReactNode;
     /**
      * An icon to display next to the title.
      */
