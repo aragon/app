@@ -34,7 +34,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
         <div
             className={classNames(
                 'group relative h-20 border-neutral-100', // default
-                'hover:shadow-neutral-md hover:border-neutral-200', // hover
+                'hover:border-neutral-200 hover:shadow-neutral-md', // hover
                 'active:border-neutral-300 active:shadow-none', // active
                 'md:w-1/2', // responsive
                 {
@@ -82,7 +82,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                             label={resolvedUserHandle}
                         />
                         <Icon
-                            className="group-hover:text-primary-300 group-active:text-primary-400 float-right text-neutral-300"
+                            className="float-right text-neutral-300 group-hover:text-primary-300 group-active:text-primary-400"
                             icon={IconType.LINK_EXTERNAL}
                             size="sm"
                         />

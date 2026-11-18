@@ -3,13 +3,15 @@ import { headers } from 'next/headers';
 import { monitoringUtils } from '../monitoringUtils';
 
 /**
- * Entry point that ran the check, reported as the `source` tag of the rejection event.
+ * Entry point that ran the check, reported as the `source` attribute of the detection counter.
  */
 export type BotIdSource = 'pin' | 'backend' | 'rpc';
 
 /**
- * What the rejected request carried, reported as the `stage` tag of the rejection event: `no-challenge` is a
- * client that never ran the BotID script (curl), `rejected` ran it and failed the check.
+ * What the automated request carried, reported as the `stage` attribute of the detection counter: `no-challenge`
+ * has no BotID header, so it did not come from our page (curl, scripts, a tab on a bundle older than BotID);
+ * `rejected` has the header and failed the check. The header can be copied, so `rejected` is not proof of a
+ * browser.
  */
 export type BotIdStage = 'no-challenge' | 'rejected';
 
@@ -20,15 +22,21 @@ export interface IBotIdCheckOptions {
      * rate limits still cap their volume.
      */
     onError: 'allow' | 'reject';
+    /**
+     * Verdict for a request that carries the challenge of our page and still fails the check (stage `rejected`).
+     * BotID fails real browsers this way, after a back/forward restore or for good, so chain reads `allow` it and
+     * only refuse clients that never ran the page; paid writes keep the default `reject`.
+     */
+    onFailedChallenge?: 'allow' | 'reject';
 }
 
 class BotIdUtils {
     /**
-     * Message of the Sentry event logged on every rejection; the "BotID rejections" metric monitor counts it.
-     * The event is informational: logged at info level and tagged `noise_class: expected`, which keeps it out
-     * of the issue alerts (new issue, issue frequency). The metric monitor is the only alerting path.
+     * Sentry counter incremented for every request BotID classifies as automated, with the `source`, `stage` and
+     * `action` (`blocked` or `allowed`) attributes; the "BotID rejections" metric monitor reads the blocked ones.
+     * A counter keeps them out of the error quota and the issue alerts.
      */
-    private readonly rejectionMessage = 'BotId: automated request rejected';
+    private readonly detectionMetric = 'botid.detection';
 
     /**
      * Check level, pinned to basic to match instrumentation-client.ts and to override the project-level
@@ -40,13 +48,13 @@ class BotIdUtils {
     };
 
     /**
-     * Returns true when Vercel BotID classifies the request as automated, and logs an info event tagged with
-     * the source and stage so rejections can be counted. Browsers that ran the client challenge (see
-     * instrumentation-client.ts) pass, curl-style requests and headless tools fail. Always false in local
-     * development, where BotID is bypassed. A failure of the check itself is logged as an error and resolved by
-     * `onError`.
+     * Returns true when the request must be refused: Vercel BotID classifies it as automated and the options do
+     * not let its stage through. Every automated verdict is counted by source, stage and action. Browsers that ran
+     * the client challenge (see instrumentation-client.ts) pass, curl-style requests and headless tools fail.
+     * Always false in local development, where BotID is bypassed. A failure of the check itself is logged as an
+     * error and resolved by `onError`.
      */
-    isBot = async (
+    shouldReject = async (
         source: BotIdSource,
         options: IBotIdCheckOptions,
     ): Promise<boolean> => {
@@ -62,15 +70,21 @@ class BotIdUtils {
             return options.onError === 'reject';
         }
 
-        if (isBot) {
-            monitoringUtils.logMessage(this.rejectionMessage, {
-                level: 'info',
-                noiseClass: 'expected',
-                context: { source, stage: await this.getStage() },
-            });
+        if (!isBot) {
+            return false;
         }
 
-        return isBot;
+        const stage = await this.getStage();
+        const isAllowed =
+            stage === 'rejected' && options.onFailedChallenge === 'allow';
+
+        monitoringUtils.incrementCounter(this.detectionMetric, {
+            source,
+            stage,
+            action: isAllowed ? 'allowed' : 'blocked',
+        });
+
+        return !isAllowed;
     };
 
     /**
@@ -78,7 +92,7 @@ class BotIdUtils {
      * return no response of their own.
      */
     assertHuman = async (source: BotIdSource): Promise<void> => {
-        if (await this.isBot(source, { onError: 'reject' })) {
+        if (await this.shouldReject(source, { onError: 'reject' })) {
             throw new Error(
                 `BotIdUtils: automated request rejected (${source}).`,
             );

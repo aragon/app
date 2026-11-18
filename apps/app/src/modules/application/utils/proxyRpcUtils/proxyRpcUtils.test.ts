@@ -14,6 +14,7 @@ import {
     generateRequest,
     generateResponse,
 } from '@/shared/testUtils';
+import { botIdUtils } from '@/shared/utils/botIdUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import { testLogger } from '@/test/utils';
@@ -118,6 +119,23 @@ describe('proxyRpc utils', () => {
                 { error: 'Access denied' },
                 { status: 403 },
             );
+        });
+
+        it('lets requests that carry the challenge and fail the check through', async () => {
+            const shouldRejectSpy = jest
+                .spyOn(botIdUtils, 'shouldReject')
+                .mockResolvedValue(false);
+            fetchSpy.mockResolvedValue(generateResponse());
+            const testClass = createTestClass();
+            await testClass.request(
+                generateNextRequest(),
+                createTestOptions('1'),
+            );
+            expect(shouldRejectSpy).toHaveBeenCalledWith(
+                'rpc',
+                expect.objectContaining({ onFailedChallenge: 'allow' }),
+            );
+            shouldRejectSpy.mockRestore();
         });
 
         it('returns error when network definitions are not found for chain id', async () => {

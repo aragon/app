@@ -35,6 +35,10 @@ export interface IDaoMemberListContainerProps
      */
     hidePagination?: boolean;
     /**
+     * Whether to show body plugin filters in "dropdown" variant.
+     */
+    showFiltersAsDropdown?: boolean;
+    /**
      * Children of the component.
      */
     children?: ReactNode;
@@ -54,6 +58,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
         value,
         onValueChange,
         featuredDelegatesTab,
+        showFiltersAsDropdown,
         ...otherProps
     } = props;
 
@@ -115,6 +120,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
             searchParamName={daoMemberListFilterParam}
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
             value={resolvedValue}
+            variant={showFiltersAsDropdown ? 'dropdown' : 'tab'}
             {...otherProps}
         />
     );

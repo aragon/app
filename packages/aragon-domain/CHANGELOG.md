@@ -1,5 +1,11 @@
 # @aragon/aragon-domain
 
+## 0.4.2
+
+### Patch Changes
+
+- [#1582](https://github.com/aragon/app/pull/1582) [`c56915d`](https://github.com/aragon/app/commit/c56915db420284269d4bff0b0f6c14ce4c014359) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (viem 2.57.17, vitest 5.1)
+
 ## 0.4.1
 
 ### Patch Changes

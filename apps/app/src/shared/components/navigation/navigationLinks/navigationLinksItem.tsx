@@ -50,7 +50,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
 
     const linkClassNames = classNames(
         'truncate text-base leading-tight font-normal text-neutral-500 hover:text-neutral-800 active:text-neutral-800',
-        'group focus-ring-primary flex items-center py-3',
+        'group flex items-center py-3 focus-ring-primary',
         { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
         { 'bg-neutral-50': isActive && variant === 'column' },
         { 'text-neutral-800': isActive },

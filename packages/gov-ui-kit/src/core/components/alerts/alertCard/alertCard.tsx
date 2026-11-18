@@ -46,7 +46,7 @@ export const AlertCard: React.FC<IAlertCardProps> = (props) => {
     return (
         <div
             className={classNames(
-                'bg-neutral-0 w-full rounded-xl border px-4 py-3 md:px-6 md:py-5',
+                'w-full rounded-xl border bg-neutral-0 px-4 py-3 md:px-6 md:py-5',
                 alertVariantToContainerClassNames[variant],
                 className,
             )}

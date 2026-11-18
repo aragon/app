@@ -309,10 +309,9 @@ src/app/workspace/[workspaceId]/
 ├─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
 │  ├─ layout.tsx              LayoutWizardEditWorkspace
 │  └─ page.tsx                WorkspaceEditPage
-└─ [accountId]/create/        the create wizards of an account, outside the group too
-   └─ execute/                the DAO direct-execute wizard (see "Direct-execute wizard")
-      ├─ layout.tsx           LayoutWizardCreateWorkspaceExecute
-      └─ page.tsx             WorkspaceCreateExecutePage
+└─ [accountId]/create/        the create wizards of an account, outside the group too (see "Create wizards")
+   ├─ execute/                LayoutWizardCreateWorkspaceExecute, WorkspaceCreateExecutePage
+   └─ [pluginAddress]/proposal/   LayoutWizardCreateWorkspaceProposal, WorkspaceCreateProposalPage
 ```
 
 The route group, as with `(daoPage)`, only decides the layout: `edit/` and `[accountId]/create/` sit outside it to get
@@ -417,20 +416,26 @@ different thing from them being populated: see [the Safe aggregation gap](#known
 (`query/transactions`), the account from `useWorkspaceAccountOptions`. Its aside card follows the same rule as the
 assets one: a selected DAO gets the DAO card, and anything else — the aggregated scope or a Safe — gets
 `WorkspaceAllTransactionsAsideCard`, titled by the option's label when one is selected. The create action sends a
-DAO to the workspace's own direct-execute wizard (`{accountId}/create/execute`, see "Direct-execute wizard"),
+DAO to the workspace's own direct-execute wizard (`{accountId}/create/execute`, see "Create wizards"),
 which checks the account itself, so the page reads no DAO to build it. The Safe write path is closed by construction
 rather than by a check at the edge: a Safe has no create wizard in the workspace yet, so its row in the
 select-account dialog is dimmed and picking it navigates nowhere. `DispatchPanel` takes the account address as
 a *DAO* address, so it renders only beside a DAO card; tests pin all of this, as the next person to touch a
 Safe branch will be tempted to open it.
 
-#### Direct-execute wizard
+#### Create wizards
 
-`/{accountId}/create/execute` is the DAO's `/dao/…/create/execute` wizard inside the workspace, DAO accounts only.
-`LayoutWizardCreateWorkspaceExecute` and `WorkspaceCreateExecutePage` render the DAO's layout and page with the
-route parameters adapted; both pass an `exitPath` to the account's workspace transactions. The page drills it
-through `CreateExecuteActionsPage` and `CreateExecuteActionsPageClient` to `useExecutePermissionCheckGuard`, which
-redirects there instead of the DAO transactions when the wallet cannot execute.
+The DAO's create wizards inside the workspace, at the DAO's own path after the account. Each workspace layout and page
+renders the DAO's with the route parameters adapted, passing an `exitPath` to the account's workspace section.
+DAO accounts only: a Safe has no execute wizard and no proposals.
+
+| Route | DAO wizard | Exits to |
+| --- | --- | --- |
+| `{accountId}/create/execute` | `/dao/…/create/execute` | `{accountId}/transactions` |
+| `{accountId}/create/{pluginAddress}/proposal` | `/dao/…/create/{pluginAddress}/proposal` | `{accountId}/proposals` |
+
+The execute page drills its `exitPath` through `CreateExecuteActionsPage` and `CreateExecuteActionsPageClient` to
+`useExecutePermissionCheckGuard`, which redirects there instead of the DAO transactions when the wallet cannot execute.
 
 | Outcome | Where |
 | --- | --- |
@@ -441,8 +446,8 @@ redirects there instead of the DAO transactions when the wallet cannot execute.
 | workspace not on this device | page: `WorkspaceGate` |
 | DAO | the wizard |
 
-The wizard's success link still leaves the workspace; see "Links out of the workspace". Review the `exitPath` prop
-drilling when the workspace links are fixed: a route-aware link mechanism should replace it.
+Some of their links still leave the workspace; see "Links out of the workspace". Review the `exitPath` prop drilling
+when the workspace links are fixed: a route-aware link mechanism should replace it.
 
 ### Account scope
 
@@ -716,7 +721,8 @@ The "New proposal" action asks for the account first (`WorkspaceSelectAccountDia
 (`SelectPluginDialog`), skipping the account step when the route has already named one — the plugin dialog is then
 not stacked and offers no back action, there being nothing underneath to go back to. Creating a proposal stays a
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
-called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
+called with the DAO and plugin of the selection, and the flow then opens the workspace's create-proposal wizard
+(`{accountId}/create/{pluginAddress}/proposal`, see "Create wizards").
 
 #### Details page
 
@@ -760,13 +766,14 @@ checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whe
 | `all/todos` | its queued transactions the wallet still has to sign, beside the proposals to vote on | backend (`query/todo`) |
 | `{accountId}/todos` | the same rows, narrowed to the Safe | backend (`query/todo`) |
 | `{accountId}/assets` | list and aside describe the Safe | client; no guard |
-| `{accountId}/transactions` | the same, read-only: no create action, dispatch panel is DAO-only | client; no guard |
+| `{accountId}/transactions` | the same; its create action opens `create/transaction` (a DAO's opens `create/execute`), dispatch panel is DAO-only | client; no guard |
+| `{accountId}/create/transaction` | the full-page Safe wizard (`SafeCreateTransactionWizard`): composed actions become one Safe transaction — batched through MultiSendCallOnly when there is more than one — signed and proposed by the owner. A DAO creates through `create/execute` and its URL here redirects to its overview. The route sits outside `(workspacePage)`, like the edit wizard, so it renders in the wizard layout | `WorkspaceSectionGuard` (subsection) |
 | `{accountId}/overview` | the Safe dashboard (threshold, owners, nonce, pending transactions, previews) | page `switch` |
 | `{accountId}/members` | its owners, settings in the aside | page `switch` |
 | `{accountId}/members/{address}` | redirect to its members page | page `switch` |
 | `{accountId}/settings` | read-only account and governance details | page `switch` |
 | `{accountId}/proposals`, `…/proposals/{slug}`, `…/permissions` | no link; the URL redirects to its overview | `WorkspaceSectionGuard` |
-| `{accountId}/create/execute` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
+| `{accountId}/create/execute`, `…/create/{pluginAddress}/proposal` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
 
 - **A Safe is an account option on every section.** Where it lacks the section, the option links to its overview,
   as does the aggregated option on permissions and settings; a URL that gets there anyway is redirected by the guard.
@@ -787,10 +794,11 @@ route to the wrong account type.
    `WorkspaceSectionGuard`. `LayoutWorkspaceAccount` already checks the account exists.
 3. Add a navigation link in `navigationWorkspaceUtils.buildLinks`, hidden through `isSectionServed`.
 
-**A create wizard** — `[accountId]/create/{subsection}/{layout,page}.tsx`:
+**A create wizard** — `[accountId]/create/…/{subsection}/{layout,page}.tsx`, at the DAO's path:
 
-1. Declare the subsection under `create.subsections` with its account types. A subsection left out would be served to
-   every type of `create`, a DAO and a Safe; `WorkspaceAccountSubsection` makes a mistyped one a type error.
+1. Declare its static segment under `create.subsections` with its account types (`proposal` for
+   `[pluginAddress]/proposal`). A route left out would be served to every type of `create`, a DAO and a Safe;
+   `WorkspaceAccountSubsection` makes a mistyped one a type error.
 2. Layout: check the `workspaces` flag and `isValidAccountId`, then render `WorkspaceSectionGuard` (`section="create"`,
    the subsection) **around** the wizard layout. Nothing above it checks the account, and a DAO layout that reads the
    DAO replaces its children with an error state when the read fails, so a guard in the page would never run.
@@ -798,15 +806,22 @@ route to the wrong account type.
 4. Exit to the account's workspace section (`getAccountScopeUrl`), and point the entry action at the new route.
 5. Record every link the wizard still has to `/dao/…` in "Links out of the workspace".
 
+A running `pnpm dev` does not pick up a new dynamic route folder (e.g. `[pluginAddress]/`): restart it, or the route
+404s.
+
 #### Links out of the workspace
 
 Links on a workspace route that lead to `/dao/…`, kept here for a review pass. Add a row when a change introduces one;
 remove it when the link stays in the workspace. The same review covers the `exitPath` props that keep the DAO
-wizards' redirects in the workspace today (see "Direct-execute wizard").
+wizards' redirects in the workspace today (see "Create wizards").
 
 | Route | Link | Leads to | Source |
 | --- | --- | --- | --- |
 | `{accountId}/create/execute` | success action of the execute dialog ("View transactions") | `/dao/{network}/{addressOrEns}/transactions` | `ExecuteActionsDialog` (`daoUtils.getDaoUrl(dao, 'transactions')`) |
+| `{accountId}/create/{pluginAddress}/proposal` | "plugin not found" error action | `/dao/…/proposals` | `CreateProposalPageClient` |
+| `{accountId}/create/{pluginAddress}/proposal` | redirect when the permission check fails | `/dao/…/proposals` | `useProposalPermissionCheckGuard` (`redirectTab: 'proposals'`) |
+| `{accountId}/create/{pluginAddress}/proposal` | success action of the publish dialog | `/dao/…/proposals/{slug}`, or the linked account's DAO path | `PublishProposalDialog` (`getProposalsLink`) |
+| `{accountId}/create/{pluginAddress}/proposal` | indexing fallback of the publish dialog | `/dao/…/proposals` | `PublishProposalDialog` (`indexingFallbackUrl`) |
 
 #### Account existence and the account lookup
 
@@ -1202,6 +1217,7 @@ src/modules/workspace/
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspaceExecute/{layoutWizardCreateWorkspaceExecute.tsx,index.ts}
+├── components/layoutWizardCreateWorkspaceProposal/{layoutWizardCreateWorkspaceProposal.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
@@ -1222,6 +1238,7 @@ src/modules/workspace/
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
 ├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
 ├── pages/workspaceCreateExecutePage/{workspaceCreateExecutePage.tsx,index.ts}
+├── pages/workspaceCreateProposalPage/{workspaceCreateProposalPage.tsx,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
 └── index.ts
@@ -1233,6 +1250,7 @@ src/app/create/workspace/{page.tsx,layout.tsx}
 src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
 src/app/workspace/[workspaceId]/[accountId]/create/execute/{layout.tsx,page.tsx}
+src/app/workspace/[workspaceId]/[accountId]/create/[pluginAddress]/proposal/{layout.tsx,page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,

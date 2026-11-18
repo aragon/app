@@ -42,7 +42,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             </div>
 
             {/* Withdraw fee row */}
-            <div className="text-primary-400 flex items-baseline justify-between text-base leading-tight font-normal">
+            <div className="flex items-baseline justify-between text-base leading-tight font-normal text-primary-400">
                 <span>
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.withdrawFee',

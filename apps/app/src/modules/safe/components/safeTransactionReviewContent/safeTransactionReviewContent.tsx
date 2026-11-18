@@ -9,6 +9,10 @@ import {
     Link as KitLink,
     Tag,
 } from '@aragon/gov-ui-kit';
+import {
+    getMultiSendCallOnlyDeployments,
+    getMultiSendDeployments,
+} from '@safe-global/safe-deployments';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import type { Hex } from 'viem';
@@ -134,15 +138,21 @@ const collectCalls = (
 };
 
 /**
- * Canonical MultiSend and MultiSendCallOnly deployments for Safe 1.3.0 and 1.4.1, lowercased for
- * comparison. Deterministic across the standard EVM chains this app supports.
+ * Every MultiSend and MultiSendCallOnly deployment of `safe-deployments` for Safe 1.3.0, 1.4.1 and 1.5.0 (canonical,
+ * eip155 and zkSync), lowercased for comparison. The protocol kit batches through whichever deployment the registry
+ * lists first for a chain, which is not always the canonical one (e.g. eip155 on Sepolia), so a batch the app built
+ * itself must not be reported as an unrecognised delegate target.
  */
-const knownDelegateTargets: Record<string, true> = {
-    '0x38869bf66a61cf6bdb996a6ae40d5853fd43b526': true,
-    '0x9641d764fc13c8b624c04430c7356c1c7c8102e2': true,
-    '0xa238cbeb142c10ef7ad8442c6d1f9e89e07e7761': true,
-    '0x40a2accbd92bca938b02010e17a5b8929b49130d': true,
-};
+const knownDelegateTargets = new Set(
+    ['1.3.0', '1.4.1', '1.5.0'].flatMap((version) =>
+        [getMultiSendDeployments, getMultiSendCallOnlyDeployments].flatMap(
+            (getDeployments) =>
+                Object.values(
+                    getDeployments({ version })?.deployments ?? {},
+                ).map(({ address }) => address.toLowerCase()),
+        ),
+    ),
+);
 
 /**
  * The reviewable payload of a Safe transaction: its fields, the device-comparison hashes, every
@@ -273,7 +283,7 @@ export const SafeTransactionReviewContent: React.FC<
      */
     const delegateCalls = calls.filter(({ call }) => call.operation === 1);
     const hasUnrecognisedDelegateTarget = delegateCalls.some(
-        ({ call }) => knownDelegateTargets[call.to.toLowerCase()] !== true,
+        ({ call }) => !knownDelegateTargets.has(call.to.toLowerCase()),
     );
 
     /**
@@ -330,6 +340,14 @@ export const SafeTransactionReviewContent: React.FC<
         delegateTargets.length > 0 &&
         (!isDelegateCodeKnown || isDelegateCodeUnavailable);
     const isHashMismatch = verification === SafeHashVerification.MISMATCH;
+
+    /**
+     * With a gas price above zero the Safe pays for its own execution, whatever its calls do: the
+     * refund goes to the refund receiver, or to whoever executes, in the gas token. The fields
+     * sit in the collapsed details, so the refund is said out loud. Disclosed rather than refused,
+     * as relayed transactions use it legitimately.
+     */
+    const hasGasRefund = !/^0+$/.test(envelope.gasPrice);
 
     /**
      * Refused rather than disclosed, because in these states what this surface *says* is wrong, not
@@ -410,6 +428,12 @@ export const SafeTransactionReviewContent: React.FC<
             {hasUnrecognisedDelegateTarget && !hasCodelessTarget && (
                 <AlertInline
                     message={t(`${translationKey}.unrecognisedDelegateCall`)}
+                    variant="warning"
+                />
+            )}
+            {hasGasRefund && (
+                <AlertInline
+                    message={t(`${translationKey}.gasRefund`)}
                     variant="warning"
                 />
             )}

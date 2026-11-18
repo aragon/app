@@ -55,7 +55,7 @@ export const DocumentParser: React.FC<IDocumentParserProps> = (props) => {
 
     return (
         <EditorContent
-            className={classNames('prose prose-neutral w-full max-w-none', className)}
+            className={classNames('w-full max-w-none prose-neutral prose', className)}
             data-testid="doc-parser"
             editor={parser}
             {...otherProps}

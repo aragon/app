@@ -89,7 +89,7 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
 
     return (
         <div className="flex size-full flex-col gap-y-2 md:gap-y-3">
-            <div className="bg-neutral-0 relative flex h-full flex-col rounded-xl md:flex-row">
+            <div className="relative flex h-full flex-col rounded-xl bg-neutral-0 md:flex-row">
                 <AssetTransferAddress addressUrl={senderUrl} participant={sender} txRole="sender" />
                 <div className="border-t border-neutral-100 md:border-l" />
                 <AvatarIcon

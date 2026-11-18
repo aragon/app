@@ -103,7 +103,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
             className={classNames(
                 'flex items-center gap-3 px-4 py-3', // Layout
                 'cursor-pointer rounded-xl text-base leading-tight focus-visible:outline-hidden', // Style
-                'data-disabled:bg-neutral-0 data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:text-neutral-300', // Disabled
+                'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-neutral-0 data-disabled:text-neutral-300', // Disabled
                 { 'bg-neutral-0 text-neutral-500': !selected && !disabled }, // Not selected
                 { 'bg-neutral-50 text-neutral-800': selected && !disabled }, // Selected
                 { 'hover:bg-neutral-50 hover:text-neutral-800': !disabled }, // Hover

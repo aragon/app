@@ -26,7 +26,7 @@ import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
  */
 export interface IGasLimitEstimationAction {
     to: string;
-    value: string;
+    value: string | bigint;
     data: string;
 }
 
@@ -239,9 +239,15 @@ export const useCrossChainControllerGasLimit = (
         reset: resetEstimation,
     } = useEstimateGasLimit();
 
+    const estimatedActions = nestedActions.map(({ to, value, data }) => ({
+        to,
+        value: String(value || '0'),
+        data: data || '0x',
+    }));
+
     // The gas limit is measured against a specific payload on a specific chain, so it is only
     // valid for the pair it was calculated from.
-    const estimationSubject = `${destinationChainId?.toString() ?? ''}:${JSON.stringify(nestedActions)}`;
+    const estimationSubject = `${destinationChainId?.toString() ?? ''}:${JSON.stringify(estimatedActions)}`;
     const lastEstimationSubject = useRef(estimationSubject);
 
     useEffect(() => {
@@ -275,11 +281,7 @@ export const useCrossChainControllerGasLimit = (
                 urlParams: { network: daoNetwork, controllerAddress },
                 body: {
                     destinationChainId,
-                    actions: nestedActions.map(({ to, value, data }) => ({
-                        to,
-                        value: value || '0',
-                        data: data || '0x',
-                    })),
+                    actions: estimatedActions,
                 },
             },
             {

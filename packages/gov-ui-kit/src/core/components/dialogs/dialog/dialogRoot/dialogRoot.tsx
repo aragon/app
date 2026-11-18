@@ -31,14 +31,14 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     } = props;
 
     const overlayClassNames = classNames(
-        'gradient-neutral-50-transparent-to-t fixed inset-0 backdrop-blur-md',
+        'fixed inset-0 backdrop-blur-md gradient-neutral-50-transparent-to-t',
         'z-[var(--guk-dialog-overlay-z-index)]',
         overlayClassName,
     );
 
     const containerClassNames = classNames(
         'fixed inset-x-2 bottom-2 mx-auto max-h-[calc(100vh-80px)] focus:outline-hidden md:inset-x-6 md:bottom-6 lg:top-12 lg:bottom-auto lg:max-h-[calc(100vh-200px)]',
-        'bg-neutral-0 shadow-neutral-md flex flex-col rounded-xl border border-neutral-100',
+        'flex flex-col rounded-xl border border-neutral-100 bg-neutral-0 shadow-neutral-md',
         'z-[var(--guk-dialog-content-z-index)]',
         sizeToClassNames[size],
         containerClassName,

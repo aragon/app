@@ -37,6 +37,7 @@
         }
     },
     "tailwind": {
+        "stylesheet": "packages/gov-ui-kit/index.css",
         "mergeFunctions": [
             "classNames",
             "clsx",

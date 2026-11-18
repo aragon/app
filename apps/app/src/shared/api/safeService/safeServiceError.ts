@@ -96,4 +96,15 @@ export class SafeServiceError extends Error {
      */
     static isRateLimitedError = (error: unknown) =>
         this.hasCode(error, SafeServiceErrorCode.RATE_LIMITED);
+
+    /**
+     * The service refused a write (a proposal or a confirmation), so it was not stored. Any other failure — a timeout,
+     * a conflict, a server error or a request that never got an answer — may hide a write that was accepted.
+     */
+    static isDefinitiveWriteError = (error: unknown) =>
+        error instanceof SafeServiceError &&
+        error.status >= 400 &&
+        error.status < 500 &&
+        error.status !== 408 &&
+        error.status !== 409;
 }

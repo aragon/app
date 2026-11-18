@@ -20,10 +20,12 @@ kind: rule
 
 - **Route, don't hide.** Only zero-signal third-party junk (browser extensions, mail crawlers, WebView DOM serialization) is dropped at source. Anything that could aid an investigation stays in Sentry, tagged — never `ignoreErrors` a real or user error.
 - **info vs error.** `logMessage(name, { level: 'info' | 'warning' })` for non-bug signals; `logError` only for actual errors. Don't re-raise an expected event as an error to "make it visible" — it's already kept and searchable by `user.id:0x...`.
+- **Rate vs issue.** A high-volume signal watched as a rate (BotID rejections) is a metric, `incrementCounter(name, attributes)` with low-cardinality attributes, not an event: at that volume events take the error quota.
+- **Server captures outlive the response.** Vercel suspends a function once it responds, before the SDK sends; `logError` / `logMessage` / `incrementCounter` hand a flush to the platform's `waitUntil` themselves. A capture that bypasses `monitoringUtils` on the server is delivered late or lost.
 - **Self-explanatory events.** Pass `context`/tags that let someone debug from the event alone.
 - **Never `JSON.stringify` an error/DOM/cyclic object.** Use `errorUtils.serialize` (WeakSet-safe); for backend payloads use `responseUtils.safeJsonParseForResponse`.
 
 ## Canon
-- `monitoringUtils.ts` — `logError` / `logMessage` / `identifyUser` / `beforeSend` (the `noise_class` taxonomy + info demotion).
+- `monitoringUtils.ts` — `logError` / `logMessage` / `incrementCounter` / `identifyUser` / `beforeSend` (the `noise_class` taxonomy + info demotion).
 - `aragonBackendServiceError.ts` — `isExpectedNotFoundError` (`notFound` + `pluginNotFound`).
 - `pageError.tsx` — suppresses expected not-found, reports the rest.

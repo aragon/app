@@ -1,4 +1,4 @@
-import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Dropdown, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { PluginSingleComponent } from '../pluginSingleComponent';
@@ -21,6 +21,7 @@ export const PluginFilterComponent = <
         value,
         onValueChange,
         searchParamName = pluginFilterComponentFilterParam,
+        variant = 'tab',
         Fallback,
         renderContent,
         ...otherProps
@@ -115,20 +116,37 @@ export const PluginFilterComponent = <
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
-            <ToggleGroup
-                isMultiSelect={false}
-                onChange={handleChange}
-                value={activePlugin}
-            >
-                {plugins.map(({ uniqueId, label, className }) => (
-                    <Toggle
-                        className={className}
-                        key={uniqueId}
-                        label={label}
-                        value={uniqueId}
-                    />
-                ))}
-            </ToggleGroup>
+            {variant === 'dropdown' ? (
+                <div>
+                    <Dropdown.Container label={activePluginRecord?.label}>
+                        {plugins.map(({ uniqueId, label, className }) => (
+                            <Dropdown.Item
+                                className={className}
+                                key={uniqueId}
+                                onSelect={() => handleChange(uniqueId)}
+                                selected={uniqueId === activePlugin}
+                            >
+                                {label}
+                            </Dropdown.Item>
+                        ))}
+                    </Dropdown.Container>
+                </div>
+            ) : (
+                <ToggleGroup
+                    isMultiSelect={false}
+                    onChange={handleChange}
+                    value={activePlugin}
+                >
+                    {plugins.map(({ uniqueId, label, className }) => (
+                        <Toggle
+                            className={className}
+                            key={uniqueId}
+                            label={label}
+                            value={uniqueId}
+                        />
+                    ))}
+                </ToggleGroup>
+            )}
 
             {activePluginRecord != null && getPluginContent(activePluginRecord)}
         </div>

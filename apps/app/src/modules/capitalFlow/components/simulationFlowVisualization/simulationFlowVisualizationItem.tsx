@@ -170,7 +170,7 @@ export const SimulationFlowVisualizationItem: React.FC<
     const showFallbackAddress = addressHref == null && !compact;
 
     return (
-        <div className="bg-neutral-0 shadow-neutral-sm w-full rounded-xl border border-neutral-100 p-6">
+        <div className="w-full rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral-sm">
             <div className="flex items-center gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                     <ItemIcon groupKind={groupKind} item={item} />
