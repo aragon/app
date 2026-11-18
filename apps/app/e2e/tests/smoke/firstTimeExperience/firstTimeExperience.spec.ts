@@ -48,6 +48,26 @@ test.describe('First-time workspace experience', () => {
             await setWorkspacesFlag(context, baseURL!, true);
         });
 
+        // An empty registry lands on Getting started rather than being seeded a workspace, so every flow that
+        // needs a workspace of its own creates one the way a first-time user does.
+        const createEmptyWorkspace = async (
+            page: import('@playwright/test').Page,
+        ) => {
+            await page.goto('/getting-started');
+            await page
+                .getByRole('button', { name: 'Add accounts later' })
+                .click();
+            await page
+                .getByRole('button', { name: 'Create workspace' })
+                .click();
+            await page.getByRole('link', { name: 'View workspace' }).click();
+            // A workspace created here owes its welcome dialog once.
+            await page.getByRole('button', { name: 'Open workspace' }).click();
+            await expect(page).toHaveURL(
+                /\/workspace\/my-workspace(?:-[a-f0-9]{8})?\/all\/overview$/,
+            );
+        };
+
         test('keeps the existing Explore experience on its separate route', async ({
             page,
         }) => {
@@ -216,8 +236,23 @@ test.describe('First-time workspace experience', () => {
                 buffer: Buffer.from('{}'),
             });
 
+            // A blank registry no longer seeds a workspace: it sends the user to Getting started.
+            await expect(page).toHaveURL(/\/getting-started$/);
+            await expect(
+                page.getByRole('heading', { level: 1, name: 'Add accounts' }),
+            ).toBeVisible();
+
+            await page
+                .getByRole('button', { name: 'Add accounts later' })
+                .click();
+            await page
+                .getByRole('button', { name: 'Create workspace' })
+                .click();
+            await page.getByRole('link', { name: 'View workspace' }).click();
+            await page.getByRole('button', { name: 'Open workspace' }).click();
+
             await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
+                /\/workspace\/my-workspace(?:-[a-f0-9]{8})?\/all\/overview$/,
             );
             await expect(
                 page.getByRole('heading', {
@@ -230,10 +265,7 @@ test.describe('First-time workspace experience', () => {
         test('installs the demo fixture and keeps normal workspace navigation working', async ({
             page,
         }) => {
-            await page.goto('/workspace');
-            await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
-            );
+            await createEmptyWorkspace(page);
 
             await page.goto('/');
             await page
@@ -274,8 +306,9 @@ test.describe('First-time workspace experience', () => {
                 /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/overview(?:\?.*)?$/,
             );
             await page.getByRole('link', { name: 'Proposals' }).first().click();
+            // The section opens as a tab of the account overview, named by the query.
             await expect(page).toHaveURL(
-                /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/proposals(?:\?.*)?$/,
+                /\/workspace\/aragon-demo\/ethereum-mainnet-0x9c25a6b1bf3F6Fd2F68a62169c043045C2460482\/overview\?.*proposals=/,
             );
             await expect(
                 page.getByRole('button', { name: 'New proposal' }),
@@ -317,7 +350,7 @@ test.describe('First-time workspace experience', () => {
 
             await page.goto('/workspace');
             await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[a-f0-9]{8}\/all\/overview$/,
+                /\/workspace\/my-workspace(?:-[a-f0-9]{8})?\/all\/overview$/,
             );
             await expect(
                 page.getByRole('heading', {
@@ -337,10 +370,10 @@ test.describe('First-time workspace experience', () => {
         test('creates an empty workspace and exposes both account actions', async ({
             page,
         }) => {
-            await page.goto('/workspace');
+            await createEmptyWorkspace(page);
 
             await expect(page).toHaveURL(
-                /\/workspace\/my-workspace-[^/]+\/all\/overview$/,
+                /\/workspace\/my-workspace(?:-[a-f0-9]{8})?\/all\/overview$/,
             );
             await expect(
                 page.getByRole('heading', { level: 1, name: 'My workspace' }),
@@ -361,7 +394,7 @@ test.describe('First-time workspace experience', () => {
         test('opens DAO creation from the empty workspace', async ({
             page,
         }) => {
-            await page.goto('/workspace');
+            await createEmptyWorkspace(page);
             await page
                 .getByRole('button', { name: 'Create a new account' })
                 .click();

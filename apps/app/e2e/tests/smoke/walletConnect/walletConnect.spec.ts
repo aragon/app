@@ -10,44 +10,43 @@ const enableWorkspaces = async (context: BrowserContext, baseURL: string) => {
     ]);
 };
 
-test.describe('Wallet connect dialog', () => {
+test.describe('Wallet connect modal', () => {
     test.beforeEach(async ({ baseURL, context, page }) => {
         await enableWorkspaces(context, baseURL!);
         await page.goto('/');
     });
 
-    test('opens with expected trust signals and controls', async ({ page }) => {
+    // The landing signs in straight from the wallet's own modal. The Aragon dialog that used to introduce it is
+    // gone from this flow only: the DAO pages still open it through their connected-wallet guards.
+    test('opens the wallet modal directly, without the Aragon dialog', async ({
+        page,
+    }) => {
+        // AppKit mounts its host element on load, so a hidden host before the click is what makes the one after
+        // it mean something.
+        await expect(page.locator('w3m-modal')).toBeHidden();
+
         await page
             .getByRole('button', { name: 'Continue with wallet' })
             .click();
 
-        const dialog = page.getByRole('dialog');
-        await expect(dialog).toBeVisible();
-
+        await expect(page.locator('w3m-modal')).toBeVisible();
+        // AppKit renders its own shadow tree, so the assertions that hold are the host's visibility and the
+        // absence of the Aragon dialog that used to come first.
+        await expect(page.getByRole('dialog')).toHaveCount(0);
         await expect(
-            dialog.getByText('wants to connect to your wallet'),
-        ).toBeVisible();
-        await expect(dialog.getByText('View-only permissions')).toBeVisible();
-        await expect(dialog.getByText(/Trusted by/)).toBeVisible();
-        await expect(dialog.getByText('Audited smart contracts')).toBeVisible();
-
-        await expect(
-            dialog.getByRole('button', { name: 'Connect' }),
-        ).toBeVisible();
-        await expect(
-            dialog.getByRole('button', { name: 'Cancel' }),
-        ).toBeVisible();
+            page.getByText('wants to connect to your wallet'),
+        ).toHaveCount(0);
     });
 
-    test('Cancel closes the dialog', async ({ page }) => {
+    test('keeps the user on the landing until a wallet connects', async ({
+        page,
+    }) => {
         await page
             .getByRole('button', { name: 'Continue with wallet' })
             .click();
+        await expect(page.locator('w3m-modal')).toBeVisible();
 
-        const dialog = page.getByRole('dialog');
-        await expect(dialog).toBeVisible();
-
-        await dialog.getByRole('button', { name: 'Cancel' }).click();
-        await expect(dialog).toBeHidden();
+        await expect(page).toHaveURL(/\/$/);
+        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     });
 });
