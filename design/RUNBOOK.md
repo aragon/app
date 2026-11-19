@@ -41,8 +41,9 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
      its files under `project/ds/aragon-gov-ui-kit/` (list them with `action: "list"`, `scope: "files"`),
      `"project/ds/aragon-gov-ui-kit/…": { "artifact": "<reference canvas url>", "path": "project/ds/aragon-gov-ui-kit/…" }`.
 
-   Before publishing, set `title` in `<folder>/project/canvas.json` to the ticket's name, so the canvas is not
-   mistaken for the reference. The prototypes load the kit from that folder. `canvas.json` from the repo already carries the kit's
+   The canvas keeps the title you created it with in its header, but `canvas.json` carries the reference's title
+   ("Aragon App prototypes"). Leave it: changing it would show up as a difference on every pull. The prototypes
+   load the kit from that folder. `canvas.json` from the repo already carries the kit's
    `designSystems` record, so nothing else is needed for the canvas to count the kit as installed.
 6. Add to `canvases/<name>.json`: `canvas` (the url), `branch`, `canvasVersion` (the version id the publish
    answered with), and `appCommit` and `kit` copied from `canvases/prototypes.json`. Commit and push the branch
