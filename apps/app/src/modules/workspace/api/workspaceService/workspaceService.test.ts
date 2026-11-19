@@ -462,6 +462,68 @@ describe('workspace service', () => {
             expect(getStoredWorkspaces()).toEqual({ existing, ...fixture });
         });
 
+        it('reads and writes the persistent registry even on a demo route', async () => {
+            // The route decides `getActiveStorage`, so on a demo page the debug panel used to export the fixture
+            // and write its import to the session registry, where navigating away lost it.
+            window.history.pushState(
+                {},
+                '',
+                '/workspace/aragon-demo/all/overview',
+            );
+            sessionStorage.setItem(
+                'aragon-session-workspaces',
+                JSON.stringify({ 'aragon-demo': { id: 'aragon-demo' } }),
+            );
+
+            const imported = {
+                mine: { ...buildBody({ name: 'Mine' }), id: 'mine' },
+            };
+            await workspaceService.importWorkspaceRegistry(
+                JSON.stringify(imported),
+            );
+
+            expect(getStoredWorkspaces()).toEqual(imported);
+            expect(sessionStorage.getItem('aragon-session-workspaces')).toBe(
+                JSON.stringify({ 'aragon-demo': { id: 'aragon-demo' } }),
+            );
+
+            window.history.pushState({}, '', '/');
+            sessionStorage.clear();
+        });
+
+        it('repairs links saved without a protocol, so an older export re-imports', async () => {
+            // Exports before the repair kept whatever the resources input accepted, which may lack a scheme.
+            const registry = {
+                first: {
+                    ...buildBody({ name: 'First' }),
+                    id: 'first',
+                    links: [{ name: 'Docs', url: 'aragon.org/docs' }],
+                },
+            };
+
+            const [workspace] = await workspaceService.importWorkspaceRegistry(
+                JSON.stringify(registry),
+            );
+
+            expect(workspace.links).toEqual([
+                { name: 'Docs', url: 'https://aragon.org/docs' },
+            ]);
+        });
+
+        it('throws the validation error on junk links instead of a TypeError', async () => {
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    JSON.stringify({
+                        broken: {
+                            ...buildBody(),
+                            id: 'broken',
+                            links: [null],
+                        },
+                    }),
+                ),
+            ).rejects.toThrow('not a valid workspace registry');
+        });
+
         it('rejects malformed imports without changing stored workspaces', async () => {
             const existing = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'Existing' }),

@@ -118,6 +118,10 @@ const isWorkspaceBody = (value: unknown): value is Omit<IWorkspace, 'id'> => {
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&
         Array.isArray(workspace.links) &&
         workspace.links.every((value) => {
+            if (value == null || typeof value !== 'object') {
+                return false;
+            }
+
             const link = value as Partial<(typeof workspace.links)[number]>;
 
             return (
@@ -162,6 +166,37 @@ const parseWorkspaceExport = (rawExport: string): Omit<IWorkspace, 'id'> => {
     return workspace;
 };
 
+/**
+ * Adds a protocol to the links of a stored workspace, the same repair the single-workspace export does. Done on the
+ * way in rather than on export, so registries downloaded before it stay importable and the export shape is unchanged.
+ */
+const normaliseWorkspaceLinks = (value: unknown): unknown => {
+    if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+        return value;
+    }
+
+    const workspace = value as { links?: unknown };
+    if (!Array.isArray(workspace.links)) {
+        return value;
+    }
+
+    return {
+        ...workspace,
+        links: workspace.links.map((link) => {
+            if (link == null || typeof link !== 'object') {
+                return link;
+            }
+
+            const { url } = link as { url?: unknown };
+            if (typeof url !== 'string' || /^https?:\/\//i.test(url)) {
+                return link;
+            }
+
+            return { ...link, url: `https://${url}` };
+        }),
+    };
+};
+
 const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
     let parsed: unknown;
 
@@ -173,18 +208,26 @@ const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
         });
     }
 
+    if (parsed == null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('The selected file is not a valid workspace registry.');
+    }
+
+    const normalised = Object.fromEntries(
+        Object.entries(parsed).map(([id, workspace]) => [
+            id,
+            normaliseWorkspaceLinks(workspace),
+        ]),
+    );
+
     if (
-        parsed == null ||
-        typeof parsed !== 'object' ||
-        Array.isArray(parsed) ||
-        !Object.entries(parsed).every(([id, workspace]) =>
+        !Object.entries(normalised).every(([id, workspace]) =>
             isWorkspace(id, workspace),
         )
     ) {
         throw new Error('The selected file is not a valid workspace registry.');
     }
 
-    return parsed as WorkspaceRegistry;
+    return normalised as WorkspaceRegistry;
 };
 /**
  * Workspace API.
@@ -422,19 +465,34 @@ class WorkspaceService {
         return workspace;
     };
 
+    /**
+     * The registry the file formats describe: the persistent one. `getActiveStorage` follows the route, so on a demo
+     * page the debug panel exported the fixture and wrote its import to the session registry, lost on navigation.
+     */
+    private getPersistentStorage = (): IWorkspaceStorage => {
+        this.requireWindow();
+
+        return { storage: localStorage, key: workspaceStorageKey };
+    };
+
     exportWorkspaceRegistry = async (): Promise<string> =>
-        JSON.stringify(this.getStoredWorkspaces(), null, 2);
+        JSON.stringify(
+            this.getStoredWorkspaces(this.getPersistentStorage()),
+            null,
+            2,
+        );
 
     importWorkspaceRegistry = async (
         rawRegistry: string,
         merge = false,
     ): Promise<IWorkspace[]> => {
+        const target = this.getPersistentStorage();
         const imported = parseWorkspaceRegistry(rawRegistry);
         const workspaces = merge
-            ? { ...this.getStoredWorkspaces(), ...imported }
+            ? { ...this.getStoredWorkspaces(target), ...imported }
             : imported;
 
-        this.persistWorkspaces(workspaces);
+        this.persistWorkspaces(workspaces, target);
 
         return Object.values(workspaces);
     };
