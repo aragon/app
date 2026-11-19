@@ -57,6 +57,16 @@
         "border/surface/fill-disabled": {
             "alias": "bg/surface/disabled",
             "note": "Code-only, pending design review: the Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+        },
+        "shadow/surface/md": {
+            "light": "#5252521a",
+            "dark": "#5252521a",
+            "note": "Code-only, pending design review: Figma defines shadow sm, default and 2xl only. The md elevation (shadow-neutral-md) recurs on raised surfaces: dialog and alert-dialog panels, the neutral tooltip and the asset-transfer address panel on hover (5 uses). Light/Dark reuse the Figma shadow/surface/default colour (same 10% alpha as today's md shadow)."
+        },
+        "shadow/accent/md": {
+            "light": "#3164fa1a",
+            "dark": "#3164fa1a",
+            "note": "Code-only, pending design review: the hover elevation of a selected selectable card (shadow-primary-md on CheckboxCard and RadioCard, 2 uses). Light/Dark reuse the Figma shadow/accent/default colour (same 10% alpha as today's md shadow)."
         }
     }
 }

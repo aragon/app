@@ -56,6 +56,7 @@
         "tokens:semantic": "node scripts/generate-semantic-tokens.mjs",
         "tokens:semantic:check": "node scripts/generate-semantic-tokens.mjs --check",
         "tokens:semantic:report": "node scripts/generate-semantic-tokens.mjs --report",
+        "tokens:semantic:map:check": "node scripts/validate-semantic-component-map.mjs",
         "type-check": "tsc --noemit",
         "visual-diff": "node scripts/visual-diff.mjs"
     },

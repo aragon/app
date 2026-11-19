@@ -32,6 +32,7 @@ const fail = (message) => {
 const shadowGeometry = {
     sm: ['0px 1px 2px 0px'],
     default: ['0px 1px 3px 0px', '0px 1px 2px -1px'],
+    md: ['0px 4px 6px -1px', '0px 2px 4px -2px'],
     '2xl': ['0px 25px 50px -12px'],
 };
 const utilityBody = (property, name, variable) => {

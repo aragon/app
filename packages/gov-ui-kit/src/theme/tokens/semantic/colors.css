@@ -98,12 +98,12 @@
         --guk-palette-blue-900: #104e64;
         --guk-palette-blue-950: #053345;
 
-        /* fallback, unverified: gray/0 -> neutral-0 */
+        /* verified from code */
         --guk-bg-surface-primary: var(--color-neutral-0);
-        /* fallback, unverified: gray/100 -> neutral-100 */
-        --guk-bg-surface-secondary: var(--color-neutral-100);
-        /* fallback, unverified: gray/200 -> neutral-200 */
-        --guk-bg-surface-tertiary: var(--color-neutral-200);
+        /* verified from code */
+        --guk-bg-surface-secondary: var(--color-neutral-50);
+        /* verified from code */
+        --guk-bg-surface-tertiary: var(--color-neutral-100);
         /* fallback, unverified: gray/400 -> neutral-400 */
         --guk-bg-surface-primary-inverse: var(--color-neutral-400);
         /* fallback, unverified: gray/600 -> neutral-600 */
@@ -116,7 +116,7 @@
         --guk-bg-surface-hover: var(--color-neutral-50);
         /* verified from code */
         --guk-bg-surface-active: var(--color-neutral-0);
-        /* fallback, unverified: gray/50 -> neutral-50 */
+        /* verified from code */
         --guk-bg-surface-selected: var(--color-neutral-50);
         /* verified from code */
         --guk-bg-surface-disabled: var(--color-neutral-100);
@@ -136,13 +136,13 @@
             var(--color-neutral-0) 1%,
             transparent
         );
-        /* fallback, unverified: gray/800a4 -> neutral-800 (alpha 4%) */
+        /* verified from code */
         --guk-bg-surface-transparent-hover: color-mix(
             in srgb,
             var(--color-neutral-800) 4%,
             transparent
         );
-        /* fallback, unverified: gray/800a8 -> neutral-800 (alpha 8%) */
+        /* verified from code */
         --guk-bg-surface-transparent-active: color-mix(
             in srgb,
             var(--color-neutral-800) 8%,
@@ -150,9 +150,9 @@
         );
         /* fallback, unverified: gray/0 -> neutral-0 */
         --guk-bg-surface-transparent-selected: var(--color-neutral-0);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-bg-accent-solid: var(--color-primary-400);
-        /* fallback, unverified: aragon/50 -> primary-50 */
+        /* verified from code */
         --guk-bg-accent-subtle: var(--color-primary-50);
         /* verified from code */
         --guk-bg-accent-default: var(--color-primary-400);
@@ -172,13 +172,13 @@
             var(--color-primary-100) 1%,
             transparent
         );
-        /* fallback, unverified: aragon/400a4 -> primary-400 (alpha 4%) */
+        /* verified from code */
         --guk-bg-accent-transparent-hover: color-mix(
             in srgb,
             var(--color-primary-400) 4%,
             transparent
         );
-        /* fallback, unverified: aragon/400a8 -> primary-400 (alpha 8%) */
+        /* verified from code */
         --guk-bg-accent-transparent-active: color-mix(
             in srgb,
             var(--color-primary-400) 8%,
@@ -186,15 +186,15 @@
         );
         /* verified from code */
         --guk-bg-body: var(--color-neutral-50);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-bg-brand-solid: var(--color-primary-400);
         /* fallback, unverified: aragon/50 -> primary-50 */
         --guk-bg-brand-subtle: var(--color-primary-50);
-        /* fallback, unverified: green/100 -> success-100 */
+        /* verified from code */
         --guk-bg-success-subtle: var(--color-success-100);
         /* fallback, unverified: green/50 -> success-100 (nearest step, green/50 has no success-50) */
         --guk-bg-success-secondary: var(--color-success-100);
-        /* fallback, unverified: green/500 -> success-500 */
+        /* verified from code */
         --guk-bg-success-solid: var(--color-success-500);
         /* verified from code */
         --guk-bg-success-default: var(--color-success-100);
@@ -202,11 +202,11 @@
         --guk-bg-success-hover: var(--color-success-100);
         /* verified from code */
         --guk-bg-success-active: var(--color-neutral-0);
-        /* fallback, unverified: orange/100 -> warning-100 */
+        /* verified from code */
         --guk-bg-warning-subtle: var(--color-warning-100);
         /* fallback, unverified: orange/50 -> warning-100 (nearest step, orange/50 has no warning-50) */
         --guk-bg-warning-secondary: var(--color-warning-100);
-        /* fallback, unverified: orange/500 -> warning-500 */
+        /* verified from code */
         --guk-bg-warning-solid: var(--color-warning-500);
         /* verified from code */
         --guk-bg-warning-default: var(--color-warning-100);
@@ -214,11 +214,11 @@
         --guk-bg-warning-hover: var(--color-warning-100);
         /* verified from code */
         --guk-bg-warning-active: var(--color-neutral-0);
-        /* fallback, unverified: red/100 -> critical-100 */
+        /* verified from code */
         --guk-bg-critical-subtle: var(--color-critical-100);
         /* fallback, unverified: red/50 -> critical-100 (nearest step, red/50 has no critical-50) */
         --guk-bg-critical-secondary: var(--color-critical-100);
-        /* fallback, unverified: red/500 -> critical-500 */
+        /* verified from code */
         --guk-bg-critical-solid: var(--color-critical-500);
         /* verified from code */
         --guk-bg-critical-default: var(--color-critical-100);
@@ -226,14 +226,14 @@
         --guk-bg-critical-hover: var(--color-critical-100);
         /* verified from code */
         --guk-bg-critical-active: var(--color-neutral-0);
-        /* fallback, unverified: blue/100 -> info-100 */
+        /* verified from code */
         --guk-bg-info-subtle: var(--color-info-100);
         /* fallback, unverified: blue/50 -> info-100 (nearest step, blue/50 has no info-50) */
         --guk-bg-info-secondary: var(--color-info-100);
-        /* fallback, unverified: blue/300 -> info-300 */
-        --guk-bg-info-solid: var(--color-info-300);
-        /* fallback, unverified: gray/50 -> neutral-50 */
-        --guk-border-surface-primary: var(--color-neutral-50);
+        /* verified from code */
+        --guk-bg-info-solid: var(--color-info-500);
+        /* verified from code */
+        --guk-border-surface-primary: var(--color-neutral-100);
         /* fallback, unverified: gray/200 -> neutral-200 */
         --guk-border-surface-secondary: var(--color-neutral-200);
         /* verified from code */
@@ -242,12 +242,12 @@
         --guk-border-surface-hover: var(--color-neutral-200);
         /* verified from code */
         --guk-border-surface-active: var(--color-neutral-400);
-        /* fallback, unverified: gray/300 -> neutral-300 */
-        --guk-border-surface-disabled: var(--color-neutral-300);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
+        --guk-border-surface-disabled: var(--color-neutral-200);
+        /* verified from code */
         --guk-border-surface-selected: var(--color-primary-400);
-        /* fallback, unverified: aragon/300 -> primary-300 */
-        --guk-border-accent-primary: var(--color-primary-300);
+        /* verified from code */
+        --guk-border-accent-primary: var(--color-primary-100);
         /* fallback, unverified: aragon/200 -> primary-200 */
         --guk-border-accent-primary-inverse: var(--color-primary-200);
         /* fallback, unverified: aragon/400 -> primary-400 */
@@ -260,7 +260,7 @@
         --guk-border-accent-hover: var(--color-primary-200);
         /* verified from code */
         --guk-border-accent-active: var(--color-primary-400);
-        /* fallback, unverified: green/400 -> success-400 */
+        /* verified from code */
         --guk-border-success-primary: var(--color-success-400);
         /* fallback, unverified: green/800 -> success-800 */
         --guk-border-success-secondary: var(--color-success-800);
@@ -270,7 +270,7 @@
         --guk-border-success-hover: var(--color-success-500);
         /* verified from code */
         --guk-border-success-active: var(--color-success-600);
-        /* fallback, unverified: orange/400 -> warning-400 */
+        /* verified from code */
         --guk-border-warning-primary: var(--color-warning-400);
         /* fallback, unverified: orange/800 -> warning-800 */
         --guk-border-warning-secondary: var(--color-warning-800);
@@ -280,7 +280,7 @@
         --guk-border-warning-hover: var(--color-warning-500);
         /* verified from code */
         --guk-border-warning-active: var(--color-warning-600);
-        /* fallback, unverified: red/400 -> critical-400 */
+        /* verified from code */
         --guk-border-critical-primary: var(--color-critical-400);
         /* fallback, unverified: red/800 -> critical-800 */
         --guk-border-critical-secondary: var(--color-critical-800);
@@ -290,17 +290,17 @@
         --guk-border-critical-hover: var(--color-critical-500);
         /* verified from code */
         --guk-border-critical-active: var(--color-critical-600);
-        /* fallback, unverified: blue/400 -> info-400 */
+        /* verified from code */
         --guk-border-info-primary: var(--color-info-400);
-        /* fallback, unverified: gray/900 -> neutral-900 */
-        --guk-text-surface-primary: var(--color-neutral-900);
-        /* fallback, unverified: gray/600 -> neutral-600 */
-        --guk-text-surface-secondary: var(--color-neutral-600);
-        /* fallback, unverified: gray/500 -> neutral-500 */
-        --guk-text-surface-tertiary: var(--color-neutral-500);
-        /* fallback, unverified: gray/300 -> neutral-300 */
+        /* verified from code */
+        --guk-text-surface-primary: var(--color-neutral-800);
+        /* verified from code */
+        --guk-text-surface-secondary: var(--color-neutral-500);
+        /* verified from code */
+        --guk-text-surface-tertiary: var(--color-neutral-400);
+        /* verified from code */
         --guk-text-surface-placeholder: var(--color-neutral-300);
-        /* fallback, unverified: gray/50 -> neutral-50 */
+        /* verified from code */
         --guk-text-surface-inverse: var(--color-neutral-50);
         /* verified from code */
         --guk-text-surface-default: var(--color-neutral-500);
@@ -308,11 +308,11 @@
         --guk-text-surface-hover: var(--color-neutral-500);
         /* verified from code */
         --guk-text-surface-active: var(--color-neutral-800);
-        /* fallback, unverified: aragon/400 -> primary-400 */
-        --guk-text-surface-selected: var(--color-primary-400);
+        /* verified from code */
+        --guk-text-surface-selected: var(--color-neutral-800);
         /* verified from code */
         --guk-text-surface-disabled: var(--color-neutral-300);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-text-accent-primary: var(--color-primary-400);
         /* fallback, unverified: aragon/900 -> primary-900 */
         --guk-text-accent-secondary: var(--color-primary-900);
@@ -324,9 +324,9 @@
         --guk-text-accent-active: var(--color-primary-600);
         /* verified from code */
         --guk-text-accent-inverse: var(--color-neutral-0);
-        /* fallback, unverified: green/700 -> success-700 */
-        --guk-text-success-primary: var(--color-success-700);
-        /* fallback, unverified: green/900 -> success-900 */
+        /* verified from code */
+        --guk-text-success-primary: var(--color-success-800);
+        /* verified from code */
         --guk-text-success-secondary: var(--color-success-900);
         /* verified from code */
         --guk-text-success-default: var(--color-success-800);
@@ -334,9 +334,9 @@
         --guk-text-success-hover: var(--color-success-800);
         /* verified from code */
         --guk-text-success-active: var(--color-success-800);
-        /* fallback, unverified: orange/700 -> warning-700 */
-        --guk-text-warning-primary: var(--color-warning-700);
-        /* fallback, unverified: orange/900 -> warning-900 */
+        /* verified from code */
+        --guk-text-warning-primary: var(--color-warning-800);
+        /* verified from code */
         --guk-text-warning-secondary: var(--color-warning-900);
         /* verified from code */
         --guk-text-warning-default: var(--color-warning-800);
@@ -344,9 +344,9 @@
         --guk-text-warning-hover: var(--color-warning-800);
         /* verified from code */
         --guk-text-warning-active: var(--color-warning-800);
-        /* fallback, unverified: red/700 -> critical-700 */
-        --guk-text-critical-primary: var(--color-critical-700);
-        /* fallback, unverified: red/900 -> critical-900 */
+        /* verified from code */
+        --guk-text-critical-primary: var(--color-critical-800);
+        /* verified from code */
         --guk-text-critical-secondary: var(--color-critical-900);
         /* verified from code */
         --guk-text-critical-default: var(--color-critical-800);
@@ -354,25 +354,25 @@
         --guk-text-critical-hover: var(--color-critical-800);
         /* verified from code */
         --guk-text-critical-active: var(--color-critical-800);
-        /* fallback, unverified: blue/700 -> info-700 */
-        --guk-text-info-primary: var(--color-info-700);
-        /* fallback, unverified: blue/900 -> info-900 */
+        /* verified from code */
+        --guk-text-info-primary: var(--color-info-800);
+        /* verified from code */
         --guk-text-info-secondary: var(--color-info-900);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-text-link-default: var(--color-primary-400);
-        /* fallback, unverified: aragon/600 -> primary-600 */
-        --guk-text-link-hover: var(--color-primary-600);
-        /* fallback, unverified: aragon/800 -> primary-800 */
-        --guk-text-link-active: var(--color-primary-800);
-        /* fallback, unverified: gray/500 -> neutral-500 */
+        /* verified from code */
+        --guk-text-link-hover: var(--color-primary-500);
+        /* verified from code */
+        --guk-text-link-active: var(--color-primary-700);
+        /* verified from code */
         --guk-text-link-secondary-default: var(--color-neutral-500);
-        /* fallback, unverified: gray/600 -> neutral-600 */
+        /* verified from code */
         --guk-text-link-secondary-hover: var(--color-neutral-600);
-        /* fallback, unverified: gray/800 -> neutral-800 */
+        /* verified from code */
         --guk-text-link-secondary-active: var(--color-neutral-800);
-        /* fallback, unverified: gray/500 -> neutral-500 */
-        --guk-icon-surface-primary: var(--color-neutral-500);
-        /* fallback, unverified: gray/300 -> neutral-300 */
+        /* verified from code */
+        --guk-icon-surface-primary: var(--color-neutral-400);
+        /* verified from code */
         --guk-icon-surface-secondary: var(--color-neutral-300);
         /* verified from code */
         --guk-icon-surface-default: var(--color-neutral-300);
@@ -382,7 +382,7 @@
         --guk-icon-surface-active: var(--color-neutral-500);
         /* verified from code */
         --guk-icon-surface-disabled: var(--color-neutral-300);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-icon-accent-primary: var(--color-primary-400);
         /* fallback, unverified: aragon/100 -> primary-100 */
         --guk-icon-accent-secondary: var(--color-primary-100);
@@ -394,11 +394,11 @@
         --guk-icon-accent-hover: var(--color-primary-400);
         /* verified from code */
         --guk-icon-accent-active: var(--color-primary-400);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-icon-accent-selected: var(--color-primary-400);
         /* verified from code */
         --guk-icon-accent-inverse: var(--color-neutral-0);
-        /* fallback, unverified: green/500 -> success-500 */
+        /* verified from code */
         --guk-icon-success-primary: var(--color-success-500);
         /* fallback, unverified: green/100 -> success-100 */
         --guk-icon-success-secondary: var(--color-success-100);
@@ -408,7 +408,7 @@
         --guk-icon-success-hover: var(--color-success-600);
         /* verified from code */
         --guk-icon-success-active: var(--color-success-600);
-        /* fallback, unverified: orange/500 -> warning-500 */
+        /* verified from code */
         --guk-icon-warning-primary: var(--color-warning-500);
         /* fallback, unverified: orange/100 -> warning-100 */
         --guk-icon-warning-secondary: var(--color-warning-100);
@@ -418,7 +418,7 @@
         --guk-icon-warning-hover: var(--color-warning-600);
         /* verified from code */
         --guk-icon-warning-active: var(--color-warning-600);
-        /* fallback, unverified: red/500 -> critical-500 */
+        /* verified from code */
         --guk-icon-critical-primary: var(--color-critical-500);
         /* fallback, unverified: red/100 -> critical-100 */
         --guk-icon-critical-secondary: var(--color-critical-100);
@@ -428,7 +428,7 @@
         --guk-icon-critical-hover: var(--color-critical-600);
         /* verified from code */
         --guk-icon-critical-active: var(--color-critical-600);
-        /* fallback, unverified: blue/500 -> info-500 */
+        /* verified from code */
         --guk-icon-info-primary: var(--color-info-500);
         /* fallback, unverified: blue/100 -> info-100 */
         --guk-icon-info-secondary: var(--color-info-100);
@@ -468,7 +468,7 @@
         --guk-shadow-critical-sm: rgba(214, 39, 54, 0.05);
         /* fallback, unverified */
         --guk-shadow-critical-2xl: rgba(214, 39, 54, 0.24);
-        /* fallback, unverified */
+        /* verified from code */
         --guk-shadow-info-default: rgba(21, 136, 185, 0.1);
         /* fallback, unverified */
         --guk-shadow-info-sm: rgba(21, 136, 185, 0.05);
@@ -536,6 +536,10 @@
         --guk-border-accent-fill-active: var(--guk-bg-accent-active);
         /* alias of bg/surface/disabled */
         --guk-border-surface-fill-disabled: var(--guk-bg-surface-disabled);
+        /* verified from code */
+        --guk-shadow-surface-md: rgba(82, 96, 109, 0.1);
+        /* verified from code */
+        --guk-shadow-accent-md: rgba(0, 59, 245, 0.1);
     }
 
     [data-theme="next"] {
@@ -740,6 +744,8 @@
         --guk-border-accent-fill-hover: var(--guk-bg-accent-hover);
         --guk-border-accent-fill-active: var(--guk-bg-accent-active);
         --guk-border-surface-fill-disabled: var(--guk-bg-surface-disabled);
+        --guk-shadow-surface-md: #5252521a;
+        --guk-shadow-accent-md: #3164fa1a;
     }
 
     [data-theme="dark"] {
@@ -944,6 +950,8 @@
         --guk-border-accent-fill-hover: var(--guk-bg-accent-hover);
         --guk-border-accent-fill-active: var(--guk-bg-accent-active);
         --guk-border-surface-fill-disabled: var(--guk-bg-surface-disabled);
+        --guk-shadow-surface-md: #5252521a;
+        --guk-shadow-accent-md: #3164fa1a;
     }
 }
 
@@ -1673,4 +1681,12 @@
 
 @utility border-surface-fill-disabled {
     border-color: var(--guk-border-surface-fill-disabled);
+}
+
+@utility shadow-surface-md {
+    @apply shadow-[0px_4px_6px_-1px_var(--guk-shadow-surface-md),0px_2px_4px_-2px_var(--guk-shadow-surface-md)];
+}
+
+@utility shadow-accent-md {
+    @apply shadow-[0px_4px_6px_-1px_var(--guk-shadow-accent-md),0px_2px_4px_-2px_var(--guk-shadow-accent-md)];
 }
