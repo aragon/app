@@ -126,9 +126,11 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - **A check.** The load check used in the test is `design/baseline-check/render-canvas.cjs` on `docs/design-canvas`.
 - **Reference screenshots, the mock backend and the static screens.** They are on `docs/design-canvas`. They are what
   an agent looks at to build a prototype for an area that has none.
-- **A proven design → code loop.** `RUNBOOK.md` describes it: one canvas and one branch per ticket, spun up from these
-  files, with `publish/pull-canvas.cjs` bringing the designer's changes back as a diff. Publishing and pulling with
-  no change gives an empty diff locally. It has not been run against a second canvas or on a real design change.
+- **A visual check of an implementation.** The design → code loop in `RUNBOOK.md` has been run once end to end: a
+  ticket canvas from these files, a designer's changes saved back as a diff, and an agent building that design in
+  the app. Nothing yet puts the built app next to the canvas. The spec proposes that as the last step of
+  "Implement"; it needs the mock backend and capture scripts from `docs/design-canvas` and a map from each prototype
+  page to its app route.
 
 ## Known gaps in the prototypes
 

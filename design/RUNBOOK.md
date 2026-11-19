@@ -1,9 +1,10 @@
 # Runbook: canvases and branches
 
 For a Claude Code session. A canvas cannot read or write the repo; a session moves the files both ways. These steps
-were written on 19 November 2026. A first run from this file alone stopped at copying the kit to a new canvas; that
-step was rewritten. A second run then started a ticket in 2.5 minutes and pulled it back with an empty diff.
-**Pulling a real design change has not been run.** Where a step fails, fix this file.
+were written on 19 November 2026 and each has since been run once by a session starting from this file: starting a
+ticket (2.5 minutes), saving a designer's changes made four ways (through a coding session, the canvas's chat, by
+hand, and a tweak default), and implementing that design in the app. "Refresh the reference canvas" and "Finish a
+ticket" have not been run. Where a step fails, fix this file.
 
 The model: **one ticket = one chat session = one branch = one canvas.**
 
@@ -42,7 +43,8 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
    ("Aragon App prototypes"). Leave it: changing it would show up as a difference on every pull. The prototypes
    load the kit from that folder. `canvas.json` from the repo already carries the kit's
    `designSystems` record, so nothing else is needed for the canvas to count the kit as installed.
-6. Add to `canvases/<name>.json`: `canvas` (the url), `branch`, `canvasVersion` (the version id the publish
+6. Add to `canvases/<name>.json`: `canvas` (the url), `branch`, `base` (the branch this ticket was cut from in
+   step 1; the design is always read as the difference against it), `canvasVersion` (the version id the publish
    answered with), and `appCommit` and `kit` copied from `canvases/prototypes.json`. Commit and push the branch
    (the owner's OK to create the branch covers pushing it).
 7. Give the owner the link. The canvas is private to its owner until they share it.
@@ -80,8 +82,11 @@ switch between design variants. One rule: **the default is the source of truth.*
 the design. At handover the default is what the engineer builds, and on the reference branch the default is what
 the app has. A variant that lost can be cleaned out later, like a feature flag.
 
-The branch's diff against the reference branch, limited to `design/canvas`, is now the design:
-`git diff <reference>...<branch> -- design/canvas ':!design/canvas/canvas.json'`.
+The branch's diff against its base, limited to `design/canvas`, is now the design:
+`git diff origin/<base>...<branch> -- design/canvas ':!design/canvas/canvas.json'`.
+`<base>` is the `base` field of `canvases/<name>.json`. A record without one (made before 20 November) was cut
+from the reference branch in the table above. Never compare against `main` while `design/` is not on it: every
+prototype file would show as new.
 
 `canvas.json` is left out on purpose. It records where frames sit on the canvas, not what the app should look like,
 and the canvas editor rewrites the whole file whenever a frame is moved by hand (in the first real round trip, about
@@ -94,7 +99,7 @@ For a developer's session, on the ticket's branch. The design and the code live 
 same pull request: do not create another branch.
 
 1. Pull first if the ticket has a canvas, so the branch holds everything the designer did.
-2. The design is the diff above (against the reference branch, without `canvas.json`). Read the changed files in
+2. The design is the diff above (against the ticket's `base`, without `canvas.json`). Read the changed files in
    full, not only the changed lines. How to read a prototype file:
    - `<x-import component-from-global-scope="GovUiKit.X" …>` is the kit component `X`; attributes are its props in
      kebab case.
@@ -110,7 +115,9 @@ same pull request: do not create another branch.
    for what you touched, and report the results as they are. Say plainly what you could not verify by running the
    app. No pull request unless asked.
 
-Run once so far, from a long hand-written prompt, not from this section.
+Run once: five design changes were built in the app from this section, with type-check, lint and tests passing.
+Nothing compared the result with the canvas by eye; a visual check as a last step here is proposed in the spec
+and not built.
 
 ## Publish: branch → its canvas
 
