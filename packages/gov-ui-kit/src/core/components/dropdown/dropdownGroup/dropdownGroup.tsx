@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import type React from 'react';
-import { Children, type ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
 export interface IDropdownGroupProps extends ComponentPropsWithoutRef<'div'> {}
 
@@ -30,9 +30,7 @@ export const DropdownGroup: React.FC<IDropdownGroupProps> = (props) => {
             )}
             {...otherProps}
         >
-            {Children.map(children, (child) => (
-                <div className="min-w-0">{child}</div>
-            ))}
+            {children}
         </div>
     );
 };
