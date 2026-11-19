@@ -58,4 +58,34 @@ export const ResponsiveButton: Story = {
     },
 };
 
+const variants = ['primary', 'secondary', 'tertiary', 'ghost', 'success', 'warning', 'critical'] as const;
+
+/**
+ * Every variant in its default, icon, only-icon, loading and disabled forms. Use the theme switcher in the toolbar to
+ * compare the colour themes.
+ */
+export const Variants: Story = {
+    render: (props) => (
+        <div className="flex flex-col gap-3">
+            {variants.map((variant) => (
+                <div className="flex flex-row items-center gap-3" data-variant={variant} key={variant}>
+                    <Button {...props} variant={variant}>
+                        Button
+                    </Button>
+                    <Button {...props} iconLeft={IconType.PLUS} iconRight={IconType.CHEVRON_DOWN} variant={variant}>
+                        With icons
+                    </Button>
+                    <Button {...props} iconLeft={IconType.PLUS} variant={variant} />
+                    <Button {...props} isLoading={true} variant={variant}>
+                        Loading
+                    </Button>
+                    <Button {...props} disabled={true} iconLeft={IconType.PLUS} variant={variant}>
+                        Disabled
+                    </Button>
+                </div>
+            ))}
+        </div>
+    ),
+};
+
 export default meta;

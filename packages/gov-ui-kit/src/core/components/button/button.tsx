@@ -8,60 +8,66 @@ import { Spinner } from '../spinner';
 import type { SpinnerSize, SpinnerVariant } from '../spinner/spinner';
 import type { ButtonContext, ButtonSize, ButtonVariant, IButtonProps } from './button.api';
 
-// Using aria-disabled: instead of disabled: modifier in order to make the modifier work for buttons and links
+// Colours come from the semantic colour tokens (src/theme/tokens/semantic), bound as in the Figma Button component.
+// Using aria-disabled: instead of disabled: modifier in order to make the modifier work for buttons and links.
+// Where Figma has no stroke (primary, disabled) the 1px border follows the fill through the border-*-fill aliases.
+const disabledClassNames =
+    'aria-disabled:bg-surface-disabled aria-disabled:text-surface-disabled aria-disabled:border-surface-fill-disabled';
+
 const variantToClassNames: Record<ButtonVariant, string[]> = {
     primary: [
-        'bg-primary-400 text-neutral-0 border-primary-400 shadow-primary-sm', // Default
-        'hover:bg-primary-500 hover:border-primary-500 hover:shadow-primary', // Hover
-        'active:bg-primary-800 active:border-primary-800 focus-ring-primary', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-accent-default text-accent-inverse border-accent-fill shadow-accent-sm', // Default
+        'hover:bg-accent-hover hover:border-accent-fill-hover hover:shadow-accent-default', // Hover
+        'active:bg-accent-active active:border-accent-fill-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
     secondary: [
-        'bg-neutral-0 text-primary-400 border-primary-100 shadow-primary-sm', // Default
-        'hover:border-primary-200 hover:bg-primary-50 hover:shadow-primary', // Hover
-        'active:border-primary-400 active:bg-neutral-0 focus-ring-primary', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-accent-default-inverse text-accent-default border-accent-default shadow-accent-sm', // Default
+        'hover:border-accent-hover hover:bg-accent-hover-inverse hover:text-accent-hover hover:shadow-accent-default', // Hover
+        'active:border-accent-active active:bg-accent-active-inverse active:text-accent-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
     tertiary: [
-        'bg-neutral-0 text-neutral-500 border-neutral-100 shadow-neutral-sm', // Default
-        'hover:bg-neutral-50 hover:border-neutral-200 hover:shadow-neutral', // Hover
-        'active:bg-neutral-0 active:border-neutral-400 active:text-neutral-800 focus-ring-primary', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-surface-default text-surface-default border-surface-default shadow-surface-sm', // Default
+        'hover:bg-surface-hover hover:border-surface-hover hover:text-surface-hover hover:shadow-surface-default', // Hover
+        'active:bg-surface-active active:border-surface-active active:text-surface-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
     ghost: [
-        'bg-transparent border-transparent text-primary-400', // Default
-        'hover:bg-neutral-0', // Hover
-        'active:bg-neutral-0 active:text-primary-600 focus-ring-primary', // Active / Focus
-        'aria-disabled:text-neutral-300', // Disabled
+        // Figma binds the ghost background to bg/body; it stays transparent so the button keeps working on any surface.
+        'bg-transparent border-transparent text-accent-default', // Default
+        'hover:bg-surface-hover hover:text-accent-hover', // Hover
+        'active:bg-surface-active active:text-accent-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        'aria-disabled:text-surface-disabled', // Disabled
     ],
     success: [
-        'bg-success-100 text-success-800 border-success-300 shadow-success-sm', // Default
-        'hover:border-success-500 hover:shadow-success', // Hover
-        'active:bg-neutral-0 active:border-success-600 focus-ring-success', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-success-default text-success-default border-success-default shadow-success-sm', // Default
+        'hover:bg-success-hover hover:border-success-hover hover:text-success-hover hover:shadow-success-default', // Hover
+        'active:bg-success-active active:border-success-active active:text-success-active focus-ring focus-visible:ring-success-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
     warning: [
-        'bg-warning-100 text-warning-800 border-warning-300 shadow-warning-sm', // Default
-        'hover:border-warning-500 hover:shadow-warning', // Hover
-        'active:bg-neutral-0 active:border-warning-600 focus-ring-warning', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-warning-default text-warning-default border-warning-default shadow-warning-sm', // Default
+        'hover:bg-warning-hover hover:border-warning-hover hover:text-warning-hover hover:shadow-warning-default', // Hover
+        'active:bg-warning-active active:border-warning-active active:text-warning-active focus-ring focus-visible:ring-warning-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
     critical: [
-        'bg-critical-100 text-critical-800 border-critical-300 shadow-critical-sm', // Default
-        'hover:border-critical-500 hover:shadow-critical', // Hover
-        'active:bg-neutral-0 active:border-critical-600 focus-ring-critical', // Active / Focus
-        'aria-disabled:bg-neutral-100 aria-disabled:text-neutral-300 aria-disabled:border-neutral-100', // Disabled
+        'bg-critical-default text-critical-default border-critical-default shadow-critical-sm', // Default
+        'hover:bg-critical-hover hover:border-critical-hover hover:text-critical-hover hover:shadow-critical-default', // Hover
+        'active:bg-critical-active active:border-critical-active active:text-critical-active focus-ring focus-visible:ring-critical-focus', // Active / Focus
+        disabledClassNames, // Disabled
     ],
 };
 
 const variantToIconClassNames: Record<ButtonVariant, string> = {
-    primary: 'text-neutral-0',
-    secondary: 'text-primary-300 group-hover:text-primary-400 group-active:text-primary-400',
-    tertiary: 'text-neutral-300 group-hover:text-neutral-500 group-active:text-neutral-500',
-    ghost: 'text-primary-300 group-hover:text-primary-400 group-active:text-primary-400',
-    success: 'text-success-500 group-hover:text-success-600 group-active:text-success-600',
-    warning: 'text-warning-500 group-hover:text-warning-600 group-active:text-warning-600',
-    critical: 'text-critical-500 group-hover:text-critical-600 group-active:text-critical-600',
+    primary: 'icon-accent-inverse',
+    secondary: 'icon-accent-default group-hover:icon-accent-hover group-active:icon-accent-active',
+    tertiary: 'icon-surface-default group-hover:icon-surface-hover group-active:icon-surface-active',
+    ghost: 'icon-accent-default group-hover:icon-accent-hover group-active:icon-accent-active',
+    success: 'icon-success-default group-hover:icon-success-hover group-active:icon-success-active',
+    warning: 'icon-warning-default group-hover:icon-warning-hover group-active:icon-warning-active',
+    critical: 'icon-critical-default group-hover:icon-critical-hover group-active:icon-critical-active',
 };
 
 const variantToSpinnerVariant: Record<ButtonVariant, SpinnerVariant> = {
@@ -223,7 +229,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonP
     });
 
     const iconClassNames = classNames(
-        'transition-all group-aria-disabled:text-neutral-300',
+        'transition-all group-aria-disabled:icon-surface-disabled',
         variantToIconClassNames[variant],
     );
 
