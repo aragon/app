@@ -1,5 +1,5 @@
 {
-    "$description": "Provisional code names for the Figma semantic colour tokens. This file is the single place to rename: keys are Figma names (property/group/role), values the name used in code (class = name with / replaced by -, CSS variable = --guk-<class>). Several Figma names may map to one code name only when their Light and Dark values are identical (the generator checks). Every Figma name not listed keeps its name. `additions` are code-only tokens that Figma does not define as semantic variables yet. An addition either has its own `light`/`dark` values or is an `alias` of another token (same value in every theme).",
+    "$description": "Provisional code names for the Figma semantic colour tokens. This file is the single place to rename: keys are Figma names (property/group/role), values the name used in code (class = name with / replaced by -, CSS variable = --guk-<class>). Several Figma names may map to one code name only when their Light and Dark values are identical (the generator checks). Every Figma name not listed keeps its name. `additions` are code-only tokens that Figma does not define as semantic variables yet. An addition either has its own `light`/`dark` values or is an `alias` of another token (same value in every theme). `utilities` declares the utility families generated beside the one-per-token utilities (see its own description).",
     "renames": {
         "bg/accent/primary": "bg/accent/solid",
         "bg/accent/primary-inverse": "bg/accent/subtle",
@@ -78,5 +78,102 @@
             "dark": "{palette.gray.600}",
             "note": "Code-only, pending design review: the border of an open dropdown trigger (DropdownContainer passes it to its tertiary or critical Button while the menu is open; today's border-neutral-300). The class must sort after border-surface-default so that it wins over the Button's own border (Tailwind orders same-property utilities by name), while hover/active variants still win. Light takes the Figma border/surface/hover value (gray/300), Dark the border/surface/active value (gray/600)."
         }
+    },
+    "utilities": {
+        "$description": "Extra utility families, generated for every token of the named families (Tailwind emits only the classes a source uses). Naming (P-37): single-side borders keep Tailwind's grammar, the side replacing the family (`border-t-accent-secondary` applies border/accent/secondary to the top side); every other applier is followed by the full token class (`from-gradient-surface-primary`, `fill-bg-surface-tertiary-inverse`, `caret-text-surface-secondary`), so the Figma token name stays readable in the class. Fades: `<gradient token>-to-<direction>` paints a gradient token to its `-transparent` twin (the semantic counterpart of the kit's `gradient-neutral-50-transparent-to-b`). `alphaStops` are the few stops that need a fixed opacity of a token, named like Tailwind's opacity modifier. `crossFamily` applies a token to a property of another family where the designer bound it so; each entry is a provisional decision (P-38) with its reason.",
+        "borderSides": [
+            "t",
+            "r",
+            "b",
+            "l",
+            "x",
+            "y"
+        ],
+        "appliers": [
+            {
+                "applier": "from",
+                "families": [
+                    "gradient"
+                ]
+            },
+            {
+                "applier": "via",
+                "families": [
+                    "gradient"
+                ]
+            },
+            {
+                "applier": "to",
+                "families": [
+                    "gradient"
+                ]
+            },
+            {
+                "applier": "fill",
+                "families": [
+                    "bg",
+                    "icon"
+                ]
+            },
+            {
+                "applier": "stroke",
+                "families": [
+                    "border",
+                    "icon"
+                ]
+            },
+            {
+                "applier": "caret",
+                "families": [
+                    "text"
+                ]
+            }
+        ],
+        "fadeDirections": [
+            "t",
+            "r",
+            "b",
+            "l"
+        ],
+        "alphaStops": [
+            {
+                "applier": "via",
+                "token": "gradient/surface/secondary",
+                "alpha": 70,
+                "note": "The collapsible's overflow fade has a 70 % middle stop today (via-neutral-0/70); Figma draws it with two stops (gradient/surface/secondary-transparent > secondary). Kept as today (O-01); the middle stop is listed for the designer."
+            }
+        ],
+        "crossFamily": [
+            {
+                "applier": "bg",
+                "token": "icon/surface/secondary",
+                "note": "Switch thumb, unchecked and checked + disabled: Figma fills the handle with icon/surface/secondary (G-17). Same colour today (neutral-300)."
+            },
+            {
+                "applier": "bg",
+                "token": "icon/accent/primary",
+                "note": "Switch thumb, checked: Figma fills the handle with icon/accent/primary (G-17). Same colour today (primary-400)."
+            },
+            {
+                "applier": "border",
+                "token": "bg/surface/primary",
+                "note": "Progress threshold marker outline: Figma strokes it with bg/surface/primary, the card surface the marker is cut out of (G-17). Same colour today (neutral-0)."
+            },
+            {
+                "applier": "border-b",
+                "token": "bg/surface/primary",
+                "note": "ProposalVotingProgress container in a row: the items keep their 1px bottom border, painted in the card's own surface colour to hide it (today border-b-neutral-0 on a neutral-0 card). Code-only: Figma has no bottom divider in the row layout."
+            },
+            {
+                "applier": "caret",
+                "token": "bg/surface/secondary-inverse",
+                "note": "Text-input caret: Figma draws it as a fill bound to bg/surface/secondary-inverse in every input focus state (G-07, G-17); the data-list filter's caret binds text/surface/secondary instead (G-18). Each follows its binding (P-28)."
+            },
+            {
+                "applier": "shadow",
+                "token": "border/surface/selected",
+                "note": "Tab trigger underline: Figma draws it as a border bound to border/surface/selected; the code draws it with a box-shadow, so the token is applied as the shadow colour. Same colour today (primary-400)."
+            }
+        ]
     }
 }

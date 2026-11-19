@@ -3,12 +3,16 @@
 // the two hand-kept maps next to it:
 //
 // - design-system/tokens/semantic-colors.tokens.json   Figma tokens (Light = $value, Dark = extension) + palette
-// - design-system/tokens/semantic-colors.mapping.json  provisional renames / merges and code-only additions
+// - design-system/tokens/semantic-colors.mapping.json  provisional renames / merges, code-only additions and the
+//                                                       extra utility families (`utilities`)
 // - design-system/tokens/semantic-colors.parity.json   default-theme ("parity") values: overrides + fallback rule
 //
 // Output: private palette properties (--guk-palette-*), three value sets under one set of names (`:root` = today's
-// colours, `[data-theme="next"]` = Figma Light, `[data-theme="dark"]` = Figma Dark) and one Tailwind `@utility` per
-// token. Usage: `node scripts/generate-semantic-tokens.mjs [--check | --report]`.
+// colours, `[data-theme="next"]` = Figma Light, `[data-theme="dark"]` = Figma Dark), one Tailwind `@utility` per
+// token for its own property (bg, text, icon, border, shadow, ring) and the extra utilities declared in
+// `mapping.utilities`: single-side borders, gradient stops and fades, fill / stroke / caret, and the few cross-family
+// utilities that apply a token of one family to another property. Usage:
+// `node scripts/generate-semantic-tokens.mjs [--check | --report]`.
 
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -28,7 +32,8 @@ const fail = (message) => {
     process.exit(1);
 };
 
-// Utility per property: how a token's variable is applied. Gradients stay variables only.
+// Utility per property: how a token's variable is applied. A gradient token is a colour stop, not a property of its
+// own: it is applied through the stop and fade utilities of `mapping.utilities`.
 const shadowGeometry = {
     sm: ['0px 1px 2px 0px'],
     default: ['0px 1px 3px 0px', '0px 1px 2px -1px'],
@@ -69,7 +74,7 @@ const flatten = (group, prefix = []) =>
     });
 
 const { palette, color } = readJson('semantic-colors.tokens.json');
-const { renames, additions } = readJson('semantic-colors.mapping.json');
+const { renames, additions, utilities: extraUtilities } = readJson('semantic-colors.mapping.json');
 const { fallbackRamps, rawFallback, overrides } = readJson('semantic-colors.parity.json');
 
 // Palette: name -> hex.
@@ -206,12 +211,68 @@ const setValue = (token, value) => (token.alias != null ? `var(${variableOf(toke
 const lightLines = [...tokens].map(([name, token]) => `${variableOf(name)}: ${setValue(token, token.light)};`);
 const darkLines = [...tokens].map(([name, token]) => `${variableOf(name)}: ${setValue(token, token.dark)};`);
 
-const utilities = [...tokens]
-    .map(([name]) => {
-        const body = utilityBody(name.split('/')[0], name, variableOf(name));
-        return body == null ? null : `@utility ${name.replaceAll('/', '-')} {\n${indent}${body}\n}`;
-    })
-    .filter((u) => u != null);
+const classOf = (name) => name.replaceAll('/', '-');
+const familyOf = (name) => name.split('/')[0];
+const familyTokens = (family) => [...tokens.keys()].filter((name) => familyOf(name) === family);
+// A colour applied through Tailwind's documented arbitrary-value form, so Tailwind writes the property (and, for
+// gradient stops and shadow colours, its own stop / colour wiring) exactly as for its palette classes.
+const applyColour = (applier, name, alpha) =>
+    `@apply ${applier}-(color:${variableOf(name)})${alpha == null ? '' : `/${alpha}`};`;
+
+// [class, body] per utility: first one per token for its own property, then the declared extra families.
+const utilityEntries = [...tokens]
+    .map(([name]) => [classOf(name), utilityBody(familyOf(name), name, variableOf(name))])
+    .filter(([, body]) => body != null);
+if (extraUtilities != null) {
+    const { borderSides, appliers, fadeDirections, alphaStops, crossFamily } = extraUtilities;
+    const requireToken = (name, where) => {
+        if (!tokens.has(name)) {
+            fail(`utilities.${where}: unknown token ${name}`);
+        }
+    };
+    // Single-side borders keep Tailwind's grammar: the side replaces the family (`border-t-accent-secondary`).
+    for (const side of borderSides) {
+        for (const name of familyTokens('border')) {
+            const applier = `border-${side}`;
+            utilityEntries.push([`${applier}-${classOf(name).slice('border-'.length)}`, applyColour(applier, name)]);
+        }
+    }
+    // Other properties: the applier is followed by the full token class (`fill-bg-surface-primary`).
+    for (const { applier, families } of appliers) {
+        for (const name of families.flatMap(familyTokens)) {
+            utilityEntries.push([`${applier}-${classOf(name)}`, applyColour(applier, name)]);
+        }
+    }
+    // Fades: a gradient token to its `-transparent` twin, one utility per direction.
+    for (const name of familyTokens('gradient').filter((n) => tokens.has(`${n}-transparent`))) {
+        for (const direction of fadeDirections) {
+            const body = `@apply bg-linear-to-${direction} from-(color:${variableOf(name)}) to-(color:${variableOf(`${name}-transparent`)});`;
+            utilityEntries.push([`${classOf(name)}-to-${direction}`, body]);
+        }
+    }
+    for (const { applier, token, alpha } of alphaStops) {
+        requireToken(token, 'alphaStops');
+        utilityEntries.push([`${applier}-${classOf(token)}/${alpha}`, applyColour(applier, token, alpha)]);
+    }
+    for (const { applier, token } of crossFamily) {
+        requireToken(token, 'crossFamily');
+        if (applier === familyOf(token)) {
+            fail(`utilities.crossFamily: ${token} already has its own ${applier} utility`);
+        }
+        utilityEntries.push([`${applier}-${classOf(token)}`, applyColour(applier, token)]);
+    }
+}
+const seen = new Set();
+for (const [name] of utilityEntries) {
+    if (seen.has(name)) {
+        fail(`two utilities named ${name}`);
+    }
+    seen.add(name);
+}
+// `/` is legal in a utility name (as in Tailwind's own `w-1/2`) but must be escaped in the CSS identifier.
+const utilities = utilityEntries.map(
+    ([name, body]) => `@utility ${name.replaceAll('/', String.raw`\/`)} {\n${indent}${body}\n}`,
+);
 
 const sources = ['tokens', 'mapping', 'parity'].map((n) => `design-system/tokens/semantic-colors.${n}.json`);
 const rawCss = `/*
@@ -224,6 +285,9 @@ const rawCss = `/*
  * - [data-theme="next"]    Figma Light values on the Figma palette;
  * - [data-theme="dark"]    Figma Dark values on the Figma palette.
  * Parity values marked "fallback, unverified" were derived by rule, not checked against a converted component.
+ * Utilities: <family>-<group>-<role> per token for its own property; border-<side>-<group>-<role> per border token;
+ * <applier>-<family>-<group>-<role> for another property (from/via/to, fill, stroke, caret and the declared
+ * cross-family ones); <gradient token>-to-<direction> fades a gradient token to its -transparent twin.
  * The Figma palette is private (--guk-palette-*): it is not a Tailwind theme colour and has no utilities.
  */
 

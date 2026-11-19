@@ -413,7 +413,7 @@
         },
         "bg/surface/primary": {
             "value": "neutral-0",
-            "evidence": "component map: alertCard, avatarIcon, card, collapsible, dataListFilter, dialogRoot, dialogAlertRoot, dropdownContainer, radioCard, assetDataListItemSkeleton, assetTransfer, memberDataListItemSkeleton, proposalDataListItemSkeleton, proposalVotingProgressContainer, transactionDetailSummary"
+            "evidence": "component map: alertCard, avatarIcon, card, collapsible, dataListFilter, dialogRoot, dialogAlertRoot, dropdownContainer, radioCard, assetDataListItemSkeleton, assetTransfer, memberDataListItemSkeleton, proposalDataListItemSkeleton, proposalVotingProgressContainer, transactionDetailSummary, progress (marker outline), proposalVotingProgressContainer (hidden row divider)"
         },
         "bg/surface/secondary": {
             "value": "neutral-50",
@@ -465,7 +465,7 @@
         },
         "border/surface/selected": {
             "value": "primary-400",
-            "evidence": "component map: checkboxCard, radioCard, switch, tabsTrigger, toggle"
+            "evidence": "component map: checkboxCard, radioCard, switch, tabsTrigger, toggle (incl. the underline shadow colour, 2)"
         },
         "border/warning/primary": {
             "value": "warning-400",
@@ -473,7 +473,7 @@
         },
         "icon/accent/primary": {
             "value": "primary-400",
-            "evidence": "component map: avatarIcon, dataListActionItem"
+            "evidence": "component map: avatarIcon, dataListActionItem, switch (thumb, checked)"
         },
         "icon/accent/selected": {
             "value": "primary-400",
@@ -497,7 +497,7 @@
         },
         "icon/surface/secondary": {
             "value": "neutral-300",
-            "evidence": "component map: assetTransfer"
+            "evidence": "component map: assetTransfer, switch (thumb, 2)"
         },
         "icon/warning/primary": {
             "value": "warning-500",
@@ -581,7 +581,7 @@
         },
         "text/surface/secondary": {
             "value": "neutral-500",
-            "evidence": "component map: alertCard, breadcrumbs, cardSummary, dataListActionItem, dataListFilter, dataListPagination, definitionListItem, dialogContent, dialogHeader, checkboxCard, inputContainer (3), inputText (2), radioCard, switch, emptyState, actionSimulation, assetDataListItemStructure, assetTransfer, assetTransferAddress, daoDataListItemStructure, memberDataListItemStructure (2), proposalActionsDecoderBooleanField, proposalActionsDecoderField (2), proposalActionsDecoderTextField, proposalActionsItem (2), proposalDataListItemStatus, proposalDataListItemStructure (3), proposalVotingBodyContent, proposalVotingProgressItem (4), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable, smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (3), voteDataListItemStructure (2), voteProposalDataListItemStructure (2)"
+            "evidence": "component map: alertCard, breadcrumbs, cardSummary, dataListActionItem, dataListFilter, dataListPagination, definitionListItem, dialogContent, dialogHeader, checkboxCard, inputContainer (3), inputText (2), radioCard, switch, emptyState, actionSimulation, assetDataListItemStructure, assetTransfer, assetTransferAddress, daoDataListItemStructure, memberDataListItemStructure (2), proposalActionsDecoderBooleanField, proposalActionsDecoderField (2), proposalActionsDecoderTextField, proposalActionsItem (2), proposalDataListItemStatus, proposalDataListItemStructure (3), proposalVotingBodyContent, proposalVotingProgressItem (4), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable, smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (3), voteDataListItemStructure (2), voteProposalDataListItemStructure (2); dataListFilter caret"
         },
         "text/surface/selected": {
             "value": "primary-400",
@@ -601,7 +601,7 @@
         },
         "border/surface/secondary": {
             "value": "neutral-100",
-            "evidence": "; component map: card, definitionListItem, dialogRoot, dialogAlertRoot, dropdownContainer, tabsList, proposalActionsContainer, proposalVotingProgressContainer"
+            "evidence": "; component map: card, definitionListItem, dialogRoot, dialogAlertRoot, dropdownContainer, tabsList, proposalActionsContainer, proposalVotingProgressContainer (incl. item dividers, 2)"
         },
         "bg/surface/primary-inverse": {
             "value": "neutral-400",
@@ -609,11 +609,51 @@
         },
         "bg/surface/tertiary-inverse": {
             "value": "neutral-800",
-            "evidence": "; component map: tooltip"
+            "evidence": "; component map: tooltip, tooltip arrow"
         },
         "border/accent/primary-inverse": {
             "value": "primary-300",
             "evidence": "; component map: spinner"
+        },
+        "gradient/surface/primary": {
+            "value": "neutral-50",
+            "evidence": "component map: accordionItemHeader, dialogFooter, dialogHeader, dialogRoot, dialogAlertFooter, dialogAlertHeader, dialogAlertRoot, textAreaRichTextActions (gradient-neutral-50-transparent-to-*)"
+        },
+        "gradient/surface/primary-transparent": {
+            "value": "color-mix(in srgb, var(--color-neutral-50) 0%, transparent)",
+            "evidence": "component map: the transparent end of the same fades"
+        },
+        "gradient/surface/secondary": {
+            "value": "neutral-0",
+            "evidence": "component map: collapsible (overflow fade, from-neutral-0 via-neutral-0/70)"
+        },
+        "gradient/surface/secondary-transparent": {
+            "value": "color-mix(in srgb, var(--color-neutral-0) 0%, transparent)",
+            "evidence": "component map: collapsible (to-neutral-0/0)"
+        },
+        "border/accent/secondary": {
+            "value": "primary-400",
+            "evidence": "component map: spinner (head, primary)"
+        },
+        "border/accent/secondary-inverse": {
+            "value": "neutral-0",
+            "evidence": "component map: spinner (head, primaryInverted)"
+        },
+        "border/success/secondary": {
+            "value": "success-800",
+            "evidence": "component map: spinner (head, success)"
+        },
+        "border/warning/secondary": {
+            "value": "warning-800",
+            "evidence": "component map: spinner (head, warning)"
+        },
+        "border/critical/secondary": {
+            "value": "critical-800",
+            "evidence": "component map: spinner (head, critical)"
+        },
+        "bg/surface/secondary-inverse": {
+            "value": "neutral-500",
+            "evidence": "component map: useInputProps (text-input caret)"
         }
     }
 }

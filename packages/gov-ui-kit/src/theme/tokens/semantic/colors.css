@@ -10,6 +10,9 @@
  * - [data-theme="next"]    Figma Light values on the Figma palette;
  * - [data-theme="dark"]    Figma Dark values on the Figma palette.
  * Parity values marked "fallback, unverified" were derived by rule, not checked against a converted component.
+ * Utilities: <family>-<group>-<role> per token for its own property; border-<side>-<group>-<role> per border token;
+ * <applier>-<family>-<group>-<role> for another property (from/via/to, fill, stroke, caret and the declared
+ * cross-family ones); <gradient token>-to-<direction> fades a gradient token to its -transparent twin.
  * The Figma palette is private (--guk-palette-*): it is not a Tailwind theme colour and has no utilities.
  */
 
@@ -106,8 +109,8 @@
         --guk-bg-surface-tertiary: var(--color-neutral-100);
         /* verified from code */
         --guk-bg-surface-primary-inverse: var(--color-neutral-400);
-        /* fallback, unverified: gray/600 -> neutral-600 */
-        --guk-bg-surface-secondary-inverse: var(--color-neutral-600);
+        /* verified from code */
+        --guk-bg-surface-secondary-inverse: var(--color-neutral-500);
         /* verified from code */
         --guk-bg-surface-tertiary-inverse: var(--color-neutral-800);
         /* verified from code */
@@ -250,9 +253,9 @@
         --guk-border-accent-primary: var(--color-primary-300);
         /* verified from code */
         --guk-border-accent-primary-inverse: var(--color-primary-300);
-        /* fallback, unverified: aragon/400 -> primary-400 */
+        /* verified from code */
         --guk-border-accent-secondary: var(--color-primary-400);
-        /* fallback, unverified: gray/0 -> neutral-0 */
+        /* verified from code */
         --guk-border-accent-secondary-inverse: var(--color-neutral-0);
         /* verified from code */
         --guk-border-accent-default: var(--color-primary-100);
@@ -262,7 +265,7 @@
         --guk-border-accent-active: var(--color-primary-400);
         /* verified from code */
         --guk-border-success-primary: var(--color-success-400);
-        /* fallback, unverified: green/800 -> success-800 */
+        /* verified from code */
         --guk-border-success-secondary: var(--color-success-800);
         /* verified from code */
         --guk-border-success-default: var(--color-success-300);
@@ -272,7 +275,7 @@
         --guk-border-success-active: var(--color-success-600);
         /* verified from code */
         --guk-border-warning-primary: var(--color-warning-400);
-        /* fallback, unverified: orange/800 -> warning-800 */
+        /* verified from code */
         --guk-border-warning-secondary: var(--color-warning-800);
         /* verified from code */
         --guk-border-warning-default: var(--color-warning-300);
@@ -282,7 +285,7 @@
         --guk-border-warning-active: var(--color-warning-600);
         /* verified from code */
         --guk-border-critical-primary: var(--color-critical-400);
-        /* fallback, unverified: red/800 -> critical-800 */
+        /* verified from code */
         --guk-border-critical-secondary: var(--color-critical-800);
         /* verified from code */
         --guk-border-critical-default: var(--color-critical-300);
@@ -474,17 +477,17 @@
         --guk-shadow-info-sm: rgba(21, 136, 185, 0.05);
         /* fallback, unverified */
         --guk-shadow-info-2xl: rgba(21, 136, 185, 0.24);
-        /* fallback, unverified: gray/100 -> neutral-100 */
-        --guk-gradient-surface-primary: var(--color-neutral-100);
-        /* fallback, unverified: gray/100a0 -> neutral-100 (alpha 0%) */
+        /* verified from code */
+        --guk-gradient-surface-primary: var(--color-neutral-50);
+        /* verified from code */
         --guk-gradient-surface-primary-transparent: color-mix(
             in srgb,
-            var(--color-neutral-100) 0%,
+            var(--color-neutral-50) 0%,
             transparent
         );
-        /* fallback, unverified: gray/0 -> neutral-0 */
+        /* verified from code */
         --guk-gradient-surface-secondary: var(--color-neutral-0);
-        /* fallback, unverified: gray/0a0 -> neutral-0 (alpha 0%) */
+        /* verified from code */
         --guk-gradient-surface-secondary-transparent: color-mix(
             in srgb,
             var(--color-neutral-0) 0%,
@@ -1705,4 +1708,1852 @@
 
 @utility border-surface-open {
     border-color: var(--guk-border-surface-open);
+}
+
+@utility border-t-surface-primary {
+    @apply border-t-(color:--guk-border-surface-primary);
+}
+
+@utility border-t-surface-secondary {
+    @apply border-t-(color:--guk-border-surface-secondary);
+}
+
+@utility border-t-surface-default {
+    @apply border-t-(color:--guk-border-surface-default);
+}
+
+@utility border-t-surface-hover {
+    @apply border-t-(color:--guk-border-surface-hover);
+}
+
+@utility border-t-surface-active {
+    @apply border-t-(color:--guk-border-surface-active);
+}
+
+@utility border-t-surface-disabled {
+    @apply border-t-(color:--guk-border-surface-disabled);
+}
+
+@utility border-t-surface-selected {
+    @apply border-t-(color:--guk-border-surface-selected);
+}
+
+@utility border-t-accent-primary {
+    @apply border-t-(color:--guk-border-accent-primary);
+}
+
+@utility border-t-accent-primary-inverse {
+    @apply border-t-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-t-accent-secondary {
+    @apply border-t-(color:--guk-border-accent-secondary);
+}
+
+@utility border-t-accent-secondary-inverse {
+    @apply border-t-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-t-accent-default {
+    @apply border-t-(color:--guk-border-accent-default);
+}
+
+@utility border-t-accent-hover {
+    @apply border-t-(color:--guk-border-accent-hover);
+}
+
+@utility border-t-accent-active {
+    @apply border-t-(color:--guk-border-accent-active);
+}
+
+@utility border-t-success-primary {
+    @apply border-t-(color:--guk-border-success-primary);
+}
+
+@utility border-t-success-secondary {
+    @apply border-t-(color:--guk-border-success-secondary);
+}
+
+@utility border-t-success-default {
+    @apply border-t-(color:--guk-border-success-default);
+}
+
+@utility border-t-success-hover {
+    @apply border-t-(color:--guk-border-success-hover);
+}
+
+@utility border-t-success-active {
+    @apply border-t-(color:--guk-border-success-active);
+}
+
+@utility border-t-warning-primary {
+    @apply border-t-(color:--guk-border-warning-primary);
+}
+
+@utility border-t-warning-secondary {
+    @apply border-t-(color:--guk-border-warning-secondary);
+}
+
+@utility border-t-warning-default {
+    @apply border-t-(color:--guk-border-warning-default);
+}
+
+@utility border-t-warning-hover {
+    @apply border-t-(color:--guk-border-warning-hover);
+}
+
+@utility border-t-warning-active {
+    @apply border-t-(color:--guk-border-warning-active);
+}
+
+@utility border-t-critical-primary {
+    @apply border-t-(color:--guk-border-critical-primary);
+}
+
+@utility border-t-critical-secondary {
+    @apply border-t-(color:--guk-border-critical-secondary);
+}
+
+@utility border-t-critical-default {
+    @apply border-t-(color:--guk-border-critical-default);
+}
+
+@utility border-t-critical-hover {
+    @apply border-t-(color:--guk-border-critical-hover);
+}
+
+@utility border-t-critical-active {
+    @apply border-t-(color:--guk-border-critical-active);
+}
+
+@utility border-t-info-primary {
+    @apply border-t-(color:--guk-border-info-primary);
+}
+
+@utility border-t-accent-fill {
+    @apply border-t-(color:--guk-border-accent-fill);
+}
+
+@utility border-t-accent-fill-hover {
+    @apply border-t-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-t-accent-fill-active {
+    @apply border-t-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-t-surface-fill-disabled {
+    @apply border-t-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-t-surface-open {
+    @apply border-t-(color:--guk-border-surface-open);
+}
+
+@utility border-r-surface-primary {
+    @apply border-r-(color:--guk-border-surface-primary);
+}
+
+@utility border-r-surface-secondary {
+    @apply border-r-(color:--guk-border-surface-secondary);
+}
+
+@utility border-r-surface-default {
+    @apply border-r-(color:--guk-border-surface-default);
+}
+
+@utility border-r-surface-hover {
+    @apply border-r-(color:--guk-border-surface-hover);
+}
+
+@utility border-r-surface-active {
+    @apply border-r-(color:--guk-border-surface-active);
+}
+
+@utility border-r-surface-disabled {
+    @apply border-r-(color:--guk-border-surface-disabled);
+}
+
+@utility border-r-surface-selected {
+    @apply border-r-(color:--guk-border-surface-selected);
+}
+
+@utility border-r-accent-primary {
+    @apply border-r-(color:--guk-border-accent-primary);
+}
+
+@utility border-r-accent-primary-inverse {
+    @apply border-r-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-r-accent-secondary {
+    @apply border-r-(color:--guk-border-accent-secondary);
+}
+
+@utility border-r-accent-secondary-inverse {
+    @apply border-r-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-r-accent-default {
+    @apply border-r-(color:--guk-border-accent-default);
+}
+
+@utility border-r-accent-hover {
+    @apply border-r-(color:--guk-border-accent-hover);
+}
+
+@utility border-r-accent-active {
+    @apply border-r-(color:--guk-border-accent-active);
+}
+
+@utility border-r-success-primary {
+    @apply border-r-(color:--guk-border-success-primary);
+}
+
+@utility border-r-success-secondary {
+    @apply border-r-(color:--guk-border-success-secondary);
+}
+
+@utility border-r-success-default {
+    @apply border-r-(color:--guk-border-success-default);
+}
+
+@utility border-r-success-hover {
+    @apply border-r-(color:--guk-border-success-hover);
+}
+
+@utility border-r-success-active {
+    @apply border-r-(color:--guk-border-success-active);
+}
+
+@utility border-r-warning-primary {
+    @apply border-r-(color:--guk-border-warning-primary);
+}
+
+@utility border-r-warning-secondary {
+    @apply border-r-(color:--guk-border-warning-secondary);
+}
+
+@utility border-r-warning-default {
+    @apply border-r-(color:--guk-border-warning-default);
+}
+
+@utility border-r-warning-hover {
+    @apply border-r-(color:--guk-border-warning-hover);
+}
+
+@utility border-r-warning-active {
+    @apply border-r-(color:--guk-border-warning-active);
+}
+
+@utility border-r-critical-primary {
+    @apply border-r-(color:--guk-border-critical-primary);
+}
+
+@utility border-r-critical-secondary {
+    @apply border-r-(color:--guk-border-critical-secondary);
+}
+
+@utility border-r-critical-default {
+    @apply border-r-(color:--guk-border-critical-default);
+}
+
+@utility border-r-critical-hover {
+    @apply border-r-(color:--guk-border-critical-hover);
+}
+
+@utility border-r-critical-active {
+    @apply border-r-(color:--guk-border-critical-active);
+}
+
+@utility border-r-info-primary {
+    @apply border-r-(color:--guk-border-info-primary);
+}
+
+@utility border-r-accent-fill {
+    @apply border-r-(color:--guk-border-accent-fill);
+}
+
+@utility border-r-accent-fill-hover {
+    @apply border-r-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-r-accent-fill-active {
+    @apply border-r-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-r-surface-fill-disabled {
+    @apply border-r-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-r-surface-open {
+    @apply border-r-(color:--guk-border-surface-open);
+}
+
+@utility border-b-surface-primary {
+    @apply border-b-(color:--guk-border-surface-primary);
+}
+
+@utility border-b-surface-secondary {
+    @apply border-b-(color:--guk-border-surface-secondary);
+}
+
+@utility border-b-surface-default {
+    @apply border-b-(color:--guk-border-surface-default);
+}
+
+@utility border-b-surface-hover {
+    @apply border-b-(color:--guk-border-surface-hover);
+}
+
+@utility border-b-surface-active {
+    @apply border-b-(color:--guk-border-surface-active);
+}
+
+@utility border-b-surface-disabled {
+    @apply border-b-(color:--guk-border-surface-disabled);
+}
+
+@utility border-b-surface-selected {
+    @apply border-b-(color:--guk-border-surface-selected);
+}
+
+@utility border-b-accent-primary {
+    @apply border-b-(color:--guk-border-accent-primary);
+}
+
+@utility border-b-accent-primary-inverse {
+    @apply border-b-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-b-accent-secondary {
+    @apply border-b-(color:--guk-border-accent-secondary);
+}
+
+@utility border-b-accent-secondary-inverse {
+    @apply border-b-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-b-accent-default {
+    @apply border-b-(color:--guk-border-accent-default);
+}
+
+@utility border-b-accent-hover {
+    @apply border-b-(color:--guk-border-accent-hover);
+}
+
+@utility border-b-accent-active {
+    @apply border-b-(color:--guk-border-accent-active);
+}
+
+@utility border-b-success-primary {
+    @apply border-b-(color:--guk-border-success-primary);
+}
+
+@utility border-b-success-secondary {
+    @apply border-b-(color:--guk-border-success-secondary);
+}
+
+@utility border-b-success-default {
+    @apply border-b-(color:--guk-border-success-default);
+}
+
+@utility border-b-success-hover {
+    @apply border-b-(color:--guk-border-success-hover);
+}
+
+@utility border-b-success-active {
+    @apply border-b-(color:--guk-border-success-active);
+}
+
+@utility border-b-warning-primary {
+    @apply border-b-(color:--guk-border-warning-primary);
+}
+
+@utility border-b-warning-secondary {
+    @apply border-b-(color:--guk-border-warning-secondary);
+}
+
+@utility border-b-warning-default {
+    @apply border-b-(color:--guk-border-warning-default);
+}
+
+@utility border-b-warning-hover {
+    @apply border-b-(color:--guk-border-warning-hover);
+}
+
+@utility border-b-warning-active {
+    @apply border-b-(color:--guk-border-warning-active);
+}
+
+@utility border-b-critical-primary {
+    @apply border-b-(color:--guk-border-critical-primary);
+}
+
+@utility border-b-critical-secondary {
+    @apply border-b-(color:--guk-border-critical-secondary);
+}
+
+@utility border-b-critical-default {
+    @apply border-b-(color:--guk-border-critical-default);
+}
+
+@utility border-b-critical-hover {
+    @apply border-b-(color:--guk-border-critical-hover);
+}
+
+@utility border-b-critical-active {
+    @apply border-b-(color:--guk-border-critical-active);
+}
+
+@utility border-b-info-primary {
+    @apply border-b-(color:--guk-border-info-primary);
+}
+
+@utility border-b-accent-fill {
+    @apply border-b-(color:--guk-border-accent-fill);
+}
+
+@utility border-b-accent-fill-hover {
+    @apply border-b-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-b-accent-fill-active {
+    @apply border-b-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-b-surface-fill-disabled {
+    @apply border-b-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-b-surface-open {
+    @apply border-b-(color:--guk-border-surface-open);
+}
+
+@utility border-l-surface-primary {
+    @apply border-l-(color:--guk-border-surface-primary);
+}
+
+@utility border-l-surface-secondary {
+    @apply border-l-(color:--guk-border-surface-secondary);
+}
+
+@utility border-l-surface-default {
+    @apply border-l-(color:--guk-border-surface-default);
+}
+
+@utility border-l-surface-hover {
+    @apply border-l-(color:--guk-border-surface-hover);
+}
+
+@utility border-l-surface-active {
+    @apply border-l-(color:--guk-border-surface-active);
+}
+
+@utility border-l-surface-disabled {
+    @apply border-l-(color:--guk-border-surface-disabled);
+}
+
+@utility border-l-surface-selected {
+    @apply border-l-(color:--guk-border-surface-selected);
+}
+
+@utility border-l-accent-primary {
+    @apply border-l-(color:--guk-border-accent-primary);
+}
+
+@utility border-l-accent-primary-inverse {
+    @apply border-l-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-l-accent-secondary {
+    @apply border-l-(color:--guk-border-accent-secondary);
+}
+
+@utility border-l-accent-secondary-inverse {
+    @apply border-l-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-l-accent-default {
+    @apply border-l-(color:--guk-border-accent-default);
+}
+
+@utility border-l-accent-hover {
+    @apply border-l-(color:--guk-border-accent-hover);
+}
+
+@utility border-l-accent-active {
+    @apply border-l-(color:--guk-border-accent-active);
+}
+
+@utility border-l-success-primary {
+    @apply border-l-(color:--guk-border-success-primary);
+}
+
+@utility border-l-success-secondary {
+    @apply border-l-(color:--guk-border-success-secondary);
+}
+
+@utility border-l-success-default {
+    @apply border-l-(color:--guk-border-success-default);
+}
+
+@utility border-l-success-hover {
+    @apply border-l-(color:--guk-border-success-hover);
+}
+
+@utility border-l-success-active {
+    @apply border-l-(color:--guk-border-success-active);
+}
+
+@utility border-l-warning-primary {
+    @apply border-l-(color:--guk-border-warning-primary);
+}
+
+@utility border-l-warning-secondary {
+    @apply border-l-(color:--guk-border-warning-secondary);
+}
+
+@utility border-l-warning-default {
+    @apply border-l-(color:--guk-border-warning-default);
+}
+
+@utility border-l-warning-hover {
+    @apply border-l-(color:--guk-border-warning-hover);
+}
+
+@utility border-l-warning-active {
+    @apply border-l-(color:--guk-border-warning-active);
+}
+
+@utility border-l-critical-primary {
+    @apply border-l-(color:--guk-border-critical-primary);
+}
+
+@utility border-l-critical-secondary {
+    @apply border-l-(color:--guk-border-critical-secondary);
+}
+
+@utility border-l-critical-default {
+    @apply border-l-(color:--guk-border-critical-default);
+}
+
+@utility border-l-critical-hover {
+    @apply border-l-(color:--guk-border-critical-hover);
+}
+
+@utility border-l-critical-active {
+    @apply border-l-(color:--guk-border-critical-active);
+}
+
+@utility border-l-info-primary {
+    @apply border-l-(color:--guk-border-info-primary);
+}
+
+@utility border-l-accent-fill {
+    @apply border-l-(color:--guk-border-accent-fill);
+}
+
+@utility border-l-accent-fill-hover {
+    @apply border-l-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-l-accent-fill-active {
+    @apply border-l-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-l-surface-fill-disabled {
+    @apply border-l-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-l-surface-open {
+    @apply border-l-(color:--guk-border-surface-open);
+}
+
+@utility border-x-surface-primary {
+    @apply border-x-(color:--guk-border-surface-primary);
+}
+
+@utility border-x-surface-secondary {
+    @apply border-x-(color:--guk-border-surface-secondary);
+}
+
+@utility border-x-surface-default {
+    @apply border-x-(color:--guk-border-surface-default);
+}
+
+@utility border-x-surface-hover {
+    @apply border-x-(color:--guk-border-surface-hover);
+}
+
+@utility border-x-surface-active {
+    @apply border-x-(color:--guk-border-surface-active);
+}
+
+@utility border-x-surface-disabled {
+    @apply border-x-(color:--guk-border-surface-disabled);
+}
+
+@utility border-x-surface-selected {
+    @apply border-x-(color:--guk-border-surface-selected);
+}
+
+@utility border-x-accent-primary {
+    @apply border-x-(color:--guk-border-accent-primary);
+}
+
+@utility border-x-accent-primary-inverse {
+    @apply border-x-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-x-accent-secondary {
+    @apply border-x-(color:--guk-border-accent-secondary);
+}
+
+@utility border-x-accent-secondary-inverse {
+    @apply border-x-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-x-accent-default {
+    @apply border-x-(color:--guk-border-accent-default);
+}
+
+@utility border-x-accent-hover {
+    @apply border-x-(color:--guk-border-accent-hover);
+}
+
+@utility border-x-accent-active {
+    @apply border-x-(color:--guk-border-accent-active);
+}
+
+@utility border-x-success-primary {
+    @apply border-x-(color:--guk-border-success-primary);
+}
+
+@utility border-x-success-secondary {
+    @apply border-x-(color:--guk-border-success-secondary);
+}
+
+@utility border-x-success-default {
+    @apply border-x-(color:--guk-border-success-default);
+}
+
+@utility border-x-success-hover {
+    @apply border-x-(color:--guk-border-success-hover);
+}
+
+@utility border-x-success-active {
+    @apply border-x-(color:--guk-border-success-active);
+}
+
+@utility border-x-warning-primary {
+    @apply border-x-(color:--guk-border-warning-primary);
+}
+
+@utility border-x-warning-secondary {
+    @apply border-x-(color:--guk-border-warning-secondary);
+}
+
+@utility border-x-warning-default {
+    @apply border-x-(color:--guk-border-warning-default);
+}
+
+@utility border-x-warning-hover {
+    @apply border-x-(color:--guk-border-warning-hover);
+}
+
+@utility border-x-warning-active {
+    @apply border-x-(color:--guk-border-warning-active);
+}
+
+@utility border-x-critical-primary {
+    @apply border-x-(color:--guk-border-critical-primary);
+}
+
+@utility border-x-critical-secondary {
+    @apply border-x-(color:--guk-border-critical-secondary);
+}
+
+@utility border-x-critical-default {
+    @apply border-x-(color:--guk-border-critical-default);
+}
+
+@utility border-x-critical-hover {
+    @apply border-x-(color:--guk-border-critical-hover);
+}
+
+@utility border-x-critical-active {
+    @apply border-x-(color:--guk-border-critical-active);
+}
+
+@utility border-x-info-primary {
+    @apply border-x-(color:--guk-border-info-primary);
+}
+
+@utility border-x-accent-fill {
+    @apply border-x-(color:--guk-border-accent-fill);
+}
+
+@utility border-x-accent-fill-hover {
+    @apply border-x-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-x-accent-fill-active {
+    @apply border-x-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-x-surface-fill-disabled {
+    @apply border-x-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-x-surface-open {
+    @apply border-x-(color:--guk-border-surface-open);
+}
+
+@utility border-y-surface-primary {
+    @apply border-y-(color:--guk-border-surface-primary);
+}
+
+@utility border-y-surface-secondary {
+    @apply border-y-(color:--guk-border-surface-secondary);
+}
+
+@utility border-y-surface-default {
+    @apply border-y-(color:--guk-border-surface-default);
+}
+
+@utility border-y-surface-hover {
+    @apply border-y-(color:--guk-border-surface-hover);
+}
+
+@utility border-y-surface-active {
+    @apply border-y-(color:--guk-border-surface-active);
+}
+
+@utility border-y-surface-disabled {
+    @apply border-y-(color:--guk-border-surface-disabled);
+}
+
+@utility border-y-surface-selected {
+    @apply border-y-(color:--guk-border-surface-selected);
+}
+
+@utility border-y-accent-primary {
+    @apply border-y-(color:--guk-border-accent-primary);
+}
+
+@utility border-y-accent-primary-inverse {
+    @apply border-y-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility border-y-accent-secondary {
+    @apply border-y-(color:--guk-border-accent-secondary);
+}
+
+@utility border-y-accent-secondary-inverse {
+    @apply border-y-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility border-y-accent-default {
+    @apply border-y-(color:--guk-border-accent-default);
+}
+
+@utility border-y-accent-hover {
+    @apply border-y-(color:--guk-border-accent-hover);
+}
+
+@utility border-y-accent-active {
+    @apply border-y-(color:--guk-border-accent-active);
+}
+
+@utility border-y-success-primary {
+    @apply border-y-(color:--guk-border-success-primary);
+}
+
+@utility border-y-success-secondary {
+    @apply border-y-(color:--guk-border-success-secondary);
+}
+
+@utility border-y-success-default {
+    @apply border-y-(color:--guk-border-success-default);
+}
+
+@utility border-y-success-hover {
+    @apply border-y-(color:--guk-border-success-hover);
+}
+
+@utility border-y-success-active {
+    @apply border-y-(color:--guk-border-success-active);
+}
+
+@utility border-y-warning-primary {
+    @apply border-y-(color:--guk-border-warning-primary);
+}
+
+@utility border-y-warning-secondary {
+    @apply border-y-(color:--guk-border-warning-secondary);
+}
+
+@utility border-y-warning-default {
+    @apply border-y-(color:--guk-border-warning-default);
+}
+
+@utility border-y-warning-hover {
+    @apply border-y-(color:--guk-border-warning-hover);
+}
+
+@utility border-y-warning-active {
+    @apply border-y-(color:--guk-border-warning-active);
+}
+
+@utility border-y-critical-primary {
+    @apply border-y-(color:--guk-border-critical-primary);
+}
+
+@utility border-y-critical-secondary {
+    @apply border-y-(color:--guk-border-critical-secondary);
+}
+
+@utility border-y-critical-default {
+    @apply border-y-(color:--guk-border-critical-default);
+}
+
+@utility border-y-critical-hover {
+    @apply border-y-(color:--guk-border-critical-hover);
+}
+
+@utility border-y-critical-active {
+    @apply border-y-(color:--guk-border-critical-active);
+}
+
+@utility border-y-info-primary {
+    @apply border-y-(color:--guk-border-info-primary);
+}
+
+@utility border-y-accent-fill {
+    @apply border-y-(color:--guk-border-accent-fill);
+}
+
+@utility border-y-accent-fill-hover {
+    @apply border-y-(color:--guk-border-accent-fill-hover);
+}
+
+@utility border-y-accent-fill-active {
+    @apply border-y-(color:--guk-border-accent-fill-active);
+}
+
+@utility border-y-surface-fill-disabled {
+    @apply border-y-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility border-y-surface-open {
+    @apply border-y-(color:--guk-border-surface-open);
+}
+
+@utility from-gradient-surface-primary {
+    @apply from-(color:--guk-gradient-surface-primary);
+}
+
+@utility from-gradient-surface-primary-transparent {
+    @apply from-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility from-gradient-surface-secondary {
+    @apply from-(color:--guk-gradient-surface-secondary);
+}
+
+@utility from-gradient-surface-secondary-transparent {
+    @apply from-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility from-gradient-skeleton-start {
+    @apply from-(color:--guk-gradient-skeleton-start);
+}
+
+@utility from-gradient-skeleton-middle {
+    @apply from-(color:--guk-gradient-skeleton-middle);
+}
+
+@utility from-gradient-skeleton-end {
+    @apply from-(color:--guk-gradient-skeleton-end);
+}
+
+@utility from-gradient-brand-primary {
+    @apply from-(color:--guk-gradient-brand-primary);
+}
+
+@utility from-gradient-brand-primary-transparent {
+    @apply from-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility from-gradient-brand-tertiary {
+    @apply from-(color:--guk-gradient-brand-tertiary);
+}
+
+@utility from-gradient-brand-tertiary-transparent {
+    @apply from-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility via-gradient-surface-primary {
+    @apply via-(color:--guk-gradient-surface-primary);
+}
+
+@utility via-gradient-surface-primary-transparent {
+    @apply via-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility via-gradient-surface-secondary {
+    @apply via-(color:--guk-gradient-surface-secondary);
+}
+
+@utility via-gradient-surface-secondary-transparent {
+    @apply via-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility via-gradient-skeleton-start {
+    @apply via-(color:--guk-gradient-skeleton-start);
+}
+
+@utility via-gradient-skeleton-middle {
+    @apply via-(color:--guk-gradient-skeleton-middle);
+}
+
+@utility via-gradient-skeleton-end {
+    @apply via-(color:--guk-gradient-skeleton-end);
+}
+
+@utility via-gradient-brand-primary {
+    @apply via-(color:--guk-gradient-brand-primary);
+}
+
+@utility via-gradient-brand-primary-transparent {
+    @apply via-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility via-gradient-brand-tertiary {
+    @apply via-(color:--guk-gradient-brand-tertiary);
+}
+
+@utility via-gradient-brand-tertiary-transparent {
+    @apply via-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility to-gradient-surface-primary {
+    @apply to-(color:--guk-gradient-surface-primary);
+}
+
+@utility to-gradient-surface-primary-transparent {
+    @apply to-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility to-gradient-surface-secondary {
+    @apply to-(color:--guk-gradient-surface-secondary);
+}
+
+@utility to-gradient-surface-secondary-transparent {
+    @apply to-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility to-gradient-skeleton-start {
+    @apply to-(color:--guk-gradient-skeleton-start);
+}
+
+@utility to-gradient-skeleton-middle {
+    @apply to-(color:--guk-gradient-skeleton-middle);
+}
+
+@utility to-gradient-skeleton-end {
+    @apply to-(color:--guk-gradient-skeleton-end);
+}
+
+@utility to-gradient-brand-primary {
+    @apply to-(color:--guk-gradient-brand-primary);
+}
+
+@utility to-gradient-brand-primary-transparent {
+    @apply to-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility to-gradient-brand-tertiary {
+    @apply to-(color:--guk-gradient-brand-tertiary);
+}
+
+@utility to-gradient-brand-tertiary-transparent {
+    @apply to-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility fill-bg-surface-primary {
+    @apply fill-(color:--guk-bg-surface-primary);
+}
+
+@utility fill-bg-surface-secondary {
+    @apply fill-(color:--guk-bg-surface-secondary);
+}
+
+@utility fill-bg-surface-tertiary {
+    @apply fill-(color:--guk-bg-surface-tertiary);
+}
+
+@utility fill-bg-surface-primary-inverse {
+    @apply fill-(color:--guk-bg-surface-primary-inverse);
+}
+
+@utility fill-bg-surface-secondary-inverse {
+    @apply fill-(color:--guk-bg-surface-secondary-inverse);
+}
+
+@utility fill-bg-surface-tertiary-inverse {
+    @apply fill-(color:--guk-bg-surface-tertiary-inverse);
+}
+
+@utility fill-bg-surface-default {
+    @apply fill-(color:--guk-bg-surface-default);
+}
+
+@utility fill-bg-surface-hover {
+    @apply fill-(color:--guk-bg-surface-hover);
+}
+
+@utility fill-bg-surface-active {
+    @apply fill-(color:--guk-bg-surface-active);
+}
+
+@utility fill-bg-surface-selected {
+    @apply fill-(color:--guk-bg-surface-selected);
+}
+
+@utility fill-bg-surface-disabled {
+    @apply fill-(color:--guk-bg-surface-disabled);
+}
+
+@utility fill-bg-surface-hover-inverse {
+    @apply fill-(color:--guk-bg-surface-hover-inverse);
+}
+
+@utility fill-bg-surface-disabled-inverse {
+    @apply fill-(color:--guk-bg-surface-disabled-inverse);
+}
+
+@utility fill-bg-surface-transparent {
+    @apply fill-(color:--guk-bg-surface-transparent);
+}
+
+@utility fill-bg-surface-transparent-default {
+    @apply fill-(color:--guk-bg-surface-transparent-default);
+}
+
+@utility fill-bg-surface-transparent-hover {
+    @apply fill-(color:--guk-bg-surface-transparent-hover);
+}
+
+@utility fill-bg-surface-transparent-active {
+    @apply fill-(color:--guk-bg-surface-transparent-active);
+}
+
+@utility fill-bg-surface-transparent-selected {
+    @apply fill-(color:--guk-bg-surface-transparent-selected);
+}
+
+@utility fill-bg-accent-solid {
+    @apply fill-(color:--guk-bg-accent-solid);
+}
+
+@utility fill-bg-accent-subtle {
+    @apply fill-(color:--guk-bg-accent-subtle);
+}
+
+@utility fill-bg-accent-default {
+    @apply fill-(color:--guk-bg-accent-default);
+}
+
+@utility fill-bg-accent-hover {
+    @apply fill-(color:--guk-bg-accent-hover);
+}
+
+@utility fill-bg-accent-active {
+    @apply fill-(color:--guk-bg-accent-active);
+}
+
+@utility fill-bg-accent-default-inverse {
+    @apply fill-(color:--guk-bg-accent-default-inverse);
+}
+
+@utility fill-bg-accent-hover-inverse {
+    @apply fill-(color:--guk-bg-accent-hover-inverse);
+}
+
+@utility fill-bg-accent-active-inverse {
+    @apply fill-(color:--guk-bg-accent-active-inverse);
+}
+
+@utility fill-bg-accent-transparent-default {
+    @apply fill-(color:--guk-bg-accent-transparent-default);
+}
+
+@utility fill-bg-accent-transparent-hover {
+    @apply fill-(color:--guk-bg-accent-transparent-hover);
+}
+
+@utility fill-bg-accent-transparent-active {
+    @apply fill-(color:--guk-bg-accent-transparent-active);
+}
+
+@utility fill-bg-body {
+    @apply fill-(color:--guk-bg-body);
+}
+
+@utility fill-bg-brand-solid {
+    @apply fill-(color:--guk-bg-brand-solid);
+}
+
+@utility fill-bg-brand-subtle {
+    @apply fill-(color:--guk-bg-brand-subtle);
+}
+
+@utility fill-bg-success-subtle {
+    @apply fill-(color:--guk-bg-success-subtle);
+}
+
+@utility fill-bg-success-secondary {
+    @apply fill-(color:--guk-bg-success-secondary);
+}
+
+@utility fill-bg-success-solid {
+    @apply fill-(color:--guk-bg-success-solid);
+}
+
+@utility fill-bg-success-default {
+    @apply fill-(color:--guk-bg-success-default);
+}
+
+@utility fill-bg-success-hover {
+    @apply fill-(color:--guk-bg-success-hover);
+}
+
+@utility fill-bg-success-active {
+    @apply fill-(color:--guk-bg-success-active);
+}
+
+@utility fill-bg-warning-subtle {
+    @apply fill-(color:--guk-bg-warning-subtle);
+}
+
+@utility fill-bg-warning-secondary {
+    @apply fill-(color:--guk-bg-warning-secondary);
+}
+
+@utility fill-bg-warning-solid {
+    @apply fill-(color:--guk-bg-warning-solid);
+}
+
+@utility fill-bg-warning-default {
+    @apply fill-(color:--guk-bg-warning-default);
+}
+
+@utility fill-bg-warning-hover {
+    @apply fill-(color:--guk-bg-warning-hover);
+}
+
+@utility fill-bg-warning-active {
+    @apply fill-(color:--guk-bg-warning-active);
+}
+
+@utility fill-bg-critical-subtle {
+    @apply fill-(color:--guk-bg-critical-subtle);
+}
+
+@utility fill-bg-critical-secondary {
+    @apply fill-(color:--guk-bg-critical-secondary);
+}
+
+@utility fill-bg-critical-solid {
+    @apply fill-(color:--guk-bg-critical-solid);
+}
+
+@utility fill-bg-critical-default {
+    @apply fill-(color:--guk-bg-critical-default);
+}
+
+@utility fill-bg-critical-hover {
+    @apply fill-(color:--guk-bg-critical-hover);
+}
+
+@utility fill-bg-critical-active {
+    @apply fill-(color:--guk-bg-critical-active);
+}
+
+@utility fill-bg-info-subtle {
+    @apply fill-(color:--guk-bg-info-subtle);
+}
+
+@utility fill-bg-info-secondary {
+    @apply fill-(color:--guk-bg-info-secondary);
+}
+
+@utility fill-bg-info-solid {
+    @apply fill-(color:--guk-bg-info-solid);
+}
+
+@utility fill-bg-surface-ghost-hover {
+    @apply fill-(color:--guk-bg-surface-ghost-hover);
+}
+
+@utility fill-icon-surface-primary {
+    @apply fill-(color:--guk-icon-surface-primary);
+}
+
+@utility fill-icon-surface-secondary {
+    @apply fill-(color:--guk-icon-surface-secondary);
+}
+
+@utility fill-icon-surface-default {
+    @apply fill-(color:--guk-icon-surface-default);
+}
+
+@utility fill-icon-surface-hover {
+    @apply fill-(color:--guk-icon-surface-hover);
+}
+
+@utility fill-icon-surface-active {
+    @apply fill-(color:--guk-icon-surface-active);
+}
+
+@utility fill-icon-surface-disabled {
+    @apply fill-(color:--guk-icon-surface-disabled);
+}
+
+@utility fill-icon-accent-primary {
+    @apply fill-(color:--guk-icon-accent-primary);
+}
+
+@utility fill-icon-accent-secondary {
+    @apply fill-(color:--guk-icon-accent-secondary);
+}
+
+@utility fill-icon-accent-tertiary {
+    @apply fill-(color:--guk-icon-accent-tertiary);
+}
+
+@utility fill-icon-accent-default {
+    @apply fill-(color:--guk-icon-accent-default);
+}
+
+@utility fill-icon-accent-hover {
+    @apply fill-(color:--guk-icon-accent-hover);
+}
+
+@utility fill-icon-accent-active {
+    @apply fill-(color:--guk-icon-accent-active);
+}
+
+@utility fill-icon-accent-selected {
+    @apply fill-(color:--guk-icon-accent-selected);
+}
+
+@utility fill-icon-accent-inverse {
+    @apply fill-(color:--guk-icon-accent-inverse);
+}
+
+@utility fill-icon-success-primary {
+    @apply fill-(color:--guk-icon-success-primary);
+}
+
+@utility fill-icon-success-secondary {
+    @apply fill-(color:--guk-icon-success-secondary);
+}
+
+@utility fill-icon-success-default {
+    @apply fill-(color:--guk-icon-success-default);
+}
+
+@utility fill-icon-success-hover {
+    @apply fill-(color:--guk-icon-success-hover);
+}
+
+@utility fill-icon-success-active {
+    @apply fill-(color:--guk-icon-success-active);
+}
+
+@utility fill-icon-warning-primary {
+    @apply fill-(color:--guk-icon-warning-primary);
+}
+
+@utility fill-icon-warning-secondary {
+    @apply fill-(color:--guk-icon-warning-secondary);
+}
+
+@utility fill-icon-warning-default {
+    @apply fill-(color:--guk-icon-warning-default);
+}
+
+@utility fill-icon-warning-hover {
+    @apply fill-(color:--guk-icon-warning-hover);
+}
+
+@utility fill-icon-warning-active {
+    @apply fill-(color:--guk-icon-warning-active);
+}
+
+@utility fill-icon-critical-primary {
+    @apply fill-(color:--guk-icon-critical-primary);
+}
+
+@utility fill-icon-critical-secondary {
+    @apply fill-(color:--guk-icon-critical-secondary);
+}
+
+@utility fill-icon-critical-default {
+    @apply fill-(color:--guk-icon-critical-default);
+}
+
+@utility fill-icon-critical-hover {
+    @apply fill-(color:--guk-icon-critical-hover);
+}
+
+@utility fill-icon-critical-active {
+    @apply fill-(color:--guk-icon-critical-active);
+}
+
+@utility fill-icon-info-primary {
+    @apply fill-(color:--guk-icon-info-primary);
+}
+
+@utility fill-icon-info-secondary {
+    @apply fill-(color:--guk-icon-info-secondary);
+}
+
+@utility fill-icon-brand-primary {
+    @apply fill-(color:--guk-icon-brand-primary);
+}
+
+@utility fill-icon-brand-secondary {
+    @apply fill-(color:--guk-icon-brand-secondary);
+}
+
+@utility fill-icon-brand-tertiary {
+    @apply fill-(color:--guk-icon-brand-tertiary);
+}
+
+@utility stroke-border-surface-primary {
+    @apply stroke-(color:--guk-border-surface-primary);
+}
+
+@utility stroke-border-surface-secondary {
+    @apply stroke-(color:--guk-border-surface-secondary);
+}
+
+@utility stroke-border-surface-default {
+    @apply stroke-(color:--guk-border-surface-default);
+}
+
+@utility stroke-border-surface-hover {
+    @apply stroke-(color:--guk-border-surface-hover);
+}
+
+@utility stroke-border-surface-active {
+    @apply stroke-(color:--guk-border-surface-active);
+}
+
+@utility stroke-border-surface-disabled {
+    @apply stroke-(color:--guk-border-surface-disabled);
+}
+
+@utility stroke-border-surface-selected {
+    @apply stroke-(color:--guk-border-surface-selected);
+}
+
+@utility stroke-border-accent-primary {
+    @apply stroke-(color:--guk-border-accent-primary);
+}
+
+@utility stroke-border-accent-primary-inverse {
+    @apply stroke-(color:--guk-border-accent-primary-inverse);
+}
+
+@utility stroke-border-accent-secondary {
+    @apply stroke-(color:--guk-border-accent-secondary);
+}
+
+@utility stroke-border-accent-secondary-inverse {
+    @apply stroke-(color:--guk-border-accent-secondary-inverse);
+}
+
+@utility stroke-border-accent-default {
+    @apply stroke-(color:--guk-border-accent-default);
+}
+
+@utility stroke-border-accent-hover {
+    @apply stroke-(color:--guk-border-accent-hover);
+}
+
+@utility stroke-border-accent-active {
+    @apply stroke-(color:--guk-border-accent-active);
+}
+
+@utility stroke-border-success-primary {
+    @apply stroke-(color:--guk-border-success-primary);
+}
+
+@utility stroke-border-success-secondary {
+    @apply stroke-(color:--guk-border-success-secondary);
+}
+
+@utility stroke-border-success-default {
+    @apply stroke-(color:--guk-border-success-default);
+}
+
+@utility stroke-border-success-hover {
+    @apply stroke-(color:--guk-border-success-hover);
+}
+
+@utility stroke-border-success-active {
+    @apply stroke-(color:--guk-border-success-active);
+}
+
+@utility stroke-border-warning-primary {
+    @apply stroke-(color:--guk-border-warning-primary);
+}
+
+@utility stroke-border-warning-secondary {
+    @apply stroke-(color:--guk-border-warning-secondary);
+}
+
+@utility stroke-border-warning-default {
+    @apply stroke-(color:--guk-border-warning-default);
+}
+
+@utility stroke-border-warning-hover {
+    @apply stroke-(color:--guk-border-warning-hover);
+}
+
+@utility stroke-border-warning-active {
+    @apply stroke-(color:--guk-border-warning-active);
+}
+
+@utility stroke-border-critical-primary {
+    @apply stroke-(color:--guk-border-critical-primary);
+}
+
+@utility stroke-border-critical-secondary {
+    @apply stroke-(color:--guk-border-critical-secondary);
+}
+
+@utility stroke-border-critical-default {
+    @apply stroke-(color:--guk-border-critical-default);
+}
+
+@utility stroke-border-critical-hover {
+    @apply stroke-(color:--guk-border-critical-hover);
+}
+
+@utility stroke-border-critical-active {
+    @apply stroke-(color:--guk-border-critical-active);
+}
+
+@utility stroke-border-info-primary {
+    @apply stroke-(color:--guk-border-info-primary);
+}
+
+@utility stroke-border-accent-fill {
+    @apply stroke-(color:--guk-border-accent-fill);
+}
+
+@utility stroke-border-accent-fill-hover {
+    @apply stroke-(color:--guk-border-accent-fill-hover);
+}
+
+@utility stroke-border-accent-fill-active {
+    @apply stroke-(color:--guk-border-accent-fill-active);
+}
+
+@utility stroke-border-surface-fill-disabled {
+    @apply stroke-(color:--guk-border-surface-fill-disabled);
+}
+
+@utility stroke-border-surface-open {
+    @apply stroke-(color:--guk-border-surface-open);
+}
+
+@utility stroke-icon-surface-primary {
+    @apply stroke-(color:--guk-icon-surface-primary);
+}
+
+@utility stroke-icon-surface-secondary {
+    @apply stroke-(color:--guk-icon-surface-secondary);
+}
+
+@utility stroke-icon-surface-default {
+    @apply stroke-(color:--guk-icon-surface-default);
+}
+
+@utility stroke-icon-surface-hover {
+    @apply stroke-(color:--guk-icon-surface-hover);
+}
+
+@utility stroke-icon-surface-active {
+    @apply stroke-(color:--guk-icon-surface-active);
+}
+
+@utility stroke-icon-surface-disabled {
+    @apply stroke-(color:--guk-icon-surface-disabled);
+}
+
+@utility stroke-icon-accent-primary {
+    @apply stroke-(color:--guk-icon-accent-primary);
+}
+
+@utility stroke-icon-accent-secondary {
+    @apply stroke-(color:--guk-icon-accent-secondary);
+}
+
+@utility stroke-icon-accent-tertiary {
+    @apply stroke-(color:--guk-icon-accent-tertiary);
+}
+
+@utility stroke-icon-accent-default {
+    @apply stroke-(color:--guk-icon-accent-default);
+}
+
+@utility stroke-icon-accent-hover {
+    @apply stroke-(color:--guk-icon-accent-hover);
+}
+
+@utility stroke-icon-accent-active {
+    @apply stroke-(color:--guk-icon-accent-active);
+}
+
+@utility stroke-icon-accent-selected {
+    @apply stroke-(color:--guk-icon-accent-selected);
+}
+
+@utility stroke-icon-accent-inverse {
+    @apply stroke-(color:--guk-icon-accent-inverse);
+}
+
+@utility stroke-icon-success-primary {
+    @apply stroke-(color:--guk-icon-success-primary);
+}
+
+@utility stroke-icon-success-secondary {
+    @apply stroke-(color:--guk-icon-success-secondary);
+}
+
+@utility stroke-icon-success-default {
+    @apply stroke-(color:--guk-icon-success-default);
+}
+
+@utility stroke-icon-success-hover {
+    @apply stroke-(color:--guk-icon-success-hover);
+}
+
+@utility stroke-icon-success-active {
+    @apply stroke-(color:--guk-icon-success-active);
+}
+
+@utility stroke-icon-warning-primary {
+    @apply stroke-(color:--guk-icon-warning-primary);
+}
+
+@utility stroke-icon-warning-secondary {
+    @apply stroke-(color:--guk-icon-warning-secondary);
+}
+
+@utility stroke-icon-warning-default {
+    @apply stroke-(color:--guk-icon-warning-default);
+}
+
+@utility stroke-icon-warning-hover {
+    @apply stroke-(color:--guk-icon-warning-hover);
+}
+
+@utility stroke-icon-warning-active {
+    @apply stroke-(color:--guk-icon-warning-active);
+}
+
+@utility stroke-icon-critical-primary {
+    @apply stroke-(color:--guk-icon-critical-primary);
+}
+
+@utility stroke-icon-critical-secondary {
+    @apply stroke-(color:--guk-icon-critical-secondary);
+}
+
+@utility stroke-icon-critical-default {
+    @apply stroke-(color:--guk-icon-critical-default);
+}
+
+@utility stroke-icon-critical-hover {
+    @apply stroke-(color:--guk-icon-critical-hover);
+}
+
+@utility stroke-icon-critical-active {
+    @apply stroke-(color:--guk-icon-critical-active);
+}
+
+@utility stroke-icon-info-primary {
+    @apply stroke-(color:--guk-icon-info-primary);
+}
+
+@utility stroke-icon-info-secondary {
+    @apply stroke-(color:--guk-icon-info-secondary);
+}
+
+@utility stroke-icon-brand-primary {
+    @apply stroke-(color:--guk-icon-brand-primary);
+}
+
+@utility stroke-icon-brand-secondary {
+    @apply stroke-(color:--guk-icon-brand-secondary);
+}
+
+@utility stroke-icon-brand-tertiary {
+    @apply stroke-(color:--guk-icon-brand-tertiary);
+}
+
+@utility caret-text-surface-primary {
+    @apply caret-(color:--guk-text-surface-primary);
+}
+
+@utility caret-text-surface-secondary {
+    @apply caret-(color:--guk-text-surface-secondary);
+}
+
+@utility caret-text-surface-tertiary {
+    @apply caret-(color:--guk-text-surface-tertiary);
+}
+
+@utility caret-text-surface-placeholder {
+    @apply caret-(color:--guk-text-surface-placeholder);
+}
+
+@utility caret-text-surface-inverse {
+    @apply caret-(color:--guk-text-surface-inverse);
+}
+
+@utility caret-text-surface-default {
+    @apply caret-(color:--guk-text-surface-default);
+}
+
+@utility caret-text-surface-hover {
+    @apply caret-(color:--guk-text-surface-hover);
+}
+
+@utility caret-text-surface-active {
+    @apply caret-(color:--guk-text-surface-active);
+}
+
+@utility caret-text-surface-selected {
+    @apply caret-(color:--guk-text-surface-selected);
+}
+
+@utility caret-text-surface-disabled {
+    @apply caret-(color:--guk-text-surface-disabled);
+}
+
+@utility caret-text-accent-primary {
+    @apply caret-(color:--guk-text-accent-primary);
+}
+
+@utility caret-text-accent-secondary {
+    @apply caret-(color:--guk-text-accent-secondary);
+}
+
+@utility caret-text-accent-default {
+    @apply caret-(color:--guk-text-accent-default);
+}
+
+@utility caret-text-accent-hover {
+    @apply caret-(color:--guk-text-accent-hover);
+}
+
+@utility caret-text-accent-active {
+    @apply caret-(color:--guk-text-accent-active);
+}
+
+@utility caret-text-accent-inverse {
+    @apply caret-(color:--guk-text-accent-inverse);
+}
+
+@utility caret-text-success-primary {
+    @apply caret-(color:--guk-text-success-primary);
+}
+
+@utility caret-text-success-secondary {
+    @apply caret-(color:--guk-text-success-secondary);
+}
+
+@utility caret-text-success-default {
+    @apply caret-(color:--guk-text-success-default);
+}
+
+@utility caret-text-success-hover {
+    @apply caret-(color:--guk-text-success-hover);
+}
+
+@utility caret-text-success-active {
+    @apply caret-(color:--guk-text-success-active);
+}
+
+@utility caret-text-warning-primary {
+    @apply caret-(color:--guk-text-warning-primary);
+}
+
+@utility caret-text-warning-secondary {
+    @apply caret-(color:--guk-text-warning-secondary);
+}
+
+@utility caret-text-warning-default {
+    @apply caret-(color:--guk-text-warning-default);
+}
+
+@utility caret-text-warning-hover {
+    @apply caret-(color:--guk-text-warning-hover);
+}
+
+@utility caret-text-warning-active {
+    @apply caret-(color:--guk-text-warning-active);
+}
+
+@utility caret-text-critical-primary {
+    @apply caret-(color:--guk-text-critical-primary);
+}
+
+@utility caret-text-critical-secondary {
+    @apply caret-(color:--guk-text-critical-secondary);
+}
+
+@utility caret-text-critical-default {
+    @apply caret-(color:--guk-text-critical-default);
+}
+
+@utility caret-text-critical-hover {
+    @apply caret-(color:--guk-text-critical-hover);
+}
+
+@utility caret-text-critical-active {
+    @apply caret-(color:--guk-text-critical-active);
+}
+
+@utility caret-text-info-primary {
+    @apply caret-(color:--guk-text-info-primary);
+}
+
+@utility caret-text-info-secondary {
+    @apply caret-(color:--guk-text-info-secondary);
+}
+
+@utility caret-text-link-default {
+    @apply caret-(color:--guk-text-link-default);
+}
+
+@utility caret-text-link-hover {
+    @apply caret-(color:--guk-text-link-hover);
+}
+
+@utility caret-text-link-active {
+    @apply caret-(color:--guk-text-link-active);
+}
+
+@utility caret-text-link-secondary-default {
+    @apply caret-(color:--guk-text-link-secondary-default);
+}
+
+@utility caret-text-link-secondary-hover {
+    @apply caret-(color:--guk-text-link-secondary-hover);
+}
+
+@utility caret-text-link-secondary-active {
+    @apply caret-(color:--guk-text-link-secondary-active);
+}
+
+@utility gradient-surface-primary-to-t {
+    @apply bg-linear-to-t from-(color:--guk-gradient-surface-primary) to-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility gradient-surface-primary-to-r {
+    @apply bg-linear-to-r from-(color:--guk-gradient-surface-primary) to-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility gradient-surface-primary-to-b {
+    @apply bg-linear-to-b from-(color:--guk-gradient-surface-primary) to-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility gradient-surface-primary-to-l {
+    @apply bg-linear-to-l from-(color:--guk-gradient-surface-primary) to-(color:--guk-gradient-surface-primary-transparent);
+}
+
+@utility gradient-surface-secondary-to-t {
+    @apply bg-linear-to-t from-(color:--guk-gradient-surface-secondary) to-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility gradient-surface-secondary-to-r {
+    @apply bg-linear-to-r from-(color:--guk-gradient-surface-secondary) to-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility gradient-surface-secondary-to-b {
+    @apply bg-linear-to-b from-(color:--guk-gradient-surface-secondary) to-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility gradient-surface-secondary-to-l {
+    @apply bg-linear-to-l from-(color:--guk-gradient-surface-secondary) to-(color:--guk-gradient-surface-secondary-transparent);
+}
+
+@utility gradient-brand-primary-to-t {
+    @apply bg-linear-to-t from-(color:--guk-gradient-brand-primary) to-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility gradient-brand-primary-to-r {
+    @apply bg-linear-to-r from-(color:--guk-gradient-brand-primary) to-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility gradient-brand-primary-to-b {
+    @apply bg-linear-to-b from-(color:--guk-gradient-brand-primary) to-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility gradient-brand-primary-to-l {
+    @apply bg-linear-to-l from-(color:--guk-gradient-brand-primary) to-(color:--guk-gradient-brand-primary-transparent);
+}
+
+@utility gradient-brand-tertiary-to-t {
+    @apply bg-linear-to-t from-(color:--guk-gradient-brand-tertiary) to-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility gradient-brand-tertiary-to-r {
+    @apply bg-linear-to-r from-(color:--guk-gradient-brand-tertiary) to-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility gradient-brand-tertiary-to-b {
+    @apply bg-linear-to-b from-(color:--guk-gradient-brand-tertiary) to-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility gradient-brand-tertiary-to-l {
+    @apply bg-linear-to-l from-(color:--guk-gradient-brand-tertiary) to-(color:--guk-gradient-brand-tertiary-transparent);
+}
+
+@utility via-gradient-surface-secondary\/70 {
+    @apply via-(color:--guk-gradient-surface-secondary)/70;
+}
+
+@utility bg-icon-surface-secondary {
+    @apply bg-(color:--guk-icon-surface-secondary);
+}
+
+@utility bg-icon-accent-primary {
+    @apply bg-(color:--guk-icon-accent-primary);
+}
+
+@utility border-bg-surface-primary {
+    @apply border-(color:--guk-bg-surface-primary);
+}
+
+@utility border-b-bg-surface-primary {
+    @apply border-b-(color:--guk-bg-surface-primary);
+}
+
+@utility caret-bg-surface-secondary-inverse {
+    @apply caret-(color:--guk-bg-surface-secondary-inverse);
+}
+
+@utility shadow-border-surface-selected {
+    @apply shadow-(color:--guk-border-surface-selected);
 }

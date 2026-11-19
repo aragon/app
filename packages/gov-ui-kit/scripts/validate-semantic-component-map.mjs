@@ -109,11 +109,14 @@ const isButton = (f) => f === 'src/core/components/button/button.tsx';
 
 // Semantic utility names. Two of them equal a primitive shadow class (shadow-warning-sm, shadow-critical-sm: the map
 // converts them to themselves); in the applied state a class with a semantic name counts as converted.
+// A name may carry an opacity suffix (`via-gradient-surface-secondary/70`), escaped as `\/` in the CSS.
 const semanticNames = new Set(
-    [...read('src/theme/tokens/semantic/colors.css').matchAll(/@utility ([a-z0-9-]+) \{/g)].map((m) => m[1]),
+    [...read('src/theme/tokens/semantic/colors.css').matchAll(/@utility ([a-z0-9-]+(?:\\\/\d+)?) \{/g)].map((m) =>
+        m[1].replace('\\/', '/'),
+    ),
 );
 const SEMANTIC_RE =
-    /(?<=^|[\s'"`{(,])(?:(?:[A-Za-z0-9_@*&>.%#=+/-]|\[[^\]\s'"`]*\])+:)*!?([a-z0-9-]+)!?(?=$|[\s'"`},)])/g;
+    /(?<=^|[\s'"`{(,])(?:(?:[A-Za-z0-9_@*&>.%#=+/-]|\[[^\]\s'"`]*\])+:)*!?([a-z0-9-]+(?:\/\d+)?)!?(?=$|[\s'"`},)])/g;
 const scan = (file, checkLoose = true, skipSemantic = false) => {
     const found = [];
     read(file)
@@ -316,10 +319,49 @@ const ringColours = new Map(
     ]),
 );
 
-// Old primitive utility -> { property: value }, or null when the utility has no modelled value.
-const PROPERTY = { bg: 'background-color', text: 'color', border: 'border-color' };
+// The colour property each applier writes (gradient stops and the shadow colour stand for Tailwind's own variables).
+const PROPERTY = {
+    bg: 'background-color',
+    text: 'color',
+    border: 'border-color',
+    'border-t': 'border-top-color',
+    'border-r': 'border-right-color',
+    'border-b': 'border-bottom-color',
+    'border-l': 'border-left-color',
+    'border-x': 'border-inline-color',
+    'border-y': 'border-block-color',
+    fill: 'fill',
+    stroke: 'stroke',
+    caret: 'caret-color',
+    from: 'gradient-from',
+    via: 'gradient-via',
+    to: 'gradient-to',
+    shadow: 'shadow-color',
+    ring: 'ring-color',
+};
+const APPLIER = '(bg|text|border(?:-[trblxy])?|fill|stroke|caret|from|via|to|shadow|ring)';
+// The kit's own palette-named gradient utilities (`gradient-neutral-50-transparent-to-b`), by name -> @apply body.
+const primitiveGradients = new Map(
+    [
+        ...read('src/theme/tokens/primitives/colors.css').matchAll(
+            /@utility (gradient-[a-z0-9-]+) \{\s*@apply ([^;]+);/g,
+        ),
+    ].map((m) => [m[1], m[2].trim()]),
+);
+const mergeValues = (values, where) => {
+    const merged = {};
+    for (const value of values) {
+        for (const [p, v] of Object.entries(value)) {
+            if (merged[p] != null) {
+                throw new Error(`${where}: property ${p} set twice`);
+            }
+            merged[p] = v;
+        }
+    }
+    return merged;
+};
 const resolveOld = (util) => {
-    let m = util.match(/^(bg|text|border)-([a-z]+-\d+)(?:\/(\d+))?$/);
+    let m = util.match(new RegExp(String.raw`^${APPLIER}-([a-z]+-\d+)(?:\/(\d+))?$`));
     if (m) {
         const hex = primitiveColours.get(m[2]);
         if (hex == null) {
@@ -327,6 +369,19 @@ const resolveOld = (util) => {
         }
         const alpha = m[3] == null ? 1 : Number(m[3]) / 100;
         return { [PROPERTY[m[1]]]: colourKey(hexToRgba(hex, alpha)) };
+    }
+    m = util.match(/^bg-linear-to-([trbl])$/);
+    if (m) {
+        return { 'gradient-direction': m[1] };
+    }
+    if (primitiveGradients.has(util)) {
+        return mergeValues(
+            primitiveGradients
+                .get(util)
+                .split(/\s+/)
+                .map((cls) => resolveOld(cls) ?? { [`unmodelled:${cls}`]: cls }),
+            util,
+        );
     }
     m = util.match(/^shadow-([a-z]+)(?:-(sm|md|lg|xl|2xl))?$/);
     if (m) {
@@ -348,12 +403,34 @@ const resolveOld = (util) => {
 
 // Semantic utilities from the generated CSS.
 const utilities = new Map();
-for (const m of semanticCss.matchAll(/@utility ([a-z0-9-]+) \{\s*([^}]*?)\s*\}/g)) {
-    utilities.set(m[1], m[2].trim());
+for (const m of semanticCss.matchAll(/@utility ([a-z0-9-]+(?:\\\/\d+)?) \{\s*([^}]*?)\s*\}/g)) {
+    utilities.set(m[1].replace('\\/', '/'), m[2].trim());
 }
-const tokenOfUtility = (name) => {
-    const m = name.match(/^(bg|text|border|icon|shadow|ring|gradient)-([a-z]+)-(.+)$/);
-    return m ? `${m[1]}/${m[2]}/${m[3]}` : null;
+// The tokens a utility applies: the --guk-<family>-<group>-<role> variables its body reads (a fade reads two).
+const tokenOfVariable = (variable) => {
+    const [family, group, ...role] = variable.replace(/^--guk-/, '').split('-');
+    return role.length > 0 ? `${family}/${group}/${role.join('-')}` : `${family}/${group}`;
+};
+const tokensOfUtility = (name) => {
+    const body = utilities.get(name);
+    return body == null ? [] : [...new Set([...body.matchAll(/--guk-[a-z0-9-]+/g)].map((m) => tokenOfVariable(m[0])))];
+};
+const resolveApplied = (cls, where) => {
+    let m = cls.match(new RegExp(String.raw`^${APPLIER}-\(color:(--guk-[a-z0-9-]+)\)(?:\/(\d+))?$`));
+    if (m) {
+        const [r, g, b, a] = resolveColour(`var(${m[2]})`);
+        const alpha = m[3] == null ? 1 : Number(m[3]) / 100;
+        return { [PROPERTY[m[1]]]: colourKey([r, g, b, Math.round(a * alpha * 1000) / 1000]) };
+    }
+    m = cls.match(/^bg-linear-to-([trbl])$/);
+    if (m) {
+        return { 'gradient-direction': m[1] };
+    }
+    m = cls.match(/^shadow-\[(.+)\]$/);
+    if (m) {
+        return { 'box-shadow': shadowLayers(m[1].replaceAll('_', ' ')) };
+    }
+    throw new Error(`cannot model "${cls}" in ${where}`);
 };
 const resolveNew = (cls) => {
     if (cls === 'focus-ring') {
@@ -363,17 +440,16 @@ const resolveNew = (cls) => {
     if (body == null) {
         throw new Error(`no semantic utility ${cls}`);
     }
-    let m = body.match(/^(background-color|color|border-color):\s*(var\(--guk-[a-z0-9-]+\));$/);
+    const m = body.match(/^(background-color|color|border-color):\s*(var\(--guk-[a-z0-9-]+\));$/);
     if (m) {
         return { [m[1]]: colourKey(resolveColour(m[2])) };
     }
-    m = body.match(/^@apply ring-\(color:(--guk-[a-z0-9-]+)\);$/);
-    if (m) {
-        return { 'ring-color': colourKey(resolveColour(`var(${m[1]})`)) };
-    }
-    m = body.match(/^@apply shadow-\[(.+)\];$/);
-    if (m) {
-        return { 'box-shadow': shadowLayers(m[1].replaceAll('_', ' ')) };
+    const applied = body.match(/^@apply (.+);$/);
+    if (applied) {
+        return mergeValues(
+            applied[1].split(/\s+/).map((c) => resolveApplied(c, cls)),
+            cls,
+        );
     }
     throw new Error(`cannot model utility ${cls}: ${body}`);
 };
@@ -426,10 +502,9 @@ for (const [file, entries] of Object.entries(mapFiles)) {
                     } catch (error) {
                         fail(`${where}: ${error.message}`);
                     }
-                    const same =
-                        oldValue != null &&
-                        Object.keys(tokenValue).every((p) => oldValue[p] === tokenValue[p]) &&
-                        Object.keys(oldValue).length === Object.keys(tokenValue).length;
+                    // Values only: the token class may write another property than the class (a fill, a side).
+                    const values = (v) => JSON.stringify(Object.values(v).sort());
+                    const same = oldValue != null && values(oldValue) === values(tokenValue);
                     if (same) {
                         fail(`${where}: listed as a conflict on ${name}, but the token already has this value`);
                     }
@@ -452,15 +527,17 @@ for (const [file, entries] of Object.entries(mapFiles)) {
                 fail(`${where}: "${cls}" does not keep the variant prefix "${old.variant}${old.important}"`);
             }
             if (parts.util !== 'focus-ring') {
-                const token = tokenOfUtility(parts.util);
-                if (token == null) {
+                const tokens = tokensOfUtility(parts.util);
+                if (tokens.length === 0) {
                     fail(`${where}: "${cls}" is not a semantic token class`);
                     continue;
                 }
-                if (FORBIDDEN.has(token)) {
-                    fail(`${where}: uses forbidden token ${token}`);
+                for (const token of tokens) {
+                    if (FORBIDDEN.has(token)) {
+                        fail(`${where}: uses forbidden token ${token}`);
+                    }
+                    tokensUsed.set(token, (tokensUsed.get(token) ?? 0) + 1);
                 }
-                tokensUsed.set(token, (tokensUsed.get(token) ?? 0) + 1);
             }
             let value;
             try {
