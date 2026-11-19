@@ -276,7 +276,7 @@ class Component extends DCLogic {
     return { nonce, nonceText: String(nonce), required, txs };
   }
   // The wallet's to-dos (apps/app: useWorkspaceTodoData): ACTIVE proposals it can vote on, soonest deadline first, then the live Safe transactions it
-  // has not signed, by nonce. One row shape: the account (avatar, with its name as the tooltip; showDao / showSafe, which the per-account page turns
+  // has not signed, by nonce. One row shape: the account (a small avatar bottom right, with its name as the tooltip; showDao / showSafe, which the per-account page turns
   // off), id, title, context (the stage of a staged process; the signatures a Safe transaction has; empty for a single-stage vote) and time (left to
   // vote; since queued). A Safe transaction has no metadata, only a nonce and actions, so its title is the function it calls.
   todoRows(safe) {
@@ -286,7 +286,7 @@ class Component extends DCLogic {
     const list = [];
     const prop = (acct, account, avatar, slug, title, end, stage) => list.push({
       acct, isDao: true, isSafe: false, showDao: true, showSafe: false, account, avatar, id: slug, title, end, time: left(end),
-      context: stage || '', hasContext: !!stage, href: '#nav:account:' + acct + ':proposal:' + slug
+      context: stage || '', hasLine2: true, href: '#nav:account:' + acct + ':proposal:' + slug
     });
     prop('meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
     if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
@@ -295,7 +295,7 @@ class Component extends DCLogic {
     list.sort((a, b) => a.end - b.end);
     safe.txs.filter((t) => !t.executed && !t.signedByMe && t.count < t.required).sort((a, b) => a.nonce - b.nonce).forEach((t) => list.push({
       acct: 'safe', isDao: false, isSafe: true, showDao: false, showSafe: true, account: 'Northstar Council Safe', avatar: '', id: '#' + t.nonce, title: t.fn,
-      time: t.queued, context: t.count + ' of ' + t.required + ' signatures', hasContext: true,
+      time: t.queued, context: t.count + ' of ' + t.required + ' signatures', hasLine2: true,
       nonce: t.nonce, count: t.count, required: t.required, href: '#nav:account:safe:transactions'
     }));
     return list;
