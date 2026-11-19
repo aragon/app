@@ -49,7 +49,7 @@ The options below differ only in **where `ws` and `scope` live**.
 
 ## Options
 
-### A. Query params
+### A. Query params (chosen)
 
 `/proposals?ws={workspaceId}&scope={accountId}`. Missing params mean "My workspace" and "All accounts".
 
@@ -75,7 +75,7 @@ then writes the resolved params into the URL (`router.replace`).
 - Everything A gives, and a forgotten param falls back to the last selection instead of resetting it.
 - A URL without params can open differently for different users. It only happens before the params are written in.
 - Two places to read the selection from, but `localStorage` is only read when the URL has no params, never synced.
-- Variation of this approach would be to extend workspace data model to define default workspace and account/scope
+- Variation of this approach would be to extend workspace data model to define default workspace and account/scope.
 
 ### Comparison
 
@@ -100,6 +100,10 @@ then writes the resolved params into the URL (`router.replace`).
   defaults.
 - **Default workspace and scope in the workspace data** (C's variation): no per-tab state, behaves like A's defaults.
 
+## Decision
+
+**Option A (query params).** `ws` and `scope` live in the URL only; missing or invalid params mean "My workspace" and
+"All accounts". All internal links are built through one helper so they carry both params.
 
 ## Open questions
 
@@ -115,8 +119,10 @@ then writes the resolved params into the URL (`router.replace`).
    - Invalid means either malformed or "not found"
    - DECISION: we should remove such a param so that it falls back to default case
 4. What happens if someone opens an account-specific page link with a different account filter in the query param?
-    - User would see an account-specific page and the account selector would still show account specified by the `scope` param
-    - This could happen only if someone manually constructs the URL, so we don't care too much about this corner case
+   - User would see an account-specific page and the account selector would still show account specified by the `scope` param
+   - This could happen only if someone manually constructs the URL, so we don't care too much about this corner case
 5. Do we even need `scope` query param? (if you want to see specific accounts then you have the page route with accounts in it)
-    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with "All accounts" selected)
+   - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with "All accounts" selected)
 6. A `/{network}/{address}/…` route at the root catches everything. Static routes like `/proposals` still win, but any unknown path would hit that route, which then has to check the network and return a 404. The legacy-prefix note already says the routes need a prefix. Something like `/account/{network}/{address}/…` would solve both problems.
+7. `/members?scope=A` and `/{network}/{address}/members` show the same data.
+  - Say when each one is used, e.g. the selector only sets scope and never navigates to account pages.
