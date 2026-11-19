@@ -108,5 +108,13 @@ then writes the resolved params into the URL (`router.replace`).
      A `/safe/…` URL with a DAO address must be redirected or rejected.
    - Drop: one route tree. The type comes from `POST /v2/workspaces/query/accounts` (one request per server render,
      already paid today by `LayoutWorkspaceAccount`).
-2. **Scope values.** One account, or several (`scope=a,b`)?
-3. **ENS** in account URLs (carried over from v1).
+   - DECISION: go without explicit account type, as long term we want to abstract away most of the specifics of individual account types
+2. **ENS** in account URLs (carried over from v1).
+   - DECISION: we won't consider it for now
+3. What if given param, `ws` or `scope` is not valid?
+   - DECISION: we should remove such a param so that it falls back to default case
+4. What happens if someone opens an account-specific page link with a different account filter in the query param?
+    - User would see an account-specific page and the account selector would still show account specified by the `scope` param
+    - This could happen only if someone manually construct the URL, so we don't care too muc about this corner case
+5. Do we even need `scope` query param? (if you want to see specific accounts then you have the page route with accounts in it)
+    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with “All accounts” selected)
