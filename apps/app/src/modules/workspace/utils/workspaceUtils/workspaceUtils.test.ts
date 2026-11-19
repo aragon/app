@@ -932,4 +932,18 @@ describe('workspace account routes', () => {
             });
         });
     });
+    describe('buildWorkspaceId', () => {
+        it('never hands out a demo workspace ID', () => {
+            // A workspace that took one would open the demo fixture in its place.
+            expect(workspaceUtils.buildWorkspaceId('Aragon Demo')).toBe(
+                'aragon-demo-2',
+            );
+        });
+
+        it('suffixes a slug already in use', () => {
+            expect(
+                workspaceUtils.buildWorkspaceId('Mine', ['mine', 'mine-2']),
+            ).toBe('mine-3');
+        });
+    });
 });

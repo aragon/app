@@ -1,4 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+
 import { getAddress } from 'viem';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
@@ -15,6 +16,7 @@ import {
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.
@@ -429,13 +431,15 @@ class WorkspaceUtils {
      */
     buildWorkspaceId = (name: string, existingIds: string[] = []): string => {
         const slug = this.slugify(name);
+        // A workspace that took a demo ID would open the fixture in its place, so those are never handed out.
+        const takenIds = [...existingIds, ...Object.keys(workspaceDemoFixture)];
 
-        if (!existingIds.includes(slug)) {
+        if (!takenIds.includes(slug)) {
             return slug;
         }
 
         let suffix = 2;
-        while (existingIds.includes(`${slug}-${suffix.toString()}`)) {
+        while (takenIds.includes(`${slug}-${suffix.toString()}`)) {
             suffix += 1;
         }
 
