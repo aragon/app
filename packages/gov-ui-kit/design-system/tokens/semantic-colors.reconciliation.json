@@ -15,8 +15,8 @@
             "adopted": 25,
             "blocked: class-ordering dependency (P-21 / P-27)": 4,
             "converted": 33,
-            "converted to a same-value token of the property’s own family (P-39)": 2,
-            "kept: already on a same-colour bg/*/solid token (P-38)": 4,
+            "converted to a same-value token of the property’s own family (P-43)": 2,
+            "kept: already on a same-colour bg/*/solid token (P-42)": 4,
             "not applied: judgement (P-33): the token named \"default\" would hold the hover tint; Figma means focus = default fill + ring": 1
         }
     },
@@ -214,7 +214,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx",
@@ -1268,7 +1268,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1288,7 +1288,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1308,7 +1308,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/secondary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1962,7 +1962,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "text/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
@@ -2458,7 +2458,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2478,7 +2478,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2670,7 +2670,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx",
@@ -2750,7 +2750,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -2842,7 +2842,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx",
@@ -2862,7 +2862,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx",
@@ -3808,7 +3808,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "bg/surface/secondary-inverse",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/forms/hooks/useInputProps.ts",
@@ -5883,7 +5883,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "icon/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -5903,7 +5903,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "icon/accent/primary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -5941,7 +5941,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "icon/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -6073,7 +6073,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/heading/heading.tsx",
@@ -6396,7 +6396,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "bg/surface/primary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/progress/progress.tsx",
@@ -6567,7 +6567,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/accent/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6587,7 +6587,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/accent/secondary-inverse",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6607,7 +6607,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/success/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6627,7 +6627,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/warning/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6647,7 +6647,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/critical/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/states/emptyState/emptyState.tsx",
@@ -6747,7 +6747,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Info (icon token on a fill)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
+            "action": "kept: already on a same-colour bg/*/solid token (P-42)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6785,7 +6785,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
+            "action": "kept: already on a same-colour bg/*/solid token (P-42)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6805,7 +6805,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
+            "action": "kept: already on a same-colour bg/*/solid token (P-42)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6825,7 +6825,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
+            "action": "kept: already on a same-colour bg/*/solid token (P-42)"
         },
         {
             "file": "src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx",
@@ -6946,7 +6946,7 @@
             "verdict": "uncertain",
             "action": "none",
             "codeTokenNow": "border/surface/selected",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7004,7 +7004,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "border/surface/selected",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7745,7 +7745,7 @@
             "verdict": "figma-differs-adoptable",
             "action": "converted",
             "codeTokenNow": "bg/surface/tertiary-inverse",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -9103,9 +9103,9 @@
             "figmaRef": "_TokenVoting / Voting / Breakdown Divider F (a fill layer)",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "converted to a same-value token of the property’s own family (P-39)",
+            "action": "converted to a same-value token of the property’s own family (P-43)",
             "codeTokenNow": "border/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",
@@ -9123,9 +9123,9 @@
             "figmaRef": "_TokenVoting / Voting / Breakdown Divider F (a fill layer)",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "converted to a same-value token of the property’s own family (P-39)",
+            "action": "converted to a same-value token of the property’s own family (P-43)",
             "codeTokenNow": "border/surface/secondary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",
@@ -9145,7 +9145,7 @@
             "verdict": "uncertain",
             "action": "none",
             "codeTokenNow": "bg/surface/primary",
-            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
+            "note": "Converted with the utilities added for U-01 (P-41, P-42)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",

@@ -2083,7 +2083,7 @@
                 "old": "via-neutral-0/70",
                 "new": "via-gradient-surface-secondary/70",
                 "part": "overlay fade",
-                "reason": "gradient stop at 70 %: gradient/surface/secondary with the declared alpha stop (Figma draws two stops; the middle stop is kept as today, P-37)"
+                "reason": "gradient stop at 70 %: gradient/surface/secondary with the declared alpha stop (Figma draws two stops; the middle stop is kept as today, P-45)"
             },
             {
                 "line": 184,
@@ -2746,7 +2746,7 @@
                 "old": "prose-neutral",
                 "new": null,
                 "part": "rendered document (typography plugin theme)",
-                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-40)"
+                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-44)"
             }
         ],
         "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx": [
@@ -3077,7 +3077,7 @@
                 "old": "caret-neutral-500",
                 "new": "caret-bg-surface-secondary-inverse",
                 "part": "input caret",
-                "reason": "caret: Figma draws the input cursor as a fill bound to bg/surface/secondary-inverse (G-07); cross-family caret utility (P-38), parity set to today’s neutral-500"
+                "reason": "caret: Figma draws the input cursor as a fill bound to bg/surface/secondary-inverse (G-07); cross-family caret utility (P-42), parity set to today’s neutral-500"
             },
             {
                 "line": 67,
@@ -3914,14 +3914,14 @@
                 "old": "bg-neutral-300",
                 "new": "bg-icon-surface-secondary",
                 "part": "thumb, default",
-                "reason": "switch thumb: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
+                "reason": "switch thumb: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-42), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 67,
                 "old": "data-[state=checked]:bg-primary-400",
                 "new": "data-[state=checked]:bg-icon-accent-primary",
                 "part": "thumb, checked",
-                "reason": "switch thumb, checked: Figma fills the handle with icon/accent/primary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
+                "reason": "switch thumb, checked: Figma fills the handle with icon/accent/primary (G-17); cross-family bg utility (P-42), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 68,
@@ -3935,7 +3935,7 @@
                 "old": "data-[state=checked]:group-disabled:bg-neutral-300",
                 "new": "data-[state=checked]:group-disabled:bg-icon-surface-secondary",
                 "part": "thumb, disabled",
-                "reason": "switch thumb, checked + disabled: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
+                "reason": "switch thumb, checked + disabled: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-42), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 72,
@@ -3979,7 +3979,7 @@
                 "old": "prose-neutral",
                 "new": null,
                 "part": "editor content (typography plugin theme)",
-                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-40)"
+                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-44)"
             }
         ],
         "src/core/components/forms/textAreaRichText/textAreaRichTextActions.tsx": [
@@ -4114,7 +4114,7 @@
                 "old": "border-neutral-0",
                 "new": "border-bg-surface-primary",
                 "part": "threshold marker outline",
-                "reason": "threshold marker outline: Figma strokes it with bg/surface/primary, the card surface (G-17); cross-family border utility (P-38), same default-theme colour. Was unconverted (no-token)"
+                "reason": "threshold marker outline: Figma strokes it with bg/surface/primary, the card surface (G-17); cross-family border utility (P-42), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 107,
@@ -4328,7 +4328,7 @@
                 "old": "active:data-[state=active]:shadow-primary-400",
                 "new": "active:data-[state=active]:shadow-border-surface-selected",
                 "part": "trigger, pressed while selected: label / underline",
-                "reason": "underline colour while pressed and still selected: the selected underline token border/surface/selected, applied as the shadow colour (the underline is a box-shadow; P-38). Code role, not the uncertain Figma match (P-34)"
+                "reason": "underline colour while pressed and still selected: the selected underline token border/surface/selected, applied as the shadow colour (the underline is a box-shadow; P-42). Code role, not the uncertain Figma match (P-34, P-47)"
             },
             {
                 "line": 30,
@@ -4350,7 +4350,7 @@
                 "old": "data-[state=active]:shadow-primary-400",
                 "new": "data-[state=active]:shadow-border-surface-selected",
                 "part": "trigger, selected: label / underline",
-                "reason": "selected underline: Figma binds border/surface/selected (_Tabs / Trigger, IsSelected=True); applied as the shadow colour (P-38)"
+                "reason": "selected underline: Figma binds border/surface/selected (_Tabs / Trigger, IsSelected=True); applied as the shadow colour (P-42)"
             },
             {
                 "line": 32,
@@ -5221,21 +5221,21 @@
                 "old": "*:border-b-neutral-100",
                 "new": "*:border-b-surface-secondary",
                 "part": "item dividers (stacked)",
-                "reason": "item divider: static container border border/surface/secondary (Figma draws the divider as a fill layer bound to bg/surface/tertiary, same Light and Dark values; P-39); single-side border utility added for U-01"
+                "reason": "item divider: static container border border/surface/secondary (Figma draws the divider as a fill layer bound to bg/surface/tertiary, same Light and Dark values; P-43); single-side border utility added for U-01"
             },
             {
                 "line": 18,
                 "old": "md:*:border-r-neutral-100",
                 "new": "md:*:border-r-surface-secondary",
                 "part": "item dividers (row)",
-                "reason": "item divider (row): border/surface/secondary (P-39); single-side border utility added for U-01"
+                "reason": "item divider (row): border/surface/secondary (P-43); single-side border utility added for U-01"
             },
             {
                 "line": 18,
                 "old": "md:*:border-b-neutral-0",
                 "new": "md:*:border-b-bg-surface-primary",
                 "part": "item dividers (row)",
-                "reason": "hidden bottom border in the row layout: painted in the card surface colour (bg/surface/primary) so it stays invisible in every theme; cross-family border-b utility (P-38)"
+                "reason": "hidden bottom border in the row layout: painted in the card surface colour (bg/surface/primary) so it stays invisible in every theme; cross-family border-b utility (P-42, P-46)"
             },
             {
                 "line": 21,
