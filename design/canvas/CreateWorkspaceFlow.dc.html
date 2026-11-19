@@ -41,11 +41,11 @@ body{margin:0}
     </form>
   </main>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
-  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
+  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" layout="{{dialogLayout}}" accounts="{{accountCount}}" account-list="{{accountList}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
 </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1330}}'>
+<script type="text/x-dc" data-dc-script data-props='{"dialogLayout":{"editor":"enum","options":["summary","centered","details","accounts"],"default":"summary"},"$preview":{"width":1440,"height":1330}}'>
 // Create workspace wizard as one live prototype (apps/app: app/create/workspace, modules/workspace/pages/createWorkspacePage,
 // components/workspaceWizard, components/createWorkspaceForm/*, dialogs/publishWorkspaceDialog). Two steps in one artboard:
 // "Describe your workspace" (CreateWorkspaceFlowMetadata) and "Add accounts" (CreateWorkspaceFlowAccounts, rows via
@@ -53,6 +53,7 @@ body{margin:0}
 // DESIGN CHANGE from the app: the "Add targets" step is removed; targets are not offered for now.
 // (CreateWorkspaceFlowPublishDialog). Frame: WizardNav / WizardProgress / WizardActions.
 // Exits: the close button goes to Explore.dc.html; "View workspace" (after the simulated save) opens the workspace prototype, Workspace.dc.html.
+// dialogLayout (tweak): the layout of the publish dialog, passed on to CreateWorkspaceFlowPublishDialog (see there).
 // Validation (shown on a failed Next, then live; and on blur): name required, URL required / valid, address required / valid /
 // not a duplicate on the same network, account must be a DAO or Safe (try the Meridian DAO 0xC8C3…BCde, Atlas Grants Council
 // 0x3115…d368 or the Northstar Council Safe 0x515f…02e2), account name required once "Add metadata" is open.
@@ -234,7 +235,13 @@ class Component extends DCLogic {
       addAccount: () => this.setState((st) => ({ accounts: st.accounts.concat([newRow()]) })),
       // dialog
       dialogOpen: s.dialogOpen, closeDialog: () => this.setState({ dialogOpen: false }),
-      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length,
+      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length, dialogLayout: this.props.dialogLayout || 'summary',
+      accountList: s.accounts.filter((a) => this.isAddr(a.address)).map((a) => {
+        const info = this.lookup(a.address), net = this.networks().find((x) => x.key === a.network);
+        const isDao = info.type === 'DAO', own = a.showMeta && a.meta.name.trim();
+        return { isDao, isSafe: !isDao, name: own || (isDao ? info.name : 'Safe'), avatar: isDao ? info.avatar : '',
+          meta: net.name + ' · ' + this.trunc(a.address), tag: isDao ? 'DAO' : 'Safe', tagVariant: isDao ? 'primary' : 'neutral' };
+      }),
       next: () => this.next(), back: () => this.back(),
       onFormSubmit: (e) => { if (e && e.preventDefault) e.preventDefault(); },
       // handlers for the metadata body

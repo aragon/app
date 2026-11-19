@@ -23,15 +23,63 @@ body{margin:0}
   <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Create workspace" on-close="{{close}}"></x-import>
   <x-import component-from-global-scope="GovUiKit.Dialog.Content">
     <div class="workspace-publish">
-      <div class="workspace-publish__head">
-        <x-import component-from-global-scope="GovUiKit.Avatar" alt="{{name}}" size="lg" src="{{avatarUrl}}"></x-import>
-        <div class="workspace-publish__title">
-          <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h4">{{name}}</x-import>
-          <p class="workspace-publish__summary">{{summary}}</p>
+      <sc-if value="{{is.summary}}" hint-placeholder-val="{{yes}}">
+        <div class="workspace-publish__head">
+          <x-import component-from-global-scope="GovUiKit.Avatar" alt="{{name}}" size="lg" src="{{avatarUrl}}"></x-import>
+          <div class="workspace-publish__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h4">{{name}}</x-import>
+            <p class="workspace-publish__summary">{{summary}}</p>
+          </div>
         </div>
-      </div>
-      <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
-        <p class="workspace-publish__description">{{description}}</p>
+        <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+          <p class="workspace-publish__description">{{description}}</p>
+        </sc-if>
+      </sc-if>
+      <sc-if value="{{is.centered}}" hint-placeholder-val="{{no}}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 8px 0; text-align: center;">
+          <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{name}}" src="{{avatarUrl}}" size="2xl"></x-import>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+            <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h3">{{name}}</x-import>
+            <p class="workspace-publish__summary">{{summary}}</p>
+          </div>
+          <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+            <p class="workspace-publish__description">{{description}}</p>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{is.details}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Name" children="{{name}}"></x-import>
+          <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Description" children="{{description}}"></x-import>
+          </sc-if>
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Accounts" children="{{accountNames}}"></x-import>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{is.accounts}}" hint-placeholder-val="{{no}}">
+        <div class="workspace-publish__head">
+          <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{name}}" src="{{avatarUrl}}" size="lg"></x-import>
+          <div class="workspace-publish__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h4">{{name}}</x-import>
+            <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+              <p class="workspace-publish__summary">{{description}}</p>
+            </sc-if>
+          </div>
+        </div>
+        <p class="workspace-publish__summary">{{summary}}</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{accountList}}" as="a" hint-placeholder-count="3">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0);">
+              <sc-if value="{{a.isDao}}" hint-placeholder-val="{{yes}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
+              <sc-if value="{{a.isSafe}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+              <div class="ws-account-item__text">
+                <span class="ws-account-item__name">{{a.name}}</span>
+                <span class="ws-account-item__meta">{{a.meta}}</span>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Tag" label="{{a.tag}}" variant="{{a.tagVariant}}" class-name="shrink-0"></x-import>
+            </div>
+          </sc-for>
+        </div>
       </sc-if>
       <sc-if value="{{isError}}" hint-placeholder-val="{{no}}">
         <x-import component-from-global-scope="GovUiKit.AlertCard" message="Unable to create the workspace" variant="critical">The workspace could not be created. Check your connection and try again.</x-import>
@@ -45,13 +93,19 @@ body{margin:0}
 </x-import>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"simulateError":{"editor":"boolean","default":false},"workspaceName":{"editor":null},"avatarUrl":{"editor":null},"description":{"editor":null},"accounts":{"editor":"int","default":1},"onClose":{"editor":null},"successHref":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"layout":{"editor":"enum","options":["summary","centered","details","accounts"],"default":"summary"},"open":{"editor":"boolean","default":true},"simulateError":{"editor":"boolean","default":false},"workspaceName":{"editor":null},"avatarUrl":{"editor":null},"description":{"editor":null},"accounts":{"editor":"int","default":1},"accountList":{"editor":null},"onClose":{"editor":null},"successHref":{"editor":null},"$preview":{"width":1440,"height":900}}'>
 // PUBLISH_WORKSPACE dialog, create mode (apps/app: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx).
 // Not a blockchain transaction: the workspace is stored in the browser registry. Mount it inside the flow, drive `open` from its state:
 //   <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="…" accounts="{{n}}" on-close="{{closeDialog}}"
 //     success-href="Explore.dc.html" hint-size="100%,1px"></dc-import>
 // Props: open; workspaceName, avatarUrl, description (form values); accounts (a number, summary "N accounts");
 // onClose (close button, Escape, overlay); successHref (the "View workspace" link, default Explore.dc.html);
+// layout (tweak): four ways to lay out what is about to be created.
+//   summary  (the app's): avatar, name and the account count on one row, the description under it.
+//   centered: a large avatar over the name, count and description, all centred, as an identity card.
+//   details:  a definition list (Name, Description, Accounts by name), as a review of what was entered.
+//   accounts: a compact header, then one row per account being added (avatar, name, network and address, DAO / Safe).
+// accountList: [{ isDao, isSafe, name, avatar, meta, tag, tagVariant }] from the flow; three sample accounts when not given.
 // simulateError (tweak): the save fails -> "Unable to create the workspace", primary "Try again"; switch off and retry to succeed.
 // States: idle (primary "Create workspace") -> pending (button loading ~1 s) -> success (AlertCard "Workspace created", primary link "View workspace").
 class Component extends DCLogic {
@@ -67,12 +121,22 @@ class Component extends DCLogic {
   close() { if (typeof this.props.onClose === 'function') this.props.onClose(); else this.reset(); }
   renderVals() {
     const p = this.props, status = this.state.status;
-    const n = Number(p.accounts ?? 0);
+    const sample = [
+      { isDao: true, isSafe: false, name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg', meta: 'Ethereum · 0xC8C3…BCde', tag: 'DAO', tagVariant: 'primary' },
+      { isDao: true, isSafe: false, name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', meta: 'Ethereum · 0x3115…d368', tag: 'DAO', tagVariant: 'primary' },
+      { isDao: false, isSafe: true, name: 'Safe', avatar: '', meta: 'Ethereum · 0x515f…02e2', tag: 'Safe', tagVariant: 'neutral' }
+    ];
+    const accountList = Array.isArray(p.accountList) ? p.accountList : sample;
+    const n = Array.isArray(p.accountList) ? accountList.length : Number(p.accounts ?? accountList.length);
+    const layouts = ['summary', 'centered', 'details', 'accounts'];
+    const layout = layouts.includes(p.layout) ? p.layout : 'summary';
+    const is = {}; layouts.forEach((l) => { is[l] = l === layout; });
     let primary;
     if (status === 'success') primary = { label: 'View workspace', href: p.successHref || 'Explore.dc.html' };
     else primary = { label: status === 'error' ? 'Try again' : 'Create workspace', isLoading: status === 'pending', onClick: () => this.publish() };
     return {
-      no: false,
+      yes: true, no: false, is, accountList,
+      accountNames: accountList.map((a) => a.name).join(', ') || 'None',
       isOpen: p.open === undefined ? true : !!p.open,
       name: p.workspaceName || 'Meridian Ecosystem', avatarUrl: p.avatarUrl,
       summary: n + (n === 1 ? ' account' : ' accounts'),
