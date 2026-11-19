@@ -27,4 +27,11 @@ describe('workspaceDialogsDefinitions', () => {
                 .requiresWallet,
         ).toBeFalsy();
     });
+
+    it("requires a wallet to add accounts, as the suggestions are the wallet's", () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.ADD_ACCOUNTS]
+                .requiresWallet,
+        ).toBe(true);
+    });
 });

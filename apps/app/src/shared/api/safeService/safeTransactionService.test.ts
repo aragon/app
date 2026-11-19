@@ -101,4 +101,35 @@ describe('safe transaction service', () => {
             safeTransactionService.getSafeBalances({ urlParams }),
         ).rejects.toMatchObject({ code: 'invalid-response', status: 502 });
     });
+
+    describe('getSafesByOwner', () => {
+        const ownerUrlParams = {
+            network: Network.ETHEREUM_MAINNET,
+            address: safeAddress,
+        };
+
+        it('reads the Safes an address owns through the proxy', async () => {
+            requestSpy.mockResolvedValue({ safes: [safeAddress] });
+
+            const result = await safeTransactionService.getSafesByOwner({
+                urlParams: ownerUrlParams,
+            });
+
+            expect(requestSpy).toHaveBeenCalledWith(
+                safeTransactionService['basePaths'].safesByOwner,
+                { urlParams: { chainId: '1', address: safeAddress } },
+            );
+            expect(result).toEqual([safeAddress]);
+        });
+
+        it('rejects a response that is not a list of addresses', async () => {
+            requestSpy.mockResolvedValue({ safes: [1] });
+
+            await expect(
+                safeTransactionService.getSafesByOwner({
+                    urlParams: ownerUrlParams,
+                }),
+            ).rejects.toMatchObject({ code: 'invalid-response', status: 502 });
+        });
+    });
 });

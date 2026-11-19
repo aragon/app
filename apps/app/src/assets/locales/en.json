@@ -5244,6 +5244,51 @@
           "title": "Unable to save the details",
           "description": "Your changes were not saved. Try again."
         }
+      },
+      "workspaceAccountSelect": {
+        "entity": "Accounts",
+        "searchPlaceholder": "Search accounts...",
+        "addAddress": "Add address",
+        "emptyState": {
+          "heading": "No results for “{{search}}”",
+          "noAccounts": "No accounts found",
+          "description": "Search for another account or add it by address",
+          "addByAddress": "Add by address"
+        },
+        "note": {
+          "member": "Member",
+          "inWorkspace": "In workspace",
+          "inList": "In your list",
+          "selected": "Selected"
+        },
+        "addressView": {
+          "placeholder": "Paste 0x account address or ENS name...",
+          "back": "All accounts",
+          "notFound": {
+            "heading": "Not a Safe or Aragon DAO",
+            "description": "This address isn’t a Safe or Aragon DAO on any supported network. Double-check the address."
+          },
+          "error": {
+            "heading": "Couldn’t look up this address",
+            "description": "Something went wrong while checking the networks. Try again in a moment."
+          }
+        },
+        "errorState": {
+          "heading": "Couldn’t load your accounts",
+          "description": "Something went wrong while looking up your accounts. You can still add one by address."
+        },
+        "scanning": "Scanning {{count}} networks, {{found}} found so far"
+      },
+      "workspaceAddAccountsDialog": {
+        "title": "Add accounts",
+        "description": "Safes and Aragon DAOs your wallet created or belongs to.",
+        "action": {
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts",
+          "createAccount": "Create a new account"
+        },
+        "error": "Unable to add the accounts. Try again."
       }
     }
   }

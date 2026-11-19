@@ -448,6 +448,21 @@ describe('workspace utils', () => {
         );
     });
 
+    describe('normalizeEnsName', () => {
+        it('normalizes an ENS name typed with capitals', () => {
+            expect(workspaceUtils.normalizeEnsName(' Vitalik.ETH ')).toEqual(
+                'vitalik.eth',
+            );
+        });
+
+        it.each(['0x1F01e6fe406295c9fe42189A2ef999636a04132a', 'hello', ''])(
+            'returns undefined for %s, which is not an ENS name',
+            (value) => {
+                expect(workspaceUtils.normalizeEnsName(value)).toBeUndefined();
+            },
+        );
+    });
+
     describe('resolveAccountScope', () => {
         it('reads the admin page segment as the aggregated scope', () => {
             expect(workspaceUtils.resolveAccountScope('admin')).toEqual(

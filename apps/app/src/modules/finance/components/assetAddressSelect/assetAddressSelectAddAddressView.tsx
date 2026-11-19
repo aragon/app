@@ -4,8 +4,6 @@ import {
     AssetDataListItem,
     addressUtils,
     CardEmptyState,
-    DataListFilter,
-    DataListRoot,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Hex } from 'viem';
@@ -14,10 +12,10 @@ import {
     useTokenInfo,
 } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
+import { DataListSelectAddressView } from '@/shared/components/dataListSelect';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useToken } from '@/shared/hooks/useToken';
 import { useDaoChain } from '../../../../shared/hooks/useDaoChain';
-import { AssetAddressSelectBackButton } from './assetAddressSelectBackButton';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
 export interface IAssetAddressSelectAddAddressViewProps {
@@ -30,7 +28,7 @@ export interface IAssetAddressSelectAddAddressViewProps {
      * when the user pasted an address that didn't match anything in the list. When set, `useToken`
      * is enabled on first render and the row resolves immediately.
      */
-    initialAddress?: Hex;
+    initialAddress?: string;
     /**
      * Callback fired when the user clicks the back button.
      */
@@ -101,19 +99,17 @@ export const AssetAddressSelectAddAddressView: React.FC<
         resolvedAddress != null && !isLoading && tokenData == null;
 
     return (
-        <DataListRoot
-            className="flex w-full flex-col gap-3"
-            entityLabel={t('app.finance.assetAddressSelect.entity')}
-            state={showSkeleton ? 'loading' : 'idle'}
+        <DataListSelectAddressView
+            backLabel={t('app.finance.assetAddressSelect.backButton.label')}
+            entity={t('app.finance.assetAddressSelect.entity')}
+            isLoading={showSkeleton}
+            onBack={onBack}
+            onSearchValueChange={setSearchValue}
+            placeholder={t(
+                'app.finance.assetAddressSelect.addAddressView.placeholder',
+            )}
+            searchValue={searchValue}
         >
-            <DataListFilter
-                onSearchValueChange={setSearchValue}
-                placeholder={t(
-                    'app.finance.assetAddressSelect.addAddressView.placeholder',
-                )}
-                searchValue={searchValue}
-            />
-            <AssetAddressSelectBackButton onClick={onBack} />
             {showSkeleton && <AssetDataListItem.Skeleton />}
             {showResult && (
                 <AssetAddressSelectItem
@@ -133,6 +129,6 @@ export const AssetAddressSelectAddAddressView: React.FC<
                     objectIllustration={{ object: 'NOT_FOUND' }}
                 />
             )}
-        </DataListRoot>
+        </DataListSelectAddressView>
     );
 };

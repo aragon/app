@@ -6,7 +6,12 @@ import * as NextNavigation from 'next/navigation';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
-import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import {
+    generateDao,
+    generateDialogContext,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
@@ -16,6 +21,7 @@ import {
     workspaceService,
 } from '../../api/workspaceService';
 import * as useWorkspaceAccountOptionsHook from '../../hooks/useWorkspaceAccountOptions';
+import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
 import {
     type IWorkspaceAccountSelectorProps,
     WorkspaceAccountSelector,
@@ -116,7 +122,10 @@ describe('<WorkspaceAccountSelector /> component', () => {
             ...result,
         });
 
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         getWorkspaceSpy.mockResolvedValue(workspace);
         getDaoSpy.mockResolvedValue(
             generateDao({ id: daoAccount.id, avatar: 'dao-cid' }),
@@ -132,6 +141,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
 
     afterEach(() => {
         imageSpies.splice(0).forEach((spy) => spy.mockRestore());
+        useDialogContextSpy.mockReset();
         getWorkspaceSpy.mockReset();
         getDaoSpy.mockReset();
         getMemberListSpy.mockReset();
@@ -224,19 +234,25 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('opens the accounts step of the edit wizard from the add account item, returning to the current page', async () => {
+    it('opens the add accounts dialog from the add account item', async () => {
+        const openAddAccounts = jest.fn();
+        jest.spyOn(
+            useWorkspaceAddAccountsDialogModule,
+            'useWorkspaceAddAccountsDialog',
+        ).mockReturnValue(openAddAccounts);
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
-
-        expect(
+        await userEvent.click(
             await screen.findByRole('menuitem', {
                 name: /workspaceAccountSelector\.addAccount$/,
             }),
-        ).toHaveAttribute(
-            'href',
-            '/workspace/test-workspace/edit?step=ACCOUNTS&returnTo=%2Fworkspace%2Ftest-workspace%2Fall%2Fproposals',
         );
+
+        expect(
+            useWorkspaceAddAccountsDialogModule.useWorkspaceAddAccountsDialog,
+        ).toHaveBeenCalledWith('test-workspace');
+        expect(openAddAccounts).toHaveBeenCalled();
     });
 
     it.each([

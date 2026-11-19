@@ -381,7 +381,7 @@ on its overview instead.
 
 `navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Workspace admin, to the
 admin page — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
-The account selector closes with an Add account item opening the edit wizard on its Accounts step.
+The account selector closes with an Add account item opening the Add accounts dialog.
 
 ### Assets page
 
@@ -1018,17 +1018,47 @@ the aggregated scope (`resolveAccountScope`).
   `useResolveWorkspaceAvatar`, shared with the publish dialog. Opened by ID so other entry points can reuse it.
 - **Accounts** (`WorkspaceAdminAccounts`) — one `WorkspaceAccountItem` per account with `onRemove`, which turns the
   overview's link row into a row with a "Remove from workspace" menu (removes at once, no confirmation). Names and
-  avatars come from `useWorkspaceDaos`. "Add account" opens the edit wizard on its Accounts step.
+  avatars come from `useWorkspaceDaos`. "Add account" opens the Add accounts dialog.
 - **Storage** (aside of `WorkspaceAdminPageClient`) — Published "None" and Sync "Local only". "Export workspace"
   downloads `{workspaceId}.json` from `exportWorkspace`.
 - **Import** — the workspace selector's "Import workspace" item opens the file picker at once; a valid export becomes
   a new workspace and opens on its overview. The selector reads its list again on a workspace change, as the list
   key does not name the registry (demo or local) it was read from.
 
+## Add accounts
+
+`WorkspaceAddAccountsDialog` (`WorkspaceDialogId.ADD_ACCOUNTS`, params `{ workspaceId }`) adds existing accounts to a
+workspace without the wizard. It opens from the account selector, the admin page and the overview's empty state,
+through `useWorkspaceAddAccountsDialog`: the dialog requires a wallet, so the hook asks to connect one first.
+
+- **Selector** (`WorkspaceAccountSelect`) — a multi-select on `DataListSelect`, the shell of the withdraw asset
+  selector (`AssetAddressSelect`), so both share search, the "Add address" action and the address view. Rows are
+  `WorkspaceSelectAccountDialogItem` in multi-select mode. Accounts the workspace holds are always listed last, ranked
+  among themselves like the others, labelled "In workspace", checked and not selectable (not dimmed or highlighted).
+  Accounts are matched on network and address, case-insensitively (`workspaceUtils.isSameNetworkAddress`). A wallet
+  change clears the selection.
+- **Suggestions** (`useWorkspaceAccountSuggestions`) — the accounts the connected wallet deployed, then the ones it
+  is a member of, labelled "Member". One paginated query (`workspaceQueryService.getAccountSuggestions`) that the hook
+  reads to the last page, so search and the address view only run against the complete list. A new backend endpoint
+  will serve it; until then a stand-in (`workspaceAccountSuggestionsStandIn.ts`) builds it from every page of
+  `daos/member/:address` (deployed when `dao.creator` is the wallet) and the Safes the wallet signs for on each Safe
+  network, all labelled member, returned as one page.
+- **Lookup** (`useWorkspaceAccountLookup`) — an address, or an ENS name normalized and resolved on Ethereum, is
+  checked on every supported network in one `query/accounts` request once the list is complete; each network it is a
+  DAO or a Safe on is a selectable row, "In your list" when the list already has it. "Not a Safe or Aragon DAO" only
+  when every network answered `unsupported`; anything else that finds nothing shows the lookup error — a network
+  that answered `unavailable` (it may hold the account), an empty or unknown-type answer, a failed request, a 404
+  included (a backend without the batch fix 404s real accounts too, see Known gaps). An answer found earlier wins over
+  a failed refetch, the ENS resolution's included. An answer with an `unavailable` network is stale at once for the
+  lookup only, so the next read asks again; other readers of `useWorkspaceAccounts` keep theirs for five minutes.
+- Adding writes the accounts one at a time with `addWorkspaceAccount`, which reads the stored workspace each time.
+- **Create a new account** (footer) temporarily goes to the DAO creation page (`/create/dao`) and closes the dialog.
+  Creating the account in the dialog, and returning to the selector with it selected, comes in PR 3.
+
 ## Edit workspace
 
-`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the account
-selector's Add account item or the empty-accounts states of the overview and the admin page.
+`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`. No page links to it
+any more: details are edited on the admin page and accounts are added with the Add accounts dialog.
 
 - Outside `(workspacePage)`, so it renders its own `WorkspaceGate`; the wizard reads its default values
   (`workspaceFormUtils.buildFormValues`) on mount.
@@ -1249,7 +1279,19 @@ Keep it that way when extending this.
 
 - **Admin page account rows show no network badge.** `WorkspaceAccountAvatar` takes no network; extending it is a
   follow-up ticket.
-- **Admin page "Add account" opens the edit wizard.** It switches to the Add accounts dialog once that lands.
+- **Account suggestions come from a stand-in** until a backend endpoint serves them (see
+  [Suggestions backend endpoint](#suggestions-backend-endpoint)). Until then:
+  - DAOs the wallet deployed without being a member are not suggested: `daos/member` only lists memberships.
+  - Every Safe is labelled "Member": the Safe API calls every signer an owner.
+  - A Safe network that fails, e.g. on the shared quota, drops its Safes without a warning, and the incomplete list
+    stays cached for 10 minutes.
+  - The "N found so far" count jumps from 0 to the total, as the stand-in returns one page.
+- **"Create a new account" leaves the dialog** for the DAO creation page (`/create/dao`) until accounts can be
+  created in place (PR 3).
+- **Search in `DataListSelect` shows the first page of matches only:** pagination is hidden while searching, as it
+  was in the withdraw asset selector, so matches past it need a narrower search.
+- **The edit wizard route is unreachable** (see [Edit workspace](#edit-workspace)); removing it is a separate
+  ticket.
 - **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.
 - **Import is a stopgap.** It opens the file picker straight from the selector and reports an invalid file with a
   browser alert, as the app has no toast.
@@ -1293,9 +1335,11 @@ Keep it that way when extending this.
   is a separate one, as on the proposals page.
 - **`query/accounts` used to fail the whole request when one address was unplaceable** — a 404
   `{"code":"safeNotFound"}` for the entire batch instead of a per-entry `status: "unsupported"`. **Fixed on sandbox
-  (verified 2026-11-09):** an unknown address, alone or in a batch, now comes back as an `unsupported` entry with a
-  200. `workspaceUtils.resolveAccountState` still reads a single-account 404 as `NOT_FOUND` for backends without the
-  fix; should the endpoint 404 for another reason (no workspace endpoints at all), every account route would 404.
+  (verified 2026-11-09) and dev (verified 2026-11-19):** an unknown address, alone or in a batch, now comes back as an
+  `unsupported` entry with a 200, including in the lookup's request for one address on every network. Staging and
+  production were not checked. `workspaceUtils.resolveAccountState` still reads a single-account 404 as `NOT_FOUND`
+  for backends without the fix; should the endpoint 404 for another reason (no workspace endpoints at all), every
+  account route would 404.
 - **A miscased account address fails the route with the generic error (verified on sandbox, 2026-11-09).** The
   backend answers 400 `badParams` to a mixed-case address whose EIP-55 checksum is wrong, on `query/accounts` and
   `GET /v2/daos/{id}` alike; lowercase and checksummed addresses are accepted. `isValidAccountId` accepts any casing,
@@ -1316,3 +1360,16 @@ Keep it that way when extending this.
 - The two tabs read different endpoints, so a backend difference (spam or decimals rules) could still show
   different numbers for one DAO; the shared normaliser only removes the client-side source of drift.
 - Workspaces cannot be deleted.
+
+### Suggestions backend endpoint
+
+A new backend endpoint will bring in the account suggestions. When it lands:
+
+- **Replace** the body of `workspaceQueryService.getAccountSuggestions` with the request to the endpoint, and its
+  query parameters if they differ.
+- **Remove** `api/workspaceQueryService/workspaceAccountSuggestionsStandIn.ts` and its test.
+- **Remove**, if the endpoint returns the Safes: `safeTransactionService.getSafesByOwner`, its test and
+  `IGetSafesByOwnerParams`, and the `v1/owners/{address}/safes` entry of the Safe proxy allowlist
+  (`proxySafeUtils.isSupportedPath`) and its tests.
+- **Revisit** the "Scanning N networks, N found so far" message of `WorkspaceAccountSelect`, as the endpoint has no
+  per-network progress.
