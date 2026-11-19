@@ -64,7 +64,7 @@ Rules live at `skills/shared/rules/<name>/SKILL.md` — always checked in, never
 
 The shared loader lives at `.agents/shared/hooks/inject-rules.mjs`. The rule stream stays agent-agnostic; only the proprietary adapter shape differs. Claude Code consumes it via `.claude/shared/hooks/inject-rules.mjs`. Spec: `skills/shared/rules/README.md`.
 
-In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. The MVP/POC and its proof live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
+In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. Implementation and contract docs live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
 
 To author a new rule, copy an existing one in `skills/shared/rules/` and follow the README — the `rule-authoring` rule-skill auto-injects when you edit anything in that folder.
 
