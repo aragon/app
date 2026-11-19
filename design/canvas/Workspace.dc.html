@@ -276,7 +276,7 @@ class Component extends DCLogic {
     return { nonce, nonceText: String(nonce), required, txs };
   }
   // The wallet's to-dos (apps/app: useWorkspaceTodoData): ACTIVE proposals it can vote on, soonest deadline first, then the live Safe transactions it
-  // has not signed, by nonce. One row shape: context (the stage or governance process the vote is in; the signatures a Safe transaction has),
+  // has not signed, by nonce. One row shape: context (the stage of a staged process; the signatures a Safe transaction has; empty for a single-stage vote),
   // time (left to vote; since queued), id, title, account (showAccount; the per-account page turns it off). A Safe transaction has no metadata,
   // only a nonce and actions, so its title is the function it calls.
   todoRows(safe) {
@@ -286,16 +286,16 @@ class Component extends DCLogic {
     const list = [];
     const prop = (acct, account, slug, title, end, stage) => list.push({
       acct, isDao: true, isSafe: false, account, showAccount: true, id: slug, title, end, time: left(end),
-      context: stage, href: '#nav:account:' + acct + ':proposal:' + slug
+      context: stage || '', hasLine2: true, href: '#nav:account:' + acct + ':proposal:' + slug
     });
-    prop('meridian', 'Meridian DAO', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour, 'Meridian Token Voting');
-    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour, 'Grants Council Multisig');
+    prop('meridian', 'Meridian DAO', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
+    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
     if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', now + (ov.adv8 ? 7 : 3) * day + hour, ov.adv8 ? 'Community veto' : 'Council approval');
     if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', now + 4 * day + hour, 'Community veto');
     list.sort((a, b) => a.end - b.end);
     safe.txs.filter((t) => !t.executed && !t.signedByMe && t.count < t.required).sort((a, b) => a.nonce - b.nonce).forEach((t) => list.push({
       acct: 'safe', isDao: false, isSafe: true, account: 'Northstar Council Safe', showAccount: true, id: '#' + t.nonce, title: t.fn,
-      time: t.queued, context: t.count + ' of ' + t.required + ' signatures',
+      time: t.queued, context: t.count + ' of ' + t.required + ' signatures', hasLine2: true,
       nonce: t.nonce, count: t.count, required: t.required, href: '#nav:account:safe:transactions'
     }));
     return list;
