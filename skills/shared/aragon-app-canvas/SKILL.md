@@ -25,10 +25,9 @@ understood before you start:
 | "save what I did", "sync", "pull my changes in" | Canvas → branch | Pull |
 | "update my canvas", "get the latest onto the canvas" | Branch → its canvas | Publish |
 | "the app changed, refresh the main canvas" | Reference branch → reference canvas | Refresh the reference canvas |
-| "it's ready for the devs", "hand it over" | Resolve variants, clean up, final diff | Hand over to engineering |
 | "this one is done" | Clean up after the merge | Finish a ticket |
 
-Nothing after the command, or you cannot tell which: ask, offering these six in plain words.
+Nothing after the command, or you cannot tell which: ask, offering these five in plain words.
 
 "Latest" is ambiguous. It can mean their canvas edits going into the repo (Pull) or the repo's files going onto
 their canvas (Publish). Publish replaces what is on the canvas, so before a Publish: say that is what you

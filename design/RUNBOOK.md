@@ -73,18 +73,12 @@ Run when the designer says so ("sync", "pull it back"), and before every publish
    and ask whether that is what they did. They should never have to list their changes for you. Point out anything
    in the diff that does not look like a deliberate design change (reformatting, image addresses, layout churn).
 
-## Hand over to engineering
+## Tweaks
 
-Before the branch goes to an engineer or into a pull request:
-
-1. Pull, so the branch has everything on the canvas.
-2. Resolve the variants. A tweak that switches between designs (a `data-props` entry whose values select different
-   markup) means both designs are in the file. List each one, ask which option won, keep that markup, and remove
-   the other options and the tweak. If such a tweak merges, it stays in the reference canvas and in every canvas
-   made from the repo afterwards, and the prototype no longer says which design the app has. Tweaks that only set a
-   starting state (which page opens, wallet connected) can stay.
-3. The same for duplicated frames: the chosen version goes in the original file, the copies are deleted.
-4. Publish the cleaned files to the ticket's canvas so it shows what is being handed over.
+Tweaks (the controls under a frame's Tweaks button, declared in `data-props`) are welcome, including ones that
+switch between design variants. One rule: **the default is the source of truth.** Whatever a tweak's default is, is
+the design. At handover the default is what the engineer builds, and on the reference branch the default is what
+the app has. A variant that lost can be cleaned out later, like a feature flag.
 
 The branch's diff against the reference branch, limited to `design/canvas`, is now the design:
 `git diff <reference>...<branch> -- design/canvas`.
