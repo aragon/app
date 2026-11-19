@@ -314,7 +314,7 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 **References**
 
-- `kit:src/core/components/button/button.tsx:188`
+- `kit:src/core/components/button/button.tsx:194`
 - `kit:src/core/components/button/button.stories.tsx:1`
 
 ### Card
@@ -2313,7 +2313,7 @@ ENS name validation and compact display helpers.
 
 **References**
 
-- `kit:src/modules/utils/ensUtils/ensUtils.ts:24`
+- `kit:src/modules/utils/ensUtils/ensUtils.ts:30`
 
 ### formatterUtils
 
