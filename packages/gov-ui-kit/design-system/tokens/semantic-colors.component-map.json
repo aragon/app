@@ -17,16 +17,16 @@
     "summary": {
         "files": 83,
         "occurrences": 546,
-        "converted": 419,
-        "unconverted": 127,
+        "converted": 447,
+        "unconverted": 99,
         "unconvertedByReason": {
-            "conflict": 77,
-            "no-utility": 32,
-            "no-token": 13,
+            "conflict": 83,
+            "no-token": 9,
             "comment": 1,
-            "ordering": 4
+            "ordering": 4,
+            "no-utility": 2
         },
-        "tokensUsed": 99,
+        "tokensUsed": 109,
         "storyFiles": 17,
         "storyOccurrences": 49,
         "testFiles": 4,
@@ -131,7 +131,17 @@
         "text/surface/selected": "primary-400",
         "text/surface/tertiary": "neutral-400",
         "text/warning/primary": "warning-800",
-        "text/warning/secondary": "warning-900"
+        "text/warning/secondary": "warning-900",
+        "bg/surface/secondary-inverse": "neutral-500",
+        "border/accent/secondary": "primary-400",
+        "border/accent/secondary-inverse": "neutral-0",
+        "border/critical/secondary": "critical-800",
+        "border/success/secondary": "success-800",
+        "border/warning/secondary": "warning-800",
+        "gradient/surface/primary": "neutral-50",
+        "gradient/surface/primary-transparent": "color-mix(in srgb, var(--color-neutral-50) 0%, transparent)",
+        "gradient/surface/secondary": "neutral-0",
+        "gradient/surface/secondary-transparent": "color-mix(in srgb, var(--color-neutral-0) 0%, transparent)"
     },
     "additions": {
         "shadow/surface/md": {
@@ -260,6 +270,18 @@
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
             "line": 209,
+            "old": "active:text-primary-800",
+            "part": "collapsible: toggle text button",
+            "token": "text/accent/active",
+            "needs": "primary-800",
+            "fixedAt": "primary-600",
+            "fixedBy": [
+                "Button (Button ghost: active:text-primary-600)"
+            ]
+        },
+        {
+            "file": "src/core/components/collapsible/collapsible.tsx",
+            "line": 209,
             "old": "hover:text-primary-600",
             "part": "collapsible: toggle text button",
             "token": "text/accent/hover",
@@ -271,14 +293,15 @@
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 209,
-            "old": "active:text-primary-800",
-            "part": "collapsible: toggle text button",
-            "token": "text/accent/active",
-            "needs": "primary-800",
-            "fixedAt": "primary-600",
+            "line": 215,
+            "old": "group-active:text-primary-700",
+            "part": "collapsible: toggle chevron icon",
+            "token": "icon/accent/active",
+            "needs": "primary-700",
+            "fixedAt": "primary-400",
             "fixedBy": [
-                "Button (Button ghost: active:text-primary-600)"
+                "Button (Button secondary, ghost icon: group-active:text-primary-400)",
+                "assetTransferAddress link-out icon, default / hover / active"
             ]
         },
         {
@@ -293,19 +316,6 @@
                 "Button (Button secondary, ghost icon: group-hover:text-primary-400)",
                 "checkbox unchecked box icon, hover / disabled",
                 "radio unchecked circle icon, default / hover / disabled"
-            ]
-        },
-        {
-            "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 215,
-            "old": "group-active:text-primary-700",
-            "part": "collapsible: toggle chevron icon",
-            "token": "icon/accent/active",
-            "needs": "primary-700",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button secondary, ghost icon: group-active:text-primary-400)",
-                "assetTransferAddress link-out icon, default / hover / active"
             ]
         },
         {
@@ -365,7 +375,7 @@
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
             "line": 55,
-            "old": "group-hover:bg-neutral-0",
+            "old": "group-focus-visible:bg-neutral-0",
             "part": "dataListActionItem: icon well, hover / focus / active",
             "token": "bg/surface/hover",
             "needs": "neutral-0",
@@ -380,7 +390,7 @@
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
             "line": 55,
-            "old": "group-focus-visible:bg-neutral-0",
+            "old": "group-hover:bg-neutral-0",
             "part": "dataListActionItem: icon well, hover / focus / active",
             "token": "bg/surface/hover",
             "needs": "neutral-0",
@@ -420,19 +430,6 @@
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
             "line": 35,
-            "old": "active:border-neutral-200",
-            "part": "dialogHeader: close button, focus / hover / active",
-            "token": "border/surface/active",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "Button (Button tertiary: active:border-neutral-400)",
-                "accordionItem item container, focus ring / active border"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-            "line": 35,
             "old": "active:bg-neutral-50",
             "part": "dialogHeader: close button, focus / hover / active",
             "token": "bg/surface/active",
@@ -441,6 +438,19 @@
             "fixedBy": [
                 "Button (Button tertiary, ghost: active:bg-neutral-0)",
                 "dataListActionItem icon well, hover / focus / active"
+            ]
+        },
+        {
+            "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
+            "line": 35,
+            "old": "active:border-neutral-200",
+            "part": "dialogHeader: close button, focus / hover / active",
+            "token": "border/surface/active",
+            "needs": "neutral-200",
+            "fixedAt": "neutral-400",
+            "fixedBy": [
+                "Button (Button tertiary: active:border-neutral-400)",
+                "accordionItem item container, focus ring / active border"
             ]
         },
         {
@@ -672,6 +682,18 @@
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
             "line": 16,
+            "old": "group-hover:text-neutral-600",
+            "part": "inputFileAvatar: add icon (default), default / hover",
+            "token": "icon/surface/hover",
+            "needs": "neutral-600",
+            "fixedAt": "neutral-500",
+            "fixedBy": [
+                "Button (Button tertiary icon: group-hover:text-neutral-500)"
+            ]
+        },
+        {
+            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
+            "line": 16,
             "old": "text-neutral-400",
             "part": "inputFileAvatar: add icon (default), default / hover",
             "token": "icon/surface/default",
@@ -681,18 +703,6 @@
                 "Button (Button tertiary icon: text-neutral-300)",
                 "radio unchecked circle icon, default / hover / disabled",
                 "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 16,
-            "old": "group-hover:text-neutral-600",
-            "part": "inputFileAvatar: add icon (default), default / hover",
-            "token": "icon/surface/hover",
-            "needs": "neutral-600",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-hover:text-neutral-500)"
             ]
         },
         {
@@ -981,6 +991,19 @@
             ]
         },
         {
+            "file": "src/core/components/spinner/spinner.tsx",
+            "line": 76,
+            "old": "border-t-neutral-500",
+            "part": "spinner: head (neutral)",
+            "token": "border/surface/active",
+            "needs": "neutral-500",
+            "fixedAt": "neutral-400",
+            "fixedBy": [
+                "Button (Button tertiary: active:border-neutral-400)",
+                "accordionItem item container, focus ring / active border"
+            ]
+        },
+        {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
             "line": 17,
             "old": "bg-primary-500",
@@ -990,6 +1013,21 @@
             "fixedAt": "primary-400",
             "fixedBy": [
                 "progress bar (primary)"
+            ]
+        },
+        {
+            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
+            "line": 30,
+            "old": "hover:shadow-neutral-800",
+            "part": "tabsTrigger: trigger (underlined), hover underline",
+            "token": "border/surface/hover",
+            "needs": "neutral-800",
+            "fixedAt": "neutral-200",
+            "fixedBy": [
+                "accordionItem item container, hover",
+                "dataListFilter search field container, hover",
+                "dataListItem interactive item (primary), hover / active",
+                "dialogHeader close button, focus / hover / active"
             ]
         },
         {
@@ -1025,6 +1063,18 @@
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
             "line": 40,
+            "old": "group-hover:text-neutral-300",
+            "part": "tabsTrigger: trigger icon, default / hover",
+            "token": "icon/surface/hover",
+            "needs": "neutral-300",
+            "fixedAt": "neutral-500",
+            "fixedBy": [
+                "Button (Button tertiary icon: group-hover:text-neutral-500)"
+            ]
+        },
+        {
+            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
+            "line": 40,
             "old": "text-neutral-500",
             "part": "tabsTrigger: trigger icon, default / hover",
             "token": "icon/surface/default",
@@ -1034,18 +1084,6 @@
                 "Button (Button tertiary icon: text-neutral-300)",
                 "radio unchecked circle icon, default / hover / disabled",
                 "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 40,
-            "old": "group-hover:text-neutral-300",
-            "part": "tabsTrigger: trigger icon, default / hover",
-            "token": "icon/surface/hover",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-hover:text-neutral-500)"
             ]
         },
         {
@@ -1126,6 +1164,55 @@
                 "inputText addon (disabled input; fill and text keep their enabled colour)",
                 "radioCard card container, disabled",
                 "switch track, disabled"
+            ]
+        },
+        {
+            "file": "src/core/components/tooltip/tooltip.tsx",
+            "line": 55,
+            "old": "fill-critical-300",
+            "part": "tooltip: arrow (critical)",
+            "token": "bg/critical/solid",
+            "needs": "critical-300",
+            "fixedAt": "critical-500",
+            "fixedBy": [
+                "progress bar (critical)",
+                "statePingAnimation ping dot (critical)"
+            ]
+        },
+        {
+            "file": "src/core/components/tooltip/tooltip.tsx",
+            "line": 56,
+            "old": "fill-info-300",
+            "part": "tooltip: arrow (info)",
+            "token": "bg/info/solid",
+            "needs": "info-300",
+            "fixedAt": "info-500",
+            "fixedBy": [
+                "statePingAnimation ping dot (info)"
+            ]
+        },
+        {
+            "file": "src/core/components/tooltip/tooltip.tsx",
+            "line": 58,
+            "old": "fill-success-300",
+            "part": "tooltip: arrow (success)",
+            "token": "bg/success/solid",
+            "needs": "success-300",
+            "fixedAt": "success-500",
+            "fixedBy": [
+                "statePingAnimation ping dot (success)"
+            ]
+        },
+        {
+            "file": "src/core/components/tooltip/tooltip.tsx",
+            "line": 59,
+            "old": "fill-warning-300",
+            "part": "tooltip: arrow (warning)",
+            "token": "bg/warning/solid",
+            "needs": "warning-300",
+            "fixedAt": "warning-500",
+            "fixedBy": [
+                "statePingAnimation ping dot (warning)"
             ]
         },
         {
@@ -1565,9 +1652,9 @@
             {
                 "line": 19,
                 "old": "data-[state=open]:gradient-neutral-50-transparent-to-b",
-                "new": null,
+                "new": "data-[state=open]:gradient-surface-primary-to-b",
                 "part": "header, open-state fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary to its -transparent twin (Figma: AccordionItem Open=True, GRAD[gradient/surface/primary>primary-transparent]); fade utility added for U-01"
             },
             {
                 "line": 20,
@@ -1987,23 +2074,23 @@
             {
                 "line": 184,
                 "old": "from-neutral-0",
-                "new": null,
+                "new": "from-gradient-surface-secondary",
                 "part": "overlay fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient stop, card surface: gradient/surface/secondary (Figma: Collapsible overlay, GRAD[gradient/surface/secondary-transparent>secondary]); stop utility added for U-01"
             },
             {
                 "line": 184,
                 "old": "via-neutral-0/70",
-                "new": null,
+                "new": "via-gradient-surface-secondary/70",
                 "part": "overlay fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient stop at 70 %: gradient/surface/secondary with the declared alpha stop (Figma draws two stops; the middle stop is kept as today, P-37)"
             },
             {
                 "line": 184,
                 "old": "to-neutral-0/0",
-                "new": null,
+                "new": "to-gradient-surface-secondary-transparent",
                 "part": "overlay fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient stop, transparent end: gradient/surface/secondary-transparent (Figma binding); stop utility added for U-01"
             },
             {
                 "line": 209,
@@ -2268,9 +2355,9 @@
             {
                 "line": 116,
                 "old": "caret-neutral-500",
-                "new": null,
+                "new": "caret-text-surface-secondary",
                 "part": "input caret",
-                "reason": "no-utility: caret colour: no caret token utility"
+                "reason": "caret: Figma fills the _DataList / Filter cursor with text/surface/secondary; caret utility added for U-01 (same default-theme colour)"
             },
             {
                 "line": 117,
@@ -2464,18 +2551,18 @@
             {
                 "line": 40,
                 "old": "gradient-neutral-50-transparent-to-t",
-                "new": null,
+                "new": "gradient-surface-primary-to-t",
                 "part": "footer fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary (Figma: Dialog footer, GRAD[primary-transparent>primary]); fade utility added for U-01"
             }
         ],
         "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx": [
             {
                 "line": 27,
                 "old": "gradient-neutral-50-transparent-to-b",
-                "new": null,
+                "new": "gradient-surface-primary-to-b",
                 "part": "header fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary (Figma: Dialog header, GRAD[primary>primary-transparent]); fade utility added for U-01"
             },
             {
                 "line": 33,
@@ -2547,9 +2634,9 @@
             {
                 "line": 34,
                 "old": "gradient-neutral-50-transparent-to-t",
-                "new": null,
+                "new": "gradient-surface-primary-to-t",
                 "part": "overlay fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, overlay: gradient/surface/primary (Figma: Dialog overlay, GRAD[primary-transparent>primary]); fade utility added for U-01"
             },
             {
                 "line": 41,
@@ -2577,9 +2664,9 @@
             {
                 "line": 37,
                 "old": "gradient-neutral-50-transparent-to-t",
-                "new": null,
+                "new": "gradient-surface-primary-to-t",
                 "part": "footer fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary (Figma: DialogAlert footer); fade utility added for U-01"
             }
         ],
         "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx": [
@@ -2618,18 +2705,18 @@
             {
                 "line": 36,
                 "old": "gradient-neutral-50-transparent-to-b",
-                "new": null,
+                "new": "gradient-surface-primary-to-b",
                 "part": "header fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary (Figma: DialogAlert header); fade utility added for U-01"
             }
         ],
         "src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx": [
             {
                 "line": 35,
                 "old": "gradient-neutral-50-transparent-to-t",
-                "new": null,
+                "new": "gradient-surface-primary-to-t",
                 "part": "overlay fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, overlay: gradient/surface/primary (Figma: DialogAlert overlay); fade utility added for U-01"
             },
             {
                 "line": 42,
@@ -2659,7 +2746,7 @@
                 "old": "prose-neutral",
                 "new": null,
                 "part": "rendered document (typography plugin theme)",
-                "reason": "no-utility: typography-plugin colour theme (sets many --tw-prose-* colours); no token equivalent"
+                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-40)"
             }
         ],
         "src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx": [
@@ -2988,9 +3075,9 @@
             {
                 "line": 66,
                 "old": "caret-neutral-500",
-                "new": null,
+                "new": "caret-bg-surface-secondary-inverse",
                 "part": "input caret",
-                "reason": "no-utility: caret colour: no caret token utility"
+                "reason": "caret: Figma draws the input cursor as a fill bound to bg/surface/secondary-inverse (G-07); cross-family caret utility (P-38), parity set to today’s neutral-500"
             },
             {
                 "line": 67,
@@ -3825,16 +3912,16 @@
             {
                 "line": 66,
                 "old": "bg-neutral-300",
-                "new": null,
+                "new": "bg-icon-surface-secondary",
                 "part": "thumb, default",
-                "reason": "no-token: switch thumb (a neutral solid knob that turns accent when checked): no bg token for a stateful knob; bg/surface/* default/disabled are container fills"
+                "reason": "switch thumb: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 67,
                 "old": "data-[state=checked]:bg-primary-400",
-                "new": null,
+                "new": "data-[state=checked]:bg-icon-accent-primary",
                 "part": "thumb, checked",
-                "reason": "no-token: switch thumb selected fill: bg/accent has no selected role"
+                "reason": "switch thumb, checked: Figma fills the handle with icon/accent/primary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 68,
@@ -3846,9 +3933,9 @@
             {
                 "line": 68,
                 "old": "data-[state=checked]:group-disabled:bg-neutral-300",
-                "new": null,
+                "new": "data-[state=checked]:group-disabled:bg-icon-surface-secondary",
                 "part": "thumb, disabled",
-                "reason": "no-token: switch thumb checked + disabled fill"
+                "reason": "switch thumb, checked + disabled: Figma fills the handle with icon/surface/secondary (G-17); cross-family bg utility (P-38), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 72,
@@ -3892,16 +3979,16 @@
                 "old": "prose-neutral",
                 "new": null,
                 "part": "editor content (typography plugin theme)",
-                "reason": "no-utility: typography-plugin colour theme (sets many --tw-prose-* colours); no token equivalent"
+                "reason": "no-utility: typography-plugin colour theme: prose-neutral sets about twenty --tw-prose-* colours (body, headings, lead, links, bullets, counters, rules, quotes, captions, code, pre, table borders and their invert twins) from the plugin’s own grey ramp; only five have a semantic token at today’s colour (P-40)"
             }
         ],
         "src/core/components/forms/textAreaRichText/textAreaRichTextActions.tsx": [
             {
                 "line": 70,
                 "old": "gradient-neutral-50-transparent-to-b",
-                "new": null,
+                "new": "gradient-surface-primary-to-b",
                 "part": "toolbar fade",
-                "reason": "no-utility: gradient tokens are CSS variables only (no utility), and today’s neutral-50 fade has no gradient token at that value"
+                "reason": "gradient fade, neutral surface: gradient/surface/primary (Figma: TextareaRichtext EditorBar, GRAD[primary>primary-transparent]); fade utility added for U-01"
             }
         ],
         "src/core/components/heading/heading.tsx": [
@@ -4025,9 +4112,9 @@
             {
                 "line": 100,
                 "old": "border-neutral-0",
-                "new": null,
+                "new": "border-bg-surface-primary",
                 "part": "threshold marker outline",
-                "reason": "no-token: white outline separating the marker from the bar: no border token at neutral-0 for this role (border/accent/secondary-inverse is an accent border)"
+                "reason": "threshold marker outline: Figma strokes it with bg/surface/primary, the card surface (G-17); cross-family border utility (P-38), same default-theme colour. Was unconverted (no-token)"
             },
             {
                 "line": 107,
@@ -4087,42 +4174,43 @@
                 "old": "border-t-neutral-500",
                 "new": null,
                 "part": "head (neutral)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-500 (was no-utility: the single-side border utility now exists)",
+                "token": "border/surface/active"
             },
             {
                 "line": 77,
                 "old": "border-t-primary-400",
-                "new": null,
+                "new": "border-t-accent-secondary",
                 "part": "head (primary)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "spinner head: Figma binds border/accent/secondary (Spinner stroke, Variant=Primary); single-side border utility added for U-01"
             },
             {
                 "line": 78,
                 "old": "border-t-neutral-0",
-                "new": null,
+                "new": "border-t-accent-secondary-inverse",
                 "part": "head (primaryInverted)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "spinner head on an accent fill: Figma binds border/accent/secondary-inverse; single-side border utility added for U-01"
             },
             {
                 "line": 79,
                 "old": "border-t-success-800",
-                "new": null,
+                "new": "border-t-success-secondary",
                 "part": "head (success)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "spinner head: Figma binds border/success/secondary; single-side border utility added for U-01"
             },
             {
                 "line": 80,
                 "old": "border-t-warning-800",
-                "new": null,
+                "new": "border-t-warning-secondary",
                 "part": "head (warning)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "spinner head: Figma binds border/warning/secondary; single-side border utility added for U-01"
             },
             {
                 "line": 81,
                 "old": "border-t-critical-800",
-                "new": null,
+                "new": "border-t-critical-secondary",
                 "part": "head (critical)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "spinner head: Figma binds border/critical/secondary; single-side border utility added for U-01"
             }
         ],
         "src/core/components/states/emptyState/emptyState.tsx": [
@@ -4238,16 +4326,17 @@
             {
                 "line": 28,
                 "old": "active:data-[state=active]:shadow-primary-400",
-                "new": null,
+                "new": "active:data-[state=active]:shadow-border-surface-selected",
                 "part": "trigger, pressed while selected: label / underline",
-                "reason": "no-utility: shadow colour on an arbitrary shadow (tab underline): no shadow-colour token utility"
+                "reason": "underline colour while pressed and still selected: the selected underline token border/surface/selected, applied as the shadow colour (the underline is a box-shadow; P-38). Code role, not the uncertain Figma match (P-34)"
             },
             {
                 "line": 30,
                 "old": "hover:shadow-neutral-800",
                 "new": null,
                 "part": "trigger (underlined), hover underline",
-                "reason": "no-utility: shadow colour on an arbitrary shadow (tab underline): no shadow-colour token utility"
+                "reason": "conflict: role token border/surface/hover has default value `neutral-200`, fixed by accordionItem item container, hover; dataListFilter search field container, hover; dataListItem interactive item (primary), hover / active; dialogHeader close button, focus / hover / active; this part needs neutral-800 (was no-utility: the shadow-colour utility now exists)",
+                "token": "border/surface/hover"
             },
             {
                 "line": 31,
@@ -4259,9 +4348,9 @@
             {
                 "line": 31,
                 "old": "data-[state=active]:shadow-primary-400",
-                "new": null,
+                "new": "data-[state=active]:shadow-border-surface-selected",
                 "part": "trigger, selected: label / underline",
-                "reason": "no-utility: shadow colour on an arbitrary shadow (tab underline): no shadow-colour token utility"
+                "reason": "selected underline: Figma binds border/surface/selected (_Tabs / Trigger, IsSelected=True); applied as the shadow colour (P-38)"
             },
             {
                 "line": 32,
@@ -4536,35 +4625,39 @@
                 "old": "fill-critical-300",
                 "new": null,
                 "part": "arrow (critical)",
-                "reason": "no-utility: SVG fill: no fill token utility"
+                "reason": "conflict: role token bg/critical/solid has default value `critical-500`, fixed by progress bar (critical); statePingAnimation ping dot (critical); this part needs critical-300 (was no-utility: the fill utility now exists)",
+                "token": "bg/critical/solid"
             },
             {
                 "line": 56,
                 "old": "fill-info-300",
                 "new": null,
                 "part": "arrow (info)",
-                "reason": "no-utility: SVG fill: no fill token utility"
+                "reason": "conflict: role token bg/info/solid has default value `info-500`, fixed by statePingAnimation ping dot (info); this part needs info-300 (was no-utility: the fill utility now exists)",
+                "token": "bg/info/solid"
             },
             {
                 "line": 57,
                 "old": "fill-neutral-800",
-                "new": null,
+                "new": "fill-bg-surface-tertiary-inverse",
                 "part": "arrow (neutral)",
-                "reason": "no-utility: SVG fill: no fill token utility"
+                "reason": "arrow (neutral): Figma fills the Tooltip Arrow with bg/surface/tertiary-inverse like the bubble; fill utility added for U-01"
             },
             {
                 "line": 58,
                 "old": "fill-success-300",
                 "new": null,
                 "part": "arrow (success)",
-                "reason": "no-utility: SVG fill: no fill token utility"
+                "reason": "conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-300 (was no-utility: the fill utility now exists)",
+                "token": "bg/success/solid"
             },
             {
                 "line": 59,
                 "old": "fill-warning-300",
                 "new": null,
                 "part": "arrow (warning)",
-                "reason": "no-utility: SVG fill: no fill token utility"
+                "reason": "conflict: role token bg/warning/solid has default value `warning-500`, fixed by statePingAnimation ping dot (warning); this part needs warning-300 (was no-utility: the fill utility now exists)",
+                "token": "bg/warning/solid"
             },
             {
                 "line": 63,
@@ -5126,23 +5219,23 @@
             {
                 "line": 16,
                 "old": "*:border-b-neutral-100",
-                "new": null,
+                "new": "*:border-b-surface-secondary",
                 "part": "item dividers (stacked)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "item divider: static container border border/surface/secondary (Figma draws the divider as a fill layer bound to bg/surface/tertiary, same Light and Dark values; P-39); single-side border utility added for U-01"
             },
             {
                 "line": 18,
                 "old": "md:*:border-r-neutral-100",
-                "new": null,
+                "new": "md:*:border-r-surface-secondary",
                 "part": "item dividers (row)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "item divider (row): border/surface/secondary (P-39); single-side border utility added for U-01"
             },
             {
                 "line": 18,
                 "old": "md:*:border-b-neutral-0",
-                "new": null,
+                "new": "md:*:border-b-bg-surface-primary",
                 "part": "item dividers (row)",
-                "reason": "no-utility: single-side border colour: token utilities set border-color on all sides"
+                "reason": "hidden bottom border in the row layout: painted in the card surface colour (bg/surface/primary) so it stays invisible in every theme; cross-family border-b utility (P-38)"
             },
             {
                 "line": 21,

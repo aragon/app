@@ -31,7 +31,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
     } = props;
 
     const overlayClassNames = classNames(
-        'fixed inset-0 backdrop-blur-md gradient-neutral-50-transparent-to-t',
+        'fixed inset-0 backdrop-blur-md gradient-surface-primary-to-t',
         'z-[var(--guk-dialog-overlay-z-index)]',
         overlayClassName,
     );

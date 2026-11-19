@@ -63,9 +63,9 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     );
 
     const thumbClassNames = classNames(
-        'block size-4 rounded-full bg-neutral-300 transition-transform duration-100 will-change-transform', // Default
-        'data-[state=checked]:translate-x-[14px] data-[state=checked]:bg-primary-400', // Checked
-        'group-disabled:bg-neutral-200 data-[state=checked]:group-disabled:bg-neutral-300', // Disabled
+        'block size-4 rounded-full transition-transform duration-100 will-change-transform bg-icon-surface-secondary', // Default
+        'data-[state=checked]:translate-x-[14px] data-[state=checked]:bg-icon-accent-primary', // Checked
+        'group-disabled:bg-neutral-200 data-[state=checked]:group-disabled:bg-icon-surface-secondary', // Disabled
     );
 
     const labelClassNames = classNames(

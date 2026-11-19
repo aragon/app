@@ -113,7 +113,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 )}
                 <input
                     className={classNames(
-                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-neutral-500 outline-hidden',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-3 outline-hidden caret-text-surface-secondary',
                         'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-surface-placeholder',
                     )}
                     onBlur={handleInputBlur}

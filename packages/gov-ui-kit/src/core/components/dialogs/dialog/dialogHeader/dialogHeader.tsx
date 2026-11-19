@@ -24,7 +24,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     const { title, onClose, className, description, ...otherProps } = props;
 
     const headerClassNames = classNames(
-        'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-neutral-50-transparent-to-b', // Layout
+        'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-surface-primary-to-b', // Layout
         'pt-4 pr-14 pb-1.5 pl-4 md:pt-6 md:pr-16 md:pb-2 md:pl-6', // Spacings
         className,
     );

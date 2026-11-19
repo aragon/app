@@ -13,10 +13,10 @@
         },
         "adoptableActions": {
             "adopted": 25,
-            "blocked: Figma binds a token of another property family here; no utility applies it to this property": 19,
             "blocked: class-ordering dependency (P-21 / P-27)": 4,
-            "blocked: no semantic utility for this property (U-01)": 11,
-            "converted": 9,
+            "converted": 33,
+            "converted to a same-value token of the property’s own family (P-39)": 2,
+            "kept: already on a same-colour bg/*/solid token (P-38)": 4,
             "not applied: judgement (P-33): the token named \"default\" would hold the hover tint; Figma means focus = default fill + ring": 1
         }
     },
@@ -202,7 +202,7 @@
             "part": "header, open-state fade",
             "state": "open",
             "codeClassBefore": "data-[state=open]:gradient-neutral-50-transparent-to-b",
-            "codeClassNow": "data-[state=open]:gradient-neutral-50-transparent-to-b",
+            "codeClassNow": "data-[state=open]:gradient-surface-primary-to-b",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary",
             "figmaTokenCode": "gradient/surface/primary",
@@ -212,7 +212,9 @@
             "figmaRef": "_AccordionTrigger @F GRAD[gradient/surface/primary>primary-transparent], Open=True",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx",
@@ -1254,7 +1256,7 @@
             "part": "overlay fade",
             "state": "default",
             "codeClassBefore": "from-neutral-0",
-            "codeClassNow": "from-neutral-0",
+            "codeClassNow": "from-gradient-surface-secondary",
             "today": "neutral-0",
             "figmaToken": "gradient/surface/secondary",
             "figmaTokenCode": "gradient/surface/secondary",
@@ -1264,7 +1266,9 @@
             "figmaRef": "_CardCollapsible / Trigger @F GRAD[secondary-transparent>secondary]",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1272,7 +1276,7 @@
             "part": "overlay fade",
             "state": "default",
             "codeClassBefore": "via-neutral-0/70",
-            "codeClassNow": "via-neutral-0/70",
+            "codeClassNow": "via-gradient-surface-secondary/70",
             "today": "neutral-0/70",
             "figmaToken": "gradient/surface/secondary",
             "figmaTokenCode": "gradient/surface/secondary",
@@ -1282,7 +1286,9 @@
             "figmaRef": "_CardCollapsible / Trigger @F GRAD (middle stop)",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1290,7 +1296,7 @@
             "part": "overlay fade",
             "state": "default",
             "codeClassBefore": "to-neutral-0/0",
-            "codeClassNow": "to-neutral-0/0",
+            "codeClassNow": "to-gradient-surface-secondary-transparent",
             "today": "neutral-0/0",
             "figmaToken": "gradient/surface/secondary-transparent",
             "figmaTokenCode": "gradient/surface/secondary-transparent",
@@ -1300,7 +1306,9 @@
             "figmaRef": "_CardCollapsible / Trigger @F GRAD",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/secondary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1942,7 +1950,7 @@
             "part": "input caret",
             "state": "default",
             "codeClassBefore": "caret-neutral-500",
-            "codeClassNow": "caret-neutral-500",
+            "codeClassNow": "caret-text-surface-secondary",
             "today": "neutral-500",
             "figmaToken": "text/surface/secondary",
             "figmaTokenCode": "text/surface/secondary",
@@ -1952,7 +1960,9 @@
             "figmaRef": "_DataList / Filter ContentWrapper/Cursor F (text token on a fill)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "text/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
@@ -2436,7 +2446,7 @@
             "part": "footer fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-t",
-            "codeClassNow": "gradient-neutral-50-transparent-to-t",
+            "codeClassNow": "gradient-surface-primary-to-t",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary-transparent",
             "figmaTokenCode": "gradient/surface/primary-transparent",
@@ -2446,7 +2456,9 @@
             "figmaRef": "_Dialog / Footer @F GRAD[primary-transparent>primary]",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2454,7 +2466,7 @@
             "part": "header fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-b",
-            "codeClassNow": "gradient-neutral-50-transparent-to-b",
+            "codeClassNow": "gradient-surface-primary-to-b",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary",
             "figmaTokenCode": "gradient/surface/primary",
@@ -2464,7 +2476,9 @@
             "figmaRef": "_Dialog / Header @F GRAD[primary>primary-transparent]",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2644,7 +2658,7 @@
             "part": "overlay fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-t",
-            "codeClassNow": "gradient-neutral-50-transparent-to-t",
+            "codeClassNow": "gradient-surface-primary-to-t",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary-transparent",
             "figmaTokenCode": "gradient/surface/primary-transparent",
@@ -2654,7 +2668,9 @@
             "figmaRef": "Dialog @F GRAD[primary-transparent>primary] (overlay)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx",
@@ -2722,7 +2738,7 @@
             "part": "footer fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-t",
-            "codeClassNow": "gradient-neutral-50-transparent-to-t",
+            "codeClassNow": "gradient-surface-primary-to-t",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary-transparent",
             "figmaTokenCode": "gradient/surface/primary-transparent",
@@ -2732,7 +2748,9 @@
             "figmaRef": "_DialogAlert / Footer @F GRAD[primary-transparent>primary]",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -2812,7 +2830,7 @@
             "part": "header fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-b",
-            "codeClassNow": "gradient-neutral-50-transparent-to-b",
+            "codeClassNow": "gradient-surface-primary-to-b",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary",
             "figmaTokenCode": "gradient/surface/primary",
@@ -2822,7 +2840,9 @@
             "figmaRef": "_DialogAlert / Header @F GRAD[primary>primary-transparent]",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx",
@@ -2830,7 +2850,7 @@
             "part": "overlay fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-t",
-            "codeClassNow": "gradient-neutral-50-transparent-to-t",
+            "codeClassNow": "gradient-surface-primary-to-t",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary-transparent",
             "figmaTokenCode": "gradient/surface/primary-transparent",
@@ -2840,7 +2860,9 @@
             "figmaRef": "DialogAlert @F GRAD[primary-transparent>primary] (overlay)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx",
@@ -3774,7 +3796,7 @@
             "part": "input caret",
             "state": "default",
             "codeClassBefore": "caret-neutral-500",
-            "codeClassNow": "caret-neutral-500",
+            "codeClassNow": "caret-bg-surface-secondary-inverse",
             "today": "neutral-500",
             "figmaToken": "bg/surface/secondary-inverse",
             "figmaTokenCode": "bg/surface/secondary-inverse",
@@ -3784,7 +3806,9 @@
             "figmaRef": "Input / Text Wrapper/Cursor F, State=Focus (a fill layer drawn as the caret)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "bg/surface/secondary-inverse",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/forms/hooks/useInputProps.ts",
@@ -5847,7 +5871,7 @@
             "part": "thumb, default",
             "state": "default",
             "codeClassBefore": "bg-neutral-300",
-            "codeClassNow": "bg-neutral-300",
+            "codeClassNow": "bg-icon-surface-secondary",
             "today": "neutral-300",
             "figmaToken": "icon/surface/secondary",
             "figmaTokenCode": "icon/surface/secondary",
@@ -5857,7 +5881,9 @@
             "figmaRef": "Switch Switch/Handle F, IsChecked=False (icon token on a fill)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "icon/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -5865,7 +5891,7 @@
             "part": "thumb, checked",
             "state": "selected",
             "codeClassBefore": "data-[state=checked]:bg-primary-400",
-            "codeClassNow": "data-[state=checked]:bg-primary-400",
+            "codeClassNow": "data-[state=checked]:bg-icon-accent-primary",
             "today": "primary-400",
             "figmaToken": "icon/accent/primary",
             "figmaTokenCode": "icon/accent/primary",
@@ -5875,7 +5901,9 @@
             "figmaRef": "Switch Switch/Handle F, IsChecked=True (icon token on a fill)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "icon/accent/primary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -5901,7 +5929,7 @@
             "part": "thumb, disabled",
             "state": "disabled + selected",
             "codeClassBefore": "data-[state=checked]:group-disabled:bg-neutral-300",
-            "codeClassNow": "data-[state=checked]:group-disabled:bg-neutral-300",
+            "codeClassNow": "data-[state=checked]:group-disabled:bg-icon-surface-secondary",
             "today": "neutral-300",
             "figmaToken": "icon/surface/secondary",
             "figmaTokenCode": "icon/surface/secondary",
@@ -5911,7 +5939,9 @@
             "figmaRef": "Switch Switch/Handle F, State=Disabled IsChecked=True",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "icon/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -6031,7 +6061,7 @@
             "part": "toolbar fade",
             "state": "default",
             "codeClassBefore": "gradient-neutral-50-transparent-to-b",
-            "codeClassNow": "gradient-neutral-50-transparent-to-b",
+            "codeClassNow": "gradient-surface-primary-to-b",
             "today": "neutral-50",
             "figmaToken": "gradient/surface/primary",
             "figmaTokenCode": "gradient/surface/primary",
@@ -6041,7 +6071,9 @@
             "figmaRef": "TextareaRichtext EditorBar F GRAD[primary>primary-transparent]",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: no semantic utility for this property (U-01)"
+            "action": "converted",
+            "codeTokenNow": "gradient/surface/primary > gradient/surface/primary-transparent",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/heading/heading.tsx",
@@ -6352,7 +6384,7 @@
             "part": "threshold marker outline",
             "state": "default",
             "codeClassBefore": "border-neutral-0",
-            "codeClassNow": "border-neutral-0",
+            "codeClassNow": "border-bg-surface-primary",
             "today": "neutral-0",
             "figmaToken": "bg/surface/primary",
             "figmaTokenCode": "bg/surface/primary",
@@ -6362,7 +6394,9 @@
             "figmaRef": "Progress ThresholdIndicator S (bg token on a stroke)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "bg/surface/primary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/progress/progress.tsx",
@@ -6521,7 +6555,7 @@
             "part": "head (primary)",
             "state": "default",
             "codeClassBefore": "border-t-primary-400",
-            "codeClassNow": "border-t-primary-400",
+            "codeClassNow": "border-t-accent-secondary",
             "today": "primary-400",
             "figmaToken": "border/accent/secondary",
             "figmaTokenCode": "border/accent/secondary",
@@ -6531,7 +6565,9 @@
             "figmaRef": "Spinner stroke S, Variant=Primary",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/accent/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6539,7 +6575,7 @@
             "part": "head (primaryInverted)",
             "state": "default",
             "codeClassBefore": "border-t-neutral-0",
-            "codeClassNow": "border-t-neutral-0",
+            "codeClassNow": "border-t-accent-secondary-inverse",
             "today": "neutral-0",
             "figmaToken": "border/accent/secondary-inverse",
             "figmaTokenCode": "border/accent/secondary-inverse",
@@ -6549,7 +6585,9 @@
             "figmaRef": "Spinner stroke S, Variant=PrimaryInverted",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/accent/secondary-inverse",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6557,7 +6595,7 @@
             "part": "head (success)",
             "state": "default",
             "codeClassBefore": "border-t-success-800",
-            "codeClassNow": "border-t-success-800",
+            "codeClassNow": "border-t-success-secondary",
             "today": "success-800",
             "figmaToken": "border/success/secondary",
             "figmaTokenCode": "border/success/secondary",
@@ -6567,7 +6605,9 @@
             "figmaRef": "Spinner stroke S, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/success/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6575,7 +6615,7 @@
             "part": "head (warning)",
             "state": "default",
             "codeClassBefore": "border-t-warning-800",
-            "codeClassNow": "border-t-warning-800",
+            "codeClassNow": "border-t-warning-secondary",
             "today": "warning-800",
             "figmaToken": "border/warning/secondary",
             "figmaTokenCode": "border/warning/secondary",
@@ -6585,7 +6625,9 @@
             "figmaRef": "Spinner stroke S, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/warning/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6593,7 +6635,7 @@
             "part": "head (critical)",
             "state": "default",
             "codeClassBefore": "border-t-critical-800",
-            "codeClassNow": "border-t-critical-800",
+            "codeClassNow": "border-t-critical-secondary",
             "today": "critical-800",
             "figmaToken": "border/critical/secondary",
             "figmaTokenCode": "border/critical/secondary",
@@ -6603,7 +6645,9 @@
             "figmaRef": "Spinner stroke S, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/critical/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/states/emptyState/emptyState.tsx",
@@ -6703,7 +6747,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Info (icon token on a fill)",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6741,7 +6785,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6761,7 +6805,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6781,7 +6825,7 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "kept: already on a same-colour bg/*/solid token (P-38)"
         },
         {
             "file": "src/core/components/states/stateSkeletonBar/stateSkeletonBar.tsx",
@@ -6890,7 +6934,7 @@
             "part": "trigger, pressed while selected: label / underline",
             "state": "pressed + selected",
             "codeClassBefore": "active:data-[state=active]:shadow-primary-400",
-            "codeClassNow": "active:data-[state=active]:shadow-primary-400",
+            "codeClassNow": "active:data-[state=active]:shadow-border-surface-selected",
             "today": "primary-400",
             "figmaToken": "border/accent/active",
             "figmaTokenCode": "border/accent/active",
@@ -6900,7 +6944,9 @@
             "figmaRef": "_Tabs / Trigger @S, State=Active IsSelected=False",
             "confidence": "low",
             "verdict": "uncertain",
-            "action": "none"
+            "action": "none",
+            "codeTokenNow": "border/surface/selected",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -6946,7 +6992,7 @@
             "part": "trigger, selected: label / underline",
             "state": "selected",
             "codeClassBefore": "data-[state=active]:shadow-primary-400",
-            "codeClassNow": "data-[state=active]:shadow-primary-400",
+            "codeClassNow": "data-[state=active]:shadow-border-surface-selected",
             "today": "primary-400",
             "figmaToken": "border/surface/selected",
             "figmaTokenCode": "border/surface/selected",
@@ -6956,7 +7002,9 @@
             "figmaRef": "_Tabs / Trigger @S, IsSelected=True",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "border/surface/selected",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7685,7 +7733,7 @@
             "part": "arrow (neutral)",
             "state": "default",
             "codeClassBefore": "fill-neutral-800",
-            "codeClassNow": "fill-neutral-800",
+            "codeClassNow": "fill-bg-surface-tertiary-inverse",
             "today": "neutral-800",
             "figmaToken": "bg/surface/tertiary-inverse",
             "figmaTokenCode": "bg/surface/tertiary-inverse",
@@ -7695,7 +7743,9 @@
             "figmaRef": "Tooltip Arrow F, Variant=Neutral",
             "confidence": "high",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted",
+            "codeTokenNow": "bg/surface/tertiary-inverse",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -9043,7 +9093,7 @@
             "part": "item dividers (stacked)",
             "state": "default",
             "codeClassBefore": "*:border-b-neutral-100",
-            "codeClassNow": "*:border-b-neutral-100",
+            "codeClassNow": "*:border-b-surface-secondary",
             "today": "neutral-100",
             "figmaToken": "bg/surface/tertiary",
             "figmaTokenCode": "bg/surface/tertiary",
@@ -9053,7 +9103,9 @@
             "figmaRef": "_TokenVoting / Voting / Breakdown Divider F (a fill layer)",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted to a same-value token of the property’s own family (P-39)",
+            "codeTokenNow": "border/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",
@@ -9061,7 +9113,7 @@
             "part": "item dividers (row)",
             "state": "default",
             "codeClassBefore": "md:*:border-r-neutral-100",
-            "codeClassNow": "md:*:border-r-neutral-100",
+            "codeClassNow": "md:*:border-r-surface-secondary",
             "today": "neutral-100",
             "figmaToken": "bg/surface/tertiary",
             "figmaTokenCode": "bg/surface/tertiary",
@@ -9071,7 +9123,9 @@
             "figmaRef": "_TokenVoting / Voting / Breakdown Divider F (a fill layer)",
             "confidence": "medium",
             "verdict": "figma-differs-adoptable",
-            "action": "blocked: Figma binds a token of another property family here; no utility applies it to this property"
+            "action": "converted to a same-value token of the property’s own family (P-39)",
+            "codeTokenNow": "border/surface/secondary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",
@@ -9079,7 +9133,7 @@
             "part": "item dividers (row)",
             "state": "default",
             "codeClassBefore": "md:*:border-b-neutral-0",
-            "codeClassNow": "md:*:border-b-neutral-0",
+            "codeClassNow": "md:*:border-b-bg-surface-primary",
             "today": "neutral-0",
             "figmaToken": "bg/surface/tertiary",
             "figmaTokenCode": "bg/surface/tertiary",
@@ -9089,7 +9143,9 @@
             "figmaRef": "_TokenVoting / Voting / Breakdown Divider F (a fill layer)",
             "confidence": "low",
             "verdict": "uncertain",
-            "action": "none"
+            "action": "none",
+            "codeTokenNow": "bg/surface/primary",
+            "note": "Converted with the utilities added for U-01 (P-37, P-38)."
         },
         {
             "file": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",

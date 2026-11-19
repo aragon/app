@@ -54,7 +54,7 @@ export interface ITooltipProps {
 const variantToArrowFill: Record<TooltipVariant, string> = {
     critical: 'fill-critical-300',
     info: 'fill-info-300',
-    neutral: 'fill-neutral-800',
+    neutral: 'fill-bg-surface-tertiary-inverse',
     success: 'fill-success-300',
     warning: 'fill-warning-300',
 };

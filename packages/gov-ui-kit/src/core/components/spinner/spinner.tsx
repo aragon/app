@@ -74,11 +74,11 @@ const variantToClassNames: Record<SpinnerVariant, string> = {
 
 const variantToLoadingClassNames: Record<SpinnerVariant, string> = {
     neutral: 'border-t-neutral-500',
-    primary: 'border-t-primary-400',
-    primaryInverted: 'border-t-neutral-0',
-    success: 'border-t-success-800',
-    warning: 'border-t-warning-800',
-    critical: 'border-t-critical-800',
+    primary: 'border-t-accent-secondary',
+    primaryInverted: 'border-t-accent-secondary-inverse',
+    success: 'border-t-success-secondary',
+    warning: 'border-t-warning-secondary',
+    critical: 'border-t-critical-secondary',
 };
 
 /**
