@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "8dc7ff00a05e38ed981fdc6ac40a415c2b9754fcdf507bfaf8e9594e4a8f6db4",
+            "sha256": "0a935c9e60825e70c3fe14df1596f438a44e7e3b359ea759cd0c44f708d116e8",
             "totalRecords": 394,
             "entryCount": 145,
             "uiEntryCount": 138,
@@ -462,7 +462,7 @@
                 "package": "@aragon/gov-ui-kit",
                 "name": "Avatar"
             },
-            "description": "Generic image avatar with size variants and a fallback.",
+            "description": "Generic image avatar with size variants, a fallback and an optional corner badge (e.g. a network logo).",
             "useWhen": [
                 "Displaying a user/entity image where no domain avatar applies"
             ],
@@ -472,7 +472,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:78",
+                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:134",
                 "stories": [
                     "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
                 ]

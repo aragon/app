@@ -6,60 +6,12 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "fc128e30a05fcdd4216df2c35bee51a5d3b0c975",
+            "commit": "e8c13f456f0e4aa8e797e1d3bf1afa8525c8ed99",
             "dirty": [
-                "packages/gov-ui-kit/src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionItem/accordionItem.tsx",
-                "packages/gov-ui-kit/src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx",
-                "packages/gov-ui-kit/src/core/components/alerts/alertCard/alertCard.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/alerts/alertCard/alertCard.tsx",
                 "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/cards/card/card.tsx",
-                "packages/gov-ui-kit/src/core/components/clipboard/clipboard.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/collapsible/collapsible.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListFilter/dataListFilter.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListItem/dataListItem.tsx",
-                "packages/gov-ui-kit/src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogFooter/dialogFooter.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogRoot/dialogRoot.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogStoryComponent.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertFooter/dialogAlertFooter.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertRoot/dialogAlertRoot.tsx",
-                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertStoryComponent.tsx",
-                "packages/gov-ui-kit/src/core/components/documentParser/documentParser.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/checkbox/checkbox.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/checkboxCard/checkboxCard.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/inputDate/inputDate.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/radio/radio.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/radioCard/radioCard.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/switch/switch.tsx",
-                "packages/gov-ui-kit/src/core/components/link/link/link.tsx",
-                "packages/gov-ui-kit/src/core/components/progress/progress.tsx",
-                "packages/gov-ui-kit/src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-                "packages/gov-ui-kit/src/core/components/toggles/toggle/toggle.tsx",
-                "packages/gov-ui-kit/src/core/components/tooltip/tooltip.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/action/actionSimulation/actionSimulation.tsx",
-                "packages/gov-ui-kit/src/modules/components/asset/assetDataListItem/assetDataListItemSkeleton/assetDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/asset/assetTransfer/assetTransfer.tsx",
-                "packages/gov-ui-kit/src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
-                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                "packages/gov-ui-kit/src/modules/components/member/memberDataListItem/memberDataListItemSkeleton/memberDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalDataListItem/proposalDataListItemSkeleton/proposalDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx",
-                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressContainer.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDetailSummary/transactionDetailSummary.tsx",
-                "packages/gov-ui-kit/src/modules/components/wallet/wallet.tsx"
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.test.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.tsx",
+                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.test.tsx"
             ],
             "sourceVersion": "3.0.0",
             "entrypoints": {
@@ -2300,15 +2252,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
-                "line": 78,
-                "sha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                "line": 134,
+                "sha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.tsx",
                     "line": 11,
-                    "sha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                    "sha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
                 }
             ],
             "stories": [
@@ -2316,7 +2268,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "721888fdb57b54267e9423e9cc08176b3c0241d04bb9fbbfed7ffbcdf689ad86"
                 }
             ],
             "tests": [
@@ -2324,12 +2276,12 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "ea2fe2037f2430eaaf3a7dc24194fedddbf2fd82481a6bd5c55aab5294c9bebf"
                 }
             ],
             "docs": [],
             "intent": {
-                "description": "Generic image avatar with size variants and a fallback.",
+                "description": "Generic image avatar with size variants, a fallback and an optional corner badge (e.g. a network logo).",
                 "useWhen": [
                     "Displaying a user/entity image where no domain avatar applies"
                 ],
@@ -2389,28 +2341,28 @@
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                        "actualSha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                        "actualSha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                        "actualSha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573",
-                        "actualSha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                        "actualSha256": "721888fdb57b54267e9423e9cc08176b3c0241d04bb9fbbfed7ffbcdf689ad86"
                     }
                 ],
                 "review": {
@@ -2816,7 +2768,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 9,
-                "sha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                "sha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
             },
             "props": [],
             "stories": [
@@ -2824,7 +2776,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "721888fdb57b54267e9423e9cc08176b3c0241d04bb9fbbfed7ffbcdf689ad86"
                 }
             ],
             "tests": [
@@ -2832,7 +2784,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "ea2fe2037f2430eaaf3a7dc24194fedddbf2fd82481a6bd5c55aab5294c9bebf"
                 }
             ],
             "docs": [],
@@ -3058,7 +3010,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "7bf519e04065305ccafd521f70f981e6f158627a1ac9667f67377129c24e7702"
+                "sha256": "69a83d0fec681b9f15799f5d89a088e9b9eba36e35b6a1c2a32fba74955f526e"
             },
             "props": [],
             "stories": [],
@@ -5024,7 +4976,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "0921c4b4fe22945cdde602fdd1905e9bcd41ce98ada6f3bc2604f3755307fd1b"
+                    "sha256": "650bc1914d2a43d974ef1a66c4479204fe7a135faef561f1439dfc7acf86ca5c"
                 }
             ],
             "docs": [],
@@ -10844,7 +10796,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 11,
-                "sha256": "8e96f83c6344e05512ef430e1f3003c1b1f2acd672dba42558380216185f1272"
+                "sha256": "3cc9b8a09024b124f2ffa87984782801e21af9a80038b043ec9cde6563c4e6ab"
             },
             "props": [],
             "stories": [
@@ -10852,7 +10804,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573"
+                    "sha256": "721888fdb57b54267e9423e9cc08176b3c0241d04bb9fbbfed7ffbcdf689ad86"
                 }
             ],
             "tests": [
@@ -10860,7 +10812,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "04a2645abc0fa4e043285fd132c457624dbca6b80838249d4adc35b73c337563"
+                    "sha256": "ea2fe2037f2430eaaf3a7dc24194fedddbf2fd82481a6bd5c55aab5294c9bebf"
                 }
             ],
             "docs": [],
@@ -12250,7 +12202,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "0921c4b4fe22945cdde602fdd1905e9bcd41ce98ada6f3bc2604f3755307fd1b"
+                    "sha256": "650bc1914d2a43d974ef1a66c4479204fe7a135faef561f1439dfc7acf86ca5c"
                 }
             ],
             "docs": [],
