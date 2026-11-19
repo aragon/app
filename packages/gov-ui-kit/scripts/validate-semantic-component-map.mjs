@@ -73,18 +73,11 @@ const sameClasses = (found, entries) =>
         .sort()
         .join('|');
 
-const FORBIDDEN = new Set([
-    'bg/accent/default-inverse',
-    'bg/accent/hover-inverse',
-    'bg/accent/active-inverse',
-    'bg/surface/primary-inverse',
-    'bg/surface/secondary-inverse',
-    'bg/surface/tertiary-inverse',
-    'bg/surface/hover-inverse',
-    'bg/surface/disabled-inverse',
-    'border/accent/primary-inverse',
-    'bg/info/secondary',
-]);
+// Tokens whose meaning is still unresolved (G-07): Figma binds them nowhere. The other -inverse tokens were settled by
+// the Figma reconciliation (semantic-colors.reconciliation.json): bg/accent/*-inverse = the light fill under accent
+// content (secondary button), bg/surface/{primary,secondary,tertiary}-inverse = inverted neutral fills (progress bar and
+// marker, input caret, neutral tooltip), border/accent/primary-inverse = spinner track on an accent fill.
+const FORBIDDEN = new Set(['bg/surface/hover-inverse', 'bg/surface/disabled-inverse', 'bg/info/secondary']);
 const REASONS = new Set(['conflict', 'no-utility', 'no-token', 'forbidden-token', 'comment', 'ordering']);
 
 // ---------------------------------------------------------------------------------------------------------------

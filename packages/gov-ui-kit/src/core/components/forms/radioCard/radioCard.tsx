@@ -52,7 +52,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-3 rounded-xl border border-surface-default bg-surface-default px-4 py-3 focus-ring ring-accent-focus', // default
+        'group flex w-full flex-col gap-3 rounded-xl border border-surface-default bg-surface-primary px-4 py-3 focus-ring ring-accent-focus', // default
         'cursor-pointer outline-hidden transition-all shadow-surface-sm md:rounded-2xl md:px-6 md:py-4', // default
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
         'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
@@ -63,7 +63,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
 
     const labelClasses = classNames(
         'w-full truncate text-left text-surface-default group-disabled:text-surface-disabled md:text-base',
-        'group-data-[state=checked]:text-surface-selected group-data-[state=checked]:group-disabled:text-surface-selected',
+        'group-data-[state=checked]:text-surface-primary group-data-[state=checked]:group-disabled:text-surface-primary',
     );
 
     return (
@@ -94,7 +94,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                     {tag && <Tag {...tag} />}
                 </div>
                 <span className={classNames({ 'h-full': description })}>
-                    <Icon className="icon-surface-secondary group-data-[state=checked]:hidden" icon={IconType.RADIO} />
+                    <Icon className="icon-surface-default group-data-[state=checked]:hidden" icon={IconType.RADIO} />
                     <RadioGroupIndicator>
                         <Icon
                             className="icon-accent-selected group-disabled:text-neutral-500"

@@ -62,7 +62,7 @@ const variantToArrowFill: Record<TooltipVariant, string> = {
 const variantToContentClassName: Record<TooltipVariant, string> = {
     critical: 'bg-critical-300 text-critical-secondary shadow-critical-md',
     info: 'bg-info-300 text-info-secondary shadow-info-md',
-    neutral: 'bg-neutral-800 text-surface-inverse shadow-surface-md',
+    neutral: 'bg-surface-tertiary-inverse text-surface-inverse shadow-surface-md',
     success: 'bg-success-300 text-success-secondary shadow-success-md',
     warning: 'bg-warning-300 text-warning-secondary shadow-warning-md',
 };

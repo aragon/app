@@ -44,7 +44,7 @@ export const DefinitionListItem: React.FC<IDefinitionListItemProps> = (props) =>
     return (
         <div
             className={classNames(
-                'flex flex-col gap-y-2 border-b border-surface-primary py-3 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-6 md:py-4',
+                'flex flex-col gap-y-2 border-b border-surface-secondary py-3 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-6 md:py-4',
                 className,
             )}
             {...otherProps}

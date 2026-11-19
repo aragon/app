@@ -93,7 +93,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
             <div
                 className={classNames(
                     'flex flex-row items-center rounded-xl border p-3 pr-2 transition-all md:pr-3 md:pl-6',
-                    'border-surface-default bg-surface-default text-surface-secondary shadow-surface-sm',
+                    'border-surface-default bg-surface-primary text-surface-secondary shadow-surface-sm',
                     'text-base leading-tight font-normal',
                     'hover:border-surface-hover hover:shadow-surface-default',
                     'focus-within:border-accent-active focus-within:shadow-accent-default',
@@ -125,7 +125,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 />
                 {displayClearIcon && (
                     <button className="mr-2 cursor-pointer p-2.5 md:mr-4" onClick={handleClear} type="button">
-                        <Icon className="icon-surface-secondary" icon={IconType.CLOSE} size="sm" />
+                        <Icon className="icon-surface-default" icon={IconType.CLOSE} size="sm" />
                     </button>
                 )}
                 <div className="flex flex-row gap-2 md:gap-3">

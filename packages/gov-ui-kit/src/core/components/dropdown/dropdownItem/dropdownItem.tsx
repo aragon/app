@@ -103,9 +103,9 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
             className={classNames(
                 'flex items-center gap-3 px-4 py-3', // Layout
                 'cursor-pointer rounded-xl text-base leading-tight focus-visible:outline-hidden', // Style
-                'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-neutral-0 data-disabled:text-surface-disabled', // Disabled
+                'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-surface-default data-disabled:text-surface-disabled', // Disabled
                 { 'bg-surface-default text-surface-default': !selected && !disabled }, // Not selected
-                { 'bg-surface-selected text-surface-selected': selected && !disabled }, // Selected
+                { 'bg-surface-selected text-surface-active': selected && !disabled }, // Selected
                 { 'hover:bg-surface-hover hover:text-neutral-800': !disabled }, // Hover
                 { 'data-highlighted:bg-surface-hover data-highlighted:text-neutral-800': !disabled }, // Highlighted
                 { 'flex-row justify-between': iconPosition === 'right' },
@@ -118,7 +118,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
         >
             <ItemWrapper {...itemWrapperProps}>
                 <p className="truncate">{children}</p>
-                {processedIcon != null && <Icon className="icon-surface-secondary" icon={processedIcon} size="md" />}
+                {processedIcon != null && <Icon className="icon-surface-default" icon={processedIcon} size="md" />}
             </ItemWrapper>
         </RadixDropdown.Item>
     );

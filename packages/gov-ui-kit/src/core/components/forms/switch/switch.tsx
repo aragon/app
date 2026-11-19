@@ -69,9 +69,9 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     );
 
     const labelClassNames = classNames(
-        'pl-2 text-sm leading-tight font-normal text-surface-default md:pl-3 md:text-base', // Default
-        'peer-data-[state=checked]:text-surface-selected', // Checked
-        'peer-disabled:text-surface-disabled peer-data-[state=checked]:peer-disabled:text-surface-selected', // Disabled
+        'pl-2 text-sm leading-tight font-normal text-surface-secondary md:pl-3 md:text-base', // Default
+        'peer-data-[state=checked]:text-surface-primary', // Checked
+        'peer-disabled:text-surface-disabled peer-data-[state=checked]:peer-disabled:text-surface-primary', // Disabled
     );
 
     return (

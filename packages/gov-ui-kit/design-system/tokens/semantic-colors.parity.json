@@ -60,7 +60,7 @@
         },
         "text/accent/inverse": {
             "value": "neutral-0",
-            "evidence": "Button primary: text-neutral-0"
+            "evidence": "Button primary: text-neutral-0; component map: daoAvatar"
         },
         "icon/accent/inverse": {
             "value": "neutral-0",
@@ -68,7 +68,7 @@
         },
         "border/accent/default": {
             "value": "primary-100",
-            "evidence": "Button secondary: border-primary-100"
+            "evidence": "Button secondary: border-primary-100; component map: spinner"
         },
         "border/accent/hover": {
             "value": "primary-200",
@@ -80,7 +80,7 @@
         },
         "text/accent/default": {
             "value": "primary-400",
-            "evidence": "Button secondary, ghost: text-primary-400; component map: collapsible"
+            "evidence": "Button secondary, ghost: text-primary-400"
         },
         "text/accent/hover": {
             "value": "primary-400",
@@ -117,7 +117,7 @@
         },
         "bg/surface/default": {
             "value": "neutral-0",
-            "evidence": "Button tertiary: bg-neutral-0; component map: accordionItem, accordionItemHeader, dataListFilter, dataListItem, dialogHeader, dropdownItem, checkboxCard, inputContainer (3), inputFileAvatar (2), radioCard, switch, toggle, wallet"
+            "evidence": "Button tertiary: bg-neutral-0; component map: accordionItem, accordionItemHeader, dataListItem, dialogHeader, dropdownItem (2), checkboxCard, inputContainer (3), inputFileAvatar (2), switch, toggle (2), wallet"
         },
         "bg/surface/hover": {
             "value": "neutral-50",
@@ -141,7 +141,7 @@
         },
         "border/surface/default": {
             "value": "neutral-100",
-            "evidence": "Button tertiary: border-neutral-100; component map: accordionItem, dataListFilter, dataListItem, dialogHeader, checkboxCard, inputContainer, inputFileAvatar, radioCard, toggle, assetTransferAddress, wallet"
+            "evidence": "Button tertiary: border-neutral-100; component map: accordionItem, dataListFilter, dataListItem, dialogHeader, checkboxCard, inputContainer, inputFileAvatar, radioCard, spinner, toggle, assetTransferAddress, wallet"
         },
         "border/surface/hover": {
             "value": "neutral-200",
@@ -153,7 +153,7 @@
         },
         "text/surface/default": {
             "value": "neutral-500",
-            "evidence": "Button tertiary: text-neutral-500; component map: dropdownItem, checkbox (2), radio, radioCard, switch, tabsTrigger, toggle, wallet"
+            "evidence": "Button tertiary: text-neutral-500; component map: dropdownItem, checkbox (2), radio, radioCard, toggle, wallet"
         },
         "text/surface/hover": {
             "value": "neutral-500",
@@ -161,7 +161,7 @@
         },
         "text/surface/active": {
             "value": "neutral-800",
-            "evidence": "Button tertiary: active:text-neutral-800; component map: tabsTrigger, wallet"
+            "evidence": "Button tertiary: active:text-neutral-800; component map: dropdownItem, tabsTrigger, wallet"
         },
         "text/surface/disabled": {
             "value": "neutral-300",
@@ -169,7 +169,7 @@
         },
         "icon/surface/default": {
             "value": "neutral-300",
-            "evidence": "Button tertiary icon: text-neutral-300; component map: radio, assetTransferAddress"
+            "evidence": "Button tertiary icon: text-neutral-300; component map: dataListFilter, dropdownItem, radio, radioCard, assetTransferAddress"
         },
         "icon/surface/hover": {
             "value": "neutral-500",
@@ -185,7 +185,7 @@
         },
         "shadow/surface/sm": {
             "value": "rgba(97, 110, 124, 0.05)",
-            "evidence": "Button tertiary: shadow-neutral-sm; component map: accordionItem (2), dataListFilter, dataListItem, dropdownContainer, checkboxCard, inputContainer, radioCard, switch, toggle, proposalVotingProgressContainer"
+            "evidence": "Button tertiary: shadow-neutral-sm; component map: accordionItem (2), dataListFilter, dropdownContainer, checkboxCard, inputContainer, radioCard, switch, toggle, proposalVotingProgressContainer"
         },
         "shadow/surface/default": {
             "value": "rgba(97, 110, 124, 0.1)",
@@ -205,7 +205,7 @@
         },
         "border/success/default": {
             "value": "success-300",
-            "evidence": "Button success: border-success-300"
+            "evidence": "Button success: border-success-300; component map: spinner"
         },
         "border/success/hover": {
             "value": "success-500",
@@ -373,7 +373,7 @@
         },
         "bg/accent/solid": {
             "value": "primary-400",
-            "evidence": "component map: progress"
+            "evidence": "component map: progress, daoAvatar"
         },
         "bg/accent/subtle": {
             "value": "primary-50",
@@ -386,10 +386,6 @@
         "bg/accent/transparent-hover": {
             "value": "color-mix(in srgb, var(--color-primary-400) 4%, transparent)",
             "evidence": "component map: dataListActionItem"
-        },
-        "bg/brand/solid": {
-            "value": "primary-400",
-            "evidence": "component map: daoAvatar"
         },
         "bg/critical/solid": {
             "value": "critical-500",
@@ -417,7 +413,7 @@
         },
         "bg/surface/primary": {
             "value": "neutral-0",
-            "evidence": "component map: alertCard, avatarIcon, card, collapsible, dialogRoot, dialogAlertRoot, dropdownContainer, assetDataListItemSkeleton, assetTransfer, memberDataListItemSkeleton, proposalDataListItemSkeleton, proposalVotingProgressContainer, transactionDetailSummary"
+            "evidence": "component map: alertCard, avatarIcon, card, collapsible, dataListFilter, dialogRoot, dialogAlertRoot, dropdownContainer, radioCard, assetDataListItemSkeleton, assetTransfer, memberDataListItemSkeleton, proposalDataListItemSkeleton, proposalVotingProgressContainer, transactionDetailSummary"
         },
         "bg/surface/secondary": {
             "value": "neutral-50",
@@ -447,10 +443,6 @@
             "value": "warning-100",
             "evidence": "component map: avatarIcon, inputText"
         },
-        "border/accent/primary": {
-            "value": "primary-100",
-            "evidence": "component map: spinner"
-        },
         "border/critical/primary": {
             "value": "critical-400",
             "evidence": "component map: alertCard"
@@ -469,7 +461,7 @@
         },
         "border/surface/primary": {
             "value": "neutral-100",
-            "evidence": "component map: card, definitionListItem, dialogRoot, dialogAlertRoot, dropdownContainer, inputText, spinner, tabsList, assetTransfer, proposalActionsContainer, proposalActionsDecoderField, proposalVotingProgressContainer, transactionDetailSummary"
+            "evidence": "component map: inputText, assetTransfer, proposalActionsDecoderField, transactionDetailSummary"
         },
         "border/surface/selected": {
             "value": "primary-400",
@@ -505,7 +497,7 @@
         },
         "icon/surface/secondary": {
             "value": "neutral-300",
-            "evidence": "component map: dataListFilter, dropdownItem, radioCard, assetTransfer"
+            "evidence": "component map: assetTransfer"
         },
         "icon/warning/primary": {
             "value": "warning-500",
@@ -549,7 +541,7 @@
         },
         "text/link/default": {
             "value": "primary-400",
-            "evidence": "component map: link"
+            "evidence": "component map: collapsible, link"
         },
         "text/link/hover": {
             "value": "primary-500",
@@ -561,7 +553,7 @@
         },
         "text/link/secondary-default": {
             "value": "neutral-500",
-            "evidence": "component map: link"
+            "evidence": "component map: link, tabsTrigger"
         },
         "text/link/secondary-hover": {
             "value": "neutral-600",
@@ -585,15 +577,15 @@
         },
         "text/surface/primary": {
             "value": "neutral-800",
-            "evidence": "component map: cardSummary, dataListFilterStatus, dataListPagination, definitionListItem, dialogHeader, checkboxCard (2), inputContainer, heading, emptyState, tag, assetDataListItemStructure (2), assetTransfer (2), assetTransferAddress, daoDataListItemSkeleton, daoDataListItemStructure, memberDataListItemStructure (2), proposalDataListItemStatus (2), proposalDataListItemStructure, proposalVotingBodyContent, proposalVotingProgressItem (2), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable (2), smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (2), voteDataListItemStructure, voteProposalDataListItemStructure"
+            "evidence": "component map: cardSummary, dataListFilterStatus, dataListPagination, definitionListItem, dialogHeader, checkboxCard (2), inputContainer, radioCard (2), switch (2), heading, emptyState, tabsTrigger, tag, assetDataListItemStructure (2), assetTransfer (2), assetTransferAddress, daoDataListItemSkeleton, daoDataListItemStructure, memberDataListItemStructure (2), proposalDataListItemStatus (2), proposalDataListItemStructure, proposalVotingBodyContent, proposalVotingProgressItem (2), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable (2), smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (2), voteDataListItemStructure, voteProposalDataListItemStructure"
         },
         "text/surface/secondary": {
             "value": "neutral-500",
-            "evidence": "component map: alertCard, breadcrumbs, cardSummary, dataListActionItem, dataListFilter, dataListPagination, definitionListItem, dialogContent, dialogHeader, checkboxCard, inputContainer (3), inputText (2), radioCard, emptyState, actionSimulation, assetDataListItemStructure, assetTransfer, assetTransferAddress, daoDataListItemStructure, memberDataListItemStructure (2), proposalActionsDecoderBooleanField, proposalActionsDecoderField (2), proposalActionsDecoderTextField, proposalActionsItem (2), proposalDataListItemStatus, proposalDataListItemStructure (3), proposalVotingBodyContent, proposalVotingProgressItem (4), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable, smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (3), voteDataListItemStructure (2), voteProposalDataListItemStructure (2)"
+            "evidence": "component map: alertCard, breadcrumbs, cardSummary, dataListActionItem, dataListFilter, dataListPagination, definitionListItem, dialogContent, dialogHeader, checkboxCard, inputContainer (3), inputText (2), radioCard, switch, emptyState, actionSimulation, assetDataListItemStructure, assetTransfer, assetTransferAddress, daoDataListItemStructure, memberDataListItemStructure (2), proposalActionsDecoderBooleanField, proposalActionsDecoderField (2), proposalActionsDecoderTextField, proposalActionsItem (2), proposalDataListItemStatus, proposalDataListItemStructure (3), proposalVotingBodyContent, proposalVotingProgressItem (4), proposalVotingStage, proposalVotingStatus, proposalVotingStatusAdvanceable, smartContractFunctionDataListItemStructure (2), transactionDataListItemStructure (3), voteDataListItemStructure (2), voteProposalDataListItemStructure (2)"
         },
         "text/surface/selected": {
-            "value": "neutral-800",
-            "evidence": "component map: dropdownItem, radioCard (2), switch (2), tabsTrigger"
+            "value": "primary-400",
+            "evidence": "component map: toggle"
         },
         "text/surface/tertiary": {
             "value": "neutral-400",
@@ -606,6 +598,22 @@
         "text/warning/secondary": {
             "value": "warning-900",
             "evidence": "component map: tooltip"
+        },
+        "border/surface/secondary": {
+            "value": "neutral-100",
+            "evidence": "; component map: card, definitionListItem, dialogRoot, dialogAlertRoot, dropdownContainer, tabsList, proposalActionsContainer, proposalVotingProgressContainer"
+        },
+        "bg/surface/primary-inverse": {
+            "value": "neutral-400",
+            "evidence": "; component map: progress (2)"
+        },
+        "bg/surface/tertiary-inverse": {
+            "value": "neutral-800",
+            "evidence": "; component map: tooltip"
+        },
+        "border/accent/primary-inverse": {
+            "value": "primary-300",
+            "evidence": "; component map: spinner"
         }
     }
 }

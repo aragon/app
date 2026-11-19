@@ -17,17 +17,16 @@
     "summary": {
         "files": 83,
         "occurrences": 546,
-        "converted": 410,
-        "unconverted": 136,
+        "converted": 419,
+        "unconverted": 127,
         "unconvertedByReason": {
-            "conflict": 81,
+            "conflict": 77,
             "no-utility": 32,
-            "no-token": 14,
+            "no-token": 13,
             "comment": 1,
-            "ordering": 4,
-            "forbidden-token": 4
+            "ordering": 4
         },
-        "tokensUsed": 95,
+        "tokensUsed": 99,
         "storyFiles": 17,
         "storyOccurrences": 49,
         "testFiles": 4,
@@ -38,7 +37,6 @@
         "bg/accent/subtle": "primary-50",
         "bg/accent/transparent-active": "color-mix(in srgb, var(--color-primary-400) 8%, transparent)",
         "bg/accent/transparent-hover": "color-mix(in srgb, var(--color-primary-400) 4%, transparent)",
-        "bg/brand/solid": "primary-400",
         "bg/critical/solid": "critical-500",
         "bg/critical/subtle": "critical-100",
         "bg/info/solid": "info-500",
@@ -50,24 +48,29 @@
         "bg/surface/disabled": "neutral-100",
         "bg/surface/hover": "neutral-50",
         "bg/surface/primary": "neutral-0",
+        "bg/surface/primary-inverse": "neutral-400",
         "bg/surface/secondary": "neutral-50",
         "bg/surface/selected": "neutral-50",
         "bg/surface/tertiary": "neutral-100",
+        "bg/surface/tertiary-inverse": "neutral-800",
         "bg/surface/transparent-active": "color-mix(in srgb, var(--color-neutral-800) 8%, transparent)",
         "bg/surface/transparent-hover": "color-mix(in srgb, var(--color-neutral-800) 4%, transparent)",
         "bg/warning/solid": "warning-500",
         "bg/warning/subtle": "warning-100",
         "border/accent/active": "primary-400",
-        "border/accent/primary": "primary-100",
+        "border/accent/default": "primary-100",
+        "border/accent/primary-inverse": "primary-300",
         "border/critical/active": "critical-600",
         "border/critical/primary": "critical-400",
         "border/info/primary": "info-400",
+        "border/success/default": "success-300",
         "border/success/primary": "success-400",
         "border/surface/active": "neutral-400",
         "border/surface/default": "neutral-100",
         "border/surface/disabled": "neutral-200",
         "border/surface/hover": "neutral-200",
         "border/surface/primary": "neutral-100",
+        "border/surface/secondary": "neutral-100",
         "border/surface/selected": "primary-400",
         "border/warning/active": "warning-600",
         "border/warning/default": "warning-300",
@@ -104,7 +107,7 @@
         "shadow/surface/sm": "rgba(97, 110, 124, 0.05)",
         "shadow/warning/default": "rgba(219, 125, 36, 0.1)",
         "shadow/warning/sm": "rgba(219, 125, 36, 0.05)",
-        "text/accent/default": "primary-400",
+        "text/accent/inverse": "neutral-0",
         "text/accent/primary": "primary-400",
         "text/critical/primary": "critical-800",
         "text/critical/secondary": "critical-900",
@@ -125,7 +128,7 @@
         "text/surface/placeholder": "neutral-300",
         "text/surface/primary": "neutral-800",
         "text/surface/secondary": "neutral-500",
-        "text/surface/selected": "neutral-800",
+        "text/surface/selected": "primary-400",
         "text/surface/tertiary": "neutral-400",
         "text/warning/primary": "warning-800",
         "text/warning/secondary": "warning-900"
@@ -503,26 +506,6 @@
                 "tag tag (warning)",
                 "actionSimulation status text (warning)",
                 "smartContractFunctionDataListItemStructure function label (warning / default)"
-            ]
-        },
-        {
-            "file": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-            "line": 106,
-            "old": "data-disabled:bg-neutral-0",
-            "part": "dropdownItem: menu item, disabled",
-            "token": "bg/surface/disabled",
-            "needs": "neutral-0",
-            "fixedAt": "neutral-100",
-            "fixedBy": [
-                "Button (Button (all): aria-disabled:bg-neutral-100)",
-                "accordionItemHeader header, disabled background",
-                "accordionItemHeader header trigger focus ring / disabled background",
-                "accordionItemHeader chevron AvatarIcon override, disabled",
-                "checkboxCard card container, checked + disabled",
-                "inputContainer field, disabled",
-                "radioCard card container, disabled",
-                "switch track, disabled",
-                "toggle toggle, disabled"
             ]
         },
         {
@@ -975,18 +958,6 @@
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
-            "line": 70,
-            "old": "border-success-300",
-            "part": "spinner: track (success)",
-            "token": "border/success/primary",
-            "needs": "success-300",
-            "fixedAt": "success-400",
-            "fixedBy": [
-                "alertCard card border + shadow (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/spinner/spinner.tsx",
             "line": 71,
             "old": "border-warning-300",
             "part": "spinner: track (warning)",
@@ -1137,34 +1108,6 @@
             "fixedAt": "success-100",
             "fixedBy": [
                 "avatarIcon container fill (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/toggles/toggle/toggle.tsx",
-            "line": 28,
-            "old": "data-[state=on]:enabled:bg-neutral-0",
-            "part": "toggle: toggle on (selected)",
-            "token": "bg/surface/selected",
-            "needs": "neutral-0",
-            "fixedAt": "neutral-50",
-            "fixedBy": [
-                "dropdownItem menu item, selected"
-            ]
-        },
-        {
-            "file": "src/core/components/toggles/toggle/toggle.tsx",
-            "line": 28,
-            "old": "data-[state=on]:enabled:text-primary-400",
-            "part": "toggle: toggle on (selected)",
-            "token": "text/surface/selected",
-            "needs": "primary-400",
-            "fixedAt": "neutral-800",
-            "fixedBy": [
-                "dropdownItem menu item, selected",
-                "radioCard label, checked (selected), also when disabled",
-                "switch label, checked (selected)",
-                "switch label, disabled / checked + disabled",
-                "tabsTrigger trigger, selected: label / underline"
             ]
         },
         {
@@ -1434,7 +1377,7 @@
         }
     ],
     "buttonNotes": [
-        "Button (not in this map) uses bg-accent-default-inverse, bg-accent-hover-inverse and bg-accent-active-inverse (secondary variant), which are on the do-not-use list; left as they are."
+        "Button (not in this map) uses bg-accent-default-inverse, bg-accent-hover-inverse and bg-accent-active-inverse (secondary variant), as bound in Figma. Their meaning is settled by the Figma reconciliation (G-07): the light fill under accent content of an outlined pressable."
     ],
     "batches": [
         {
@@ -1998,9 +1941,9 @@
             {
                 "line": 18,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "card container",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: Card @S, HasBorder=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 18,
@@ -2065,9 +2008,9 @@
             {
                 "line": 209,
                 "old": "text-primary-400",
-                "new": "text-accent-default",
+                "new": "text-link-default",
                 "part": "toggle text button",
-                "reason": "text, interactive emphasis: state default of a part that responds to interaction"
+                "reason": "Figma binding: Collapsible Trigger/Label; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 209,
@@ -2262,9 +2205,9 @@
             {
                 "line": 96,
                 "old": "bg-neutral-0",
-                "new": "bg-surface-default",
+                "new": "bg-surface-primary",
                 "part": "search field container, default (text is static)",
-                "reason": "fill, neutral content: state default of a part that responds to interaction"
+                "reason": "Figma binding: _DataList / Filter Search F; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 96,
@@ -2339,9 +2282,9 @@
             {
                 "line": 128,
                 "old": "text-neutral-300",
-                "new": "icon-surface-secondary",
+                "new": "icon-surface-default",
                 "part": "clear icon",
-                "reason": "icon, neutral content: static content, secondary level"
+                "reason": "Figma binding: _DataList / Filter TriggerClear/Icon; adopted from the Figma reconciliation (same default-theme colour)"
             }
         ],
         "src/core/components/dataList/dataListFilter/dataListFilterStatus.tsx": [
@@ -2482,9 +2425,9 @@
             {
                 "line": 47,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "row divider",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: DefintionList / Item @S; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 52,
@@ -2611,9 +2554,9 @@
             {
                 "line": 41,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "dialog panel",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: _Dialog / Content @S; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 41,
@@ -2691,9 +2634,9 @@
             {
                 "line": 42,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "dialog panel",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: _Dialog / Content @S; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 42,
@@ -2723,9 +2666,9 @@
             {
                 "line": 132,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "menu panel",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: Dropdown Menu S; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 132,
@@ -2746,10 +2689,9 @@
             {
                 "line": 106,
                 "old": "data-disabled:bg-neutral-0",
-                "new": null,
+                "new": "data-disabled:bg-surface-default",
                 "part": "menu item, disabled",
-                "reason": "conflict: role token bg/surface/disabled has default value `neutral-100`, fixed by Button (Button (all): aria-disabled:bg-neutral-100); accordionItemHeader header, disabled background; accordionItemHeader header trigger focus ring / disabled background; accordionItemHeader chevron AvatarIcon override, disabled; +5 more; this part needs neutral-0",
-                "token": "bg/surface/disabled"
+                "reason": "Figma binding: Dropdown / MenuItem @F, State=Disabled; adopted from the Figma reconciliation (same default-theme colour). Was unconverted (conflict)"
             },
             {
                 "line": 106,
@@ -2782,9 +2724,9 @@
             {
                 "line": 108,
                 "old": "text-neutral-800",
-                "new": "text-surface-selected",
+                "new": "text-surface-active",
                 "part": "menu item, selected",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: Dropdown / MenuItem Label, IsSelected=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 109,
@@ -2819,9 +2761,9 @@
             {
                 "line": 121,
                 "old": "text-neutral-300",
-                "new": "icon-surface-secondary",
+                "new": "icon-surface-default",
                 "part": "item icon",
-                "reason": "icon, neutral content: static content, secondary level"
+                "reason": "Figma binding: Dropdown / MenuItem Icon; adopted from the Figma reconciliation (same default-theme colour)"
             }
         ],
         "src/core/components/forms/checkbox/checkbox.tsx": [
@@ -3682,9 +3624,9 @@
             {
                 "line": 55,
                 "old": "bg-neutral-0",
-                "new": "bg-surface-default",
+                "new": "bg-surface-primary",
                 "part": "card container, default / focus ring",
-                "reason": "fill, neutral content: state default of a part that responds to interaction"
+                "reason": "Figma binding: _Radio / Card @F; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 55,
@@ -3774,16 +3716,16 @@
             {
                 "line": 66,
                 "old": "group-data-[state=checked]:text-neutral-800",
-                "new": "group-data-[state=checked]:text-surface-selected",
+                "new": "group-data-[state=checked]:text-surface-primary",
                 "part": "label, checked (selected), also when disabled",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: _Radio / Card CopyWrapper/Label, IsChecked=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 66,
                 "old": "group-data-[state=checked]:group-disabled:text-neutral-800",
-                "new": "group-data-[state=checked]:group-disabled:text-surface-selected",
+                "new": "group-data-[state=checked]:group-disabled:text-surface-primary",
                 "part": "label, checked (selected), also when disabled",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: _Radio / Card CopyWrapper/Label, State=Disabled IsChecked=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 89,
@@ -3802,9 +3744,9 @@
             {
                 "line": 97,
                 "old": "text-neutral-300",
-                "new": "icon-surface-secondary",
+                "new": "icon-surface-default",
                 "part": "unchecked radio icon (no hover change)",
-                "reason": "icon, neutral content: static content, secondary level"
+                "reason": "Figma binding: _Radio / Card IconWrapper/Icon, IsChecked=False; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 100,
@@ -3911,16 +3853,16 @@
             {
                 "line": 72,
                 "old": "text-neutral-500",
-                "new": "text-surface-default",
+                "new": "text-surface-secondary",
                 "part": "label, default",
-                "reason": "text, neutral content: state default of a part that responds to interaction"
+                "reason": "Figma binding: Switch Label, IsChecked=False; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 73,
                 "old": "peer-data-[state=checked]:text-neutral-800",
-                "new": "peer-data-[state=checked]:text-surface-selected",
+                "new": "peer-data-[state=checked]:text-surface-primary",
                 "part": "label, checked (selected)",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: Switch Label, IsChecked=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 74,
@@ -3932,9 +3874,9 @@
             {
                 "line": 74,
                 "old": "peer-data-[state=checked]:peer-disabled:text-neutral-800",
-                "new": "peer-data-[state=checked]:peer-disabled:text-surface-selected",
+                "new": "peer-data-[state=checked]:peer-disabled:text-surface-primary",
                 "part": "label, disabled / checked + disabled",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: Switch Label, State=Disabled IsChecked=True; adopted from the Figma reconciliation (same default-theme colour)"
             }
         ],
         "src/core/components/forms/textAreaRichText/textAreaRichText.tsx": [
@@ -4054,10 +3996,9 @@
             {
                 "line": 47,
                 "old": "bg-neutral-400",
-                "new": null,
+                "new": "bg-surface-primary-inverse",
                 "part": "bar (neutral)",
-                "reason": "forbidden-token: neutral solid fill: the matching role is the unresolved bg/surface/primary-inverse family",
-                "token": "bg/surface/primary-inverse"
+                "reason": "Figma binding: Progress Indicator F, Variant=Neutral (G-07 resolved); adopted from the Figma reconciliation (same default-theme colour). Was unconverted (forbidden-token)"
             },
             {
                 "line": 48,
@@ -4091,42 +4032,39 @@
             {
                 "line": 107,
                 "old": "bg-neutral-400",
-                "new": null,
+                "new": "bg-surface-primary-inverse",
                 "part": "threshold marker line",
-                "reason": "forbidden-token: neutral solid fill: the matching role is the unresolved bg/surface/primary-inverse family",
-                "token": "bg/surface/primary-inverse"
+                "reason": "Figma binding: Progress ThresholdIndicator F (G-07 resolved); adopted from the Figma reconciliation (same default-theme colour). Was unconverted (forbidden-token)"
             }
         ],
         "src/core/components/spinner/spinner.tsx": [
             {
                 "line": 67,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-default",
                 "part": "track (neutral)",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: Spinner background S, Variant=Neutral; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 68,
                 "old": "border-primary-100",
-                "new": "border-accent-primary",
+                "new": "border-accent-default",
                 "part": "track (primary)",
-                "reason": "border, interactive emphasis: static content, primary level"
+                "reason": "Figma binding: Spinner background S, Variant=Primary; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 69,
                 "old": "border-primary-300",
-                "new": null,
+                "new": "border-accent-primary-inverse",
                 "part": "track (primaryInverted, on an accent fill)",
-                "reason": "forbidden-token: accent border on an accent fill: the matching role is the unresolved border/accent/primary-inverse",
-                "token": "border/accent/primary-inverse"
+                "reason": "Figma binding: Spinner background S, Variant=PrimaryInverted (G-07 resolved); adopted from the Figma reconciliation (same default-theme colour). Was unconverted (forbidden-token)"
             },
             {
                 "line": 70,
                 "old": "border-success-300",
-                "new": null,
+                "new": "border-success-default",
                 "part": "track (success)",
-                "reason": "conflict: role token border/success/primary has default value `success-400`, fixed by alertCard card border + shadow (success); this part needs success-300",
-                "token": "border/success/primary"
+                "reason": "Figma binding: Spinner background S, Variant=Success; adopted from the Figma reconciliation (same default-theme colour). Was unconverted (conflict)"
             },
             {
                 "line": 71,
@@ -4277,9 +4215,9 @@
             {
                 "line": 12,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "underline divider",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: Tabs @S, HasUnderline=True; adopted from the Figma reconciliation (same default-theme colour)"
             }
         ],
         "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx": [
@@ -4314,9 +4252,9 @@
             {
                 "line": 31,
                 "old": "data-[state=active]:text-neutral-800",
-                "new": "data-[state=active]:text-surface-selected",
+                "new": "data-[state=active]:text-surface-primary",
                 "part": "trigger, selected: label / underline",
-                "reason": "text, neutral content: state selected of a part that responds to interaction"
+                "reason": "Figma binding: _Tabs / Trigger Label, IsSelected=True; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 31,
@@ -4328,9 +4266,9 @@
             {
                 "line": 32,
                 "old": "text-neutral-500",
-                "new": "text-surface-default",
+                "new": "text-link-secondary-default",
                 "part": "trigger label, default / hover",
-                "reason": "text, neutral content: state default of a part that responds to interaction"
+                "reason": "Figma binding: _Tabs / Trigger Label, State=Default IsSelected=False; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 32,
@@ -4551,18 +4489,16 @@
             {
                 "line": 28,
                 "old": "data-[state=on]:enabled:bg-neutral-0",
-                "new": null,
+                "new": "data-[state=on]:enabled:bg-surface-default",
                 "part": "toggle on (selected)",
-                "reason": "conflict: role token bg/surface/selected has default value `neutral-50`, fixed by dropdownItem menu item, selected; this part needs neutral-0",
-                "token": "bg/surface/selected"
+                "reason": "Figma binding: Toggle @F, State=Default IsSelected=True; adopted from the Figma reconciliation (same default-theme colour). Was unconverted (conflict)"
             },
             {
                 "line": 28,
                 "old": "data-[state=on]:enabled:text-primary-400",
-                "new": null,
+                "new": "data-[state=on]:enabled:text-surface-selected",
                 "part": "toggle on (selected)",
-                "reason": "conflict: role token text/surface/selected has default value `neutral-800`, fixed by dropdownItem menu item, selected; radioCard label, checked (selected), also when disabled; switch label, checked (selected); switch label, disabled / checked + disabled; +1 more; this part needs primary-400",
-                "token": "text/surface/selected"
+                "reason": "Figma binding: Toggle Label, IsSelected=True; adopted from the Figma reconciliation (same default-theme colour). Was unconverted (conflict)"
             },
             {
                 "line": 29,
@@ -4677,10 +4613,9 @@
             {
                 "line": 65,
                 "old": "bg-neutral-800",
-                "new": null,
+                "new": "bg-surface-tertiary-inverse",
                 "part": "bubble (neutral)",
-                "reason": "forbidden-token: inverse (dark) neutral surface: the matching role is the unresolved bg/surface/*-inverse family",
-                "token": "bg/surface/tertiary-inverse"
+                "reason": "Figma binding: Tooltip @F, Variant=Neutral (G-07 resolved); adopted from the Figma reconciliation (same default-theme colour). Was unconverted (forbidden-token)"
             },
             {
                 "line": 65,
@@ -4946,16 +4881,16 @@
             {
                 "line": 90,
                 "old": "bg-primary-400",
-                "new": "bg-brand-solid",
+                "new": "bg-accent-solid",
                 "part": "fallback avatar disc (DAO identity) + initials",
-                "reason": "fill, identity: one-off role “solid”"
+                "reason": "Figma binding: _AvatarFallback image F, Type=Initials; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 90,
                 "old": "text-neutral-0",
-                "new": null,
+                "new": "text-accent-inverse",
                 "part": "fallback avatar disc (DAO identity) + initials",
-                "reason": "no-token: initials on a brand fill: there is no text/brand/inverse; text/accent/inverse belongs to accent fills"
+                "reason": "Figma binding: _AvatarFallback image/SO T, Type=Initials; adopted from the Figma reconciliation (same default-theme colour). Was unconverted (no-token)"
             }
         ],
         "src/modules/components/dao/daoDataListItem/daoDataListItemSkeleton/daoDataListItemSkeleton.tsx": [
@@ -5040,9 +4975,9 @@
             {
                 "line": 42,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "empty-state card border (CardEmptyState override, same colour as its base)",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: CardEmptyState → Card @S (keeps the override equal to the Card border it overrides); adopted from the Figma reconciliation (same default-theme colour)"
             }
         ],
         "src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderBooleanField/proposalActionsDecoderBooleanField.tsx": [
@@ -5212,9 +5147,9 @@
             {
                 "line": 21,
                 "old": "border-neutral-100",
-                "new": "border-surface-primary",
+                "new": "border-surface-secondary",
                 "part": "progress card",
-                "reason": "border, neutral content: static content, primary level"
+                "reason": "Figma binding: _TokenVoting / Voting / Breakdown S; adopted from the Figma reconciliation (same default-theme colour)"
             },
             {
                 "line": 21,

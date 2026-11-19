@@ -44,7 +44,7 @@ const responsiveIndicatorSizeClassNames: ResponsiveAttributeClassMap<ProgressSiz
 
 const variantToClassNames: Record<ProgressVariant, string> = {
     primary: 'bg-accent-solid',
-    neutral: 'bg-neutral-400',
+    neutral: 'bg-surface-primary-inverse',
     success: 'bg-success-400',
     critical: 'bg-critical-solid',
 };
@@ -104,7 +104,7 @@ export const Progress: React.FC<IProgressProps> = (props) => {
                     data-value={processedIndicator}
                     style={{ left: `${processedIndicator.toString()}%`, transform: 'translateX(-50%)' }}
                 >
-                    <div className="h-full w-0.5 rounded-full bg-neutral-400" />
+                    <div className="h-full w-0.5 rounded-full bg-surface-primary-inverse" />
                 </div>
             )}
         </div>

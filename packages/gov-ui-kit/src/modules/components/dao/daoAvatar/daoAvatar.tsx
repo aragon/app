@@ -87,7 +87,7 @@ export const DaoAvatar: React.FC<IDaoAvatarProps> = (props) => {
             fallback={
                 <span
                     className={classNames(
-                        'flex size-full items-center justify-center rounded-full bg-brand-solid leading-tight text-neutral-0',
+                        'flex size-full items-center justify-center rounded-full bg-accent-solid leading-tight text-accent-inverse',
                         responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
                         className,
                     )}

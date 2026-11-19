@@ -16,7 +16,7 @@ export const Card: React.FC<ICardProps> = (props) => {
     return (
         <div
             className={classNames(
-                'rounded-xl border border-surface-primary bg-surface-primary shadow-surface-default',
+                'rounded-xl border border-surface-secondary bg-surface-primary shadow-surface-default',
                 className,
             )}
             {...otherProps}
