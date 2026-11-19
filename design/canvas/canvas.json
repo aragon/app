@@ -686,16 +686,8 @@
       "title": "CreateWorkspaceFlowMetadata",
       "page": "parts"
     },
-    "CreateWorkspaceFlowTargets.dc.html": {
-      "x": 4360,
-      "y": 20867,
-      "w": 800,
-      "h": 420,
-      "title": "CreateWorkspaceFlowTargets",
-      "page": "parts"
-    },
     "CreateWorkspaceFlowPublishDialog.dc.html": {
-      "x": 5240,
+      "x": 4360,
       "y": 20867,
       "w": 1440,
       "h": 900,
@@ -1008,7 +1000,6 @@
     "CreateWorkspaceFlowAccounts.dc.html",
     "CreateWorkspaceFlowAddressFields.dc.html",
     "CreateWorkspaceFlowMetadata.dc.html",
-    "CreateWorkspaceFlowTargets.dc.html",
     "CreateWorkspaceFlowPublishDialog.dc.html",
     "CreateProposalFlowActions.dc.html",
     "CreateProposalFlowMetadata.dc.html",

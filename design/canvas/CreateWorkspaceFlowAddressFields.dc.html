@@ -63,9 +63,9 @@ body{margin:0}
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"row":{"editor":null},"$preview":{"width":760,"height":120}}'>
-// Network + address fields of one workspace target / account row (apps/app: modules/workspace/components/createWorkspaceForm/
+// Network + address fields of one workspace account row (apps/app: modules/workspace/components/createWorkspaceForm/
 // createWorkspaceFormNetworkAddressFields, createWorkspaceFormAccountIdentity; shared/components/forms/networkInput).
-// Used by CreateWorkspaceFlowTargets and CreateWorkspaceFlowAccounts. Prop `row` (built by CreateWorkspaceFlow):
+// Used by CreateWorkspaceFlowAccounts. Prop `row` (built by CreateWorkspaceFlow):
 //   { id, networkName, networkLogo, chainId, options: [{ name, logo, tag, selected, pick }], address, alert: {message, variant},
 //     onAddress(value), onBlur(), identity: null | 'loading' | { isDao, name, avatar, primary, truncated, hasName, tag, tagVariant } }
 class Component extends DCLogic {

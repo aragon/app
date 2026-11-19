@@ -28,10 +28,6 @@
                     <div class="page-stat__value"><p>4</p></div>
                     <p class="page-stat__label">Accounts</p>
                   </div>
-                  <div class="page-stat">
-                    <div class="page-stat__value"><p>0</p></div>
-                    <p class="page-stat__label">Targets</p>
-                  </div>
                 </div>
               </div>
               <div class="page-header__avatar">
@@ -109,7 +105,7 @@
 // All-accounts overview (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx, components
 // workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more;
 // DESIGN CHANGE from the app: the rows are the to-dos page's rows, see WsTodos.dc.html, not a card of rows with buttons),
-// the accounts list (each row -> account:<id>:overview), Resources aside. 0 targets, so no Targets section (as in the app).
+// the accounts list (each row -> account:<id>:overview), Resources aside. No Targets stat or section: targets are not offered for now.
 // To-dos follow the app's rules: ACTIVE proposals the wallet can vote on, then Safe transactions it can sign. Their state is
 // derived from the DAO prototypes' shared state (window.__atlasDao /
 // window.__nspState (what the visitor did on the proposal pages).

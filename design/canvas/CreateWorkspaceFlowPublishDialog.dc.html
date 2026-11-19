@@ -45,12 +45,12 @@ body{margin:0}
 </x-import>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"simulateError":{"editor":"boolean","default":false},"workspaceName":{"editor":null},"avatarUrl":{"editor":null},"description":{"editor":null},"accounts":{"editor":"int","default":1},"targets":{"editor":"int","default":0},"onClose":{"editor":null},"successHref":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"simulateError":{"editor":"boolean","default":false},"workspaceName":{"editor":null},"avatarUrl":{"editor":null},"description":{"editor":null},"accounts":{"editor":"int","default":1},"onClose":{"editor":null},"successHref":{"editor":null},"$preview":{"width":1440,"height":900}}'>
 // PUBLISH_WORKSPACE dialog, create mode (apps/app: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx).
 // Not a blockchain transaction: the workspace is stored in the browser registry. Mount it inside the flow, drive `open` from its state:
-//   <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="…" accounts="{{n}}" targets="{{m}}" on-close="{{closeDialog}}"
+//   <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="…" accounts="{{n}}" on-close="{{closeDialog}}"
 //     success-href="Explore.dc.html" hint-size="100%,1px"></dc-import>
-// Props: open; workspaceName, avatarUrl, description (form values); accounts, targets (numbers, summary "N accounts · M targets");
+// Props: open; workspaceName, avatarUrl, description (form values); accounts (a number, summary "N accounts");
 // onClose (close button, Escape, overlay); successHref (the "View workspace" link, default Explore.dc.html);
 // simulateError (tweak): the save fails -> "Unable to create the workspace", primary "Try again"; switch off and retry to succeed.
 // States: idle (primary "Create workspace") -> pending (button loading ~1 s) -> success (AlertCard "Workspace created", primary link "View workspace").
@@ -67,7 +67,7 @@ class Component extends DCLogic {
   close() { if (typeof this.props.onClose === 'function') this.props.onClose(); else this.reset(); }
   renderVals() {
     const p = this.props, status = this.state.status;
-    const n = Number(p.accounts ?? 0), m = Number(p.targets ?? 0);
+    const n = Number(p.accounts ?? 0);
     let primary;
     if (status === 'success') primary = { label: 'View workspace', href: p.successHref || 'Explore.dc.html' };
     else primary = { label: status === 'error' ? 'Try again' : 'Create workspace', isLoading: status === 'pending', onClick: () => this.publish() };
@@ -75,7 +75,7 @@ class Component extends DCLogic {
       no: false,
       isOpen: p.open === undefined ? true : !!p.open,
       name: p.workspaceName || 'Meridian Ecosystem', avatarUrl: p.avatarUrl,
-      summary: n + ' accounts · ' + m + ' targets',
+      summary: n + (n === 1 ? ' account' : ' accounts'),
       hasDescription: !!p.description, description: p.description,
       isError: status === 'error', isSuccess: status === 'success', primary,
       noFocus: (e) => e.preventDefault(),

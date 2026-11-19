@@ -23,15 +23,12 @@ body{margin:0}
   <dc-import name="WizardNav" wizard-name="Create workspace" exit-href="Explore.dc.html" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
     <form class="wizard-form" onSubmit="{{onFormSubmit}}">
-      <dc-import name="WizardProgress" step="{{stepNumber}}" total="{{three}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
+      <dc-import name="WizardProgress" step="{{stepNumber}}" total="{{two}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
       <div class="wizard-step">
         <sc-if value="{{isStep1}}" hint-placeholder-val="{{yes}}">
           <dc-import name="CreateWorkspaceFlowMetadata" vm="{{metaProps}}" hint-size="100%,1100px"></dc-import>
         </sc-if>
         <sc-if value="{{isStep2}}" hint-placeholder-val="{{no}}">
-          <dc-import name="CreateWorkspaceFlowTargets" rows="{{targetRows}}" on-add="{{addTarget}}" hint-size="100%,420px"></dc-import>
-        </sc-if>
-        <sc-if value="{{isStep3}}" hint-placeholder-val="{{no}}">
           <dc-import name="CreateWorkspaceFlowAccounts" rows="{{accountRows}}" on-add="{{addAccount}}" hint-size="100%,520px"></dc-import>
         </sc-if>
         <div class="{{footerClass}}">
@@ -44,15 +41,16 @@ body{margin:0}
     </form>
   </main>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
-  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" targets="{{targetCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
+  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
 </div>
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1330}}'>
 // Create workspace wizard as one live prototype (apps/app: app/create/workspace, modules/workspace/pages/createWorkspacePage,
-// components/workspaceWizard, components/createWorkspaceForm/*, dialogs/publishWorkspaceDialog). Three steps in one artboard:
-// "Describe your workspace" (CreateWorkspaceFlowMetadata), "Add targets" (CreateWorkspaceFlowTargets), "Add accounts"
-// (CreateWorkspaceFlowAccounts, rows via CreateWorkspaceFlowAddressFields), then the PUBLISH_WORKSPACE dialog
+// components/workspaceWizard, components/createWorkspaceForm/*, dialogs/publishWorkspaceDialog). Two steps in one artboard:
+// "Describe your workspace" (CreateWorkspaceFlowMetadata) and "Add accounts" (CreateWorkspaceFlowAccounts, rows via
+// CreateWorkspaceFlowAddressFields), then the PUBLISH_WORKSPACE dialog
+// DESIGN CHANGE from the app: the "Add targets" step is removed; targets are not offered for now.
 // (CreateWorkspaceFlowPublishDialog). Frame: WizardNav / WizardProgress / WizardActions.
 // Exits: the close button goes to Explore.dc.html; "View workspace" (after the simulated save) opens the workspace prototype, Workspace.dc.html.
 // Validation (shown on a failed Next, then live; and on blur): name required, URL required / valid, address required / valid /
@@ -69,7 +67,7 @@ class Component extends DCLogic {
     this.state = {
       step: 0, attempted: false, dialogOpen: false,
       name: '', nameTouched: false, avatar: undefined, description: '',
-      resources: [], targets: [],
+      resources: [],
       accounts: [this.emptyRow(1)]
     };
   }
@@ -137,11 +135,10 @@ class Component extends DCLogic {
       if (err) e1.push(err);
       return err;
     });
-    const targetErrs = s.targets.map((_, i) => this.addressError(s.targets, i, false));
     const accountErrs = s.accounts.map((_, i) => this.addressError(s.accounts, i, true));
     const metaErrs = s.accounts.map((a) => (a.showMeta && a.meta.name.trim() === '' ? { kind: 'required', message: 'Account name is mandatory.' } : null));
-    return { nameErr, resErrs, targetErrs, accountErrs, metaErrs,
-      steps: [e1, targetErrs.filter(Boolean), accountErrs.concat(metaErrs).filter(Boolean)] };
+    return { nameErr, resErrs, accountErrs, metaErrs,
+      steps: [e1, accountErrs.concat(metaErrs).filter(Boolean)] };
   }
 
   patch(listKey, id, fn) { this.setState((s) => ({ [listKey]: s[listKey].map((r) => (r.id === id ? fn(r) : r)) })); }
@@ -158,14 +155,14 @@ class Component extends DCLogic {
   next() {
     const v = this.validate(), s = this.state;
     if (v.steps[s.step].length > 0) { this.setState({ attempted: true }); return; }
-    if (s.step < 2) { this.setState({ step: s.step + 1, attempted: false }); this.toTop(); } else { this.setState({ dialogOpen: true }); }
+    if (s.step < 1) { this.setState({ step: s.step + 1, attempted: false }); this.toTop(); } else { this.setState({ dialogOpen: true }); }
   }
   back() { this.setState((s) => ({ step: Math.max(0, s.step - 1), attempted: false })); this.toTop(); }
   toTop() { try { window.scrollTo(0, 0); } catch (e) {} }
 
   rowVm(listKey, i, v) {
     const s = this.state, list = s[listKey], r = list[i], isAccount = listKey === 'accounts';
-    const err = (isAccount ? v.accountErrs : v.targetErrs)[i];
+    const err = v.accountErrs[i];
     const show = err && (s.attempted || r.touched || !err.onTouch && err.kind !== 'required');
     const net = this.networks().find((n) => n.key === r.network);
     let identity = null;
@@ -223,23 +220,21 @@ class Component extends DCLogic {
     }));
     const upRes = (i, p) => this.setState((st) => ({ resources: st.resources.map((r, j) => (j === i ? { ...r, ...p } : r)) }));
     return {
-      yes: true, no: false, three: 3,
+      yes: true, no: false, two: 2,
       stepNumber: s.step + 1,
-      nextStepName: ['Add targets', 'Add accounts', 'Create workspace'][s.step],
-      isStep1: s.step === 0, isStep2: s.step === 1, isStep3: s.step === 2,
-      hasBack: s.step > 0, isLast: s.step === 2,
+      nextStepName: ['Add accounts', 'Create workspace'][s.step],
+      isStep1: s.step === 0, isStep2: s.step === 1,
+      hasBack: s.step > 0, isLast: s.step === 1,
       footerClass: showAlert ? 'wizard-footer wizard-footer--critical' : 'wizard-footer',
       showAlert, alertTitle: alerts[status][0], alertText: alerts[status][1],
       // step 1
       name: s.name, description: s.description,
       // step bodies
-      targetRows: s.targets.map((_, i) => this.rowVm('targets', i, v)),
       accountRows: s.accounts.map((_, i) => this.rowVm('accounts', i, v)),
-      addTarget: () => this.setState((st) => ({ targets: st.targets.concat([newRow()]) })),
       addAccount: () => this.setState((st) => ({ accounts: st.accounts.concat([newRow()]) })),
       // dialog
       dialogOpen: s.dialogOpen, closeDialog: () => this.setState({ dialogOpen: false }),
-      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length, targetCount: s.targets.length,
+      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length,
       next: () => this.next(), back: () => this.back(),
       onFormSubmit: (e) => { if (e && e.preventDefault) e.preventDefault(); },
       // handlers for the metadata body
