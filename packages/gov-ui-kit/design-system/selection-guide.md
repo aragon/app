@@ -222,7 +222,7 @@ Displays an asset transfer (sender, recipient, amount, symbol, fiat value).
 
 `import { Avatar } from '@aragon/gov-ui-kit';`
 
-Generic image avatar with size variants and a fallback.
+Generic image avatar with size variants, a fallback and an optional corner badge (e.g. a network logo).
 
 **Use when**
 
@@ -230,7 +230,7 @@ Generic image avatar with size variants and a fallback.
 
 **References**
 
-- `kit:src/core/components/avatars/avatar/avatar.tsx:78`
+- `kit:src/core/components/avatars/avatar/avatar.tsx:134`
 - `kit:src/core/components/avatars/avatar/avatar.stories.tsx:1`
 
 ### AvatarBase

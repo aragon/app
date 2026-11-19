@@ -31,4 +31,10 @@ describe('<DaoAvatar/> component', () => {
         render(createTestComponent({ name }));
         expect(screen.getByText(expected)).toBeInTheDocument();
     });
+
+    it('renders the badge next to the initials fallback', () => {
+        render(createTestComponent({ name: 'Aragon DAO', badge: <span data-testid="badge" /> }));
+        expect(screen.getByTestId('badge')).toBeInTheDocument();
+        expect(screen.getByText('AD')).toBeInTheDocument();
+    });
 });

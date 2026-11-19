@@ -67,4 +67,22 @@ export const AllSizes: Story = {
     ),
 };
 
+/**
+ * Avatar component with a badge, e.g. a network logo, sized from the avatar size.
+ */
+export const WithBadge: Story = {
+    args: {
+        src: 'https://aragon-1.mypinata.cloud/ipfs/QmX4q3fu1QkSfdVFUAmSUWziCmnXtitp2TVKLbrFVBcPvv',
+        size: 'md',
+        badge: (
+            <img
+                alt=""
+                height={16}
+                src="https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+                width={16}
+            />
+        ),
+    },
+};
+
 export default meta;

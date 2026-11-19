@@ -6,9 +6,9 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "0d9659f842198d01a8ea8e6fbcc5edc4eae93a1d",
+            "commit": "19c9a8ddea5b9fbe5c0fc17d16994f008ecd0e2c",
             "dirty": [
-                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.tsx"
+                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.stories.tsx"
             ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -2249,15 +2249,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
-                "line": 78,
-                "sha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                "line": 134,
+                "sha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.tsx",
                     "line": 11,
-                    "sha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                    "sha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
                 }
             ],
             "stories": [
@@ -2265,7 +2265,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
+                    "sha256": "bf97f4703eff72b4e572d55d224eb00af3dfd4ade95eaf310df105165ada3acb"
                 }
             ],
             "tests": [
@@ -2273,12 +2273,12 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
+                    "sha256": "ee5d4a847df070ab4412092896bf870113c781692c901ed36638ac4563161752"
                 }
             ],
             "docs": [],
             "intent": {
-                "description": "Generic image avatar with size variants and a fallback.",
+                "description": "Generic image avatar with size variants, a fallback and an optional corner badge (e.g. a network logo).",
                 "useWhen": [
                     "Displaying a user/entity image where no domain avatar applies"
                 ],
@@ -2338,28 +2338,28 @@
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                        "actualSha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                        "actualSha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.tsx",
                         "status": "changed",
                         "expectedSha256": "2eb14ebf0fd01c8038042e2c4bae082f33bcbbbe49ded6324b390741b1dc2a7b",
-                        "actualSha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                        "actualSha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                         "status": "changed",
                         "expectedSha256": "589027e1a79c6b567b57692c45d6558de72f7f5f3c8f08a20eaec77db64e4573",
-                        "actualSha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
+                        "actualSha256": "bf97f4703eff72b4e572d55d224eb00af3dfd4ade95eaf310df105165ada3acb"
                     }
                 ],
                 "review": {
@@ -2765,7 +2765,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 9,
-                "sha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                "sha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
             },
             "props": [],
             "stories": [
@@ -2773,7 +2773,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
+                    "sha256": "bf97f4703eff72b4e572d55d224eb00af3dfd4ade95eaf310df105165ada3acb"
                 }
             ],
             "tests": [
@@ -2781,7 +2781,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
+                    "sha256": "ee5d4a847df070ab4412092896bf870113c781692c901ed36638ac4563161752"
                 }
             ],
             "docs": [],
@@ -3079,7 +3079,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "543a30b7774bd49bce1dfa2f1640837f793cb2eea2c85d6cb1f2220da61e5cbf"
+                "sha256": "138a3ffb4514d530f611c7442407e86536e2fcc23a424d96a051f4d51d530b02"
             },
             "props": [],
             "stories": [],
@@ -5045,7 +5045,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "31b32818f0e5cc00654a5e9503895210ad8db5c8597b0c1c65eccb4d53b94c01"
+                    "sha256": "ab72b0cb739e0ecc53b23984d4b3c07ffd5b15802ea66636476461baad704480"
                 }
             ],
             "docs": [],
@@ -5079,19 +5079,19 @@
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 81,
-                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
+                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 11,
-                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
+                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 15,
-                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
+                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
                     },
                     {
                         "repository": "kit",
@@ -5104,22 +5104,22 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
-                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "status": "changed",
+                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
                         "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
-                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "status": "changed",
+                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
                         "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "current",
-                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "status": "changed",
+                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
                         "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
@@ -10974,7 +10974,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatar/avatar.tsx",
                 "line": 11,
-                "sha256": "35e29e935152a08c383500e69f34e33b28ad0082cf05e9549d2e181380ad81e6"
+                "sha256": "08824dd88e0df79ec491bb4445be0fbd7586bf8dec92a50f5ae63bb749705122"
             },
             "props": [],
             "stories": [
@@ -10982,7 +10982,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.stories.tsx",
                     "line": 1,
-                    "sha256": "b30f9fce76c8bfe091b955c874cca059de9b6579a14b0cc0afcf13320c56aab3"
+                    "sha256": "bf97f4703eff72b4e572d55d224eb00af3dfd4ade95eaf310df105165ada3acb"
                 }
             ],
             "tests": [
@@ -10990,7 +10990,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatar/avatar.test.tsx",
                     "line": 1,
-                    "sha256": "788bf96e2335054164eade156be6e51ba7e3e7efccc6388b11f63bf975dd1091"
+                    "sha256": "ee5d4a847df070ab4412092896bf870113c781692c901ed36638ac4563161752"
                 }
             ],
             "docs": [],
@@ -12439,7 +12439,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.test.tsx",
                     "line": 1,
-                    "sha256": "31b32818f0e5cc00654a5e9503895210ad8db5c8597b0c1c65eccb4d53b94c01"
+                    "sha256": "ab72b0cb739e0ecc53b23984d4b3c07ffd5b15802ea66636476461baad704480"
                 }
             ],
             "docs": [],
