@@ -43,7 +43,7 @@ full conflict list), `semantic-colors.parity.json` (the value each token has in 
 | ID | Decision | Why | Alternative |
 | --- | --- | --- | --- |
 | P-09 | Secondary button, pressed: the label becomes `primary-600` (today `primary-400`). **Visible change.** | The designer bound it to the same token as the ghost button. Every other accent pressable darkens its text when pressed (ghost 600, link 700, collapsible 700/800, tertiary 500→800); secondary has no pressed text class at all, which reads as an omission. | Split the token and keep `primary-400`. |
-| P-10 | Ghost button, hover: stays white as today, with its own code-only token. | The designer's `bg/surface/hover` (grey 50) equals the page background in Figma, so the hover would be invisible on the page. White is invisible on a card; the kit's pattern for transparent elements is a tint. Candidate: `bg/surface/transparent-hover`. | Take the designer's grey 50; or the tint (new design change). |
+| P-10 | Ghost button, hover: stays white as today, with its own code-only token `bg/surface/ghost-hover`. | The designer's `bg/surface/hover` (grey 50) equals the page background in Figma, so the hover would be invisible on the page. White is invisible on a card; the kit's pattern for transparent elements is a tint. Candidate: `bg/surface/transparent-hover`. | Take the designer's grey 50; or the tint (new design change). |
 | P-11 | Ghost button background stays transparent. | Figma binds `bg/body`, which would paint a grey box on a card. | Follow Figma. |
 | P-12 | Four code-only border tokens (`border/accent/fill`, `-hover`, `-active`, `border/surface/fill-disabled`) alias the fill colour. | Today the 1px border of primary and disabled buttons is painted in the fill colour; Figma has no stroke; a transparent border was not pixel-identical. | Remove the border (visible at corners). |
 | P-13 | Focus ring keeps today's `*-200` colour through new code-only `ring/*/focus` tokens; the ring offset stays white. | Figma has no ring tokens; it binds primitive `*-400` and offsets with `bg/body`. | Take the Figma ring (visible change; fixes a 2:1 contrast issue noted in the tokens). |
@@ -59,6 +59,8 @@ full conflict list), `semantic-colors.parity.json` (the value each token has in 
 | P-18 | Code-only `shadow/surface/md` (5 uses) and `shadow/accent/md` (2 uses). | Figma covers three shadow sizes; code uses six. | Leave those shadows unconverted. |
 | P-19 | Role calls made in the mapping, least certain first: neutral text and fill levels sit one step lighter than Figma (text 800/500/400, fills 50/100); input focus is treated as "active"; keyboard highlight and focus are treated as "hover"; checked marks use `icon-accent-selected`; selected parts use the `surface` group; blue static text is `text-accent-primary`; the DAO avatar disc is `bg-brand-solid`; an open accordion item is "selected"; the tab trigger's underline is `border-surface-selected`. | Judgement from the code, not script-verified. | Each is reconciled against the Figma bindings. |
 | P-20 | Focus rings on other components use `focus-ring ring-<group>-focus` without a variant on the colour class (Button uses `focus-visible:`). | The `focus-visible:` form would lose the ring on wrappers using `:has(:focus-visible)`, e.g. the accordion item. | Unify both forms later. |
+| P-26 | Code-only `border/surface/open` (today's `neutral-300`) for the open dropdown trigger, passed only to tertiary and critical triggers. | The trigger overrides Button's border by passing a class; with semantic names the winner flipped by class-name order. The new name sorts so it wins as before. Fragile by nature: overriding a kit component's colour through `className` depends on name order. | Give Button an explicit "open" state. |
+| P-27 | The data list item's `shadow-neutral-sm` stays primitive. | A consumer passes `shadow-none`, which won only by name order; the semantic name would flip it (found by the screenshot run, 16 stories). | Make the item's shadow an explicit prop. |
 | P-21 | Three classes in `dataListFilterStatus.tsx` are left unconverted. | The loading text is blue today only through class ordering; renamed, it would turn grey. Needs the code to choose the colour explicitly. | Fix the component, then convert. |
 
 ### Tooling and repo
@@ -148,6 +150,19 @@ Status of all: `DESIGNER`, with the Figma bindings as evidence.
 | G-08 | `neutral-25` has no counterpart in the Figma grey ramp. | DESIGNER |
 | G-09 | Some components still bind primitives directly in Figma (seen on Cards and Forms); they will not respond to the mode switch there. | DESIGNER |
 | G-10 | No semantic layer for spacing, radius or type in Figma. Out of scope for this pass (O-02). | — |
+
+### Seen in the dark theme after the kit conversion
+
+From screenshots of all 304 stories in dark. Each traces back to an item above. The "next" theme looks coherent.
+
+| ID | What is wrong | Cause |
+| --- | --- | --- |
+| D-01 | Dialog and alert-dialog headers, footers and the overlay keep light gradients: a white-to-grey frame and a backdrop fading to near-white. | U-01 (gradient utilities not converted) |
+| D-02 | Proposal-voting stage and open accordion headers show a white gradient behind white text ("Stage 1" is invisible). | U-01 |
+| D-03 | Info, warning and success tags have pale fills with light text; unreadable. | C-01 |
+| D-04 | Avatar and member placeholders are light-grey discs. | C-09 |
+| D-05 | Breakdown and divider borders in proposal voting are bright white lines. | U-01 (single-side borders) |
+| D-06 | Hover, pressed and disabled states of converted components are not covered by the screenshot run (only Button and the dropdown trigger were captured in those states). | Tooling gap; add state captures (T-06) |
 
 ## 7. Palette change (reviewed separately, O-06)
 
