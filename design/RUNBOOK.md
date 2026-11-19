@@ -81,7 +81,12 @@ the design. At handover the default is what the engineer builds, and on the refe
 the app has. A variant that lost can be cleaned out later, like a feature flag.
 
 The branch's diff against the reference branch, limited to `design/canvas`, is now the design:
-`git diff <reference>...<branch> -- design/canvas`.
+`git diff <reference>...<branch> -- design/canvas ':!design/canvas/canvas.json'`.
+
+`canvas.json` is left out on purpose. It records where frames sit on the canvas, not what the app should look like,
+and the canvas editor rewrites the whole file whenever a frame is moved by hand (in the first real round trip, about
+1,700 changed lines for one frame removed and one moved). GitHub shows it collapsed as a generated file. Also
+expect, and ignore, a re-quoted `data-props` line where a tweak's default was changed on the canvas.
 
 ## Publish: branch → its canvas
 
