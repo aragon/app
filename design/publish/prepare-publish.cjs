@@ -4,7 +4,7 @@
 //
 // A canvas loads images only from its asset store (an upload answers with a /_blob/<id> url); a path such as
 // assets/mock/avatar/meridian.svg shows nothing on the canvas. The repo keeps paths. The canvas pointer file
-// (design/canvases/prototypes.json, `assets`) records, per image, the url of its upload and the sha256 of the file
+// (design/canvases/<name>.json, `assets`) records, per image, the url of its upload and the sha256 of the file
 // uploaded; this script replaces each path with that url in the copies it writes.
 //
 // An image that has no upload yet, or whose file changed since, is listed and copied ready to upload to
@@ -14,17 +14,21 @@
 // Image paths must be written out literally in the canvas files ('assets/networks/base.svg'), never built in code,
 // or this script cannot find them.
 //
-//   node design/publish/prepare-publish.cjs <folder>
+//   node design/publish/prepare-publish.cjs <folder> [canvas name, default: prototypes]
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { APP_ASSETS, CANVAS, POINTER, REPO, die } = require('./paths.cjs');
+const { APP_ASSETS, CANVAS, REPO, die, pointerFile } = require('./paths.cjs');
 
 const out = process.argv[2];
-if (!out || process.argv.length > 3) {
-    die('Usage: node design/publish/prepare-publish.cjs <folder>');
+if (!out || process.argv.length > 4) {
+    die('Usage: node design/publish/prepare-publish.cjs <folder> [canvas name]');
 }
-const pointer = JSON.parse(fs.readFileSync(POINTER, 'utf8'));
+const POINTER = pointerFile(process.argv[3]);
+// A canvas with no record yet (a new one) has no uploads: every image is listed for upload.
+const pointer = fs.existsSync(POINTER)
+    ? JSON.parse(fs.readFileSync(POINTER, 'utf8'))
+    : {};
 const uploaded = pointer.assets ?? {};
 
 // Every file of the canvas, by its path on the canvas (under project/): the canvas folder and the app-owned images.

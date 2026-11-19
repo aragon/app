@@ -28,7 +28,8 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 | `canvas/assets/mock/` | Mock DAO avatars and token logos |
 | `app-assets.json` | Images the prototypes show that belong to the app (chain logos), by path in the repo |
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
-| `publish/` | Two scripts that prepare the files for a canvas (see Publishing) |
+| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, and lay the canvas out |
+| `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, pulling a designer's changes into a branch, publishing |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
 
 The prototypes:
@@ -90,7 +91,7 @@ node design/publish/prepare-publish.cjs <folder>
 ```
 
 writes the files to `<folder>/project/` with each image path swapped for that image's upload on the canvas, as
-recorded in `canvases/prototypes.json`. The session then publishes that folder to the canvas with its Artifact tool.
+recorded in `canvases/prototypes.json` (a second canvas has a record of its own: pass its name as a second argument). The session then publishes that folder to the canvas with its Artifact tool.
 If an image has no upload yet, the script lists it; after uploading, `publish/record-assets.cjs` records the urls.
 
 The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are installed on the canvas from the
@@ -101,9 +102,9 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - **A check.** The load check used in the test is `design/baseline-check/render-canvas.cjs` on `docs/design-canvas`.
 - **Reference screenshots, the mock backend and the static screens.** They are on `docs/design-canvas`. They are what
   an agent looks at to build a prototype for an area that has none.
-- **A way back from the canvas.** Copying a designer's edits from the canvas into these files is done by a Claude Code
-  session reading the canvas's files and reversing the image swap. `docs/design-canvas` has a runbook for it; it has not
-  been exercised on a real design change.
+- **A proven design → code loop.** `RUNBOOK.md` describes it: one canvas and one branch per ticket, spun up from these
+  files, with `publish/pull-canvas.cjs` bringing the designer's changes back as a diff. Publishing and pulling with
+  no change gives an empty diff locally. It has not been run against a second canvas or on a real design change.
 
 ## Known gaps in the prototypes
 

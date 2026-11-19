@@ -3,18 +3,21 @@
 // the file uploaded), for prepare-publish.cjs. Takes a JSON file mapping each image's canvas path (e.g.
 // "assets/mock/avatar/meridian.svg") to the url the upload answered with.
 //
-//   node design/publish/record-assets.cjs <uploads.json>
+//   node design/publish/record-assets.cjs <uploads.json> [canvas name, default: prototypes]
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { APP_ASSETS, CANVAS, POINTER, REPO, die } = require('./paths.cjs');
+const { APP_ASSETS, CANVAS, REPO, die, pointerFile } = require('./paths.cjs');
 
 const input = process.argv[2];
-if (!input || process.argv.length > 3) {
-    die('Usage: node design/publish/record-assets.cjs <uploads.json>');
+if (!input || process.argv.length > 4) {
+    die('Usage: node design/publish/record-assets.cjs <uploads.json> [canvas name]');
 }
+const POINTER = pointerFile(process.argv[3]);
 const uploads = JSON.parse(fs.readFileSync(input, 'utf8'));
-const pointer = JSON.parse(fs.readFileSync(POINTER, 'utf8'));
+const pointer = fs.existsSync(POINTER)
+    ? JSON.parse(fs.readFileSync(POINTER, 'utf8'))
+    : {};
 pointer.assets = pointer.assets ?? {};
 for (const [canvasPath, url] of Object.entries(uploads)) {
     const appOwned = APP_ASSETS[canvasPath];
