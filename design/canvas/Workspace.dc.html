@@ -276,27 +276,26 @@ class Component extends DCLogic {
     return { nonce, nonceText: String(nonce), required, txs };
   }
   // The wallet's to-dos (apps/app: useWorkspaceTodoData): ACTIVE proposals it can vote on, soonest deadline first, then the live Safe transactions it
-  // has not signed, by nonce. One row shape for every list: title = the thing to act on, identifier, description = account · urgency (`short` = the
-  // urgency alone, for the per-account page), and the action tag, styled the same for Vote and Sign.
+  // has not signed, by nonce. A proposal row carries what the kit's proposal list item takes (id, title, summary, context = the stage, end, publisher,
+  // tag = the account); a Safe row carries the same slots (id = #nonce, title, summary = what it calls, queued, signatures, account). The per-account
+  // page drops the account (tag / showAccount).
   todoRows(safe) {
     const day = 86400000, hour = 3600000, now = Date.now();
     const ov = window.__nspState || {}, at = window.__atlasDao || {};
-    const left = (ms) => GovUiKit.formatterUtils.formatDate(ms, { format: GovUiKit.DateFormat.DURATION }) + ' left';
     const list = [];
-    const prop = (acct, account, avatar, slug, title, end) => list.push({
-      acct, isDao: true, isSafe: false, account, avatar, title, identifier: slug, description: account + ' · ' + left(end), short: left(end), end,
-      action: 'Vote', tagVariant: 'primary', href: '#nav:account:' + acct + ':proposal:' + slug
+    const prop = (acct, account, slug, title, summary, end, address, name, context) => list.push({
+      acct, isDao: true, isSafe: false, account, tag: account, id: slug, title, summary, end, context,
+      publisher: { address, name, link: '#nav:account:' + acct + ':member:' + address }, href: '#nav:account:' + acct + ':proposal:' + slug
     });
-    prop('meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
-    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
-    if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', now + (ov.adv8 ? 7 : 3) * day + hour);
-    if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', now + 4 * day + hour);
+    prop('meridian', 'Meridian DAO', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', now + 3 * day + hour, '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth');
+    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'AGC-5', 'Grant: Wallet accessibility audit', 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', now + 6 * day + hour, '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth');
+    if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', 'Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook.', now + (ov.adv8 ? 7 : 3) * day + hour, '0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth', ov.adv8 ? 'Community veto' : 'Council approval');
+    if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', 'Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement.', now + 4 * day + hour, '0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81', 'ines-alvarez.eth', 'Community veto');
     list.sort((a, b) => a.end - b.end);
     safe.txs.filter((t) => !t.executed && !t.signedByMe && t.count < t.required).sort((a, b) => a.nonce - b.nonce).forEach((t) => list.push({
-      acct: 'safe', isDao: false, isSafe: true, account: 'Northstar Council Safe', avatar: '', title: 'Safe transaction',
-      identifier: '#' + t.nonce + (t.tag ? ' · ' + t.tag : ''), description: 'Northstar Council Safe · ' + t.count + ' of ' + t.required + ' signatures',
-      short: t.count + ' of ' + t.required + ' signatures',
-      nonce: t.nonce, count: t.count, required: t.required, action: 'Sign', tagVariant: 'primary', href: '#nav:account:safe:transactions'
+      acct: 'safe', isDao: false, isSafe: true, account: 'Northstar Council Safe', showAccount: true, id: '#' + t.nonce, title: t.title,
+      summary: t.fn + (t.tag ? ' · ' + t.tag : ''), queued: t.queued, signatures: t.count + ' of ' + t.required + ' signatures',
+      nonce: t.nonce, count: t.count, required: t.required, href: '#nav:account:safe:transactions'
     }));
     return list;
   }

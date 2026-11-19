@@ -59,17 +59,8 @@
               <sc-if value="{{hasTodos}}" hint-placeholder-val="{{true}}">
                 <div class="ws-account-list">
                   <sc-for list="{{preview}}" as="t" hint-placeholder-count="3">
-                    <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t.href}}">
-                      <div class="ws-summary">
-                        <sc-if value="{{t.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t.account}}" src="{{t.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
-                        <sc-if value="{{t.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
-                        <div class="ws-summary__text">
-                          <div class="ws-summary__title"><span>{{t.title}}</span><span class="ws-summary__identifier">{{t.identifier}}</span></div>
-                          <p class="ws-summary__description">{{t.description}}</p>
-                        </div>
-                        <x-import component-from-global-scope="GovUiKit.Tag" label="{{t.action}}" variant="{{t.tagVariant}}" class-name="shrink-0"></x-import>
-                      </div>
-                    </x-import>
+                    <sc-if value="{{t.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="{{t.id}}" title="{{t.title}}" summary="{{t.summary}}" status="ACTIVE" status-context="{{t.context}}" date="{{t.end}}" publisher="{{t.publisher}}" tag="{{t.tag}}" href="{{t.href}}"></x-import></sc-if>
+                    <sc-if value="{{t.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex flex-col gap-y-4 py-4 md:gap-y-4 md:py-6" href="{{t.href}}"><div class="flex min-h-6 w-full items-center justify-between gap-x-4 md:gap-x-6"><div class="flex min-w-0 items-center gap-x-1"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="shrink-0"></x-import></div><div class="flex shrink-0 items-center gap-x-2 md:gap-x-3"><span class="text-sm leading-tight text-info-800 md:text-base">{{t.queued}}</span><x-import component-from-global-scope="GovUiKit.StatePingAnimation" variant="info"></x-import></div></div><div class="flex flex-col gap-y-1"><x-import component-from-global-scope="GovUiKit.Heading" as="h2" size="h3" class-name="flex gap-x-2 md:gap-x-3"><span class="shrink-0 text-neutral-500">{{t.id}}</span><span class="line-clamp-1 text-neutral-800">{{t.title}}</span></x-import><p class="m-0 line-clamp-2 leading-normal text-neutral-500 md:text-lg">{{t.summary}}</p></div><div class="flex items-center justify-between gap-x-4 md:gap-x-6"><p class="m-0 min-h-5 truncate text-sm leading-tight text-neutral-500 md:min-h-6 md:text-base">{{t.signatures}}</p><sc-if value="{{t.showAccount}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{t.account}}" variant="primary" class-name="shrink-0"></x-import></sc-if></div></x-import></sc-if>
                   </sc-for>
                 </div>
               </sc-if>
@@ -118,7 +109,7 @@
 // PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (unused, 'all').
 // All-accounts overview (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx, components
 // workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more;
-// DESIGN CHANGE from the app: the rows are the to-dos page's list items, whole row a link, not a card of rows with buttons),
+// DESIGN CHANGE from the app: the rows are the to-dos page's rows, see WsTodos.dc.html, not a card of rows with buttons),
 // the accounts list (each row -> account:<id>:overview), Resources aside. 0 targets, so no Targets section (as in the app).
 // To-dos follow the app's rules: ACTIVE proposals the wallet can vote on, then Safe transactions it can sign. Their state is
 // derived from the DAO prototypes' shared state (window.__atlasDao /
