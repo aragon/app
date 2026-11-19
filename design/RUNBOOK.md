@@ -19,11 +19,16 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
 ## Start a ticket: a new canvas from the repo
 
 1. Branch off the reference branch. Pick a short canvas name (`proposal-filters`).
-2. Create an empty Design canvas with the Artifact tool (`action: "quickstart"`, `intent: "design"`, then publish
-   with the Design type's `type_url` and a title). Note its url.
-3. Give it the Governance UI Kit: copy the eight files under `project/ds/aragon-gov-ui-kit/` from the reference
-   canvas (the `files` map of a publish takes `{ "artifact": "<reference canvas url>", "path": "…" }`, a server-side
-   copy). The prototypes load the kit from that folder.
+2. Create an empty Design canvas with the Artifact tool: `action: "quickstart"`, `intent: "design"` names the Design
+   type; publish with its `type_url` and a title, no files. Note the new canvas's url. The create result carries the
+   type's own instructions: follow them for how files are published, but **do not use the organisation's default
+   design system** (it is the marketing brand). The prototypes use the Governance UI Kit only.
+3. Give the canvas the kit. The prototypes load it from `project/ds/aragon-gov-ui-kit/`. Copy that folder's files
+   from the reference canvas: list the reference canvas's files (`action: "list"`, `scope: "files"`, its url from
+   `canvases/prototypes.json`), then publish to the new canvas with a `files` map entry per kit file,
+   `"project/ds/aragon-gov-ui-kit/…": { "artifact": "<reference canvas url>", "path": "project/ds/aragon-gov-ui-kit/…" }`
+   (a server-side copy). If the Design type offers its own way to attach the "Aragon Governance UI Kit" design
+   system and it produces the same folder, that is fine too; say which you used.
 4. `node design/publish/prepare-publish.cjs <folder> <name>` lists every image as needing an upload and copies them
    to `<folder>/uploads/`. Upload them to the new canvas (publish with `url`, `asset: true`, `file_paths`, up to 25
    a call). Write a JSON file mapping each image's path to the url its upload answered with, and run
