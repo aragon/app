@@ -314,7 +314,7 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 **References**
 
-- `kit:src/core/components/button/button.tsx:194`
+- `kit:src/core/components/button/button.tsx:195`
 - `kit:src/core/components/button/button.stories.tsx:1`
 
 ### Card
@@ -733,7 +733,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72`
+- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:76`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
 
 ### Dropdown.Item

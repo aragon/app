@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "a009e52f6ee7d8455d3bc8fbfc5c3978bb6b9c6f08013895dab36736aa53d3a8",
+            "sha256": "601e9b6423ae6bea1a0abd5b902a43f461981fa818959bf9517988fd78152e65",
             "totalRecords": 394,
             "entryCount": 145,
             "uiEntryCount": 138,
@@ -602,7 +602,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/button/button.tsx:194",
+                "source": "kit:src/core/components/button/button.tsx:195",
                 "stories": [
                     "kit:src/core/components/button/button.stories.tsx:1"
                 ]
@@ -1539,7 +1539,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
+                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:76",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
                 ]
