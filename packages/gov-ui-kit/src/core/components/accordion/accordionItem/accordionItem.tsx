@@ -17,11 +17,11 @@ export const AccordionItem = forwardRef<HTMLDivElement, IAccordionItemProps>((pr
     const { children, className, disabled, value, ...otherProps } = props;
 
     const accordionItemClasses = classNames(
-        'w-full overflow-hidden rounded-xl border border-neutral-100 bg-neutral-0', // base
-        'data-disabled:border-neutral-200', // disabled
-        'data-[state=open]:border-neutral-200 data-[state=open]:shadow-neutral-sm', // open
-        'hover:border-neutral-200 hover:shadow-neutral-sm', // hover
-        'focus-ring-primary active:border-neutral-400', // active / focus
+        'w-full overflow-hidden rounded-xl border border-surface-default bg-surface-default', // base
+        'data-disabled:border-surface-disabled', // disabled
+        'data-[state=open]:border-neutral-200 data-[state=open]:shadow-surface-sm', // open
+        'hover:border-surface-hover hover:shadow-surface-sm', // hover
+        'focus-ring ring-accent-focus active:border-surface-active', // active / focus
         className,
     );
 

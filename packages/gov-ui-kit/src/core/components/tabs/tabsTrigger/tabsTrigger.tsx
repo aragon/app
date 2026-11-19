@@ -24,13 +24,13 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
     const { isUnderlined } = useContext(TabsContext);
 
     const triggerClassNames = classNames(
-        'group line-clamp-1 flex items-center gap-x-4 rounded-t border-primary-400 py-3 text-base leading-tight font-normal', // Base
-        'active:data-[state=active]:text-neutral-800 active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-primary-400', // Active state
+        'group line-clamp-1 flex items-center gap-x-4 rounded-t border-surface-selected py-3 text-base leading-tight font-normal', // Base
+        'active:data-[state=active]:text-surface-active active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-primary-400', // Active state
         'focus:outline-hidden', // Focus state
         { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-neutral-800': isUnderlined && !disabled }, //  Underlined & enabled variant
-        'data-[state=active]:text-neutral-800 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-primary-400', // Active selection
-        { 'cursor-pointer text-neutral-500 hover:text-neutral-800': !disabled }, // Enabled state
-        { 'text-neutral-300': disabled }, // Disabled state
+        'data-[state=active]:text-surface-selected data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-primary-400', // Active selection
+        { 'cursor-pointer text-surface-default hover:text-neutral-800': !disabled }, // Enabled state
+        { 'text-surface-disabled': disabled }, // Disabled state
         className,
     );
 

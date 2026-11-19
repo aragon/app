@@ -35,8 +35,8 @@ export interface IAvatarIconProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const avatarVariantToIconClassNames: Record<AvatarIconVariant, string> = {
-    neutral: 'text-neutral-400',
-    primary: 'text-primary-400',
+    neutral: 'icon-surface-primary',
+    primary: 'icon-accent-primary',
     critical: 'text-critical-600',
     info: 'text-info-600',
     success: 'text-success-600',
@@ -44,13 +44,13 @@ const avatarVariantToIconClassNames: Record<AvatarIconVariant, string> = {
 };
 
 const avatarVariantToContainerClassNames: Record<AvatarIconVariant | 'white', string> = {
-    neutral: 'bg-neutral-50',
-    primary: 'bg-primary-50',
-    critical: 'bg-critical-100',
-    info: 'bg-info-100',
-    success: 'bg-success-100',
-    warning: 'bg-warning-100',
-    white: 'bg-neutral-0',
+    neutral: 'bg-surface-secondary',
+    primary: 'bg-accent-subtle',
+    critical: 'bg-critical-subtle',
+    info: 'bg-info-subtle',
+    success: 'bg-success-subtle',
+    warning: 'bg-warning-subtle',
+    white: 'bg-surface-primary',
 };
 
 const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarIconSize> = {

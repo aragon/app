@@ -64,8 +64,8 @@ const responsiveSizeClassNames: ResponsiveAttributeClassMap<SpinnerSize> = {
 };
 
 const variantToClassNames: Record<SpinnerVariant, string> = {
-    neutral: 'border-neutral-100',
-    primary: 'border-primary-100',
+    neutral: 'border-surface-primary',
+    primary: 'border-accent-primary',
     primaryInverted: 'border-primary-300',
     success: 'border-success-300',
     warning: 'border-warning-300',

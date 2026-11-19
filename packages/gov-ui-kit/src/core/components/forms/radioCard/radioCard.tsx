@@ -52,18 +52,18 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 focus-ring-primary', // default
-        'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl md:px-6 md:py-4', // default
-        'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // checked
-        'hover:border-neutral-200 hover:shadow-neutral hover:data-[state=checked]:shadow-primary-md', // hover
-        'disabled:cursor-default disabled:border-neutral-200 disabled:bg-neutral-100 disabled:shadow-none', // disabled
+        'group flex w-full flex-col gap-3 rounded-xl border border-surface-default bg-surface-default px-4 py-3 focus-ring ring-accent-focus', // default
+        'cursor-pointer outline-hidden transition-all shadow-surface-sm md:rounded-2xl md:px-6 md:py-4', // default
+        'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
+        'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
+        'disabled:cursor-default disabled:border-surface-disabled disabled:bg-surface-disabled disabled:shadow-none', // disabled
         'disabled:data-[state=checked]:border-neutral-300 disabled:data-[state=checked]:shadow-none', // disabled & checked
         className,
     );
 
     const labelClasses = classNames(
-        'w-full truncate text-left text-neutral-500 group-disabled:text-neutral-300 md:text-base',
-        'group-data-[state=checked]:text-neutral-800 group-data-[state=checked]:group-disabled:text-neutral-800',
+        'w-full truncate text-left text-surface-default group-disabled:text-surface-disabled md:text-base',
+        'group-data-[state=checked]:text-surface-selected group-data-[state=checked]:group-disabled:text-surface-selected',
     );
 
     return (
@@ -86,7 +86,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                             {label}
                         </p>
                         {description && (
-                            <p className="w-full truncate text-left text-neutral-500 group-disabled:text-neutral-300">
+                            <p className="w-full truncate text-left text-surface-secondary group-disabled:text-surface-disabled">
                                 {description}
                             </p>
                         )}
@@ -94,10 +94,10 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                     {tag && <Tag {...tag} />}
                 </div>
                 <span className={classNames({ 'h-full': description })}>
-                    <Icon className="text-neutral-300 group-data-[state=checked]:hidden" icon={IconType.RADIO} />
+                    <Icon className="icon-surface-secondary group-data-[state=checked]:hidden" icon={IconType.RADIO} />
                     <RadioGroupIndicator>
                         <Icon
-                            className="text-primary-400 group-disabled:text-neutral-500"
+                            className="icon-accent-selected group-disabled:text-neutral-500"
                             icon={IconType.RADIO_SELECTED}
                         />
                     </RadioGroupIndicator>

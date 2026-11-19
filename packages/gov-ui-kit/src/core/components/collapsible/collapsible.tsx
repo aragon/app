@@ -161,7 +161,7 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
     );
 
     return (
-        <div className={classNames('relative', { 'bg-neutral-0': showOverlay }, className)} {...otherProps}>
+        <div className={classNames('relative', { 'bg-surface-primary': showOverlay }, className)} {...otherProps}>
             <div
                 className="relative overflow-hidden transition-all"
                 data-testid="collapsible-content"
@@ -206,13 +206,13 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                         <button
                             aria-controls={contentId}
                             aria-expanded={isOpen}
-                            className="group flex cursor-pointer items-center text-primary-400 hover:text-primary-600 active:text-primary-800"
+                            className="group flex cursor-pointer items-center text-accent-default hover:text-primary-600 active:text-primary-800"
                             onClick={toggle}
                             type="button"
                         >
                             {isOpen ? buttonLabelOpened : buttonLabelClosed}
                             <Icon
-                                className="ml-2 text-primary-300 group-hover:text-primary-500 group-active:text-primary-700"
+                                className="ml-2 icon-accent-default group-hover:text-primary-500 group-active:text-primary-700"
                                 icon={isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN}
                                 size="sm"
                             />

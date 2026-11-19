@@ -43,10 +43,10 @@ const responsiveIndicatorSizeClassNames: ResponsiveAttributeClassMap<ProgressSiz
 };
 
 const variantToClassNames: Record<ProgressVariant, string> = {
-    primary: 'bg-primary-400',
+    primary: 'bg-accent-solid',
     neutral: 'bg-neutral-400',
     success: 'bg-success-400',
-    critical: 'bg-critical-500',
+    critical: 'bg-critical-solid',
 };
 
 /**
@@ -82,7 +82,7 @@ export const Progress: React.FC<IProgressProps> = (props) => {
     return (
         <div className="relative w-full">
             <RadixProgress.Root
-                className={classNames('overflow-hidden rounded-xl bg-neutral-100', sizeClassNames, className)}
+                className={classNames('overflow-hidden rounded-xl bg-surface-tertiary', sizeClassNames, className)}
                 value={processedValue}
                 {...otherProps}
             >

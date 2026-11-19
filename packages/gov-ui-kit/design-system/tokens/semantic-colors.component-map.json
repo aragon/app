@@ -1,5 +1,9 @@
 {
     "$description": "Mechanical mapping from primitive colour classes to semantic colour token classes for every kit component except Button (already converted in bde797e). Paths are relative to packages/gov-ui-kit. For each file, `entries` lists every primitive colour class occurrence in source order: `old` is the class exactly as written (variant prefix included), `new` its exact replacement (one or more classes; every class keeps the variant prefix of `old`) or null when the class stays as it is, with the reason. Apply entries by line; when a line holds the same `old` twice, entries are in column order. Validated by scripts/validate-semantic-component-map.mjs, which proves that every replacement keeps the default-theme colour.",
+    "applied": {
+        "base": "b7b8692",
+        "lines": "Line numbers describe the sources at b7b8692, before applying; Biome then re-sorted and re-wrapped edited lines."
+    },
     "conventions": [
         "Role first, value second: a part takes a level role (primary/secondary/tertiary) when its colour does not react to interaction, and state roles (default/hover/active/selected/disabled) when its own colour changes on hover, press, focus or selection. A part that only dims when disabled stays a level token and uses */disabled for the disabled variant.",
         "Static text levels in today’s colours: text/surface/primary = neutral-800 (titles, values), secondary = neutral-500 (descriptions), tertiary = neutral-400 (meta lines); static fills: bg/surface/primary = neutral-0, secondary = neutral-50 (skeletons, icon wells), tertiary = neutral-100 (tracks, neutral tag); static borders: border/surface/primary = neutral-100.",
@@ -5844,37 +5848,44 @@
         "src/core/components/avatars/avatarIcon/avatarIcon.test.tsx": [
             {
                 "line": 27,
-                "old": "bg-neutral-0"
+                "old": "bg-neutral-0",
+                "new": "bg-surface-primary"
             }
         ],
         "src/core/components/dataList/dataListActionItem/dataListActionItem.test.tsx": [
             {
                 "line": 28,
-                "old": "text-primary-400"
+                "old": "text-primary-400",
+                "new": "text-accent-primary"
             },
             {
                 "line": 34,
-                "old": "text-neutral-500"
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary"
             }
         ],
         "src/core/components/forms/inputSearch/inputSearch.test.tsx": [
             {
                 "line": 49,
-                "old": "text-neutral-600"
+                "old": "text-neutral-600",
+                "new": null
             },
             {
                 "line": 53,
-                "old": "text-neutral-600"
+                "old": "text-neutral-600",
+                "new": null
             }
         ],
         "src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.test.tsx": [
             {
                 "line": 88,
-                "old": "text-neutral-500"
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary"
             },
             {
                 "line": 167,
-                "old": "text-neutral-500"
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary"
             }
         ]
     }

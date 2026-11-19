@@ -25,13 +25,13 @@ describe('<DataList.ActionItem /> component', () => {
     it('applies primary variant classes when variant is primary', () => {
         render(createTestComponent({ variant: 'primary' }));
         const button = screen.getByRole('button');
-        expect(button.className).toContain('text-primary-400');
+        expect(button.className).toContain('text-accent-primary');
     });
 
     it('applies neutral variant classes when variant is neutral', () => {
         render(createTestComponent({ variant: 'neutral' }));
         const button = screen.getByRole('button');
-        expect(button.className).toContain('text-neutral-500');
+        expect(button.className).toContain('text-surface-secondary');
     });
 
     it('calls onClick when clicked', async () => {

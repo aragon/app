@@ -51,10 +51,10 @@ export const VoteProposalDataListItemStructure: React.FC<IVoteProposalDataListIt
             {...otherProps}
         >
             <div className="flex w-full items-center gap-x-1 leading-tight md:gap-x-1.5 md:text-lg">
-                <p className="max-w-full shrink-0 truncate text-neutral-500">{proposalId}</p>
-                <p className="truncate text-neutral-800">{proposalTitle}</p>
+                <p className="max-w-full shrink-0 truncate text-surface-secondary">{proposalId}</p>
+                <p className="truncate text-surface-primary">{proposalTitle}</p>
             </div>
-            <div className="flex items-center gap-x-4 text-sm leading-tight text-neutral-500 md:gap-x-6 md:text-base">
+            <div className="flex items-center gap-x-4 text-sm leading-tight text-surface-secondary md:gap-x-6 md:text-base">
                 <div className="flex items-center gap-x-1 md:gap-x-2">
                     <Tag
                         className="capitalize"

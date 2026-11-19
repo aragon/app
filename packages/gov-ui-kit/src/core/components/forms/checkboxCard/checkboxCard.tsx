@@ -73,18 +73,18 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
 
     const containerClasses = classNames(
         'group flex min-w-0 cursor-pointer flex-col gap-3 outline-hidden transition-all', // Layout
-        'rounded-xl border bg-neutral-0 px-4 py-3 focus-ring-primary md:gap-4 md:px-6 md:py-4', // Style
-        'border-primary-400 shadow-primary hover:shadow-primary-md', // Checked/indeterminate & hover
-        'data-[state=unchecked]:enabled:border-neutral-100 data-[state=unchecked]:enabled:shadow-neutral-sm', // Unchecked
-        'data-[state=unchecked]:enabled:hover:shadow-neutral', // Unchecked hover
-        'disabled:cursor-default disabled:border-neutral-300 disabled:bg-neutral-100 disabled:shadow-none', // Checked/indeterminate & disabled
-        'disabled:data-[state=unchecked]:border-neutral-200', // Disabled & unchecked
+        'rounded-xl border bg-surface-default px-4 py-3 focus-ring ring-accent-focus md:gap-4 md:px-6 md:py-4', // Style
+        'border-surface-selected shadow-accent-default hover:shadow-accent-md', // Checked/indeterminate & hover
+        'data-[state=unchecked]:enabled:border-surface-default data-[state=unchecked]:enabled:shadow-surface-sm', // Unchecked
+        'data-[state=unchecked]:enabled:hover:shadow-surface-default', // Unchecked hover
+        'disabled:cursor-default disabled:border-neutral-300 disabled:bg-surface-disabled disabled:shadow-none', // Checked/indeterminate & disabled
+        'disabled:data-[state=unchecked]:border-surface-disabled', // Disabled & unchecked
         className,
     );
 
     const labelClasses = classNames(
-        'max-w-full cursor-pointer truncate text-neutral-800 group-data-[state=unchecked]:text-neutral-800 md:text-base',
-        'group-data-disabled:cursor-default group-data-[state=unchecked]:group-data-disabled:text-neutral-300',
+        'max-w-full cursor-pointer truncate text-surface-primary group-data-[state=unchecked]:text-surface-primary md:text-base',
+        'group-data-disabled:cursor-default group-data-[state=unchecked]:group-data-disabled:text-surface-disabled',
     );
 
     return (
@@ -105,7 +105,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                         {label}
                     </p>
                     {description && (
-                        <p className="max-w-full truncate text-neutral-500 group-data-disabled:text-neutral-300">
+                        <p className="max-w-full truncate text-surface-secondary group-data-disabled:text-surface-disabled">
                             {description}
                         </p>
                     )}
@@ -113,14 +113,14 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                 {tag && <Tag {...tag} className={classNames(tag.className, { 'self-start': description })} />}
                 <Icon
                     className={classNames(
-                        'mt-0.5 hidden text-neutral-400 group-data-disabled:text-neutral-300 group-data-[state=unchecked]:block md:mt-1',
+                        'mt-0.5 hidden icon-surface-primary group-data-disabled:icon-surface-disabled group-data-[state=unchecked]:block md:mt-1',
                         { 'self-start': description },
                     )}
                     icon={IconType.CHECKBOX}
                     size="md"
                 />
                 <RadixCheckbox.Indicator
-                    className={classNames('mt-0.5 text-primary-400 group-data-disabled:text-neutral-500 md:mt-1', {
+                    className={classNames('mt-0.5 icon-accent-selected group-data-disabled:text-neutral-500 md:mt-1', {
                         'self-start': description,
                     })}
                 >

@@ -39,7 +39,7 @@ export const DialogAlertRoot: React.FC<IDialogAlertRootProps> = (props) => {
 
     const containerClassNames = classNames(
         'fixed inset-x-2 bottom-2 mx-auto max-h-[calc(100vh-80px)] lg:top-12 lg:bottom-auto lg:max-h-[calc(100vh-200px)]',
-        'flex flex-col rounded-xl border border-neutral-100 bg-neutral-0 shadow-neutral-md',
+        'flex flex-col rounded-xl border border-surface-primary bg-surface-primary shadow-surface-md',
         'z-[var(--guk-dialog-alert-content-z-index)]',
         sizeToClassNames[size],
         containerClassName,
