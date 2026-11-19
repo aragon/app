@@ -35,7 +35,7 @@ Today every page sits under `/workspace/{workspaceId}/{accountId | all}/{section
 | Page | URL |
 | --- | --- |
 | Section, aggregated over the scope | `/proposals`, `/assets`, `/members`, `/transactions`, `/overview`, `/todos` |
-| Account page | `/dao/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/safe/{network}/{address}/members` |
+| Account page | `/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/{network}/{address}/members` |
 | Workspace page | `/workspace/{workspaceId}/settings` (the workspace is the subject, so it stays in the path) |
 
 - **Note:** legacy routes (`/`, `/dao/…`, `/safe/…`) must stay unchanged for now, so we must consider prefixing the
@@ -108,13 +108,15 @@ then writes the resolved params into the URL (`router.replace`).
      A `/safe/…` URL with a DAO address must be redirected or rejected.
    - Drop: one route tree. The type comes from `POST /v2/workspaces/query/accounts` (one request per server render,
      already paid today by `LayoutWorkspaceAccount`).
-   - DECISION: go without explicit account type, as long term we want to abstract away most of the specifics of individual account types
+   - DECISION: Drop the account type, long term we want to abstract away account-type specifics. Each page would need to resolve account type and to validate it, and to decide if given page is supported for the given type.
 2. **ENS** in account URLs (carried over from v1).
-   - DECISION: we won't consider it for now
+   - DECISION: we won't consider it for now, not needed for the first version.
 3. What if given param, `ws` or `scope` is not valid?
+   - Invalid means either malformed or "not found"
    - DECISION: we should remove such a param so that it falls back to default case
 4. What happens if someone opens an account-specific page link with a different account filter in the query param?
     - User would see an account-specific page and the account selector would still show account specified by the `scope` param
-    - This could happen only if someone manually construct the URL, so we don't care too muc about this corner case
+    - This could happen only if someone manually constructs the URL, so we don't care too much about this corner case
 5. Do we even need `scope` query param? (if you want to see specific accounts then you have the page route with accounts in it)
-    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with “All accounts” selected)
+    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with "All accounts" selected)
+6. A `/{network}/{address}/…` route at the root catches everything. Static routes like `/proposals` still win, but any unknown path would hit that route, which then has to check the network and return a 404. The legacy-prefix note already says the routes need a prefix. Something like `/account/{network}/{address}/…` would solve both problems.
