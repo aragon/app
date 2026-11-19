@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "6ccfb0e640d5ce4f6f6fc8d6676a0ba5ed95e62d7e92510febcef58c90ba6549",
+            "sha256": "e0a30e01d6d20bac94f500ed49aae9240fa90147af81156c50dcb9a1e2a74c00",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -1676,7 +1676,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:24",
+                "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:30",
                 "stories": []
             }
         },

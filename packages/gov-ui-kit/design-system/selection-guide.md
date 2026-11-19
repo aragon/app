@@ -2347,7 +2347,7 @@ ENS name validation and compact display helpers.
 
 **References**
 
-- `kit:src/modules/utils/ensUtils/ensUtils.ts:24`
+- `kit:src/modules/utils/ensUtils/ensUtils.ts:30`
 
 ### formatterUtils
 
