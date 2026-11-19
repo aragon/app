@@ -130,7 +130,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   for this package. Install policy and the dependency catalog are at the repo root.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
 - `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`. Plain Node, no
-  framework; keep new checks in that shape.
+  framework; keep new checks in that shape. `scripts/README.md` covers the local screenshot comparison
+  (`pnpm visual-diff`) and the primitive-colour lint (`pnpm lint:colors:report`).
 - `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.
 - Root `AGENTS.md` — monorepo layout, release scopes, CI split and Turbo caching.
 - `.github/workflows/app-development.yml` — CI truth for the type/lint/test gates (all workspaces);
