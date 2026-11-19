@@ -43,6 +43,7 @@
                 "!src/modules/components/dao/**",
                 "!src/modules/components/gukModulesProvider/**",
                 "!src/modules/components/member/**",
+                "!src/modules/components/proposal/**",
                 "!src/modules/components/smartContract/**",
                 "!src/modules/components/vote/**"
             ]
@@ -68,6 +69,7 @@
                 "src/modules/components/dao/**",
                 "src/modules/components/gukModulesProvider/**",
                 "src/modules/components/member/**",
+                "src/modules/components/proposal/**",
                 "src/modules/components/smartContract/**",
                 "src/modules/components/vote/**",
                 "!**/*.test.ts",
@@ -99,6 +101,7 @@
                 "!src/modules/components/dao/**",
                 "!src/modules/components/gukModulesProvider/**",
                 "!src/modules/components/member/**",
+                "!src/modules/components/proposal/**",
                 "!src/modules/components/smartContract/**",
                 "!src/modules/components/vote/**"
             ]
@@ -124,6 +127,7 @@
                 "src/modules/components/dao/**",
                 "src/modules/components/gukModulesProvider/**",
                 "src/modules/components/member/**",
+                "src/modules/components/proposal/**",
                 "src/modules/components/smartContract/**",
                 "src/modules/components/vote/**"
             ]
