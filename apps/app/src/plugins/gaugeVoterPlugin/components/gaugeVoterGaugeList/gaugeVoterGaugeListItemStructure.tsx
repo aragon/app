@@ -134,7 +134,10 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
     const itemClassName = classNames(
         'flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6',
         {
-            'border-primary-300 hover:border-primary-300': isSelected,
+            // Per-axis border colours: they are emitted after the item's own `border-surface-*` classes, so they
+            // replace its default and hover borders, while its pressed border still wins as it did before.
+            'border-x-primary-300 border-y-primary-300 hover:border-x-primary-300 hover:border-y-primary-300':
+                isSelected,
         },
     );
     // Avatar created through the app should always be in ipfs://cid format, but there might be a case where avatar is set

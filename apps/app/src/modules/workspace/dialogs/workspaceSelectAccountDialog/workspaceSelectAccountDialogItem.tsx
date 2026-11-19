@@ -76,9 +76,9 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:shadow-primary!':
                     isActive,
-                'border-neutral-100 bg-neutral-50': isDisabled,
+                'border-neutral-100 bg-surface-secondary': isDisabled,
             })}
             {...otherProps}
             {...(isDisabled ? { onClick: undefined } : {})}
