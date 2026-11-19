@@ -1,1 +1,5 @@
-export { type IPageMainSectionProps, PageMainSection } from './pageMainSection';
+export {
+    type IPageMainSectionActionProps,
+    type IPageMainSectionProps,
+    PageMainSection,
+} from './pageMainSection';

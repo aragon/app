@@ -1,9 +1,19 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { useWorkspace } from '@/modules/workspace/api/workspaceService';
+import { Spinner } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
+import {
+    useWorkspace,
+    workspaceService,
+    workspaceServiceKeys,
+} from '@/modules/workspace/api/workspaceService';
 import { WorkspaceGate } from '@/modules/workspace/components/workspaceGate';
+import { WorkspaceDialogId } from '@/modules/workspace/constants/workspaceDialogId';
+import workspaceDemoFixture from '@/modules/workspace/fixtures/workspaceDemo.fixture.json';
+import { workspaceWelcomeUtils } from '@/modules/workspace/utils/workspaceWelcomeUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { NavigationWorkspace } from '../../navigations/navigationWorkspace';
 import { LayoutSidebar } from '../layoutSidebar';
 
@@ -33,16 +43,100 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
     props,
 ) => {
     const { workspaceId, children } = props;
+    const queryClient = useQueryClient();
+    const { open } = useDialogContext();
+    const isDemoWorkspace = Object.hasOwn(workspaceDemoFixture, workspaceId);
+    const [readyWorkspaceId, setReadyWorkspaceId] = useState<
+        string | undefined
+    >(() => (isDemoWorkspace ? undefined : workspaceId));
+    const isRegistryReady = readyWorkspaceId === workspaceId;
+
+    useEffect(() => {
+        if (isRegistryReady) {
+            return;
+        }
+
+        if (
+            !isDemoWorkspace ||
+            workspaceService.hasSessionWorkspace(workspaceId)
+        ) {
+            setReadyWorkspaceId(workspaceId);
+            return;
+        }
+
+        let isActive = true;
+        const bootstrapRegistry = async () => {
+            try {
+                await workspaceService.activateSessionWorkspaceRegistry(
+                    JSON.stringify(workspaceDemoFixture),
+                );
+                queryClient.removeQueries({
+                    queryKey: workspaceServiceKeys.workspaceList(),
+                });
+                queryClient.removeQueries({
+                    queryKey: workspaceServiceKeys.workspace({
+                        urlParams: { id: workspaceId },
+                    }),
+                });
+            } finally {
+                if (isActive) {
+                    setReadyWorkspaceId(workspaceId);
+                }
+            }
+        };
+
+        void bootstrapRegistry();
+
+        return () => {
+            isActive = false;
+        };
+    }, [isDemoWorkspace, isRegistryReady, queryClient, workspaceId]);
 
     // Same query and options as the gate, so this observes its read rather than adding one.
     const { status, error } = useWorkspace(
         { urlParams: { id: workspaceId } },
-        { retry: false },
+        { enabled: isRegistryReady, retry: false },
     );
+
+    // The user who just created this workspace enters it here: greet them once. The flag stays pending until they
+    // acknowledge the dialog, so closing the tab mid-dialog owes it again; returning to the workspace or creating
+    // another one shows nothing, and the demo is never greeted.
+    const hasOpenedWelcomeRef = useRef(false);
+
+    useEffect(() => {
+        if (
+            !isRegistryReady ||
+            isDemoWorkspace ||
+            hasOpenedWelcomeRef.current
+        ) {
+            return;
+        }
+
+        if (!workspaceWelcomeUtils.isWelcomePending()) {
+            return;
+        }
+
+        hasOpenedWelcomeRef.current = true;
+        // The no-op `onClose` keeps Escape from dismissing it: acknowledging is the only way out.
+        open(WorkspaceDialogId.WORKSPACE_WELCOME, {
+            disableOutsideClick: true,
+            onClose: () => undefined,
+        });
+    }, [isRegistryReady, isDemoWorkspace, open]);
     const hasNavigation =
         status === 'success' ||
         (status === 'error' &&
             !AragonBackendServiceError.isNotFoundError(error));
+
+    if (!isRegistryReady) {
+        return (
+            <LayoutSidebar navigation={null}>
+                <div className="flex grow items-center justify-center py-20">
+                    <Spinner size="lg" variant="neutral" />
+                </div>
+            </LayoutSidebar>
+        );
+    }
 
     return (
         <LayoutSidebar

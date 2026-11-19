@@ -17,6 +17,7 @@ import {
     workspaceStorageKey,
 } from '../../api/workspaceService';
 import type { ICreateWorkspaceFormData } from '../../components/createWorkspaceForm';
+import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 import {
     type IPublishWorkspaceDialogProps,
     PublishWorkspaceDialog,
@@ -166,6 +167,23 @@ describe('<PublishWorkspaceDialog /> component', () => {
         ).resolves.toMatchObject({ accounts: [] });
     });
 
+    it('owes the welcome dialog once the workspace is created', async () => {
+        const markPendingWelcomeSpy = jest.spyOn(
+            workspaceWelcomeUtils,
+            'markPendingWelcome',
+        );
+
+        render(createTestComponent());
+
+        await userEvent.click(getSubmitButton());
+        await screen.findByRole('link', {
+            name: /publishWorkspaceDialog.button.success/,
+        });
+
+        expect(markPendingWelcomeSpy).toHaveBeenCalledTimes(1);
+        markPendingWelcomeSpy.mockRestore();
+    });
+
     it('closes the dialog when navigating to the created workspace', async () => {
         render(createTestComponent());
 
@@ -232,6 +250,11 @@ describe('<PublishWorkspaceDialog /> component', () => {
         });
 
         it('updates the stored workspace', async () => {
+            const markPendingWelcomeSpy = jest.spyOn(
+                workspaceWelcomeUtils,
+                'markPendingWelcome',
+            );
+
             render(createUpdateComponent({ name: 'Renamed' }));
 
             await userEvent.click(getUpdateButton());
@@ -243,6 +266,9 @@ describe('<PublishWorkspaceDialog /> component', () => {
                 'href',
                 '/workspace/demo-workspace/all/overview',
             );
+            // An update is not a creation, so it owes no welcome.
+            expect(markPendingWelcomeSpy).not.toHaveBeenCalled();
+            markPendingWelcomeSpy.mockRestore();
             await expect(
                 workspaceService.getWorkspace({
                     urlParams: { id: storedWorkspace.id },

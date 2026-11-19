@@ -1,6 +1,7 @@
 import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { Network } from '@/shared/api/daoService';
+import { userEvent } from '@testing-library/user-event';
+import { type IDao, Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
@@ -11,10 +12,15 @@ import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
+import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
 import {
     type IWorkspaceAccountItemProps,
     WorkspaceAccountItem,
 } from './workspaceAccountItem';
+
+jest.mock('../workspaceAccountAvatar', () => ({
+    WorkspaceAccountAvatar: jest.fn(() => null),
+}));
 
 describe('<WorkspaceAccountItem /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
@@ -119,5 +125,48 @@ describe('<WorkspaceAccountItem /> component', () => {
 
         expect(screen.getByText('Main treasury')).toBeInTheDocument();
         expect(screen.queryByText('Demo DAO')).not.toBeInTheDocument();
+    });
+
+    it('displays the name and avatar of the DAO, which the registry does not store', () => {
+        const dao = {
+            name: 'Indexed DAO',
+            avatar: 'ipfs://dao-avatar',
+        } as IDao;
+        render(createTestComponent({ dao }));
+
+        expect(screen.getByText('Indexed DAO')).toBeInTheDocument();
+        expect(WorkspaceAccountAvatar).toHaveBeenLastCalledWith(
+            expect.objectContaining({ avatar: 'ipfs://dao-avatar' }),
+            undefined,
+        );
+    });
+
+    describe('with a remove action', () => {
+        it('renders a row with a menu instead of a link', () => {
+            render(createTestComponent({ onRemove: jest.fn() }));
+
+            expect(screen.queryByRole('link')).not.toBeInTheDocument();
+            expect(
+                screen.queryByText(/workspaceAccountItem.type/),
+            ).not.toBeInTheDocument();
+        });
+
+        it('removes the account from its menu', async () => {
+            const onRemove = jest.fn();
+            render(createTestComponent({ onRemove }));
+
+            await userEvent.click(
+                screen.getByRole('button', {
+                    name: 'app.workspace.workspaceAccountItem.menu',
+                }),
+            );
+            await userEvent.click(
+                await screen.findByRole('menuitem', {
+                    name: 'app.workspace.workspaceAccountItem.remove',
+                }),
+            );
+
+            expect(onRemove).toHaveBeenCalledTimes(1);
+        });
     });
 });

@@ -91,7 +91,7 @@ test.describe('Sidebar navigation', () => {
             await page.goto(`/workspace/${workspace.id}/all/overview`);
 
             const sidebar = page.getByRole('navigation').filter({
-                has: page.getByRole('link', { name: 'Edit workspace' }),
+                has: page.getByRole('link', { name: 'Workspace admin' }),
             });
             await expect(sidebar).toBeVisible();
             await expect(
@@ -101,8 +101,8 @@ test.describe('Sidebar navigation', () => {
                 `/workspace/${workspace.id}/all/proposals`,
             );
             await expect(
-                sidebar.getByRole('link', { name: 'Edit workspace' }),
-            ).toHaveAttribute('href', `/workspace/${workspace.id}/edit`);
+                sidebar.getByRole('link', { name: 'Workspace admin' }),
+            ).toHaveAttribute('href', `/workspace/${workspace.id}/admin`);
             await expect(page.getByRole('contentinfo')).toBeHidden();
             // Permissions and settings belong to a DAO account: the aggregated scope has neither.
             await expect(

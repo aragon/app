@@ -15,7 +15,10 @@ import {
     useDaoPolicies,
 } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { Page } from '@/shared/components/page';
+import {
+    type IPageMainSectionActionProps,
+    Page,
+} from '@/shared/components/page';
 import { PolicyDataListItem } from '@/shared/components/policyDataListItem';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -137,7 +140,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
         dao?.version,
         '1.4',
     );
-    const addProcessAction = {
+    const addProcessAction: IPageMainSectionActionProps = {
         onClick: handleAddProcess,
         label: t('app.settings.daoSettingsPage.main.governanceAction'),
         iconLeft: IconType.PLUS,
@@ -184,7 +187,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
         open(CapitalFlowDialogId.CREATE_POLICY_DETAILS, { params });
     };
 
-    const addPolicyAction = {
+    const addPolicyAction: IPageMainSectionActionProps = {
         onClick: handleAddPolicy,
         label: t('app.settings.daoSettingsPage.main.automationAction'),
         iconLeft: IconType.PLUS,

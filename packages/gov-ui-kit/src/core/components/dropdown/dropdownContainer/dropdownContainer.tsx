@@ -106,7 +106,12 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
 
     return (
         <RadixDropdown.Root defaultOpen={defaultOpen} onOpenChange={handleOpenChange} open={open} {...otherProps}>
-            <RadixDropdown.Trigger asChild={true} className="group" disabled={disabled}>
+            <RadixDropdown.Trigger
+                asChild={true}
+                className="group"
+                data-guk-dropdown-trigger="true"
+                disabled={disabled}
+            >
                 {customTrigger ?? (
                     <Button
                         className={isOpen ? 'border-neutral-300' : undefined}
