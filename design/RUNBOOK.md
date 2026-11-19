@@ -88,6 +88,30 @@ and the canvas editor rewrites the whole file whenever a frame is moved by hand 
 1,700 changed lines for one frame removed and one moved). GitHub shows it collapsed as a generated file. Also
 expect, and ignore, a re-quoted `data-props` line where a tweak's default was changed on the canvas.
 
+## Implement a design
+
+For a developer's session, on the ticket's branch. The design and the code live on the same branch and go in the
+same pull request: do not create another branch.
+
+1. Pull first if the ticket has a canvas, so the branch holds everything the designer did.
+2. The design is the diff above (against the reference branch, without `canvas.json`). Read the changed files in
+   full, not only the changed lines. How to read a prototype file:
+   - `<x-import component-from-global-scope="GovUiKit.X" …>` is the kit component `X`; attributes are its props in
+     kebab case.
+   - Plain elements with classes from `app.css` or `proto.css` are app layout. Build them with the app's own
+     components and classes; do not copy the markup.
+   - `renderVals()` and everything in it is mock data and prototype wiring, not spec.
+   - A tweak's default is the design (see Tweaks).
+   - The ticket's canvas (`canvases/<name>.json` → `canvas`) is there to look at when a file is ambiguous.
+3. Before writing code, tell the person: in plain words what you understand the design change to be; which app
+   files you will change; anything the design implies that is more than UI (new data, sorting, an API field) and
+   anything it leaves undecided. Then wait for their go-ahead. If they named a part ("only the to-dos"), keep to it.
+4. Implement in `apps/app` following the repo's `AGENTS.md` (changeset included), run type-check, lint and the tests
+   for what you touched, and report the results as they are. Say plainly what you could not verify by running the
+   app. No pull request unless asked.
+
+Run once so far, from a long hand-written prompt, not from this section.
+
 ## Publish: branch → its canvas
 
 1. Pull first if the canvas's version differs from the record.

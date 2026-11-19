@@ -1,6 +1,6 @@
 ---
 name: aragon-app-canvas
-description: Use when someone wants to design on a claude.ai canvas of the Aragon App prototypes - start a canvas for a ticket or idea, save or sync what they changed on a canvas into the repo, bring the latest files onto a canvas, or refresh the reference canvas. Also when they type /aragon-app-canvas followed by anything.
+description: Use when someone wants to design on a claude.ai canvas of the Aragon App prototypes, or build a design made on one - start a canvas for a ticket or idea, save or sync what they changed on a canvas into the repo, bring the latest files onto a canvas, refresh the reference canvas, or implement a canvas design in the app. Also when they type /aragon-app-canvas followed by anything.
 ---
 
 # Aragon App canvas
@@ -16,22 +16,24 @@ that branch.
 
 ## What the person wants
 
-They will say it in their own words, after the command or without it. Map it to one of these and say which one you
-understood before you start:
+They will say it in their own words, after the command or without it. Map it to one of these and, before you start,
+say which one you understood **using the words in the "Say it as" column**. "Pull" and "Publish" are the runbook's
+names for you; never say them to the person ("pull" reads as the opposite of saving).
 
-| They say something like | Do | Runbook section |
+| They say something like | Say it as | Runbook section |
 | --- | --- | --- |
-| "start a new one for the filters ticket", "I want to try an idea" | New branch and new canvas from the repo | Start a ticket |
-| "save what I did", "sync", "pull my changes in" | Canvas → branch | Pull |
-| "update my canvas", "get the latest onto the canvas" | Branch → its canvas | Publish |
-| "the app changed, refresh the main canvas" | Reference branch → reference canvas | Refresh the reference canvas |
-| "this one is done" | Clean up after the merge | Finish a ticket |
+| "start a new one for the filters ticket", "I want to try an idea" | "Start: a new branch and a new canvas from the repo." | Start a ticket |
+| "save what I did", "sync", "pull my changes in" | "Save: your canvas changes go into the repo. Your canvas is not changed." | Pull |
+| "update my canvas", "get the latest onto the canvas" | "Update your canvas: the repo's files replace what is on the canvas." | Publish |
+| "the app changed, refresh the main canvas" | "Refresh the reference canvas from the repo." | Refresh the reference canvas |
+| "implement this design", "build this", "make the app match the canvas" | "Implement: build the design from this branch in the app." | Implement a design |
+| "this one is done" | "Finish: clean up after the merge." | Finish a ticket |
 
-Nothing after the command, or you cannot tell which: ask, offering these five in plain words.
+Nothing after the command, or you cannot tell which: ask, offering these six in plain words.
 
 "Latest" is ambiguous. It can mean their canvas edits going into the repo (Pull) or the repo's files going onto
-their canvas (Publish). Publish replaces what is on the canvas, so before a Publish: say that is what you
-understood, and Pull first, as the runbook requires. Never publish over canvas edits that are not in the branch.
+their canvas (Publish). Publish replaces what is on the canvas, so before one: say that is what you understood,
+and save their canvas changes first, as the runbook requires. Never publish over canvas edits that are not in the branch.
 
 Which canvas: a ticket's canvas is recorded in `design/canvases/<name>.json` on its branch. If the person does not
 name one and the branch does not settle it, ask.
