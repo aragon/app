@@ -516,7 +516,7 @@ Avatar specialized for a DAO (name + image with fallback).
 
 **References**
 
-- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:23`
+- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
 
 ### DaoDataListItem.Skeleton

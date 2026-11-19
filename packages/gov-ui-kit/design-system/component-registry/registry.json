@@ -6,8 +6,10 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "b207fff24587e6429b8267efadddd2a5b24d2acf",
-            "dirty": [],
+            "commit": "0d9659f842198d01a8ea8e6fbcc5edc4eae93a1d",
+            "dirty": [
+                "packages/gov-ui-kit/src/modules/components/dao/daoAvatar/daoAvatar.tsx"
+            ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
                 "js": [
@@ -5019,15 +5021,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                "line": 23,
-                "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                "line": 81,
+                "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                    "line": 4,
-                    "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                    "line": 11,
+                    "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                 }
             ],
             "stories": [
@@ -5077,19 +5079,19 @@
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 81,
-                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 11,
-                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
                         "line": 15,
-                        "sha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce"
+                        "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
@@ -5102,23 +5104,23 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "changed",
-                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                        "status": "current",
+                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "changed",
-                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                        "status": "current",
+                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                        "status": "changed",
-                        "expectedSha256": "2686b79dd98a12f7d7a1fd1ee5b21c2cc33541ee4f2c29f4563cd6bf11a2ddce",
-                        "actualSha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                        "status": "current",
+                        "expectedSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784",
+                        "actualSha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
                     },
                     {
                         "repository": "kit",
@@ -12420,8 +12422,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoAvatar/daoAvatar.tsx",
-                "line": 4,
-                "sha256": "4f4734a019cf1aaef6bfee254016604a311bf55d560c753237b252d87fa8a71d"
+                "line": 11,
+                "sha256": "a6d3843dc31adf9d04cbfa1f8e56938208dd2a19bed8bee3619c25d7e712b784"
             },
             "props": [],
             "stories": [

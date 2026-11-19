@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "e0a30e01d6d20bac94f500ed49aae9240fa90147af81156c50dcb9a1e2a74c00",
+            "sha256": "2e33fa4c0020a73cce6658fe60f1a4abe4f0eadafd8df27924bcea3078fa34ea",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -921,7 +921,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:23",
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ]
