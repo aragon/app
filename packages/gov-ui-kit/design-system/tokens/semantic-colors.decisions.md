@@ -9,7 +9,8 @@ the branch carries the provisional choice stated on each item.
 
 Sources: the Figma branch of the Governance UI Kit (`Semantic: Color` collection, 189 variables, Light and Dark),
 `semantic-colors.tokens.json` (its dump), `semantic-colors.component-map.json` (the code-derived mapping, with the
-full conflict list), `semantic-colors.parity.json` (the value each token has in the default theme).
+full conflict list), `semantic-colors.parity.json` (the value each token has in the default theme). Figma bindings per component: `figma-bindings/` (raw
+extraction of 41 pages + Buttons); their comparison with the code, row by row: `semantic-colors.reconciliation.json`.
 
 ## 1. Decided by the owner
 
@@ -63,6 +64,24 @@ full conflict list), `semantic-colors.parity.json` (the value each token has in 
 | P-27 | The data list item's `shadow-neutral-sm` stays primitive. | A consumer passes `shadow-none`, which won only by name order; the semantic name would flip it (found by the screenshot run, 16 stories). | Make the item's shadow an explicit prop. |
 | P-21 | Three classes in `dataListFilterStatus.tsx` are left unconverted. | The loading text is blue today only through class ordering; renamed, it would turn grey. Needs the code to choose the colour explicitly. | Fix the component, then convert. |
 
+### Figma reconciliation (T-01)
+
+Evidence: `figma-bindings/` (the extracted bindings) and `semantic-colors.reconciliation.json` (one row per code part,
+with the Figma layer it was matched to, a confidence and a verdict). The default theme is unchanged (proven by the
+screenshot run); dark and "next" now follow the designer's token wherever it could hold today's colour.
+
+| ID | Decision | Why | Alternative |
+| --- | --- | --- | --- |
+| P-28 | Where Figma binds a different token that holds (or can be set to) today's colour for all its users, the code takes the designer's token: 25 classes switched token, 9 classes newly converted. This includes cases where Figma itself looks inconsistent: Radio Card fill `bg/surface/primary` vs Checkbox Card `bg/surface/default`, data-list search field `bg/surface/primary` vs inputs `bg/surface/default`, spinner success track `border/success/default` vs warning/critical `*/primary` (G-19). | No pixel change; the binding is the only evidence of intent we have, and an inconsistency is easier to spot and fix in one place (Figma) than to second-guess per component. | Keep the code's consistent choice where Figma looks inconsistent. |
+| P-29 | `border/surface/secondary` takes today's static border (`neutral-100`) and replaces `border-surface-primary` on card, definition list, dialog and alert-dialog panels, dropdown menu, tabs divider, voting breakdown and the proposal-actions empty card. | Figma binds `border/surface/secondary` on every static container and never binds `border/surface/primary` (gray/50, nearly invisible). `border-surface-primary` keeps 4 users that Figma binds to a primitive or nothing (input addon, asset-transfer divider, decoder field, transaction summary). | Rename `border/surface/secondary` → `primary` and drop the gray/50 token. |
+| P-30 | `text/surface/selected` moves from `neutral-800` to `primary-400` (its Figma Light value) and the toggle "on" label is converted to it. Its four former users take what Figma binds there: dropdown selected item → `text/surface/active`; radio card, switch and tab selected labels → `text/surface/primary`. | Figma uses `text/surface/selected` only for the toggle, whose label is blue today: the token's meaning ("selected accent label") and today's toggle agree. Resolves the C-10 toggle case. | Keep `neutral-800` and leave the toggle label primitive. |
+| P-31 | G-07 settled from the bindings: the names are kept (they read as level or state + `inverse`, P-01/P-05), the do-not-use status is lifted for seven tokens and the four U-03 classes are converted (progress neutral bar and marker → `bg/surface/primary-inverse`, neutral tooltip → `bg/surface/tertiary-inverse`, inverted spinner track → `border/accent/primary-inverse` at today's `primary-300`). Three tokens stay do-not-use: `bg/surface/hover-inverse`, `bg/surface/disabled-inverse`, `bg/info/secondary` (bound nowhere). | Each lifted token has one clear, consistent use in Figma (G-07). Renaming would only rename what already reads correctly. | Rename to `bg/surface/solid-*` / `bg/surface/inverted`; merge `bg/accent/*-inverse` into `bg/surface/*` (impossible as is: Dark values differ). |
+| P-32 | The DAO avatar fallback follows Figma's `_AvatarFallback` Initials: `bg/accent/solid` (was `bg/brand/solid`, a P-19 call) and its initials are converted to `text/accent/inverse`. `bg/brand/solid` and `border/accent/primary` keep no kit user and lose their verified parity value (they fall back by rule; the app uses no semantic class yet). | The binding is explicit; same colour today. | Keep the DAO disc on the brand token (identity, not interaction). |
+| P-33 | The secondary data-list item's focus fill is not moved to `bg/surface/transparent-default`, although that unused token could take the colour. | It would pin a token named "default" to the hover tint; Figma's own meaning is "focus = default fill + ring". Listed as an applied-differently case (A-09). | Adopt it (dark and "next" would then show no tint on focus, as in Figma). |
+| P-34 | 12 rows matched by inference only are marked `uncertain` and not acted on (data-list action item icon wells, avatar loading fill, asset-transfer card, tab pressed while selected, file-avatar preview button, decoder and vote meta lines). | Their Figma colour comes from a nested instance's variant or from a layer whose correspondence to the code part is a guess. | Treat the inferred token as bound. |
+| P-35 | 34 adoptable rows are left as they are because no utility applies the token there: Figma binds an icon token to a fill (switch thumb, ping dot), a text or `bg/surface/secondary-inverse` token to the caret, a `bg` token to a stroke (progress marker outline), or the class is a gradient, single-side border, SVG fill or underline shadow colour (U-01). No new utilities were invented. | Utility families per property are a mechanism decision (P-06), not a reconciliation one. | Add `bg-icon-*`-style utilities, or ask the designer to bind same-family tokens (G-18). |
+| P-36 | Interaction states of the changed components were compared before/after with a local capture (hover, pressed, focus-visible, open menu); not added to the committed screenshot tool. | Cheap proof for this change; a general state capture for every story needs per-story interaction scripts (T-06). | Extend `visual-diff.mjs` with state captures now. |
+
 ### Tooling and repo
 
 | ID | Decision | Why |
@@ -102,36 +121,97 @@ Status of all: `DESIGNER`.
 | ID | Part | Code today | Figma |
 | --- | --- | --- | --- |
 | V-16 | Link, hover / pressed | `primary-500` / `primary-700` | `aragon/600` / `aragon/800` |
-| V-17 | All components other than Button | — | Not yet compared: needs the Figma binding extraction (see T-01). |
+| V-17 | All components other than Button | — | Replaced by V-18…V-29 (T-01 done). |
+
+### All components, per token (from the Figma reconciliation)
+
+The default value of each token in use vs its Figma Light value (compare ramp and step; the ramps themselves change
+separately, O-06). Users are component files; Button rows repeat V-01…V-16. A pattern runs through most of them:
+**Figma's neutral steps sit one step darker than today's code** for text, icons, fills and borders.
+
+| ID | Token | Figma Light | Today | Used by |
+| --- | --- | --- | --- | --- |
+| V-18 | `text/surface/primary` · `secondary` · `tertiary` | `gray/900` · `gray/600` · `gray/500` | `neutral-800` · `neutral-500` · `neutral-400` | Static text of ~30 components (headings, data-list items, alerts, dialogs, definition list, inputs, voting, …); tertiary: definition list, link URL line, DAO item meta. |
+| V-19 | `text/surface/active` · `disabled` | `gray/700` · `gray/400` | `neutral-800` · `neutral-300` | active: dropdown item (selected), tabs, wallet, Button; disabled: 10 components (dropdown item, checkbox, radio, cards, switch, link, tabs, toggle, Button). |
+| V-20 | `bg/surface/secondary` · `tertiary` | `gray/100` · `gray/200` | `neutral-50` · `neutral-100` | secondary: avatar icon, skeletons, input addon, empty state, asset transfer; tertiary: progress track, neutral tag. |
+| V-21 | `border/surface/default` · `hover` · `disabled` · `secondary` · `primary` | `gray/200` · `gray/300` · `gray/300` · `gray/200` · `gray/50` | `neutral-100` · `neutral-200` · `neutral-200` · `neutral-100` · `neutral-100` | default/hover: every pressable field and card (13 components); disabled: 7 controls; secondary: static containers (P-29); primary: input addon, asset-transfer divider, decoder field, transaction summary. |
+| V-22 | `icon/surface/primary` · `default` · `active` | `gray/500` · `gray/400` · `gray/600` | `neutral-400` · `neutral-300` · `neutral-500` | primary: avatar icon, checkbox card, input icon; default: data-list filter, dropdown item, radio, radio card, asset-transfer link, Button; active: Button. |
+| V-23 | `text/{success,warning,critical,info}/primary` | `*/700` | `*-800` | Alerts, tags, action simulation, proposal voting status and progress, proposal status, smart-contract item. |
+| V-24 | `border/accent/active` | `aragon/300` | `primary-400` | Focused input and data-list search border (lighter than the default accent in Figma), Button secondary pressed (V-04). |
+| V-25 | `icon/accent/active` | `aragon/600` | `primary-400` | Asset-transfer link icon pressed, Button (V-06). |
+| V-26 | `border/success/default` · `border/warning/default` · `border/warning/active` | `green/400` · `orange/400` · `orange/500` | `success-300` · `warning-300` · `warning-600` | Spinner success track, file-avatar warning zone, focused warning input, status Buttons (V-11, V-12). |
+| V-27 | `border/accent/primary-inverse` | `aragon/200` | `primary-300` | Spinner track on an accent fill (P-31). |
+| V-28 | `bg/info/solid` | `blue/300` | `info-500` | Ping dot (info). Figma's info `tertiary` is a 300 while success/warning/critical are 500: the 300 matches today's info tooltip (A-15). |
+| V-29 | Shadow colours, kit-wide | `#525252` / `#3164fa` at 5/10/24 %; status shadows unbound (G-11) | today's slate / primary / status rgba | Every shadow: V-14 holds for all components, not only Button. |
+
+### Applied differently: Figma binds a token that would change today's colour
+
+Every `figma-differs-conflict` row of `semantic-colors.reconciliation.json` (102 rows), grouped by pattern. Code is
+unchanged for all of them. Per O-05 each carries an argument from related patterns in the kit; the last column is a
+**recommendation**, not a decision. Status of all: `DESIGNER`.
+
+| ID | Parts | Code today | Figma | Related patterns | Recommendation |
+| --- | --- | --- | --- | --- | --- |
+| A-01 | Hover label: checkbox, radio, dropdown item (+ keyboard highlight), tab | darkens to `neutral-800` | `text/surface/hover` (today `neutral-500`, set by the tertiary Button, which does not change on hover); tabs `text/link/secondary-hover` (`neutral-600`) | Four components darken; only the tertiary Button stays put, and P-09 already treats a missing pressed change as an omission. | One hover token, as Figma does, but with a visible step: change the Button, not the four components. |
+| A-02 | Unchecked checkbox / radio icon, hover | turns accent (`primary-400`) | `icon/surface/hover` (grey) | Cards show no icon change on hover in code; every other neutral control hovers in grey in Figma. | Figma (grey), low confidence: an accent preview of "checked" is also a known pattern. |
+| A-03 | Checkbox item label, checked + disabled | keeps `neutral-500` | `text/surface/disabled` | In both code and Figma the switch and radio card keep a checked label readable when disabled. | Code: keep checked labels readable; ask the designer to align the checkbox item with switch / radio card. |
+| A-04 | Checked mark, disabled, in checkbox card / radio card | `neutral-500` | `icon/surface/default` (`neutral-300`) | Checkbox and radio items use `icon/surface/disabled` (`neutral-300`) for the same state in code and Figma. | Figma value, but via `icon/surface/disabled` like the items; the card binding to `default` looks accidental. |
+| A-05 | Disabled borders: checked cards `neutral-300`; toggle `neutral-100`; switch track default `neutral-200` | three steps | `border/surface/disabled` / `border/surface/default` | All other controls use one disabled border (`neutral-200`) and one default border (`neutral-100`). | Figma: one value per role (C-08). |
+| A-06 | Open accordion item | border `neutral-200`, shadow sm | `border/surface/active` + `bg/surface/active` + shadow default | The open dropdown trigger has its own role in code (`border/surface/open`, P-26). | Neither as is: an explicit "open" role shared by accordion and dropdown trigger. |
+| A-07 | Pressed border: data-list item, asset-transfer panel `neutral-300`; dialog close `neutral-200` | two steps | `border/surface/active` (`neutral-400`, Button) | Button and accordion press at `neutral-400`. | Figma: one pressed border. |
+| A-08 | Pressed fill: dialog close, wallet | `neutral-50` | `bg/surface/active` (white in Figma Light and today) | Pressing towards white after a grey hover reads as a release; Figma's `bg/{status}/active` are white placeholders too (G-06). | Code: grey; ask whether `bg/surface/active` = white is intended. |
+| A-09 | Secondary data-list item: focus fill / pressed tint | focus = hover tint; pressed `neutral-400/8` | focus = `transparent-default` + ring; pressed `transparent-active` (`neutral-800/8`) | The action item presses at `neutral-800/8` (C-11); focus elsewhere = default + ring. | Figma for both (P-33 kept code for now). |
+| A-10 | Elevation: dialogs, tooltip, asset-transfer hover, selected card hover use md; dropdown menu sm; accordion hover/open sm; bordered card default | md / sm / default | `shadow/surface/default` everywhere, bordered card sm | Figma has sm / default / 2xl only (P-18). | Code for md on overlays (they float above cards); Figma for the rest. Needs a designer call on md. |
+| A-11 | Status icon on avatar icon | `*-600` | `icon/*/primary` (`*-500`, alerts) | Alerts and file avatar use 500. | Figma: one status icon step. |
+| A-12 | Status text: alert-dialog titles, input addons | `*-600` | `text/*/primary` (`*-800`, alerts, tags) | Every other status text is 800. | Figma. |
+| A-13 | Status borders of inputs and file-avatar zone | `*-500`, hover `*-600` | `border/*/default` / `hover` (`*-300` / `*-500`, status Buttons) | Figma unifies fields with status buttons. | Code: an error field border must stay clearly visible (non-text contrast); give fields their own token if the Button keeps 300. |
+| A-14 | Status tag fills | `*-200` | `bg/*/subtle` (`*-100`: alerts, avatar icons, addons) | The primary tag uses `primary-50`; every other pale status fill is 100. | Figma (also improves D-03 once the dark values apply). |
+| A-15 | Status tooltip fills (+ arrows) | `*-300` | `bg/*/solid` (`*-500`; info `blue/300`) | `*-900` text on a 500 fill is weak; Figma's own info solid is 300. | Code values (300); ask whether solid should be 300 for all or the tooltip needs its own fill. |
+| A-16 | Progress bar, success | `success-400` | `bg/success/solid` (`success-500`) | Critical bar and ping dots use 500. | Figma. |
+| A-17 | Ping dot, primary | `primary-500` | `icon/accent/primary` (`primary-400`) | Every other accent fill is 400. | Figma. |
+| A-18 | Spinner track, warning / critical; spinner head, neutral | `*-300`; `neutral-500` | `border/*/primary` (400); `border/surface/active` (400) | Success track binds `border/success/default` (300) in Figma. | Code tracks (bind `*/default` in Figma as for success); Figma for the neutral head. |
+| A-19 | Skeleton bars and circles | `neutral-50` | `bg/surface/tertiary` (`neutral-100`) | Neutral tracks (progress, tag) use tertiary. | Figma, low stakes. |
+| A-20 | Avatar placeholder fill | `neutral-200` | `bg/surface/tertiary` (`neutral-100`) | Same as A-19. | Figma. |
+| A-21 | Neutral icon steps (C-06): checkbox card icon 400, file-avatar icon 400/600, search icon 400/600, clear icon 600, tab icons 500/300/800/200/600, accordion chevron disabled 100, breadcrumb separator 200, action-item icon 500, switch thumb disabled 200 | eight steps | `icon/surface/{default,hover,active,disabled,secondary,primary}` | Figma applies the six icon roles consistently across forms, tabs, dropdown and cards. | Figma. |
+| A-22 | Tab hover underline | `neutral-800` | `border/surface/hover` (`neutral-200`) | Selected underline is accent; hover borders elsewhere are 200. | Figma. |
+| A-23 | Asset data-list item: name and amount `neutral-800`, fiat `neutral-500` | primary / secondary | secondary / tertiary (unknown asset: primitive `gray/800`) | All other data-list items, and the asset-transfer amount in Figma, use primary for the title. | Code. |
+| A-24 | Input addon text, character counter | `neutral-500` | `text/surface/tertiary` (`neutral-400`) | Definition-list meta uses tertiary. | Figma, low stakes. |
+| A-25 | Voting percentage | `text/surface/secondary` | `text/surface/primary` | Other vote counts are primary. | Figma. |
+| A-26 | Radio card label, unchecked | `neutral-500` | `text/surface/primary` | Checkbox card labels are primary in both states, in code and Figma. | Figma. |
+| A-27 | File-avatar zone hover border, empty | `border/surface/hover` | `border/surface/default` (filled: hover) | Every other field darkens its border on hover. | Code. |
+| A-28 | Asset-transfer link icon, hover / pressed | accent `primary-300` / `primary-400` | `icon/surface/default` in every state | Links turn accent on hover elsewhere. | Code; ask the designer. |
+| A-29 | Ghost Button fill, default / hover | transparent / white | `bg/body` / `bg/surface/hover` | Already P-10, P-11. | See P-10, P-11. |
 
 ## 4. Conflicts: one token, different colours in today's code
 
-82 classes are left unconverted because the role-appropriate token is already fixed at another colour by a
+81 classes (the component map's count; this list said 82 before) were left unconverted because the role-appropriate token is already fixed at another colour by a
 different component. Each group is either a real distinction that needs its own token, or an inconsistency to
 unify. The complete list, with file and line, is in `semantic-colors.component-map.json` → `conflicts`.
-Status of all: `DESIGNER`, with the Figma bindings as evidence.
+Status of all: `DESIGNER`, with the Figma bindings as evidence. After the reconciliation 77 classes remain in the
+list (4 were converted: toggle "on" fill and text, dropdown item disabled fill, spinner success track). The last
+column says what the designer did in Figma; the per-part cases are A-01…A-29 above.
 
-| ID | Group | Example |
-| --- | --- | --- |
-| C-01 | Status fills, pale | Tag backgrounds are `*-200`; alerts, avatar icons and input addons are `*-100`. |
-| C-02 | Status fills, strong | Tooltip backgrounds are `*-300`; ping and progress are `*-500` (success progress `400`). |
-| C-03 | Status borders | Input error/warning borders are `500` (hover `600`); the status buttons' are `300` (hover `500`); alert card `400`; spinner `300`. |
-| C-04 | Status text and icons | Alert dialog titles and input addons use `*-600`; alerts and tags use `*-800`. Avatar and input icons use `600`; alert icons `500`. |
-| C-05 | Accent interaction steps | The collapsible toggle hovers/presses at `primary-600`/`800` (icon `500`/`700`); the button at `400`/`600`. |
-| C-06 | Neutral icon steps | Default icon is `neutral-300` on buttons and radios, `400` on checkbox, file input and search, `500` on tabs; hover, pressed and disabled steps differ similarly. |
-| C-07 | Neutral text hover | Dropdown item, checkbox, radio and tab labels hover to `neutral-800`; the tertiary button stays `500`. |
-| C-08 | Neutral borders | Pressed border is `400` on buttons and accordion, `300` on data list items, `200` on the dialog close; switch track `200` vs controls `100`; disabled border `300`/`200`/`100` in different controls. |
-| C-09 | Neutral fills | Pressed fill is white on buttons, `neutral-50` on dialog close and wallet; icon wells are `50` or `primary-50` where the token is white or `primary-400`; avatar fallback `200` vs `100`; toggle "on" is white where the selected token is `50`. |
-| C-10 | Selected state | Toggle "on" text is `primary-400` where the selected text token is `neutral-800`; an open accordion border is `neutral-200` where the selected border token is `primary-400`. |
-| C-11 | Tint | Data list item pressed tint is `neutral-400/8`; the action item's is `neutral-800/8`. |
+| ID | Group | Example | In Figma |
+| --- | --- | --- | --- |
+| C-01 | Status fills, pale | Tag backgrounds are `*-200`; alerts, avatar icons and input addons are `*-100`. | **Unified**: tags, avatar icons and input addons all bind `bg/*/primary` (code `bg/*/subtle`); alert cards have no status fill. The tags' 200 is the outlier (A-14). |
+| C-02 | Status fills, strong | Tooltip backgrounds are `*-300`; ping and progress are `*-500` (success progress `400`). | **Unified** under `bg/*/tertiary` (code `solid`) for tooltip and progress; ping dots bind `icon/*/primary` instead (G-18). Figma's info solid is `blue/300`, the others 500 (V-28, A-15). |
+| C-03 | Status borders | Input error/warning borders are `500` (hover `600`); the status buttons' are `300` (hover `500`); alert card `400`; spinner `300`. | **Unified, two roles**: inputs and the file-avatar zone use the status Button's `border/*/default`/`hover`/`active`; alert card and tag outline use `border/*/primary`; spinner tracks mix both (A-13, A-18). |
+| C-04 | Status text and icons | Alert dialog titles and input addons use `*-600`; alerts and tags use `*-800`. Avatar and input icons use `600`; alert icons `500`. | **Unified**: alert-dialog titles and input addons bind `text/*/primary` like alerts and tags; avatar and alert icons bind `icon/*/primary` (A-11, A-12). |
+| C-05 | Accent interaction steps | The collapsible toggle hovers/presses at `primary-600`/`800` (icon `500`/`700`); the button at `400`/`600`. | **Distinct by family**: the collapsible label binds `text/link/default`, whose Figma hover/active (`aragon/600`/`800`) are the collapsible's code values; Figma has no collapsible hover state, and the Link component in code uses 500/700 (V-16). |
+| C-06 | Neutral icon steps | Default icon is `neutral-300` on buttons and radios, `400` on checkbox, file input and search, `500` on tabs; hover, pressed and disabled steps differ similarly. | **Unified**: one set of icon roles (`icon/surface/{default,hover,active,disabled}`, plus `primary`/`secondary` for static icons) across checkbox, radio, cards, search, file avatar, tabs, dropdown, breadcrumbs (A-21). |
+| C-07 | Neutral text hover | Dropdown item, checkbox, radio and tab labels hover to `neutral-800`; the tertiary button stays `500`. | **Unified** on `text/surface/hover` (checkbox, radio, dropdown, toggle, navigation, wallet, Button); tabs use `text/link/secondary-hover` (A-01). |
+| C-08 | Neutral borders | Pressed border is `400` on buttons and accordion, `300` on data list items, `200` on the dialog close; switch track `200` vs controls `100`; disabled border `300`/`200`/`100` in different controls. | **Unified**: pressed = `border/surface/active` (Button, accordion, data-list item, asset transfer, navigation); switch track = `border/surface/default` like other controls; disabled = `border/surface/disabled` everywhere (A-05, A-07). |
+| C-09 | Neutral fills | Pressed fill is white on buttons, `neutral-50` on dialog close and wallet; icon wells are `50` or `primary-50` where the token is white or `primary-400`; avatar fallback `200` vs `100`; toggle "on" is white where the selected token is `50`. | **Unified**: pressed = `bg/surface/active` (white) everywhere; avatar fallback = `bg/surface/tertiary`; toggle on = `bg/surface/default` (converted, P-28); icon wells are AvatarIcon instances without a fill override (uncertain, P-34). |
+| C-10 | Selected state | Toggle "on" text is `primary-400` where the selected text token is `neutral-800`; an open accordion border is `neutral-200` where the selected border token is `primary-400`. | **Resolved for the toggle**: its label binds `text/surface/selected`, whose Figma value is the blue of today's code (converted, P-30). The open accordion binds `border/surface/active`, not `selected` (A-06). |
+| C-11 | Tint | Data list item pressed tint is `neutral-400/8`; the action item's is `neutral-800/8`. | **Unified** on `bg/surface/transparent-active` (`gray/800` 8 %) for both; the data-list item's `neutral-400/8` is the outlier (A-09). |
 
 ## 5. Classes left unconverted for other reasons
 
 | ID | Count | Reason | Status |
 | --- | --- | --- | --- |
 | U-01 | 32 | No semantic class exists yet for the property: gradient utilities, `fill-*`, `caret-*`, single-side borders, the tab underline's shadow colour, `prose-neutral`, the collapsible fade. | OPEN |
-| U-02 | 14 | No token fits the role. | DESIGNER |
-| U-03 | 4 | Would need a token whose meaning is unresolved (progress neutral bar and marker, inverted spinner track, neutral tooltip background). | Waits on G-07 |
+| U-02 | 13 | No token fits the role (14 before T-01: the DAO avatar initials were converted to the token Figma binds, P-32). | DESIGNER |
+| U-03 | 0 (was 4) | Would need a token whose meaning is unresolved (progress neutral bar and marker, inverted spinner track, neutral tooltip background). Converted after G-07 was settled (P-31). | Done |
 | U-04 | 3 | Class-ordering dependency (P-21). | OPEN |
 | U-05 | 49 classes in 17 story files | Stories still use primitive classes; harmless, to be updated. | OPEN |
 | U-06 | 2 | `var(--color-primary-*)` in the illustrations stylesheet. | OPEN |
@@ -146,23 +226,34 @@ Status of all: `DESIGNER`, with the Figma bindings as evidence.
 | G-04 | Info has no hover/active states. Decided not a gap: info is only used for static tags and alerts (proposal statuses map to tag variants). | PROVISIONAL |
 | G-05 | Duplicate names with the same value (37 within their own group), e.g. `bg/surface/primary` = `bg/surface/default`. Kept on purpose where one is a level and the other a state (P-01). | PROVISIONAL |
 | G-06 | Values that look like placeholders: `bg/{success,warning,critical}/active` are white; `bg/surface/primary-inverse` is mid-grey in Light; the primitive `aragon/100a1` holds the `aragon/50` colour. | DESIGNER |
-| G-07 | Meaning unresolved, not used outside Button: `bg/accent/{default,hover,active}-inverse`, `bg/surface/{primary,secondary,tertiary,hover,disabled}-inverse`, `border/accent/primary-inverse`, `bg/info/secondary`. Settled by reading what they are bound to (T-01). | OPEN |
+| G-07 | Meaning unresolved: `bg/accent/{default,hover,active}-inverse`, `bg/surface/{primary,secondary,tertiary,hover,disabled}-inverse`, `border/accent/primary-inverse`, `bg/info/secondary`. **Settled from the bindings** (P-31): `bg/accent/*-inverse` = the light fill under accent content of an outlined pressable (secondary Button only); `bg/surface/primary-inverse` = mid-grey neutral fill (progress neutral bar and threshold marker); `bg/surface/secondary-inverse` = the text caret drawn as a fill in every input focus state; `bg/surface/tertiary-inverse` = the dark inverted surface (neutral tooltip and arrow); `border/accent/primary-inverse` = spinner track on an accent fill. Names kept, do-not-use lifted, U-03 converted. **Still unresolved**: `bg/surface/hover-inverse`, `bg/surface/disabled-inverse`, `bg/info/secondary` are bound nowhere; they stay do-not-use. | PROVISIONAL (P-31); the last three DESIGNER |
 | G-08 | `neutral-25` has no counterpart in the Figma grey ramp. | DESIGNER |
-| G-09 | Some components still bind primitives directly in Figma (seen on Cards and Forms); they will not respond to the mode switch there. | DESIGNER |
+| G-09 | Some components still bind primitives directly in Figma; they will not respond to the mode switch there. Full list from the extraction: Input / Text focus placeholder and value (`gray/300`, `gray/500`); TextareaRichtext caret (`gray/600`); _Action / Index (`gray/500`); _DataList / ActionItem labels and primary icon (`aragon/400`, `gray/500`); AssetInput link; AssetTransfer spacer and icon; AddressCheck card (`gray/0`, `gray/100`); Member and Transaction data-list items (`gray/*`, icons `green/500`, `red/500`, `blue/500`); _TransactionStatus title; _TransactionDetail / Summary; _Navigation / DialogContent / Wallet / Default; `_Select` placeholders in Card (`blue/600`/`700`; Dialog uses `text/info/*` for the same); the Member header gradient and Illu404 are raw colours. | DESIGNER |
 | G-10 | No semantic layer for spacing, radius or type in Figma. Out of scope for this pass (O-02). | — |
+| G-11 | Status shadows (success, warning, critical, info) are unbound raw colours in every component (Button, inputs, alert card, tooltip, voting option); only surface and accent shadows use `shadow/*` tokens. The code's `shadow/{status}/*` tokens therefore have no Figma binding to follow. | DESIGNER |
+| G-12 | Focus rings are drawn as two drop-shadow effects: `bg/body` (offset) + the primitive `aragon/400` (`red/400` on the critical file avatar, `green`/`orange`/`red` 400 on status Buttons). No ring token exists (G-03). | DESIGNER |
+| G-13 | Hover and active swapped: _AssetInput / Field binds `border/{warning,critical}/active` on Hover and `*/hover` on Focus, the reverse of Input / Text. | DESIGNER |
+| G-14 | Input / NumberMax, Critical + Focus binds `border/critical/hover` where every other input binds `border/critical/active`. TextareaRichtext, Warning/Critical + Focus with value colours the text `text/{status}/primary` (other inputs keep `text/surface/secondary`). Input / Text Critical Default and Input / Time 24h Default have no shadow. | DESIGNER |
+| G-15 | Opacity carried by the paint, not the token: `bg/surface/transparent-default@1`, `-hover@4`, `-active@8`, and the Tag outline `bg/surface/transparent@0`. The token values already hold the alpha (`gray/0a1`, `gray/800a4`, …), so the paint opacity multiplies it again; the Tag outline is invisible either way. | DESIGNER |
+| G-16 | Layer and component name typos: `DefintionList`, `_ExtneralAddress`, `StateEmtpyWrapper`, `warpper`; the Neutral Link's label layer is named `title` in some states. | DESIGNER |
+| G-17 | Tokens of one property family bound to another: Switch handle and StatePingAnimation dots fill with `icon/*`; the _DataList / Filter caret fills with `text/surface/secondary`, other carets with `bg/surface/secondary-inverse`; the Progress threshold stroke uses `bg/surface/primary`; illustrations use `icon/brand/*`. Code cannot apply them without new utilities (P-35). | DESIGNER |
+| G-18 | Same role, different binding: Radio Card fill `bg/surface/primary` vs Checkbox Card `bg/surface/default`; Input / Number, NumberMax and the data-list search fill `bg/surface/primary` vs Input / Text `bg/surface/default`; spinner track success `border/success/default` vs warning/critical `*/primary`; checked + disabled mark in cards `icon/surface/default` vs items `icon/surface/disabled`. The code follows the binding where pixel-safe (P-28). | DESIGNER |
+| G-19 | States missing in Figma that code has: focus + hover on inputs; hover/pressed on Collapsible; hover on a selected Toggle; Warning and Disabled on Input / FileAvatar; the unchecked checkbox / radio icon in its default state has no colour override; no Avatar loading state; Button disabled only for Primary. | DESIGNER |
+| G-20 | `border/surface/primary` (`gray/50`) is bound nowhere; static containers use `border/surface/secondary` (P-29). | DESIGNER |
 
 ### Seen in the dark theme after the kit conversion
 
-From screenshots of all 304 stories in dark. Each traces back to an item above. The "next" theme looks coherent.
+From screenshots of all 304 stories in dark. Each traces back to an item above. The "next" theme looks coherent. Re-captured after the
+Figma reconciliation (last column; images in the session scratchpad, `storybook-shots/kit-dark-2/`, not committed).
 
-| ID | What is wrong | Cause |
-| --- | --- | --- |
-| D-01 | Dialog and alert-dialog headers, footers and the overlay keep light gradients: a white-to-grey frame and a backdrop fading to near-white. | U-01 (gradient utilities not converted) |
-| D-02 | Proposal-voting stage and open accordion headers show a white gradient behind white text ("Stage 1" is invisible). | U-01 |
-| D-03 | Info, warning and success tags have pale fills with light text; unreadable. | C-01 |
-| D-04 | Avatar and member placeholders are light-grey discs. | C-09 |
-| D-05 | Breakdown and divider borders in proposal voting are bright white lines. | U-01 (single-side borders) |
-| D-06 | Hover, pressed and disabled states of converted components are not covered by the screenshot run (only Button and the dropdown trigger were captured in those states). | Tooling gap; add state captures (T-06) |
+| ID | What is wrong | Cause | After the Figma reconciliation (dark re-capture, 53 of 304 stories changed) |
+| --- | --- | --- | --- |
+| D-01 | Dialog and alert-dialog headers, footers and the overlay keep light gradients: a white-to-grey frame and a backdrop fading to near-white. | U-01 (gradient utilities not converted) | Not improved. The fades are gradient utilities (U-01). Figma binds them to `gradient/surface/primary` / `-transparent` (Dark `gray/950`), so a gradient utility per token would fix it. |
+| D-02 | Proposal-voting stage and open accordion headers show a white gradient behind white text ("Stage 1" is invisible). | U-01 | Not improved for the header (same gradient cause; Figma: `gradient/surface/primary`). Around it the stage now follows the designer: breakdown cards get their `border/surface/secondary` outline, the selected tab label is `text/surface/primary`. |
+| D-03 | Info, warning and success tags have pale fills with light text; unreadable. | C-01 | Not improved. Tag fills stay primitive `*-200` (A-14); Figma binds `bg/*/primary`, whose Dark values are `*/900`: converting them is the fix, but it changes today's colour. |
+| D-04 | Avatar and member placeholders are light-grey discs. | C-09 | Not improved. Avatar fallback stays `neutral-200` (A-20); member avatars are image/blockies placeholders outside the token layer. The DAO avatar fallback disc changed (now `bg/accent/solid`, Dark `aragon/600`). |
+| D-05 | Breakdown and divider borders in proposal voting are bright white lines. | U-01 (single-side borders) | Partly. Breakdown and voting cards now show a grey outline (`border/surface/secondary`, Dark `gray/700`) instead of none; the bright dividers remain: single-side borders (U-01), bound in Figma to a `bg/surface/tertiary` fill layer. |
+| D-06 | Hover, pressed and disabled states of converted components are not covered by the screenshot run (only Button and the dropdown trigger were captured in those states). | Tooling gap; add state captures (T-06) | Partly covered: hover, pressed, focus-visible and open-menu captures of the changed components (52 stories, 243 captures) are identical before/after in the default theme (P-36); still uncovered: disabled-by-interaction states and every other component. |
 
 ## 7. Palette change (reviewed separately, O-06)
 
@@ -177,7 +268,7 @@ From screenshots of all 304 stories in dark. Each traces back to an item above. 
 
 | ID | Item | Status |
 | --- | --- | --- |
-| T-01 | Read the Figma bindings for all components, compare them line by line with the component map, correct the mapping where the designer chose differently, and add each difference to section 3. | In progress (extraction) |
+| T-01 | Read the Figma bindings for all components, compare them line by line with the component map, correct the mapping where the designer chose differently, and add each difference to section 3. | **Done**: 646 code parts compared (`semantic-colors.reconciliation.json`): 333 agree, 69 adoptable (34 applied: 25 switched token, 9 newly converted; 34 blocked by a missing utility or ordering; 1 kept, P-33), 102 applied differently (A-01…A-29), 61 primitive or raw in Figma, 69 without a Figma counterpart, 12 uncertain. Default theme 0/304 stories changed. |
 | T-02 | Convert the app (about 700 colour classes in 217 files, plus 37 hex literals and 27 `var(--color-*)` uses in charts, the wallet theme and the permissions graph). | OPEN |
 | T-03 | Convert the design prototypes under `design/canvas` (about 265 colour-variable references and 148 palette classes), then refresh the canvases' copy of the kit. | OPEN |
 | T-04 | Switch the default theme to the Figma values and enable dark mode in the app. Needs sections 3, 4 and 6 reviewed. | OPEN |
@@ -187,3 +278,4 @@ From screenshots of all 304 stories in dark. Each traces back to an item above. 
 | T-08 | Re-check two component-registry entries flagged stale by an unrelated earlier commit (`ensUtils`, `MemberAvatar`). | OPEN |
 | T-09 | Spacing: audit the app's gaps and paddings and propose role tokens (inconsistent responsive rules, e.g. `gap-2 md:gap-3` nine times and `gap-3 md:gap-2` seven times). Separate track. | OPEN |
 | T-10 | Product: should users get a light/dark/system toggle? Is per-DAO theming wanted? (The naming does not block either.) | OPEN |
+| T-11 | The class-ordering trap (P-26, P-27) is live in the app since the kit conversion: `Card` now carries `border-surface-*`, `bg-surface-primary` and `shadow-surface-default`, which sort after the primitive classes the app passes in, so they win. Affected: `ctaCard` (`border-primary-200 shadow-primary`), `existingConditionCard` (`border-primary-400 shadow-primary`), `dispatchSimulationDialog` (`bg-critical-50 border-critical-200`): these cards now render with the default border, fill and shadow. Found by a Tailwind compile probe (same-property utilities sort by name, semantic and primitive alike); not checked in the running app. Fix in the app (important modifier) or give Card explicit variant props; renaming classes cannot fix it for every consumer. | OPEN |
