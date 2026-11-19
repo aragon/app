@@ -64,7 +64,7 @@ body{margin:0}
 </x-import>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"simulateRejection":{"editor":"boolean","default":false},"title":{"editor":"text","default":"Submit vote"},"description":{"editor":"text","default":"To submit your vote, confirm the onchain transaction in your wallet."},"submitLabel":{"editor":"text","default":"Submit vote"},"successLabel":{"editor":"text","default":"View proposal"},"steps":{"editor":null},"summary":{"editor":null},"onClose":{"editor":null},"onSuccess":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"indexing":{"editor":"boolean","default":true},"open":{"editor":"boolean","default":true},"simulateRejection":{"editor":"boolean","default":false},"title":{"editor":"text","default":"Submit vote"},"description":{"editor":"text","default":"To submit your vote, confirm the onchain transaction in your wallet."},"submitLabel":{"editor":"text","default":"Submit vote"},"successLabel":{"editor":"text","default":"View proposal"},"steps":{"editor":null},"summary":{"editor":null},"onClose":{"editor":null},"onSuccess":{"editor":null},"$preview":{"width":1440,"height":900}}'>
 // TxFlowDialog: the app's TransactionDialog (apps/app: shared/components/transactionDialog/{transactionDialog,
 // transactionDialogShell,transactionDialogFooter}.tsx + shared/components/transactionStatus/transactionStatusStep),
 // as an interactive part with a SIMULATED wallet (no chain). Mount it inside a flow and drive `open` from the flow's state:
@@ -108,6 +108,9 @@ class Component extends DCLogic {
     this.setState({ phase: 'awaiting' });
     if (this.props.simulateRejection) { this.later('rejected', 1500); return; }
     this.later('confirming', 1500);
+    // indexing={{no}}: a transaction the app runs without a transaction type (delegate, wrap, approve) has no
+    // "Index onchain data" step; it is done once confirmed.
+    if (this.props.indexing === false) { this.later('success', 2700); return; }
     this.later('indexing', 2700);
     this.later('success', 3500);
   }
@@ -140,9 +143,9 @@ class Component extends DCLogic {
       .concat([
         row('Prepare transaction', 'success'),
         row(sign === 'error' ? 'Rejected by wallet' : 'Sign transaction', sign, { wallet: true }),
-        row('Confirm transaction', confirm, { details: phase === 'confirming' }),
-        row('Index onchain data', index)
-      ]);
+        row('Confirm transaction', confirm, { details: phase === 'confirming' })
+      ])
+      .concat(p.indexing === false ? [] : [row('Index onchain data', index)]);
 
     let primary;
     if (phase === 'idle') primary = { label: 'Sign transaction', onClick: () => this.sign() };

@@ -124,7 +124,8 @@ class Component extends DCLogic {
     kinds.forEach((k, i) => { const on = match(k); show['r' + i] = on; if (on) count++; });
     const day = 24 * 3600000;
     const kit = window.GovUiKit;
-    const lastActivity = kit.formatterUtils.formatDate(Date.now() - 2 * day, { format: kit.DateFormat.RELATIVE }) ?? '-';
+    // the newest row is dated 2026-11-14 (fixed above): "Last activity" is relative to that date, so the two never contradict each other
+    const lastActivity = kit.formatterUtils.formatDate(new Date('2026-11-14T18:18:00').getTime(), { format: kit.DateFormat.RELATIVE }) ?? '-';
     return {
       yes: true,
       no: false,

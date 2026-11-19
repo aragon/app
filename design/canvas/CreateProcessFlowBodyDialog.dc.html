@@ -21,7 +21,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{open}}" on-open-change="{{onOpenChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" size="lg" hidden-title="Add voting body" hidden-description="Create a new voting body for your DAO">
   <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Add voting body" on-close="{{onClose}}"></x-import>
   <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pb-1.5">
-    <div class="dlg-wizard-form">
+    <div class="dlg-wizard-form" onKeyDown="{{onEnter}}">
 
       <sc-if value="{{isSelect}}" hint-placeholder-val="{{yes}}">
         <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Governance type" help-text="This determines the governance the body uses to make decisions." value="{{plugin}}" on-value-change="{{onPlugin}}">
@@ -221,6 +221,7 @@ class Component extends DCLogic {
       moreTriggerSm: R.createElement(G.Button, { iconRight: 'DOTS_VERTICAL', size: 'md', variant: 'tertiary' }, 'More'),
       dotsTrigger: R.createElement(G.Button, { className: 'shrink-0', iconLeft: 'DOTS_VERTICAL', variant: 'tertiary' }),
       hasError: !!vm.hasError,
+      onEnter: (e) => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && vm.onPrimary) { e.preventDefault(); vm.onPrimary(); } },
       primary: { label: vm.primaryLabel || 'Next', onClick: vm.onPrimary || noop, type: 'button' },
       secondary: { label: vm.hasPrevious ? 'Back' : 'Close', onClick: vm.onSecondary || noop } };
   }

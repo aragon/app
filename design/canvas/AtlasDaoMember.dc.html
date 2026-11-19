@@ -135,7 +135,7 @@ class Component extends DCLogic {
       1: ['Grant: Open-source zk proving benchmarks', 'Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems.', -40, A.n, [A.n, A.l, A.s, A.t], now - 34 * day - hour, 'EXECUTED'],
       2: ['Grant: Governance analytics dashboard', 'Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC).', -30, A.s, [A.n, A.l, A.s], now - 23 * day - hour, 'EXPIRED'],
       3: ['Grant: Hackathon prize pool for Q4', 'Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks.', -20, A.c, [A.n], now - 13 * day - hour, 'REJECTED'],
-      4: ['Add a sixth council seat for research', 'Expand the council with a research seat to improve technical review of grant applications.', -3, A.n, [A.n, A.l, A.s], now + 4 * day + hour, st.executed4 ? 'EXECUTED' : 'EXECUTABLE'],
+      4: ['Add a sixth council seat for research', 'Expand the council with a research seat to improve technical review of grant applications.', -3, A.n, [A.n, A.l, A.s], st.executed4 ? now - hour : now + 4 * day + hour, st.executed4 ? 'EXECUTED' : 'EXECUTABLE'],
       5: ['Grant: Wallet accessibility audit', 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', -1, A.t, [A.c].concat(st.approved5 ? [A.n] : []), now + 6 * day + hour, 'ACTIVE'],
       6: ['Q1 2027 council operating budget', 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', 1, A.l, [], now + 8 * day + hour, 'PENDING']
     };

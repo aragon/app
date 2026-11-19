@@ -176,7 +176,7 @@ class Component extends DCLogic {
   openBodyDialog(stageIdx, bodyRef) {
     let form = emptyForm(); let edit = null;
     if (bodyRef) { form = JSON.parse(JSON.stringify(bodyRef.body)); edit = { id: bodyRef.body.id }; }
-    this.setState({ dlg: { stageIdx, edit, screen: bodyRef ? this.seq(form, stageIdx != null)[0] : 'select', form, tried: {}, touched: {} }, chk: {} });
+    this.setState({ dlg: { stageIdx, edit, screen: bodyRef ? this.seq(form, stageIdx != null)[1] : 'select', form, tried: {}, touched: {} }, chk: {} });
   }
   seq(f, isSub) {
     const s = ['select'];
@@ -189,7 +189,10 @@ class Component extends DCLogic {
   bodyDlgErrors(d = this.state.dlg) {
     const f = d.form; const e = {}; const sc = d.screen;
     const addrErr = (a, list, i) => (!a ? 'Address is required' : !ADDR.test(a) ? 'Address is not valid.' : list.findIndex((x, j) => j !== i && x.toLowerCase() === a.toLowerCase()) >= 0 ? 'Address has already been added.' : null);
-    if (sc === 'metadata') { if (!f.name.trim()) e.name = 'Body name is mandatory.'; }
+    if (sc === 'metadata') {
+      if (!f.name.trim()) e.name = 'Body name is mandatory.';
+      f.resources.forEach((r, i) => { if (!r.url.trim()) e['res' + i] = 'URL is mandatory.'; else if (!/^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/.test(r.url.trim())) e['res' + i] = 'Invalid URL format.'; });
+    }
     if (sc === 'external') {
       if (!f.address) e.address = 'Any address is mandatory.'; else if (!ADDR.test(f.address)) e.address = 'Any address is invalid.';
       else if (!this.chkDone('ext', f.address)) e.address = 'Please wait for the address type checks to complete';
@@ -385,7 +388,7 @@ class Component extends DCLogic {
     const filtered = q ? groups.map((g) => ({ ...g, items: g.items.filter((i) => i.name.toLowerCase().includes(q) || g.name.toLowerCase().includes(q)) })).filter((g) => g.items.length) : groups;
     return { mode: s.perm, onMode: (v) => this.setState({ perm: v, menuOpen: false }), alert: this.alertOf(e.dup),
       selectors: s.selectors.map((a, i) => ({ ...a, onRemove: () => this.mut((x) => { x.selectors.splice(i, 1); }) })),
-      search: s.search, onSearch: (ev) => this.setState({ search: ev.target.value, menuOpen: true }), onSearchFocus: () => this.setState({ menuOpen: true }), onSearchBlur: () => { clearTimeout(this.t3); this.t3 = setTimeout(() => this.setState({ menuOpen: false }), 250); }, menuOpen: s.menuOpen, groups: filtered };
+      search: s.search, onSearch: (ev) => this.setState({ search: ev.target.value, menuOpen: true }), onSearchFocus: () => this.setState({ menuOpen: true }), onSearchKey: (ev) => { if (ev.key === 'Enter') { if (ev.preventDefault) ev.preventDefault(); const f = filtered.flatMap((g) => g.items)[0]; if (f) f.onSelect(); } else if (ev.key === 'Escape') this.setState({ menuOpen: false }); }, onSearchBlur: () => { clearTimeout(this.t3); this.t3 = setTimeout(() => this.setState({ menuOpen: false }), 250); }, menuOpen: s.menuOpen, groups: filtered };
   }
 
   bodyDialogVm() {
@@ -408,7 +411,7 @@ class Component extends DCLogic {
     vm.meta = { name: f.name, nameAlert: A('name'), onName: (ev) => set((x) => { x.name = ev.target.value; }), onNameBlur: blur('name'), description: f.description,
       onDescription: (ev) => set((x) => { x.description = ev.target.value; }),
       resourcesVm: { helpText: 'These are shown as links on the members list under the description as additional external resources.',
-        resources: f.resources.map((r, i) => ({ url: r.url, name: r.name, namePlaceholder: r.url || undefined, onUrl: (ev) => set((x) => { x.resources[i].url = ev.target.value; }), onName: (ev) => set((x) => { x.resources[i].name = ev.target.value; }), onRemove: () => set((x) => { x.resources.splice(i, 1); }) })),
+        resources: f.resources.map((r, i) => ({ url: r.url, name: r.name, namePlaceholder: r.url || undefined, urlAlert: A('res' + i), onUrlBlur: blur('res' + i), onUrl: (ev) => set((x) => { x.resources[i].url = ev.target.value; }), onName: (ev) => set((x) => { x.resources[i].name = ev.target.value; }), onRemove: () => set((x) => { x.resources.splice(i, 1); }) })),
         onAdd: () => set((x) => { x.resources.push({ url: '', name: '' }); }) } };
     const chk = this.state.chk.ext;
     const extPending = ADDR.test(f.address) && !ck('ext', f.address);

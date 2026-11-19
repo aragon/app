@@ -109,11 +109,12 @@ body{margin:0}
               <div class="page-section__header">
                 <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Other DAO memberships</x-import>
               </div>
-              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{four}}" page-size="{{three}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{four}}" page-size="{{three}}" state="idle" on-load-more="{{loadMoreDaos}}">
                 <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" ens="meridian.dao.eth" address="{{daos.meridian}}" logo-src="assets/mock/avatar/meridian.svg" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." network="Ethereum" href="Dao.dc.html"></x-import>
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" ens="atlas-grants.dao.eth" address="{{daos.atlas}}" logo-src="assets/mock/avatar/atlas.svg" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." network="Ethereum" href="AtlasDao.dc.html"></x-import>
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Solace Collective" ens="solace.dao.eth" address="{{daos.solace}}" logo-src="assets/mock/avatar/solace.svg" description="An artist-run collective funding generative art residencies." network="Base" href="#"></x-import>
+<sc-if value="{{daoMore}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Harbor Protocol" ens="harbor.dao.eth" address="{{daos.harbor}}" logo-src="assets/mock/avatar/harbor.svg" description="Decentralized insurance pools governed by underwriters." network="Ethereum" href="#"></x-import></sc-if>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -165,7 +166,7 @@ class Component extends DCLogic {
   };
   constructor(props) {
     super(props);
-    this.state = { vbody: 'tv', txOpen: false, delegated: false };
+    this.state = { vbody: 'tv', txOpen: false, delegated: false, daoMore: false };
   }
   renderVals() {
     const hour = 3600000, day = 24 * hour, now = Date.now();
@@ -224,7 +225,8 @@ class Component extends DCLogic {
       v, vshow, vCount: votes.length, pr, pshow, pCount: mine.length,
       emptyVotes: { heading: 'No votes found', description: vb === 'c' || vb === 'g' ? 'Safe confirmations are not indexed as votes.' : 'This member has not voted in this body yet.' },
       emptyProposals: { heading: 'No proposals found', description: 'This member has not created a proposal yet.' },
-      daos: { meridian: '0xc8c322384903ee8f11f511b71d0504237886bcde', atlas: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', solace: '0xe2f001c33fca00ad672f2a79abbcd567803178ee' },
+      daos: { meridian: '0xc8c322384903ee8f11f511b71d0504237886bcde', atlas: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', solace: '0xe2f001c33fca00ad672f2a79abbcd567803178ee', harbor: '0x506b251c4cefd8a679955e7d17c8968b3d994693' },
+      daoMore: this.state.daoMore, loadMoreDaos: () => this.setState({ daoMore: true }),
       addressLink: { href: 'https://etherscan.io/address/' + row[1], isOnchainEntity: true },
       txOpen: this.state.txOpen, closeTx: () => this.setState({ txOpen: false }),
       txDone: () => { window.__nspDelegate = row[1]; this.setState({ txOpen: false, delegated: true }); }

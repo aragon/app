@@ -25,7 +25,7 @@ body{margin:0}
   </x-import>
   <x-import component-from-global-scope="GovUiKit.AddressInput" label="Your delegation" help-text="Enter the address where you want to delegate your current or future token balance's voting power." placeholder="ENS or 0x…" disabled="{{isSelf}}" value="{{text}}" on-change="{{onText}}" enforce-checksum="{{no}}" alert="{{alert}}" variant="{{inputVariant}}" chain-id="{{chainId}}"></x-import>
   <sc-if value="{{isDialog}}" hint-placeholder-val="{{no}}">
-    <div class="flex flex-col gap-9">
+    <div class="flex flex-col gap-9" style="gap: 36px;">
       <p class="footer-info">Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.</p>
       <div class="flex gap-3 justify-between">
         <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{cancel}}">Cancel</x-import>

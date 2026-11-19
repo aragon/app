@@ -28,10 +28,10 @@
               </x-import>
             </div>
             <x-import component-from-global-scope="GovUiKit.DataList.Container">
-<sc-if value="{{show.r0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="500000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-11-12T18:18:00" hash="0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" target="_blank"></x-import></sc-if>
-<sc-if value="{{show.r1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="WITHDRAW" token-amount="40000" token-symbol="USDC" chain-id="{{chainId}}" date="2026-10-15T18:18:00" hash="0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" target="_blank"></x-import></sc-if>
-<sc-if value="{{show.r2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="120000" token-symbol="DAI" chain-id="{{chainId}}" date="2026-09-07T18:18:00" hash="0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" target="_blank"></x-import></sc-if>
-<sc-if value="{{show.r3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="25.32" token-symbol="ETH" chain-id="{{chainId}}" date="2026-06-19T18:18:00" hash="0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="500000" token-symbol="USDC" chain-id="{{chainId}}" date="{{dt.d4_1818}}" hash="0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x8f2600bfdcb4e9a273ca6bf155e75e59078e50c231835d0301185084ac064df5" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="WITHDRAW" token-amount="40000" token-symbol="USDC" chain-id="{{chainId}}" date="{{dt.d32_1818}}" hash="0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x05709708d96a1038da03f0405f879da73797b9334d702bf63ee7604b302b3d33" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="120000" token-symbol="DAI" chain-id="{{chainId}}" date="{{dt.d70_1818}}" hash="0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x43c88776bfbd392d91734e158d66d9205b45a296a0dd6712597e20a51b40af58" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.r3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="DEPOSIT" token-amount="25.32" token-symbol="ETH" chain-id="{{chainId}}" date="{{dt.d150_1818}}" hash="0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x2c0eb9ba4956a0b1526c0a669c262c54fc093f1d5f84fc076080dce074ee4cec" target="_blank"></x-import></sc-if>
 </x-import>
             <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
           </x-import>
@@ -99,8 +99,11 @@ class Component extends DCLogic {
     const day = 24 * 3600000;
     const kit = window.GovUiKit;
     const lastActivity = kit.formatterUtils.formatDate(Date.now() - 4 * day, { format: kit.DateFormat.RELATIVE }) ?? '-';
+    // transaction dates are day offsets from today at a fixed time of day, so "Last activity" and the rows agree on any clock
+    const isoDay = (n, hhmm) => { const d = new Date(Date.now() - n * 24 * 3600000); const p = (x) => String(x).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + hhmm + ':00'; };
+    const dt = {d4_1818: isoDay(4, '18:18'), d32_1818: isoDay(32, '18:18'), d70_1818: isoDay(70, '18:18'), d150_1818: isoDay(150, '18:18')};
     return {
-      click: this.click, yes: true, no: false, one: 1, two: 2, chainId: 1,
+      dt, click: this.click, yes: true, no: false, one: 1, two: 2, chainId: 1,
       count, show, filter: f, setFilter: this.setFilter, pageSize: 20, lastActivity,
       addressLink: { href: 'https://etherscan.io/address/0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', isOnchainEntity: true }
     };

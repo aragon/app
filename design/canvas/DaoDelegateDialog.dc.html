@@ -19,7 +19,7 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Set up your delegation" hidden-description="Delegation form">
-  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Set up your delegation"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Set up your delegation" on-close="{{onClose}}"></x-import>
   <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pb-4">
     <dc-import name="DaoDelegateForm" mode="dialog" wallet="{{wallet}}" current="{{current}}" initial="{{initial}}" on-submit="{{onSubmit}}" on-cancel="{{onClose}}" on-connect="{{onConnect}}" hint-size="100%,420px"></dc-import>
   </x-import>

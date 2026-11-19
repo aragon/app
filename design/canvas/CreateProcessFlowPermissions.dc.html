@@ -38,7 +38,7 @@ body{margin:0}
       </x-import>
     </sc-if>
     <div class="autocomplete">
-      <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="{{search}}" on-change="{{onSearch}}" on-focus="{{onSearchFocus}}" on-blur="{{onSearchBlur}}" auto-complete="off" wrapper-class-name="{{inputWrap}}"></x-import>
+      <x-import component-from-global-scope="GovUiKit.InputText" placeholder="Search by action, contract name, or address" value="{{search}}" on-change="{{onSearch}}" on-focus="{{onSearchFocus}}" on-key-down="{{onSearchKey}}" on-blur="{{onSearchBlur}}" auto-complete="off" wrapper-class-name="{{inputWrap}}"></x-import>
       <sc-if value="{{menuOpen}}" hint-placeholder-val="{{no}}">
         <div class="autocomplete-menu" role="listbox">
           <div class="autocomplete-menu__list">
@@ -78,7 +78,7 @@ class Component extends DCLogic {
     const selectors = vm.selectors || [];
     return { yes: true, no: false, mode, onMode: vm.onMode || noop, isAny: mode === 'ANY', isSelected: mode === 'SELECTED',
       settingsIllustration: { object: 'SETTINGS' }, selectors, noSelectors: selectors.length === 0, hasSelectors: selectors.length > 0, alert: vm.alert,
-      search: vm.search || '', onSearch: vm.onSearch || noop, onSearchFocus: vm.onSearchFocus || noop, onSearchBlur: vm.onSearchBlur || noop, menuOpen: !!vm.menuOpen,
+      search: vm.search || '', onSearch: vm.onSearch || noop, onSearchFocus: vm.onSearchFocus || noop, onSearchKey: vm.onSearchKey || noop, onSearchBlur: vm.onSearchBlur || noop, menuOpen: !!vm.menuOpen,
       inputWrap: vm.menuOpen ? 'shadow-primary-lg border-primary-400 autocomplete__input--open' : '', groups: vm.groups || [] };
   }
 }

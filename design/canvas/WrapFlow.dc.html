@@ -25,7 +25,7 @@ body{margin:0}
 
     <div class="app-column">
       <div class="dao-slot">
-        <dc-import name="WrapFlowMembers" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" underlying="{{underlying}}" wrapped="{{wrapped}}" allowance="{{allowance}}" delegate="{{delegate}}" on-wrap="{{startWrap}}" on-unwrap="{{startUnwrap}}" on-delegate="{{startDelegate}}" on-onboard="{{openForm}}" hint-size="100%,1000px"></dc-import>
+        <dc-import name="WrapFlowMembers" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" underlying="{{underlying}}" wrapped="{{wrapped}}" allowance="{{allowance}}" delegate="{{delegate}}" on-wrap="{{startWrap}}" on-unwrap="{{startUnwrap}}" on-delegate="{{startDelegate}}" on-onboard="{{openForm}}" on-onboard-delegate="{{openDelForm}}" hint-size="100%,1000px"></dc-import>
       </div>
       <div class="app-launcher">
         <button type="button" aria-label="Ask Aragon">
@@ -49,61 +49,78 @@ body{margin:0}
 <sc-if value="{{dialog.form}}" hint-placeholder-val="{{false}}">
   <dc-import name="WrapFlowOnboardDialog" step="form" underlying="{{underlying}}" wrapped="{{wrapped}}" allowance="{{allowance}}" on-submit="{{startWrap}}" on-close="{{closeDialog}}" hint-size="1px,1px"></dc-import>
 </sc-if>
-<dc-import name="WrapFlowTxDialog" open="{{txOpen}}" kind="{{txKind}}" amount="{{txAmount}}" show-info="{{txInfo}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="1px,1px"></dc-import>
-<dc-import name="TxFlowDialog" open="{{delegateOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeDelegate}}" on-success="{{delegateDone}}" hint-size="1px,1px"></dc-import>
+<sc-if value="{{dialog.delIntro}}" hint-placeholder-val="{{false}}">
+  <dc-import name="WrapFlowOnboardDialog" step="delegateIntro" on-next="{{openDelForm}}" on-close="{{closeDialog}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dialog.delForm}}" hint-placeholder-val="{{false}}">
+  <dc-import name="WrapFlowOnboardDialog" step="delegateForm" wallet="{{wallet}}" on-submit="{{startDelegate}}" on-close="{{closeDialog}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<dc-import name="WrapFlowTxDialog" open="{{txOpen}}" kind="{{txKind}}" amount="{{txAmount}}" show-info="{{txInfo}}" delegate-address="{{txAddr}}" delegate-ens="{{txEns}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="1px,1px"></dc-import>
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"startWrapped":{"editor":"float","default":2000},"startUnderlying":{"editor":"float","default":12500},"$preview":{"width":1440,"height":1000}}'>
 // Live prototype: wrapping tokens in a token-voting DAO (Harbor Collective) whose governance token wHBR wraps HBR.
-// ONE artboard: state = { wallet, dialog, txOpen, tx:{kind,amount,info}, underlying, wrapped, allowance, delegate }.
+// ONE artboard: state = { wallet, dialog, txOpen, tx:{kind,amount,info,addr,ens}, underlying, wrapped, allowance, delegate }.
 // Page: members page of the DAO (WrapFlowMembers) in the DAO shell of Dao.dc.html (DaoNav, wallet dialogs, Footer).
-// Sequence of the app (tokenWrapForm.tsx): submit -> if allowance < amount: APPROVE_TOKENS dialog ("Step 1 of 2") -> on success
-// WRAP_UNWRAP dialog ("Step 2 of 2") -> on success balances update (HBR down, wHBR and voting power up). Unwrap button of the
-// form -> WRAP_UNWRAP dialog (action unwrap, the whole wHBR balance) -> balances update back.
-// Onboarding: connecting a wallet with HBR and no wHBR opens the intro dialog (WRAP_ONBOARDING_INTRO) -> the wrap form dialog;
-// the same form opens from the card above the members list. Set the tweak startWrapped to 0 to see them straight away.
-// Every state is source-only: the mock data has no wrapped-token DAO, so no screenshot exists. The app also opens the
-// delegation onboarding after a first wrap; it is not drawn here. Nav entries other than the logo do nothing.
+// Sequence of the app (tokenWrapForm.tsx): submit -> if allowance < amount: APPROVE_TOKENS dialog ("Step 1 of 2") -> when it confirms, the
+// WRAP_UNWRAP dialog opens by itself ("Step 2 of 2") -> when it confirms balances update (HBR down, wHBR up) and, if the wallet has not
+// delegated yet, the delegation onboarding intro replaces the dialog. Unwrap button of the form -> WRAP_UNWRAP dialog (action unwrap, the
+// whole wHBR balance) -> balances update back. The delegate dialog (DELEGATE) is the same kind of transaction dialog.
+// Onboarding: connecting a wallet that holds wHBR but has not delegated opens the delegation intro; connecting one with HBR and no voting
+// power opens the wrap intro (WRAP_ONBOARDING_INTRO, which wins when both apply, as in the app) -> the wrap form dialog. On the members list a
+// card shows the same states: delegation card first ("Your wHBR is undelegated"), else the wrap card ("You have unwrapped HBR").
+// Voting power ("getVotes") = wHBR balance only while the wallet delegates to itself. Set the tweak startWrapped to 0 to see the wrap
+// onboarding straight away; with wHBR > 0 the wallet starts delegated to itself.
+// Every state is source-only: the mock data has no wrapped-token DAO, so no screenshot exists. Nav entries other than the logo do nothing.
+const SELF = '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a';
+const ENS = { '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a': 'nadia.eth', '0xac6399087027f972e6d2ab830dc9b33cda035642': 'kofi-mensah.eth', '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05': 'lenaweber.eth', '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a': 'sofiaruiz.eth', '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e': 'tomas.eth', '0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8': 'marcusj.eth', '0x8a25faabbd80f71248328cf3a5867d3168210a46': 'chenwei.eth' };
 class Component extends DCLogic {
   constructor(props) {
     super(props);
     const w = props.startWrapped != null ? Number(props.startWrapped) : 2000;
     const u = props.startUnderlying != null ? Number(props.startUnderlying) : 12500;
-    this.state = { wallet: '', dialog: '', txOpen: false, tx: { kind: 'approve', amount: 0, info: true }, underlying: u, wrapped: w, allowance: 0, delegate: '', delegateOpen: false, pendingDelegate: '' };
+    this.state = { wallet: '', dialog: '', txOpen: false, tx: { kind: 'approve', amount: 0, info: true, addr: '', ens: '' }, underlying: u, wrapped: w, allowance: 0, delegate: w > 0 ? SELF : '' };
   }
+  votes(s) { return s.delegate === SELF ? s.wrapped : 0; }
   connect = () => this.setState({ dialog: 'connect' });
   openUser = () => this.setState({ dialog: 'user' });
   closeDialog = () => this.setState({ dialog: '' });
   openForm = () => this.setState({ dialog: 'form' });
-  pickWallet = () => this.setState((s) => ({ wallet: 'connected', dialog: s.wrapped === 0 && s.underlying > 0 ? 'intro' : '' }));
-  disconnect = () => this.setState({ wallet: '', dialog: '' });
+  openDelForm = () => this.setState({ dialog: 'delForm' });
+  // Watchers of the app: the delegation intro and the wrap intro both fire on connection; the wrap one is opened last and replaces the other.
+  pickWallet = () => this.setState((s) => ({ wallet: 'connected', dialog: this.votes(s) === 0 && s.underlying > 0 ? 'intro' : (s.wrapped > 0 && !s.delegate ? 'delIntro' : '') }));
+  disconnect = () => this.setState({ wallet: '', dialog: '', txOpen: false });
   nav = () => {};
   startWrap = (amount) => {
     const s = this.state;
     const needs = s.allowance < amount;
-    this.setState({ dialog: '', txOpen: true, tx: { kind: needs ? 'approve' : 'wrap', amount, info: needs } });
+    this.setState({ dialog: '', txOpen: true, tx: { kind: needs ? 'approve' : 'wrap', amount, info: needs, addr: '', ens: '' } });
   };
-  startUnwrap = () => this.setState((s) => ({ txOpen: true, tx: { kind: 'unwrap', amount: s.wrapped, info: false } }));
+  startUnwrap = () => this.setState((s) => ({ dialog: '', txOpen: true, tx: { kind: 'unwrap', amount: s.wrapped, info: false, addr: '', ens: '' } }));
   closeTx = () => this.setState({ txOpen: false });
+  // Called once when the open transaction confirms (the app's onSuccess of each dialog).
   txDone = () => this.setState((s) => {
     const t = s.tx;
-    if (t.kind === 'approve') return { allowance: t.amount, tx: { kind: 'wrap', amount: t.amount, info: true } };
-    if (t.kind === 'wrap') return { txOpen: false, underlying: s.underlying - t.amount, wrapped: s.wrapped + t.amount, allowance: Math.max(0, s.allowance - t.amount) };
-    return { txOpen: false, underlying: s.underlying + t.amount, wrapped: s.wrapped - t.amount };
+    if (t.kind === 'approve') return { allowance: t.amount, tx: { kind: 'wrap', amount: t.amount, info: true, addr: '', ens: '' } };
+    if (t.kind === 'wrap') {
+      const next = { underlying: s.underlying - t.amount, wrapped: s.wrapped + t.amount, allowance: Math.max(0, s.allowance - t.amount) };
+      // useOpenDelegationOnboardingIfNeeded: an undelegated wallet gets the delegation intro, which replaces the transaction dialog.
+      return s.delegate ? next : Object.assign(next, { txOpen: false, dialog: 'delIntro' });
+    }
+    if (t.kind === 'delegate') return { delegate: t.addr };
+    return { underlying: s.underlying + t.amount, wrapped: s.wrapped - t.amount };
   });
-  startDelegate = (address) => this.setState({ delegateOpen: true, pendingDelegate: address });
-  closeDelegate = () => this.setState({ delegateOpen: false });
-  delegateDone = () => this.setState((s) => ({ delegateOpen: false, delegate: s.pendingDelegate }));
+  startDelegate = (address) => this.setState({ dialog: '', txOpen: true, tx: { kind: 'delegate', amount: 0, info: false, addr: String(address || '').toLowerCase(), ens: ENS[String(address || '').toLowerCase()] || '' } });
   renderVals() {
     const s = this.state;
+    const connected = s.wallet === 'connected';
     return {
-      yes: true, noSteps: [], nav: this.nav, wallet: s.wallet, connect: this.connect, openUser: this.openUser, openForm: this.openForm,
-      dialog: { connect: s.dialog === 'connect', user: s.dialog === 'user', intro: s.dialog === 'intro', form: s.dialog === 'form' },
+      yes: true, nav: this.nav, wallet: s.wallet, connect: this.connect, openUser: this.openUser, openForm: this.openForm, openDelForm: this.openDelForm,
+      dialog: { connect: s.dialog === 'connect', user: s.dialog === 'user', intro: connected && s.dialog === 'intro', form: connected && s.dialog === 'form', delIntro: connected && s.dialog === 'delIntro', delForm: connected && s.dialog === 'delForm' },
       closeDialog: this.closeDialog, pickWallet: this.pickWallet, disconnect: this.disconnect,
       underlying: s.underlying, wrapped: s.wrapped, allowance: s.allowance, delegate: s.delegate,
       startWrap: this.startWrap, startUnwrap: this.startUnwrap, startDelegate: this.startDelegate,
-      txOpen: s.txOpen, txKind: s.tx.kind, txAmount: s.tx.amount, txInfo: s.tx.info, closeTx: this.closeTx, txDone: this.txDone,
-      delegateOpen: s.delegateOpen, closeDelegate: this.closeDelegate, delegateDone: this.delegateDone
+      txOpen: s.txOpen && connected, txKind: s.tx.kind, txAmount: s.tx.amount, txInfo: s.tx.info, txAddr: s.tx.addr, txEns: s.tx.ens, closeTx: this.closeTx, txDone: this.txDone
     };
   }
 }

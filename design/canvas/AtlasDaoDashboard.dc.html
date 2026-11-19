@@ -157,7 +157,7 @@ class Component extends DCLogic {
       proposals: [
         { id: 'AGC-6', href: '#nav:proposal:AGC-6', title: 'Q1 2027 council operating budget', summary: 'Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.', status: 'PENDING', date: now + 8 * day + hour, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
         { id: 'AGC-5', href: '#nav:proposal:AGC-5', title: 'Grant: Wallet accessibility audit', summary: 'Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).', status: 'ACTIVE', date: now + 6 * day + hour, publisher: person('0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth') },
-        { id: 'AGC-4', href: '#nav:proposal:AGC-4', title: 'Add a sixth council seat for research', summary: 'Expand the council with a research seat to improve technical review of grant applications.', status: st.executed4 ? 'EXECUTED' : 'EXECUTABLE', date: now + 4 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', connected ? 'You' : 'nadia.eth') }
+        { id: 'AGC-4', href: '#nav:proposal:AGC-4', title: 'Add a sixth council seat for research', summary: 'Expand the council with a research seat to improve technical review of grant applications.', status: st.executed4 ? 'EXECUTED' : 'EXECUTABLE', date: st.executed4 ? now - hour : now + 4 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', connected ? 'You' : 'nadia.eth') }
       ],
       members: [
         { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth' },

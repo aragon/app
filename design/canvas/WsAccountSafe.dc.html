@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Workspace Safe account</title>
+<title>Workspace Safe settings</title>
 <script src="./support.js"></script>
 <link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
 <link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
@@ -19,104 +19,85 @@ body{margin:0}
 </style>
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
-<dc-import name="SafeFlowPage" txs="{{txs}}" nonce-text="{{nonceText}}" on-review="{{openReview}}" hint-size="100%,1900px"></dc-import>
-<dc-import name="SafeFlowReviewDialog" open="{{reviewOpen}}" tx="{{reviewTx}}" connected="{{connected}}" on-close="{{closeReview}}" on-action="{{startAction}}" hint-size="0px,0px"></dc-import>
-<dc-import name="SafeFlowTxDialog" open="{{actionOpen}}" tx="{{actionTx}}" mode="{{actionMode}}" on-cancel="{{cancelAction}}" on-applied="{{applyAction}}" on-done="{{finishAction}}" hint-size="0px,0px"></dc-import>
+<div class="page-container" onClick="{{click}}">
+  <div class="app-container page-content">
+    <main class="page-main page-main--titled">
+      <header class="page-main__header">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Settings</x-import>
+      </header>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <div class="page-section__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Account</x-import>
+          </div>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Blockchain">
+              <div class="settings-info__value">
+                <p class="text-neutral-500">Ethereum</p>
+                <p class="settings-info__note">Not changeable</p>
+              </div>
+            </x-import></div>
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Not changeable" link="{{safeLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import></div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Summary">
+              <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{four}}"><p class="text-neutral-500">The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.</p></x-import>
+            </x-import>
+          </x-import>
+        </x-import>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <div class="page-section__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance</x-import>
+          </div>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Required confirmations" link="{{membersLink}}" children="3 of 5"></x-import></div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Current Safe nonce"><p class="text-neutral-500">{{nonceText}}</p></x-import>
+          </x-import>
+        </x-import>
+      </div>
+    </main>
+
+    <aside class="page-aside">
+      <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+        <div class="aside-card__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contracts</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Safe 1.4.1" link="{{safeLink}}" children="0x515f…02e2"></x-import>
+        </x-import>
+      </x-import>
+    </aside>
+  </div>
+</div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-nav":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":1100,"height":1900}}'>
-// Safe account pages inside the workspace shell (Northstar Council Safe, 3-of-5, nonce 5): SafeFlowPage + its review and sign dialogs,
-// with the state SafeFlow.dc.html keeps (queue, nonce, review/action dialogs). Props: wallet ('connected' | '': the shell's wallet; the owner
-// signing is nadia.eth), onConnect() (opens the shell's connect dialog when Approve / Execute is pressed without a wallet).
-// state = { nonce, reviewId, actionId, actionMode, actionOpen, txs }. Lives in the shell's page slot, so it remounts when the page changes.
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":null},"on-connect":{"editor":null},"scope":{"editor":null},"safe":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// Settings of the Safe account of the workspace (apps/app: modules/workspace/pages/workspaceAccountSettingsPage/workspaceSafeSettingsPageClient.tsx; strings
+// app.workspace.workspaceSafeSettingsPage, app.safe.safeSettings). PART of the workspace prototype: the Safe's Settings section. Props: onNav(target), wallet, onConnect
+// (unused), scope (unused), safe (the shell's Safe state: the current nonce).
+// Main: "Account" card (Blockchain, Address linked to the Safe app, Summary = the account's description) and "Governance" card (Required confirmations, linking to the
+// members page, and the current nonce). Aside "Contracts": the Safe address with its version. A Safe with no guard or modules has no further rows.
+// Source-only: the unavailable-network and failed-read states are not drawn.
 class Component extends DCLogic {
-  state = {
-    nonce: 5,
-    reviewId: '',
-    actionId: '',
-    actionMode: 'approve',
-    actionOpen: false,
-    txs: [
-      { id: 'tx5', nonce: 5, tag: 'NSP-7', title: 'Increase the bug bounty ceiling to 1M USDC', queuedDays: 4, signers: [1, 2], executed: false,
-        fn: 'reportProposalResult', to: '0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', value: '0',
-        data: '0x523039620000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000',
-        safeTxHash: '0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb',
-        domainHash: '0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510',
-        messageHash: '0x0b42b6393c1f53060fe3ddbfcd7aadcca894465a5a438f69c87d790b2299b9b2' },
-      { id: 'tx6', nonce: 6, tag: 'NSP-8', title: 'Seed NSP/ETH liquidity on Uniswap v4', queuedDays: 2, signers: [1, 3], executed: false,
-        fn: 'reportProposalResult', to: '0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', value: '0',
-        data: '0x523039620000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000',
-        safeTxHash: '0xf1918e8562236eb17adc8502332f4c9c82bc14e19bfc0aa10ab674ff75b3d2f3',
-        domainHash: '0xa8982c89d80987fb9a510e25981ee9170206be21af3c8e0eb312ef1d3382e761',
-        messageHash: '0xd1e8aeb79500496ef3dc2e57ba746a8315d048b7a664a2bf948db4fa91960483' },
-      { id: 'tx7', nonce: 7, tag: '', title: 'Safe transaction', queuedDays: 1, signers: [1, 2, 4], executed: false,
-        fn: 'transfer', to: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', value: '0',
-        data: '0xa9059cbb000000000000000000000000826e7eb63d237333d9063dc74e7ce8e222b0fc050000000000000000000000000000000000000000000000000000000a7a358200',
-        safeTxHash: '0x14bcc435f49d130d189737f9762feb25c44ef5b886bef833e31a702af6be4748',
-        domainHash: '0xa766932420cc6e9072394bef2c036ad8972c44696fee29397bd5e2c06001f615',
-        messageHash: '0xea00237ef11bd9615a3b6d2629f2c6259d67b19bb94947a1bd739bae3415141c' }
-    ]
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
   };
-
-  openReview = (id) => this.setState({ reviewId: id });
-  closeReview = () => this.setState({ reviewId: '' });
-  startAction = (mode) => {
-    if (this.props.wallet !== 'connected') { if (typeof this.props.onConnect === 'function') this.props.onConnect(); return; }
-    this.setState({ actionId: this.state.reviewId, actionMode: mode, actionOpen: true, reviewId: '' });
-  };
-  cancelAction = () => this.setState({ actionOpen: false, reviewId: this.state.actionId });
-  applyAction = () => {
-    const { actionId, actionMode } = this.state;
-    this.setState((s) => ({
-      nonce: actionMode === 'execute' ? s.nonce + 1 : s.nonce,
-      txs: s.txs.map((t) => t.id !== actionId ? t
-        : actionMode === 'execute' ? { ...t, executed: true }
-        : t.signers.includes(0) ? t : { ...t, signers: [...t.signers, 0] })
-    }));
-  };
-  finishAction = () => {
-    const back = this.state.actionMode === 'approve' ? this.state.actionId : '';
-    this.setState({ actionOpen: false, reviewId: back });
-  };
-
-  view(t) {
-    const nonce = this.state.nonce;
-    const required = 3;
-    const count = t.signers.length;
-    const full = count >= required;
-    const ready = !t.executed && full && t.nonce === nonce;
-    const waiting = !t.executed && full && t.nonce !== nonce;
-    const confirmed = this.props.wallet === 'connected' && t.signers.includes(0);
-    const day = 24 * 3600000;
-    const queued = 'Queued ' + GovUiKit.formatterUtils.formatDate(Date.now() - t.queuedDays * day, { format: GovUiKit.DateFormat.RELATIVE });
-    const owners = [
-      '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', '0xAC6399087027F972e6D2AB830dC9b33CDa035642',
-      '0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05', '0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81',
-      '0x7331c334835fD8C5D6a351F67a517E6b0F452F63'
-    ];
-    return {
-      ...t, required, count, ready, waiting, confirmed, queued, nonceText: String(t.nonce), currentNonce: String(nonce),
-      hasTag: !!t.tag, countText: count + ' of ' + required,
-      ownerRows: owners.map((a, i) => {
-        const ok = t.signers.includes(i);
-        return { address: a, label: ok ? 'Approved' : 'Pending', variant: ok ? 'success' : 'neutral' };
-      })
-    };
-  }
-
   renderVals() {
-    const s = this.state;
-    const all = s.txs.map((t) => this.view(t));
-    const find = (id) => id ? all.find((t) => t.id === id) : null;
+    const safe = this.props.safe;
     return {
-      yes: true,
-      connected: this.props.wallet === 'connected',
-      nonceText: String(s.nonce),
-      txs: all,
-      openReview: this.openReview, closeReview: this.closeReview,
-      startAction: this.startAction, cancelAction: this.cancelAction, applyAction: this.applyAction, finishAction: this.finishAction,
-      reviewOpen: !!s.reviewId, reviewTx: find(s.reviewId) || find(s.actionId) || all[0],
-      actionOpen: s.actionOpen, actionTx: find(s.actionId) || all[0], actionMode: s.actionMode
+      yes: true, four: 4, click: this.click,
+      nonceText: safe && safe.nonceText ? safe.nonceText : '5',
+      safeLink: { href: 'https://app.safe.global/home?safe=eth:0x515feC2E8F6553948b1D57C14c1243a1405C02e2', isExternal: true, isOnchainEntity: true },
+      membersLink: { href: '#nav:members', isExternal: false }
     };
   }
 }

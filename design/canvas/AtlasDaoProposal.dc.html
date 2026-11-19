@@ -560,6 +560,16 @@
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"proposal":{"editor":"text","default":"AGC-5"},"onNav":{"editor":null},"wallet":{"editor":"text","default":""},"onConnect":{"editor":null}}'>// Shared state of the prototype (parts remount when you navigate): the mock user nadia.eth approved AGC-5, AGC-4 was executed.
+// "Published" dates are fixed text in the reference (relative to 2026-11-16); shift them with the clock so they stay before the end date on any day.
+const shiftDay = (text) => {
+  const m = /^([A-Za-z]+) (\d+), (\d{4})$/.exec(String(text || ''));
+  if (!m) return text;
+  const ref = Date.UTC(2026, 10, 16);
+  const then = Date.parse(m[1] + ' ' + m[2] + ', ' + m[3] + ' 00:00:00 GMT');
+  if (isNaN(then)) return text;
+  const d = new Date(Date.now() - Math.round((ref - then) / 86400000) * 86400000);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
 const atlasState = () => (window.__atlasDao = window.__atlasDao || { approved5: false, executed4: false });
 
 // PART of the Atlas Grants Council prototype (AtlasDao.dc.html). Props: proposal (slug AGC-1 ... AGC-6; unknown slugs show AGC-5),
@@ -582,6 +592,9 @@ class Component extends DCLogic {
     // "Approve proposal" clicked while disconnected: once the wallet connects, continue to the transaction (as the app's guard does).
     if (this.state.pendingApprove && prev.wallet !== 'connected' && this.props.wallet === 'connected') {
       this.setState({ pendingApprove: false, txOpen: true, txKind: 'approve' });
+    } else if (this.state.pendingApprove && prev.connectOpen && !this.props.connectOpen) {
+      // the connect dialog was dismissed without connecting: forget the click, a later connect must not open the transaction
+      this.setState({ pendingApprove: false });
     }
   }
   componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
@@ -692,7 +705,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x5f2cd08d93a483f7ad67d1652b2197ea6cc8cbac0d8ee52801216a7a96d563a2',
       creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
-      published: "October 7, 2026",
+      published: shiftDay("October 7, 2026"),
       publishedLink: { href: 'https://etherscan.io/tx/0x16b51fe60d97a8e2ab8ac0372a49a691985bd4d0ab73aba3bf5d8347b24be966' }
     };
   }
@@ -713,7 +726,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isOnchainEntity: true },
-      published: "October 17, 2026",
+      published: shiftDay("October 17, 2026"),
       publishedLink: { href: 'https://etherscan.io/tx/0x873c23c998b5e1556868cd9fbbf91607b287b7392782460a1eae614c7e15b7be' }
     };
   }
@@ -734,7 +747,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46', isOnchainEntity: true },
-      published: "October 27, 2026",
+      published: shiftDay("October 27, 2026"),
       publishedLink: { href: 'https://etherscan.io/tx/0xd6c4184eea0ddcfc2bcc03b8ea2ce16e821e65f1204403e6363137bf12661879' }
     };
   }
@@ -753,9 +766,9 @@ class Component extends DCLogic {
       settings: undefined,
       action: { type: 'Unknown', from: dao, to: plugin, data: '0x', value: '0', inputData: null },
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
-      executedLink: 'https://etherscan.io/tx/0x',
+      executedLink: 'https://etherscan.io/tx/0x7d3a61c2e0b94f58a1c6d2e93b7f4085a6c1d9e2f3b4a5968778695a4b3c2d1e',
       creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
-      published: "November 13, 2026",
+      published: shiftDay("November 13, 2026"),
       publishedLink: { href: 'https://etherscan.io/tx/0xd9dba209d0ceab4b361350e615b76f605d3a149163769c13a9a2ded12b279e85' }
     };
   }

@@ -159,9 +159,9 @@ class Component extends DCLogic {
       click: this.click, connected, mdSize: { md: 'md' },
       yes: true, two: 2, three: 3, six: 6,
       proposals: [
-        { id: 'MGP-8', href: '#nav:proposal:MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, voted: connected, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
+        { id: 'MGP-8', href: '#nav:proposal:MGP-8', title: 'Fund the Q1 2027 Ecosystem Grants Program', summary: 'Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.', status: 'ACTIVE', date: now + 3 * day + hour, voted: connected && !!window.__daoVote, publisher: person('0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth') },
         { id: 'MGP-7', href: '#nav:proposal:MGP-7', title: 'Adopt the Meridian Constitution v2', summary: 'Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.', status: 'PENDING', date: now + 6 * day + hour, publisher: person('0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', connected ? 'You' : 'nadia.eth') },
-        { id: 'MGP-6', href: '#nav:proposal:MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: 'EXECUTABLE', date: now - 1 * day - hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') }
+        { id: 'MGP-6', href: '#nav:proposal:MGP-6', title: 'Allocate 120 ETH to Uniswap v4 liquidity provisioning', summary: 'Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.', status: window.__daoExecuted ? 'EXECUTED' : 'EXECUTABLE', date: now - 1 * day - hour, publisher: person('0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth') }
       ],
       members: [
         { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', delegations: 214, votingPower: 4850000 },

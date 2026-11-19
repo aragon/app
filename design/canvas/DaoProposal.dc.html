@@ -84,7 +84,7 @@
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="7"><p class="truncate text-neutral-500">7</p></x-import></div>
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-8</p></x-import></div>
                 <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" link="{{p8.creatorLink}}" children="lenaweber.eth"></x-import></div>
-                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p8.publishedLink}}" children="November 14, 2026"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p8.publishedLink}}" children="{{p8.published}}"></x-import></div>
                 <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="w-fit"></x-import></x-import>
               </x-import>
             </x-import>
@@ -620,6 +620,13 @@ const VOTERS = [
 const VOTE_CYCLE = [2, 2, 3, 2, 1, 2, 3, 2, 2, 1, 2, 3]; // 1 abstain, 2 yes, 3 no
 const INDICATOR = { 1: 'abstain', 2: 'yes', 3: 'no' };
 
+// "Published" dates: copied from the reference (clock 2026-11-16) and moved with the viewer's clock, so a proposal that ends
+// "in 3 days" is never shown as published months ago. Prints the reference text at the reference time.
+const pubDate = (y, m, d) => {
+  const t = GovUiKit.formatterUtils.formatDate(Date.now() - (Date.UTC(2026, 10, 16, 18) - Date.UTC(y, m, d, 12)), { format: GovUiKit.DateFormat.YEAR_MONTH_DAY });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+
 // PART of the DAO prototype (mounted by Dao.dc.html). Props: proposal (slug MGP-1 ... MGP-8; unknown slugs show MGP-8),
 // onNav(target) - navigation, wallet ('connected' | ''), onConnect() - opens the connect dialog (Vote / Execute while disconnected).
 // Own parts: DaoProposalVote (vote area). Voting, simulation and execute (MGP-6) are simulated in this part's state.
@@ -629,13 +636,17 @@ const INDICATOR = { 1: 'abstain', 2: 'yes', 3: 'no' };
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    this.state = { options: false, selected: '', txOpen: false, txKind: '', voted: '', executed: false, pendingVote: false, sim: {} };
+    this.state = { options: false, selected: '', txOpen: false, txKind: '', voted: window.__daoVote || '', executed: !!window.__daoExecuted, pendingVote: false, sim: {} };
     this.timers = [];
   }
   componentDidUpdate(prev) {
     // "Vote on proposal" clicked while disconnected: once the wallet connects, continue to the options (as the app's guard does).
     if (this.state.pendingVote && prev.wallet !== 'connected' && this.props.wallet === 'connected') {
       this.setState({ pendingVote: false, options: true });
+    }
+    // The connect dialog was dismissed without connecting: forget the pending vote (a later connect must not open the options).
+    else if (this.state.pendingVote && prev.connecting && !this.props.connecting && this.props.wallet !== 'connected') {
+      this.setState({ pendingVote: false });
     }
   }
   componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
@@ -714,8 +725,9 @@ class Component extends DCLogic {
       settings, tx, txOpen: st.txOpen,
       closeTx: () => this.setState({ txOpen: false }),
       txDone: () => {
-        if (this.state.txKind === 'vote') this.setState({ txOpen: false, voted: this.state.selected, options: false });
-        else this.setState({ txOpen: false, executed: true });
+        // kept on window: the proposal page is unmounted when the user navigates, the app keeps the vote and the status
+        if (this.state.txKind === 'vote') { window.__daoVote = this.state.selected; this.setState({ txOpen: false, voted: this.state.selected, options: false }); }
+        else { window.__daoExecuted = true; this.setState({ txOpen: false, executed: true }); }
       }
     }, p);
   }
@@ -746,6 +758,7 @@ class Component extends DCLogic {
     return {
       yes: true, no: false, zero: 0, one: 1, two: 2,
       breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-8' }],
+      published: pubDate(2026, 10, 14),
       statusTag: { label: 'Active', variant: 'info' },
       description: '<h2>Summary</h2><p>Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>',
       // The kit prints "3 days left to vote" relative to the viewer's clock, so the end date is an offset from now:
@@ -811,7 +824,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
-      published: "November 10, 2026",
+      published: pubDate(2026, 10, 10),
       publishedLink: { href: 'https://etherscan.io/tx/0xd766c4a7e9750f51b940227e2749c5997f7a947d0f419189f22621bafc66b860' }
     };
   }
@@ -833,7 +846,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isOnchainEntity: true },
-      published: "November 5, 2026",
+      published: pubDate(2026, 10, 5),
       publishedLink: { href: 'https://etherscan.io/tx/0xdf19ec2ddc9916c7045e4710d3c839a9fb1eec162743e12beb3d68dcd0a41479' }
     };
   }
@@ -855,7 +868,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', isOnchainEntity: true },
-      published: "October 29, 2026",
+      published: pubDate(2026, 9, 29),
       publishedLink: { href: 'https://etherscan.io/tx/0x912f406bab4c48d03e1b94456d8504b2a30975ec83ff18ba72e397958b2a03ff' }
     };
   }
@@ -877,7 +890,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x16df34ecd492fa69b80b0ed6d5b2a2c9f41f4cdf2c2ffc8f1dda86e6058569b0',
       creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
-      published: "October 16, 2026",
+      published: pubDate(2026, 9, 16),
       publishedLink: { href: 'https://etherscan.io/tx/0xc9bcc5f67114b2d1e36f26516d8f72031069325c31699a328154b47b272b3573' }
     };
   }
@@ -899,7 +912,7 @@ class Component extends DCLogic {
       dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
       executedLink: 'https://etherscan.io/tx/0x',
       creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
-      published: "October 3, 2026",
+      published: pubDate(2026, 9, 3),
       publishedLink: { href: 'https://etherscan.io/tx/0x2a011ced91eb99998338a160332d85541408e9ecf928b780a2a52d2730e1028d' }
     };
   }

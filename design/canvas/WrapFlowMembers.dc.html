@@ -24,17 +24,20 @@ body{margin:0}
             <header class="page-main__header">
               <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
             </header>
-            <sc-if value="{{showCard}}" hint-placeholder-val="{{no}}">
-              <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="You have unwrapped HBR" description="Wrap more tokens to increase your voting power." is-stacked="{{no}}" object-illustration="{{walletIllustration}}" primary-button="{{cardButton}}"></x-import>
-            </sc-if>
             <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{count}}" state="idle">
+              <sc-if value="{{showDelegationCard}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Your wHBR is undelegated" description="Delegate your voting power to yourself or to someone else." is-stacked="{{no}}" human-illustration="{{humanIllustration}}" primary-button="{{delegationCardButton}}"></x-import>
+              </sc-if>
+              <sc-if value="{{showCard}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="You have unwrapped HBR" description="Wrap more tokens to increase your voting power." is-stacked="{{no}}" object-illustration="{{walletIllustration}}" primary-button="{{cardButton}}"></x-import>
+              </sc-if>
               <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m0.address}}" ens-name="{{m0.ens}}" delegation-count="{{m0.deleg}}" token-amount="{{m0.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m1.address}}" ens-name="{{m1.ens}}" delegation-count="{{m1.deleg}}" token-amount="{{m1.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m2.address}}" ens-name="{{m2.ens}}" delegation-count="{{m2.deleg}}" token-amount="{{m2.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m3.address}}" ens-name="{{m3.ens}}" delegation-count="{{m3.deleg}}" token-amount="{{m3.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m4.address}}" ens-name="{{m4.ens}}" delegation-count="{{m4.deleg}}" token-amount="{{m4.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m5.address}}" ens-name="{{m5.ens}}" delegation-count="{{m5.deleg}}" token-amount="{{m5.power}}" is-delegate="{{no}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m0.address}}" ens-name="{{m0.ens}}" delegation-count="{{m0.deleg}}" token-amount="{{m0.power}}" is-delegate="{{m0.isDelegate}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m1.address}}" ens-name="{{m1.ens}}" delegation-count="{{m1.deleg}}" token-amount="{{m1.power}}" is-delegate="{{m1.isDelegate}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m2.address}}" ens-name="{{m2.ens}}" delegation-count="{{m2.deleg}}" token-amount="{{m2.power}}" is-delegate="{{m2.isDelegate}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m3.address}}" ens-name="{{m3.ens}}" delegation-count="{{m3.deleg}}" token-amount="{{m3.power}}" is-delegate="{{m3.isDelegate}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m4.address}}" ens-name="{{m4.ens}}" delegation-count="{{m4.deleg}}" token-amount="{{m4.power}}" is-delegate="{{m4.isDelegate}}" class-name="min-w-0" href="#"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m5.address}}" ens-name="{{m5.ens}}" delegation-count="{{m5.deleg}}" token-amount="{{m5.power}}" is-delegate="{{m5.isDelegate}}" class-name="min-w-0" href="#"></x-import>
 </x-import>
               <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
             </x-import>
@@ -72,15 +75,15 @@ body{margin:0}
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"underlying":{"editor":"float","default":12500},"wrapped":{"editor":"float","default":2000},"allowance":{"editor":"float","default":0},"delegate":{"editor":"text","default":""},"on-connect":{"editor":null},"on-wrap":{"editor":null},"on-unwrap":{"editor":null},"on-delegate":{"editor":null},"on-onboard":{"editor":null},"$preview":{"width":1440,"height":1000}}'>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"underlying":{"editor":"float","default":12500},"wrapped":{"editor":"float","default":2000},"allowance":{"editor":"float","default":0},"delegate":{"editor":"text","default":""},"on-connect":{"editor":null},"on-wrap":{"editor":null},"on-unwrap":{"editor":null},"on-delegate":{"editor":null},"on-onboard":{"editor":null},"on-onboard-delegate":{"editor":null},"$preview":{"width":1440,"height":1000}}'>
 // Page body of WrapFlow.dc.html: the members page of a token-voting DAO whose governance token (wHBR) wraps an underlying
 // token (HBR). Source: modules/governance/pages/daoMembersPage + plugins/tokenPlugin/components/{tokenMemberList,tokenMemberPanel}.
 // Aside: the app's member panel card titled "<underlying name> (<symbol>)" with tabs Wrap / Delegation (Wrap first, selected by
 // default; the Delegation tab is the shared DaoDelegateForm).
-// List: the onboarding card "You have unwrapped HBR" shows above it for a connected user with HBR and no voting power (wHBR = 0).
-// The user's row shows voting power = wHBR balance (the user is assumed to be self-delegated).
+// The user's row shows voting power = wHBR balance while the wallet delegates to itself, 0 otherwise; a delegate other than the user is pinned second with the Delegate tag.
+// Cards above the list (tokenMemberList.tsx): "Your wHBR is undelegated" (wHBR > 0, no delegate) wins over "You have unwrapped HBR" (no voting power, HBR > 0).
 // Props: wallet ('connected' or ''); underlying/wrapped/allowance (token amounts); delegate (address, '' = none);
-// on-connect(); on-wrap(amount); on-unwrap(); on-delegate(address); on-onboard() (card button); on-nav(target) (unused links).
+// on-connect(); on-wrap(amount); on-unwrap(); on-delegate(address); on-onboard() (wrap card button); on-onboard-delegate() (delegation card button); on-nav(target) (unused links).
 // The members list is written out one per line at column 0 (the kit pagination counts direct children).
 class Component extends DCLogic {
   state = { tab: 'wrap' };
@@ -97,17 +100,31 @@ class Component extends DCLogic {
       ['0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth', 167, 3920000], ['0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth', 98, 2740000],
       ['0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth', 54, 1680000], ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth', 21, 1245500],
       ['0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', 'marcusj.eth', 12, 760000], ['0x8a25faabbd80f71248328cf3a5867d3168210a46', 'chenwei.eth', 3, 512340]
-    ].map((r) => ({ address: r[0], ens: r[1], deleg: r[2], power: r[3] }));
-    const me = { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', deleg: 0, power: wrapped };
-    // As the app does, the connected user is pinned first.
-    const list = connected ? [me].concat(others.slice(0, 5)) : others;
+    ].map((r) => ({ address: r[0], ens: r[1], deleg: r[2], power: r[3], isDelegate: false }));
+    const SELF = '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a';
+    const delegate = String(p.delegate || '').toLowerCase();
+    // Voting power of the connected user = wHBR balance only while delegating to itself (getVotes); others' rows stay as sampled.
+    const me = { address: SELF, ens: 'nadia.eth', deleg: 0, power: delegate === SELF ? wrapped : 0, isDelegate: false };
+    // As the app does (tokenMemberListBase), the connected user is pinned first, then a valid delegate (another address) with the Delegate tag.
+    let list = others;
+    if (connected) {
+      const pinned = [me];
+      if (delegate && delegate !== SELF) {
+        const known = others.find((o) => o.address === delegate);
+        pinned.push(Object.assign({}, known || { address: delegate, ens: '', deleg: 1, power: wrapped }, { isDelegate: true }));
+      }
+      list = pinned.concat(others.filter((o) => !pinned.some((q) => q.address === o.address))).slice(0, 6);
+    }
     const v = { onClick: this.click, yes: true, no: false, count: 6 };
     list.forEach((m, i) => { v['m' + i] = m; });
     return Object.assign(v, {
       wallet: p.wallet || '', underlying: under, wrapped, allowance: Number(p.allowance) || 0, delegate: p.delegate || '',
       tab: this.state.tab, setTab: (t) => { if (t) this.setState({ tab: t }); },
       isWrap: this.state.tab === 'wrap', isDelegate: this.state.tab === 'delegate',
-      showCard: connected && wrapped === 0 && under > 0,
+      showDelegationCard: connected && wrapped > 0 && !delegate,
+      showCard: connected && (delegate === SELF ? wrapped : 0) === 0 && under > 0 && !(wrapped > 0 && !delegate),
+      humanIllustration: { body: 'ELEVATING', hairs: 'SHORT', accessory: 'PIERCINGS_TATTOO', sunglasses: 'LARGE_STYLIZED', expression: 'SMILE_WINK' },
+      delegationCardButton: { label: 'Set up your delegation', onClick: () => { if (typeof p.onOnboardDelegate === 'function') p.onOnboardDelegate(); } },
       walletIllustration: { object: 'WALLET' },
       cardButton: { label: 'Wrap tokens', onClick: () => { if (typeof p.onOnboard === 'function') p.onOnboard(); } },
       pluginLink: { href: 'https://etherscan.io/address/0x7a3c9e5d1b2f4a6c8e0d1f3b5a7c9e2d4f6a8b0c', isOnchainEntity: true },

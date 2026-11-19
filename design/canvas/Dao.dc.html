@@ -27,13 +27,13 @@
           <dc-import name="DaoProposals" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.proposal}}" hint-placeholder-val="{{false}}">
-          <dc-import name="DaoProposal" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" proposal="{{param}}" hint-size="100%,900px"></dc-import>
+          <dc-import name="DaoProposal" on-nav="{{nav}}" wallet="{{wallet}}" connecting="{{dialog.connect}}" on-connect="{{connect}}" proposal="{{param}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.members}}" hint-placeholder-val="{{false}}">
           <dc-import name="DaoMembers" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.member}}" hint-placeholder-val="{{false}}">
-          <dc-import name="DaoMember" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" member="{{param}}" hint-size="100%,900px"></dc-import>
+          <dc-import name="DaoMember" on-nav="{{nav}}" wallet="{{wallet}}" connecting="{{dialog.connect}}" on-connect="{{connect}}" member="{{param}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.assets}}" hint-placeholder-val="{{false}}">
           <dc-import name="DaoAssets" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>

@@ -61,13 +61,15 @@
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":"connected"},"onConnect":{"editor":null},"scope":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":"connected"},"onConnect":{"editor":null},"scope":{"editor":null},"todoRows":{"editor":null},"safe":{"editor":null},"onSafe":{"editor":null},"$preview":{"width":1100,"height":900}}'>
 // PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (unused).
 // All-accounts to-dos (apps/app: modules/workspace/pages/workspaceTodosPage, components workspaceTodoList(+Item), workspaceTodosAsideCard).
+// The rows come from the shell (prop todoRows, one list for the navigation badges, this page, the per-account pages and the overview preview); they follow
+// what the visitor did on the proposal pages (DAO votes) and in the Safe's transactions (a signed transaction leaves the list).
 // Disconnected: the list's connect state (its button calls onConnect) and no aside. Connected (nadia.eth): what the wallet can act on, as the
 // app counts it: ACTIVE proposals to vote on (Meridian MGP-8, Atlas AGC-5, Northstar NSP-8 core team approval and NSP-6 community veto), then
 // Safe transactions to sign (Northstar Council Safe nonces 5 and 6; nonce 7 is fully signed by others, so nothing to sign). A row opens
-// account:<id>:proposal:<slug>, a Safe transaction account:safe:transactions. What the visitor did on the DAO proposal pages
+// account:<id>:proposal:<slug>, a Safe transaction account:safe:transactions (the Transactions of the Safe, where the voting card of the row signs). What the visitor did on the DAO proposal pages
 // (window.__atlasDao, window.__nspState) removes the matching to-do. When nothing is left, the list shows its own empty state.
 // The rows are six fixed slots, each in its own <sc-if>, written at column 0: the kit's pagination counts the direct children.
 class Component extends DCLogic {
@@ -77,28 +79,9 @@ class Component extends DCLogic {
     e.preventDefault();
     if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
   };
-  todos() {
-    const day = 86400000, hour = 3600000, now = Date.now();
-    const ov = window.__nspState || {}, at = window.__atlasDao || {};
-    const left = (ms) => GovUiKit.formatterUtils.formatDate(ms, { format: GovUiKit.DateFormat.DURATION }) + ' left';
-    const list = [];
-    const prop = (id, account, avatar, slug, title, end) => list.push({
-      isDao: true, isSafe: false, account, avatar, title, identifier: slug, description: left(end),
-      action: 'Vote', tagVariant: 'primary', href: '#nav:account:' + id + ':proposal:' + slug
-    });
-    prop('meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
-    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
-    if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', now + (ov.adv8 ? 7 : 3) * day + hour);
-    if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', now + 4 * day + hour);
-    [[5, 'NSP-7'], [6, 'NSP-8']].forEach((r) => list.push({
-      isDao: false, isSafe: true, account: 'Northstar Council Safe', avatar: '', title: 'Northstar Council Safe', identifier: '#' + r[0] + ' · ' + r[1],
-      description: '2 of 3 signatures', action: 'Sign', tagVariant: 'neutral', href: '#nav:account:safe:transactions'
-    }));
-    return list;
-  }
   renderVals() {
     const connected = this.props.wallet === 'connected';
-    const all = connected ? this.todos() : [];
+    const all = connected && Array.isArray(this.props.todoRows) ? this.props.todoRows : [];
     const v = {
       onClick: this.click, yes: true, no: false,
       walletIllustration: { object: 'WALLET' },

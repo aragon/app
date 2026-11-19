@@ -25,7 +25,7 @@
               <x-import component-from-global-scope="GovUiKit.DataList.Container">
 <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-8" title="Fund the Q1 2027 Ecosystem Grants Program" summary="Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027." status="ACTIVE" date="{{dates.mgp8}}" publisher="{{people.lena}}" href="#nav:proposal:MGP-8"></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-7" title="Adopt the Meridian Constitution v2" summary="Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures." status="PENDING" date="{{dates.mgp7}}" publisher="{{people.nadia}}" href="#nav:proposal:MGP-7"></x-import>
-<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-6" title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" summary="Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook." status="EXECUTABLE" date="{{dates.mgp6}}" publisher="{{people.kofi}}" href="#nav:proposal:MGP-6"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-6" title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" summary="Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook." status="{{status6}}" date="{{dates.mgp6}}" publisher="{{people.kofi}}" href="#nav:proposal:MGP-6"></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-5" title="Signal: Expand the delegate compensation framework" summary="Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget." status="ACCEPTED" date="{{dates.mgp5}}" publisher="{{people.sofia}}" href="#nav:proposal:MGP-5"></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-4" title="Reduce proposal threshold to 25,000 MRD" summary="Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation." status="REJECTED" date="{{dates.mgp4}}" publisher="{{people.anon}}" href="#nav:proposal:MGP-4"></x-import>
 <x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-3" title="Update DAO metadata and website links" summary="Refresh the DAO description to reflect the cross-chain routing roadmap and add the new Discord and forum links." status="EXECUTED" date="{{dates.mgp3}}" publisher="{{people.kofi}}" href="#nav:proposal:MGP-3"></x-import>
@@ -86,6 +86,8 @@ class Component extends DCLogic {
         if (h && h.indexOf('#nav:') === 0) { e.preventDefault(); nav(h.slice(5)); }
       },
       yes: true,
+      // MGP-6 executed from its page (DaoProposal keeps that on window)
+      status6: window.__daoExecuted ? 'EXECUTED' : 'EXECUTABLE',
       count: 8,
       pageSize: 10,
       dates: {

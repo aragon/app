@@ -514,7 +514,7 @@
       "x": 1180,
       "y": 13607,
       "w": 1100,
-      "h": 1900,
+      "h": 900,
       "title": "WsAccountSafe",
       "page": "parts"
     },
@@ -582,8 +582,16 @@
       "title": "WsTransactions",
       "page": "parts"
     },
-    "WsTransactionsAccountDialog.dc.html": {
+    "SafeFlowTxDialog.dc.html": {
       "x": 2700,
+      "y": 15827,
+      "w": 1440,
+      "h": 900,
+      "title": "SafeFlowTxDialog",
+      "page": "parts"
+    },
+    "WsTransactionsAccountDialog.dc.html": {
+      "x": 4220,
       "y": 15827,
       "w": 1440,
       "h": 900,
@@ -622,16 +630,8 @@
       "title": "SafeFlowReviewDialog",
       "page": "parts"
     },
-    "SafeFlowTxDialog.dc.html": {
-      "x": 4848,
-      "y": 18347,
-      "w": 1440,
-      "h": 900,
-      "title": "SafeFlowTxDialog",
-      "page": "parts"
-    },
     "SafeTransactionFlowContractDialog.dc.html": {
-      "x": 6368,
+      "x": 4848,
       "y": 18347,
       "w": 1440,
       "h": 900,
@@ -639,7 +639,7 @@
       "page": "parts"
     },
     "SafeTransactionFlowDialog.dc.html": {
-      "x": 7888,
+      "x": 6368,
       "y": 18347,
       "w": 1440,
       "h": 900,
@@ -902,8 +902,16 @@
       "title": "LockFlowLockDialog",
       "page": "parts"
     },
-    "WrapFlowOnboardDialog.dc.html": {
+    "LockFlowTxDialog.dc.html": {
       "x": 560,
+      "y": 29367,
+      "w": 1440,
+      "h": 900,
+      "title": "LockFlowTxDialog",
+      "page": "parts"
+    },
+    "WrapFlowOnboardDialog.dc.html": {
+      "x": 2080,
       "y": 29367,
       "w": 600,
       "h": 500,
@@ -911,7 +919,7 @@
       "page": "parts"
     },
     "WrapFlowTxDialog.dc.html": {
-      "x": 1240,
+      "x": 2760,
       "y": 29367,
       "w": 1440,
       "h": 900,
@@ -987,12 +995,12 @@
     "WsProposals.dc.html",
     "WsTodos.dc.html",
     "WsTransactions.dc.html",
+    "SafeFlowTxDialog.dc.html",
     "WsTransactionsAccountDialog.dc.html",
     "SafeFlowPage.dc.html",
     "SafeFlowReviewContent.dc.html",
     "SafeTransactionFlowActions.dc.html",
     "SafeFlowReviewDialog.dc.html",
-    "SafeFlowTxDialog.dc.html",
     "SafeTransactionFlowContractDialog.dc.html",
     "SafeTransactionFlowDialog.dc.html",
     "CreateDaoFlowMetadata.dc.html",
@@ -1027,6 +1035,7 @@
     "LockFlowBlockedDialog.dc.html",
     "LockFlowFeedbackDialog.dc.html",
     "LockFlowLockDialog.dc.html",
+    "LockFlowTxDialog.dc.html",
     "WrapFlowOnboardDialog.dc.html",
     "WrapFlowTxDialog.dc.html"
   ],

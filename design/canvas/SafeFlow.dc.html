@@ -32,19 +32,17 @@ body{margin:0}
   <dc-import name="SafeFlowPage" txs="{{txs}}" nonce-text="{{nonceText}}" on-review="{{openReview}}" hint-size="100%,1900px"></dc-import>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
 
-  <dc-import name="SafeFlowReviewDialog" open="{{reviewOpen}}" tx="{{reviewTx}}" connected="{{connected}}" on-close="{{closeReview}}" on-action="{{startAction}}" hint-size="0px,0px"></dc-import>
-  <dc-import name="SafeFlowTxDialog" open="{{actionOpen}}" tx="{{actionTx}}" mode="{{actionMode}}" on-cancel="{{cancelAction}}" on-applied="{{applyAction}}" on-done="{{finishAction}}" hint-size="0px,0px"></dc-import>
+  <dc-import name="SafeFlowReviewDialog" open="{{reviewOpen}}" tx="{{reviewTx}}" on-close="{{closeReview}}" hint-size="0px,0px"></dc-import>
 </div>
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
 // Safe account prototype (route /safe/ethereum-mainnet/<Council Safe>): the Northstar Council Safe, 3-of-5, nonce 5.
-// One artboard. state = { connected, nonce, txs, reviewId, actionId, actionMode, actionOpen }.
+// One artboard. state = { connected, nonce, txs, reviewId }.
 //   Wallet button in the top bar toggles a mock connection as owner 0 (nadia.eth, 0x9CB2...D98A).
-//   Review (row button) -> SafeFlowReviewDialog (modules/safe/dialogs/safeTransactionReviewDialog + simulation card + the
-//   confirmations of safeTransactionVoting) -> Approve / Execute -> SafeFlowTxDialog (modules/safe/dialogs/safeTransactionDialog).
-//   Approve adds the connected owner's confirmation, Execute marks the transaction executed (it leaves the pending list) and
-//   raises the Safe nonce, which can make a later transaction executable.
+//   Review (row button) -> SafeFlowReviewDialog (modules/safe/dialogs/safeTransactionReviewDialog): read-only, as in the app.
+//   Approving and executing are not on this page in the app: they live on the voting card of the transaction's row in the workspace
+//   Transactions list (Workspace.dc.html, Safe account -> Transactions), which opens the sign dialog (SafeFlowTxDialog).
 // Queue (sample, consistent with data-spp.cjs): nonce 5 NSP-7 (2 of 3), nonce 6 NSP-8 (2 of 3), nonce 7 plain transfer (3 of 3,
 // fully signed but waiting for its turn).
 class Component extends DCLogic {
@@ -52,9 +50,6 @@ class Component extends DCLogic {
     connected: false,
     nonce: 5,
     reviewId: '',
-    actionId: '',
-    actionMode: 'approve',
-    actionOpen: false,
     txs: [
       { id: 'tx5', nonce: 5, tag: 'NSP-7', title: 'Increase the bug bounty ceiling to 1M USDC', queuedDays: 4, signers: [1, 2], executed: false,
         fn: 'reportProposalResult', to: '0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09', value: '0',
@@ -80,23 +75,6 @@ class Component extends DCLogic {
   openReview = (id) => this.setState({ reviewId: id });
   closeReview = () => this.setState({ reviewId: '' });
   toggleWallet = () => this.setState({ connected: !this.state.connected });
-  startAction = (mode) => {
-    this.setState({ connected: true, actionId: this.state.reviewId, actionMode: mode, actionOpen: true, reviewId: '' });
-  };
-  cancelAction = () => this.setState({ actionOpen: false, reviewId: this.state.actionId });
-  applyAction = () => {
-    const { actionId, actionMode } = this.state;
-    this.setState((s) => ({
-      nonce: actionMode === 'execute' ? s.nonce + 1 : s.nonce,
-      txs: s.txs.map((t) => t.id !== actionId ? t
-        : actionMode === 'execute' ? { ...t, executed: true }
-        : t.signers.includes(0) ? t : { ...t, signers: [...t.signers, 0] })
-    }));
-  };
-  finishAction = () => {
-    const back = this.state.actionMode === 'approve' ? this.state.actionId : '';
-    this.setState({ actionOpen: false, reviewId: back });
-  };
 
   view(t) {
     const nonce = this.state.nonce;
@@ -134,9 +112,7 @@ class Component extends DCLogic {
       nonceText: String(s.nonce),
       txs: all,
       toggleWallet: this.toggleWallet, openReview: this.openReview, closeReview: this.closeReview,
-      startAction: this.startAction, cancelAction: this.cancelAction, applyAction: this.applyAction, finishAction: this.finishAction,
-      reviewOpen: !!s.reviewId, reviewTx: find(s.reviewId) || find(s.actionId) || all[0],
-      actionOpen: s.actionOpen, actionTx: find(s.actionId) || all[0], actionMode: s.actionMode
+      reviewOpen: !!s.reviewId, reviewTx: find(s.reviewId) || all[0]
     };
   }
 }

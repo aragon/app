@@ -179,7 +179,7 @@ class Component extends DCLogic {
       openMenu: () => call(cb.openMenu), removeAll: () => call(cb.removeAll),
       changeQuery: (e) => call(cb.query, e.target.value),
       blurQuery: () => call(cb.closeMenu),
-      keyQuery: (e) => { if (e.key === 'Escape') call(cb.closeMenu); },
+      keyQuery: (e) => { if (e.key === 'Escape') call(cb.closeMenu); else if (e.key === 'Enter') { if (e.preventDefault) e.preventDefault(); const all = groups.flatMap((g) => g.items); const f = (q && all.find((it) => it.name.toLowerCase().includes(q))) || all[0]; if (f) f.pick(); } },
       moreTrigger: h(K.Button, { className: 'aspect-square w-fit shrink-0', iconLeft: 'DOTS_VERTICAL', size: 'md', variant: 'tertiary', 'aria-label': 'More' }),
     };
   }

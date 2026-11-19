@@ -21,7 +21,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{open}}" on-open-change="{{onOpenChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" size="lg" hidden-title="Settings" hidden-description="Configure the settings for the stage">
   <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Settings"></x-import>
   <x-import component-from-global-scope="GovUiKit.Dialog.Content">
-    <div class="stage-settings-form">
+    <div class="stage-settings-form" onKeyDown="{{onEnter}}">
       <sc-if value="{{hasApprove}}" hint-placeholder-val="{{yes}}"><dc-import name="CreateProcessFlowNumberInput" vm="{{approve}}" hint-size="100%,200px"></dc-import></sc-if>
       <sc-if value="{{hasVeto}}" hint-placeholder-val="{{no}}"><dc-import name="CreateProcessFlowNumberInput" vm="{{veto}}" hint-size="100%,200px"></dc-import></sc-if>
       <x-import component-from-global-scope="GovUiKit.InputContainer" class-name="flex flex-col" id="minDuration" label="Stage duration" help-text="The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter." use-custom-wrapper="{{yes}}">
@@ -58,6 +58,7 @@ class Component extends DCLogic {
       hasApprove: !!vm.approve, approve: vm.approve || {}, hasVeto: !!vm.veto, veto: vm.veto || {}, duration: vm.duration || {},
       hasEarly: !!vm.hasEarly, early: !!vm.early, earlyLabel: vm.early ? 'Enabled' : 'Disabled', onEarly: vm.onEarly || noop,
       expiration: !!vm.expiration, expirationLabel: vm.expiration ? 'Enabled' : 'Disabled', onExpiration: vm.onExpiration || noop, expirationDuration: vm.expirationDuration || {},
+      onEnter: (e) => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && vm.onSave) { e.preventDefault(); vm.onSave(); } },
       primary: { label: 'Save', onClick: vm.onSave || noop, type: 'button' }, secondary: { label: 'Cancel', onClick: vm.onCancel || noop } };
   }
 }

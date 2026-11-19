@@ -112,7 +112,7 @@
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"onConnect":{"editor":null},"scope":{"editor":null},"$preview":{"width":1100,"height":1100}}'>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"onConnect":{"editor":null},"scope":{"editor":null},"todoRows":{"editor":null},"safe":{"editor":null},"onSafe":{"editor":null},"$preview":{"width":1100,"height":1100}}'>
 // PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (unused, 'all').
 // All-accounts overview (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx, components
 // workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more),
@@ -128,24 +128,16 @@ class Component extends DCLogic {
     e.preventDefault();
     if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
   };
+  // The to-do rows come from the shell (todoRows); this preview words them as workspaceTodoPreviewItem does.
   todos() {
-    const day = 86400000, hour = 3600000, now = Date.now();
-    const ov = window.__nspState || {}, at = window.__atlasDao || {};
     const rel = (ms) => GovUiKit.formatterUtils.formatDate(ms, { format: GovUiKit.DateFormat.RELATIVE });
-    const list = [];
-    const prop = (id, account, avatar, slug, title, end) => list.push({
-      isDao: true, isSafe: false, account, avatar, action: 'Vote', variant: 'primary',
-      title: slug + ' · ' + title, meta: 'Vote · ends ' + rel(end), href: '#nav:account:' + id + ':proposal:' + slug
+    return (Array.isArray(this.props.todoRows) ? this.props.todoRows : []).map((r) => r.isDao ? {
+      isDao: true, isSafe: false, account: r.account, avatar: r.avatar, action: 'Vote', variant: 'primary',
+      title: r.identifier + ' · ' + r.title, meta: 'Vote · ends ' + rel(r.end), href: r.href
+    } : {
+      isDao: false, isSafe: true, account: r.account, avatar: '', action: 'Sign', variant: 'secondary',
+      title: 'Safe transaction #' + r.nonce, meta: 'Sign · Northstar Council Safe · ' + r.description, href: r.href
     });
-    prop('meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'MGP-8', 'Fund the Q1 2027 Ecosystem Grants Program', now + 3 * day + hour);
-    if (!at.approved5) prop('atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'AGC-5', 'Grant: Wallet accessibility audit', now + 6 * day + hour);
-    if (!(ov.core8 || ov.council8) || ov.adv8) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-8', 'Seed NSP/ETH liquidity on Uniswap v4', now + (ov.adv8 ? 7 : 3) * day + hour);
-    if (!ov.veto6) prop('northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'NSP-6', 'Launch the Northstar Ecosystem Grants round 3', now + 4 * day + hour);
-    [[5, 'NSP-7'], [6, 'NSP-8']].forEach((r) => list.push({
-      isDao: false, isSafe: true, account: 'Northstar Council Safe', avatar: '', action: 'Sign', variant: 'secondary',
-      title: 'Safe transaction #' + r[0], meta: 'Sign · Northstar Council Safe · 2 of 3 signatures', href: '#nav:account:safe:transactions'
-    }));
-    return list;
   }
   renderVals() {
     const connected = this.props.wallet === 'connected';

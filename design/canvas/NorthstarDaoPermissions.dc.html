@@ -69,8 +69,17 @@ body{margin:0}
                   </div>
                 </div>
                 <sc-if value="{{hideDao}}" hint-placeholder-val="{{yes}}">
-                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}">
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-0">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" value="{{expanded}}" on-value-change="{{setExpanded}}">
+                <div class="perm-card">
+                  <p class="perm-card__name">EXECUTE_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xff1fb33f-0xa7678469-EXECUTE_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" label="Northstar Staged Governance" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="SPP" variant="primary" class-name="perm-tag"></x-import></span></div>
@@ -79,8 +88,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-1">
+                <div class="perm-card">
+                  <p class="perm-card__name">CREATE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x566805a83e872e67a32d84596b81d16faa7ba6a2" children="Core Team"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0x566805a8-0xff1fb33f-CREATE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x566805a83e872e67a32d84596b81d16faa7ba6a2" label="Core Team" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
@@ -89,8 +118,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x566805a83e872e67a32d84596b81d16faa7ba6a2" children="Core Team"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-2">
+                <div class="perm-card">
+                  <p class="perm-card__name">CREATE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" children="Safe"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="SafeOwner"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0x515fec2e-0xff1fb33f-CREATE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="Safe" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Avatar" size="sm" src="assets/safeWallet.png"></x-import></span></div>
@@ -99,8 +148,28 @@ body{margin:0}
                       <span class="perm-condition">SafeOwner</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" children="Safe"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="SafeOwner"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-3">
+                <div class="perm-card">
+                  <p class="perm-card__name">ADVANCE_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ADVANCE_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xffffffff-0xff1fb33f-ADVANCE_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xffffffffffffffffffffffffffffffffffffffff" label="Anyone" has-interactive-ancestor="{{yes}}"></x-import></span></div>
@@ -109,8 +178,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ADVANCE_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-4">
+                <div class="perm-card">
+                  <p class="perm-card__name">EXECUTE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xffffffff-0xff1fb33f-EXECUTE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xffffffffffffffffffffffffffffffffffffffff" label="Anyone" has-interactive-ancestor="{{yes}}"></x-import></span></div>
@@ -119,12 +208,32 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
                 </x-import>
                 </sc-if>
                 <sc-if value="{{showDao}}" hint-placeholder-val="{{no}}">
-                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}">
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-0">
+                <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{yes}}" value="{{expanded}}" on-value-change="{{setExpanded}}">
+                <div class="perm-card">
+                  <p class="perm-card__name">EXECUTE_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xff1fb33f-0xa7678469-EXECUTE_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" label="Northstar Staged Governance" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="SPP" variant="primary" class-name="perm-tag"></x-import></span></div>
@@ -133,8 +242,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-1">
+                <div class="perm-card">
+                  <p class="perm-card__name">ROOT_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ROOT_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xa7678469-ROOT_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -143,8 +272,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ROOT_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-2">
+                <div class="perm-card">
+                  <p class="perm-card__name">UPGRADE_DAO_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPGRADE_DAO_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xa7678469-UPGRADE_DAO_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -153,8 +302,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPGRADE_DAO_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-3">
+                <div class="perm-card">
+                  <p class="perm-card__name">SET_METADATA_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_METADATA_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xa7678469-SET_METADATA_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -163,8 +332,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_METADATA_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-4">
+                <div class="perm-card">
+                  <p class="perm-card__name">REGISTER_STANDARD_CALLBACK_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="REGISTER_STANDARD_CALLBACK_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xa7678469-REGISTER_STANDARD_CALLBACK_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -173,8 +362,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="REGISTER_STANDARD_CALLBACK_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-5">
+                <div class="perm-card">
+                  <p class="perm-card__name">SET_TRUSTED_FORWARDER_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_TRUSTED_FORWARDER_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xa7678469-SET_TRUSTED_FORWARDER_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -183,8 +392,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_TRUSTED_FORWARDER_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-6">
+                <div class="perm-card">
+                  <p class="perm-card__name">MINT_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0x384915d45e1807d6d3875540263d2801b9309e70" children="Northstar (NSP)"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="MINT_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0x384915d4-MINT_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -193,8 +422,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0x384915d45e1807d6d3875540263d2801b9309e70" children="Northstar (NSP)"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="MINT_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-7">
+                <div class="perm-card">
+                  <p class="perm-card__name">UPDATE_STAGES_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPDATE_STAGES_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xff1fb33f-UPDATE_STAGES_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -203,8 +452,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPDATE_STAGES_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-8">
+                <div class="perm-card">
+                  <p class="perm-card__name">UPDATE_RULES_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPDATE_RULES_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xff1fb33f-UPDATE_RULES_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -213,8 +482,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPDATE_RULES_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-9">
+                <div class="perm-card">
+                  <p class="perm-card__name">SET_METADATA_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_METADATA_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xff1fb33f-SET_METADATA_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -223,8 +512,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_METADATA_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-10">
+                <div class="perm-card">
+                  <p class="perm-card__name">SET_TARGET_CONFIG_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_TARGET_CONFIG_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xff1fb33f-SET_TARGET_CONFIG_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -233,8 +542,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="SET_TARGET_CONFIG_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-11">
+                <div class="perm-card">
+                  <p class="perm-card__name">UPGRADE_PLUGIN_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPGRADE_PLUGIN_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xa7678469-0xff1fb33f-UPGRADE_PLUGIN_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xa767846912853e30403f3efb946a5250e8e6a063" label="DAO" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="DAO" size="sm"></x-import></span></div>
@@ -243,8 +572,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xa767846912853e30403f3efb946a5250e8e6a063" children="DAO"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="UPGRADE_PLUGIN_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-12">
+                <div class="perm-card">
+                  <p class="perm-card__name">CREATE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x566805a83e872e67a32d84596b81d16faa7ba6a2" children="Core Team"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0x566805a8-0xff1fb33f-CREATE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x566805a83e872e67a32d84596b81d16faa7ba6a2" label="Core Team" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="MULTISIG" variant="primary" class-name="perm-tag"></x-import></span></div>
@@ -253,8 +602,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x566805a83e872e67a32d84596b81d16faa7ba6a2" children="Core Team"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-13">
+                <div class="perm-card">
+                  <p class="perm-card__name">CREATE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" children="Safe"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="SafeOwner"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0x515fec2e-0xff1fb33f-CREATE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" label="Safe" has-interactive-ancestor="{{yes}}"></x-import><x-import component-from-global-scope="GovUiKit.Avatar" size="sm" src="assets/safeWallet.png"></x-import></span></div>
@@ -263,8 +632,28 @@ body{margin:0}
                       <span class="perm-condition">SafeOwner</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0x515fec2e8f6553948b1d57c14c1243a1405c02e2" children="Safe"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="CREATE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="SafeOwner"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-14">
+                <div class="perm-card">
+                  <p class="perm-card__name">ADVANCE_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ADVANCE_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xffffffff-0xff1fb33f-ADVANCE_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xffffffffffffffffffffffffffffffffffffffff" label="Anyone" has-interactive-ancestor="{{yes}}"></x-import></span></div>
@@ -273,8 +662,28 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="ADVANCE_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
-                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="row-15">
+                <div class="perm-card">
+                  <p class="perm-card__name">EXECUTE_PROPOSAL_PERMISSION</p>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                    <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PROPOSAL_PERMISSION"></x-import></div>
+                    <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                  </x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.Accordion.Item" value="0xffffffff-0xff1fb33f-EXECUTE_PROPOSAL_PERMISSION" class-name="perm-acc">
                   <x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader">
                     <div class="perm-row">
                       <div class="perm-cell"><span class="perm-entity"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0xffffffffffffffffffffffffffffffffffffffff" label="Anyone" has-interactive-ancestor="{{yes}}"></x-import></span></div>
@@ -283,12 +692,23 @@ body{margin:0}
                       <span class="perm-condition">-</span>
                     </div>
                   </x-import>
+                  <x-import component-from-global-scope="GovUiKit.Accordion.ItemContent">
+                    <div class="perm-detail">
+                      <p class="perm-detail__heading">Details</p>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Who" copy-value="0xffffffffffffffffffffffffffffffffffffffff" children="Anyone"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Where" copy-value="0xff1fb33fbd069eaa0077e9bd0af3fe00a54c6f09" children="Northstar Staged Governance"></x-import></div>
+                      <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permission" children="EXECUTE_PROPOSAL_PERMISSION"></x-import></div>
+                      <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Condition" children="-"></x-import>
+                      </x-import>
+                    </div>
+                  </x-import>
                 </x-import>
                 </x-import>
                 </sc-if>
               </div>
               <div class="perm-expand">
-                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" href="#">Expand all</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{toggleAll}}">{{expandLabel}}</x-import>
               </div>
               </sc-if>
 
@@ -382,9 +802,13 @@ class Component extends DCLogic {
     e.preventDefault();
     if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
   };
-  state = { view: 'list', hideDao: true };
+  state = { view: 'list', hideDao: true, expanded: [] };
+  // row keys of each list (the app keys a row by who + where + permission): the filter decides which are visible
+  rowKeys = {"hide": ["0xff1fb33f-0xa7678469-EXECUTE_PERMISSION", "0x566805a8-0xff1fb33f-CREATE_PROPOSAL_PERMISSION", "0x515fec2e-0xff1fb33f-CREATE_PROPOSAL_PERMISSION", "0xffffffff-0xff1fb33f-ADVANCE_PERMISSION", "0xffffffff-0xff1fb33f-EXECUTE_PROPOSAL_PERMISSION"], "all": ["0xff1fb33f-0xa7678469-EXECUTE_PERMISSION", "0xa7678469-0xa7678469-ROOT_PERMISSION", "0xa7678469-0xa7678469-UPGRADE_DAO_PERMISSION", "0xa7678469-0xa7678469-SET_METADATA_PERMISSION", "0xa7678469-0xa7678469-REGISTER_STANDARD_CALLBACK_PERMISSION", "0xa7678469-0xa7678469-SET_TRUSTED_FORWARDER_PERMISSION", "0xa7678469-0x384915d4-MINT_PERMISSION", "0xa7678469-0xff1fb33f-UPDATE_STAGES_PERMISSION", "0xa7678469-0xff1fb33f-UPDATE_RULES_PERMISSION", "0xa7678469-0xff1fb33f-SET_METADATA_PERMISSION", "0xa7678469-0xff1fb33f-SET_TARGET_CONFIG_PERMISSION", "0xa7678469-0xff1fb33f-UPGRADE_PLUGIN_PERMISSION", "0x566805a8-0xff1fb33f-CREATE_PROPOSAL_PERMISSION", "0x515fec2e-0xff1fb33f-CREATE_PROPOSAL_PERMISSION", "0xffffffff-0xff1fb33f-ADVANCE_PERMISSION", "0xffffffff-0xff1fb33f-EXECUTE_PROPOSAL_PERMISSION"]};
   renderVals() {
     const s = this.state;
+    const visible = this.rowKeys[s.hideDao ? 'hide' : 'all'];
+    const allOpen = visible.every((x) => s.expanded.indexOf(x) >= 0);
     return {
       click: this.click,
       yes: true,
@@ -396,7 +820,11 @@ class Component extends DCLogic {
       isList: s.view !== 'graph',
       isGraph: s.view === 'graph',
       setView: (v) => this.setState({ view: v === 'graph' ? 'graph' : 'list' }),
-      setHideDao: (c) => this.setState({ hideDao: !!c })
+      setHideDao: (c) => this.setState((st) => { const on = !!c; const vis = this.rowKeys[on ? 'hide' : 'all']; return { hideDao: on, expanded: st.expanded.filter((x) => vis.indexOf(x) >= 0) }; }),
+      expanded: s.expanded,
+      setExpanded: (v) => this.setState({ expanded: Array.isArray(v) ? v : [] }),
+      expandLabel: allOpen ? 'Collapse all' : 'Expand all',
+      toggleAll: () => this.setState({ expanded: allOpen ? [] : visible.slice() })
     };
   }
 }

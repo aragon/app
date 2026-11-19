@@ -247,12 +247,12 @@ body{margin:0}
 </sc-if>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"scope":{"editor":"enum","options":["all","meridian","atlas","northstar","safe"],"default":"all"},"active":{"editor":"enum","options":["overview","todos","proposals","transactions","assets","members","permissions","settings"],"default":"overview"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"todos":{"editor":null},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"scope":{"editor":"enum","options":["all","meridian","atlas","northstar","safe"],"default":"all"},"active":{"editor":"enum","options":["overview","todos","proposals","transactions","assets","members","permissions","settings"],"default":"overview"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"todos":{"editor":null},"todoRows":{"editor":null},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
 // Workspace navigation (apps/app: navigationWorkspace.tsx + navigationWorkspaceUtils.ts, workspaceSelector.tsx, workspaceAccountSelector.tsx):
 // the sidebar from lg, the top bar and the navigation dialog below lg.
 // Props: scope ('all' | account id: meridian | atlas | northstar | safe), active (section: overview | todos | proposals | transactions | assets |
 //   members | permissions | settings), wallet ('connected' | ''), onNav(target) with the Workspace.dc.html targets ('all:<section>' or
-//   'account:<id>:<section>'), onConnect(), onUser(), todos (optional object { all, meridian, atlas, northstar, safe } of to-do badge counts).
+//   'account:<id>:<section>'), onConnect(), onUser(), todoRows (the wallet's to-dos from the shell: one entry per row, acct = account id; the badge counts them, so it matches the rows the to-do pages list), todos (optional object { all, meridian, atlas, northstar, safe } overriding the counts).
 // Sections by scope follow workspaceSectionScopes: all accounts = Dashboard, Proposals, Transactions, Assets, Members; a DAO account adds Permissions and
 // Settings; a Safe has no Proposals or Permissions. Choosing an account keeps the current section when that account has it, else opens its overview.
 // The workspace menu lists the one workspace and "Create workspace" (CreateWorkspaceFlow.dc.html). "Add account" and "Edit workspace" have no screen yet.
@@ -301,7 +301,11 @@ class Component extends DCLogic {
     links.push(link('transactions', 'Transactions', 'APP_TRANSACTIONS'), link('assets', 'Assets', 'APP_ASSETS'), link('members', 'Members', 'APP_MEMBERS'));
     if (scope !== 'all' && served('permissions', scope)) links.push(link('permissions', 'Permissions', 'APP_PERMISSIONS'));
     if (scope !== 'all' && served('settings', scope)) links.push(link('settings', 'Settings', 'SETTINGS'));
-    const counts = Object.assign({ all: 5, meridian: 1, atlas: 1, northstar: 1, safe: 2 }, p.todos || {});
+    // badge = the rows the to-do pages list: todoRows, computed by the shell (a row has acct = the account id it belongs to)
+    const rows = Array.isArray(p.todoRows) ? p.todoRows : [];
+    const counts = { all: rows.length, meridian: 0, atlas: 0, northstar: 0, safe: 0 };
+    rows.forEach((r) => { if (counts[r.acct] !== undefined) counts[r.acct] += 1; });
+    Object.assign(counts, p.todos || {});
     const count = counts[scope] || 0;
     const todos = Object.assign(link('todos', 'To-dos', 'CHECKMARK'), { count: String(count), hasCount: count > 0 });
     const userClick = (e) => { stop(e); closeAll(); if (typeof p.onUser === 'function') p.onUser(); };

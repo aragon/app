@@ -157,7 +157,7 @@ body{margin:0}
           </sc-if>
           </aside>
         </div>
-        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
       </div>
 </x-import>
 </x-dc>
@@ -192,10 +192,12 @@ class Component extends DCLogic {
   renderVals() {
     const s = this.state;
     const connected = this.props.wallet === 'connected';
+    // the delegation done here (or on a member page) is kept in window.__nspDelegate, so it survives a trip to another page
+    const delegatedNow = s.delegated || (connected && !!window.__nspDelegate);
     const isSelf = s.sel === 'YOURSELF';
     const invalid = connected && s.touched && !isSelf && !this.resolved();
     const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
-    return {
+    return { noIndexing: false,
       click: this.click, yes: true, no: false, chainId: 1, pageSize: 12, noSteps: [],
       body: s.body, setBody: this.setBody,
       is: { tv: s.body === 'tv', ms: s.body === 'ms', c: s.body === 'c', g: s.body === 'g' },
@@ -211,9 +213,9 @@ class Component extends DCLogic {
       inputVariant: invalid ? 'critical' : 'default',
       delegate: (e) => { stop(e); this.press(); },
       submitDelegate: (e) => { stop(e); this.press(); },
-      delegateLabel: s.delegated ? 'Delegated' : 'Delegate NSP', delegateVariant: s.delegated ? 'secondary' : 'primary', delegateDisabled: !!s.delegated,
+      delegateLabel: delegatedNow ? 'Delegated' : 'Delegate NSP', delegateVariant: delegatedNow ? 'secondary' : 'primary', delegateDisabled: !!delegatedNow,
       txOpen: s.txOpen, closeTx: () => this.setState({ txOpen: false }),
-      txDone: () => this.setState({ txOpen: false, delegated: true })
+      txDone: () => { window.__nspDelegate = this.state.sel === 'YOURSELF' ? '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a' : String(this.state.text || '').trim().toLowerCase(); this.setState({ txOpen: false, delegated: true }); }
     };
   }
 }

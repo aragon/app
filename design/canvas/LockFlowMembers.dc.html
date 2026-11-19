@@ -29,10 +29,14 @@ body{margin:0}
                 <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="{{cardHeading}}" description="Lock more tokens to increase your voting power." is-stacked="{{no}}" object-illustration="{{walletIllustration}}" primary-button="{{cardButton}}"></x-import>
               </sc-if>
               <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-<sc-for list="{{members}}" as="mem">
-<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{mem.address}}" ens-name="{{mem.ens}}" token-amount="{{mem.power}}" class-name="min-w-0"></x-import>
-</sc-for>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m0.address}}" ens-name="{{m0.ens}}" token-amount="{{m0.power}}" class-name="min-w-0"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m1.address}}" ens-name="{{m1.ens}}" token-amount="{{m1.power}}" class-name="min-w-0"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m2.address}}" ens-name="{{m2.ens}}" token-amount="{{m2.power}}" class-name="min-w-0"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m3.address}}" ens-name="{{m3.ens}}" token-amount="{{m3.power}}" class-name="min-w-0"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m4.address}}" ens-name="{{m4.ens}}" token-amount="{{m4.power}}" class-name="min-w-0"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m5.address}}" ens-name="{{m5.ens}}" token-amount="{{m5.power}}" class-name="min-w-0"></x-import>
 </x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
             </x-import>
           </main>
 
@@ -65,10 +69,10 @@ class Component extends DCLogic {
       ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth', 305500], ['0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', 'marcusj.eth', 96000]
     ].map((r) => ({ address: r[0], ens: r[1], power: r[2] }));
     const me = { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', ens: 'nadia.eth', power: locked };
-    const members = connected && locked > 0 ? [me].concat(others) : others;
+    const members = connected && locked > 0 ? [me].concat(others.slice(0, 5)) : others;
     const call = (f, a) => (...args) => { if (typeof f === 'function') f(...args); };
     return {
-      yes: true, no: false, members, count: members.length,
+      yes: true, no: false, count: members.length, m0: members[0], m1: members[1], m2: members[2], m3: members[3], m4: members[4], m5: members[5],
       wallet: p.wallet || '', symbol, balance, locked, allowance: Number(p.allowance) || 0,
       showCard: connected && locked === 0 && balance > 0,
       cardHeading: 'You have unlocked ' + symbol,

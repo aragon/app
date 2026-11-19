@@ -82,6 +82,8 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-5" proposal-title="Signal: Expand the delegate compensation framework" vote-indicator="yes" date="{{dates.v5}}" href="#nav:proposal:MGP-5"></x-import>
 <x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-4" proposal-title="Reduce proposal threshold to 25,000 MRD" vote-indicator="no" date="{{dates.v4}}" href="#nav:proposal:MGP-4"></x-import>
 <x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-3" proposal-title="Update DAO metadata and website links" vote-indicator="yes" date="{{dates.v3}}" href="#nav:proposal:MGP-3"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-2" proposal-title="Q4 2026 Contributor Compensation" vote-indicator="yes" date="{{dates.v2}}" href="#nav:proposal:MGP-2"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="MGP-1" proposal-title="Sponsor the ETHDenver 2027 Community Hub" vote-indicator="no" date="{{dates.v1}}" href="#nav:proposal:MGP-1"></x-import>
 </x-import>
                 <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
               </x-import>
@@ -128,7 +130,7 @@ body{margin:0}
           </aside>
         </div>
         <dc-import name="DaoDelegateDialog" open="{{formOpen}}" wallet="{{wallet}}" current="{{current}}" initial="{{initial}}" on-close="{{closeForm}}" on-submit="{{startTx}}" on-connect="{{connect}}" hint-size="100%,1px"></dc-import>
-        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
       </div>
 </x-import>
 </x-dc>
@@ -158,6 +160,7 @@ class Component extends DCLogic {
   }
   componentDidUpdate(prev) {
     if (this.state.afterConnect && prev.wallet !== 'connected' && this.props.wallet === 'connected') this.setState({ afterConnect: false, formOpen: true });
+    else if (this.state.afterConnect && prev.connecting && !this.props.connecting && this.props.wallet !== 'connected') this.setState({ afterConnect: false }); // connect dialog dismissed
   }
   closeForm = () => this.setState({ formOpen: false });
   startTx = (address) => this.setState({ formOpen: false, txOpen: true, pending: address });
@@ -188,7 +191,7 @@ class Component extends DCLogic {
       }
     };
     const title = row[2] || checksum.slice(0, 6) + '…' + checksum.slice(-4);
-    return {
+    return { noIndexing: false,
       onClick: this.click, m, title, btn, self, no: false, wallet: this.props.wallet || '', current: cur, initial: passive ? '' : row[0], noSteps: [],
       usersIllustration: { object: 'USERS' }, statementButton: { label: 'Add delegate statement' },
       formOpen: this.state.formOpen, txOpen: this.state.txOpen, closeForm: this.closeForm, startTx: this.startTx, closeTx: this.closeTx, txDone: this.txDone, connect: this.connect,
@@ -201,6 +204,8 @@ class Component extends DCLogic {
         v5: now - 10.875 * day,
         v4: now - 17.875 * day,
         v3: now - 30.875 * day,
+        v2: now - 44.875 * day,
+        v1: now - 66.875 * day,
         mgp7: now + 6 * day + hour,
         mgp2: now - 39 * day - hour
       },

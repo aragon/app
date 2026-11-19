@@ -71,6 +71,10 @@
 // (Reown AppKit, third-party markup) where choosing any wallet connects. Mount only while open.
 class Component extends DCLogic {
   state = { step: 'dialog' };
+  // The wallet SDK modal (step 2) is not a kit dialog: give it the Escape key a real modal has.
+  onKey = (e) => { if (e.key === 'Escape' && this.state.step === 'appkit' && this.props.onClose) this.props.onClose(); };
+  componentDidMount() { document.addEventListener('keydown', this.onKey); }
+  componentWillUnmount() { document.removeEventListener('keydown', this.onKey); }
   renderVals() {
     const step = this.state.step;
     const close = () => { if (this.props.onClose) this.props.onClose(); };

@@ -20,7 +20,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (109 files) |
+| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (110 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit. Written by `publish/layout-canvas.cjs`, not by hand |
@@ -107,17 +107,17 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 
 ## Known gaps in the prototypes
 
-- **The Safe account page has no entry point** from the other prototypes; it is a frame of its own.
-- **Safe review dialog.** It carries Approve and Execute buttons in its footer. In the app the review is read-only and
-  those actions live on the voting card. Its warning states, rejecting a transaction and error states are not drawn.
-  Everything on the Safe page except the page itself was built from source with no screenshot to compare.
+- **Safe.** The standalone Safe account frame is review-only; approving and executing a Safe transaction happens in
+  the workspace, on the transaction's voting card, as in the app. The review dialog's warning states, rejecting a
+  transaction and error states are not drawn. A Safe transaction created in "Create a Safe transaction" does not then
+  appear in the workspace's queue. Everything Safe except the account page was built from source with no screenshot.
 - **Vote amounts do not reconcile.** On a proposal, the individual votes in the Votes tab do not add up to the totals in
   the Breakdown tab; the mismatch comes from the mock data.
 - **The vote list is drawn by script.** `DaoProposal.dc.html` defines a small component in code for the Votes tab, so
   that list cannot be selected or edited on the canvas like the rest.
 - **Create proposal:** only the Transfer action can be added; the other action types are listed and do nothing.
   Simulation always succeeds. "View proposal" lands on the DAO's dashboard, not on the new proposal.
-- **Permissions:** the graph view is a still picture. "Expand all" and "Uninstall process" do nothing.
+- **Permissions:** the graph view is a still picture. "Uninstall process" does nothing.
 - **Delegation:** the signing dialog does not show the delegate's row. "Add delegate statement" does nothing.
 - **Proposals, members and assets have no filters, search or sort,** because the app shows none for a DAO with one
   governance process and no linked accounts.
@@ -135,14 +135,20 @@ The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are
 - **Governance designer:** the import-token, lock-to-vote and external-address body variants, the inner states of
   steps 3 and 4, and "Remove stage" were carried over from an older prototype and only checked to render.
 - **Create proposal draws part of its form by script** (`CreateProposalFlowActions.dc.html`), as the vote list does.
-- **Workspace:** "Add account" and "Edit workspace" do nothing. A Safe account's Transactions, Assets, Members and
-  Settings sections all show the same Safe page. "New proposal" skips the app's pick-a-process step and always opens
+- **Workspace:** "Add account" and "Edit workspace" do nothing. "New proposal" skips the app's pick-a-process step and always opens
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
 - **Not built, because open pull requests are changing them:** editing a workspace, suggested accounts in the create
   workspace wizard, creating a Safe, and the governance designer inside a workspace.
-- **Checks.** Each prototype loads without errors at 1440 and 390 px wide, and each flow's main path was clicked through
+- **Governance designer at phone width:** in the stage settings dialog the value label of the approval threshold bar
+  hangs about 15 px past the window's edge.
+- **Deliberately inert controls** (they exist in the app and do nothing here): Copy buttons, "Download as JSON",
+  "Ask Aragon", "Open support chat", "+ Policy", "Upgrade contracts", file upload, and the wizard's wallet button.
+- **Checks.** On 19 November a "break-it" pass tested ten kinds of failure on every prototype (unwired handlers,
+  dead links, dialogs that lock the page, dialogs at phone width, typing and Enter, the part wrapper, a later clock,
+  list counts, widths between phone and desktop, state that should carry between pages) and fixed about fifty
+  findings. It was run once by agents; nothing repeats it. Before that: Each prototype loads without errors at 1440 and 390 px wide, and each flow's main path was clicked through
   once by the agent that built it. On 18 November, 66 states (Explore, the three DAOs' pages and proposals, the first
   steps of the wizards, the Safe page) were compared once with the reference screenshots on `docs/design-canvas`: 30
   matched, and nine distinct mistakes were found, of which seven were fixed. Left as they are: transaction times

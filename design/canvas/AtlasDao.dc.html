@@ -27,7 +27,7 @@
           <dc-import name="AtlasDaoProposals" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.proposal}}" hint-placeholder-val="{{false}}">
-          <dc-import name="AtlasDaoProposal" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" proposal="{{param}}" hint-size="100%,900px"></dc-import>
+          <dc-import name="AtlasDaoProposal" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" proposal="{{param}}" connect-open="{{dialog.connect}}" hint-size="100%,900px"></dc-import>
         </sc-if>
         <sc-if value="{{is.members}}" hint-placeholder-val="{{false}}">
           <dc-import name="AtlasDaoMembers" on-nav="{{nav}}" wallet="{{wallet}}" on-connect="{{connect}}" hint-size="100%,900px"></dc-import>

@@ -103,6 +103,46 @@
 .sf-signer { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; font-size: 14px; }
 .sf-card .sf-alert { margin-top: 0; }
 
+/* permissionsListRow.tsx Accordion.ItemContent body: flex flex-col gap-3; heading text-lg leading-tight text-neutral-800 */
+.perm-detail { display: flex; flex-direction: column; gap: 12px; }
+.perm-detail__heading { margin: 0; font-size: 18px; line-height: 22.5px; color: var(--color-neutral-800); }
+/* permissionsListRow.tsx: below md each row is a card (flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:hidden)
+   and the accordion item is hidden (hidden md:block); both switch on the page column's container width. */
+.perm-card { display: flex; flex-direction: column; gap: 16px; padding: 16px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); }
+.perm-card__name { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-800); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 18px; line-height: 22.5px; }
+.perm-acc { display: none; }
+@container app (min-width: 48rem) {
+    .perm-card { display: none; }
+    .perm-acc { display: block; }
+}
+
+/* proto-gc.css: Workspace shell, Ws* parts, SafeFlow*, SafeTransactionFlow* (break-it pass, agent GC). */
+.ws-safe-tx { display: flex; flex-direction: column; gap: 12px; width: 100%; min-width: 0; }
+.ws-safe-tx__actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (min-width: 48rem) { .ws-safe-tx__actions { flex-direction: row; align-items: center; } }
+.ws-safe-tx__call { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ws-safe-tx__fn { font-size: 16px; line-height: 24px; overflow-wrap: anywhere; }
+
+/* GD: fixes found in the break-it pass (create-proposal settings) */
+/* the three date/duration fields share the card width: let the kit input roots shrink below their content width */
+.advanced-date-input__fields .grow,
+.advanced-date-input__fields label,
+.advanced-date-input__fields label > div { min-width: 0; }
+/* app: "flex flex-col justify-between gap-4 md:flex-row" (md = 768px, a window breakpoint here: the wizard has no container) */
+@media (max-width: 767px) {
+  .advanced-date-input__fields { flex-direction: column; }
+}
+/* create process, body dialog, token recipient row: let the fields shrink so the remove menu stays inside the card at phone width */
+.token-member__fields { min-width: 0; }
+/* the hidden "View settings" link sits outside .app-page: pin it to the top so it does not add 1px of scroll at the page end */
+#cpr-dao-link { top: 0; left: 0; }
+
+/* TransactionStatusInfo (apps/app shared/components/transactionStatus): "Step {current}" in neutral-800 and "of {total}" in neutral-500 */
+.tx-info__step { display: flex; flex-direction: row; gap: 4px; font-size: 16px; line-height: 1.25; font-weight: 400; }
+.tx-info__current { color: var(--color-neutral-800); }
+.tx-info__total { color: var(--color-neutral-500); }
+@media (max-width: 767px) { .tx-info__step { font-size: 14px; } }
+
 /* Lock-to-vote prototype (LockFlow*.dc.html) */
 .l2v-info { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
 .l2v-info-sm { margin: 0; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }

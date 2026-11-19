@@ -25,7 +25,7 @@ body{margin:0}
       <a href="Explore.dc.html" aria-label="Aragon home" style="display: block; height: 40px;">
         <dc-import name="AragonLogo" size="lg" variant="white" responsive="{{yes}}" hint-size="162px,40px"></dc-import>
       </a>
-      <x-import component-from-global-scope="GovUiKit.Wallet"></x-import>
+      <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}" on-click="{{walletClick}}"></x-import>
     </div>
     <div class="explore-nav__trailing">
       <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="FEEDBACK" aria-label="Open support chat"></x-import>
@@ -140,12 +140,12 @@ body{margin:0}
           </x-import>
           <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="DAOs" items-count="{{daoCount}}" page-size="{{pageSize}}" state="idle">
             <x-import component-from-global-scope="GovUiKit.DataList.Filter" placeholder="Search by name, address, or ENS" search-value="{{search}}" on-search-value-change="{{onSearch}}"></x-import>
-            <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2" empty-state="{{emptyState}}">
 <sc-if value="{{show.meridian}}" hint-placeholder-val="{{true}}">
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Meridian DAO" description="Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance." address="0xc8c322384903ee8f11f511b71d0504237886bcde" ens="meridian.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/meridian.svg" href="Dao.dc.html"></x-import>
 </sc-if>
 <sc-if value="{{show.atlas}}" hint-placeholder-val="{{true}}">
-<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" ens="atlas-grants.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/atlas.svg" href="Dao.dc.html"></x-import>
+<x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Atlas Grants Council" description="The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council." address="0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368" ens="atlas-grants.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/atlas.svg" href="AtlasDao.dc.html"></x-import>
 </sc-if>
 <sc-if value="{{show.lido}}" hint-placeholder-val="{{true}}">
 <x-import component-from-global-scope="GovUiKit.DaoDataListItem.Structure" name="Lido DAO" description="Liquid staking governance for the Lido protocol on Ethereum." address="0x612309293021ea0289246c9e5ee84c0e0cb034df" ens="lido.dao.eth" network="Ethereum" logo-src="assets/mock/avatar/lido.svg" href="Dao.dc.html"></x-import>
@@ -180,6 +180,12 @@ body{margin:0}
     <dc-import name="Footer" hint-size="100%,65px"></dc-import>
   </div>
 </div>
+<sc-if value="{{dialog.connect}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletConnect" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+<sc-if value="{{dialog.user}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletUser" on-close="{{closeDialog}}" on-disconnect="{{disconnect}}" hint-size="1px,1px"></dc-import>
+</sc-if>
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2719}}'>
@@ -190,7 +196,12 @@ body{margin:0}
 // not looped or indented: the kit's pagination counts the list's direct children, and the canvas runtime counts a loop
 // as one child and indentation as another.
 class Component extends DCLogic {
-  state = { search: '', postHero: false };
+  state = { search: '', postHero: false, wallet: '', dialog: '' };
+  // The nav's wallet button opens the same connect / user dialogs as the DAO prototype (View profile only closes the dialog here).
+  walletClick = () => this.setState({ dialog: this.state.wallet ? 'user' : 'connect' });
+  closeDialog = () => this.setState({ dialog: '' });
+  pickWallet = () => this.setState({ wallet: 'connected', dialog: '' });
+  disconnect = () => this.setState({ wallet: '', dialog: '' });
   // exploreNav.tsx: the bar is a gradient over the hero and turns solid once the hero has scrolled under it.
   checkHero = () => {
     const hero = document.getElementById('explore-page-hero');
@@ -208,7 +219,7 @@ class Component extends DCLogic {
     const D = { meridian: 'Meridian DAO meridian.dao.eth 0xc8c322384903ee8f11f511b71d0504237886bcde', atlas: 'Atlas Grants Council atlas-grants.dao.eth 0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368', lido: 'Lido DAO lido.dao.eth 0x612309293021ea0289246c9e5ee84c0e0cb034df', polygon: 'Polygon Village polygon-village.dao.eth 0x5f0cfb4039b4094a7034c9e3f2035af861eeb42c', solace: 'Solace Collective solace.dao.eth 0xe2f001c33fca00ad672f2a79abbcd567803178ee', harbor: 'Harbor Protocol harbor.dao.eth 0x506b251c4cefd8a679955e7d17c8968b3d994693', greenfield: 'Greenfield Climate DAO greenfield.dao.eth 0x8fbfe35944a15b4aedfe95d04194b6667a98f094', nexus: 'Nexus Research Guild nexus.dao.eth 0x2bb42aad9340728612feabf3be9b5b7fee8b96b9', orbit: 'Orbit Gaming DAO orbit.dao.eth 0x86f9e0f117f631ac91c6a32005817e8350e19435' };
     const show = {}; let n = 0;
     for (const k in D) { show[k] = !q || D[k].toLowerCase().includes(q); if (show[k]) n++; }
-    return { navState: this.state.postHero ? 'explore-nav--solid' : '', yes: true, no: false, daoCount: n, pageSize: 20, show, search: this.state.search || '', filter: 'all',
+    return { user: this.state.wallet ? { address: '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', name: 'nadia.eth' } : undefined, walletClick: this.walletClick, dialog: { connect: this.state.dialog === 'connect', user: this.state.dialog === 'user' }, closeDialog: this.closeDialog, pickWallet: this.pickWallet, disconnect: this.disconnect, emptyState: { heading: 'No DAOs found', description: 'This will show relevant DAOs when available.' }, navState: this.state.postHero ? 'explore-nav--solid' : '', yes: true, no: false, daoCount: n, pageSize: 20, show, search: this.state.search || '', filter: 'all',
       onSearch: (v) => this.setState({ search: v || '' }) };
   }
 }

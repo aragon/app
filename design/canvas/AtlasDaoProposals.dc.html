@@ -106,6 +106,8 @@ class Component extends DCLogic {
     const v = this.baseVals();
     v.click = this.click;
     v.agc4Status = atlasState().executed4 ? 'EXECUTED' : 'EXECUTABLE';
+    // an executed proposal has no time left: its date is in the past ("1 hour ago"), not the 4 days left of the executable one
+    if (atlasState().executed4) v.dates.agc4 = Date.now() - 3600000;
     return v;
   }
 }

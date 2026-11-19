@@ -65,7 +65,7 @@ body{margin:0}
             </x-import>
           </aside>
         </div>
-        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
       </div>
 </x-import>
 </x-dc>
@@ -118,7 +118,7 @@ class Component extends DCLogic {
       const rest = base.filter((m) => m.address !== cur && m.address !== SELF);
       list = [base[0], d].concat(rest).slice(0, 12); // 12 fixed slots (pagination counts written-out children)
     }
-    return {
+    return { noIndexing: false,
       onClick: this.click, yes: true, noSteps: [], wallet: this.props.wallet || '', current: cur,
       count: 12, chainId: 1,
       pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isOnchainEntity: true },
@@ -181,7 +181,7 @@ body{margin:0}
             </x-import>
           </aside>
         </div>
-        <dc-import name="TxFlowDialog" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
       </div>
 </x-import>
 </x-dc>
