@@ -16,6 +16,17 @@ describe('<Image /> component', () => {
         expect(image.src).toMatch(/_next\/image/);
     });
 
+    it.each([
+        'https://metadata.ens.domains/mainnet/avatar/alice.eth',
+        'https://euc.li/alice.eth',
+    ])(
+        'loads mutable avatar URLs directly, bypassing the optimizer (%s)',
+        (src) => {
+            render(createTestComponent({ src }));
+            expect(screen.getByRole<HTMLImageElement>('img').src).toEqual(src);
+        },
+    );
+
     it('renders empty container when src is not defined', () => {
         const src = undefined;
         const { container } = render(createTestComponent({ src }));
