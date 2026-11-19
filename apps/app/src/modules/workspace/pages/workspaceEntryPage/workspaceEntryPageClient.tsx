@@ -8,7 +8,7 @@ import { Page } from '@/shared/components/page';
 import {
     type IWorkspace,
     useGetOrCreateDefaultWorkspace,
-    useWorkspaceList,
+    workspaceService,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import {
@@ -52,22 +52,27 @@ export const WorkspaceEntryPageClient: React.FC<
     // Getting started instead of seeding an empty workspace they did not ask for.
     const hasSeedingRunRef = useRef(false);
 
-    const { data: workspaces } = useWorkspaceList();
-
     useEffect(() => {
-        if (hasSeedingRunRef.current || workspaces == null) {
+        if (hasSeedingRunRef.current) {
             return;
         }
 
         hasSeedingRunRef.current = true;
 
-        if (workspaces.length === 0) {
-            router.replace(gettingStartedUrl);
-            return;
-        }
+        // Read the registry itself: the list query caches one entry for both the demo (session) and the real
+        // (local) registry, so a stale one decides this redirect the wrong way.
+        workspaceService
+            .getWorkspaceList()
+            .then((workspaces) => {
+                if (workspaces.length === 0) {
+                    router.replace(gettingStartedUrl);
+                    return;
+                }
 
-        mutate();
-    }, [workspaces, mutate, router]);
+                mutate();
+            })
+            .catch(() => mutate());
+    }, [mutate, router]);
 
     if (error != null) {
         return (

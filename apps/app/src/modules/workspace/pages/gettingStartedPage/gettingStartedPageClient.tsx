@@ -9,7 +9,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     defaultWorkspaceName,
-    useWorkspaceList,
+    workspaceService,
 } from '../../api/workspaceService';
 import {
     createWorkspaceFormDefaultValues,
@@ -53,24 +53,30 @@ export const GettingStartedPageClient: React.FC<
 > = () => {
     const { open } = useDialogContext();
     const router = useRouter();
-    const { data: workspaces } = useWorkspaceList();
-
     // Only a first visit belongs here: the entry page keeps workspace owners out, but a bookmark, a shared link or
-    // Back after publishing would otherwise create a second workspace. Checked once, so the workspace this wizard
-    // creates does not redirect the dialog away from its success state.
+    // Back after publishing would otherwise create a second workspace. Checked once against the registry itself,
+    // not the list query, whose cached entry is shared with the demo; and once, so the workspace this wizard creates
+    // does not redirect the dialog away from its success state.
     const hasCheckedRegistryRef = useRef(false);
 
     useEffect(() => {
-        if (hasCheckedRegistryRef.current || workspaces == null) {
+        if (hasCheckedRegistryRef.current) {
             return;
         }
 
         hasCheckedRegistryRef.current = true;
 
-        if (workspaces.length > 0) {
-            router.replace('/workspace');
-        }
-    }, [workspaces, router]);
+        workspaceService
+            .getWorkspaceList()
+            .then((workspaces) => {
+                if (workspaces.length > 0) {
+                    router.replace('/workspace');
+                }
+            })
+            .catch(() => {
+                // Storage refused the read: keep the wizard up rather than guess whether a workspace exists.
+            });
+    }, [router]);
 
     const handleSubmit = (values: ICreateWorkspaceFormData) => {
         const params: IPublishWorkspaceDialogParams = { values };

@@ -10,9 +10,9 @@ import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import { GettingStartedPageClient } from './gettingStartedPageClient';
 
 describe('<GettingStartedPageClient /> component', () => {
-    const useWorkspaceListSpy = jest.spyOn(
-        workspaceService,
-        'useWorkspaceList',
+    const getWorkspaceListSpy = jest.spyOn(
+        workspaceService.workspaceService,
+        'getWorkspaceList',
     );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
@@ -20,9 +20,7 @@ describe('<GettingStartedPageClient /> component', () => {
     const replaceMock = jest.fn();
 
     beforeEach(() => {
-        useWorkspaceListSpy.mockReturnValue({
-            data: [],
-        } as unknown as ReturnType<typeof workspaceService.useWorkspaceList>);
+        getWorkspaceListSpy.mockResolvedValue([]);
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ open: openMock }),
         );
@@ -32,7 +30,7 @@ describe('<GettingStartedPageClient /> component', () => {
     });
 
     afterEach(() => {
-        useWorkspaceListSpy.mockReset();
+        getWorkspaceListSpy.mockReset();
         useDialogContextSpy.mockReset();
         useRouterSpy.mockReset();
         openMock.mockReset();
@@ -91,9 +89,11 @@ describe('<GettingStartedPageClient /> component', () => {
     });
 
     it('sends a user who already holds a workspace to the workspace entry', async () => {
-        useWorkspaceListSpy.mockReturnValue({
-            data: [{ id: 'existing' }],
-        } as unknown as ReturnType<typeof workspaceService.useWorkspaceList>);
+        getWorkspaceListSpy.mockResolvedValue([{ id: 'existing' }] as Awaited<
+            ReturnType<
+                typeof workspaceService.workspaceService.getWorkspaceList
+            >
+        >);
 
         render(createTestComponent());
 

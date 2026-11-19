@@ -7,6 +7,11 @@ export interface ILayoutWizardCreateWorkspaceProps {
      * Key of the wizard name displayed on the navigation, the create-workspace one when not set.
      */
     name?: string;
+    /**
+     * Where leaving the wizard goes, the landing page when not set. A flow whose own entry point is the landing
+     * page needs another one, or its exit sends the user straight back into it.
+     */
+    exitPath?: string;
 }
 
 /**
@@ -22,8 +27,8 @@ export const LayoutWizardCreateWorkspace: React.FC<
 
     return (
         <LayoutWizard
-            exitPath="/"
             {...props}
+            exitPath={props.exitPath ?? '/'}
             name={
                 props.name ?? 'app.workspace.layoutWizardCreateWorkspace.name'
             }

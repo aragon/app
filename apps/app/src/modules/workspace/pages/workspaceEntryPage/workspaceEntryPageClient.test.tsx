@@ -128,4 +128,21 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(replaceMock).not.toHaveBeenCalled();
     });
+    it('reads the registry, not a stale list cached from another registry', async () => {
+        // The reported bug: browsing the demo leaves its two workspaces in the shared list cache, so the entry
+        // page decided on a non-empty registry and had a "My workspace" seeded instead of showing Getting started.
+        const queryClient = new QueryClient();
+        queryClient.setQueryData(workspaceServiceKeys.workspaceList(), [
+            workspace,
+            workspace,
+        ]);
+        getWorkspaceListSpy.mockResolvedValue([]);
+
+        render(createTestComponent(undefined, queryClient));
+
+        await waitFor(() =>
+            expect(replaceMock).toHaveBeenCalledWith('/getting-started'),
+        );
+        expect(getOrCreateDefaultWorkspaceSpy).not.toHaveBeenCalled();
+    });
 });
