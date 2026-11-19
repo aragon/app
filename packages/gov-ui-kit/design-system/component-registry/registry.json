@@ -6,10 +6,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "19c9a8ddea5b9fbe5c0fc17d16994f008ecd0e2c",
-            "dirty": [
-                "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.stories.tsx"
-            ],
+            "commit": "f9ca4c5900d0c963f44b1fe24867a2297c5c8ba4",
+            "dirty": [],
             "sourceVersion": "3.0.1",
             "entrypoints": {
                 "js": [
@@ -3079,7 +3077,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "138a3ffb4514d530f611c7442407e86536e2fcc23a424d96a051f4d51d530b02"
+                "sha256": "59904829c3bc62a837f2a46c1c60cda539b039e2628db41881505b1d77bdb617"
             },
             "props": [],
             "stories": [],
