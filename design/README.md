@@ -68,7 +68,8 @@ Every prototype, and every canvas made from these files, shows **the app as it r
 `main`**, not what users see in production.
 
 - **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026); later ones from `main`
-  as it stood up to 18 November (`0bc09d3`). `canvases/prototypes.json` → `appCommit` records the first.
+  as it stood up to 18 November. On 20 November they were caught up with `main` of 19 November (`51c4622`), which is
+  what `canvases/prototypes.json` → `appCommit` records. `RUNBOOK.md`, "Catch up with main", has the procedure.
 - **Feature flags:** each flag's `local` value, the one a developer's machine uses. Checked against a snapshot of
   the 16 flags taken in mid-November (`design/baseline-check/cms/feature-flags.json` on `docs/design-canvas`):
 
@@ -140,12 +141,18 @@ on a canvas", says what to do when a canvas's copy falls behind.
   the workspace, on the transaction's voting card, as in the app. The review dialog's warning states, rejecting a
   transaction and error states are not drawn. A Safe transaction created in "Create a Safe transaction" does not then
   appear in the workspace's queue. Everything Safe except the account page was built from source with no screenshot.
-- **Safe transactions in the workspace.** An expanded pending transaction follows the app's components (a voting
-  card with Breakdown, Votes and Settings tabs, then the simulation, then the actions), rebuilt from source on 20
-  November after a flattened, invented version was spotted. Still not built: rejecting a transaction (the button is
-  drawn and does nothing beyond asking for a wallet), the superseded, loading and error states, and the "You" mark
-  on the connected owner's vote. An executed Safe transaction in the history still expands to a plain transfer
-  where the app shows an execution summary and the actions. None of this has been compared with a screenshot.
+- **Safe transactions in the workspace.** An expanded Safe transaction follows the app's components (a voting card
+  with Breakdown, Votes and Settings tabs, the simulation, the actions; an execution summary once executed), and a
+  transaction can be rejected, which adds the rejection as its own row. Rebuilt from source on 20 November after a
+  flattened, invented version was spotted. Not reachable, because the prototype has one connected owner and the
+  Safe needs three: a rejection gathering enough approvals to execute, and a second owner approving an existing
+  rejection. Not drawn: loading and load-error states, the "You" mark on the connected owner's vote, the gas-refund
+  warning in the review, and the error states of the create Safe transaction dialog. A rejection does not appear in
+  the to-dos. None of this has been compared with a screenshot.
+- **Create proposal from the workspace** exits back to the workspace by carrying the account on the link. That works
+  in the local check; whether the canvas keeps it when following a link between frames is not confirmed. If it does
+  not, the wizard exits to the DAO as before. The "+ Proposal" buttons on an account's own pages inside the
+  workspace still exit to the DAO.
 - **Vote amounts do not reconcile.** On a proposal, the individual votes in the Votes tab do not add up to the totals in
   the Breakdown tab; the mismatch comes from the mock data.
 - **The vote list is drawn by script.** `DaoProposal.dc.html` defines a small component in code for the Votes tab, so

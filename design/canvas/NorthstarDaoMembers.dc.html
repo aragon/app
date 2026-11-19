@@ -26,12 +26,24 @@ body{margin:0}
               <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
             </header>
             <div class="flex flex-col gap-2 md:gap-3">
+              <sc-if value="{{asTabs}}" hint-placeholder-val="{{yes}}">
               <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{body}}" on-change="{{setBody}}">
                   <x-import component-from-global-scope="GovUiKit.Toggle" value="tv" label="NSP Token Holders"></x-import>
                   <x-import component-from-global-scope="GovUiKit.Toggle" value="ms" label="Core Team"></x-import>
                   <x-import component-from-global-scope="GovUiKit.Toggle" value="c" label="Safe 0x515f…02e2"></x-import>
                   <x-import component-from-global-scope="GovUiKit.Toggle" value="g" label="Safe 0xf361…465e"></x-import>
               </x-import>
+              </sc-if>
+              <sc-if value="{{asDropdown}}" hint-placeholder-val="{{no}}">
+              <div>
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="{{bodyLabel}}">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.tv}}" on-select="{{pick.tv}}">NSP Token Holders</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.ms}}" on-select="{{pick.ms}}">Core Team</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.c}}" on-select="{{pick.c}}">Safe 0x515f…02e2</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.g}}" on-select="{{pick.g}}">Safe 0xf361…465e</x-import>
+                </x-import>
+              </div>
+              </sc-if>
 <sc-if value="{{is.tv}}" hint-placeholder-val="{{yes}}">
             <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{tv.count}}" page-size="{{pageSize}}" state="idle">
               <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
@@ -161,8 +173,8 @@ body{margin:0}
       </div>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
-// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect().
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":null}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (set by Workspace.dc.html to any value: the body filter is then the dropdown of the workspace page, showFiltersAsDropdown; unset (NorthstarDao) keeps the toggle tabs).
 // Members page (apps/app: modules/governance/pages/daoMembersPage + PluginFilterComponent). Northstar has several bodies, so the page shows the
 // body tabs of a multi-body DAO: NSP Token Holders (token list + Delegation card), Core Team (multisig members), and one tab per Safe (owners, with
 // the Safe settings aside). The toggle is state: it switches the list and the aside card, and the count under the list follows. The list items are
@@ -200,6 +212,9 @@ class Component extends DCLogic {
     return { noIndexing: false,
       click: this.click, yes: true, no: false, chainId: 1, pageSize: 12, noSteps: [],
       body: s.body, setBody: this.setBody,
+      asTabs: !this.props.scope, asDropdown: !!this.props.scope,
+      bodyLabel: { tv: 'NSP Token Holders', ms: 'Core Team', c: 'Safe 0x515f…02e2', g: 'Safe 0xf361…465e' }[s.body],
+      pick: { tv: () => this.setBody('tv'), ms: () => this.setBody('ms'), c: () => this.setBody('c'), g: () => this.setBody('g') },
       is: { tv: s.body === 'tv', ms: s.body === 'ms', c: s.body === 'c', g: s.body === 'g' },
       d0: 0, d3: 3, d6: 6, d9: 9, d17: 17, d28: 28, d41: 41,
       tv: { count: 10, pluginLink: { href: 'https://etherscan.io/address/0x65bcf0e7d2a74d45fe702135d19f954d59658f36', isOnchainEntity: true }, launchLink: { href: 'https://etherscan.io/tx/0x3995ecdb4ac48b1d2129986ea48b2668d1fc8f8f4cb3fb59dad4f99f4e868c6e' } },

@@ -3,8 +3,8 @@
 For a Claude Code session. A canvas cannot read or write the repo; a session moves the files both ways. These steps
 were written on 19 November 2026 and each has since been run once by a session starting from this file: starting a
 ticket (2.5 minutes), saving a designer's changes made four ways (through a coding session, the canvas's chat, by
-hand, and a tweak default), and implementing that design in the app. "Refresh the reference canvas" and "Finish a
-ticket" have not been run. Where a step fails, fix this file.
+hand, and a tweak default), implementing that design in the app, and catching up with `main`. "Finish a ticket"
+has not been run, and nothing has been merged to `main`. Where a step fails, fix this file.
 
 The model: **one ticket = one chat session = one branch = one canvas.**
 
@@ -148,9 +148,35 @@ and not built.
 
 ## Refresh the reference canvas
 
-When prototype files change on the reference branch (a ticket merged, or prototypes redrawn after an app change):
-publish as above with no name (the record is `prototypes.json`). Nothing triggers this yet; who does it and when is
-undecided.
+When prototype files change on the reference branch (a ticket merged, or a catch-up): publish as above with no name
+(the record is `prototypes.json`). Nobody designs on the reference canvas, so there is nothing to save first.
+
+## Catch up with main
+
+A design ticket keeps its prototypes current by itself: design and code merge together. This is for the other kind
+of change, app code changed with no design ticket, which leaves a prototype behind without anything noticing.
+`canvases/prototypes.json` → `appCommit` is the app commit the prototypes were last brought in line with.
+
+1. Bring the reference branch up to date with `main` (a merge; no history rewrite).
+2. Triage, read-only. For every change in `apps/app/src` and `packages/gov-ui-kit/src` between `appCommit` and
+   `main` (and changed strings in `en.json`), read the diff and sort it: no visible effect; visible, but no prototype
+   covers it; affects a prototype. For the last kind, open the prototype and check whether it already has the change
+   or is behind. Write the behind items as a table: what changed in a designer's words, the commit, the app file and
+   lines, the prototype file, a size. A kit change matters only if a prototype's own markup or props must change;
+   otherwise give the canvas the current kit (see "The UI kit on a canvas").
+3. Show the person the table. Error, loading and failure variants are left out of the prototypes on purpose (a
+   prototype has no backend and must never leave a designer stuck): list them as not done unless told otherwise.
+4. Fix what is behind, following `BRIEF.md`, from the app's source. One agent per group of files; no two agents on
+   the same file. Each fix is proved by clicking, not only by loading.
+5. Load-check every prototype touched, refresh the reference canvas, set `appCommit` to `main`'s head, add what was
+   left out to the README's known gaps, commit, push.
+
+It finds what changed. It does not find a prototype that was wrong from the start; only someone looking does.
+
+Run once, on 20 November 2026, from 16 November's app to `main` of 19 November: 139 app files changed; triage took
+an agent 3 minutes and found 14 changes touching a prototype, 4 already in and 10 behind; two agents fixed 8 of them
+in parallel in about 10 minutes; 2 error-state items were left out on purpose. With merging, checking and
+publishing, under an hour. When this runs (after each release, on demand, or per pull request) is undecided.
 
 ## Finish a ticket
 

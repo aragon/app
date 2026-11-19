@@ -20,7 +20,7 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="app-page">
-  <dc-import name="WizardNav" exit-href="Dao.dc.html" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <dc-import name="WizardNav" exit-href="{{exitHref}}" wizard-name="Create proposal" dao-name="Meridian DAO" dao-address="0xC8C322384903eE8f11F511b71d0504237886BCde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
   <main class="wizard-main">
     <form class="wizard-form" onSubmit="{{submitForm}}">
       <dc-import name="WizardProgress" step="{{progressStep}}" total="{{total}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
@@ -79,7 +79,7 @@ body{margin:0}
 // Source-only (no screenshot): validation errors, step alert, resources, asset search, simulation, fixed dates, remove / move / remove all.
 // Not built: the other actions of the menu (Mint, Update settings, Set metadata, Add contract address: menu closes), Connect, Upload,
 // ENS resolution (any 0x address is accepted by the address input; atlas-grants.dao.eth resolves to a sample address).
-// Simulation always succeeds (sample data). Exit and "View proposal" go to Dao.dc.html. Parts: CreateProposalFlow<Metadata|Actions|Settings|Next|AssetDialog|SimulateDialog>.
+// Simulation always succeeds (sample data). "View proposal" goes to Dao.dc.html; Exit goes to Dao.dc.html too, unless the wizard was opened from the workspace (WsProposals link ?from=workspace&account=<id>), then it goes to Workspace.dc.html?account=<id>&page=proposals. Parts: CreateProposalFlow<Metadata|Actions|Settings|Next|AssetDialog|SimulateDialog>.
 const URL_RE = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
 const KNOWN_ENS = { 'atlas-grants.dao.eth': '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368' };
 const SAMPLE_ADDRESS = '0x4b3f5d1a0c8e7d2b9a6f1e3c5d7b9a0c2e4f6a8b';
@@ -229,6 +229,10 @@ class Component extends DCLogic {
     blur: (k) => this.touch(k),
   };
 
+  exitHref() {
+    try { const q = new URLSearchParams(window.location.search), a = q.get('account'); if (q.get('from') === 'workspace' && ['meridian', 'atlas', 'northstar'].indexOf(a) >= 0) return 'Workspace.dc.html?account=' + a + '&page=proposals'; } catch (e) {}
+    return 'Dao.dc.html';
+  }
   renderVals() {
     const s = this.state, e = this.errorsFor(s), st = this.steps(s), idx = st.indexOf(s.step);
     const shown = (key) => s.submitted || !!s.touched[key];
@@ -282,7 +286,7 @@ class Component extends DCLogic {
       footerPlain: plain, footerCritical: !dropdown && showAlert, footerDropdown: dropdown,
       nextVariant: showAlert ? 'critical' : 'secondary',
       hasBack: idx > 0, backClass: idx > 0 ? '' : 'invisible', isLast, nextLabel: isLast ? 'Publish proposal' : 'Next',
-      back: this.back, next: this.next, submitForm: this.submitForm, simulate: this.simulate, skipSimulation: this.skipSimulation,
+      exitHref: this.exitHref(), back: this.back, next: this.next, submitForm: this.submitForm, simulate: this.simulate, skipSimulation: this.skipSimulation,
       // dialogs
       dlgAsset: s.dlg === 'asset', dlgSim: s.dlg === 'simulate', dlgTx: s.dlg === 'tx',
       txSteps: ['Pin data on IPFS'], txSummary: { type: 'proposal', title: s.title || 'Untitled proposal', summary: s.summary },

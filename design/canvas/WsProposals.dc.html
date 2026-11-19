@@ -194,7 +194,7 @@ class Component extends DCLogic {
       closeDialog: () => this.setState({ dialog: false }),
       dialogChange: (o) => { if (!o) this.setState({ dialog: false }); },
       accounts: ACC.map((a) => ({ name: a[1], avatar: a[2], meta: a[3], cls: 'wsy-pick' + (chosen === a[0] ? ' wsy-pick--active' : ''), choose: () => this.setState({ chosen: a[0] }) })),
-      primary: { label: 'Next', href: 'CreateProposalFlow.dc.html', disabled: !chosen },
+      primary: { label: 'Next', href: 'CreateProposalFlow.dc.html?from=workspace&account=' + chosen, disabled: !chosen },
       secondary: { label: 'Cancel', onClick: () => this.setState({ dialog: false }) }
     };
   }

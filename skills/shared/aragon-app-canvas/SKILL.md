@@ -1,6 +1,6 @@
 ---
 name: aragon-app-canvas
-description: Use when someone wants to design on a claude.ai canvas of the Aragon App prototypes, or build a design made on one - start a canvas for a ticket or idea, save or sync what they changed on a canvas into the repo, bring the latest files onto a canvas, refresh the reference canvas, or implement a canvas design in the app. Also when they type /aragon-app-canvas followed by anything.
+description: Use when someone wants to design on a claude.ai canvas of the Aragon App prototypes, or build a design made on one - start a canvas for a ticket or idea, save or sync what they changed on a canvas into the repo, bring the latest files onto a canvas, refresh the reference canvas, bring the prototypes up to date with app changes on main, or implement a canvas design in the app. Also when they type /aragon-app-canvas followed by anything.
 ---
 
 # Aragon App canvas
@@ -25,11 +25,12 @@ names for you; never say them to the person ("pull" reads as the opposite of sav
 | "start a new one for the filters ticket", "I want to try an idea" | "Start: a new branch and a new canvas from the repo." | Start a ticket |
 | "save what I did", "sync", "pull my changes in" | "Save: your canvas changes go into the repo. Your canvas is not changed." | Pull |
 | "update my canvas", "get the latest onto the canvas" | "Update your canvas: the repo's files replace what is on the canvas." | Publish |
-| "the app changed, refresh the main canvas" | "Refresh the reference canvas from the repo." | Refresh the reference canvas |
+| "refresh the main canvas" | "Refresh the reference canvas from the repo." | Refresh the reference canvas |
+| "the app changed", "catch up with main", "are the prototypes up to date?" | "Catch up: find app changes the prototypes are missing and fix them." | Catch up with main |
 | "implement this design", "build this", "make the app match the canvas" | "Implement: build the design from this branch in the app." | Implement a design |
 | "this one is done" | "Finish: clean up after the merge." | Finish a ticket |
 
-Nothing after the command, or you cannot tell which: ask, offering these six in plain words.
+Nothing after the command, or you cannot tell which: ask, offering these seven in plain words.
 
 "Latest" is ambiguous. It can mean their canvas edits going into the repo (Pull) or the repo's files going onto
 their canvas (Publish). Publish replaces what is on the canvas, so before one: say that is what you understood,
