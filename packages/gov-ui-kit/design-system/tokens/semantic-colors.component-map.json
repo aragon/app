@@ -17,14 +17,14 @@
     "summary": {
         "files": 83,
         "occurrences": 546,
-        "converted": 411,
-        "unconverted": 135,
+        "converted": 410,
+        "unconverted": 136,
         "unconvertedByReason": {
             "conflict": 81,
             "no-utility": 32,
             "no-token": 14,
             "comment": 1,
-            "ordering": 3,
+            "ordering": 4,
             "forbidden-token": 4
         },
         "tokensUsed": 95,
@@ -1403,6 +1403,20 @@
                 "old": "bg-neutral-50"
             },
             "note": "Different variants (group-data-disabled: sorts after the unprefixed base): ordering unaffected by renaming. Same for dialogHeader line 49 group-hover:bg-neutral-50 over AvatarIcon white bg-neutral-0. Verified by screenshot against 87c6176 (no difference)."
+        },
+        {
+            "check": false,
+            "consumer": {
+                "file": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
+                "line": 81,
+                "old": "shadow-none"
+            },
+            "target": {
+                "file": "src/core/components/dataList/dataListItem/dataListItem.tsx",
+                "line": 31,
+                "old": "shadow-neutral-sm"
+            },
+            "note": "Not a colour class, so the ordering pass did not see it: className passed to DataList.Item when asChild (also by smartContractFunctionDataListItemSkeleton line 23). Today shadow-none sorts after shadow-neutral-sm and wins; shadow-surface-sm would sort after it and win, so the DataListItem shadow stays unconverted (reason ordering). Found by pnpm visual-diff after applying the map."
         }
     ],
     "nonClassReferences": [
@@ -2385,9 +2399,9 @@
             {
                 "line": 31,
                 "old": "shadow-neutral-sm",
-                "new": "shadow-surface-sm",
+                "new": null,
                 "part": "item container (primary), default",
-                "reason": "shadow colour, neutral content: one-off role “sm”; same geometry and colour as the primitive shadow"
+                "reason": "ordering: role token shadow/surface/sm fits, but SmartContractFunctionDataListItemStructure and SmartContractFunctionDataListItemSkeleton (asChild) pass shadow-none to DataList.Item, which wins today only by name order (shadow-none sorts after shadow-neutral-sm); renamed, shadow-surface-sm would sort after shadow-none and the embedded item would get a shadow (found by the screenshot comparison after applying: 16 ProposalActions stories). Convert together with a restructure, e.g. a DataList.Item prop that drops the shadow"
             },
             {
                 "line": 33,
