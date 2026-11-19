@@ -77,7 +77,20 @@ describe('<UserDialog /> component', () => {
         },
     ];
 
-    const createTestComponent = (props?: Partial<IUserDialogProps>) => {
+    const buildSnapshot = (workspaces: boolean): FeatureFlagSnapshot[] => [
+        ...featureFlagsSnapshot,
+        {
+            key: 'workspaces',
+            name: 'Workspaces',
+            description: 'Enables the workspace feature.',
+            enabled: workspaces,
+        },
+    ];
+
+    const createTestComponent = (
+        props?: Partial<IUserDialogProps>,
+        snapshot: FeatureFlagSnapshot[] = buildSnapshot(true),
+    ) => {
         const completeProps: IUserDialogProps = {
             location: { id: 'test' },
             ...props,
@@ -85,7 +98,7 @@ describe('<UserDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                <FeatureFlagsProvider initialSnapshot={snapshot}>
                     <UserDialog {...completeProps} />
                 </FeatureFlagsProvider>
             </GukModulesProvider>
@@ -205,7 +218,7 @@ describe('<UserDialog /> component', () => {
         expect(open).toHaveBeenCalled();
     });
 
-    it('disconnects and returns to the login screen when logout is clicked', async () => {
+    it('disconnects without navigating away when logout is clicked', async () => {
         const disconnect = jest.fn().mockResolvedValue(undefined);
         useConnectionSpy.mockReturnValue({
             address: '0x123',
@@ -222,6 +235,7 @@ describe('<UserDialog /> component', () => {
         await userEvent.click(screen.getByTestId(IconType.LOGOUT));
 
         expect(disconnect).toHaveBeenCalled();
+        // Workspaces are on here, so the home route is the sign-in landing.
         await waitFor(() => expect(replace).toHaveBeenCalledWith('/'));
     });
 
@@ -238,5 +252,25 @@ describe('<UserDialog /> component', () => {
         const { rerender } = render(createTestComponent());
         rerender(createTestComponent());
         expect(close).toHaveBeenCalled();
+    });
+    it('stays on the page after logout when workspaces are off, where the home route is Explore', async () => {
+        const disconnect = jest.fn().mockResolvedValue(undefined);
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useDisconnectSpy.mockReturnValue({
+            disconnect,
+        } as unknown as ReturnType<typeof AppKit.useDisconnect>);
+
+        render(createTestComponent(undefined, buildSnapshot(false)));
+
+        await userEvent.click(screen.getByTestId(IconType.LOGOUT));
+
+        await waitFor(() => expect(disconnect).toHaveBeenCalled());
+        expect(replace).not.toHaveBeenCalled();
     });
 });
