@@ -3,7 +3,6 @@
 import {
     AlertInline,
     Button,
-    Card,
     CardEmptyState,
     IconType,
 } from '@aragon/gov-ui-kit';
@@ -12,9 +11,9 @@ import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { useWorkspaceTodoListData } from '../../hooks/useWorkspaceTodoListData';
 import { workspaceTodoUtils } from '../../utils/workspaceTodoUtils';
 import {
-    WorkspaceTodoPreviewItem,
-    WorkspaceTodoPreviewItemSkeleton,
-} from './workspaceTodoPreviewItem';
+    WorkspaceTodoListItem,
+    WorkspaceTodoListItemSkeleton,
+} from '../workspaceTodoList';
 
 export interface IWorkspaceTodoPreviewProps {
     /**
@@ -35,10 +34,12 @@ export interface IWorkspaceTodoPreviewProps {
     viewAllHref: string;
 }
 
+const listClassName = 'flex flex-col gap-3 md:gap-2';
+
 /**
- * Preview of the to-dos of the connected wallet on the workspace overview: the first ones as the compact rows of
- * one card, each with its action, and a link to the to-dos page for the rest. It reads the to-dos and their states
- * from `useWorkspaceTodoListData`, as the to-dos page does.
+ * Preview of the to-dos of the connected wallet on the workspace overview: the first ones, as the rows the to-dos
+ * page lists, and a link to that page for the rest. It reads the to-dos and their states from
+ * `useWorkspaceTodoListData`, as the to-dos page does.
  */
 export const WorkspaceTodoPreview: React.FC<IWorkspaceTodoPreviewProps> = (
     props,
@@ -53,10 +54,10 @@ export const WorkspaceTodoPreview: React.FC<IWorkspaceTodoPreviewProps> = (
     const renderContent = () => {
         if (state === 'initialLoading') {
             return (
-                <Card className="flex flex-col border border-neutral-100">
-                    <WorkspaceTodoPreviewItemSkeleton />
-                    <WorkspaceTodoPreviewItemSkeleton />
-                </Card>
+                <div className={listClassName}>
+                    <WorkspaceTodoListItemSkeleton />
+                    <WorkspaceTodoListItemSkeleton />
+                </div>
             );
         }
 
@@ -70,15 +71,15 @@ export const WorkspaceTodoPreview: React.FC<IWorkspaceTodoPreviewProps> = (
 
         return (
             <>
-                <Card className="flex flex-col border border-neutral-100">
+                <div className={listClassName}>
                     {todoList.slice(0, previewSize).map((todo) => (
-                        <WorkspaceTodoPreviewItem
+                        <WorkspaceTodoListItem
                             key={workspaceTodoUtils.getTodoKey(todo)}
                             todo={todo}
                             workspaceId={workspaceId}
                         />
                     ))}
-                </Card>
+                </div>
                 {todoList.length > previewSize && (
                     <Button
                         className="self-start"

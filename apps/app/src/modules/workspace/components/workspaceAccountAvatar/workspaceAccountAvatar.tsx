@@ -17,6 +17,11 @@ export interface IWorkspaceAccountAvatarProps {
      * Avatar of the account, as an IPFS CID or a URL.
      */
     avatar?: string | null;
+    /**
+     * Size of the avatar.
+     * @default md
+     */
+    size?: 'sm' | 'md';
 }
 
 /**
@@ -26,7 +31,7 @@ export interface IWorkspaceAccountAvatarProps {
 export const WorkspaceAccountAvatar: React.FC<IWorkspaceAccountAvatarProps> = (
     props,
 ) => {
-    const { type, name, avatar } = props;
+    const { type, name, avatar, size = 'md' } = props;
 
     const { t } = useTranslations();
 
@@ -34,7 +39,7 @@ export const WorkspaceAccountAvatar: React.FC<IWorkspaceAccountAvatarProps> = (
 
     if (type === WorkspaceAccountType.DAO) {
         return (
-            <DaoAvatar className="shrink-0" name={name} size="md" src={src} />
+            <DaoAvatar className="shrink-0" name={name} size={size} src={src} />
         );
     }
 
@@ -42,7 +47,7 @@ export const WorkspaceAccountAvatar: React.FC<IWorkspaceAccountAvatarProps> = (
         <Avatar
             alt={t('app.workspace.workspaceAccountAvatar.safe')}
             className="shrink-0"
-            size="md"
+            size={size}
             src={src ?? safeWallet.src}
         />
     );

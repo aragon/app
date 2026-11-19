@@ -113,7 +113,6 @@ describe('<WorkspaceTransactionsPageClient /> component', () => {
         avatar: null,
         links: [],
         accounts: [daoAccount, safeAccount],
-        targets: [],
         ...workspace,
     });
 

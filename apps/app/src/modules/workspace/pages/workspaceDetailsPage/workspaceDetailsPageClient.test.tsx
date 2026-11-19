@@ -24,7 +24,6 @@ import {
 
 describe('<WorkspaceDetailsPageClient /> component', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
-    const targetAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
     const walletAddress = '0x1c8Cae0e29e1a0dc65f0f0E4C74DCE9f9C9F4a2B';
 
     const getWorkspaceSpy = jest.spyOn(workspaceService, 'getWorkspace');
@@ -67,7 +66,6 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
                     network: Network.ETHEREUM_SEPOLIA,
                 },
             ],
-            targets: [],
             ...workspace,
         };
     };
@@ -185,29 +183,6 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         expect(
             screen.queryByText(/workspaceDetailsPage\.section\.todos$/),
         ).not.toBeInTheDocument();
-    });
-
-    it('hides the targets section when the workspace has no target', async () => {
-        renderWorkspace(buildWorkspace());
-
-        expect(await screen.findByText('Test Workspace')).toBeInTheDocument();
-        expect(
-            screen.queryByText(/workspaceDetailsPage\.section\.targets$/),
-        ).not.toBeInTheDocument();
-    });
-
-    it('displays the targets section when the workspace has targets', async () => {
-        renderWorkspace(
-            buildWorkspace({
-                targets: [
-                    { address: targetAddress, network: Network.CITREA_MAINNET },
-                ],
-            }),
-        );
-
-        expect(
-            await screen.findByText(/workspaceDetailsPage\.section\.targets$/),
-        ).toBeInTheDocument();
     });
 
     it('links a workspace with no account to its edit wizard to add some', async () => {

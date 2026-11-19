@@ -35,6 +35,7 @@ export const WorkspaceTodosPageClient: React.FC<
             <Page.Main title={t('app.workspace.workspaceTodosPage.main.title')}>
                 <WorkspaceTodoList
                     accounts={scopedAccounts}
+                    hideAccount={activeOption?.account != null}
                     isPending={isPending}
                     pageSize={workspaceTodosCount}
                     workspaceId={workspaceId}

@@ -38,7 +38,7 @@ class PublishWorkspaceDialogUtils {
      */
     buildWorkspace = (params: IBuildWorkspaceParams): ICreateWorkspaceBody => {
         const { values, avatarUri, accountAvatarUris, accountInfos } = params;
-        const { name, description, resources, targets, accounts } = values;
+        const { name, description, resources, accounts } = values;
 
         return {
             name,
@@ -52,10 +52,6 @@ class PublishWorkspaceDialogUtils {
                     accountAvatarUris[index],
                 ),
             ),
-            targets: targets.map(({ address, network }) => ({
-                address,
-                network,
-            })),
         };
     };
 

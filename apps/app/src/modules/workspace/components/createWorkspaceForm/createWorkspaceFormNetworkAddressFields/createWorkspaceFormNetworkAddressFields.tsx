@@ -24,22 +24,18 @@ export interface ICreateWorkspaceFormNetworkAddressFieldsProps {
      * Index of the entry inside the field-array.
      */
     index: number;
-    /**
-     * Resolves the address through the workspace accounts API and rejects it when it is neither an indexed DAO nor a
-     * readable Safe. Set for accounts only: a target is an arbitrary address and must not be resolved.
-     */
-    validateAccount?: boolean;
 }
 
 type AddressFieldBaseForm = Record<string, string>;
 
 /**
- * Network and address fields shared by the workspace target and account rows.
+ * Network and address fields of a workspace account row. The address is resolved through the workspace accounts API
+ * and rejected when it is neither an indexed DAO nor a readable Safe.
  */
 export const CreateWorkspaceFormNetworkAddressFields: React.FC<
     ICreateWorkspaceFormNetworkAddressFieldsProps
 > = (props) => {
-    const { listName, index, validateAccount } = props;
+    const { listName, index } = props;
 
     const { t } = useTranslations();
 
@@ -68,8 +64,7 @@ export const CreateWorkspaceFormNetworkAddressFields: React.FC<
         defaultValue: '',
     });
 
-    const canResolveAccount =
-        validateAccount === true && addressUtils.isAddress(address);
+    const canResolveAccount = addressUtils.isAddress(address);
 
     const { data: accountInfos, isFetching: isResolvingAccount } =
         useWorkspaceAccounts(
@@ -104,9 +99,7 @@ export const CreateWorkspaceFormNetworkAddressFields: React.FC<
                         return networkAddressError;
                     }
 
-                    return validateAccount === true
-                        ? workspaceUtils.validateAccountInfo(accountInfo)
-                        : true;
+                    return workspaceUtils.validateAccountInfo(accountInfo);
                 },
             },
             sanitizeOnBlur: false,

@@ -23,7 +23,6 @@ describe('workspace service', () => {
                 network: Network.ETHEREUM_SEPOLIA,
             },
         ],
-        targets: [],
         ...body,
     });
 
@@ -104,7 +103,6 @@ describe('workspace service', () => {
                 avatar: null,
                 links: [],
                 accounts: [],
-                targets: [],
             });
             expect(getStoredWorkspaces()).toEqual({
                 [workspace.id]: workspace,

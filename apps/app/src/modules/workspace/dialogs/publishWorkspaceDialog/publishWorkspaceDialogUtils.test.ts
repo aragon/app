@@ -12,7 +12,6 @@ import type {
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 describe('publishWorkspaceDialog utils', () => {
-    const targetAddress = '0xA941b1C1D9aDC88C9241aA3ACA59E8B8f0386419';
     const accountAddress = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
     const buildAccount = (
@@ -42,7 +41,6 @@ describe('publishWorkspaceDialog utils', () => {
         name: 'Demo Workspace',
         description: 'A demo workspace',
         resources: [],
-        targets: [],
         accounts: [buildAccount()],
         ...values,
     });
@@ -51,9 +49,6 @@ describe('publishWorkspaceDialog utils', () => {
         it('maps the form values to the workspace to be persisted', () => {
             const values = buildValues({
                 resources: [{ name: 'Website', url: 'https://aragon.org' }],
-                targets: [
-                    { address: targetAddress, network: Network.CITREA_MAINNET },
-                ],
             });
 
             const workspace = publishWorkspaceDialogUtils.buildWorkspace({
@@ -75,9 +70,6 @@ describe('publishWorkspaceDialog utils', () => {
                         network: Network.ETHEREUM_SEPOLIA,
                         metadata: undefined,
                     },
-                ],
-                targets: [
-                    { address: targetAddress, network: Network.CITREA_MAINNET },
                 ],
             });
         });

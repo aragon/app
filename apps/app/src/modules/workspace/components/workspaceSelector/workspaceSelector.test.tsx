@@ -29,7 +29,6 @@ describe('<WorkspaceSelector /> component', () => {
         avatar: null,
         links: [],
         accounts: [],
-        targets: [],
         ...workspace,
     });
 

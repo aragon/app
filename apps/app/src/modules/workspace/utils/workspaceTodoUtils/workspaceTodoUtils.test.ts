@@ -1,6 +1,10 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { generateProposal } from '@/modules/governance/testUtils';
+import {
+    generateSppProposal,
+    generateSppStage,
+} from '@/plugins/sppPlugin/testUtils/generators';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateDao,
@@ -48,6 +52,81 @@ describe('workspaceTodo utils', () => {
             expect(
                 workspaceTodoUtils.getProposalStatus(generateProposal()),
             ).toBeUndefined();
+        });
+    });
+
+    describe('getProposalStage', () => {
+        const buildStagedProposal = (stageIndex: number) => {
+            const proposal = generateSppProposal({
+                pluginInterfaceType: PluginInterfaceType.SPP,
+                stageIndex,
+            });
+            proposal.settings.stages = [
+                generateSppStage({ stageIndex: 0, name: 'Council approval' }),
+                generateSppStage({ stageIndex: 1, name: undefined }),
+            ];
+
+            return proposal;
+        };
+
+        it('returns the stage a staged proposal is at', () => {
+            expect(
+                workspaceTodoUtils.getProposalStage(buildStagedProposal(0)),
+            ).toEqual({ index: 0, name: 'Council approval' });
+        });
+
+        it('returns the index alone for an unnamed stage', () => {
+            expect(
+                workspaceTodoUtils.getProposalStage(buildStagedProposal(1)),
+            ).toEqual({ index: 1, name: undefined });
+        });
+
+        it('returns no stage for a process with a single stage', () => {
+            const proposal = generateSppProposal({
+                pluginInterfaceType: PluginInterfaceType.SPP,
+            });
+
+            expect(
+                workspaceTodoUtils.getProposalStage(proposal),
+            ).toBeUndefined();
+        });
+
+        it('returns no stage for a proposal that is not staged', () => {
+            const proposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+            });
+
+            expect(
+                workspaceTodoUtils.getProposalStage(proposal),
+            ).toBeUndefined();
+        });
+    });
+
+    describe('sortProposalsByDeadline', () => {
+        const buildTodo = (
+            id: string,
+            voteEndDate: number,
+        ): IWorkspaceTodoProposalItem => ({
+            type: WorkspaceTodoType.PROPOSAL,
+            proposal: { ...generateProposal({ id }), voteEndDate },
+            dao: generateDao(),
+        });
+
+        it('orders the proposals soonest deadline first, an unknown deadline last', () => {
+            const todos = [
+                buildTodo('unknown', Number.NaN),
+                buildTodo('late', 300),
+                buildTodo('soon', 100),
+                buildTodo('middle', 200),
+            ];
+
+            expect(
+                workspaceTodoUtils
+                    .sortProposalsByDeadline(todos)
+                    .map(({ proposal }) => proposal.id),
+            ).toEqual(['soon', 'middle', 'late', 'unknown']);
+            // The list read from the endpoint is left as it was.
+            expect(todos[0].proposal.id).toBe('unknown');
         });
     });
 

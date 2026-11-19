@@ -11,13 +11,8 @@ describe('workspaceWizard definitions', () => {
                     meta: { name: 'app.test.steps.METADATA.name' },
                 },
                 {
-                    id: WorkspaceWizardStep.TARGETS,
-                    order: 1,
-                    meta: { name: 'app.test.steps.TARGETS.name' },
-                },
-                {
                     id: WorkspaceWizardStep.ACCOUNTS,
-                    order: 2,
+                    order: 1,
                     meta: { name: 'app.test.steps.ACCOUNTS.name' },
                 },
             ]);

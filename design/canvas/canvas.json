@@ -1,930 +1,1083 @@
 {
   "v": 3,
-  "createdOnFiles": {
-    "v": 1,
-    "at": "2026-11-18T12:30:27Z"
-  },
-  "title": "Aragon App prototypes",
-  "launch": {
-    "view": "canvas",
-    "page": "prototypes"
-  },
-  "pages": [
-    {
-      "id": "prototypes",
-      "name": "Prototypes"
-    },
-    {
-      "id": "parts",
-      "name": "Parts"
-    }
-  ],
+  "attachments": {},
   "boards": {
-    "Explore.dc.html": {
+    "AragonLogo.dc.html": {
+      "h": 40,
+      "page": "parts",
+      "title": "AragonLogo",
+      "w": 162,
       "x": 0,
-      "y": 300,
-      "w": 1440,
-      "h": 900,
-      "title": "Explore",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "Dao.dc.html": {
-      "x": 0,
-      "y": 1700,
-      "w": 1440,
-      "h": 900,
-      "title": "Meridian DAO · token voting",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
+      "y": 300
     },
     "AtlasDao.dc.html": {
-      "x": 1520,
-      "y": 1700,
-      "w": 1440,
+      "expand": "fill",
       "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
       "title": "Atlas Grants Council · multisig",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "NorthstarDao.dc.html": {
-      "x": 3040,
-      "y": 1700,
       "w": 1440,
-      "h": 900,
-      "title": "Northstar Protocol · multi-stage",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "Workspace.dc.html": {
-      "x": 0,
-      "y": 3100,
-      "w": 1440,
-      "h": 900,
-      "title": "Workspace · three DAOs and a Safe",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "SafeFlow.dc.html": {
       "x": 1520,
-      "y": 3100,
-      "w": 1440,
-      "h": 900,
-      "title": "Safe account",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "SafeTransactionFlow.dc.html": {
-      "x": 3040,
-      "y": 3100,
-      "w": 1440,
-      "h": 900,
-      "title": "Create a Safe transaction",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateDaoFlow.dc.html": {
-      "x": 0,
-      "y": 4500,
-      "w": 1440,
-      "h": 900,
-      "title": "Create a DAO",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateWorkspaceFlow.dc.html": {
-      "x": 1520,
-      "y": 4500,
-      "w": 1440,
-      "h": 900,
-      "title": "Create a workspace",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateProposalFlow.dc.html": {
-      "x": 3040,
-      "y": 4500,
-      "w": 1440,
-      "h": 900,
-      "title": "Create a proposal",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "CreateProcessFlow.dc.html": {
-      "x": 4560,
-      "y": 4500,
-      "w": 1440,
-      "h": 900,
-      "title": "Create a governance process",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "WrapFlow.dc.html": {
-      "x": 0,
-      "y": 5900,
-      "w": 1440,
-      "h": 900,
-      "title": "Wrap tokens",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "LockFlow.dc.html": {
-      "x": 1520,
-      "y": 5900,
-      "w": 1440,
-      "h": 900,
-      "title": "Lock to vote",
-      "page": "prototypes",
-      "expand": "fill",
-      "is_interactive": true
-    },
-    "AragonLogo.dc.html": {
-      "x": 0,
-      "y": 300,
-      "w": 162,
-      "h": 40,
-      "title": "AragonLogo",
-      "page": "parts"
-    },
-    "DaoDelegateForm.dc.html": {
-      "x": 242,
-      "y": 300,
-      "w": 380,
-      "h": 520,
-      "title": "DaoDelegateForm",
-      "page": "parts"
-    },
-    "DaoNav.dc.html": {
-      "x": 702,
-      "y": 300,
-      "w": 1024,
-      "h": 900,
-      "title": "DaoNav",
-      "page": "parts"
-    },
-    "Footer.dc.html": {
-      "x": 1806,
-      "y": 300,
-      "w": 1440,
-      "h": 65,
-      "title": "Footer",
-      "page": "parts"
-    },
-    "ResourcesInput.dc.html": {
-      "x": 3326,
-      "y": 300,
-      "w": 1440,
-      "h": 900,
-      "title": "ResourcesInput",
-      "page": "parts"
-    },
-    "WizardActions.dc.html": {
-      "x": 4846,
-      "y": 300,
-      "w": 800,
-      "h": 48,
-      "title": "WizardActions",
-      "page": "parts"
-    },
-    "WizardNav.dc.html": {
-      "x": 5726,
-      "y": 300,
-      "w": 1440,
-      "h": 91,
-      "title": "WizardNav",
-      "page": "parts"
-    },
-    "WizardProgress.dc.html": {
-      "x": 7246,
-      "y": 300,
-      "w": 800,
-      "h": 40,
-      "title": "WizardProgress",
-      "page": "parts"
-    },
-    "DaoWalletConnect.dc.html": {
-      "x": 0,
-      "y": 1320,
-      "w": 480,
-      "h": 400,
-      "title": "DaoWalletConnect",
-      "page": "parts"
-    },
-    "DaoWalletUser.dc.html": {
-      "x": 560,
-      "y": 1320,
-      "w": 480,
-      "h": 400,
-      "title": "DaoWalletUser",
-      "page": "parts"
-    },
-    "TxFlowDialog.dc.html": {
-      "x": 1120,
-      "y": 1320,
-      "w": 1440,
-      "h": 900,
-      "title": "TxFlowDialog",
-      "page": "parts"
-    },
-    "DaoAssets.dc.html": {
-      "x": 0,
-      "y": 2840,
-      "w": 1440,
-      "h": 900,
-      "title": "DaoAssets",
-      "page": "parts"
-    },
-    "DaoDashboard.dc.html": {
-      "x": 1520,
-      "y": 2840,
-      "w": 1100,
-      "h": 2300,
-      "title": "DaoDashboard",
-      "page": "parts"
-    },
-    "DaoMember.dc.html": {
-      "x": 2700,
-      "y": 2840,
-      "w": 1440,
-      "h": 2400,
-      "title": "DaoMember",
-      "page": "parts"
-    },
-    "DaoMembers.dc.html": {
-      "x": 4220,
-      "y": 2840,
-      "w": 1440,
-      "h": 1382,
-      "title": "DaoMembers",
-      "page": "parts"
-    },
-    "DaoPermissions.dc.html": {
-      "x": 5740,
-      "y": 2840,
-      "w": 1100,
-      "h": 900,
-      "title": "DaoPermissions",
-      "page": "parts"
-    },
-    "DaoProcess.dc.html": {
-      "x": 6920,
-      "y": 2840,
-      "w": 1100,
-      "h": 900,
-      "title": "DaoProcess",
-      "page": "parts"
-    },
-    "DaoProposal.dc.html": {
-      "x": 8100,
-      "y": 2840,
-      "w": 1440,
-      "h": 900,
-      "title": "DaoProposal",
-      "page": "parts"
-    },
-    "DaoProposalVote.dc.html": {
-      "x": 9620,
-      "y": 2840,
-      "w": 1440,
-      "h": 900,
-      "title": "DaoProposalVote",
-      "page": "parts"
-    },
-    "DaoProposals.dc.html": {
-      "x": 0,
-      "y": 5360,
-      "w": 1440,
-      "h": 900,
-      "title": "DaoProposals",
-      "page": "parts"
-    },
-    "DaoSettings.dc.html": {
-      "x": 1520,
-      "y": 5360,
-      "w": 1100,
-      "h": 900,
-      "title": "DaoSettings",
-      "page": "parts"
-    },
-    "DaoTransactions.dc.html": {
-      "x": 2700,
-      "y": 5360,
-      "w": 1440,
-      "h": 1347,
-      "title": "DaoTransactions",
-      "page": "parts"
-    },
-    "DaoDelegateDialog.dc.html": {
-      "x": 4220,
-      "y": 5360,
-      "w": 600,
-      "h": 600,
-      "title": "DaoDelegateDialog",
-      "page": "parts"
-    },
-    "DaoTransactionDetailDialog.dc.html": {
-      "x": 4900,
-      "y": 5360,
-      "w": 1440,
-      "h": 900,
-      "title": "DaoTransactionDetailDialog",
-      "page": "parts"
+      "y": 1700
     },
     "AtlasDaoAssets.dc.html": {
-      "x": 0,
-      "y": 7327,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoAssets",
-      "page": "parts"
+      "w": 1100,
+      "x": 0,
+      "y": 7327
     },
     "AtlasDaoDashboard.dc.html": {
-      "x": 1180,
-      "y": 7327,
-      "w": 1100,
       "h": 2100,
+      "page": "parts",
       "title": "AtlasDaoDashboard",
-      "page": "parts"
+      "w": 1100,
+      "x": 1180,
+      "y": 7327
     },
     "AtlasDaoMember.dc.html": {
-      "x": 2360,
-      "y": 7327,
-      "w": 1100,
       "h": 1778,
+      "page": "parts",
       "title": "AtlasDaoMember",
-      "page": "parts"
+      "w": 1100,
+      "x": 2360,
+      "y": 7327
     },
     "AtlasDaoMembers.dc.html": {
-      "x": 3540,
-      "y": 7327,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoMembers",
-      "page": "parts"
+      "w": 1100,
+      "x": 3540,
+      "y": 7327
     },
     "AtlasDaoPermissions.dc.html": {
-      "x": 4720,
-      "y": 7327,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoPermissions",
-      "page": "parts"
+      "w": 1100,
+      "x": 4720,
+      "y": 7327
     },
     "AtlasDaoProcess.dc.html": {
-      "x": 5900,
-      "y": 7327,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoProcess",
-      "page": "parts"
+      "w": 1100,
+      "x": 5900,
+      "y": 7327
     },
     "AtlasDaoProposal.dc.html": {
-      "x": 7080,
-      "y": 7327,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoProposal",
-      "page": "parts"
+      "w": 1440,
+      "x": 7080,
+      "y": 7327
     },
     "AtlasDaoProposals.dc.html": {
-      "x": 8600,
-      "y": 7327,
-      "w": 1100,
       "h": 1531,
+      "page": "parts",
       "title": "AtlasDaoProposals",
-      "page": "parts"
+      "w": 1100,
+      "x": 8600,
+      "y": 7327
     },
     "AtlasDaoSettings.dc.html": {
-      "x": 0,
-      "y": 9547,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoSettings",
-      "page": "parts"
+      "w": 1100,
+      "x": 0,
+      "y": 9547
     },
     "AtlasDaoTransactions.dc.html": {
-      "x": 1180,
-      "y": 9547,
-      "w": 1100,
       "h": 900,
+      "page": "parts",
       "title": "AtlasDaoTransactions",
-      "page": "parts"
-    },
-    "NorthstarDaoAssets.dc.html": {
-      "x": 0,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoAssets",
-      "page": "parts"
-    },
-    "NorthstarDaoDashboard.dc.html": {
-      "x": 1520,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoDashboard",
-      "page": "parts"
-    },
-    "NorthstarDaoMember.dc.html": {
-      "x": 3040,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoMember",
-      "page": "parts"
-    },
-    "NorthstarDaoMembers.dc.html": {
-      "x": 4560,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoMembers",
-      "page": "parts"
-    },
-    "NorthstarDaoPermissions.dc.html": {
-      "x": 6080,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoPermissions",
-      "page": "parts"
-    },
-    "NorthstarDaoProcess.dc.html": {
-      "x": 7600,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoProcess",
-      "page": "parts"
-    },
-    "NorthstarDaoProposal.dc.html": {
-      "x": 9120,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoProposal",
-      "page": "parts"
-    },
-    "NorthstarDaoProposals.dc.html": {
-      "x": 10640,
-      "y": 11067,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoProposals",
-      "page": "parts"
-    },
-    "NorthstarDaoSettings.dc.html": {
-      "x": 0,
-      "y": 12087,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoSettings",
-      "page": "parts"
-    },
-    "NorthstarDaoTransactions.dc.html": {
-      "x": 1520,
-      "y": 12087,
-      "w": 1440,
-      "h": 900,
-      "title": "NorthstarDaoTransactions",
-      "page": "parts"
-    },
-    "WsAccountOverview.dc.html": {
-      "x": 0,
-      "y": 13607,
       "w": 1100,
-      "h": 2100,
-      "title": "WsAccountOverview",
-      "page": "parts"
-    },
-    "WsAccountSafe.dc.html": {
       "x": 1180,
-      "y": 13607,
-      "w": 1100,
+      "y": 9547
+    },
+    "CreateDaoFlow.dc.html": {
+      "expand": "fill",
       "h": 900,
-      "title": "WsAccountSafe",
-      "page": "parts"
-    },
-    "WsAccountTodos.dc.html": {
-      "x": 2360,
-      "y": 13607,
-      "w": 1100,
-      "h": 700,
-      "title": "WsAccountTodos",
-      "page": "parts"
-    },
-    "WsAssets.dc.html": {
-      "x": 3540,
-      "y": 13607,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Create a DAO",
       "w": 1440,
-      "h": 900,
-      "title": "WsAssets",
-      "page": "parts"
-    },
-    "WsMembers.dc.html": {
-      "x": 5060,
-      "y": 13607,
-      "w": 1100,
-      "h": 1100,
-      "title": "WsMembers",
-      "page": "parts"
-    },
-    "WsNav.dc.html": {
-      "x": 6240,
-      "y": 13607,
-      "w": 1024,
-      "h": 900,
-      "title": "WsNav",
-      "page": "parts"
-    },
-    "WsOverview.dc.html": {
-      "x": 7344,
-      "y": 13607,
-      "w": 1100,
-      "h": 1100,
-      "title": "WsOverview",
-      "page": "parts"
-    },
-    "WsProposals.dc.html": {
-      "x": 8524,
-      "y": 13607,
-      "w": 1100,
-      "h": 1300,
-      "title": "WsProposals",
-      "page": "parts"
-    },
-    "WsTodos.dc.html": {
       "x": 0,
-      "y": 15827,
-      "w": 1100,
-      "h": 900,
-      "title": "WsTodos",
-      "page": "parts"
-    },
-    "WsTransactions.dc.html": {
-      "x": 1180,
-      "y": 15827,
-      "w": 1440,
-      "h": 1900,
-      "title": "WsTransactions",
-      "page": "parts"
-    },
-    "SafeFlowTxDialog.dc.html": {
-      "x": 2700,
-      "y": 15827,
-      "w": 1440,
-      "h": 900,
-      "title": "SafeFlowTxDialog",
-      "page": "parts"
-    },
-    "WsTransactionsAccountDialog.dc.html": {
-      "x": 4220,
-      "y": 15827,
-      "w": 1440,
-      "h": 900,
-      "title": "WsTransactionsAccountDialog",
-      "page": "parts"
-    },
-    "SafeFlowPage.dc.html": {
-      "x": 0,
-      "y": 18347,
-      "w": 1440,
-      "h": 1900,
-      "title": "SafeFlowPage",
-      "page": "parts"
-    },
-    "SafeFlowReviewContent.dc.html": {
-      "x": 1520,
-      "y": 18347,
-      "w": 432,
-      "h": 520,
-      "title": "SafeFlowReviewContent",
-      "page": "parts"
-    },
-    "SafeTransactionFlowActions.dc.html": {
-      "x": 2032,
-      "y": 18347,
-      "w": 1216,
-      "h": 700,
-      "title": "SafeTransactionFlowActions",
-      "page": "parts"
-    },
-    "SafeFlowReviewDialog.dc.html": {
-      "x": 3328,
-      "y": 18347,
-      "w": 1440,
-      "h": 900,
-      "title": "SafeFlowReviewDialog",
-      "page": "parts"
-    },
-    "SafeTransactionFlowContractDialog.dc.html": {
-      "x": 4848,
-      "y": 18347,
-      "w": 1440,
-      "h": 900,
-      "title": "SafeTransactionFlowContractDialog",
-      "page": "parts"
-    },
-    "SafeTransactionFlowDialog.dc.html": {
-      "x": 6368,
-      "y": 18347,
-      "w": 1440,
-      "h": 900,
-      "title": "SafeTransactionFlowDialog",
-      "page": "parts"
+      "y": 4500
     },
     "CreateDaoFlowMetadata.dc.html": {
-      "x": 0,
-      "y": 20867,
-      "w": 800,
       "h": 1500,
+      "page": "parts",
       "title": "CreateDaoFlowMetadata",
-      "page": "parts"
+      "w": 800,
+      "x": 0,
+      "y": 20867
     },
     "CreateDaoFlowNetwork.dc.html": {
-      "x": 880,
-      "y": 20867,
-      "w": 800,
       "h": 1600,
+      "page": "parts",
       "title": "CreateDaoFlowNetwork",
-      "page": "parts"
-    },
-    "CreateWorkspaceFlowAccounts.dc.html": {
-      "x": 1760,
-      "y": 20867,
       "w": 800,
-      "h": 520,
-      "title": "CreateWorkspaceFlowAccounts",
-      "page": "parts"
+      "x": 880,
+      "y": 20867
     },
-    "CreateWorkspaceFlowAddressFields.dc.html": {
-      "x": 2640,
-      "y": 20867,
-      "w": 760,
-      "h": 120,
-      "title": "CreateWorkspaceFlowAddressFields",
-      "page": "parts"
-    },
-    "CreateWorkspaceFlowMetadata.dc.html": {
-      "x": 3480,
-      "y": 20867,
-      "w": 800,
-      "h": 1100,
-      "title": "CreateWorkspaceFlowMetadata",
-      "page": "parts"
-    },
-    "CreateWorkspaceFlowTargets.dc.html": {
-      "x": 4360,
-      "y": 20867,
-      "w": 800,
-      "h": 420,
-      "title": "CreateWorkspaceFlowTargets",
-      "page": "parts"
-    },
-    "CreateWorkspaceFlowPublishDialog.dc.html": {
-      "x": 5240,
-      "y": 20867,
-      "w": 1440,
+    "CreateProcessFlow.dc.html": {
+      "expand": "fill",
       "h": 900,
-      "title": "CreateWorkspaceFlowPublishDialog",
-      "page": "parts"
-    },
-    "CreateProposalFlowActions.dc.html": {
-      "x": 0,
-      "y": 23087,
-      "w": 1216,
-      "h": 700,
-      "title": "CreateProposalFlowActions",
-      "page": "parts"
-    },
-    "CreateProposalFlowMetadata.dc.html": {
-      "x": 1296,
-      "y": 23087,
-      "w": 1216,
-      "h": 1500,
-      "title": "CreateProposalFlowMetadata",
-      "page": "parts"
-    },
-    "CreateProposalFlowNext.dc.html": {
-      "x": 2592,
-      "y": 23087,
-      "w": 800,
-      "h": 48,
-      "title": "CreateProposalFlowNext",
-      "page": "parts"
-    },
-    "CreateProposalFlowSettings.dc.html": {
-      "x": 3472,
-      "y": 23087,
-      "w": 1216,
-      "h": 800,
-      "title": "CreateProposalFlowSettings",
-      "page": "parts"
-    },
-    "CreateProposalFlowAssetDialog.dc.html": {
-      "x": 4768,
-      "y": 23087,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Create a governance process",
       "w": 1440,
-      "h": 900,
-      "title": "CreateProposalFlowAssetDialog",
-      "page": "parts"
-    },
-    "CreateProposalFlowSimulateDialog.dc.html": {
-      "x": 6288,
-      "y": 23087,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProposalFlowSimulateDialog",
-      "page": "parts"
+      "x": 4560,
+      "y": 4500
     },
     "CreateProcessFlowBodyCard.dc.html": {
-      "x": 0,
-      "y": 25207,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "CreateProcessFlowBodyCard",
-      "page": "parts"
-    },
-    "CreateProcessFlowDesigner.dc.html": {
-      "x": 1520,
-      "y": 25207,
       "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowDesigner",
-      "page": "parts"
-    },
-    "CreateProcessFlowDuration.dc.html": {
-      "x": 3040,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowDuration",
-      "page": "parts"
-    },
-    "CreateProcessFlowMetadata.dc.html": {
-      "x": 4560,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowMetadata",
-      "page": "parts"
-    },
-    "CreateProcessFlowNumberInput.dc.html": {
-      "x": 6080,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowNumberInput",
-      "page": "parts"
-    },
-    "CreateProcessFlowPermissions.dc.html": {
-      "x": 7600,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowPermissions",
-      "page": "parts"
-    },
-    "CreateProcessFlowProposalCreation.dc.html": {
-      "x": 9120,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "CreateProcessFlowProposalCreation",
-      "page": "parts"
-    },
-    "TransactionStatus.dc.html": {
-      "x": 10640,
-      "y": 25207,
-      "w": 1440,
-      "h": 900,
-      "title": "TransactionStatus",
-      "page": "parts"
+      "x": 0,
+      "y": 25207
     },
     "CreateProcessFlowBodyDialog.dc.html": {
-      "x": 0,
-      "y": 26227,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "CreateProcessFlowBodyDialog",
-      "page": "parts"
+      "w": 1440,
+      "x": 0,
+      "y": 26227
+    },
+    "CreateProcessFlowDesigner.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowDesigner",
+      "w": 1440,
+      "x": 1520,
+      "y": 25207
+    },
+    "CreateProcessFlowDuration.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowDuration",
+      "w": 1440,
+      "x": 3040,
+      "y": 25207
+    },
+    "CreateProcessFlowMetadata.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowMetadata",
+      "w": 1440,
+      "x": 4560,
+      "y": 25207
+    },
+    "CreateProcessFlowNumberInput.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowNumberInput",
+      "w": 1440,
+      "x": 6080,
+      "y": 25207
+    },
+    "CreateProcessFlowPermissions.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowPermissions",
+      "w": 1440,
+      "x": 7600,
+      "y": 25207
+    },
+    "CreateProcessFlowProposalCreation.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProcessFlowProposalCreation",
+      "w": 1440,
+      "x": 9120,
+      "y": 25207
     },
     "CreateProcessFlowStageDialog.dc.html": {
-      "x": 1520,
-      "y": 26227,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "CreateProcessFlowStageDialog",
-      "page": "parts"
+      "w": 1440,
+      "x": 1520,
+      "y": 26227
+    },
+    "CreateProposalFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Create a proposal",
+      "w": 1440,
+      "x": 3040,
+      "y": 4500
+    },
+    "CreateProposalFlowActions.dc.html": {
+      "h": 700,
+      "page": "parts",
+      "title": "CreateProposalFlowActions",
+      "w": 1216,
+      "x": 0,
+      "y": 23087
+    },
+    "CreateProposalFlowAssetDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProposalFlowAssetDialog",
+      "w": 1440,
+      "x": 4768,
+      "y": 23087
+    },
+    "CreateProposalFlowMetadata.dc.html": {
+      "h": 1500,
+      "page": "parts",
+      "title": "CreateProposalFlowMetadata",
+      "w": 1216,
+      "x": 1296,
+      "y": 23087
+    },
+    "CreateProposalFlowNext.dc.html": {
+      "h": 48,
+      "page": "parts",
+      "title": "CreateProposalFlowNext",
+      "w": 800,
+      "x": 2592,
+      "y": 23087
+    },
+    "CreateProposalFlowSettings.dc.html": {
+      "h": 800,
+      "page": "parts",
+      "title": "CreateProposalFlowSettings",
+      "w": 1216,
+      "x": 3472,
+      "y": 23087
+    },
+    "CreateProposalFlowSimulateDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateProposalFlowSimulateDialog",
+      "w": 1440,
+      "x": 6288,
+      "y": 23087
+    },
+    "CreateWorkspaceFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Create a workspace",
+      "w": 1440,
+      "x": 1520,
+      "y": 4500
+    },
+    "CreateWorkspaceFlowAccounts.dc.html": {
+      "h": 520,
+      "page": "parts",
+      "title": "CreateWorkspaceFlowAccounts",
+      "w": 800,
+      "x": 1760,
+      "y": 20867
+    },
+    "CreateWorkspaceFlowAddressFields.dc.html": {
+      "h": 120,
+      "page": "parts",
+      "title": "CreateWorkspaceFlowAddressFields",
+      "w": 760,
+      "x": 2640,
+      "y": 20867
+    },
+    "CreateWorkspaceFlowMetadata.dc.html": {
+      "h": 1100,
+      "page": "parts",
+      "title": "CreateWorkspaceFlowMetadata",
+      "w": 800,
+      "x": 3480,
+      "y": 20867
+    },
+    "CreateWorkspaceFlowPublishDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "CreateWorkspaceFlowPublishDialog",
+      "w": 1440,
+      "x": 4360,
+      "y": 20867
+    },
+    "Dao.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Meridian DAO · token voting",
+      "w": 1440,
+      "x": 0,
+      "y": 1700
+    },
+    "DaoAssets.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoAssets",
+      "w": 1440,
+      "x": 0,
+      "y": 2840
+    },
+    "DaoDashboard.dc.html": {
+      "h": 2300,
+      "page": "parts",
+      "title": "DaoDashboard",
+      "w": 1100,
+      "x": 1520,
+      "y": 2840
+    },
+    "DaoDelegateDialog.dc.html": {
+      "h": 600,
+      "page": "parts",
+      "title": "DaoDelegateDialog",
+      "w": 600,
+      "x": 4220,
+      "y": 5360
+    },
+    "DaoDelegateForm.dc.html": {
+      "h": 520,
+      "page": "parts",
+      "title": "DaoDelegateForm",
+      "w": 380,
+      "x": 242,
+      "y": 300
+    },
+    "DaoMember.dc.html": {
+      "h": 2400,
+      "page": "parts",
+      "title": "DaoMember",
+      "w": 1440,
+      "x": 2700,
+      "y": 2840
+    },
+    "DaoMembers.dc.html": {
+      "h": 1382,
+      "page": "parts",
+      "title": "DaoMembers",
+      "w": 1440,
+      "x": 4220,
+      "y": 2840
+    },
+    "DaoNav.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoNav",
+      "w": 1024,
+      "x": 702,
+      "y": 300
+    },
+    "DaoPermissions.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoPermissions",
+      "w": 1100,
+      "x": 5740,
+      "y": 2840
+    },
+    "DaoProcess.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoProcess",
+      "w": 1100,
+      "x": 6920,
+      "y": 2840
+    },
+    "DaoProposal.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoProposal",
+      "w": 1440,
+      "x": 8100,
+      "y": 2840
+    },
+    "DaoProposalVote.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoProposalVote",
+      "w": 1440,
+      "x": 9620,
+      "y": 2840
+    },
+    "DaoProposals.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoProposals",
+      "w": 1440,
+      "x": 0,
+      "y": 5360
+    },
+    "DaoSettings.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoSettings",
+      "w": 1100,
+      "x": 1520,
+      "y": 5360
+    },
+    "DaoTransactionDetailDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "DaoTransactionDetailDialog",
+      "w": 1440,
+      "x": 4900,
+      "y": 5360
+    },
+    "DaoTransactions.dc.html": {
+      "h": 1347,
+      "page": "parts",
+      "title": "DaoTransactions",
+      "w": 1440,
+      "x": 2700,
+      "y": 5360
+    },
+    "DaoWalletConnect.dc.html": {
+      "h": 400,
+      "page": "parts",
+      "title": "DaoWalletConnect",
+      "w": 480,
+      "x": 0,
+      "y": 1320
+    },
+    "DaoWalletUser.dc.html": {
+      "h": 400,
+      "page": "parts",
+      "title": "DaoWalletUser",
+      "w": 480,
+      "x": 560,
+      "y": 1320
+    },
+    "Explore.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Explore",
+      "w": 1440,
+      "x": 0,
+      "y": 300
+    },
+    "Footer.dc.html": {
+      "h": 65,
+      "page": "parts",
+      "title": "Footer",
+      "w": 1440,
+      "x": 1806,
+      "y": 300
+    },
+    "LockFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Lock to vote",
+      "w": 1440,
+      "x": 1520,
+      "y": 5900
     },
     "LockFlowAmountField.dc.html": {
-      "x": 0,
-      "y": 27747,
-      "w": 400,
       "h": 150,
+      "page": "parts",
       "title": "LockFlowAmountField",
-      "page": "parts"
-    },
-    "LockFlowLockForm.dc.html": {
-      "x": 480,
-      "y": 27747,
       "w": 400,
-      "h": 420,
-      "title": "LockFlowLockForm",
-      "page": "parts"
-    },
-    "LockFlowMembers.dc.html": {
-      "x": 960,
-      "y": 27747,
-      "w": 1440,
-      "h": 900,
-      "title": "LockFlowMembers",
-      "page": "parts"
-    },
-    "LockFlowProposal.dc.html": {
-      "x": 2480,
-      "y": 27747,
-      "w": 1440,
-      "h": 1500,
-      "title": "LockFlowProposal",
-      "page": "parts"
-    },
-    "WrapFlowForm.dc.html": {
-      "x": 4000,
-      "y": 27747,
-      "w": 380,
-      "h": 520,
-      "title": "WrapFlowForm",
-      "page": "parts"
-    },
-    "WrapFlowMembers.dc.html": {
-      "x": 4460,
-      "y": 27747,
-      "w": 1440,
-      "h": 1000,
-      "title": "WrapFlowMembers",
-      "page": "parts"
+      "x": 0,
+      "y": 27747
     },
     "LockFlowBlockedDialog.dc.html": {
-      "x": 5980,
-      "y": 27747,
-      "w": 480,
       "h": 380,
+      "page": "parts",
       "title": "LockFlowBlockedDialog",
-      "page": "parts"
+      "w": 480,
+      "x": 5980,
+      "y": 27747
     },
     "LockFlowFeedbackDialog.dc.html": {
-      "x": 6540,
-      "y": 27747,
-      "w": 480,
       "h": 420,
+      "page": "parts",
       "title": "LockFlowFeedbackDialog",
-      "page": "parts"
+      "w": 480,
+      "x": 6540,
+      "y": 27747
     },
     "LockFlowLockDialog.dc.html": {
-      "x": 0,
-      "y": 29367,
-      "w": 480,
       "h": 420,
+      "page": "parts",
       "title": "LockFlowLockDialog",
-      "page": "parts"
+      "w": 480,
+      "x": 0,
+      "y": 29367
+    },
+    "LockFlowLockForm.dc.html": {
+      "h": 420,
+      "page": "parts",
+      "title": "LockFlowLockForm",
+      "w": 400,
+      "x": 480,
+      "y": 27747
+    },
+    "LockFlowMembers.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "LockFlowMembers",
+      "w": 1440,
+      "x": 960,
+      "y": 27747
+    },
+    "LockFlowProposal.dc.html": {
+      "h": 1500,
+      "page": "parts",
+      "title": "LockFlowProposal",
+      "w": 1440,
+      "x": 2480,
+      "y": 27747
     },
     "LockFlowTxDialog.dc.html": {
-      "x": 560,
-      "y": 29367,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "LockFlowTxDialog",
-      "page": "parts"
+      "w": 1440,
+      "x": 560,
+      "y": 29367
+    },
+    "NorthstarDao.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Northstar Protocol · multi-stage",
+      "w": 1440,
+      "x": 3040,
+      "y": 1700
+    },
+    "NorthstarDaoAssets.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoAssets",
+      "w": 1440,
+      "x": 0,
+      "y": 11067
+    },
+    "NorthstarDaoDashboard.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoDashboard",
+      "w": 1440,
+      "x": 1520,
+      "y": 11067
+    },
+    "NorthstarDaoMember.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoMember",
+      "w": 1440,
+      "x": 3040,
+      "y": 11067
+    },
+    "NorthstarDaoMembers.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoMembers",
+      "w": 1440,
+      "x": 4560,
+      "y": 11067
+    },
+    "NorthstarDaoPermissions.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoPermissions",
+      "w": 1440,
+      "x": 6080,
+      "y": 11067
+    },
+    "NorthstarDaoProcess.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoProcess",
+      "w": 1440,
+      "x": 7600,
+      "y": 11067
+    },
+    "NorthstarDaoProposal.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoProposal",
+      "w": 1440,
+      "x": 9120,
+      "y": 11067
+    },
+    "NorthstarDaoProposals.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoProposals",
+      "w": 1440,
+      "x": 10640,
+      "y": 11067
+    },
+    "NorthstarDaoSettings.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoSettings",
+      "w": 1440,
+      "x": 0,
+      "y": 12087
+    },
+    "NorthstarDaoTransactions.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "NorthstarDaoTransactions",
+      "w": 1440,
+      "x": 1520,
+      "y": 12087
+    },
+    "ResourcesInput.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "ResourcesInput",
+      "w": 1440,
+      "x": 3326,
+      "y": 300
+    },
+    "SafeFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Safe account",
+      "w": 1440,
+      "x": 1520,
+      "y": 3100
+    },
+    "SafeFlowPage.dc.html": {
+      "h": 1900,
+      "page": "parts",
+      "title": "SafeFlowPage",
+      "w": 1440,
+      "x": 0,
+      "y": 18347
+    },
+    "SafeFlowReviewContent.dc.html": {
+      "h": 520,
+      "page": "parts",
+      "title": "SafeFlowReviewContent",
+      "w": 432,
+      "x": 1520,
+      "y": 18347
+    },
+    "SafeFlowReviewDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "SafeFlowReviewDialog",
+      "w": 1440,
+      "x": 3328,
+      "y": 18347
+    },
+    "SafeFlowTxDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "SafeFlowTxDialog",
+      "w": 1440,
+      "x": 2700,
+      "y": 15827
+    },
+    "SafeTransactionFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Create a Safe transaction",
+      "w": 1440,
+      "x": 3040,
+      "y": 3100
+    },
+    "SafeTransactionFlowActions.dc.html": {
+      "h": 700,
+      "page": "parts",
+      "title": "SafeTransactionFlowActions",
+      "w": 1216,
+      "x": 2032,
+      "y": 18347
+    },
+    "SafeTransactionFlowContractDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "SafeTransactionFlowContractDialog",
+      "w": 1440,
+      "x": 4848,
+      "y": 18347
+    },
+    "SafeTransactionFlowDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "SafeTransactionFlowDialog",
+      "w": 1440,
+      "x": 6368,
+      "y": 18347
+    },
+    "TransactionStatus.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "TransactionStatus",
+      "w": 1440,
+      "x": 10640,
+      "y": 25207
+    },
+    "TxFlowDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "TxFlowDialog",
+      "w": 1440,
+      "x": 1120,
+      "y": 1320
+    },
+    "WizardActions.dc.html": {
+      "h": 48,
+      "page": "parts",
+      "title": "WizardActions",
+      "w": 800,
+      "x": 4846,
+      "y": 300
+    },
+    "WizardNav.dc.html": {
+      "h": 91,
+      "page": "parts",
+      "title": "WizardNav",
+      "w": 1440,
+      "x": 5726,
+      "y": 300
+    },
+    "WizardProgress.dc.html": {
+      "h": 40,
+      "page": "parts",
+      "title": "WizardProgress",
+      "w": 800,
+      "x": 7246,
+      "y": 300
+    },
+    "Workspace.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Workspace · three DAOs and a Safe",
+      "w": 1440,
+      "x": 0,
+      "y": 3100
+    },
+    "WrapFlow.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "prototypes",
+      "title": "Wrap tokens",
+      "w": 1440,
+      "x": 0,
+      "y": 5900
+    },
+    "WrapFlowForm.dc.html": {
+      "h": 520,
+      "page": "parts",
+      "title": "WrapFlowForm",
+      "w": 380,
+      "x": 4000,
+      "y": 27747
+    },
+    "WrapFlowMembers.dc.html": {
+      "h": 1000,
+      "page": "parts",
+      "title": "WrapFlowMembers",
+      "w": 1440,
+      "x": 4460,
+      "y": 27747
     },
     "WrapFlowOnboardDialog.dc.html": {
-      "x": 2080,
-      "y": 29367,
-      "w": 600,
       "h": 500,
+      "page": "parts",
       "title": "WrapFlowOnboardDialog",
-      "page": "parts"
+      "w": 600,
+      "x": 2080,
+      "y": 29367
     },
     "WrapFlowTxDialog.dc.html": {
-      "x": 2760,
-      "y": 29367,
-      "w": 1440,
       "h": 900,
+      "page": "parts",
       "title": "WrapFlowTxDialog",
-      "page": "parts"
+      "w": 1440,
+      "x": 2760,
+      "y": 29367
+    },
+    "WsAccountOverview.dc.html": {
+      "h": 2100,
+      "page": "parts",
+      "title": "WsAccountOverview",
+      "w": 1100,
+      "x": 0,
+      "y": 13607
+    },
+    "WsAccountSafe.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "WsAccountSafe",
+      "w": 1100,
+      "x": 1180,
+      "y": 13607
+    },
+    "WsAccountTodos.dc.html": {
+      "h": 700,
+      "page": "parts",
+      "title": "WsAccountTodos",
+      "w": 1100,
+      "x": 2360,
+      "y": 13607
+    },
+    "WsAssets.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "WsAssets",
+      "w": 1440,
+      "x": 3540,
+      "y": 13607
+    },
+    "WsMembers.dc.html": {
+      "h": 1100,
+      "page": "parts",
+      "title": "WsMembers",
+      "w": 1100,
+      "x": 5060,
+      "y": 13607
+    },
+    "WsNav.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "WsNav",
+      "w": 1024,
+      "x": 6240,
+      "y": 13607
+    },
+    "WsOverview.dc.html": {
+      "h": 1100,
+      "page": "parts",
+      "title": "WsOverview",
+      "w": 1100,
+      "x": 7344,
+      "y": 13607
+    },
+    "WsProposals.dc.html": {
+      "h": 1300,
+      "page": "parts",
+      "title": "WsProposals",
+      "w": 1100,
+      "x": 8524,
+      "y": 13607
+    },
+    "WsTodos.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "WsTodos",
+      "w": 1100,
+      "x": 0,
+      "y": 15827
+    },
+    "WsTransactions.dc.html": {
+      "h": 1900,
+      "page": "parts",
+      "title": "WsTransactions",
+      "w": 1440,
+      "x": 1180,
+      "y": 15827
+    },
+    "WsTransactionsAccountDialog.dc.html": {
+      "h": 900,
+      "page": "parts",
+      "title": "WsTransactionsAccountDialog",
+      "w": 1440,
+      "x": 4220,
+      "y": 15827
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-18T12:30:27Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
+      "copiedAt": "2026-11-18T12:30:27Z",
+      "namespace": "aragon-gov-ui-kit",
+      "title": "Aragon Governance UI Kit",
+      "version": "1794906150-8cdd"
+    }
+  ],
+  "launch": {
+    "page": "prototypes",
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "proto-start-here",
+    "proto-a-dao-one-per-governance-type",
+    "proto-workspace-and-safe",
+    "proto-creating-things",
+    "proto-token-mechanics",
+    "proto-how-to",
+    "parts-shared-by-several-prototypes",
+    "parts-meridian-dao",
+    "parts-atlas-multisig",
+    "parts-northstar-multi-stage",
+    "parts-workspace",
+    "parts-safe",
+    "parts-create-dao-and-workspace",
+    "parts-create-proposal",
+    "parts-governance-designer",
+    "parts-wrap-and-lock"
+  ],
+  "notes": {
+    "parts-atlas-multisig": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Atlas (multisig)",
+      "w": 240,
+      "x": 0,
+      "y": 7027
+    },
+    "parts-create-dao-and-workspace": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Create DAO and workspace",
+      "w": 240,
+      "x": 0,
+      "y": 20567
+    },
+    "parts-create-proposal": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Create proposal",
+      "w": 240,
+      "x": 0,
+      "y": 22787
+    },
+    "parts-governance-designer": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Governance designer",
+      "w": 240,
+      "x": 0,
+      "y": 24907
+    },
+    "parts-meridian-dao": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Meridian DAO",
+      "w": 240,
+      "x": 0,
+      "y": 2540
+    },
+    "parts-northstar-multi-stage": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Northstar (multi-stage)",
+      "w": 240,
+      "x": 0,
+      "y": 10767
+    },
+    "parts-safe": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Safe",
+      "w": 240,
+      "x": 0,
+      "y": 18047
+    },
+    "parts-shared-by-several-prototypes": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Shared by several prototypes",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "parts-workspace": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Workspace",
+      "w": 240,
+      "x": 0,
+      "y": 13307
+    },
+    "parts-wrap-and-lock": {
+      "kind": "title1",
+      "maxW": 8000,
+      "page": "parts",
+      "text": "Wrap and lock",
+      "w": 240,
+      "x": 0,
+      "y": 27447
+    },
+    "proto-a-dao-one-per-governance-type": {
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "prototypes",
+      "text": "A DAO, one per governance type",
+      "w": 240,
+      "x": 0,
+      "y": 1400
+    },
+    "proto-creating-things": {
+      "kind": "title1",
+      "maxW": 6000,
+      "page": "prototypes",
+      "text": "Creating things",
+      "w": 240,
+      "x": 0,
+      "y": 4200
+    },
+    "proto-how-to": {
+      "page": "prototypes",
+      "text": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Explore: it links to the DAO and the two creation wizards.",
+      "w": 440,
+      "x": -560,
+      "y": 300
+    },
+    "proto-start-here": {
+      "kind": "title1",
+      "maxW": 1440,
+      "page": "prototypes",
+      "text": "Start here",
+      "w": 240,
+      "x": 0,
+      "y": 0
+    },
+    "proto-token-mechanics": {
+      "kind": "title1",
+      "maxW": 2960,
+      "page": "prototypes",
+      "text": "Token mechanics",
+      "w": 240,
+      "x": 0,
+      "y": 5600
+    },
+    "proto-workspace-and-safe": {
+      "kind": "title1",
+      "maxW": 4480,
+      "page": "prototypes",
+      "text": "Workspace and Safe",
+      "w": 240,
+      "x": 0,
+      "y": 2800
     }
   },
   "order": [
@@ -1008,7 +1161,6 @@
     "CreateWorkspaceFlowAccounts.dc.html",
     "CreateWorkspaceFlowAddressFields.dc.html",
     "CreateWorkspaceFlowMetadata.dc.html",
-    "CreateWorkspaceFlowTargets.dc.html",
     "CreateWorkspaceFlowPublishDialog.dc.html",
     "CreateProposalFlowActions.dc.html",
     "CreateProposalFlowMetadata.dc.html",
@@ -1039,142 +1191,15 @@
     "WrapFlowOnboardDialog.dc.html",
     "WrapFlowTxDialog.dc.html"
   ],
-  "notes": {
-    "proto-start-here": {
-      "x": 0,
-      "y": 0,
-      "text": "Start here",
-      "kind": "title1",
-      "maxW": 1440,
-      "page": "prototypes"
-    },
-    "proto-a-dao-one-per-governance-type": {
-      "x": 0,
-      "y": 1400,
-      "text": "A DAO, one per governance type",
-      "kind": "title1",
-      "maxW": 4480,
-      "page": "prototypes"
-    },
-    "proto-workspace-and-safe": {
-      "x": 0,
-      "y": 2800,
-      "text": "Workspace and Safe",
-      "kind": "title1",
-      "maxW": 4480,
-      "page": "prototypes"
-    },
-    "proto-creating-things": {
-      "x": 0,
-      "y": 4200,
-      "text": "Creating things",
-      "kind": "title1",
-      "maxW": 6000,
-      "page": "prototypes"
-    },
-    "proto-token-mechanics": {
-      "x": 0,
-      "y": 5600,
-      "text": "Token mechanics",
-      "kind": "title1",
-      "maxW": 2960,
-      "page": "prototypes"
-    },
-    "proto-how-to": {
-      "x": -560,
-      "y": 300,
-      "w": 440,
-      "text": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Explore: it links to the DAO and the two creation wizards.",
-      "page": "prototypes"
-    },
-    "parts-shared-by-several-prototypes": {
-      "x": 0,
-      "y": 0,
-      "text": "Shared by several prototypes",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-meridian-dao": {
-      "x": 0,
-      "y": 2540,
-      "text": "Meridian DAO",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-atlas-multisig": {
-      "x": 0,
-      "y": 7027,
-      "text": "Atlas (multisig)",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-northstar-multi-stage": {
-      "x": 0,
-      "y": 10767,
-      "text": "Northstar (multi-stage)",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-workspace": {
-      "x": 0,
-      "y": 13307,
-      "text": "Workspace",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-safe": {
-      "x": 0,
-      "y": 18047,
-      "text": "Safe",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-create-dao-and-workspace": {
-      "x": 0,
-      "y": 20567,
-      "text": "Create DAO and workspace",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-create-proposal": {
-      "x": 0,
-      "y": 22787,
-      "text": "Create proposal",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-governance-designer": {
-      "x": 0,
-      "y": 24907,
-      "text": "Governance designer",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    },
-    "parts-wrap-and-lock": {
-      "x": 0,
-      "y": 27447,
-      "text": "Wrap and lock",
-      "kind": "title1",
-      "maxW": 8000,
-      "page": "parts"
-    }
-  },
-  "designSystems": [
+  "pages": [
     {
-      "title": "Aragon Governance UI Kit",
-      "namespace": "aragon-gov-ui-kit",
-      "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
-      "version": "1794906150-8cdd",
-      "copiedAt": "2026-11-18T12:30:27Z"
+      "id": "prototypes",
+      "name": "Prototypes"
+    },
+    {
+      "id": "parts",
+      "name": "Parts"
     }
-  ]
+  ],
+  "title": "Aragon App prototypes"
 }

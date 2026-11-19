@@ -1,6 +1,8 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { ISppProposal } from '@/plugins/sppPlugin/types';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type {
     IWorkspaceTodoItem,
@@ -8,6 +10,17 @@ import type {
     IWorkspaceTodoTransactionItem,
 } from '../../hooks/useWorkspaceTodoData';
 import { workspaceUtils } from '../workspaceUtils';
+
+export interface IWorkspaceTodoProposalStage {
+    /**
+     * Index of the stage the proposal is at.
+     */
+    index: number;
+    /**
+     * Name of that stage, when its process names it.
+     */
+    name?: string;
+}
 
 class WorkspaceTodoUtils {
     /**
@@ -24,6 +37,43 @@ class WorkspaceTodoUtils {
         });
 
         return getStatus?.(proposal);
+    };
+
+    /**
+     * Stage a proposal of a staged process is at, which is where its to-do stands. Undefined for a proposal that is
+     * not staged or whose process has a single stage, where the stage says nothing the proposal does not.
+     */
+    getProposalStage = (
+        proposal: IProposal,
+    ): IWorkspaceTodoProposalStage | undefined => {
+        if (proposal.pluginInterfaceType !== PluginInterfaceType.SPP) {
+            return undefined;
+        }
+
+        const { stageIndex, settings } = proposal as ISppProposal;
+        const stages = settings?.stages ?? [];
+        const stage = stages[stageIndex];
+
+        return stages.length > 1 && stage != null
+            ? { index: stageIndex, name: stage.name ?? undefined }
+            : undefined;
+    };
+
+    /**
+     * Orders the proposals of the to-do list by the end of their vote window, soonest first; the ones whose end is
+     * unknown come last, in the order they were read.
+     */
+    sortProposalsByDeadline = (
+        proposals: IWorkspaceTodoProposalItem[],
+    ): IWorkspaceTodoProposalItem[] => {
+        const getDeadline = ({ proposal }: IWorkspaceTodoProposalItem) =>
+            Number.isFinite(proposal.voteEndDate)
+                ? proposal.voteEndDate
+                : Number.POSITIVE_INFINITY;
+
+        return [...proposals].sort(
+            (first, second) => getDeadline(first) - getDeadline(second),
+        );
     };
 
     /**

@@ -83,7 +83,6 @@ describe('<WorkspaceAssetsPageClient /> component', () => {
             buildDaoAccount(params.daoAddress),
             buildSafeAccount(params.safeAddress),
         ],
-        targets: [],
     });
 
     const allAccountsOption: IWorkspaceAccountOption = {

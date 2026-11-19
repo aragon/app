@@ -38,7 +38,6 @@ export interface IWorkspaceWizardProps {
 
 const stepContent: Record<WorkspaceWizardStep, ReactNode> = {
     [WorkspaceWizardStep.METADATA]: <CreateWorkspaceForm.Metadata />,
-    [WorkspaceWizardStep.TARGETS]: <CreateWorkspaceForm.Targets />,
     [WorkspaceWizardStep.ACCOUNTS]: <CreateWorkspaceForm.Accounts />,
 };
 
@@ -73,7 +72,6 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
         plausibleAnalyticsUtils.track('wizard_submit', {
             flow: analyticsFlow,
             accounts: values.accounts.length,
-            targets: values.targets.length,
             hasAvatar: values.avatar != null,
         });
         onSubmit(values);

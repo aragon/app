@@ -1,0 +1,162 @@
+{
+    "canvas": "https://claude.ai/artifact/8eymQkHSESWmxkEwtsiAmZ",
+    "branch": "design/roundtrip-test",
+    "base": "docs/design-prototypes",
+    "canvasVersion": "1795097893-f281",
+    "appCommit": "041dc089dc666832f310ffb6a39922e4404871d5",
+    "kit": {
+        "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
+        "version": "1794906150-8cdd",
+        "folder": "aragon-gov-ui-kit"
+    },
+    "assets": {
+        "assets/mock/avatar/atlas.svg": {
+            "url": "/_blob/80304dbe02c72379647cadea77726ec2",
+            "sha256": "c53516c2bbd2acee1d7e1379932a0ed65e4dded61fd4dae4850db0c42b12bf1a"
+        },
+        "assets/mock/avatar/greenfield.svg": {
+            "url": "/_blob/92bd98437f2c0423d906d41978c3da60",
+            "sha256": "40c2fd9dfc50fe04b11e29e55a4a3150ec751e7ca5502eeee1b4ed1132d7c7df"
+        },
+        "assets/mock/avatar/harbor.svg": {
+            "url": "/_blob/f16c9134759896c46172caef51ca4253",
+            "sha256": "e3f6e52fe1b680c605aae527385a6647b867b5f6b3ff213879e237eb14a1fc58"
+        },
+        "assets/mock/avatar/lido.svg": {
+            "url": "/_blob/70906c531e73bcd646998a00e8519aff",
+            "sha256": "6cb25304d0a1d2551227cf47968d280cde3e26efddea027f46c34437e6bdd947"
+        },
+        "assets/mock/avatar/meridian.svg": {
+            "url": "/_blob/cb046699ddafb5c4e252580ed2cb1954",
+            "sha256": "e706b1e54dfc3857857c2916b901e87d891566c3ca9a16e44726bd1bca26ae07"
+        },
+        "assets/mock/avatar/nexus.svg": {
+            "url": "/_blob/9034c206ad4a0e9d8eb02fc03d48bb03",
+            "sha256": "135e9485a2a7f1b006aca03e63d69daf1cd981d61bdd99727f1ae7c5c3b488e7"
+        },
+        "assets/mock/avatar/northstar.svg": {
+            "url": "/_blob/c1626722bc1ba585dc639fc5e565c237",
+            "sha256": "a812f0a7e21f5479f4c3967bd255659a757cbcc8f9a40c54ed7f67af0ebadc7f"
+        },
+        "assets/mock/avatar/orbit.svg": {
+            "url": "/_blob/0b0de1f647fbedf898d1cd084e538651",
+            "sha256": "419de4a6586971513bffd66e91d96ce2643edb682e913ac66abb9dc473270661"
+        },
+        "assets/mock/avatar/polygon-village.svg": {
+            "url": "/_blob/ef84ae0b0830445f830dab89e58fc077",
+            "sha256": "67eaddb4af023af434b36eb87213995c7dbb9644ba680902daa5c10a65d6dff7"
+        },
+        "assets/mock/avatar/solace.svg": {
+            "url": "/_blob/ffb5553f0f1d8c687b73af887c26b49f",
+            "sha256": "f08d7f8be1d87c0ec47bd6c89a80343d6b09363ce2eace70a99dec4f6b373415"
+        },
+        "assets/mock/token/dai.svg": {
+            "url": "/_blob/0952c4b58e008dbcf117283ce2769f45",
+            "sha256": "928c29056aedbf72e0e4270b9f7e95db1e75fc3eaa702fc076f9181acbfcca4b"
+        },
+        "assets/mock/token/eth.svg": {
+            "url": "/_blob/40d411ced353ee40bb9fbf945fe8e596",
+            "sha256": "20079b9f60b56832eb139d0f9689765d658fb010830e53675b9d6b2e67378e0e"
+        },
+        "assets/mock/token/mrd.svg": {
+            "url": "/_blob/a3db149de5a5921e3184ba51bf4eb180",
+            "sha256": "07c35f5de6f47aeb12aa5baeaf4124f6a5ea298ede2043092e9c87aac574134b"
+        },
+        "assets/mock/token/nsp.svg": {
+            "url": "/_blob/5705caa020b2a1d6c75dbf0f7c28b68e",
+            "sha256": "bbace8b1e2384a7d8ec9c54590f10e2ff72988329d07ca1943baa49fb5acc2ad"
+        },
+        "assets/mock/token/usdc.svg": {
+            "url": "/_blob/b1c8818d936edb23ee82e2a0ae1e0d38",
+            "sha256": "99f2456c8b18bece286e8c55fa395c6a7c7854c20a13849424238023d064b807"
+        },
+        "assets/mock/token/weth.svg": {
+            "url": "/_blob/a87b29878a6e0991e2c6eb1658a12a36",
+            "sha256": "e5a506c1ee289e99c9b64d99cceee93d2bacd3840d9e2cda89b5808920f9c52e"
+        },
+        "assets/net_bg.svg": {
+            "url": "/_blob/ed3858d63b52a3d814f541a12223e993",
+            "sha256": "4d397843bc268478434d6f9b6d65720ef0745304d9762e72a3c4e7b0dbd0f6dd"
+        },
+        "assets/networks/arbitrum.svg": {
+            "url": "/_blob/444415ea2f0da35fac022e0f99b505c4",
+            "sha256": "aa503c2b5318494157bee5dccf26632932d8571a111981cfd484785d90320920"
+        },
+        "assets/networks/avalanche.svg": {
+            "url": "/_blob/d293a0064754b11c90fd4fd89485fca3",
+            "sha256": "75436a46bc587f7bcf037ba6e1df3d409cae5e24ce9a59458f412501ebcc25ea"
+        },
+        "assets/networks/base_sepolia.svg": {
+            "url": "/_blob/7f8f5bb4d7e839b11ecf0d410a4f98d4",
+            "sha256": "03c2a764222cb9a64ee154c6f7f5f305648d52a45ab36d53e42bf7fcd39625ba"
+        },
+        "assets/networks/base.svg": {
+            "url": "/_blob/e2d62efe5eb7add56e126d4e596bb90d",
+            "sha256": "ed0e3769159d82c07c6e18a8e3c9d416dfb52e1e948afefe4f21c1be0ecfc3f4"
+        },
+        "assets/networks/bnb_testnet.svg": {
+            "url": "/_blob/e075b51199d7f7e4fcee4278c537ab7b",
+            "sha256": "50aa96fe0927b8631bde4c0bdd52693b55ed9381e395d45f8db561f34b281829"
+        },
+        "assets/networks/bnb.svg": {
+            "url": "/_blob/0613e6e8aa1e39efe2e0047bca8ab5a8",
+            "sha256": "d068cbf5169368d3e27992d205e7891f2a376908fb6d6f5edbacf11a3f058c61"
+        },
+        "assets/networks/chiliz.svg": {
+            "url": "/_blob/793b973a4d5162e8c4c706ac4d294b42",
+            "sha256": "d21c21b366df0f9dab00aec365cb8f99bdd6bb07a123f400d63eb1cb2d3c39c3"
+        },
+        "assets/networks/citrea.svg": {
+            "url": "/_blob/c504ae649b1bfbb3a127bf08f1daad74",
+            "sha256": "42286b0ea9351de3e18be264eadc65c2db9520fd3f2dddbbf0c5a5b1c3180efb"
+        },
+        "assets/networks/ethereum.svg": {
+            "url": "/_blob/dc0fa5353f79adbcf54ccefc0a653427",
+            "sha256": "2a5afd8d7ae8dda54abf5e9cb54768261325321f0d7a6638ca298a2af994cc3e"
+        },
+        "assets/networks/hemi.svg": {
+            "url": "/_blob/2d3d6876e26c2190f1c2318f36a7f2c1",
+            "sha256": "8eb0d8c02b4cb95018af48b172cb194403ee68e27fc7ca9aafb70d5b29cb3197"
+        },
+        "assets/networks/hoodi.svg": {
+            "url": "/_blob/26fa1fc8d3b2f89cf487b751d47f7a5c",
+            "sha256": "288111c0254331c06d7d65a1cc8ef410a476b63c0a620458f22522b50508c1cc"
+        },
+        "assets/networks/katana.svg": {
+            "url": "/_blob/8555ef1efb86df21a66d41e31a762c5f",
+            "sha256": "4716e7b5ba39a45d9d4670bf1fbaa1c2e62fcae66674f36994ada01eb0cf5839"
+        },
+        "assets/networks/monad.svg": {
+            "url": "/_blob/6872803ceff145a1c8857e85571f998b",
+            "sha256": "0ea2a1ed975a7247720855760f6677ac41220bae33286eec6f2116a9e4fb324b"
+        },
+        "assets/networks/optimism.svg": {
+            "url": "/_blob/6a29e637d8d56f96bac4b4593e934618",
+            "sha256": "e8e723342ac2ba34ed7b6375f24418f1c503cea659debe42535b1162976ce52f"
+        },
+        "assets/networks/polygon_amoy.svg": {
+            "url": "/_blob/9405811df9ed4dd95ecb38c797a2849d",
+            "sha256": "ee20c1c8278f4d7ffd7f11a8072694a5ddf0ab169c5989f5b19638a20ec7e396"
+        },
+        "assets/networks/polygon.svg": {
+            "url": "/_blob/de8ff0294365078906aff699424b26da",
+            "sha256": "f839a5ab5d8e401be89bc4d283156001c09f489bf7419da3c34e209569943cdf"
+        },
+        "assets/networks/robinhood.svg": {
+            "url": "/_blob/49986830cbbd1f3f2975492d14da18e6",
+            "sha256": "0f5e8b52db41ea6c94d6fec334aa4bf991819baf2ec41206ecb21399e736b2f7"
+        },
+        "assets/networks/sepolia.svg": {
+            "url": "/_blob/2ae21c26ae544171951371aebc3ef59c",
+            "sha256": "47834b1446fcb8aba185f283a2fa37475ceda6fb5cbbc2153c863aa12222765b"
+        },
+        "assets/networks/zksync.svg": {
+            "url": "/_blob/34b88b661576077b9c9f50d06ca0a3df",
+            "sha256": "23c367223ec9a18048364d9e54bbd4cfd1399b7a979a57c0c21e0b8cff1033a5"
+        },
+        "assets/safeWallet.png": {
+            "url": "/_blob/09b4ea635f2d228a666aa3c3205d8d49",
+            "sha256": "b34f4bc993af8abcae23cafa7751e1c807021929532996715a5770b655c2c97e"
+        }
+    }
+}

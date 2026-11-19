@@ -27,7 +27,7 @@ export interface ICreateWorkspaceFormNetworkAddress {
      */
     network: Network;
     /**
-     * Address of the account or target.
+     * Address of the account.
      */
     address: string;
 }
@@ -58,32 +58,26 @@ export interface ICreateWorkspaceFormAccount
 export interface ICreateWorkspaceFormData
     extends ICreateWorkspaceFormMetadataData {
     /**
-     * Targets of the workspace, used for account discovery later on.
-     */
-    targets: ICreateWorkspaceFormNetworkAddress[];
-    /**
      * Accounts belonging to the workspace.
      */
     accounts: ICreateWorkspaceFormAccount[];
 }
 
 /**
- * Empty network-address row appended when the user adds a target or an account.
+ * Empty network-address row appended when the user adds an account.
  */
 export const createWorkspaceFormEmptyNetworkAddress: ICreateWorkspaceFormNetworkAddress =
     { address: '', network: Network.ETHEREUM_SEPOLIA };
 
 /**
- * Default values of the create-workspace form. Both field-arrays are seeded here, at the form root, so that
- * `useFieldArray` sees them on the very first render: seeding them from the list components instead would either
+ * Default values of the create-workspace form. The accounts field-array is seeded here, at the form root, so that
+ * `useFieldArray` sees it on the very first render: seeding it from the list component instead would either
  * render an empty list on mount or need an effect that mutates the form while the rows are already mounting.
  */
 export const createWorkspaceFormDefaultValues: Pick<
     ICreateWorkspaceFormData,
-    'targets' | 'accounts'
+    'accounts'
 > = {
-    // Targets are optional, therefore the list starts empty.
-    targets: [],
     // Accounts are optional; one removable row makes adding one the obvious path.
     accounts: [createWorkspaceFormEmptyNetworkAddress],
 };

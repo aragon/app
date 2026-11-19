@@ -78,7 +78,7 @@ export type IWorkspaceTodoItem =
 export interface IUseWorkspaceTodoDataResult {
     /**
      * What is waiting on the wallet, as one list: the active proposals it can vote on and has not voted on yet,
-     * newest first, then the live transactions of the Safes it owns that it has not confirmed yet, in account
+     * soonest deadline first, then the live transactions of the Safes it owns that it has not confirmed yet, in account
      * order then by nonce.
      */
     todos: IWorkspaceTodoItem[];
@@ -189,7 +189,10 @@ export const useWorkspaceTodoData = (
     );
 
     return {
-        todos: [...proposals, ...transactions],
+        todos: [
+            ...workspaceTodoUtils.sortProposalsByDeadline(proposals),
+            ...transactions,
+        ],
         isPending: isEnabled && (isTodoPending || isDaosPending),
         isError,
         hasUnreadableAccounts: workspaceCoverageUtils.hasUnreadableAccounts(

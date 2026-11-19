@@ -150,7 +150,6 @@ class WorkspaceService {
         avatar: null,
         links: [],
         accounts: [],
-        targets: [],
     });
 
     /**

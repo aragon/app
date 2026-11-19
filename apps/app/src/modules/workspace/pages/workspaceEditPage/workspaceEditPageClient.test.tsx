@@ -30,7 +30,6 @@ describe('<WorkspaceEditPageClient /> component', () => {
         avatar: null,
         links: [],
         accounts: [],
-        targets: [],
     };
 
     beforeEach(() => {
@@ -121,7 +120,6 @@ describe('<WorkspaceEditPageClient /> component', () => {
         });
         await userEvent.clear(nameInput);
         await userEvent.type(nameInput, 'Renamed');
-        await clickNext();
         await clickNext();
 
         // The workspace holds no account, which the edit wizard accepts as is.

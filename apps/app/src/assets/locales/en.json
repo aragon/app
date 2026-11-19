@@ -4709,17 +4709,11 @@
             "label": "Description"
           },
           "name": {
-            "label": "Workspace name"
+            "label": "Name"
           },
           "resources": {
             "helpText": "These are shown as links on the workspace pages. They are best suited for your website, social media, or other communication channels."
           }
-        },
-        "targets": {
-          "add": "Add target",
-          "helpText": "Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically.",
-          "label": "Targets",
-          "remove": "Remove target"
         }
       },
       "createWorkspacePage": {
@@ -4733,11 +4727,6 @@
             "description": "Describe your workspace so visitors know what it covers. Don't worry if these aren't final—any of these fields can be changed later.",
             "name": "Describe your workspace",
             "title": "Describe your workspace"
-          },
-          "TARGETS": {
-            "description": "Add the addresses this workspace relates to. This step is optional and can be left empty.",
-            "name": "Add targets",
-            "title": "Add targets"
           }
         },
         "submitLabel": "Create workspace"
@@ -4762,7 +4751,15 @@
           "success": "Workspace created",
           "title": "Create workspace"
         },
-        "summary": "{{accounts}} accounts · {{targets}} targets",
+        "account": {
+          "safe": "Safe",
+          "type": {
+            "dao": "DAO",
+            "safe": "Safe"
+          }
+        },
+        "summary": "{{count}} accounts",
+        "summarySingular": "{{count}} account",
         "update": {
           "error": {
             "description": "The changes could not be saved. Check your connection and try again.",
@@ -4838,14 +4835,11 @@
         },
         "section": {
           "accounts": "Accounts",
-          "targets": "Targets",
-          "targetsDescription": "Addresses this workspace relates to.",
-          "todos": "To-dos",
+          "todos": "To do",
           "todosDescription": "Across every account in {{workspace}}. To-dos belong to your wallet; the workspace only filters them."
         },
         "stat": {
-          "accounts": "Accounts",
-          "targets": "Targets"
+          "accounts": "Accounts"
         }
       },
       "workspaceGate": {
@@ -5022,11 +5016,6 @@
             "description": "Update how your workspace is described to visitors.",
             "name": "Edit details",
             "title": "Edit details"
-          },
-          "TARGETS": {
-            "description": "Add or remove the addresses this workspace relates to. This step is optional and can be left empty.",
-            "name": "Edit targets",
-            "title": "Edit targets"
           }
         },
         "submitLabel": "Save changes"
@@ -5092,29 +5081,17 @@
         },
         "partial": "Some Safes could not be read, so this list may be missing transactions.",
         "item": {
-          "proposal": {
-            "action": "Vote"
-          },
           "transaction": {
+            "id": "#{{nonce}}",
+            "title": "Safe transaction",
+            "queued": "Queued {{date}}",
             "signatures": "{{count}} of {{required}} signatures",
-            "signaturesNonceRival": "{{count}} of {{required}} signatures, nonce conflict",
-            "action": "Sign"
+            "signaturesNonceRival": "{{count}} of {{required}} signatures, nonce conflict"
           }
         }
       },
       "workspaceTodoPreview": {
-        "viewAll": "View all",
-        "proposal": {
-          "title": "{{slug}} · {{title}}",
-          "meta": "Vote · ends {{date}}",
-          "action": "Vote"
-        },
-        "transaction": {
-          "title": "Safe transaction #{{nonce}}",
-          "meta": "Sign · {{account}} · {{count}} of {{required}} signatures",
-          "nonceRival": "nonce conflict",
-          "action": "Sign"
-        }
+        "viewAll": "View all"
       },
       "workspaceTodosAsideCard": {
         "allTodos": "All to-dos",
