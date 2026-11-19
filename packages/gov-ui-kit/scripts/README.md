@@ -48,3 +48,18 @@ pnpm lint:colors:check     # .grit files up to date, warn/error scopes disjoint
 
 To make a migrated folder strict, add its glob to both `primitive-colors.*.error.grit` entries in
 `biome.jsonc` and the same glob negated (`!…`) to both `warn` entries.
+
+## Semantic colour component map (`validate-` / `apply-semantic-component-map.mjs`)
+
+`design-system/tokens/semantic-colors.component-map.json` lists, per component file, every primitive colour class with
+its semantic replacement (or `new: null` and a reason to keep it).
+
+```sh
+pnpm tokens:semantic:map:check   # the map matches the sources and keeps every default-theme colour
+pnpm tokens:semantic:map:apply   # replaces each converted occurrence on its line; fails, writing nothing, on any mismatch
+```
+
+Applying marks the map with `applied: { base }`: its line numbers then describe the sources of that commit, because
+`pnpm lint` re-sorts the renamed classes and re-wraps lines. From then on `map:check` verifies the applied state per
+file (only the unconverted primitives are left, every converted class is present, the listed test assertions use
+their new class) instead of the line-by-line match.

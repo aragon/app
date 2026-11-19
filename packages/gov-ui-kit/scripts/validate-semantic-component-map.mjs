@@ -19,6 +19,14 @@
 //    Declared cross-component overrides (a class passed via className to another kit component) are checked too.
 // 6. Summary counts and the batch split (every file in exactly one batch) match the entries.
 //
+// Once scripts/apply-semantic-component-map.mjs has run, the map carries `applied` (the commit it was applied on) and
+// its line numbers describe the sources of that commit: Biome then re-sorted and re-wrapped some of the edited lines.
+// Step 1 checks the applied state per file instead: the primitive classes left are exactly the unconverted entries, no
+// converted `old` is left, every class of every converted `new` is there (as often as the entries need it), and every
+// listed test assertion uses its `new` class. Step 5's pairwise pass ran on the sources it was proven against and is
+// skipped (renaming is done; the outcome is what the screenshot comparison covers); the cross-component overrides,
+// steps 2-4 and 6 only read the map, the token data and the generated CSS and run unchanged.
+//
 // Usage: node scripts/validate-semantic-component-map.mjs   (exit 1 on any failure)
 
 import { execFileSync } from 'node:child_process';
@@ -33,6 +41,37 @@ const map = JSON.parse(read('design-system/tokens/semantic-colors.component-map.
 
 const errors = [];
 const fail = (message) => errors.push(message);
+const applied = map.applied != null;
+const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// Whole-class occurrences of `cls` in a text (same boundaries as CLASS_RE).
+const countClass = (text, cls) =>
+    [...text.matchAll(new RegExp(String.raw`(?<=^|[\s'"\`{(,])${escapeRe(cls)}(?=$|[\s'"\`},)])`, 'gm'))].length;
+// Applied state: every class of every converted entry's replacement is in the file, as often as the entries need it.
+const checkApplied = (file, entries) => {
+    const text = read(file);
+    const expected = new Map();
+    for (const e of entries.filter((x) => x.new != null)) {
+        for (const cls of e.new.split(' ')) {
+            expected.set(cls, (expected.get(cls) ?? 0) + 1);
+        }
+    }
+    for (const [cls, count] of expected) {
+        const found = countClass(text, cls);
+        if (found < count) {
+            fail(`${file}: applied map expects ${count} × "${cls}", found ${found}`);
+        }
+    }
+};
+// Applied state: the primitive classes left are exactly the unconverted ones (as a multiset; lines may have moved).
+const sameClasses = (found, entries) =>
+    found
+        .map((o) => o.old)
+        .sort()
+        .join('|') ===
+    entries
+        .map((e) => e.old)
+        .sort()
+        .join('|');
 
 const FORBIDDEN = new Set([
     'bg/accent/default-inverse',
@@ -75,18 +114,28 @@ const sources = ['src/core/components', 'src/modules/components']
 const isAux = (f) => /\.(stories|test|spec)\.tsx?$/.test(f) || /StoryComponent\.tsx$/.test(f);
 const isButton = (f) => f === 'src/core/components/button/button.tsx';
 
-const scan = (file, checkLoose = true) => {
+// Semantic utility names. Two of them equal a primitive shadow class (shadow-warning-sm, shadow-critical-sm: the map
+// converts them to themselves); in the applied state a class with a semantic name counts as converted.
+const semanticNames = new Set(
+    [...read('src/theme/tokens/semantic/colors.css').matchAll(/@utility ([a-z0-9-]+) \{/g)].map((m) => m[1]),
+);
+const SEMANTIC_RE =
+    /(?<=^|[\s'"`{(,])(?:(?:[A-Za-z0-9_@*&>.%#=+/-]|\[[^\]\s'"`]*\])+:)*!?([a-z0-9-]+)!?(?=$|[\s'"`},)])/g;
+const scan = (file, checkLoose = true, skipSemantic = false) => {
     const found = [];
     read(file)
         .split('\n')
         .forEach((text, index) => {
-            const strict = [...text.matchAll(CLASS_RE)];
+            const strict = [...text.matchAll(CLASS_RE)].filter((m) => !(skipSemantic && semanticNames.has(m[3])));
+            const semantic = skipSemantic ? [...text.matchAll(SEMANTIC_RE)].filter((m) => semanticNames.has(m[1])) : [];
             for (const m of strict) {
                 found.push({ line: index + 1, old: m[0], variant: m[1], important: m[2] + m[4], util: m[3] });
             }
             // Every loose hit must be part of a strict hit, or be a CSS variable reference (listed separately).
             for (const m of checkLoose ? text.matchAll(LOOSE_RE) : []) {
-                const inside = strict.some((s) => m.index >= s.index && m.index < s.index + s[0].length);
+                const inside = [...strict, ...semantic].some(
+                    (s) => m.index >= s.index && m.index < s.index + s[0].length,
+                );
                 if (
                     !inside &&
                     !/var\(--color-/.test(text.slice(Math.max(0, m.index - 12), m.index + m[0].length)) &&
@@ -105,10 +154,21 @@ const mapFiles = map.files ?? {};
 let occurrenceCount = 0;
 const occurrencesByFile = new Map();
 for (const file of inScope) {
-    const found = scan(file);
+    const found = scan(file, true, applied);
     occurrencesByFile.set(file, found);
     occurrenceCount += found.length;
-    const entries = mapFiles[file] ?? [];
+    const allEntries = mapFiles[file] ?? [];
+    // Applied: only the unconverted entries are still primitive classes in the source.
+    const entries = applied ? allEntries.filter((e) => e.new == null) : allEntries;
+    if (applied && mapFiles[file] != null) {
+        checkApplied(file, allEntries);
+        if (!sameClasses(found, entries)) {
+            fail(
+                `${file}: applied map leaves [${entries.map((e) => e.old).join(', ')}], source has [${found.map((o) => o.old).join(', ')}]`,
+            );
+        }
+        continue;
+    }
     if (found.length === 0 && entries.length > 0) {
         fail(`${file}: has map entries but no primitive colour classes`);
     }
@@ -140,6 +200,20 @@ for (const [section, pick] of [
     const listed = map[section] ?? {};
     for (const file of sources.filter(pick)) {
         // Stories carry non-class colour names (Storybook background names, CSS comments): strict pattern only.
+        // Applied: the test assertions were updated to their `new` class; stories are not updated by the apply step.
+        if (applied && section === 'testsToUpdate') {
+            const entries = listed[file] ?? [];
+            checkApplied(file, entries);
+            if (
+                !sameClasses(
+                    scan(file, false),
+                    entries.filter((e) => e.new == null),
+                )
+            ) {
+                fail(`${section}: ${file} still asserts a converted primitive class, or an unlisted one`);
+            }
+            continue;
+        }
         const found = scan(file, false).map((o) => `${o.line} ${o.old}`);
         const have = (listed[file] ?? []).map((o) => `${o.line} ${o.old}`);
         if (found.join('|') !== have.join('|')) {
@@ -618,7 +692,7 @@ const compatible = (a, b) => {
     return true;
 };
 const hazards = [];
-for (const [file, entries] of Object.entries(mapFiles)) {
+for (const [file, entries] of Object.entries(applied ? {} : mapFiles)) {
     if (!/\.tsx?$/.test(file)) {
         continue;
     }
@@ -715,8 +789,9 @@ for (const [k, v] of Object.entries(computed)) {
 if (JSON.stringify(map.summary?.unconvertedByReason) !== JSON.stringify(unconvertedByReason)) {
     fail(`summary.unconvertedByReason does not match the entries: ${JSON.stringify(unconvertedByReason)}`);
 }
-if (computed.occurrences !== occurrenceCount) {
-    fail(`map has ${computed.occurrences} entries, sources have ${occurrenceCount} occurrences`);
+const expectedInSources = applied ? computed.unconverted : computed.occurrences;
+if (expectedInSources !== occurrenceCount) {
+    fail(`map expects ${expectedInSources} primitive classes in the sources, they have ${occurrenceCount}`);
 }
 const conflictCount = (map.conflicts ?? []).length;
 if (conflictCount !== (unconvertedByReason.conflict ?? 0)) {
@@ -745,7 +820,7 @@ if (errors.length > 0) {
     process.exit(1);
 }
 console.log(
-    `validate-semantic-component-map: ok — ${computed.files} files, ${computed.occurrences} occurrences ` +
+    `validate-semantic-component-map: ok (${applied ? `applied on ${map.applied.base}` : 'not applied yet'}) — ${computed.files} files, ${computed.occurrences} occurrences ` +
         `(${computed.converted} converted, ${computed.unconverted} unconverted: ${Object.entries(unconvertedByReason)
             .map(([k, v]) => `${k} ${v}`)
             .join(', ')}), ${tokensUsed.size} tokens, every converted value equal in the default theme, ` +
