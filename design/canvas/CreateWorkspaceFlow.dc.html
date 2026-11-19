@@ -41,7 +41,7 @@ body{margin:0}
     </form>
   </main>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
-  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" layout="{{dialogLayout}}" accounts="{{accountCount}}" account-list="{{accountList}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
+  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" layout="{{dialogLayout}}" account-list="{{accountList}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
 </div>
 </x-import>
 </x-dc>
@@ -235,7 +235,7 @@ class Component extends DCLogic {
       addAccount: () => this.setState((st) => ({ accounts: st.accounts.concat([newRow()]) })),
       // dialog
       dialogOpen: s.dialogOpen, closeDialog: () => this.setState({ dialogOpen: false }),
-      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length, dialogLayout: this.props.dialogLayout || 'summary',
+      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length, dialogLayout: this.props.dialogLayout || 'accounts',
       accountList: s.accounts.filter((a) => this.isAddr(a.address)).map((a) => {
         const info = this.lookup(a.address), net = this.networks().find((x) => x.key === a.network);
         const isDao = info.type === 'DAO', own = a.showMeta && a.meta.name.trim();

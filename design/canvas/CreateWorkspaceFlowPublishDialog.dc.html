@@ -93,19 +93,20 @@ body{margin:0}
 </x-import>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;summary&quot;,&quot;centered&quot;,&quot;details&quot;,&quot;accounts&quot;],&quot;default&quot;:&quot;accounts&quot;},&quot;open&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true},&quot;simulateError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;workspaceName&quot;:{&quot;editor&quot;:null},&quot;avatarUrl&quot;:{&quot;editor&quot;:null},&quot;description&quot;:{&quot;editor&quot;:null},&quot;accounts&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1},&quot;accountList&quot;:{&quot;editor&quot;:null},&quot;onClose&quot;:{&quot;editor&quot;:null},&quot;successHref&quot;:{&quot;editor&quot;:null},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;summary&quot;,&quot;centered&quot;,&quot;details&quot;,&quot;accounts&quot;],&quot;default&quot;:&quot;accounts&quot;},&quot;open&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true},&quot;simulateError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;workspaceName&quot;:{&quot;editor&quot;:null},&quot;avatarUrl&quot;:{&quot;editor&quot;:null},&quot;description&quot;:{&quot;editor&quot;:null},&quot;accounts&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:4},&quot;accountList&quot;:{&quot;editor&quot;:null},&quot;onClose&quot;:{&quot;editor&quot;:null},&quot;successHref&quot;:{&quot;editor&quot;:null},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
 // PUBLISH_WORKSPACE dialog, create mode (apps/app: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx).
 // Not a blockchain transaction: the workspace is stored in the browser registry. Mount it inside the flow, drive `open` from its state:
 //   <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="…" accounts="{{n}}" on-close="{{closeDialog}}"
 //     success-href="Explore.dc.html" hint-size="100%,1px"></dc-import>
-// Props: open; workspaceName, avatarUrl, description (form values); accounts (a number, summary "N accounts");
+// Props: open; workspaceName, avatarUrl, description (form values); accounts (tweak: how many sample accounts when no accountList is passed);
 // onClose (close button, Escape, overlay); successHref (the "View workspace" link, default Explore.dc.html);
 // layout (tweak): four ways to lay out what is about to be created.
 //   summary  (the app's): avatar, name and the account count on one row, the description under it.
 //   centered: a large avatar over the name, count and description, all centred, as an identity card.
 //   details:  a definition list (Name, Description, Accounts by name), as a review of what was entered.
 //   accounts: a compact header, then one row per account being added (avatar, name, network and address, DAO / Safe).
-// accountList: [{ isDao, isSafe, name, avatar, meta, tag, tagVariant }] from the flow; three sample accounts when not given.
+// accountList: [{ isDao, isSafe, name, avatar, meta, tag, tagVariant }] from the flow. When not given, the `accounts` tweak (0 to 4) says how
+//   many sample accounts to show; every layout's count and names come from that one list.
 // simulateError (tweak): the save fails -> "Unable to create the workspace", primary "Try again"; switch off and retry to succeed.
 // States: idle (primary "Create workspace") -> pending (button loading ~1 s) -> success (AlertCard "Workspace created", primary link "View workspace").
 class Component extends DCLogic {
@@ -124,12 +125,15 @@ class Component extends DCLogic {
     const sample = [
       { isDao: true, isSafe: false, name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg', meta: 'Ethereum · 0xC8C3…BCde', tag: 'DAO', tagVariant: 'primary' },
       { isDao: true, isSafe: false, name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', meta: 'Ethereum · 0x3115…d368', tag: 'DAO', tagVariant: 'primary' },
-      { isDao: false, isSafe: true, name: 'Safe', avatar: '', meta: 'Ethereum · 0x515f…02e2', tag: 'Safe', tagVariant: 'neutral' }
+      { isDao: false, isSafe: true, name: 'Safe', avatar: '', meta: 'Ethereum · 0x515f…02e2', tag: 'Safe', tagVariant: 'neutral' },
+      { isDao: true, isSafe: false, name: 'Northstar Protocol', avatar: 'assets/mock/avatar/northstar.svg', meta: 'Ethereum · 0xA767…A063', tag: 'DAO', tagVariant: 'primary' }
     ];
-    const accountList = Array.isArray(p.accountList) ? p.accountList : sample;
-    const n = Array.isArray(p.accountList) ? accountList.length : Number(p.accounts ?? accountList.length);
+    // Without a list from the flow, the `accounts` tweak picks how many of the sample accounts are shown, so the count and the names agree.
+    const wanted = Math.max(0, Math.min(sample.length, Math.round(Number(p.accounts ?? 3)) || 0));
+    const accountList = Array.isArray(p.accountList) ? p.accountList : sample.slice(0, wanted);
+    const n = accountList.length;
     const layouts = ['summary', 'centered', 'details', 'accounts'];
-    const layout = layouts.includes(p.layout) ? p.layout : 'summary';
+    const layout = layouts.includes(p.layout) ? p.layout : 'accounts';
     const is = {}; layouts.forEach((l) => { is[l] = l === layout; });
     let primary;
     if (status === 'success') primary = { label: 'View workspace', href: p.successHref || 'Explore.dc.html' };
