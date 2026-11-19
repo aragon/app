@@ -20,15 +20,6 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <div class="app-page">
-  <nav class="sf-nav" aria-label="Main">
-    <div class="sf-nav__inner">
-      <a href="Explore.dc.html" aria-label="Aragon home" style="display: block; height: 40px;">
-        <dc-import name="AragonLogo" size="lg" responsive="{{yes}}" hint-size="162px,40px"></dc-import>
-      </a>
-      <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}" on-click="{{toggleWallet}}"></x-import>
-    </div>
-  </nav>
-
   <dc-import name="SafeFlowPage" txs="{{txs}}" nonce-text="{{nonceText}}" on-review="{{openReview}}" hint-size="100%,1900px"></dc-import>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
 
