@@ -1,0 +1,62 @@
+{
+    "$description": "Provisional code names for the Figma semantic colour tokens. This file is the single place to rename: keys are Figma names (property/group/role), values the name used in code (class = name with / replaced by -, CSS variable = --guk-<class>). Several Figma names may map to one code name only when their Light and Dark values are identical (the generator checks). Every Figma name not listed keeps its name. `additions` are code-only tokens that Figma does not define as semantic variables yet. An addition either has its own `light`/`dark` values or is an `alias` of another token (same value in every theme).",
+    "renames": {
+        "bg/accent/primary": "bg/accent/solid",
+        "bg/accent/primary-inverse": "bg/accent/subtle",
+        "bg/brand/primary": "bg/brand/solid",
+        "bg/brand/primary-inverse": "bg/brand/subtle",
+        "bg/success/primary": "bg/success/subtle",
+        "bg/success/tertiary": "bg/success/solid",
+        "bg/warning/primary": "bg/warning/subtle",
+        "bg/warning/tertiary": "bg/warning/solid",
+        "bg/critical/primary": "bg/critical/subtle",
+        "bg/critical/tertiary": "bg/critical/solid",
+        "bg/info/primary": "bg/info/subtle",
+        "bg/info/tertiary": "bg/info/solid",
+        "text/accent/default-inverse": "text/accent/inverse",
+        "text/accent/hover-inverse": "text/accent/inverse",
+        "text/accent/active-inverse": "text/accent/inverse",
+        "icon/accent/default-inverse": "icon/accent/inverse",
+        "icon/accent/hover-inverse": "icon/accent/inverse",
+        "icon/accent/active-inverse": "icon/accent/inverse",
+        "text/surface/primary-inverse": "text/surface/inverse"
+    },
+    "additions": {
+        "ring/accent/focus": {
+            "light": "{palette.aragon.400}",
+            "dark": "{palette.aragon.400}",
+            "note": "Figma Button Focus state binds its ring (4px drop shadow) to the primitive aragon/400, not to a semantic variable."
+        },
+        "ring/success/focus": {
+            "light": "{palette.green.400}",
+            "dark": "{palette.green.400}",
+            "note": "Figma Button Focus state binds its ring to the primitive green/400."
+        },
+        "ring/warning/focus": {
+            "light": "{palette.orange.400}",
+            "dark": "{palette.orange.400}",
+            "note": "Figma Button Focus state binds its ring to the primitive orange/400."
+        },
+        "ring/critical/focus": {
+            "light": "{palette.red.400}",
+            "dark": "{palette.red.400}",
+            "note": "Figma Button Focus state binds its ring to the primitive red/400."
+        },
+        "border/accent/fill": {
+            "alias": "bg/accent/default",
+            "note": "Code-only, pending design review: the Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+        },
+        "border/accent/fill-hover": {
+            "alias": "bg/accent/hover",
+            "note": "Code-only, pending design review: the Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+        },
+        "border/accent/fill-active": {
+            "alias": "bg/accent/active",
+            "note": "Code-only, pending design review: the Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+        },
+        "border/surface/fill-disabled": {
+            "alias": "bg/surface/disabled",
+            "note": "Code-only, pending design review: the Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+        }
+    }
+}

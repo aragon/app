@@ -50,6 +50,9 @@
         "test": "jest",
         "test:coverage": "jest --coverage",
         "test:watch": "jest --watch",
+        "tokens:semantic": "node scripts/generate-semantic-tokens.mjs",
+        "tokens:semantic:check": "node scripts/generate-semantic-tokens.mjs --check",
+        "tokens:semantic:report": "node scripts/generate-semantic-tokens.mjs --report",
         "type-check": "tsc --noemit"
     },
     "dependencies": {

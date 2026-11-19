@@ -1,0 +1,373 @@
+{
+    "$description": "Values of the default theme (`:root`, \"parity\"): it must reproduce today's colours so that converting a component does not change its pixels. `overrides` (keyed by code name, after renames) win and are verified against the code of converted components; every other token falls back to the same step of today's corresponding ramp (nearest existing step when the step does not exist today, same alpha for alpha steps), and the generated CSS marks those values as unverified. A value like `primary-800` means `var(--color-primary-800)`; anything else is literal CSS.",
+    "fallbackRamps": {
+        "gray": "neutral",
+        "aragon": "primary",
+        "green": "success",
+        "orange": "warning",
+        "red": "critical",
+        "blue": "info"
+    },
+    "rawFallback": {
+        "$description": "Fallback for tokens whose Figma value is a raw colour (the shadows): the colour today's shadow of the same family and size uses (src/theme/tokens/primitives/shadows.css).",
+        "shadow/surface/sm": "rgba(97, 110, 124, 0.05)",
+        "shadow/surface/default": "rgba(97, 110, 124, 0.1)",
+        "shadow/surface/2xl": "rgba(82, 96, 109, 0.24)",
+        "shadow/accent/sm": "rgba(0, 59, 245, 0.05)",
+        "shadow/accent/default": "rgba(0, 59, 245, 0.1)",
+        "shadow/accent/2xl": "rgba(0, 59, 245, 0.24)",
+        "shadow/success/sm": "rgba(116, 175, 7, 0.05)",
+        "shadow/success/default": "rgba(116, 175, 7, 0.1)",
+        "shadow/success/2xl": "rgba(116, 175, 7, 0.24)",
+        "shadow/warning/sm": "rgba(219, 125, 36, 0.05)",
+        "shadow/warning/default": "rgba(219, 125, 36, 0.1)",
+        "shadow/warning/2xl": "rgba(219, 125, 36, 0.24)",
+        "shadow/critical/sm": "rgba(214, 39, 54, 0.05)",
+        "shadow/critical/default": "rgba(214, 39, 54, 0.1)",
+        "shadow/critical/2xl": "rgba(214, 39, 54, 0.24)",
+        "shadow/info/sm": "rgba(21, 136, 185, 0.05)",
+        "shadow/info/default": "rgba(21, 136, 185, 0.1)",
+        "shadow/info/2xl": "rgba(21, 136, 185, 0.24)"
+    },
+    "overrides": {
+        "bg/body": {
+            "value": "neutral-50",
+            "evidence": ".storybook/preview.tsx canvas background (neutral-50)"
+        },
+
+        "bg/accent/default": {
+            "value": "primary-400",
+            "evidence": "Button primary: bg-primary-400"
+        },
+        "bg/accent/hover": {
+            "value": "primary-500",
+            "evidence": "Button primary: hover:bg-primary-500"
+        },
+        "bg/accent/active": {
+            "value": "primary-800",
+            "evidence": "Button primary: active:bg-primary-800"
+        },
+        "bg/accent/default-inverse": {
+            "value": "neutral-0",
+            "evidence": "Button secondary: bg-neutral-0"
+        },
+        "bg/accent/hover-inverse": {
+            "value": "primary-50",
+            "evidence": "Button secondary: hover:bg-primary-50"
+        },
+        "bg/accent/active-inverse": {
+            "value": "neutral-0",
+            "evidence": "Button secondary: active:bg-neutral-0"
+        },
+        "text/accent/inverse": {
+            "value": "neutral-0",
+            "evidence": "Button primary: text-neutral-0"
+        },
+        "icon/accent/inverse": {
+            "value": "neutral-0",
+            "evidence": "Button primary icon: text-neutral-0"
+        },
+        "border/accent/default": {
+            "value": "primary-100",
+            "evidence": "Button secondary: border-primary-100"
+        },
+        "border/accent/hover": {
+            "value": "primary-200",
+            "evidence": "Button secondary: hover:border-primary-200"
+        },
+        "border/accent/active": {
+            "value": "primary-400",
+            "evidence": "Button secondary: active:border-primary-400"
+        },
+        "text/accent/default": {
+            "value": "primary-400",
+            "evidence": "Button secondary, ghost: text-primary-400"
+        },
+        "text/accent/hover": {
+            "value": "primary-400",
+            "evidence": "Button secondary, ghost: no hover text colour (stays text-primary-400)"
+        },
+        "text/accent/active": {
+            "value": "primary-600",
+            "evidence": "Button ghost: active:text-primary-600",
+            "conflict": "Button secondary is bound to the same token in Figma but keeps text-primary-400 when active today; it changes to primary-600"
+        },
+        "icon/accent/default": {
+            "value": "primary-300",
+            "evidence": "Button secondary, ghost icon: text-primary-300"
+        },
+        "icon/accent/hover": {
+            "value": "primary-400",
+            "evidence": "Button secondary, ghost icon: group-hover:text-primary-400"
+        },
+        "icon/accent/active": {
+            "value": "primary-400",
+            "evidence": "Button secondary, ghost icon: group-active:text-primary-400"
+        },
+        "shadow/accent/sm": {
+            "value": "rgba(0, 59, 245, 0.05)",
+            "evidence": "Button primary, secondary: shadow-primary-sm"
+        },
+        "shadow/accent/default": {
+            "value": "rgba(0, 59, 245, 0.1)",
+            "evidence": "Button primary, secondary: hover:shadow-primary"
+        },
+        "ring/accent/focus": {
+            "value": "primary-200",
+            "evidence": "focus-ring-primary (focusRing.css: --ring-color-primary)"
+        },
+
+        "bg/surface/default": {
+            "value": "neutral-0",
+            "evidence": "Button tertiary: bg-neutral-0"
+        },
+        "bg/surface/hover": {
+            "value": "neutral-50",
+            "evidence": "Button tertiary: hover:bg-neutral-50",
+            "conflict": "Button ghost is bound to the same token in Figma but hovers to bg-neutral-0 today; it changes to neutral-50"
+        },
+        "bg/surface/active": {
+            "value": "neutral-0",
+            "evidence": "Button tertiary, ghost: active:bg-neutral-0"
+        },
+        "bg/surface/disabled": {
+            "value": "neutral-100",
+            "evidence": "Button (all): aria-disabled:bg-neutral-100"
+        },
+        "border/surface/default": {
+            "value": "neutral-100",
+            "evidence": "Button tertiary: border-neutral-100"
+        },
+        "border/surface/hover": {
+            "value": "neutral-200",
+            "evidence": "Button tertiary: hover:border-neutral-200"
+        },
+        "border/surface/active": {
+            "value": "neutral-400",
+            "evidence": "Button tertiary: active:border-neutral-400"
+        },
+        "text/surface/default": {
+            "value": "neutral-500",
+            "evidence": "Button tertiary: text-neutral-500"
+        },
+        "text/surface/hover": {
+            "value": "neutral-500",
+            "evidence": "Button tertiary: no hover text colour (stays text-neutral-500)"
+        },
+        "text/surface/active": {
+            "value": "neutral-800",
+            "evidence": "Button tertiary: active:text-neutral-800"
+        },
+        "text/surface/disabled": {
+            "value": "neutral-300",
+            "evidence": "Button (all): aria-disabled:text-neutral-300"
+        },
+        "icon/surface/default": {
+            "value": "neutral-300",
+            "evidence": "Button tertiary icon: text-neutral-300"
+        },
+        "icon/surface/hover": {
+            "value": "neutral-500",
+            "evidence": "Button tertiary icon: group-hover:text-neutral-500"
+        },
+        "icon/surface/active": {
+            "value": "neutral-500",
+            "evidence": "Button tertiary icon: group-active:text-neutral-500"
+        },
+        "icon/surface/disabled": {
+            "value": "neutral-300",
+            "evidence": "Button (all) icon: group-aria-disabled:text-neutral-300"
+        },
+        "shadow/surface/sm": {
+            "value": "rgba(97, 110, 124, 0.05)",
+            "evidence": "Button tertiary: shadow-neutral-sm"
+        },
+        "shadow/surface/default": {
+            "value": "rgba(97, 110, 124, 0.1)",
+            "evidence": "Button tertiary: hover:shadow-neutral"
+        },
+
+        "bg/success/default": {
+            "value": "success-100",
+            "evidence": "Button success: bg-success-100"
+        },
+        "bg/success/hover": {
+            "value": "success-100",
+            "evidence": "Button success: no hover background (stays bg-success-100)"
+        },
+        "bg/success/active": {
+            "value": "neutral-0",
+            "evidence": "Button success: active:bg-neutral-0"
+        },
+        "border/success/default": {
+            "value": "success-300",
+            "evidence": "Button success: border-success-300"
+        },
+        "border/success/hover": {
+            "value": "success-500",
+            "evidence": "Button success: hover:border-success-500"
+        },
+        "border/success/active": {
+            "value": "success-600",
+            "evidence": "Button success: active:border-success-600"
+        },
+        "text/success/default": {
+            "value": "success-800",
+            "evidence": "Button success: text-success-800"
+        },
+        "text/success/hover": {
+            "value": "success-800",
+            "evidence": "Button success: no hover text colour"
+        },
+        "text/success/active": {
+            "value": "success-800",
+            "evidence": "Button success: no active text colour"
+        },
+        "icon/success/default": {
+            "value": "success-500",
+            "evidence": "Button success icon: text-success-500"
+        },
+        "icon/success/hover": {
+            "value": "success-600",
+            "evidence": "Button success icon: group-hover:text-success-600"
+        },
+        "icon/success/active": {
+            "value": "success-600",
+            "evidence": "Button success icon: group-active:text-success-600"
+        },
+        "shadow/success/sm": {
+            "value": "rgba(116, 175, 7, 0.05)",
+            "evidence": "Button success: shadow-success-sm"
+        },
+        "shadow/success/default": {
+            "value": "rgba(116, 175, 7, 0.1)",
+            "evidence": "Button success: hover:shadow-success"
+        },
+        "ring/success/focus": {
+            "value": "success-200",
+            "evidence": "focus-ring-success (focusRing.css: --ring-color-success)"
+        },
+
+        "bg/warning/default": {
+            "value": "warning-100",
+            "evidence": "Button warning: bg-warning-100"
+        },
+        "bg/warning/hover": {
+            "value": "warning-100",
+            "evidence": "Button warning: no hover background (stays bg-warning-100)"
+        },
+        "bg/warning/active": {
+            "value": "neutral-0",
+            "evidence": "Button warning: active:bg-neutral-0"
+        },
+        "border/warning/default": {
+            "value": "warning-300",
+            "evidence": "Button warning: border-warning-300"
+        },
+        "border/warning/hover": {
+            "value": "warning-500",
+            "evidence": "Button warning: hover:border-warning-500"
+        },
+        "border/warning/active": {
+            "value": "warning-600",
+            "evidence": "Button warning: active:border-warning-600"
+        },
+        "text/warning/default": {
+            "value": "warning-800",
+            "evidence": "Button warning: text-warning-800"
+        },
+        "text/warning/hover": {
+            "value": "warning-800",
+            "evidence": "Button warning: no hover text colour"
+        },
+        "text/warning/active": {
+            "value": "warning-800",
+            "evidence": "Button warning: no active text colour"
+        },
+        "icon/warning/default": {
+            "value": "warning-500",
+            "evidence": "Button warning icon: text-warning-500"
+        },
+        "icon/warning/hover": {
+            "value": "warning-600",
+            "evidence": "Button warning icon: group-hover:text-warning-600"
+        },
+        "icon/warning/active": {
+            "value": "warning-600",
+            "evidence": "Button warning icon: group-active:text-warning-600"
+        },
+        "shadow/warning/sm": {
+            "value": "rgba(219, 125, 36, 0.05)",
+            "evidence": "Button warning: shadow-warning-sm"
+        },
+        "shadow/warning/default": {
+            "value": "rgba(219, 125, 36, 0.1)",
+            "evidence": "Button warning: hover:shadow-warning"
+        },
+        "ring/warning/focus": {
+            "value": "warning-200",
+            "evidence": "focus-ring-warning (focusRing.css: --ring-color-warning)"
+        },
+
+        "bg/critical/default": {
+            "value": "critical-100",
+            "evidence": "Button critical: bg-critical-100"
+        },
+        "bg/critical/hover": {
+            "value": "critical-100",
+            "evidence": "Button critical: no hover background (stays bg-critical-100)"
+        },
+        "bg/critical/active": {
+            "value": "neutral-0",
+            "evidence": "Button critical: active:bg-neutral-0"
+        },
+        "border/critical/default": {
+            "value": "critical-300",
+            "evidence": "Button critical: border-critical-300"
+        },
+        "border/critical/hover": {
+            "value": "critical-500",
+            "evidence": "Button critical: hover:border-critical-500"
+        },
+        "border/critical/active": {
+            "value": "critical-600",
+            "evidence": "Button critical: active:border-critical-600"
+        },
+        "text/critical/default": {
+            "value": "critical-800",
+            "evidence": "Button critical: text-critical-800"
+        },
+        "text/critical/hover": {
+            "value": "critical-800",
+            "evidence": "Button critical: no hover text colour"
+        },
+        "text/critical/active": {
+            "value": "critical-800",
+            "evidence": "Button critical: no active text colour"
+        },
+        "icon/critical/default": {
+            "value": "critical-500",
+            "evidence": "Button critical icon: text-critical-500"
+        },
+        "icon/critical/hover": {
+            "value": "critical-600",
+            "evidence": "Button critical icon: group-hover:text-critical-600"
+        },
+        "icon/critical/active": {
+            "value": "critical-600",
+            "evidence": "Button critical icon: group-active:text-critical-600"
+        },
+        "shadow/critical/sm": {
+            "value": "rgba(214, 39, 54, 0.05)",
+            "evidence": "Button critical: shadow-critical-sm"
+        },
+        "shadow/critical/default": {
+            "value": "rgba(214, 39, 54, 0.1)",
+            "evidence": "Button critical: hover:shadow-critical"
+        },
+        "ring/critical/focus": {
+            "value": "critical-200",
+            "evidence": "focus-ring-critical (focusRing.css: --ring-color-critical)"
+        }
+    }
+}
