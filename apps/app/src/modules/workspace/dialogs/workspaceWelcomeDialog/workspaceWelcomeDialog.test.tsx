@@ -3,26 +3,24 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
-import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 import {
     type IWorkspaceWelcomeDialogProps,
     WorkspaceWelcomeDialog,
 } from './workspaceWelcomeDialog';
 
 describe('<WorkspaceWelcomeDialog /> component', () => {
-    afterEach(() => localStorage.clear());
+    const closeSpy = jest.fn();
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const closeMock = jest.fn();
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(
-            generateDialogContext({ close: closeMock }),
+            generateDialogContext({ close: closeSpy }),
         );
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
-        closeMock.mockReset();
+        closeSpy.mockClear();
     });
 
     const createTestComponent = (
@@ -42,37 +40,46 @@ describe('<WorkspaceWelcomeDialog /> component', () => {
         );
     };
 
-    it('greets the user with the copy of the welcome dialog', () => {
+    it('renders the title, both items and the note', () => {
         render(createTestComponent());
 
         expect(
-            screen.getByText(/workspaceWelcomeDialog\.title$/),
+            screen.getByText('app.workspace.workspaceWelcomeDialog.title'),
         ).toBeInTheDocument();
         expect(
             screen.getByText(
-                /workspaceWelcomeDialog\.feature\.waiting\.title$/,
+                'app.workspace.workspaceWelcomeDialog.items.pending.title',
             ),
         ).toBeInTheDocument();
         expect(
-            screen.getByText(/workspaceWelcomeDialog\.feature\.track\.title$/),
+            screen.getByText(
+                'app.workspace.workspaceWelcomeDialog.items.pending.description',
+            ),
         ).toBeInTheDocument();
         expect(
-            screen.getByText(/workspaceWelcomeDialog\.note$/),
+            screen.getByText(
+                'app.workspace.workspaceWelcomeDialog.items.tracking.title',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceWelcomeDialog.items.tracking.description',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText('app.workspace.workspaceWelcomeDialog.note'),
         ).toBeInTheDocument();
     });
 
-    it('closes the dialog and records the first run when the user opens the workspace', async () => {
-        workspaceWelcomeUtils.markPendingWelcome();
-
+    it('closes the dialog on "Open workspace"', async () => {
         render(createTestComponent());
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: /workspaceWelcomeDialog\.action\.openWorkspace/,
+                name: 'app.workspace.workspaceWelcomeDialog.action',
             }),
         );
 
-        expect(closeMock).toHaveBeenCalledWith('WORKSPACE_WELCOME');
-        expect(workspaceWelcomeUtils.isWelcomePending()).toBe(false);
+        expect(closeSpy).toHaveBeenCalledWith('WORKSPACE_WELCOME');
     });
 });

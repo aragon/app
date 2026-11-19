@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import {
@@ -49,6 +49,8 @@ describe('useWorkspaceAccountSuggestions hook', () => {
             suggestions: [],
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: expect.any(Function),
         });
         expect(getAccountSuggestionsSpy).not.toHaveBeenCalled();
     });
@@ -63,6 +65,7 @@ describe('useWorkspaceAccountSuggestions hook', () => {
                     totalPages: 2,
                     totalRecords: 2,
                 },
+                isIncomplete: false,
             })
             .mockResolvedValueOnce({
                 data: [second],
@@ -72,6 +75,7 @@ describe('useWorkspaceAccountSuggestions hook', () => {
                     totalPages: 2,
                     totalRecords: 2,
                 },
+                isIncomplete: false,
             });
         const { result } = renderSuggestions(wallet);
 
@@ -87,6 +91,84 @@ describe('useWorkspaceAccountSuggestions hook', () => {
         );
     });
 
+    it('reports a list that is missing accounts', async () => {
+        getAccountSuggestionsSpy.mockResolvedValue({
+            data: [first],
+            metadata: { page: 1, pageSize: 1, totalPages: 1, totalRecords: 1 },
+            isIncomplete: true,
+        });
+        const { result } = renderSuggestions(wallet);
+
+        await waitFor(() => expect(result.current.isPending).toBe(false));
+
+        expect(result.current.isIncomplete).toBe(true);
+    });
+
+    it('reads the list again on refetch, pending until it is read', async () => {
+        getAccountSuggestionsSpy.mockResolvedValueOnce({
+            data: [first],
+            metadata: { page: 1, pageSize: 1, totalPages: 1, totalRecords: 1 },
+            isIncomplete: true,
+        });
+        let resolveRefetch: () => void = () => undefined;
+        getAccountSuggestionsSpy.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveRefetch = () =>
+                    resolve({
+                        data: [first, second],
+                        metadata: {
+                            page: 1,
+                            pageSize: 2,
+                            totalPages: 1,
+                            totalRecords: 2,
+                        },
+                        isIncomplete: false,
+                    });
+            }),
+        );
+        const { result } = renderSuggestions(wallet);
+        await waitFor(() => expect(result.current.isIncomplete).toBe(true));
+
+        act(() => result.current.refetch());
+
+        await waitFor(() => expect(result.current.isPending).toBe(true));
+        resolveRefetch();
+        await waitFor(() => expect(result.current.isPending).toBe(false));
+        expect(result.current.suggestions).toEqual([first, second]);
+        expect(result.current.isIncomplete).toBe(false);
+    });
+
+    it('stays settled while a background refetch reads the list again', async () => {
+        const page = {
+            data: [first],
+            metadata: { page: 1, pageSize: 1, totalPages: 1, totalRecords: 1 },
+            isIncomplete: false,
+        };
+        getAccountSuggestionsSpy
+            .mockResolvedValueOnce(page)
+            .mockReturnValueOnce(new Promise(() => undefined));
+        const client = new QueryClient();
+        const { result } = renderHook(
+            () => useWorkspaceAccountSuggestions(wallet),
+            {
+                wrapper: ({ children }) => (
+                    <ReactQueryWrapper client={client}>
+                        {children}
+                    </ReactQueryWrapper>
+                ),
+            },
+        );
+        await waitFor(() => expect(result.current.isPending).toBe(false));
+
+        act(() => void client.invalidateQueries());
+
+        await waitFor(() =>
+            expect(getAccountSuggestionsSpy).toHaveBeenCalledTimes(2),
+        );
+        expect(result.current.isPending).toBe(false);
+        expect(result.current.suggestions).toEqual([first]);
+    });
+
     it('stops at a page that fails and reports the error', async () => {
         getAccountSuggestionsSpy
             .mockResolvedValueOnce({
@@ -97,6 +179,7 @@ describe('useWorkspaceAccountSuggestions hook', () => {
                     totalPages: 2,
                     totalRecords: 2,
                 },
+                isIncomplete: false,
             })
             .mockRejectedValue(new Error('error'));
         const client = new QueryClient({

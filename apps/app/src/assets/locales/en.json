@@ -774,7 +774,6 @@
           "title": "Your team’s onchain finances, in one place"
         },
         "legal": "Legal",
-        "openingWorkspace": "Opening your workspace…",
         "privacy": "Privacy",
         "signIn": {
           "comingSoon": "coming soon",
@@ -4771,9 +4770,6 @@
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
-      "layoutWizardEditWorkspace": {
-        "name": "Edit workspace"
-      },
       "publishWorkspaceDialog": {
         "button": {
           "retry": "Try again",
@@ -4788,16 +4784,7 @@
           "success": "Workspace created",
           "title": "Create workspace"
         },
-        "summary": "{{accounts}} accounts · {{targets}} targets",
-        "update": {
-          "error": {
-            "description": "The changes could not be saved. Check your connection and try again.",
-            "title": "Unable to save the workspace"
-          },
-          "submit": "Save changes",
-          "success": "Workspace updated",
-          "title": "Save workspace"
-        }
+        "summary": "{{accounts}} accounts · {{targets}} targets"
       },
       "workspaceAccountAvatar": {
         "safe": "Safe"
@@ -4905,7 +4892,27 @@
         "error": {
           "description": "Something went wrong while opening your workspace. Please try again later.",
           "title": "Workspace failed to open"
-        }
+        },
+        "opening": "Opening your workspace…"
+      },
+      "workspaceGettingStarted": {
+        "name": "Getting started",
+        "title": "Add accounts",
+        "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
+        "action": {
+          "createAccount": "Create a new account",
+          "later": "Add accounts later",
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts"
+        },
+        "emptyState": {
+          "heading": "No Safes or Aragon DAOs found",
+          "description": "This wallet didn’t create and isn’t a signer or member of an account on the networks we checked.",
+          "addByAddress": "Add account by address"
+        },
+        "error": "Unable to create your workspace. Try again.",
+        "scanning": "Scanning {{count}} networks, {{found}} found so far"
       },
       "workspaceMemberList": {
         "emptyState": {
@@ -5042,26 +5049,6 @@
         "import": "Import workspace",
         "importError": "This file is not a valid workspace export."
       },
-      "workspaceEditPage": {
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.",
-            "name": "Edit accounts",
-            "title": "Edit accounts"
-          },
-          "METADATA": {
-            "description": "Update how your workspace is described to visitors.",
-            "name": "Edit details",
-            "title": "Edit details"
-          },
-          "TARGETS": {
-            "description": "Add or remove the addresses this workspace relates to. This step is optional and can be left empty.",
-            "name": "Edit targets",
-            "title": "Edit targets"
-          }
-        },
-        "submitLabel": "Save changes"
-      },
       "workspaceSafeDashboardPage": {
         "main": {
           "assets": {
@@ -5171,36 +5158,6 @@
         "error": "The demo workspace could not be installed. Reload the page to try again.",
         "settingUp": "Setting up your Aragon demo workspace…"
       },
-      "gettingStartedPage": {
-        "name": "Getting started",
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
-            "name": "Add accounts",
-            "title": "Add accounts"
-          }
-        },
-        "submitLabel": "Add accounts",
-        "addAccountsLater": "Add accounts later"
-      },
-      "workspaceWelcomeDialog": {
-        "action": {
-          "openWorkspace": "Open workspace"
-        },
-        "description": "Your accounts are now available from one place.",
-        "feature": {
-          "track": {
-            "description": "Check your transactions to see what’s still waiting on others.",
-            "title": "Keep track after you sign"
-          },
-          "waiting": {
-            "description": "Find transactions waiting for your signature or ready for you to execute.",
-            "title": "See what’s waiting for you"
-          }
-        },
-        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
-        "title": "Your workspace is ready"
-      },
       "workspaceAdminPage": {
         "title": "Workspace admin",
         "details": {
@@ -5247,6 +5204,9 @@
       },
       "workspaceAccountSelect": {
         "entity": "Accounts",
+        "incomplete": "Some of your accounts could not be loaded.",
+        "error": "Couldn’t load your accounts.",
+        "retry": "Retry",
         "searchPlaceholder": "Search accounts...",
         "addAddress": "Add address",
         "emptyState": {
@@ -5272,12 +5232,7 @@
             "heading": "Couldn’t look up this address",
             "description": "Something went wrong while checking the networks. Try again in a moment."
           }
-        },
-        "errorState": {
-          "heading": "Couldn’t load your accounts",
-          "description": "Something went wrong while looking up your accounts. You can still add one by address."
-        },
-        "scanning": "Scanning {{count}} networks, {{found}} found so far"
+        }
       },
       "workspaceAddAccountsDialog": {
         "title": "Add accounts",
@@ -5289,6 +5244,22 @@
           "createAccount": "Create a new account"
         },
         "error": "Unable to add the accounts. Try again."
+      },
+      "workspaceWelcomeDialog": {
+        "title": "Your workspace is ready",
+        "description": "Your accounts are now available from one place.",
+        "items": {
+          "pending": {
+            "title": "See what’s waiting for you",
+            "description": "Find transactions waiting for your signature or ready for you to execute."
+          },
+          "tracking": {
+            "title": "Keep track after you sign",
+            "description": "Check your transactions to see what’s still waiting on others."
+          }
+        },
+        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
+        "action": "Open workspace"
       }
     }
   }

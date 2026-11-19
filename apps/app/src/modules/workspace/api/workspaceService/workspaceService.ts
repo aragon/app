@@ -17,7 +17,6 @@ import type {
     IGetWorkspaceParams,
     IRemoveWorkspaceAccountParams,
     IUpdateWorkspaceDetailsParams,
-    IUpdateWorkspaceParams,
     IWorkspaceExport,
 } from './workspaceService.api';
 
@@ -29,7 +28,7 @@ export const workspaceStorageKey = 'aragon-workspaces';
 const sessionWorkspaceStorageKey = 'aragon-session-workspaces';
 
 /**
- * Name of the workspace seeded on an empty registry. Stored data the user can rename, so not translated.
+ * Name of the default workspace. Stored data the user can rename, so not translated.
  */
 export const defaultWorkspaceName = 'My workspace';
 
@@ -257,21 +256,16 @@ class WorkspaceService {
         Object.values(this.getStoredWorkspaces());
 
     /**
-     * Returns the first workspace, seeding and persisting the default one when the active registry is empty.
+     * Persists the default workspace with the given accounts next to the stored ones.
      *
      * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
      */
-    getOrCreateDefaultWorkspace = async (): Promise<IWorkspace> => {
-        const workspaces = this.getStoredWorkspaces();
-        const firstWorkspace = Object.values(workspaces)[0];
-
-        if (firstWorkspace != null) {
-            return firstWorkspace;
-        }
-
-        const defaultWorkspace = this.buildDefaultWorkspace();
+    createDefaultWorkspace = async (
+        accounts: IWorkspaceAccount[],
+    ): Promise<IWorkspace> => {
+        const defaultWorkspace = this.buildDefaultWorkspace(accounts);
         this.persistWorkspaces({
-            ...workspaces,
+            ...this.getStoredWorkspaces(),
             [defaultWorkspace.id]: defaultWorkspace,
         });
 
@@ -288,25 +282,6 @@ class WorkspaceService {
             body.name,
             Object.keys(workspaces),
         );
-        const workspace: IWorkspace = { ...body, id };
-
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
-
-        return workspace;
-    };
-
-    updateWorkspace = async (
-        params: IUpdateWorkspaceParams,
-    ): Promise<IWorkspace> => {
-        const { urlParams, body } = params;
-        const { id } = urlParams;
-
-        const workspaces = this.getStoredWorkspaces();
-
-        if (workspaces[id] == null) {
-            throw this.buildNotFoundError(id);
-        }
-
         const workspace: IWorkspace = { ...body, id };
 
         this.persistWorkspaces({ ...workspaces, [id]: workspace });
@@ -496,6 +471,22 @@ class WorkspaceService {
 
         return Object.values(workspaces);
     };
+
+    /**
+     * Removes the persistent registry (`aragon-workspaces`); the demo session registry is left alone.
+     *
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the removal.
+     */
+    deleteWorkspaceRegistry = async (): Promise<void> => {
+        this.requireWindow();
+
+        try {
+            localStorage.removeItem(workspaceStorageKey);
+        } catch (error: unknown) {
+            throw this.buildStorageError(error);
+        }
+    };
+
     activateSessionWorkspaceRegistry = async (
         rawRegistry: string,
     ): Promise<void> => {
@@ -530,16 +521,18 @@ class WorkspaceService {
     };
 
     /**
-     * Builds the workspace seeded on an empty registry. Its ID gets a random suffix so default workspaces of
+     * Builds the default workspace with the given accounts. Its ID gets a random suffix so default workspaces of
      * different users never share one.
      */
-    private buildDefaultWorkspace = (): IWorkspace => ({
+    private buildDefaultWorkspace = (
+        accounts: IWorkspaceAccount[],
+    ): IWorkspace => ({
         id: `${workspaceUtils.slugify(defaultWorkspaceName)}-${crypto.randomUUID().slice(0, 8)}`,
         name: defaultWorkspaceName,
         description: '',
         avatar: null,
         links: [],
-        accounts: [],
+        accounts,
         targets: [],
     });
 

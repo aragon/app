@@ -13,14 +13,12 @@ import {
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import {
     type IWorkspaceNetworkAddress,
     type IWorkspaceSectionScope,
     type WorkspaceAccountSection,
     workspaceAccountSections,
     workspaceAllAccountsSegment,
-    workspaceEditStepParam,
     workspaceUtils,
 } from './workspaceUtils';
 
@@ -128,50 +126,6 @@ describe('workspace utils', () => {
         });
     });
 
-    describe('getWorkspaceEditUrl', () => {
-        it('builds the url of the edit wizard', () => {
-            expect(workspaceUtils.getWorkspaceEditUrl('demo')).toEqual(
-                '/workspace/demo/edit',
-            );
-        });
-
-        it('opens the wizard on the given step', () => {
-            expect(
-                workspaceUtils.getWorkspaceEditUrl(
-                    'demo',
-                    WorkspaceWizardStep.ACCOUNTS,
-                ),
-            ).toEqual('/workspace/demo/edit?step=ACCOUNTS');
-        });
-    });
-
-    describe('parseWorkspaceEditStep', () => {
-        it('reads back the step written by getWorkspaceEditUrl', () => {
-            const url = workspaceUtils.getWorkspaceEditUrl(
-                'demo',
-                WorkspaceWizardStep.TARGETS,
-            );
-            const stepParam = new URL(
-                url,
-                'https://app.aragon.org',
-            ).searchParams.get(workspaceEditStepParam);
-
-            expect(
-                workspaceUtils.parseWorkspaceEditStep(stepParam ?? undefined),
-            ).toEqual(WorkspaceWizardStep.TARGETS);
-        });
-
-        it('reads no step when the parameter is missing, repeated or unknown', () => {
-            expect(workspaceUtils.parseWorkspaceEditStep()).toBeUndefined();
-            expect(
-                workspaceUtils.parseWorkspaceEditStep(['ACCOUNTS', 'TARGETS']),
-            ).toBeUndefined();
-            expect(
-                workspaceUtils.parseWorkspaceEditStep('accounts'),
-            ).toBeUndefined();
-        });
-    });
-
     describe('getAccountScopeUrl', () => {
         it('scopes the workspace to an account', () => {
             expect(
@@ -216,8 +170,8 @@ describe('workspace utils', () => {
                     '/workspace/mine/ethereum-sepolia-0x123/members/0xabc',
             },
             {
-                pathname: '/workspace/demo/edit',
-                expected: '/workspace/mine/edit',
+                pathname: '/workspace/demo/admin',
+                expected: '/workspace/mine/admin',
             },
             { pathname: '/workspace/demo', expected: '/workspace/mine' },
             {

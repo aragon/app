@@ -1,9 +1,11 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import {
     type IWorkspaceAccountSuggestion,
     useWorkspaceAccountSuggestionList,
+    workspaceQueryServiceKeys,
 } from '../../api/workspaceQueryService';
 
 export interface IUseWorkspaceAccountSuggestionsResult {
@@ -12,13 +14,21 @@ export interface IUseWorkspaceAccountSuggestionsResult {
      */
     suggestions: IWorkspaceAccountSuggestion[];
     /**
-     * Whether the list is still incomplete, i.e. a page is still being read.
+     * Whether a page is still being read.
      */
     isPending: boolean;
     /**
      * Whether a page could not be read; the pages after it are not read either.
      */
     isError: boolean;
+    /**
+     * Whether a source could not be read, so accounts may be missing.
+     */
+    isIncomplete: boolean;
+    /**
+     * Reads the list again, pending as on the first load.
+     */
+    refetch: () => void;
 }
 
 const suggestionPageSize = 50;
@@ -31,6 +41,11 @@ export const useWorkspaceAccountSuggestions = (
     walletAddress?: string,
 ): IUseWorkspaceAccountSuggestionsResult => {
     const isEnabled = walletAddress != null;
+    const queryClient = useQueryClient();
+    const params = {
+        urlParams: { address: walletAddress ?? '' },
+        queryParams: { pageSize: suggestionPageSize },
+    };
 
     const {
         data,
@@ -39,13 +54,7 @@ export const useWorkspaceAccountSuggestions = (
         hasNextPage,
         isFetchingNextPage,
         fetchNextPage,
-    } = useWorkspaceAccountSuggestionList(
-        {
-            urlParams: { address: walletAddress ?? '' },
-            queryParams: { pageSize: suggestionPageSize },
-        },
-        { enabled: isEnabled },
-    );
+    } = useWorkspaceAccountSuggestionList(params, { enabled: isEnabled });
 
     // Stops at a failed page, which would otherwise be fetched again in a loop.
     useEffect(() => {
@@ -55,12 +64,23 @@ export const useWorkspaceAccountSuggestions = (
     }, [hasNextPage, isFetchingNextPage, isError, fetchNextPage]);
 
     if (!isEnabled) {
-        return { suggestions: [], isPending: false, isError: false };
+        return {
+            suggestions: [],
+            isPending: false,
+            isError: false,
+            isIncomplete: false,
+            refetch: () => undefined,
+        };
     }
 
     return {
         suggestions: data?.pages.flatMap((page) => page.data) ?? [],
         isPending: !isError && (isLoading || hasNextPage),
         isError,
+        isIncomplete: data?.pages.some((page) => page.isIncomplete) ?? false,
+        refetch: () =>
+            void queryClient.resetQueries({
+                queryKey: workspaceQueryServiceKeys.accountSuggestions(params),
+            }),
     };
 };

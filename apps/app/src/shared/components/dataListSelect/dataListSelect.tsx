@@ -51,6 +51,8 @@ export interface IDataListSelectAddressViewParams {
     onBack: () => void;
 }
 
+export type DataListSelectMode = 'list' | 'address';
+
 export interface IDataListSelectProps<TItem>
     extends Pick<
             IDataListRootProps,
@@ -87,6 +89,15 @@ export interface IDataListSelectProps<TItem>
      */
     isAddressSearch?: (value: string) => boolean;
     /**
+     * View shown on mount.
+     * @default list
+     */
+    initialMode?: DataListSelectMode;
+    /**
+     * Called on a switch between the list and the address view.
+     */
+    onModeChange?: (mode: DataListSelectMode) => void;
+    /**
      * Displays the search input.
      */
     hasSearch?: boolean;
@@ -99,8 +110,6 @@ export interface IDataListSelectProps<TItem>
      */
     children?: ReactNode;
 }
-
-type DataListSelectMode = 'list' | 'address';
 
 /**
  * Searchable list of items with an address view for what the list does not hold: an address searched without a
@@ -115,6 +124,8 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
         renderAddressView,
         labels,
         isAddressSearch = addressUtils.isAddress,
+        initialMode = 'list',
+        onModeChange,
         hasSearch,
         hidePagination,
         children,
@@ -127,7 +138,7 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
     } = props;
 
     const [searchValue, setSearchValue] = useState<string>();
-    const [mode, setMode] = useState<DataListSelectMode>('list');
+    const [mode, setMode] = useState(initialMode);
     const [pendingAddress, setPendingAddress] = useState<string>();
 
     const rows = items.map((item) => ({
@@ -155,12 +166,17 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
         setPendingAddress(searchValue);
         setSearchValue(undefined);
         setMode('address');
-    }, [mode, searchValue, isAddressSearch, filteredRows.length]);
+        onModeChange?.('address');
+    }, [mode, searchValue, isAddressSearch, filteredRows.length, onModeChange]);
 
-    const handleOpenAddress = () => setMode('address');
+    const handleOpenAddress = () => {
+        setMode('address');
+        onModeChange?.('address');
+    };
     const handleBack = () => {
         setPendingAddress(undefined);
         setMode('list');
+        onModeChange?.('list');
     };
 
     if (mode === 'address') {
