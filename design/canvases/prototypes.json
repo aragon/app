@@ -1,11 +1,11 @@
 {
     "canvas": "https://claude.ai/artifact/NnpGqxhynigQPwVyKgsc5p",
     "branch": "docs/design-prototypes",
-    "canvasVersion": "1795096499-b690",
+    "canvasVersion": "1795099085-cbc8",
     "appCommit": "041dc089dc666832f310ffb6a39922e4404871d5",
     "kit": {
         "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
-        "version": "1794906150-8cdd",
+        "version": "1794992991-48d3",
         "folder": "aragon-gov-ui-kit",
         "files": [
             "components/bundle.css",

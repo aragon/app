@@ -118,8 +118,10 @@ writes the files to `<folder>/project/` with each image path swapped for that im
 recorded in `canvases/prototypes.json` (a second canvas has a record of its own: pass its name as a second argument). The session then publishes that folder to the canvas with its Artifact tool.
 If an image has no upload yet, the script lists it; after uploading, `publish/record-assets.cjs` records the urls.
 
-The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are installed on the canvas from the
-[design system artifact](https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC) and are not in the repo.
+The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are not in the repo. Each canvas copies
+them from the [design system artifact](https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC), which the design sync
+builds from `packages/gov-ui-kit`. Anyone starting a canvas needs access to that artifact. `RUNBOOK.md`, "The UI kit
+on a canvas", says what to do when a canvas's copy falls behind.
 
 ## What is not here
 

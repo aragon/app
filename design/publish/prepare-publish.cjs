@@ -124,7 +124,7 @@ for (const [canvasPath, source] of Object.entries(files)) {
 
 // The `files` map for the Artifact tool's publish call (with `file_path` = project/canvas.json and `root` = <folder>),
 // so nobody has to list a hundred files by hand. kit-files.json is the extra entries a NEW canvas needs: the
-// Governance UI Kit, copied server-side from the reference canvas.
+// Governance UI Kit, copied server-side from the kit's own design system artifact (canvases/prototypes.json → kit).
 const reference = JSON.parse(fs.readFileSync(pointerFile(), 'utf8'));
 const ownFiles = Object.fromEntries(
     Object.keys(files)
@@ -142,7 +142,7 @@ const kitFolder = `project/ds/${reference.kit.folder}`;
 const kitFiles = Object.fromEntries(
     (reference.kit.files ?? []).map((file) => [
         `${kitFolder}/${file}`,
-        { artifact: reference.canvas, path: `${kitFolder}/${file}` },
+        { artifact: reference.kit.artifact, path: `project/${file}` },
     ]),
 );
 fs.writeFileSync(

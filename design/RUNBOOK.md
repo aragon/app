@@ -37,7 +37,9 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
 5. Publish everything in **one** call (a publish always needs a `file_path`, so the kit cannot be copied in a call
    of its own): `url` = the new canvas, `file_path` = `<folder>/project/canvas.json`, `root` = `<folder>`, and a
    `files` = the contents of `<folder>/files.json` merged with `<folder>/kit-files.json` (both written by
-   `prepare-publish.cjs`: the canvas's own files, and the kit copied server-side from the reference canvas).
+   `prepare-publish.cjs`: the canvas's own files, and the Governance UI Kit copied server-side from the kit's own
+   design system artifact, named in `canvases/prototypes.json` → `kit`). The person needs access to that artifact;
+   they do not need access to the reference canvas.
 
    The canvas keeps the title you created it with in its header, but `canvas.json` carries the reference's title
    ("Aragon App prototypes"). Leave it: changing it would show up as a difference on every pull. The prototypes
@@ -74,6 +76,24 @@ Run when the designer says so ("sync", "pull it back"), and before every publish
 6. Tell the person, in plain words and frame by frame, what changed on the canvas, as a designer would describe it,
    and ask whether that is what they did. They should never have to list their changes for you. Point out anything
    in the diff that does not look like a deliberate design change (reformatting, image addresses, layout churn).
+
+## The UI kit on a canvas
+
+The prototypes draw with the built Governance UI Kit, which is not in the repo. It lives in the kit's design system
+artifact on claude.ai, which the design sync produces from `packages/gov-ui-kit`. A canvas gets a copy of it when it
+is created and keeps that copy: it does not follow later kit changes.
+
+If a kit component on a canvas looks or behaves differently from the app (a missing prop, an old style), the copy
+is the first suspect:
+
+1. Is the kit artifact itself behind the code? If `packages/gov-ui-kit` changed since the artifact's last sync, run
+   the design sync for the kit first.
+2. Then give the canvas the current kit: publish to it with the entries of `<folder>/kit-files.json`.
+3. Check the prototypes still load, set `kit.version` in the canvas's record (and in `canvas.json` →
+   `designSystems`) to the artifact's version, commit.
+
+The reference canvas was last given the kit on 20 November 2026 (artifact version `1794992991-48d3`); all 13
+prototypes loaded without errors against it at 1440 and 390 px.
 
 ## Tweaks
 
