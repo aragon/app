@@ -28,12 +28,14 @@ if (process.env.NEXT_PUBLIC_ENV !== 'local') {
 
 Sentry.init({
     ...monitoringUtils.getBaseConfig(),
+    tracesSampler: monitoringUtils.browserTracesSampler,
 
     integrations: [
         replayIntegration({
             // Self-host the replay web worker to comply to the strict CSP policies and avoid allowing worker-src: blob
             // (see https://docs.sentry.io/platforms/javascript/session-replay/configuration/#using-a-custom-compression-worker)
             workerUrl: '/web-workers/sentry-replay.min.js',
+            beforeErrorSampling: monitoringUtils.shouldSampleReplay,
         }),
         thirdPartyErrorFilterIntegration({
             filterKeys: ['aragon-app'],
@@ -52,7 +54,7 @@ Sentry.init({
     ],
 
     replaysSessionSampleRate: 0,
-    replaysOnErrorSampleRate: 0.05,
+    replaysOnErrorSampleRate: 1,
 });
 
 // eslint-disable-next-line import/namespace

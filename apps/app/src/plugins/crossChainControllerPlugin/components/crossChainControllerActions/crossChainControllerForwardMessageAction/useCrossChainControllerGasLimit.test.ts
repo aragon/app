@@ -334,6 +334,28 @@ describe('useCrossChainControllerGasLimit hook', () => {
         expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
     });
 
+    it('sends a bigint value as a string and ignores non-payload action fields', async () => {
+        const formAction = {
+            ...nestedAction,
+            value: BigInt(1),
+            inputData: { amount: BigInt(1) },
+        };
+        const { result } = renderGasLimitHook({ nestedActions: [formAction] });
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(estimateGasLimitSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    body: {
+                        destinationChainId,
+                        actions: [{ ...nestedAction, value: '1' }],
+                    },
+                }),
+            ),
+        );
+    });
+
     it('ignores an in-flight estimation result once the destination chain changes before it resolves', async () => {
         let resolveEstimation: (estimation: IGasLimitEstimation) => void = () =>
             undefined;

@@ -1,5 +1,139 @@
 # @aragon/assistant
 
+## 0.3.4
+
+### Patch Changes
+
+- [#1582](https://github.com/aragon/app/pull/1582) [`c56915d`](https://github.com/aragon/app/commit/c56915db420284269d4bff0b0f6c14ce4c014359) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (@linear/sdk 101, Sentry 10.78, ai 7.0.166, hono 4.13.17 and @hono/node-server 2.1.6 with their security fixes)
+
+- [#1555](https://github.com/aragon/app/pull/1555) [`e439562`](https://github.com/aragon/app/commit/e439562bfcbae484ff86c45fb9a5ff4ef0bafc8c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - The heading pattern of the corpus loader no longer backtracks quadratically on long runs of spaces (CodeQL `js/polynomial-redos`).
+
+- Index the pages the knowledge base changed since the previous release: 49 added, 33 changed, 38 removed.
+
+    - Added `/application/actions`
+    - Added `/application/actions/action-builder`
+    - Added `/application/actions/action-simulation`
+    - Added `/application/actions/basic-action-views`
+    - Added `/application/actions/execution-routing`
+    - Added `/application/actions/submitting-a-transaction`
+    - Added `/application/availability`
+    - Added `/application/availability/app-cms`
+    - Added `/application/availability/aragon-deployed-plugins`
+    - Added `/application/availability/plugin-compatibility`
+    - Added `/application/availability/supported-chains`
+    - Added `/application/identity`
+    - Added `/application/identity/address-display`
+    - Added `/application/identity/address-input`
+    - Added `/application/identity/aragon-names`
+    - Added `/application/identity/aragon-profiles`
+    - Added `/application/identity/connecting-a-safe`
+    - Added `/application/identity/wallet-connection`
+    - Added `/application/interactions`
+    - Added `/application/interactions/alerts`
+    - Added `/application/interactions/collection-pages`
+    - Added `/application/interactions/metadata-input`
+    - Added `/application/interactions/wizard`
+    - Added `/application/support`
+    - Added `/application/support/aragon-assistant`
+    - Added `/application/support/getting-help`
+    - Added `/governance/configuration`
+    - Added `/governance/configuration/admin-governance`
+    - Added `/governance/configuration/governance-designer`
+    - Added `/governance/configuration/process-removal`
+    - Added `/governance/execution-targets`
+    - Added `/governance/participation`
+    - Added `/governance/participation/aragon-notifications`
+    - Added `/governance/participation/benqi-lending-market-gauges`
+    - Added `/governance/participation/delegate-profile-record`
+    - Added `/governance/participation/gauge-voting`
+    - Added `/governance/participation/token-panel`
+    - Added `/governance/participation/velocker`
+    - Added `/governance/proposals`
+    - Added `/governance/proposals/proposal-creation`
+    - Added `/governance/proposals/proposal-identifiers`
+    - Added `/governance/proposals/proposal-status`
+    - Added `/governance/staged-governance`
+    - Added `/governance/staged-governance/multisig-gates`
+    - Added `/governance/staged-governance/optimistic-governance`
+    - Added `/governance/staged-governance/safe-as-a-body`
+    - Added `/governance/staged-governance/stage`
+    - Added `/guides/make-your-dao-immutable`
+    - Added `/guides/set-up-a-guardian-dao`
+    - Changed `/`
+    - Changed `/access-control/gradual-permission-handover`
+    - Changed `/access-control/scoped-authority`
+    - Changed `/accounts`
+    - Changed `/accounts/account`
+    - Changed `/accounts/account-creation`
+    - Changed `/accounts/contract-upgrades`
+    - Changed `/accounts/dashboard`
+    - Changed `/accounts/executing-on-a-linked-account`
+    - Changed `/accounts/linked-account`
+    - Changed `/accounts/safe`
+    - Changed `/accounts/settings`
+    - Changed `/application`
+    - Changed `/application/explore-page`
+    - Changed `/governance`
+    - Changed `/governance/action`
+    - Changed `/governance/body`
+    - Changed `/governance/cross-chain-execution`
+    - Changed `/governance/member`
+    - Changed `/governance/plugin`
+    - Changed `/governance/process`
+    - Changed `/governance/proposal`
+    - Changed `/guides`
+    - Changed `/guides/choose-token-voting-power-mechanism`
+    - Changed `/guides/harden-token-governance-against-attacks`
+    - Changed `/guides/multisigs-in-advanced-governance`
+    - Changed `/guides/safe-vs-aragon-multisig`
+    - Changed `/osx-and-the-platform`
+    - Changed `/treasury/assets`
+    - Changed `/treasury/capital-distributor`
+    - Changed `/treasury/create-transaction`
+    - Changed `/treasury/transactions`
+    - Changed `/value-proposition`
+    - Removed `/application/action-builder`
+    - Removed `/application/action-simulation`
+    - Removed `/application/address-display`
+    - Removed `/application/address-input`
+    - Removed `/application/alerts`
+    - Removed `/application/app-cms`
+    - Removed `/application/aragon-assistant`
+    - Removed `/application/aragon-deployed-plugins`
+    - Removed `/application/aragon-names`
+    - Removed `/application/aragon-profiles`
+    - Removed `/application/basic-action-views`
+    - Removed `/application/collection-pages`
+    - Removed `/application/connecting-a-safe`
+    - Removed `/application/execution-routing`
+    - Removed `/application/getting-help`
+    - Removed `/application/metadata-input`
+    - Removed `/application/plugin-compatibility`
+    - Removed `/application/submitting-a-transaction`
+    - Removed `/application/supported-chains`
+    - Removed `/application/wallet-connection`
+    - Removed `/application/wizard`
+    - Removed `/governance/admin-flow`
+    - Removed `/governance/aragon-notifications`
+    - Removed `/governance/benqi-lending-market-gauges`
+    - Removed `/governance/delegate-profile-record`
+    - Removed `/governance/gauge-voting`
+    - Removed `/governance/governance-designer`
+    - Removed `/governance/multisig-gates`
+    - Removed `/governance/optimistic-governance`
+    - Removed `/governance/process-removal`
+    - Removed `/governance/proposal-creation`
+    - Removed `/governance/proposal-identifiers`
+    - Removed `/governance/proposal-status`
+    - Removed `/governance/safe-as-a-body`
+    - Removed `/governance/stage`
+    - Removed `/governance/target`
+    - Removed `/governance/token-panel`
+    - Removed `/governance/velocker`
+
+- Updated dependencies [[`e439562`](https://github.com/aragon/app/commit/e439562bfcbae484ff86c45fb9a5ff4ef0bafc8c)]:
+    - @aragon/docs-corpus@0.1.1
+
 ## 0.3.3
 
 ### Patch Changes
