@@ -7,6 +7,56 @@
         // The kit keeps the 120-column lines of its standalone repo.
         "lineWidth": 120
     },
+    // Primitive palette colour classes (bg-primary-400, shadow-neutral-md, focus-ring-primary, var(--color-…)) while
+    // components move to the semantic colour layer. The .grit files are generated (`pnpm lint:colors:generate`).
+    // To make a migrated folder strict, add its glob to the `error` plugin of each language AND add the same glob
+    // negated ("!…") to the matching `warn` plugin; `pnpm lint:colors:check` verifies the scopes stay disjoint.
+    // `pnpm lint:colors:report` prints the remaining findings per component folder.
+    "plugins": [
+        {
+            "path": "./biome-plugins/primitive-colors.js.warn.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/**/*.ts",
+                "src/**/*.tsx",
+                "!src/theme/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!**/*StoryComponent.tsx",
+                "!src/core/test/**",
+                "!src/modules/testUtils/**",
+                "!src/core/components/button/**"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-colors.js.error.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/core/components/button/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!**/*StoryComponent.tsx"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-colors.css.warn.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/**/*.css",
+                "!src/theme/**",
+                "!src/core/components/button/**"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-colors.css.error.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/core/components/button/**"
+            ]
+        }
+    ],
     "linter": {
         "rules": {
             "performance": {
