@@ -81,8 +81,9 @@ class Component extends DCLogic {
     const account = this.props.account || 'meridian';
     const connected = this.props.wallet === 'connected';
     const names = { meridian: 'Meridian DAO', atlas: 'Atlas Grants Council', northstar: 'Northstar Protocol', safe: 'Northstar Council Safe' };
-    // the shell's rows of this account (the same list the all-accounts page and the navigation badge count)
-    const all = connected && Array.isArray(this.props.todoRows) ? this.props.todoRows.filter((r) => r.acct === account) : [];
+    // the shell's rows of this account (the same list the all-accounts page and the navigation badge count); the second line drops the
+    // account name, which this page's scope already gives
+    const all = connected && Array.isArray(this.props.todoRows) ? this.props.todoRows.filter((r) => r.acct === account).map((r) => Object.assign({}, r, { description: r.short || r.description })) : [];
     const v = {
       yes: true, no: false, twelve: 12,
       click: this.click,

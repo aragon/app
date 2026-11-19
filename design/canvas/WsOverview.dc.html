@@ -57,19 +57,21 @@
                 <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Nothing is waiting for you" description="Active proposals you can vote on and Safe transactions you can sign will show up here." object-illustration="{{checkIllustration}}" is-stacked="{{no}}"></x-import>
               </sc-if>
               <sc-if value="{{hasTodos}}" hint-placeholder-val="{{true}}">
-                <x-import component-from-global-scope="GovUiKit.Card" class-name="ws-todo-preview">
+                <div class="ws-account-list">
                   <sc-for list="{{preview}}" as="t" hint-placeholder-count="3">
-                    <div class="ws-todo-preview__row">
-                      <sc-if value="{{t.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t.account}}" src="{{t.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
-                      <sc-if value="{{t.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
-                      <div class="ws-todo-preview__text">
-                        <p class="ws-todo-preview__title">{{t.title}}</p>
-                        <p class="ws-todo-preview__meta">{{t.meta}}</p>
+                    <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t.href}}">
+                      <div class="ws-summary">
+                        <sc-if value="{{t.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t.account}}" src="{{t.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
+                        <sc-if value="{{t.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+                        <div class="ws-summary__text">
+                          <div class="ws-summary__title"><span>{{t.title}}</span><span class="ws-summary__identifier">{{t.identifier}}</span></div>
+                          <p class="ws-summary__description">{{t.description}}</p>
+                        </div>
+                        <x-import component-from-global-scope="GovUiKit.Tag" label="{{t.action}}" variant="{{t.tagVariant}}" class-name="shrink-0"></x-import>
                       </div>
-                      <x-import component-from-global-scope="GovUiKit.Button" variant="{{t.variant}}" size="sm" href="{{t.href}}" class-name="shrink-0">{{t.action}}</x-import>
-                    </div>
+                    </x-import>
                   </sc-for>
-                </x-import>
+                </div>
               </sc-if>
               <sc-if value="{{hasMore}}" hint-placeholder-val="{{true}}">
                 <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:all:todos" class-name="self-start">View all</x-import>
@@ -115,7 +117,8 @@
 <script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"onConnect":{"editor":null},"scope":{"editor":null},"todoRows":{"editor":null},"safe":{"editor":null},"onSafe":{"editor":null},"$preview":{"width":1100,"height":1100}}'>
 // PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (unused, 'all').
 // All-accounts overview (apps/app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx, components
-// workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more),
+// workspaceTodoPreview(+Item), workspaceAccountItem): header, the to-do preview (3 rows, "View all" -> all:todos when more;
+// DESIGN CHANGE from the app: the rows are the to-dos page's list items, whole row a link, not a card of rows with buttons),
 // the accounts list (each row -> account:<id>:overview), Resources aside. 0 targets, so no Targets section (as in the app).
 // To-dos follow the app's rules: ACTIVE proposals the wallet can vote on, then Safe transactions it can sign. Their state is
 // derived from the DAO prototypes' shared state (window.__atlasDao /
@@ -128,17 +131,8 @@ class Component extends DCLogic {
     e.preventDefault();
     if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
   };
-  // The to-do rows come from the shell (todoRows); this preview words them as workspaceTodoPreviewItem does.
-  todos() {
-    const rel = (ms) => GovUiKit.formatterUtils.formatDate(ms, { format: GovUiKit.DateFormat.RELATIVE });
-    return (Array.isArray(this.props.todoRows) ? this.props.todoRows : []).map((r) => r.isDao ? {
-      isDao: true, isSafe: false, account: r.account, avatar: r.avatar, action: 'Vote', variant: 'primary',
-      title: r.identifier + ' · ' + r.title, meta: 'Vote · ends ' + rel(r.end), href: r.href
-    } : {
-      isDao: false, isSafe: true, account: r.account, avatar: '', action: 'Sign', variant: 'secondary',
-      title: 'Safe transaction #' + r.nonce, meta: 'Sign · Northstar Council Safe · ' + r.description, href: r.href
-    });
-  }
+  // The to-do rows come from the shell (todoRows); the preview is the first three, drawn as the same row the to-dos page lists.
+  todos() { return Array.isArray(this.props.todoRows) ? this.props.todoRows : []; }
   renderVals() {
     const connected = this.props.wallet === 'connected';
     const all = connected ? this.todos() : [];
