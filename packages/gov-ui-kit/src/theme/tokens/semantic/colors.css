@@ -542,6 +542,8 @@
         --guk-shadow-accent-md: rgba(0, 59, 245, 0.1);
         /* verified from code */
         --guk-bg-surface-ghost-hover: var(--color-neutral-0);
+        /* verified from code */
+        --guk-border-surface-open: var(--color-neutral-300);
     }
 
     [data-theme="next"] {
@@ -749,6 +751,7 @@
         --guk-shadow-surface-md: #5252521a;
         --guk-shadow-accent-md: #3164fa1a;
         --guk-bg-surface-ghost-hover: var(--guk-palette-gray-0);
+        --guk-border-surface-open: var(--guk-palette-gray-300);
     }
 
     [data-theme="dark"] {
@@ -956,6 +959,7 @@
         --guk-shadow-surface-md: #5252521a;
         --guk-shadow-accent-md: #3164fa1a;
         --guk-bg-surface-ghost-hover: var(--guk-palette-gray-900);
+        --guk-border-surface-open: var(--guk-palette-gray-600);
     }
 }
 
@@ -1697,4 +1701,8 @@
 
 @utility bg-surface-ghost-hover {
     background-color: var(--guk-bg-surface-ghost-hover);
+}
+
+@utility border-surface-open {
+    border-color: var(--guk-border-surface-open);
 }

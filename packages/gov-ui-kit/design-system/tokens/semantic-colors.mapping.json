@@ -72,6 +72,11 @@
             "light": "{palette.gray.0}",
             "dark": "{palette.gray.900}",
             "note": "Code-only, pending design review: ghost hover kept at today's white; designer bound bg/surface/hover, which equals the page background in Figma; candidate replacement is bg/surface/transparent-hover, pending design review. Used by the Button ghost variant hover fill only. Light/Dark take the bg/surface/default values (gray/0, gray/900)."
+        },
+        "border/surface/open": {
+            "light": "{palette.gray.300}",
+            "dark": "{palette.gray.600}",
+            "note": "Code-only, pending design review: the border of an open dropdown trigger (DropdownContainer passes it to its tertiary or critical Button while the menu is open; today's border-neutral-300). The class must sort after border-surface-default so that it wins over the Button's own border (Tailwind orders same-property utilities by name), while hover/active variants still win. Light takes the Figma border/surface/hover value (gray/300), Dark the border/surface/active value (gray/600)."
         }
     }
 }

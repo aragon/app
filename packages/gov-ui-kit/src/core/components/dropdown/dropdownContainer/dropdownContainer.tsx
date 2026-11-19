@@ -69,6 +69,10 @@ export interface IDropdownContainerProps extends Omit<ComponentProps<'div'>, 'di
     variant?: ButtonVariant;
 }
 
+// The open trigger darkens its border only where that border wins over the Button's own one, as before the semantic
+// tokens: on tertiary and critical Buttons. The other variants keep their own border while open.
+const openBorderVariants: ButtonVariant[] = ['tertiary', 'critical'];
+
 export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
     const {
         children,
@@ -109,7 +113,7 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
             <RadixDropdown.Trigger asChild={true} className="group" disabled={disabled}>
                 {customTrigger ?? (
                     <Button
-                        className={isOpen ? 'border-neutral-300' : undefined}
+                        className={isOpen && openBorderVariants.includes(variant) ? 'border-surface-open' : undefined}
                         disabled={disabled}
                         iconLeft={hasLabel ? undefined : triggerIcon}
                         iconRight={hideIcon ? undefined : triggerIcon}
