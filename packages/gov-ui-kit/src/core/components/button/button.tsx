@@ -36,7 +36,8 @@ const variantToClassNames: Record<ButtonVariant, string[]> = {
     ghost: [
         // Figma binds the ghost background to bg/body; it stays transparent so the button keeps working on any surface.
         'bg-transparent border-transparent text-accent-default', // Default
-        'hover:bg-surface-hover hover:text-accent-hover', // Hover
+        // Hover stays white as before the semantic tokens (Figma binds bg/surface/hover); see bg/surface/ghost-hover.
+        'hover:bg-surface-ghost-hover hover:text-accent-hover', // Hover
         'active:bg-surface-active active:text-accent-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
         'aria-disabled:text-surface-disabled', // Disabled
     ],

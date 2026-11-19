@@ -540,6 +540,8 @@
         --guk-shadow-surface-md: rgba(82, 96, 109, 0.1);
         /* verified from code */
         --guk-shadow-accent-md: rgba(0, 59, 245, 0.1);
+        /* verified from code */
+        --guk-bg-surface-ghost-hover: var(--color-neutral-0);
     }
 
     [data-theme="next"] {
@@ -746,6 +748,7 @@
         --guk-border-surface-fill-disabled: var(--guk-bg-surface-disabled);
         --guk-shadow-surface-md: #5252521a;
         --guk-shadow-accent-md: #3164fa1a;
+        --guk-bg-surface-ghost-hover: var(--guk-palette-gray-0);
     }
 
     [data-theme="dark"] {
@@ -952,6 +955,7 @@
         --guk-border-surface-fill-disabled: var(--guk-bg-surface-disabled);
         --guk-shadow-surface-md: #5252521a;
         --guk-shadow-accent-md: #3164fa1a;
+        --guk-bg-surface-ghost-hover: var(--guk-palette-gray-900);
     }
 }
 
@@ -1689,4 +1693,8 @@
 
 @utility shadow-accent-md {
     @apply shadow-[0px_4px_6px_-1px_var(--guk-shadow-accent-md),0px_2px_4px_-2px_var(--guk-shadow-accent-md)];
+}
+
+@utility bg-surface-ghost-hover {
+    background-color: var(--guk-bg-surface-ghost-hover);
 }

@@ -67,6 +67,11 @@
             "light": "#3164fa1a",
             "dark": "#3164fa1a",
             "note": "Code-only, pending design review: the hover elevation of a selected selectable card (shadow-primary-md on CheckboxCard and RadioCard, 2 uses). Light/Dark reuse the Figma shadow/accent/default colour (same 10% alpha as today's md shadow)."
+        },
+        "bg/surface/ghost-hover": {
+            "light": "{palette.gray.0}",
+            "dark": "{palette.gray.900}",
+            "note": "Code-only, pending design review: ghost hover kept at today's white; designer bound bg/surface/hover, which equals the page background in Figma; candidate replacement is bg/surface/transparent-hover, pending design review. Used by the Button ghost variant hover fill only. Light/Dark take the bg/surface/default values (gray/0, gray/900)."
         }
     }
 }
