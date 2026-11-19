@@ -212,3 +212,12 @@
 /* Agent Z: data-list rows of the workspace transactions page that are not accordion items (pending Safe, DAO execution), padded as the app's px-4 py-3 md:p-6 */
 .ws-dli { padding: 12px 16px; }
 @media (min-width: 768px) { .ws-dli { padding: 24px; } }
+
+/* WsTransactions: expanded pending Safe transaction (workspaceTransactionListItem: flex w-full flex-col gap-y-2 md:gap-y-3; safeTransactionVoting actions/alerts pt-6) */
+.ws-safe-tx { gap: 8px; }
+@container app (min-width: 48rem) { .ws-safe-tx { gap: 12px; } }
+.ws-sv-pt { padding-top: 24px; }
+/* safeTransactionVoting actions row: flex flex-col items-start gap-3 pt-6 md:flex-row md:items-center; buttons w-full md:w-fit (md = the page column, and the kit stylesheet lacks md:w-fit) */
+.ws-sv-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 24px; }
+.ws-sv-btn { width: 100%; }
+@container app (min-width: 48rem) { .ws-sv-actions { flex-direction: row; align-items: center; } .ws-sv-btn { width: fit-content; } }

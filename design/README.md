@@ -140,6 +140,12 @@ on a canvas", says what to do when a canvas's copy falls behind.
   the workspace, on the transaction's voting card, as in the app. The review dialog's warning states, rejecting a
   transaction and error states are not drawn. A Safe transaction created in "Create a Safe transaction" does not then
   appear in the workspace's queue. Everything Safe except the account page was built from source with no screenshot.
+- **Safe transactions in the workspace.** An expanded pending transaction follows the app's components (a voting
+  card with Breakdown, Votes and Settings tabs, then the simulation, then the actions), rebuilt from source on 20
+  November after a flattened, invented version was spotted. Still not built: rejecting a transaction (the button is
+  drawn and does nothing beyond asking for a wallet), the superseded, loading and error states, and the "You" mark
+  on the connected owner's vote. An executed Safe transaction in the history still expands to a plain transfer
+  where the app shows an execution summary and the actions. None of this has been compared with a screenshot.
 - **Vote amounts do not reconcile.** On a proposal, the individual votes in the Votes tab do not add up to the totals in
   the Breakdown tab; the mismatch comes from the mock data.
 - **The vote list is drawn by script.** `DaoProposal.dc.html` defines a small component in code for the Votes tab, so
