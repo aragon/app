@@ -22,7 +22,9 @@ const { APP_ASSETS, CANVAS, REPO, die, pointerFile } = require('./paths.cjs');
 
 const out = process.argv[2];
 if (!out || process.argv.length > 4) {
-    die('Usage: node design/publish/prepare-publish.cjs <folder> [canvas name]');
+    die(
+        'Usage: node design/publish/prepare-publish.cjs <folder> [canvas name]',
+    );
 }
 const POINTER = pointerFile(process.argv[3]);
 // A canvas with no record yet (a new one) has no uploads: every image is listed for upload.
@@ -120,8 +122,43 @@ for (const [canvasPath, source] of Object.entries(files)) {
     written++;
 }
 
+// The `files` map for the Artifact tool's publish call (with `file_path` = project/canvas.json and `root` = <folder>),
+// so nobody has to list a hundred files by hand. kit-files.json is the extra entries a NEW canvas needs: the
+// Governance UI Kit, copied server-side from the reference canvas.
+const reference = JSON.parse(fs.readFileSync(pointerFile(), 'utf8'));
+const ownFiles = Object.fromEntries(
+    Object.keys(files)
+        .filter(
+            (canvasPath) =>
+                !isImage(canvasPath) && canvasPath !== 'canvas.json',
+        )
+        .sort()
+        .map((canvasPath) => [
+            `project/${canvasPath}`,
+            `project/${canvasPath}`,
+        ]),
+);
+const kitFolder = `project/ds/${reference.kit.folder}`;
+const kitFiles = Object.fromEntries(
+    (reference.kit.files ?? []).map((file) => [
+        `${kitFolder}/${file}`,
+        { artifact: reference.canvas, path: `${kitFolder}/${file}` },
+    ]),
+);
+fs.writeFileSync(
+    path.join(out, 'files.json'),
+    `${JSON.stringify(ownFiles, null, 1)}\n`,
+);
+fs.writeFileSync(
+    path.join(out, 'kit-files.json'),
+    `${JSON.stringify(kitFiles, null, 1)}\n`,
+);
+
 console.log(
     `${written} files in ${path.join(out, 'project')}/, images swapped for their uploads (${path.relative(REPO, POINTER)} → assets)`,
+);
+console.log(
+    `The publish call's files map is in ${path.join(out, 'files.json')}; for a new canvas, add the entries of ${path.join(out, 'kit-files.json')}`,
 );
 if (pending.length > 0) {
     console.log(

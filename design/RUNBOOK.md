@@ -29,17 +29,14 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
    system** (it is the marketing brand). The prototypes use the Governance UI Kit only.
 3. `node design/publish/prepare-publish.cjs <folder> <name>` lists every image as needing an upload and copies them
    to `<folder>/uploads/` (exit code 2 is expected here; `<folder>` is any scratch folder outside the repo). Upload them to the new canvas (publish with `url`, `asset: true`, `file_paths`, up to 25
-   a call). Write a JSON file mapping each image's canvas path (`assets/networks/base.svg`, not the upload's file path) to the
-   url its upload answered with, and run
+   a call). Write a JSON file mapping each image to the url its upload answered with; the image may be named by its canvas
+   path (`assets/networks/base.svg`) or by the path of the file you uploaded, and run
    `node design/publish/record-assets.cjs <that file> <name>`. This creates `canvases/<name>.json`.
 4. Run `prepare-publish.cjs <folder> <name>` again (it must exit 0).
 5. Publish everything in **one** call (a publish always needs a `file_path`, so the kit cannot be copied in a call
    of its own): `url` = the new canvas, `file_path` = `<folder>/project/canvas.json`, `root` = `<folder>`, and a
-   `files` map with
-   - every other file under `<folder>/project/`, as `"project/<file>": "project/<file>"`;
-   - the kit, copied server-side from the reference canvas (its url is in `canvases/prototypes.json`): for each of
-     its files under `project/ds/aragon-gov-ui-kit/` (list them with `action: "list"`, `scope: "files"`),
-     `"project/ds/aragon-gov-ui-kit/…": { "artifact": "<reference canvas url>", "path": "project/ds/aragon-gov-ui-kit/…" }`.
+   `files` = the contents of `<folder>/files.json` merged with `<folder>/kit-files.json` (both written by
+   `prepare-publish.cjs`: the canvas's own files, and the kit copied server-side from the reference canvas).
 
    The canvas keeps the title you created it with in its header, but `canvas.json` carries the reference's title
    ("Aragon App prototypes"). Leave it: changing it would show up as a difference on every pull. The prototypes
@@ -78,7 +75,8 @@ The branch's diff against the reference branch, limited to `design/canvas`, is n
 ## Publish: branch → its canvas
 
 1. Pull first if the canvas's version differs from the record.
-2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists; publish the changed files.
+2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists; publish with `files` from
+   `<folder>/files.json` (or only the entries that changed).
 3. Set `canvasVersion`, commit, push.
 
 ## Refresh the reference canvas

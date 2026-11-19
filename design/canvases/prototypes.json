@@ -6,7 +6,17 @@
     "kit": {
         "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
         "version": "1794906150-8cdd",
-        "folder": "aragon-gov-ui-kit"
+        "folder": "aragon-gov-ui-kit",
+        "files": [
+            "components/bundle.css",
+            "components/bundle.js",
+            "components/index.d.ts",
+            "components/lib/react-hook-form.js",
+            "fonts/Manrope-Regular.ttf",
+            "fonts/Manrope-SemiBold.ttf",
+            "tokens.css",
+            "tokens.json"
+        ]
     },
     "assets": {
         "assets/mock/avatar/atlas.svg": {
