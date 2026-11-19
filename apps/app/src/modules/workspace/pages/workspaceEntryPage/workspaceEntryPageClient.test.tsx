@@ -29,7 +29,6 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         avatar: null,
         links: [],
         accounts: [],
-        targets: [],
     };
 
     beforeEach(() => {

@@ -4,4 +4,3 @@ export type {
     IWorkspaceAccount,
     IWorkspaceAccountMetadata,
 } from './workspaceAccount';
-export type { IWorkspaceTarget } from './workspaceTarget';

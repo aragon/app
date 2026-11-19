@@ -13,7 +13,7 @@ export interface IWorkspaceDetailsPageProps {
 }
 
 /**
- * Overview of a workspace: its metadata, the accounts it aggregates and its targets.
+ * Overview of a workspace: its metadata, and the accounts it aggregates.
  *
  * Nothing is prefetched: the page renders the workspace itself, which only exists in the local-storage registry and
  * is therefore resolved on the client (see `docs/projectDocs/createWorkspace.md`). The dashboard of a single

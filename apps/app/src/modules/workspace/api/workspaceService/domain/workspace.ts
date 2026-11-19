@@ -1,6 +1,5 @@
 import type { IResource } from '@/shared/api/daoService';
 import type { IWorkspaceAccount } from './workspaceAccount';
-import type { IWorkspaceTarget } from './workspaceTarget';
 
 export interface IWorkspace {
     /**
@@ -27,8 +26,4 @@ export interface IWorkspace {
      * Accounts belonging to the workspace. Ordered as they should be displayed on the account filters.
      */
     accounts: IWorkspaceAccount[];
-    /**
-     * Targets of the workspace. Opaque addresses for now, to be used for account discovery later on.
-     */
-    targets: IWorkspaceTarget[];
 }

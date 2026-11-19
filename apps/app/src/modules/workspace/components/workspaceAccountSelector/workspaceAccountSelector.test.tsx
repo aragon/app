@@ -67,7 +67,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         avatar: 'workspace-cid',
         links: [],
         accounts: [daoAccount],
-        targets: [],
     };
 
     const allAccountsOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption =

@@ -35,7 +35,6 @@ describe('<WorkspaceGate /> component', () => {
         avatar: null,
         links: [],
         accounts: [],
-        targets: [],
     });
 
     beforeEach(() => {

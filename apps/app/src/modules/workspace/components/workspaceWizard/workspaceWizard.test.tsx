@@ -36,7 +36,6 @@ describe('<WorkspaceWizard /> component', () => {
                 name: 'Demo Workspace',
                 description: '',
                 resources: [],
-                targets: [],
                 accounts: [],
             },
             ...props,
@@ -90,7 +89,6 @@ describe('<WorkspaceWizard /> component', () => {
         render(createTestComponent({ onSubmit }));
 
         await clickNext();
-        await clickNext();
         await userEvent.click(
             screen.getByRole('button', { name: 'app.test.submitLabel' }),
         );
@@ -103,7 +101,6 @@ describe('<WorkspaceWizard /> component', () => {
         expect(trackSpy).toHaveBeenCalledWith('wizard_submit', {
             flow: 'test_flow',
             accounts: 0,
-            targets: 0,
             hasAvatar: false,
         });
     });

@@ -17,7 +17,7 @@ import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 
 /**
- * A network and address pair, i.e. what identifies a workspace account or target.
+ * A network and address pair, i.e. what identifies a workspace account.
  */
 export interface IWorkspaceNetworkAddress {
     /**
@@ -25,7 +25,7 @@ export interface IWorkspaceNetworkAddress {
      */
     network: Network;
     /**
-     * Address of the account or target.
+     * Address of the account.
      */
     address: string;
 }

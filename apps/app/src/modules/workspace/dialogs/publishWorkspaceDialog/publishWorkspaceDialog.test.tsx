@@ -83,7 +83,6 @@ describe('<PublishWorkspaceDialog /> component', () => {
         name: 'Demo Workspace',
         description: 'A demo workspace',
         resources: [],
-        targets: [],
         accounts: [
             {
                 address: '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5',
@@ -119,6 +118,21 @@ describe('<PublishWorkspaceDialog /> component', () => {
         screen.getByRole('button', {
             name: /publishWorkspaceDialog.create.submit/,
         });
+
+    it('summarises the accounts about to be stored, one row per account', async () => {
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                /publishWorkspaceDialog\.summarySingular \(count=1\)$/,
+            ),
+        ).toBeInTheDocument();
+        // The mocked DAO is unnamed, so its row is titled by its address, and typed once the lookup resolves.
+        expect(screen.getByText('0xE8fd…0De5')).toBeInTheDocument();
+        expect(
+            await screen.findByText(/account\.type\.dao$/),
+        ).toBeInTheDocument();
+    });
 
     it('does not unblock the navigation before the workspace is created', () => {
         render(createTestComponent());
@@ -203,7 +217,6 @@ describe('<PublishWorkspaceDialog /> component', () => {
             avatar: 'ipfs://stored-cid',
             links: [],
             accounts: [],
-            targets: [],
         };
 
         const createUpdateComponent = (

@@ -51,7 +51,6 @@ export const CreateWorkspaceFormAccountsItem: React.FC<
                     <CreateWorkspaceFormNetworkAddressFields
                         index={index}
                         listName={name}
-                        validateAccount={true}
                     />
                 </div>
                 <div className="mt-0 md:mt-9">

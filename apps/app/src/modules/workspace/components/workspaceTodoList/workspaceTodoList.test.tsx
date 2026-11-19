@@ -29,6 +29,7 @@ jest.mock('./workspaceTodoListItem', () => ({
     WorkspaceTodoListItem: (props: IWorkspaceTodoListItemProps) => (
         <p>{`todo-row ${props.todo.type} ${props.workspaceId}`}</p>
     ),
+    WorkspaceTodoListItemSkeleton: () => <p>todo-skeleton</p>,
 }));
 
 describe('<WorkspaceTodoList /> component', () => {

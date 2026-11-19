@@ -17,18 +17,18 @@ import {
 } from '../../hooks/useWorkspaceTodoData';
 import type { IUseWorkspaceTodoListDataResult } from '../../hooks/useWorkspaceTodoListData';
 import * as useWorkspaceTodoListDataModule from '../../hooks/useWorkspaceTodoListData';
+import type { IWorkspaceTodoListItemProps } from '../workspaceTodoList';
 import {
     type IWorkspaceTodoPreviewProps,
     WorkspaceTodoPreview,
 } from './workspaceTodoPreview';
-import type { IWorkspaceTodoPreviewItemProps } from './workspaceTodoPreviewItem';
 
 // The row is tested on its own; here it only needs to say which to-do it renders.
-jest.mock('./workspaceTodoPreviewItem', () => ({
-    WorkspaceTodoPreviewItem: (props: IWorkspaceTodoPreviewItemProps) => (
+jest.mock('../workspaceTodoList', () => ({
+    WorkspaceTodoListItem: (props: IWorkspaceTodoListItemProps) => (
         <p>{`todo-row ${props.todo.type} ${props.workspaceId}`}</p>
     ),
-    WorkspaceTodoPreviewItemSkeleton: () => <p>todo-skeleton</p>,
+    WorkspaceTodoListItemSkeleton: () => <p>todo-skeleton</p>,
 }));
 
 describe('<WorkspaceTodoPreview /> component', () => {

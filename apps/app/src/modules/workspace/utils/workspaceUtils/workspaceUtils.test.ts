@@ -141,7 +141,7 @@ describe('workspace utils', () => {
         it('reads back the step written by getWorkspaceEditUrl', () => {
             const url = workspaceUtils.getWorkspaceEditUrl(
                 'demo',
-                WorkspaceWizardStep.TARGETS,
+                WorkspaceWizardStep.ACCOUNTS,
             );
             const stepParam = new URL(
                 url,
@@ -150,13 +150,13 @@ describe('workspace utils', () => {
 
             expect(
                 workspaceUtils.parseWorkspaceEditStep(stepParam ?? undefined),
-            ).toEqual(WorkspaceWizardStep.TARGETS);
+            ).toEqual(WorkspaceWizardStep.ACCOUNTS);
         });
 
         it('reads no step when the parameter is missing, repeated or unknown', () => {
             expect(workspaceUtils.parseWorkspaceEditStep()).toBeUndefined();
             expect(
-                workspaceUtils.parseWorkspaceEditStep(['ACCOUNTS', 'TARGETS']),
+                workspaceUtils.parseWorkspaceEditStep(['ACCOUNTS', 'METADATA']),
             ).toBeUndefined();
             expect(
                 workspaceUtils.parseWorkspaceEditStep('accounts'),

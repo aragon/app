@@ -65,7 +65,6 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
         avatar: null,
         links: [],
         accounts: [heldAccount],
-        targets: [],
         ...workspace,
     });
 

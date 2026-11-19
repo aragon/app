@@ -75,7 +75,6 @@ describe('<WorkspaceMembersPageClient /> component', () => {
         avatar: null,
         links: [],
         accounts: [daoAccount, safeAccount],
-        targets: [],
     };
 
     beforeEach(() => {

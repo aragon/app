@@ -22,7 +22,6 @@ describe('workspaceEditPage utils', () => {
                 network: Network.ETHEREUM_SEPOLIA,
             },
         ],
-        targets: [{ address, network: Network.CITREA_MAINNET }],
         ...workspace,
     });
 
@@ -35,7 +34,6 @@ describe('workspaceEditPage utils', () => {
                 description: 'A demo workspace',
                 avatar: undefined,
                 resources: [{ name: 'Website', url: 'https://aragon.org' }],
-                targets: [{ address, network: Network.CITREA_MAINNET }],
                 accounts: [
                     {
                         address,

@@ -1,6 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { generateProposal } from '@/modules/governance/testUtils';
+import {
+    generateSppProposal,
+    generateSppStage,
+} from '@/plugins/sppPlugin/testUtils/generators';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateDao,
@@ -142,12 +146,43 @@ describe('<WorkspaceTodoListItem /> component', () => {
             expect(screen.queryByText(/left$/)).not.toBeInTheDocument();
         });
 
-        it('calls for a vote and links to the proposal page of its account', () => {
+        it('tells the stage a proposal of a staged process is at', () => {
+            const sppProposal = generateSppProposal({
+                network,
+                daoAddress,
+                pluginAddress,
+                pluginInterfaceType: PluginInterfaceType.SPP,
+                stageIndex: 1,
+            });
+            sppProposal.settings.stages = [
+                generateSppStage({ stageIndex: 0, name: 'Council approval' }),
+                generateSppStage({ stageIndex: 1, name: 'Community veto' }),
+            ];
+            const todo = buildProposalTodo();
+            todo.proposal = { ...sppProposal, voteEndDate: Number.NaN };
+            render(createTestComponent({ todo }));
+
+            expect(screen.getByText('Community veto')).toBeInTheDocument();
+        });
+
+        it('marks the row with its account, named on hover', () => {
+            render(createTestComponent());
+
+            expect(screen.getByTitle('Demo DAO')).toBeInTheDocument();
+        });
+
+        it('leaves the account out of a list scoped to one account', () => {
+            render(createTestComponent({ hideAccount: true }));
+
+            expect(screen.queryByTitle('Demo DAO')).not.toBeInTheDocument();
+        });
+
+        it('carries no action label and links to the proposal page of its account', () => {
             render(createTestComponent());
 
             expect(
-                screen.getByText(/item\.proposal\.action$/),
-            ).toBeInTheDocument();
+                screen.queryByText(/item\.proposal\.action$/),
+            ).not.toBeInTheDocument();
             expect(screen.getByRole('link')).toHaveAttribute(
                 'href',
                 workspaceUtils.getAccountScopeUrl(
@@ -177,11 +212,33 @@ describe('<WorkspaceTodoListItem /> component', () => {
     });
 
     describe('Safe transaction', () => {
-        it('titles the row as the transactions page does, with the account and its nonce', () => {
+        it('identifies the row by its nonce and titles an undecoded call as a Safe transaction', () => {
             render(createTestComponent({ todo: buildTransactionTodo() }));
 
-            expect(screen.getByText('Treasury Safe')).toBeInTheDocument();
-            expect(screen.getByText('TS-12')).toBeInTheDocument();
+            expect(
+                screen.getByText(/item\.transaction\.id \(nonce=12\)$/),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByText(/item\.transaction\.title$/),
+            ).toBeInTheDocument();
+            expect(screen.getByTitle('Treasury Safe')).toBeInTheDocument();
+        });
+
+        it('titles the row with the function the transaction calls', () => {
+            const todo = buildTransactionTodo();
+            // changeThreshold(2)
+            todo.transaction.data = `0x694e80c3${'2'.padStart(64, '0')}`;
+            render(createTestComponent({ todo }));
+
+            expect(screen.getByText('changeThreshold')).toBeInTheDocument();
+        });
+
+        it('tells since when the transaction is queued', () => {
+            render(createTestComponent({ todo: buildTransactionTodo() }));
+
+            expect(
+                screen.getByText(/item\.transaction\.queued \(date=.+\)$/),
+            ).toBeInTheDocument();
         });
 
         it('counts the signatures against the threshold read from the Safe', () => {
@@ -220,13 +277,10 @@ describe('<WorkspaceTodoListItem /> component', () => {
             ).toBeInTheDocument();
         });
 
-        it('calls for a signature and links to the transaction among the ones of its Safe', () => {
+        it('links to the transaction among the ones of its Safe', () => {
             const todo = buildTransactionTodo();
             render(createTestComponent({ todo }));
 
-            expect(
-                screen.getByText(/item\.transaction\.action$/),
-            ).toBeInTheDocument();
             expect(screen.getByRole('link')).toHaveAttribute(
                 'href',
                 workspaceTransactionUtils.getSafeTransactionUrl(

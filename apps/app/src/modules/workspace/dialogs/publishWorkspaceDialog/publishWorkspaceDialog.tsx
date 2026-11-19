@@ -2,7 +2,7 @@
 
 import {
     AlertCard,
-    Avatar,
+    DaoAvatar,
     Dialog,
     Heading,
     type IInputFileAvatarValue,
@@ -18,7 +18,10 @@ import {
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
+import {
+    useWorkspaceAccounts,
+    workspaceAccountsOptions,
+} from '../../api/workspaceQueryService';
 import {
     useCreateWorkspace,
     useUpdateWorkspace,
@@ -32,6 +35,7 @@ import {
     workspaceAllAccountsSegment,
     workspaceUtils,
 } from '../../utils/workspaceUtils';
+import { PublishWorkspaceDialogAccount } from './publishWorkspaceDialogAccount';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 export interface IPublishWorkspaceDialogParams {
@@ -61,7 +65,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     );
 
     const { values, workspaceId } = location.params;
-    const { name, description, avatar, accounts, targets } = values;
+    const { name, description, avatar, accounts } = values;
 
     const isUpdate = workspaceId != null;
     const mode = isUpdate ? 'update' : 'create';
@@ -80,6 +84,20 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     // An update keeps the ID of the workspace, a creation gets one assigned by the registry.
     const savedWorkspaceId = workspaceId ?? createdWorkspace?.id;
     const queryClient = useQueryClient();
+
+    // Tells the rows what each account is. The form resolved the same accounts one by one while it was filled in;
+    // this read only names them, the authoritative one still happens right before the workspace is stored.
+    const { data: accountInfos } = useWorkspaceAccounts(
+        {
+            body: {
+                accounts: accounts.map(({ network, address }) => ({
+                    network,
+                    address,
+                })),
+            },
+        },
+        { enabled: accounts.length > 0 },
+    );
 
     // A newly selected file is pinned, while an avatar carried over from the stored workspace keeps its URI.
     const resolveAvatarUri = async (value?: IInputFileAvatarValue) => {
@@ -193,23 +211,42 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
             />
             <Dialog.Content className="flex flex-col gap-4 px-6 pt-4 pb-6">
                 <div className="flex items-center gap-3">
-                    <Avatar alt={name} size="lg" src={avatar?.url} />
+                    <DaoAvatar
+                        className="shrink-0"
+                        name={name}
+                        size="lg"
+                        src={avatar?.url}
+                    />
                     <div className="flex min-w-0 flex-col gap-1">
                         <Heading as="h3" size="h4">
                             {name}
                         </Heading>
-                        <p className="text-sm leading-normal text-neutral-500">
-                            {t('app.workspace.publishWorkspaceDialog.summary', {
-                                accounts: accounts.length,
-                                targets: targets.length,
-                            })}
-                        </p>
+                        {description !== '' && (
+                            <p className="text-sm leading-normal text-neutral-500">
+                                {description}
+                            </p>
+                        )}
                     </div>
                 </div>
-                {description !== '' && (
-                    <p className="text-base leading-normal text-neutral-500">
-                        {description}
-                    </p>
+                <p className="text-sm leading-normal text-neutral-500">
+                    {t(
+                        `app.workspace.publishWorkspaceDialog.${accounts.length === 1 ? 'summarySingular' : 'summary'}`,
+                        { count: accounts.length },
+                    )}
+                </p>
+                {accounts.length > 0 && (
+                    <div className="flex flex-col gap-2">
+                        {accounts.map((account) => (
+                            <PublishWorkspaceDialogAccount
+                                account={account}
+                                accountInfo={workspaceUtils.findAccountInfo(
+                                    accountInfos,
+                                    account,
+                                )}
+                                key={workspaceUtils.buildAccountId(account)}
+                            />
+                        ))}
+                    </div>
                 )}
                 {status === 'error' && (
                     <AlertCard

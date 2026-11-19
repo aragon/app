@@ -1,15 +1,8 @@
 'use client';
 
-import {
-    AddressOutput,
-    Card,
-    DaoAvatar,
-    EmptyState,
-    Link,
-} from '@aragon/gov-ui-kit';
+import { Card, DaoAvatar, EmptyState, Link } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
@@ -31,8 +24,7 @@ export interface IWorkspaceDetailsPageClientProps {
 const dashboardTodosCount = 3;
 
 /**
- * Overview of a workspace: its metadata, what is waiting on the connected wallet, the accounts it aggregates and its
- * targets.
+ * Overview of a workspace: its metadata, what is waiting on the connected wallet and the accounts it aggregates.
  *
  * This is the aggregated overview, which is also the state a workspace holding no DAO account is always in; the
  * dashboard of a single account is an account-scoped page of its own.
@@ -73,7 +65,7 @@ export const WorkspaceDetailsPageClient: React.FC<
         return null;
     }
 
-    const { name, description, avatar, links, targets } = workspace;
+    const { name, description, avatar, links } = workspace;
 
     return (
         <>
@@ -92,12 +84,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                             'app.workspace.workspaceDetailsPage.stat.accounts',
                         ),
                         value: accounts.length,
-                    },
-                    {
-                        label: t(
-                            'app.workspace.workspaceDetailsPage.stat.targets',
-                        ),
-                        value: targets.length,
                     },
                 ]}
                 title={name}
@@ -169,36 +155,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                             ))}
                         </div>
                     </Page.MainSection>
-                    {targets.length > 0 && (
-                        <Page.MainSection
-                            description={t(
-                                'app.workspace.workspaceDetailsPage.section.targetsDescription',
-                            )}
-                            title={t(
-                                'app.workspace.workspaceDetailsPage.section.targets',
-                            )}
-                        >
-                            <div className="flex flex-col gap-3 md:gap-2">
-                                {targets.map((target) => (
-                                    <Card
-                                        className="flex flex-col gap-1 p-4 shadow-neutral-sm md:p-6"
-                                        key={`${target.network}-${target.address}`}
-                                    >
-                                        <span className="text-sm leading-normal text-neutral-500">
-                                            {
-                                                networkDefinitions[
-                                                    target.network
-                                                ].name
-                                            }
-                                        </span>
-                                        <AddressOutput
-                                            address={target.address}
-                                        />
-                                    </Card>
-                                ))}
-                            </div>
-                        </Page.MainSection>
-                    )}
                 </Page.Main>
                 <Page.Aside>
                     {links.length > 0 && (

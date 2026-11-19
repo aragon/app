@@ -14,8 +14,7 @@ class WorkspaceEditPageUtils {
      * @returns The form values the workspace is edited from.
      */
     buildFormValues = (workspace: IWorkspace): ICreateWorkspaceFormData => {
-        const { name, description, avatar, links, targets, accounts } =
-            workspace;
+        const { name, description, avatar, links, accounts } = workspace;
 
         return {
             name,
@@ -24,10 +23,6 @@ class WorkspaceEditPageUtils {
             resources: links.map((link) => ({
                 name: link.name,
                 url: link.url,
-            })),
-            targets: targets.map(({ network, address }) => ({
-                network,
-                address,
             })),
             accounts: accounts.map(this.buildAccountValues),
         };

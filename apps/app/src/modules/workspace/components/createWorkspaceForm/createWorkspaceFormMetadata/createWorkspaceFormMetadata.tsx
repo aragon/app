@@ -47,7 +47,6 @@ export const CreateWorkspaceFormMetadata: React.FC<
     return (
         <div className="flex flex-col gap-10">
             <InputText maxLength={nameMaxLength} {...nameField} />
-            <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <TextArea
                 helpText={t(
                     'app.workspace.createWorkspaceForm.metadata.description.helpText',
@@ -59,6 +58,7 @@ export const CreateWorkspaceFormMetadata: React.FC<
                     (descriptionField.value as string | null | undefined) ?? ''
                 }
             />
+            <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <ResourcesInput
                 fieldPrefix={fieldPrefix}
                 helpText={t(
