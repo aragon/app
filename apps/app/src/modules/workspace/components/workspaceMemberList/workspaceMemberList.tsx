@@ -123,6 +123,7 @@ export const WorkspaceMemberList: React.FC<IWorkspaceMemberListProps> = (
             plugins={filterTabs}
             renderContent={(plugin) => renderList(plugin.props)}
             searchParamName={daoMemberListFilterParam}
+            variant="dropdown"
         />
     );
 };

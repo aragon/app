@@ -22,6 +22,18 @@ export interface IImageProps
     fill?: boolean;
 }
 
+// Name-keyed avatar URLs whose image changes in place: the optimizer cache (`minimumCacheTTL`) would keep the old
+// image for days.
+const mutableImageHosts = new Set(['metadata.ens.domains', 'euc.li']);
+
+const isMutableImage = (src: string) => {
+    try {
+        return mutableImageHosts.has(new URL(src).hostname);
+    } catch {
+        return false;
+    }
+};
+
 export const Image: React.FC<IImageProps> = (props) => {
     const { src, alt = 'image', fill = true, sizes, ...otherProps } = props;
 
@@ -40,6 +52,7 @@ export const Image: React.FC<IImageProps> = (props) => {
             fill={fill}
             sizes={processedSizes}
             src={src}
+            unoptimized={isMutableImage(src)}
             {...otherProps}
         />
     );

@@ -21,6 +21,10 @@ export interface IDaoMembersPageProps {
      * DAO page parameters.
      */
     params: Promise<IDaoPageParams>;
+    /**
+     * Whether to show body plugin filters in "dropdown" variant.
+     */
+    showFiltersAsDropdown?: boolean;
 }
 
 export const daoMembersCount = 18;
@@ -42,7 +46,7 @@ export const daoMembersCount = 18;
  */
 
 export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
-    const { params } = props;
+    const { params, showFiltersAsDropdown } = props;
     const daoPageParams = await params;
 
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
@@ -123,6 +127,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
                 <DaoMembersPageClient
                     featuredDelegates={featuredDelegates}
                     initialParams={memberListParams}
+                    showFiltersAsDropdown={showFiltersAsDropdown}
                 />
             </Page.Content>
         </Page.Container>

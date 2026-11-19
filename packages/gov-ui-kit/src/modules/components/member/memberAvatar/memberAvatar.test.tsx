@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import * as blockies from 'blockies-ts';
 import * as viem from 'viem';
 import { mainnet, polygon } from 'viem/chains';
@@ -6,6 +6,7 @@ import { normalize } from 'viem/ens';
 import * as wagmi from 'wagmi';
 import { ssrUtils } from '../../../../core';
 import { RadixImageMock } from '../../../../core/test';
+import { ensUtils } from '../../../utils';
 import { type IMemberAvatarProps, MemberAvatar } from './memberAvatar';
 
 describe('<MemberAvatar /> component', () => {
@@ -47,6 +48,7 @@ describe('<MemberAvatar /> component', () => {
         getAddressMock.mockReset();
         blockiesCreateMock.mockReset();
         isServerMock.mockReset();
+        jest.useRealTimers();
     });
 
     it('displays the avatar set as avatarSrc prop without resolving ens name, address or avatar', async () => {
@@ -67,7 +69,24 @@ describe('<MemberAvatar /> component', () => {
 
         await waitFor(() => expect(screen.getByRole('img')).toHaveAttribute('src', expectedAvatarUrl));
         expect(useEnsNameMock).toHaveBeenCalledWith(expect.objectContaining({ query: { enabled: false } }));
-        expect(useEnsAvatarMock).toHaveBeenCalledWith(expect.objectContaining({ name: normalize(ensName) }));
+        expect(useEnsAvatarMock).toHaveBeenCalledWith(
+            expect.objectContaining({ name: normalize(ensName), assetGatewayUrls: ensUtils.avatarGatewayUrls }),
+        );
+    });
+
+    it('falls back to the ENS metadata avatar only once the avatar lookup returns nothing', () => {
+        const ensName = 'vitalik.eth';
+        const metadataSrc = `https://metadata.ens.domains/mainnet/avatar/${ensName}`;
+        jest.useFakeTimers();
+        useEnsAvatarMock.mockReturnValue({ data: undefined, isLoading: true } as wagmi.UseEnsAvatarReturnType);
+        const { rerender } = render(createTestComponent({ ensName }));
+        act(() => jest.runAllTimers());
+        expect(screen.queryByRole('img')).not.toBeInTheDocument();
+
+        useEnsAvatarMock.mockReturnValue({ data: null, isLoading: false } as wagmi.UseEnsAvatarReturnType);
+        rerender(createTestComponent({ ensName }));
+        act(() => jest.runAllTimers());
+        expect(screen.getByRole('img')).toHaveAttribute('src', metadataSrc);
     });
 
     it('displays avatar for a valid address and call related hooks with correct parameters', async () => {

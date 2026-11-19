@@ -11,7 +11,7 @@ export class ProxyBackendUtils {
 
         if (
             isPost &&
-            (await botIdUtils.isBot('backend', { onError: 'allow' }))
+            (await botIdUtils.shouldReject('backend', { onError: 'allow' }))
         ) {
             return NextResponse.json(
                 { error: 'Access denied' },
