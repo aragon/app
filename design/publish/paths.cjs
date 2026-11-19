@@ -17,7 +17,9 @@ const CANVAS = path.join(DESIGN, 'canvas');
 // the reference canvas, the one that mirrors main, is "prototypes".
 const pointerFile = (name = 'prototypes') => {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) {
-        die(`"${name}" is not a canvas name (lower-case letters, digits and dashes)`);
+        die(
+            `"${name}" is not a canvas name (lower-case letters, digits and dashes)`,
+        );
     }
     return path.join(DESIGN, 'canvases', `${name}.json`);
 };

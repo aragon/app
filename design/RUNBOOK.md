@@ -2,7 +2,8 @@
 
 For a Claude Code session. A canvas cannot read or write the repo; a session moves the files both ways. These steps
 were written on 19 November 2026. A first run from this file alone stopped at copying the kit to a new canvas; that
-step was rewritten (step 5 below) and **the steps after it have still not been run**. Where a step fails, fix this file.
+step was rewritten. A second run then started a ticket in 2.5 minutes and pulled it back with an empty diff.
+**Pulling a real design change has not been run.** Where a step fails, fix this file.
 
 The model: **one ticket = one chat session = one branch = one canvas.**
 
@@ -27,19 +28,19 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
    instructions: follow them for how files are published, but **do not use the organisation's default design
    system** (it is the marketing brand). The prototypes use the Governance UI Kit only.
 3. `node design/publish/prepare-publish.cjs <folder> <name>` lists every image as needing an upload and copies them
-   to `<folder>/uploads/`. Upload them to the new canvas (publish with `url`, `asset: true`, `file_paths`, up to 25
-   a call). Write a JSON file mapping each image's path to the url its upload answered with, and run
+   to `<folder>/uploads/` (exit code 2 is expected here; `<folder>` is any scratch folder outside the repo). Upload them to the new canvas (publish with `url`, `asset: true`, `file_paths`, up to 25
+   a call). Write a JSON file mapping each image to the url its upload answered with; the image may be named by its canvas
+   path (`assets/networks/base.svg`) or by the path of the file you uploaded, and run
    `node design/publish/record-assets.cjs <that file> <name>`. This creates `canvases/<name>.json`.
 4. Run `prepare-publish.cjs <folder> <name>` again (it must exit 0).
 5. Publish everything in **one** call (a publish always needs a `file_path`, so the kit cannot be copied in a call
    of its own): `url` = the new canvas, `file_path` = `<folder>/project/canvas.json`, `root` = `<folder>`, and a
-   `files` map with
-   - every other file under `<folder>/project/`, as `"project/<file>": "project/<file>"`;
-   - the kit, copied server-side from the reference canvas (its url is in `canvases/prototypes.json`): for each of
-     its files under `project/ds/aragon-gov-ui-kit/` (list them with `action: "list"`, `scope: "files"`),
-     `"project/ds/aragon-gov-ui-kit/…": { "artifact": "<reference canvas url>", "path": "project/ds/aragon-gov-ui-kit/…" }`.
+   `files` = the contents of `<folder>/files.json` merged with `<folder>/kit-files.json` (both written by
+   `prepare-publish.cjs`: the canvas's own files, and the kit copied server-side from the reference canvas).
 
-   The prototypes load the kit from that folder. `canvas.json` from the repo already carries the kit's
+   The canvas keeps the title you created it with in its header, but `canvas.json` carries the reference's title
+   ("Aragon App prototypes"). Leave it: changing it would show up as a difference on every pull. The prototypes
+   load the kit from that folder. `canvas.json` from the repo already carries the kit's
    `designSystems` record, so nothing else is needed for the canvas to count the kit as installed.
 6. Add to `canvases/<name>.json`: `canvas` (the url), `branch`, `canvasVersion` (the version id the publish
    answered with), and `appCommit` and `kit` copied from `canvases/prototypes.json`. Commit and push the branch
@@ -50,10 +51,11 @@ files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploa
 
 Run when the designer says so ("sync", "pull it back"), and before every publish to a ticket's canvas.
 
-1. List the canvas's files (Artifact `action: "list"`, `scope: "files"`). The answer names the canvas's version.
-   If it equals `canvasVersion` in the record, nothing changed on the canvas: stop. A different version does not
-   prove an edit: the version also moves when the Design type itself is updated. Pull and let the diff decide.
-2. Read every file under `project/` except `project/ds/` into a folder (`action: "read"`, `paths`, `out_dir`).
+1. List the canvas's files (Artifact `action: "list"`, `scope: "files"`). Do not use the canvas's version to decide
+   whether anything changed: it moves on its own (seen twice: when the Design type was updated, and seconds after a
+   publish). Always pull and let the diff decide.
+2. Read every file under `project/` except `project/ds/` into a folder (`action: "read"`, `paths`, `out_dir`). The
+   paths have to be listed one by one, from step 1's listing.
 3. `node design/publish/pull-canvas.cjs <folder> <name>` makes `design/canvas/` match: image urls go back to paths,
    files deleted on the canvas are deleted. Tested locally: publishing and pulling with no change gives an empty diff.
    - Exit code 2: an image was added on the canvas. Download it (read by its asset id), save it under
@@ -63,16 +65,58 @@ Run when the designer says so ("sync", "pull it back"), and before every publish
 4. New or removed frames: add a new prototype to `canvas-layout.json`, then `node design/publish/layout-canvas.cjs`
    (it fails if a file is mounted by no prototype). A variant the designer duplicated is a new file; ask whether it
    replaces the original or is dropped before the branch is handed over.
-5. Check every prototype still loads (the load check is on `docs/design-canvas`, see README). Set `canvasVersion`,
+5. There is no load check on this branch (README, "What is not here"). Ask the owner to open the canvas, or say
+   plainly that nothing was checked. Set `canvasVersion` to the listing's version (a record of when, not a test),
    commit `design/canvas/` and the record together, push.
 
+6. Tell the person, in plain words and frame by frame, what changed on the canvas, as a designer would describe it,
+   and ask whether that is what they did. They should never have to list their changes for you. Point out anything
+   in the diff that does not look like a deliberate design change (reformatting, image addresses, layout churn).
+
+## Tweaks
+
+Tweaks (the controls under a frame's Tweaks button, declared in `data-props`) are welcome, including ones that
+switch between design variants. One rule: **the default is the source of truth.** Whatever a tweak's default is, is
+the design. At handover the default is what the engineer builds, and on the reference branch the default is what
+the app has. A variant that lost can be cleaned out later, like a feature flag.
+
 The branch's diff against the reference branch, limited to `design/canvas`, is now the design:
-`git diff <reference>...<branch> -- design/canvas`.
+`git diff <reference>...<branch> -- design/canvas ':!design/canvas/canvas.json'`.
+
+`canvas.json` is left out on purpose. It records where frames sit on the canvas, not what the app should look like,
+and the canvas editor rewrites the whole file whenever a frame is moved by hand (in the first real round trip, about
+1,700 changed lines for one frame removed and one moved). GitHub shows it collapsed as a generated file. Also
+expect, and ignore, a re-quoted `data-props` line where a tweak's default was changed on the canvas.
+
+## Implement a design
+
+For a developer's session, on the ticket's branch. The design and the code live on the same branch and go in the
+same pull request: do not create another branch.
+
+1. Pull first if the ticket has a canvas, so the branch holds everything the designer did.
+2. The design is the diff above (against the reference branch, without `canvas.json`). Read the changed files in
+   full, not only the changed lines. How to read a prototype file:
+   - `<x-import component-from-global-scope="GovUiKit.X" …>` is the kit component `X`; attributes are its props in
+     kebab case.
+   - Plain elements with classes from `app.css` or `proto.css` are app layout. Build them with the app's own
+     components and classes; do not copy the markup.
+   - `renderVals()` and everything in it is mock data and prototype wiring, not spec.
+   - A tweak's default is the design (see Tweaks).
+   - The ticket's canvas (`canvases/<name>.json` → `canvas`) is there to look at when a file is ambiguous.
+3. Before writing code, tell the person: in plain words what you understand the design change to be; which app
+   files you will change; anything the design implies that is more than UI (new data, sorting, an API field) and
+   anything it leaves undecided. Then wait for their go-ahead. If they named a part ("only the to-dos"), keep to it.
+4. Implement in `apps/app` following the repo's `AGENTS.md` (changeset included), run type-check, lint and the tests
+   for what you touched, and report the results as they are. Say plainly what you could not verify by running the
+   app. No pull request unless asked.
+
+Run once so far, from a long hand-written prompt, not from this section.
 
 ## Publish: branch → its canvas
 
 1. Pull first if the canvas's version differs from the record.
-2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists; publish the changed files.
+2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists; publish with `files` from
+   `<folder>/files.json` (or only the entries that changed).
 3. Set `canvasVersion`, commit, push.
 
 ## Refresh the reference canvas

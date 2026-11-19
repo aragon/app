@@ -20,21 +20,25 @@ if (!input || process.argv.length > 4) {
 }
 const POINTER = pointerFile(process.argv[3]);
 if (!fs.existsSync(POINTER)) {
-    die(`${POINTER} does not exist: this canvas was never published from the repo`);
+    die(
+        `${POINTER} does not exist: this canvas was never published from the repo`,
+    );
 }
 const root = fs.existsSync(path.join(input, 'project'))
     ? path.join(input, 'project')
     : input;
 const pathOfUrl = Object.fromEntries(
-    Object.entries(JSON.parse(fs.readFileSync(POINTER, 'utf8')).assets ?? {}).map(
-        ([canvasPath, record]) => [record.url, canvasPath],
-    ),
+    Object.entries(
+        JSON.parse(fs.readFileSync(POINTER, 'utf8')).assets ?? {},
+    ).map(([canvasPath, record]) => [record.url, canvasPath]),
 );
 
 const isText = (file) => /\.(dc\.html|css|json)$/.test(file);
 const pulled = fs
     .readdirSync(root)
-    .filter((file) => isText(file) && fs.statSync(path.join(root, file)).isFile());
+    .filter(
+        (file) => isText(file) && fs.statSync(path.join(root, file)).isFile(),
+    );
 if (!pulled.includes('canvas.json')) {
     die(`${root} has no canvas.json: it does not look like a canvas's files`);
 }

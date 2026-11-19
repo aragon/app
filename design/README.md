@@ -30,6 +30,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
 | `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, and lay the canvas out |
 | `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, pulling a designer's changes into a branch, publishing |
+| `../skills/shared/aragon-app-canvas/` | The `/aragon-app-canvas` command: type it followed by what you want in plain words ("start a new one for the filters ticket", "save what I did"). It points a session at the runbook. The repo's convention is that a new skill starts private in `skills/local/`; this one is committed as part of the proposal so it can be reviewed |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
 
 The prototypes:
@@ -60,6 +61,29 @@ Every other file is a part. Each prototype is responsive: the phone layout is th
 
 The canvas is [Aragon App prototypes](https://claude.ai/artifact/NnpGqxhynigQPwVyKgsc5p). It is private; ask its
 owner for access.
+
+## Which app the prototypes show
+
+Every prototype, and every canvas made from these files, shows **the app as it runs on a developer's machine from
+`main`**, not what users see in production.
+
+- **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026); later ones from `main`
+  as it stood up to 18 November (`0bc09d3`). `canvases/prototypes.json` → `appCommit` records the first.
+- **Feature flags:** each flag's `local` value, the one a developer's machine uses. Checked against a snapshot of
+  the 16 flags taken in mid-November (`design/baseline-check/cms/feature-flags.json` on `docs/design-canvas`):
+
+  | | Flags |
+  | --- | --- |
+  | On in the prototypes, off in production | `workspaces`, `safeAccountPage`, `capitalFlowAutomation`, `existingProposalCreationCondition` (and the developer-only `debugPanel`, `useMocks`) |
+  | Off in the prototypes, on in production | `gateAdvancedGovernance` (the governance designer has a tweak that shows it) |
+  | Same in both | the other nine |
+
+  `workspaces` and `safeAccountPage` are also off in the deployed development environment in that snapshot, so the
+  Workspace and Safe prototypes show something only a local build has.
+- **Data:** mock data written for this, not any real DAO.
+
+So the prototypes are a picture of what is coming, which suits design work. No prototype can be switched to
+"what production looks like", and the flag values above are a snapshot: they are not re-read when flags change.
 
 ## How they were made
 
