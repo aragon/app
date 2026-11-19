@@ -78,8 +78,10 @@ describe('<TokenProposalVotingSummary /> component', () => {
             '50',
         );
         // Support is above the threshold => reached (primary) variant
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).not.toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).toBeNull();
         expect(
             screen.getByText(
                 'app.plugins.token.tokenProposalVotingSummary.supportLabel',
@@ -106,8 +108,10 @@ describe('<TokenProposalVotingSummary /> component', () => {
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('10');
         // Support must not be marked as reached
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
         expect(
             screen.getByText(
                 'app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel',
@@ -129,8 +133,10 @@ describe('<TokenProposalVotingSummary /> component', () => {
         expect(screen.getByTestId('progress-indicator').dataset.value).toEqual(
             '50',
         );
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
     });
 
     it('displays zero support without the reached variant when only abstain votes are cast', () => {
@@ -144,8 +150,10 @@ describe('<TokenProposalVotingSummary /> component', () => {
         // Progress clamps the rendered value to a minimum of 1.
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('1');
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
         expect(
             screen.getByText(
                 'app.plugins.token.tokenProposalVotingSummary.votesDescription (details=0 TTT)',
@@ -165,8 +173,10 @@ describe('<TokenProposalVotingSummary /> component', () => {
         // Veto support is yes / (yes + no) = 75% > 50% => reached (primary) variant
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('75');
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).not.toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).toBeNull();
         expect(
             screen.getByText(
                 'app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel',
