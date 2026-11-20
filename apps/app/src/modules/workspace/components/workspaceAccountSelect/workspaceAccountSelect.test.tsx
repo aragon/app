@@ -4,7 +4,10 @@ import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import * as workspaceQueryServiceModule from '../../api/workspaceQueryService';
 import {
+    type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
     WorkspaceAccountSuggestionRole,
@@ -20,6 +23,12 @@ import {
     type IWorkspaceAccountSelectProps,
     WorkspaceAccountSelect,
 } from './workspaceAccountSelect';
+
+// The test file transform exports images as a bare file name, which has no `src`; mock it as Next.js would.
+jest.mock('@/assets/images/safeWallet.png', () => ({
+    __esModule: true,
+    default: { src: '/assets/safeWallet.png' },
+}));
 
 describe('<WorkspaceAccountSelect /> component', () => {
     const wallet = '0x5dcD623bf6E792bfBDbf8d643f6478153df4A8D2';
@@ -49,6 +58,19 @@ describe('<WorkspaceAccountSelect /> component', () => {
         WorkspaceAccountType.SAFE,
     );
 
+    // The avatar only mounts its image once the browser reports it as loaded, which jsdom never does.
+    const imageSpies: jest.SpyInstance[] = [];
+    const stubImageLoading = () => {
+        imageSpies.push(
+            jest
+                .spyOn(HTMLImageElement.prototype, 'complete', 'get')
+                .mockReturnValue(true),
+            jest
+                .spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get')
+                .mockReturnValue(1),
+        );
+    };
+
     const useWalletAccountSpy = jest.spyOn(
         useWalletAccountModule,
         'useWalletAccount',
@@ -65,8 +87,17 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useWorkspaceAccountLookupModule,
         'useWorkspaceAccountLookup',
     );
+    const useWorkspaceAccountsSpy = jest.spyOn(
+        workspaceQueryServiceModule,
+        'useWorkspaceAccounts',
+    );
+    const mockAccountInfos = (data?: IWorkspaceAccountInfo[]) =>
+        useWorkspaceAccountsSpy.mockReturnValue({ data } as ReturnType<
+            typeof workspaceQueryServiceModule.useWorkspaceAccounts
+        >);
 
     beforeEach(() => {
+        mockAccountInfos();
         useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
         useWalletAccountSpy.mockReturnValue({
             address: wallet,
@@ -100,10 +131,14 @@ describe('<WorkspaceAccountSelect /> component', () => {
     });
 
     afterEach(() => {
+        for (const spy of imageSpies.splice(0)) {
+            spy.mockRestore();
+        }
         useWorkspaceDaosSpy.mockReset();
         useWalletAccountSpy.mockReset();
         useSuggestionsSpy.mockReset();
         useLookupSpy.mockReset();
+        useWorkspaceAccountsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -363,6 +398,111 @@ describe('<WorkspaceAccountSelect /> component', () => {
 
         await userEvent.click(selected);
         expect(onChange).toHaveBeenLastCalledWith([]);
+    });
+
+    it('names a selected account no suggestion holds through the accounts API', () => {
+        const deployed = buildAccount(
+            Network.ETHEREUM_MAINNET,
+            '0x9cE7B2b1F8a1A7d2dF0E43a4f7C2B1a3E5d6C7b8',
+        );
+        const { network, address } = deployed;
+        mockAccountInfos([
+            {
+                network,
+                address,
+                type: WorkspaceAccountInfoType.DAO,
+                status: WorkspaceAccountInfoStatus.AVAILABLE,
+                indexed: true,
+                name: 'Deployed DAO',
+            },
+        ]);
+        render(
+            createTestComponent({
+                value: [deployed],
+                workspaceAccounts: [lookedUp],
+            }),
+        );
+
+        expect(getCheckbox(/Deployed DAO/)).toBeChecked();
+        expect(useWorkspaceAccountsSpy).toHaveBeenLastCalledWith(
+            { body: { accounts: [{ network, address }] } },
+            { enabled: true },
+        );
+        expect(useWorkspaceDaosSpy).toHaveBeenLastCalledWith([
+            deployed,
+            lookedUp,
+        ]);
+    });
+
+    it('keeps a selected account no suggestion holds listed once unticked', async () => {
+        const deployed = buildAccount(
+            Network.ETHEREUM_MAINNET,
+            '0x9cE7B2b1F8a1A7d2dF0E43a4f7C2B1a3E5d6C7b8',
+        );
+        const { network, address } = deployed;
+        mockAccountInfos([
+            {
+                network,
+                address,
+                type: WorkspaceAccountInfoType.DAO,
+                status: WorkspaceAccountInfoStatus.AVAILABLE,
+                indexed: true,
+                name: 'Deployed DAO',
+            },
+        ]);
+        const onChange = jest.fn();
+        const { rerender } = render(
+            createTestComponent({ onChange, value: [deployed] }),
+        );
+
+        await userEvent.click(getCheckbox(/Deployed DAO/));
+        expect(onChange).toHaveBeenLastCalledWith([]);
+        rerender(createTestComponent({ onChange, value: [] }));
+        expect(getCheckbox(/Deployed DAO/)).not.toBeChecked();
+        expect(useWorkspaceAccountsSpy).toHaveBeenLastCalledWith(
+            { body: { accounts: [{ network, address }] } },
+            { enabled: true },
+        );
+
+        await userEvent.click(getCheckbox(/Deployed DAO/));
+        expect(onChange).toHaveBeenLastCalledWith([deployed]);
+    });
+
+    it('shows the avatar of a selected DAO no suggestion holds', async () => {
+        stubImageLoading();
+        const deployed = buildAccount(
+            Network.ETHEREUM_MAINNET,
+            '0x9cE7B2b1F8a1A7d2dF0E43a4f7C2B1a3E5d6C7b8',
+        );
+        useWorkspaceDaosSpy.mockImplementation((accounts = []) => ({
+            daos: accounts.some(({ id }) => id === deployed.id)
+                ? {
+                      [deployed.id]: generateDao({
+                          name: 'Deployed DAO',
+                          avatar: 'deployed-cid',
+                      }),
+                  }
+                : {},
+            isPending: false,
+        }));
+        render(createTestComponent({ value: [deployed] }));
+
+        expect(getCheckbox(/Deployed DAO/)).toBeChecked();
+        expect(await screen.findByRole('img')).toHaveAttribute(
+            'src',
+            ipfsUtils.cidToSrc('deployed-cid'),
+        );
+    });
+
+    it('shows the Safe logo for a selected Safe no suggestion holds', async () => {
+        stubImageLoading();
+        render(createTestComponent({ value: [lookedUp] }));
+
+        expect(
+            await screen.findByRole('img', {
+                name: 'app.workspace.workspaceAccountAvatar.safe',
+            }),
+        ).toHaveAttribute('src', '/assets/safeWallet.png');
     });
 
     it('keeps the name and note of a selected suggestion the suggestions drop', () => {

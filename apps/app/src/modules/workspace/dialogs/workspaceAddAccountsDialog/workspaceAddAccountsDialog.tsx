@@ -19,6 +19,7 @@ import {
     WorkspaceAccountSelect,
     WorkspaceAccountSelectStatusAlert,
 } from '../../components/workspaceAccountSelect';
+import { useWorkspaceCreateAccountDialog } from '../../hooks/useWorkspaceCreateAccountDialog';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAddAccountsDialogParams {
@@ -65,6 +66,25 @@ export const WorkspaceAddAccountsDialog: React.FC<
     const [hasError, setHasError] = useState(false);
 
     const handleClose = () => close(location.id);
+
+    const openCreateAccount = useWorkspaceCreateAccountDialog();
+    const handleCreateAccount = () =>
+        openCreateAccount(
+            {
+                onCreated: (account) =>
+                    setSelected((current) =>
+                        current.some((selected) =>
+                            workspaceUtils.isSameNetworkAddress(
+                                selected,
+                                account,
+                            ),
+                        )
+                            ? current
+                            : [...current, account],
+                    ),
+            },
+            { stack: true },
+        );
 
     const handleAdd = async () => {
         setIsAdding(true);
@@ -152,13 +172,11 @@ export const WorkspaceAddAccountsDialog: React.FC<
                     disabled: selected.length === 0 || isAdding,
                     isLoading: isAdding,
                 }}
-                // TODO(APP-1499): create the account in place and return here with it selected.
                 secondaryAction={{
                     label: t(
                         'app.workspace.workspaceAddAccountsDialog.action.createAccount',
                     ),
-                    href: '/create/dao',
-                    onClick: handleClose,
+                    onClick: handleCreateAccount,
                 }}
             />
         </>
