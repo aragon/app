@@ -26,7 +26,7 @@ export interface IBuildMetadataParams {
 }
 
 class MetadataUtils {
-    baseUrl = 'https://app.aragon.org';
+    baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.aragon.org';
 
     private defaultTitle = 'Governed on Aragon';
     private defaultDescription =
@@ -37,6 +37,7 @@ class MetadataUtils {
     private authors = [{ name: this.defaultSiteName, url: this.baseUrl }];
 
     getDefaultMetadata = (): Metadata => ({
+        metadataBase: new URL(this.baseUrl),
         title: this.defaultTitle,
         description: this.defaultDescription,
         authors: this.authors,

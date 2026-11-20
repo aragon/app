@@ -108,6 +108,8 @@ The scheduled run green-skips when there are no pending changesets for the `app`
 5. ✅ Slack: "Deployed to production"; the smoke suite runs and reports in the thread
 6. 🎉 The Slack head message flips to "Completed (production)" and the Linear release is marked complete
 
+Right after production, the same tag is deployed to OCC ([new.app.aragon.org](https://new.app.aragon.org)), the production build with its own feature flags and analytics, under the approval production already got, followed by its own smoke run. The release is marked Completed after production; OCC deploys and runs its smoke right after.
+
 The deploy job only runs for tags starting `@aragon/app@`, so assistant and gov-ui-kit releases do not trigger it.
 
 If any step of any flow fails, the thread gets a ❌ message with the link to the run.
@@ -147,7 +149,7 @@ Roll back production to a previous version.
 2. Specify tag to rollback to (e.g., `@aragon/app@1.16.0`)
 3. Run workflow
 
-Production will be rebuilt and deployed from the specified tag, behind the production approval.
+Production will be rebuilt and deployed from the specified tag, behind the production approval. The same tag is then deployed to OCC (`new.app.aragon.org`); a tag older than the OCC environment leaves OCC as it is.
 
 ---
 

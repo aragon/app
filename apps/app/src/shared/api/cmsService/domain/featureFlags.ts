@@ -44,6 +44,7 @@
  * - `development` - Development environment
  * - `staging` - Staging environment
  * - `production` - Production environment
+ * - `occ` - OCC soft-launch environment (new.app.aragon.org); falls back to the `production` value when it has none of its own
  *
  * **Note:** CMS values override code defaults but can be further overridden by local cookie-based overrides.
  *
