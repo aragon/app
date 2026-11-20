@@ -44,13 +44,13 @@ export interface IUseWorkspaceAccountLookupResult {
     isError: boolean;
 }
 
+const isUnavailable = ({ status }: IWorkspaceAccountInfo) =>
+    status === WorkspaceAccountInfoStatus.UNAVAILABLE;
+
 /**
  * Looks an address or an ENS name up on every supported network, without asking for a network first. An ENS name
  * is resolved on Ethereum, then its address is looked up like any other.
  */
-const isUnavailable = ({ status }: IWorkspaceAccountInfo) =>
-    status === WorkspaceAccountInfoStatus.UNAVAILABLE;
-
 export const useWorkspaceAccountLookup = (
     value?: string,
 ): IUseWorkspaceAccountLookupResult => {
