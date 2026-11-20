@@ -17,12 +17,12 @@
     "summary": {
         "files": 226,
         "occurrences": 832,
-        "converted": 696,
-        "unconverted": 136,
+        "converted": 697,
+        "unconverted": 135,
         "unconvertedByReason": {
             "ordering": 5,
             "brand": 12,
-            "conflict": 99,
+            "conflict": 98,
             "no-token": 12,
             "no-css": 1,
             "no-utility": 7
@@ -33,6 +33,7 @@
         "bg-accent-hover": 2,
         "bg-accent-solid": 11,
         "bg-body": 1,
+        "bg-body-sidebar": 1,
         "bg-brand-solid": 3,
         "bg-critical-subtle": 1,
         "bg-surface-default": 10,
@@ -96,12 +97,6 @@
                 "classes": 1,
                 "todayValues": {
                     "primary-500": 1
-                }
-            },
-            "bg/body": {
-                "classes": 1,
-                "todayValues": {
-                    "neutral-25": 1
                 }
             },
             "bg/info/solid": {
@@ -2247,10 +2242,9 @@
             {
                 "line": 72,
                 "old": "has-[[data-app-sidebar]]:bg-neutral-25",
-                "new": null,
-                "token": "bg/body",
+                "new": "has-[[data-app-sidebar]]:bg-body-sidebar",
                 "part": "page background with the sidebar layout",
-                "reason": "conflict: bg/body has default value `neutral-50`, today `neutral-25` (neutral-25 has no Figma counterpart either (G-08))"
+                "reason": "component-level alias token (P-66): bg/body-sidebar holds today's neutral-25 in the default theme and follows bg/body in \"next\" and \"dark\". Was unconverted (conflict: bg/body has default value `neutral-50`, today `neutral-25` (neutral-25 has no Figma counterpart either (G-08)))"
             }
         ],
         "apps/app/src/modules/application/components/navigations/navigationDao/navigationDao.tsx": [
