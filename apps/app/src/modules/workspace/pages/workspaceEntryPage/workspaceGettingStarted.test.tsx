@@ -30,6 +30,7 @@ import {
 } from '../../api/workspaceService';
 import * as workspaceAccountSelectModule from '../../components/workspaceAccountSelect';
 import * as useWorkspaceAccountSuggestionsModule from '../../hooks/useWorkspaceAccountSuggestions';
+import * as useWorkspaceCreateAccountDialogModule from '../../hooks/useWorkspaceCreateAccountDialog';
 import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 import { WorkspaceGettingStarted } from './workspaceGettingStarted';
 
@@ -91,6 +92,11 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useWorkspaceAccountSuggestionsModule,
         'useWorkspaceAccountSuggestions',
     );
+    const useCreateAccountDialogSpy = jest.spyOn(
+        useWorkspaceCreateAccountDialogModule,
+        'useWorkspaceCreateAccountDialog',
+    );
+    const openCreateAccountMock = jest.fn();
 
     const replaceMock = jest.fn();
     const pushMock = jest.fn();
@@ -156,6 +162,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useWalletConnectedSpy.mockReturnValue(true);
         mockWalletAddress(wallet);
         mockSuggestions();
+        useCreateAccountDialogSpy.mockReturnValue(openCreateAccountMock);
     });
 
     afterEach(() => {
@@ -167,6 +174,8 @@ describe('<WorkspaceGettingStarted /> component', () => {
         useWalletConnectedSpy.mockReset();
         useWalletAccountSpy.mockReset();
         useSuggestionsSpy.mockReset();
+        useCreateAccountDialogSpy.mockReset();
+        openCreateAccountMock.mockReset();
         replaceMock.mockReset();
         pushMock.mockReset();
         prefetchMock.mockReset();
@@ -270,16 +279,30 @@ describe('<WorkspaceGettingStarted /> component', () => {
         await waitFor(() => expect(replaceMock).toHaveBeenCalled());
     });
 
-    it('creates a new account from the button under the selector', async () => {
+    it('opens the create account dialog and selects the account it creates', async () => {
+        const created = buildAccount(
+            '0x9cE7B2b1F8a1A7d2dF0E43a4f7C2B1a3E5d6C7b8',
+        );
         render(createTestComponent());
 
+        await userEvent.click(screen.getByText('pick one'));
         const createButton = screen.getByRole('button', {
             name: 'app.workspace.workspaceGettingStarted.action.createAccount',
         });
         expect(createButton).toHaveClass('bg-neutral-0');
         await userEvent.click(createButton);
 
-        expect(pushMock).toHaveBeenCalledWith('/create/dao');
+        expect(openCreateAccountMock).toHaveBeenCalledWith({
+            onCreated: expect.any(Function),
+        });
+        const [{ onCreated }] = openCreateAccountMock.mock.calls[0];
+        act(() => onCreated(created));
+
+        expect(selectSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ value: [first, created] }),
+            undefined,
+        );
+        expect(pushMock).not.toHaveBeenCalled();
     });
 
     it('tells how far the scan of the networks is while suggestions load', () => {
@@ -345,7 +368,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         expect(refetch).toHaveBeenCalled();
     });
 
-    it('shows only an empty card when the wallet has no accounts', async () => {
+    it('shows only an empty card when the wallet has no accounts', () => {
         mockSuggestions({ suggestions: [] });
         render(createTestComponent());
 
@@ -360,13 +383,57 @@ describe('<WorkspaceGettingStarted /> component', () => {
                 name: /workspaceGettingStarted.action.later/,
             }),
         ).not.toBeInTheDocument();
+    });
+
+    it('selects the account created from the empty card, which gives way to the selector', async () => {
+        mockSuggestions({ suggestions: [] });
+        render(createTestComponent());
 
         await userEvent.click(
             screen.getByRole('button', {
                 name: 'app.workspace.workspaceGettingStarted.action.createAccount',
             }),
         );
-        expect(pushMock).toHaveBeenCalledWith('/create/dao');
+
+        const [{ onCreated }] = openCreateAccountMock.mock.calls[0];
+        act(() => onCreated(first));
+        // Already selected: not added twice.
+        act(() => onCreated(first));
+
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceGettingStarted.emptyState.heading',
+            ),
+        ).not.toBeInTheDocument();
+        expect(selectSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ value: [first] }),
+            undefined,
+        );
+        expect(getAddButton()).toBeEnabled();
+    });
+
+    it('keeps the selector once an account was created from the empty card, even unchecked', async () => {
+        mockSuggestions({ suggestions: [] });
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.workspace.workspaceGettingStarted.action.createAccount',
+            }),
+        );
+
+        const [{ onCreated }] = openCreateAccountMock.mock.calls[0];
+        act(() => onCreated(first));
+        act(() => selectSpy.mock.lastCall?.[0].onChange([]));
+
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceGettingStarted.emptyState.heading',
+            ),
+        ).not.toBeInTheDocument();
+        expect(selectSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ value: [] }),
+            undefined,
+        );
     });
 
     it('opens the selector on its address view from the empty card', async () => {

@@ -1,6 +1,7 @@
 // biome-ignore-all lint/suspicious/useAwait: async keeps the service contract of a real backend over the sync storage.
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import type { IResource } from '@/shared/api/daoService';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 import { workspaceUtils } from '../../utils/workspaceUtils';
@@ -47,6 +48,21 @@ const workspaceExportVersion = 1;
 const isOptionalString = (value: unknown) =>
     value == null || typeof value === 'string';
 
+const isWorkspaceLink = (value: unknown): value is IResource => {
+    if (value == null || typeof value !== 'object') {
+        return false;
+    }
+
+    const link = value as Partial<IResource>;
+
+    return (
+        typeof link.name === 'string' &&
+        typeof link.url === 'string' &&
+        URL.canParse(link.url) &&
+        ['http:', 'https:'].includes(new URL(link.url).protocol)
+    );
+};
+
 const isWorkspaceAccountMetadata = (
     value: unknown,
 ): value is IWorkspaceAccountMetadata => {
@@ -59,7 +75,10 @@ const isWorkspaceAccountMetadata = (
     return (
         typeof metadata.name === 'string' &&
         isOptionalString(metadata.description) &&
-        isOptionalString(metadata.avatar)
+        isOptionalString(metadata.avatar) &&
+        (metadata.links == null ||
+            (Array.isArray(metadata.links) &&
+                metadata.links.every(isWorkspaceLink)))
     );
 };
 
@@ -116,20 +135,7 @@ const isWorkspaceBody = (value: unknown): value is Omit<IWorkspace, 'id'> => {
         typeof workspace.description === 'string' &&
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&
         Array.isArray(workspace.links) &&
-        workspace.links.every((value) => {
-            if (value == null || typeof value !== 'object') {
-                return false;
-            }
-
-            const link = value as Partial<(typeof workspace.links)[number]>;
-
-            return (
-                typeof link.name === 'string' &&
-                typeof link.url === 'string' &&
-                URL.canParse(link.url) &&
-                ['http:', 'https:'].includes(new URL(link.url).protocol)
-            );
-        }) &&
+        workspace.links.every(isWorkspaceLink) &&
         Array.isArray(workspace.accounts) &&
         workspace.accounts.every(isWorkspaceAccount) &&
         Array.isArray(workspace.targets) &&

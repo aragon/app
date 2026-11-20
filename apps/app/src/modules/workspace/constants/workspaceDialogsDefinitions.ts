@@ -1,6 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishWorkspaceDialog } from '../dialogs/publishWorkspaceDialog';
 import { WorkspaceAddAccountsDialog } from '../dialogs/workspaceAddAccountsDialog';
+import { WorkspaceCreateAccountDialog } from '../dialogs/workspaceCreateAccountDialog';
 import { WorkspaceEditDetailsDialog } from '../dialogs/workspaceEditDetailsDialog';
 import { WorkspaceSelectAccountDialog } from '../dialogs/workspaceSelectAccountDialog';
 import { WorkspaceWelcomeDialog } from '../dialogs/workspaceWelcomeDialog';
@@ -13,6 +14,13 @@ export const workspaceDialogsDefinitions: Record<
     // Opened through `useWorkspaceAddAccountsDialog`, which asks for a wallet first: the suggestions are the wallet's.
     [WorkspaceDialogId.ADD_ACCOUNTS]: {
         Component: WorkspaceAddAccountsDialog,
+        requiresWallet: true,
+    },
+    // Opened through `useWorkspaceCreateAccountDialog`, which asks for a wallet first: the signers start with it, and the
+    // stacked deploy dialog goes with it on disconnect.
+    [WorkspaceDialogId.CREATE_ACCOUNT]: {
+        Component: WorkspaceCreateAccountDialog,
+        size: 'lg',
         requiresWallet: true,
     },
     // Not `requiresWallet`: workspaces are stored locally.

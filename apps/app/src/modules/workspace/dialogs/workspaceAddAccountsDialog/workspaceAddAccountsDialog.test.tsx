@@ -1,5 +1,5 @@
 import { Dialog, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
@@ -13,6 +13,7 @@ import {
 } from '../../api/workspaceService';
 import * as workspaceAccountSelectModule from '../../components/workspaceAccountSelect';
 import * as useWorkspaceAccountSuggestionsModule from '../../hooks/useWorkspaceAccountSuggestions';
+import * as useWorkspaceCreateAccountDialogModule from '../../hooks/useWorkspaceCreateAccountDialog';
 import {
     type IWorkspaceAddAccountsDialogProps,
     WorkspaceAddAccountsDialog,
@@ -54,6 +55,11 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         useWorkspaceAccountSuggestionsModule,
         'useWorkspaceAccountSuggestions',
     );
+    const useCreateAccountDialogSpy = jest.spyOn(
+        useWorkspaceCreateAccountDialogModule,
+        'useWorkspaceCreateAccountDialog',
+    );
+    const openCreateAccountMock = jest.fn();
     const mockIncomplete = (isIncomplete: boolean) =>
         useSuggestionsSpy.mockReturnValue({
             suggestions: [],
@@ -68,6 +74,7 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
     beforeEach(async () => {
         mockWallet('0x5dcD623bf6E792bfBDbf8d643f6478153df4A8D2');
         mockIncomplete(false);
+        useCreateAccountDialogSpy.mockReturnValue(openCreateAccountMock);
         useDialogContextSpy.mockReturnValue(
             generateDialogContext({ close: closeSpy }),
         );
@@ -100,6 +107,8 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         addWorkspaceAccountSpy.mockClear();
         selectSpy.mockReset();
         useSuggestionsSpy.mockReset();
+        useCreateAccountDialogSpy.mockReset();
+        openCreateAccountMock.mockReset();
         closeSpy.mockClear();
         localStorage.clear();
     });
@@ -237,12 +246,30 @@ describe('<WorkspaceAddAccountsDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('links to creating a new account', async () => {
+    it('creates an account on top of this dialog and adds it to the selection', async () => {
+        const created = buildAccount(
+            '0x9cE7B2b1F8a1A7d2dF0E43a4f7C2B1a3E5d6C7b8',
+        );
         render(createTestComponent());
 
-        const link = await screen.findByRole('link', {
-            name: 'app.workspace.workspaceAddAccountsDialog.action.createAccount',
-        });
-        expect(link).toHaveAttribute('href', '/create/dao');
+        await userEvent.click(await screen.findByText('pick one'));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.workspace.workspaceAddAccountsDialog.action.createAccount',
+            }),
+        );
+
+        expect(openCreateAccountMock).toHaveBeenCalledWith(
+            { onCreated: expect.any(Function) },
+            { stack: true },
+        );
+        const [{ onCreated }] = openCreateAccountMock.mock.calls[0];
+        act(() => onCreated(created));
+
+        expect(selectSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ value: [first, created] }),
+            undefined,
+        );
+        expect(closeSpy).not.toHaveBeenCalled();
     });
 });

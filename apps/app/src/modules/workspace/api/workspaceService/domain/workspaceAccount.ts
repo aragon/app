@@ -1,4 +1,4 @@
-import type { Network } from '@/shared/api/daoService';
+import type { IResource, Network } from '@/shared/api/daoService';
 import type { WorkspaceAccountType } from './enum';
 
 export interface IWorkspaceAccountMetadata {
@@ -14,6 +14,10 @@ export interface IWorkspaceAccountMetadata {
      * Avatar of the account.
      */
     avatar?: string;
+    /**
+     * Links of the account, shown with its details.
+     */
+    links?: IResource[];
 }
 
 export interface IWorkspaceAccount {

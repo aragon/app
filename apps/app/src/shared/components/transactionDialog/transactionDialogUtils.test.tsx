@@ -1,5 +1,6 @@
 import type { UseQueryReturnType } from 'wagmi/query';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { TransactionDialogStep } from './transactionDialog.api';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
 describe('transactionDialog utils', () => {
@@ -24,6 +25,36 @@ describe('transactionDialog utils', () => {
                     'idle',
                 );
                 expect(result).toEqual(queryStatus);
+            },
+        );
+    });
+
+    describe('isTransactionInFlight', () => {
+        it.each([
+            { stepId: TransactionDialogStep.CONFIRM, state: 'pending' },
+            { stepId: TransactionDialogStep.CONFIRM, state: 'success' },
+            { stepId: TransactionDialogStep.INDEXING, state: 'pending' },
+            { stepId: TransactionDialogStep.INDEXING, state: 'success' },
+        ] as const)(
+            'returns true for the $stepId step in $state state',
+            ({ stepId, state }) => {
+                expect(
+                    transactionDialogUtils.isTransactionInFlight(stepId, state),
+                ).toBeTruthy();
+            },
+        );
+
+        it.each([
+            { stepId: TransactionDialogStep.APPROVE, state: 'pending' },
+            { stepId: TransactionDialogStep.CONFIRM, state: 'error' },
+            { stepId: TransactionDialogStep.INDEXING, state: 'warning' },
+            { stepId: undefined, state: undefined },
+        ] as const)(
+            'returns false for the $stepId step in $state state',
+            ({ stepId, state }) => {
+                expect(
+                    transactionDialogUtils.isTransactionInFlight(stepId, state),
+                ).toBeFalsy();
             },
         );
     });

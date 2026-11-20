@@ -1,6 +1,7 @@
 import type { UseQueryReturnType } from 'wagmi/query';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { TransactionStatusState } from '../transactionStatus';
+import { TransactionDialogStep } from './transactionDialog.api';
 
 // Known low-level errors mapped to a specific, actionable step error label. Message-substring
 // matching is intentional: viem surfaces the node's RPC details (e.g. "Details: eth_sendRawTransaction:
@@ -22,6 +23,17 @@ export class TransactionDialogUtils {
                 ? 'pending'
                 : 'idle'
             : status;
+
+    /**
+     * True once the transaction is sent and until it lands or fails: a managed dialog can't be cancelled then.
+     */
+    isTransactionInFlight = (
+        stepId?: string,
+        state?: TransactionStatusState,
+    ): boolean =>
+        (stepId === TransactionDialogStep.CONFIRM ||
+            stepId === TransactionDialogStep.INDEXING) &&
+        (state === 'success' || state === 'pending');
 
     /**
      * Returns the translation key of a specific error label for known transaction errors, or

@@ -33,4 +33,10 @@ EIP-55 by default (`enforceChecksum`), and on a checksum error it calls `onAccep
 - `BlockNavigationContextProvider` backs the dirty-exit confirmation (`useConfirmWizardExit`).
   Its default context is a no-op, so leaving it out disables the guard instead of throwing.
 - `DialogProvider`'s `close(dialogId)` closes one dialog and returns to its parent; `close()`
-  with no id closes the whole stack.
+  with no id closes the whole stack. `WizardDialog.Container` and `TransactionDialog` take a `dialogId` to
+  close only their own dialog when stacked: the wizard's step-1 footer "Close" (the header X already closes by
+  location id through Radix), and the transaction footer's Cancel, Success and "Proceed anyway".
+  `TransactionDialog` also takes `onProceedAnyway(receipt)`, called instead of linking out.
+  With `preventCloseWhileBusy`, Cancel is disabled while the wallet prompt is open, and Escape is ignored then, while
+  Cancel is disabled and from confirmation until the success action ("Proceed anyway" included); otherwise Escape
+  closes by `dialogId`.
