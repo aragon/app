@@ -76,6 +76,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: created,
@@ -122,6 +124,49 @@ describe('<WorkspaceAccountSelect /> component', () => {
 
     const getCheckbox = (name: RegExp) =>
         screen.getByRole('checkbox', { name });
+
+    it('offers to add an account by address when there are no suggestions', async () => {
+        useSuggestionsSpy.mockReturnValue({
+            isPending: false,
+            isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
+            suggestions: [],
+        });
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceAccountSelect.emptyState.noAccounts',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceAccountSelect.emptyState.description',
+            ),
+        ).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.workspace.workspaceAccountSelect.emptyState.addByAddress',
+            }),
+        );
+        expect(
+            screen.getByPlaceholderText(
+                'app.workspace.workspaceAccountSelect.addressView.placeholder',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('opens on the address view when initialMode is address', () => {
+        render(createTestComponent({ initialMode: 'address' }));
+
+        expect(
+            screen.getByPlaceholderText(
+                'app.workspace.workspaceAccountSelect.addressView.placeholder',
+            ),
+        ).toBeInTheDocument();
+    });
 
     it('suggests the accounts of the connected wallet, deployed ones first', () => {
         render(createTestComponent());
@@ -264,10 +309,12 @@ describe('<WorkspaceAccountSelect /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('tells how far the scan of the networks is while suggestions load', () => {
+    it('lists the suggestions found so far while the scan runs', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: true,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: member,
@@ -278,9 +325,6 @@ describe('<WorkspaceAccountSelect /> component', () => {
         });
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/workspaceAccountSelect.scanning/),
-        ).toHaveTextContent(/count=19.*found=1|found=1.*count=19/);
         expect(getCheckbox(/Member DAO/)).toBeInTheDocument();
     });
 
@@ -296,6 +340,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions,
         });
         render(createTestComponent());
@@ -305,6 +351,72 @@ describe('<WorkspaceAccountSelect /> component', () => {
         await userEvent.click(screen.getByRole('button', { name: /more/i }));
 
         expect(screen.getAllByRole('checkbox')).toHaveLength(13);
+    });
+
+    it('keeps a selected account listed when the suggestions no longer hold it', async () => {
+        const onChange = jest.fn();
+        render(createTestComponent({ onChange, value: [lookedUp] }));
+
+        const selected = screen.getAllByRole('checkbox')[0];
+        expect(selected).toHaveAccessibleName(/0x1F01/);
+        expect(selected).toBeChecked();
+
+        await userEvent.click(selected);
+        expect(onChange).toHaveBeenLastCalledWith([]);
+    });
+
+    it('keeps the name and note of a selected suggestion the suggestions drop', () => {
+        const { rerender } = render(createTestComponent({ value: [member] }));
+
+        useSuggestionsSpy.mockReturnValue({
+            isPending: false,
+            isError: false,
+            isIncomplete: true,
+            refetch: jest.fn(),
+            suggestions: [],
+        });
+        rerender(createTestComponent({ value: [member] }));
+
+        expect(getCheckbox(/Member DAO/)).toBeChecked();
+        expect(
+            screen.getByText(
+                'app.workspace.workspaceAccountSelect.note.member',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('keeps the latest name and note of a selected suggestion the suggestions drop', () => {
+        const { rerender } = render(createTestComponent({ value: [member] }));
+
+        const mockSuggestions = (
+            suggestions: ReturnType<
+                typeof useWorkspaceAccountSuggestionsModule.useWorkspaceAccountSuggestions
+            >['suggestions'],
+        ) =>
+            useSuggestionsSpy.mockReturnValue({
+                isPending: false,
+                isError: false,
+                isIncomplete: true,
+                refetch: jest.fn(),
+                suggestions,
+            });
+        mockSuggestions([
+            {
+                account: member,
+                dao: generateDao({ name: 'Renamed DAO' }),
+                role: WorkspaceAccountSuggestionRole.CREATOR,
+            },
+        ]);
+        rerender(createTestComponent({ value: [member] }));
+        mockSuggestions([]);
+        rerender(createTestComponent({ value: [member] }));
+
+        expect(getCheckbox(/Renamed DAO/)).toBeChecked();
+        expect(
+            screen.queryByText(
+                'app.workspace.workspaceAccountSelect.note.member',
+            ),
+        ).not.toBeInTheDocument();
     });
 
     it('lists the accounts the workspace holds even when nothing suggests them', () => {
@@ -322,6 +434,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: lookedUp,
@@ -356,6 +470,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: testnetMember,
@@ -483,6 +599,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: true,
             isError: false,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [
                 {
                     account: created,
@@ -563,17 +681,19 @@ describe('<WorkspaceAccountSelect /> component', () => {
         expect(screen.queryAllByTestId('stateSkeletonBar')).toHaveLength(0);
     });
 
-    it('tells when the suggestions could not be loaded', () => {
+    it('offers to add an account by address when the suggestions could not be loaded', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: true,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [],
         });
         render(createTestComponent());
 
         expect(
             screen.getByText(
-                'app.workspace.workspaceAccountSelect.errorState.heading',
+                'app.workspace.workspaceAccountSelect.emptyState.noAccounts',
             ),
         ).toBeInTheDocument();
     });
@@ -582,6 +702,8 @@ describe('<WorkspaceAccountSelect /> component', () => {
         useSuggestionsSpy.mockReturnValue({
             isPending: false,
             isError: true,
+            isIncomplete: false,
+            refetch: jest.fn(),
             suggestions: [],
         });
         useLookupSpy.mockReturnValue({
@@ -610,19 +732,17 @@ describe('<WorkspaceAccountSelect /> component', () => {
         expect(screen.getByRole('checkbox')).toBeChecked();
     });
 
-    it('flags a failed scan above the list when the workspace holds accounts', () => {
+    it('keeps listing the suggestions it holds when reading them again fails', () => {
         useSuggestionsSpy.mockReturnValue({
-            isPending: false,
+            ...useSuggestionsSpy.getMockImplementation()?.(undefined),
             isError: true,
-            suggestions: [],
-        });
-        render(createTestComponent({ workspaceAccounts: [lookedUp] }));
+        } as ReturnType<
+            typeof useWorkspaceAccountSuggestionsModule.useWorkspaceAccountSuggestions
+        >);
+        render(createTestComponent({ value: [member] }));
 
-        expect(screen.getByRole('checkbox')).toBeChecked();
-        expect(
-            screen.getByText(
-                'app.workspace.workspaceAccountSelect.errorState.heading',
-            ),
-        ).toBeInTheDocument();
+        expect(getCheckbox(/Created DAO/)).toBeInTheDocument();
+        expect(getCheckbox(/Member DAO/)).toBeChecked();
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     });
 });

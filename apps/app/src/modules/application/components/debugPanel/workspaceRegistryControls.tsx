@@ -44,11 +44,27 @@ export const WorkspaceRegistryControls: React.FC = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (
+            !window.confirm('Delete every local workspace from this browser?')
+        ) {
+            return;
+        }
+
+        try {
+            await workspaceService.deleteWorkspaceRegistry();
+            window.location.assign('/workspace');
+        } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : String(error));
+        }
+    };
+
     return (
         <section className="flex flex-col gap-2">
             <Heading size="h3">Workspace registry</Heading>
             <p className="text-sm leading-normal text-neutral-500">
-                Save or restore the local workspace JSON for this environment.
+                Save, restore or delete the local workspace JSON for this
+                environment.
             </p>
             <div className="flex flex-wrap gap-2">
                 <Button onClick={handleExport} size="sm" variant="secondary">
@@ -60,6 +76,9 @@ export const WorkspaceRegistryControls: React.FC = () => {
                     variant="secondary"
                 >
                     Import JSON
+                </Button>
+                <Button onClick={handleDelete} size="sm" variant="critical">
+                    Delete workspaces
                 </Button>
             </div>
             <input

@@ -127,6 +127,32 @@ describe('<DataListSelect /> component', () => {
         expect(screen.getByText('address view empty')).toBeInTheDocument();
     });
 
+    it('opens on the address view when initialMode is address', async () => {
+        render(createTestComponent({ initialMode: 'address' }));
+
+        expect(screen.getByText('address view empty')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'back' }));
+        expect(screen.getByText('Alpha')).toBeInTheDocument();
+    });
+
+    it('reports each change of view', async () => {
+        const onModeChange = jest.fn();
+        render(createTestComponent({ onModeChange }));
+
+        await userEvent.click(
+            screen.getByRole('button', { name: 'Add address' }),
+        );
+        expect(onModeChange).toHaveBeenLastCalledWith('address');
+
+        await userEvent.click(screen.getByRole('button', { name: 'back' }));
+        expect(onModeChange).toHaveBeenLastCalledWith('list');
+
+        await userEvent.type(screen.getByRole('searchbox'), unknown);
+        expect(onModeChange).toHaveBeenLastCalledWith('address');
+        expect(screen.getByText(`address view ${unknown}`)).toBeInTheDocument();
+    });
+
     it('hides the search when hasSearch is false', () => {
         render(createTestComponent({ hasSearch: false }));
 

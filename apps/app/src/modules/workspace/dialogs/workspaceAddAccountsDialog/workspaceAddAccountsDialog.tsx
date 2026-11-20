@@ -15,7 +15,10 @@ import {
     useWorkspace,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
-import { WorkspaceAccountSelect } from '../../components/workspaceAccountSelect';
+import {
+    WorkspaceAccountSelect,
+    WorkspaceAccountSelectStatusAlert,
+} from '../../components/workspaceAccountSelect';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAddAccountsDialogParams {
@@ -124,7 +127,9 @@ export const WorkspaceAddAccountsDialog: React.FC<
                 title={t('app.workspace.workspaceAddAccountsDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-4 pb-4">
+                <WorkspaceAccountSelectStatusAlert />
                 {workspace != null && (
+                    // Not keyed by address: accounts added by address belong to no wallet, so they stay.
                     <WorkspaceAccountSelect
                         onChange={setSelected}
                         value={selected}
@@ -147,7 +152,7 @@ export const WorkspaceAddAccountsDialog: React.FC<
                     disabled: selected.length === 0 || isAdding,
                     isLoading: isAdding,
                 }}
-                // TODO(APP-1499): create the account in place, returning here with it selected (PR 3).
+                // TODO(APP-1499): create the account in place and return here with it selected.
                 secondaryAction={{
                     label: t(
                         'app.workspace.workspaceAddAccountsDialog.action.createAccount',

@@ -1,6 +1,5 @@
 import {
     AragonBackendService,
-    type IPaginatedResponse,
     type IPaginatedResponseMetadata,
 } from '@/shared/api/aragonBackendService';
 
@@ -8,7 +7,7 @@ import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 
 import type {
     IWorkspaceAccountInfo,
-    IWorkspaceAccountSuggestion,
+    IWorkspaceAccountSuggestionListResponse,
     IWorkspaceAssetListResponse,
     IWorkspaceMember,
     IWorkspaceProposalListResponse,
@@ -77,7 +76,7 @@ class WorkspaceQueryService extends AragonBackendService {
      */
     getAccountSuggestions = (
         params: IGetWorkspaceAccountSuggestionsParams,
-    ): Promise<IPaginatedResponse<IWorkspaceAccountSuggestion>> =>
+    ): Promise<IWorkspaceAccountSuggestionListResponse> =>
         getWorkspaceAccountSuggestions(params);
 
     /**
