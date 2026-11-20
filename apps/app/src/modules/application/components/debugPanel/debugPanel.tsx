@@ -7,6 +7,7 @@ import { useDebugContext } from '@/shared/components/debugProvider/debugProvider
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
+import { useThemePreview } from '../../hooks/useThemePreview';
 import { DebugPanelControl } from './debugPanelControl';
 
 export const DebugPanel: React.FC = () => {
@@ -14,6 +15,7 @@ export const DebugPanel: React.FC = () => {
 
     const { controls, registerControl } = useDebugContext();
     useAddressImpersonation();
+    useThemePreview();
     const { t } = useTranslations();
     const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 

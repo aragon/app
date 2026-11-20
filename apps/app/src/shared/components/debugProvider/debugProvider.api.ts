@@ -2,11 +2,22 @@ import type { ReactNode } from 'react';
 
 export type DebugContextValues = Record<string, unknown>;
 
+export interface IDebugContextControlOption {
+    /**
+     * Label of the option.
+     */
+    label: string;
+    /**
+     * Value of the option.
+     */
+    value: string;
+}
+
 export interface IDebugContextControl {
     /**
      * Control type used to define the component to be rendered.
      */
-    type: 'boolean' | 'string' | 'address';
+    type: 'boolean' | 'string' | 'address' | 'select';
     /**
      * Name of the control.
      */
@@ -15,6 +26,14 @@ export interface IDebugContextControl {
      * Label of the control.
      */
     label: string;
+    /**
+     * Optional description rendered below the control.
+     */
+    description?: string;
+    /**
+     * Options of a `select` control.
+     */
+    options?: IDebugContextControlOption[];
     /**
      * Initial value for the control.
      */
