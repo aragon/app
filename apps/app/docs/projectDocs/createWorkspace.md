@@ -1123,16 +1123,16 @@ as `ManageMembershipAddressList` expects), `threshold` and `accountType`. Steps:
 3. **Signers and approvals** (`WorkspaceCreateAccountDialogSigners`): `ManageMembershipAddressList` (the connected
    wallet is the first signer) and `NumberProgressInput` with `hideInputLabel` for the approvals, clamped to the
    number of signers; one by default.
-4. **Account type**: cards, Aragon selected. The Safe card is disabled until Safe creation lands (#1580).
+4. **Account type**: cards, Safe selected where supported. Elsewhere Aragon is selected and Safe is disabled with a reason.
 
 `buildCreateAccountRequest(form, { onCreated, t })` and `buildCreatedAccount(accountType, deployed)` are the one place
-that differs per account type. The request is `{ dialogId, params }`: for ARAGON it is `PublishDaoDialog` with the
-multisig `plugin`, its `labels` and an `onCreated` adapter built on `buildCreatedAccount`. SAFE is not supported yet:
-the request throws, and #1580 adds its branch. A DAO keeps its name, description, logo and links in its IPFS metadata,
-so its account has no `metadata`; a Safe has none on-chain, so its branch stores them in the account's `metadata`
-(`name`, `description`, the pinned `avatar`, `links`). Submit opens that dialog stacked; closing it or a rejected wallet request
-returns to the filled-in wizard. The wizard closes only from `onCreated`, which runs on the success action, after
-indexing.
+that differs per account type. The request is `{ dialogId, params }`: ARAGON opens `PublishDaoDialog` with the
+multisig `plugin` and labels; SAFE opens `SafeDeployTransactionDialog` with the form's owners and threshold. A DAO
+keeps its name, description, logo and links in IPFS metadata, so its account has no `metadata`. A Safe has none
+on-chain, so its account stores the name, description, pinned logo and links in `metadata`. The Safe
+receipt is decoded on confirmation; Done hands the address to the wizard. Submit opens the deploy dialog stacked; closing it or a
+rejected wallet request returns to the filled-in wizard. The wizard closes only from `onCreated`: after indexing
+for Aragon, or after confirmation and Done for Safe.
 
 Multisig settings: `onlyListed: true`, members = the signers, `minApprovals` = the threshold, target the DAO itself.
 

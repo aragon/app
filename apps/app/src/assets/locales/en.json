@@ -3864,6 +3864,13 @@
       }
     },
     "safe": {
+      "safeDeployTransactionDialog": {
+        "addressError": "Unable to read the deployed Safe address. Try again.",
+        "title": "Deploy Safe Account",
+        "description": "To deploy the account, confirm the onchain transaction in your wallet.",
+        "submit": "Deploy Safe Account",
+        "success": "Done"
+      },
       "safeAccountPage": {
         "aside": {
           "details": {
@@ -5301,7 +5308,8 @@
         "accountType": {
           "SAFE": {
             "label": "Safe",
-            "description": "A Safe multisig. Works with the Safe ecosystem."
+            "description": "A Safe multisig. Works with the Safe ecosystem.",
+            "unsupported": "Not supported"
           },
           "ARAGON": {
             "label": "Aragon",
