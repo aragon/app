@@ -444,7 +444,7 @@ designer meanwhile, and collapses at the value switch (T-04).
 | U-02 | 9 | No token fits the role (14 before T-01: the DAO avatar initials were converted to the token Figma binds, P-32; 13 before the U-01 utilities: the switch thumb ×3 and the progress marker outline now take the tokens Figma binds, P-42). | DESIGNER |
 | U-03 | 0 (was 4) | Would need a token whose meaning is unresolved (progress neutral bar and marker, inverted spinner track, neutral tooltip background). Converted after G-07 was settled (P-31). | Done |
 | U-04 | 3 | Class-ordering dependency (P-21). | OPEN |
-| U-05 | 49 classes in 17 story files | Stories still use primitive classes; harmless, to be updated. | OPEN |
+| U-05 | 49 classes in 17 story files | Stories still use primitive colour classes; harmless, to be updated. **Done** for 35 of 49 classes in 15 files (status fills `bg-{info,success,warning}-subtle`, avatar `bg-accent-solid text-accent-inverse`, static text `text-surface-primary/secondary`, skeleton bars `bg-surface-secondary`, clipboard card `border/bg-surface-default hover:bg-surface-hover`); visual-diff 0 of 304 in today, 14 of 304 in dark (the converted stories now follow the theme; in dark the accordion/tab placeholders keep inherited dark text on a now dark fill). **Left** (14, no role-right token with that exact colour): `border-info-300` ×11 (placeholders), `bg-warning-400` ×1 (dialogFooter), `text-primary-300` ×2 (tooltip). The app's two autocomplete `<hr>` dividers are done too (`border-surface-secondary`, pixel-identical). | PARTLY DONE |
 | U-06 | 2 | `var(--color-primary-*)` in the illustrations stylesheet. | OPEN |
 
 ## 6. Gaps in the Figma token set

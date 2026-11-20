@@ -99,11 +99,11 @@ export const InsideClickable: Story = {
     },
     render: (props) => (
         <button
-            className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 hover:bg-neutral-50"
+            className="flex items-center gap-2 rounded-xl border border-surface-default bg-surface-default px-4 py-3 hover:bg-surface-hover"
             onClick={() => alert('Parent clicked!')}
             type="button"
         >
-            <span className="text-sm text-neutral-500">{props.copyValue}</span>
+            <span className="text-sm text-surface-secondary">{props.copyValue}</span>
             <Clipboard {...props} />
         </button>
     ),
@@ -120,12 +120,12 @@ export const InsideLink: Story = {
     },
     render: (props) => (
         <a
-            className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 hover:bg-neutral-50"
+            className="flex items-center gap-2 rounded-xl border border-surface-default bg-surface-default px-4 py-3 hover:bg-surface-hover"
             href="https://example.com"
             rel="noopener noreferrer"
             target="_blank"
         >
-            <span className="text-sm text-neutral-500">{props.copyValue}</span>
+            <span className="text-sm text-surface-secondary">{props.copyValue}</span>
             <Clipboard {...props} />
         </a>
     ),

@@ -1438,47 +1438,60 @@
     },
     "storiesToUpdate": {},
     "leftovers": {
-        "$description": "Work left that needs no design judgement, in batches with no file in two batches (see the decisions file, T-02).",
+        "$description": "Work left that needs no design judgement, in batches with no file in two batches (see the decisions file, T-02). Batches 1 and 2 (kit stories) and the divider part of batch 3 are done; what remains is listed under `done` and `remaining`.",
         "batches": [
-            {
-                "batch": 1,
-                "scope": "packages/gov-ui-kit stories (U-05), core A",
-                "files": [
-                    "packages/gov-ui-kit/src/core/components/accordion/accordionContainer/accordionContainer.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/alerts/alertCard/alertCard.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/avatars/avatar/avatar.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/clipboard/clipboard.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/dataList/dataListRoot/dataListRoot.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogStoryComponent.tsx",
-                    "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertStoryComponent.tsx"
-                ],
-                "how": "Replace the 30 primitive classes listed for these files in the kit map (storiesToUpdate) with the same-valued semantic class of the same role; story placeholders take bg/surface/secondary-like neutral fills only where the value matches, else stay. Proof: `pnpm visual-diff ref <start>` 0 of 304, then the registry refresh (stories are cited by the registry). No kit changeset (stories only)."
-            },
-            {
-                "batch": 2,
-                "scope": "packages/gov-ui-kit stories (U-05), rest",
-                "files": [
-                    "packages/gov-ui-kit/src/core/components/forms/textAreaRichText/textAreaRichText.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx",
-                    "packages/gov-ui-kit/src/core/components/tooltip/tooltip.stories.tsx",
-                    "packages/gov-ui-kit/src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx",
-                    "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx"
-                ],
-                "how": "Same as batch 1 (18 classes)."
-            },
             {
                 "batch": 3,
                 "scope": "apps/app leftovers",
                 "files": [
-                    "apps/app/src/shared/components/forms/autocompleteInput/autocompleteInputGroup.tsx",
                     "apps/app/src/daos/alchemix/components/alchemixSubmitVote/components/alchemixObjectionVote.test.tsx"
                 ],
-                "how": "autocompleteInputGroup.tsx: the two <hr> dividers colour their border through `text-neutral-100` (currentColor); replace with `border-surface-secondary` (same neutral-100, the static divider role) and check the autocomplete menu in the screenshot run (the validator cannot prove a change of property). alchemixObjectionVote.test.tsx: T-13, asserts the kit Button's old `bg-primary-400`; assert through the accessible surface or the kit's `bg-accent-default`."
+                "how": "alchemixObjectionVote.test.tsx: T-13, asserts the kit Button's old `bg-primary-400`; assert through the accessible surface or the kit's `bg-accent-default`. (The `<hr>` dividers of autocompleteInputGroup.tsx are done, see `done`.)"
+            }
+        ],
+        "done": [
+            {
+                "batches": "1 and 2",
+                "scope": "packages/gov-ui-kit stories (U-05)",
+                "files": 17,
+                "classes": "35 of 49 converted",
+                "conversions": {
+                    "bg-info-100": "bg-info-subtle (8 files, 11 uses; status fill subtle)",
+                    "bg-success-100": "bg-success-subtle (2)",
+                    "bg-warning-100": "bg-warning-subtle (1)",
+                    "bg-primary-400 + text-neutral-0 (avatar fallback)": "bg-accent-solid text-accent-inverse (as DaoAvatar)",
+                    "border-neutral-100 bg-neutral-0 hover:bg-neutral-50 (clipboard pressable card)": "border-surface-default bg-surface-default hover:bg-surface-hover (x2)",
+                    "text-neutral-800 / text-neutral-500 (static text)": "text-surface-primary / text-surface-secondary (8)",
+                    "bg-neutral-50 (skeleton bars)": "bg-surface-secondary (3, as StateSkeletonBar)"
+                },
+                "proof": "visual-diff ref bcf2bf1: 0 of 304 differ (today); dark: 14 of 304 differ (the converted stories now follow the theme)"
+            },
+            {
+                "batch": 3,
+                "file": "apps/app/src/shared/components/forms/autocompleteInput/autocompleteInputGroup.tsx",
+                "change": "two <hr> `text-neutral-100` -> `border-surface-secondary`",
+                "proof": "preflight gives hr `border-top-width:1px; color:inherit`, border colour defaults to currentColor; computed style and screenshot of the rule are identical before/after in the default theme (1px, rgb(228,231,235), same box); in dark the rule now follows the theme. Screenshot run: 121 compared, 0 differ."
+            }
+        ],
+        "remaining": [
+            {
+                "classes": "border-info-300 (11 uses on story placeholders)",
+                "files": "accordionContainer, alertCard, dialogContent, dialogStoryComponent, dialogAlertContent, dialogAlertStoryComponent, tabsRoot (x4), proposalDataListItemStructure",
+                "reason": "no border token holds #75e8f3; border-info-primary is info-400"
+            },
+            {
+                "classes": "bg-warning-400 (1)",
+                "files": "dialogFooter.stories.tsx",
+                "reason": "only bg-warning-solid exists and it is warning-500; the tooltip variant (warning-300) is role-wrong"
+            },
+            {
+                "classes": "text-primary-300 (2)",
+                "files": "tooltip.stories.tsx",
+                "reason": "no text token holds #628cfe (text-accent-* are 400/600/900); icon-accent-default/border-accent-primary hold it but are role-wrong"
+            },
+            {
+                "item": "T-13 test assertions",
+                "files": "alchemixObjectionVote.test.tsx and lockToVoteProposalVotingSummary tests"
             }
         ]
     },

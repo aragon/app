@@ -42,7 +42,9 @@ export const CustomFallback: Story = {
     args: {
         src: 'broken-image',
         size: 'lg',
-        fallback: <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">SO</span>,
+        fallback: (
+            <span className="flex size-full items-center justify-center bg-accent-solid text-accent-inverse">SO</span>
+        ),
     },
 };
 
