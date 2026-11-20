@@ -37,6 +37,8 @@
         "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:colors:check": "node scripts/semanticColors/primitive-colors.mjs check",
+        "lint:colors:report": "node scripts/semanticColors/primitive-colors.mjs report",
         "setup": "./scripts/setupEnv.sh",
         "start": "next start",
         "test": "jest",
