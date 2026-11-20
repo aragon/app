@@ -1,12 +1,13 @@
 import { headers } from 'next/headers';
 import { cache } from 'react';
-import type {
-    FeatureFlagDefinition,
-    FeatureFlagEnvironment,
-    FeatureFlagKey,
-    FeatureFlagOverrides,
-    FeatureFlagSnapshot,
-    IFeatureFlagsProvider,
+import {
+    FEATURE_FLAG_BASE_ENVIRONMENTS,
+    type FeatureFlagDefinition,
+    type FeatureFlagEnvironment,
+    type FeatureFlagKey,
+    type FeatureFlagOverrides,
+    type FeatureFlagSnapshot,
+    type IFeatureFlagsProvider,
 } from './featureFlags.api';
 import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
 import {
@@ -14,29 +15,36 @@ import {
     GithubCmsFeatureFlagsProvider,
 } from './providers/githubProvider';
 import { getEnvironment } from './utils/getEnvironment';
+import { getEnvironmentValue } from './utils/getEnvironmentValue';
 
-const getStaticDefaultValue = (
-    definition: FeatureFlagDefinition,
-    env: FeatureFlagEnvironment,
-): boolean => {
-    const envValue = definition.environments?.[env];
-    if (envValue != null) {
-        return envValue;
-    }
-
-    return definition.defaultValue;
-};
-
+// Environment first, then the base environment: local override > CMS (environment) > code
+// (environment) > CMS (base) > code (base) > default.
 const resolveFlagValue = (
     definition: FeatureFlagDefinition,
     overrides: FeatureFlagOverrides,
+    baseOverrides: FeatureFlagOverrides,
     env: FeatureFlagEnvironment,
 ): boolean => {
     if (overrides[definition.key] != null) {
         return overrides[definition.key] === true;
     }
 
-    return getStaticDefaultValue(definition, env);
+    const envValue = getEnvironmentValue(definition.environments, env);
+    if (envValue != null) {
+        return envValue;
+    }
+
+    if (baseOverrides[definition.key] != null) {
+        return baseOverrides[definition.key] === true;
+    }
+
+    const baseEnv = FEATURE_FLAG_BASE_ENVIRONMENTS[env];
+    const baseValue =
+        baseEnv != null
+            ? getEnvironmentValue(definition.environments, baseEnv)
+            : undefined;
+
+    return baseValue ?? definition.defaultValue;
 };
 
 class FeatureFlags {
@@ -70,13 +78,21 @@ class FeatureFlags {
      * CMS fetch instead of triggering one per call.
      */
     private async getSnapshotInternal(): Promise<FeatureFlagSnapshot[]> {
-        const overrides = await this.provider.loadOverrides();
+        const [overrides, baseOverrides] = await Promise.all([
+            this.provider.loadOverrides(),
+            this.provider.loadBaseOverrides?.() ?? {},
+        ]);
 
         return this.definitions.map((definition) => ({
             key: definition.key,
             name: definition.name,
             description: definition.description,
-            enabled: resolveFlagValue(definition, overrides, this.environment),
+            enabled: resolveFlagValue(
+                definition,
+                overrides,
+                baseOverrides,
+                this.environment,
+            ),
         }));
     }
 

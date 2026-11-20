@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { featureFlags } from '@/shared/featureFlags';
+import { featureFlags, getEnvironment } from '@/shared/featureFlags';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
 
 class RobotsUtils {
@@ -7,6 +7,11 @@ class RobotsUtils {
     // sitemap, listed here while the helpCenter flag serves it: listed sooner, the crawlers would
     // fetch a sitemap at a path that answers not found.
     generateRobots = async (): Promise<MetadataRoute.Robots> => {
+        // Every other environment serves the same pages as production on another host.
+        if (getEnvironment() !== 'production') {
+            return { rules: { userAgent: '*', disallow: '/' } };
+        }
+
         const isHelpCenterEnabled = await featureFlags.isEnabled('helpCenter');
         const sitemaps = [
             `${metadataUtils.baseUrl}/sitemap.xml`,
