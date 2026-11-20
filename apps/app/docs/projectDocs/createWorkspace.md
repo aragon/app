@@ -1027,14 +1027,15 @@ The content column is 800px wide at most, with 32px between the header, the body
   a failed read keeps the last list, which may be incomplete too.
 - **Selector** — `WorkspaceAccountSelect` in a `Card`. Its own empty state, e.g. after a search with no match, reads
   "No accounts found" with "Add by address".
-- **Create a new account** — a button under the card, to `/create/dao` for now (returning with the account selected
-  comes with APP-1499). It is primary once the scan has finished with nothing to list (no suggestion, no account
-  added by address, no selection), as the design does, secondary otherwise.
+- **Create a new account** — a button under the card that opens the [Create account](#create-account) dialog; the
+  account it deploys is added to the selection (once). It is primary once the scan has finished with nothing to list
+  (no suggestion, no account added by address or created, no selection), as the design does, secondary otherwise.
 - **No accounts** — once a complete scan has settled with no suggestions and nothing is selected, a standalone
   `CardEmptyState` ("No Safes or Aragon DAOs found", wallet illustration) replaces the card, the create button and
   the actions. Its primary button is "Create a new account"; its secondary, "Add account by address", brings the
   card and the actions back with the selector opened on its address view (`initialMode="address"`). Going back with
-  no account added brings the empty card back; an account added by address keeps the selector, as it stays listed.
+  no account added brings the empty card back; an account added by address or created keeps the selector, as it
+  stays listed even unchecked.
 - **Actions** — "Add accounts later" and "Add N accounts" call `createDefaultWorkspace(accounts)` (none for later),
   then invalidate the workspace list, mark the welcome pending (`workspaceWelcomeUtils.markPendingWelcome`) and
   `router.replace` to the new workspace's aggregated overview, where the workspace layout opens
@@ -1100,8 +1101,70 @@ through `useWorkspaceAddAccountsDialog`: the dialog requires a wallet, so the ho
   address", with a single "Add by address" button opening the address view.
 - **Status alert** — the same alert as on Getting started, with Retry, sits above the selector. The dialog shows
   no scan status line: the list's placeholder rows stand for it.
-- **Create a new account** (footer) temporarily goes to the DAO creation page (`/create/dao`) and closes the dialog.
-  Creating the account in the dialog, and returning to the selector with it selected, comes with APP-1499.
+- **Create a new account** (footer) opens the [Create account](#create-account) dialog stacked on this one. The
+  deployed account is added to the selection (earlier ticks stay) and this dialog stays open.
+- A selected account no suggestion holds (e.g. one just deployed) is named through the accounts lookup
+  (`useWorkspaceAccounts`), DAO or Safe; a DAO shows its avatar through `useWorkspaceDaos`, a Safe the Safe logo.
+
+## Create account
+
+`WorkspaceCreateAccountDialog` (`WorkspaceDialogId.CREATE_ACCOUNT`, requires a wallet, `size: 'lg'`) deploys an account
+from a `WizardDialog.Container`, through `useWorkspaceCreateAccountDialog` (asks to connect a wallet first;
+`{ stack: true }` opens it on top of another dialog). Params: `{ onCreated(account: IWorkspaceAccount) }`.
+
+The form is the dialog's own, built from shared primitives rather than the `/create/dao` form parts. Its shape
+(`IWorkspaceCreateAccountForm`): `network`, `name`, `description`, `avatar`, `resources`, `members` (the signers, named
+as `ManageMembershipAddressList` expects), `threshold` and `accountType`. Steps:
+
+1. **Network**: radio list of networks (`WorkspaceCreateAccountDialogNetwork`), Ethereum Sepolia by default.
+2. **Details**: name (required), description, `AvatarInput`, `ResourcesInput`. No ENS subdomain, as these are
+   accounts rather than DAOs and a subdomain can be set later: the deploy request submits `ens: ''`, so no name is
+   registered.
+3. **Signers and approvals** (`WorkspaceCreateAccountDialogSigners`): `ManageMembershipAddressList` (the connected
+   wallet is the first signer) and `NumberProgressInput` with `hideInputLabel` for the approvals, clamped to the
+   number of signers; one by default.
+4. **Account type**: cards, Aragon selected. The Safe card is disabled until Safe creation lands (#1580).
+
+`buildCreateAccountRequest(form, { onCreated, t })` and `buildCreatedAccount(accountType, deployed)` are the one place
+that differs per account type. The request is `{ dialogId, params }`: for ARAGON it is `PublishDaoDialog` with the
+multisig `plugin`, its `labels` and an `onCreated` adapter built on `buildCreatedAccount`. SAFE is not supported yet:
+the request throws, and #1580 adds its branch. A DAO keeps its name, description, logo and links in its IPFS metadata,
+so its account has no `metadata`; a Safe has none on-chain, so its branch stores them in the account's `metadata`
+(`name`, `description`, the pinned `avatar`, `links`). Submit opens that dialog stacked; closing it or a rejected wallet request
+returns to the filled-in wizard. The wizard closes only from `onCreated`, which runs on the success action, after
+indexing.
+
+Multisig settings: `onlyListed: true`, members = the signers, `minApprovals` = the threshold, target the DAO itself.
+
+What `onCreated` does per entry point:
+
+| Entry point | After deployment |
+| --- | --- |
+| Getting started (both buttons) | Ticks the new account in the selection, keeping existing ticks |
+| Add accounts footer | Same; the Add accounts dialog stays open |
+| All Accounts dropdown "Create account" | `useAddWorkspaceAccountAndOpen`: adds it to the workspace, refreshes the workspace and list, opens its overview |
+
+The "Create account" item sits after "Add account" in the All Accounts dropdown. A created row is named through the
+accounts lookup (see Add accounts above).
+
+Shared pieces it relies on:
+
+- `TransactionDialog` (managed mode) takes `dialogId`, so the footer Cancel, Success and "Proceed anyway" close only
+  that dialog of the stack (omitted closes all, as before), and `onProceedAnyway(receipt)`, called instead of linking out
+  on "Proceed anyway".
+- `WizardDialog.Container` takes `dialogId`, so its step-1 footer "Close" closes only its own dialog when stacked.
+- `CreateDaoSlotId.CREATE_DAO_BUILD_PLUGIN_SETTINGS` builds a plugin's install settings from
+  `{ network, signers, minApprovals }` (`buildCreateDaoPluginSettings` for multisig); the module imports no multisig code,
+  only the plugin id.
+- `PublishDaoDialog` takes optional `plugin` (`{ pluginId, settings }`, resolved through that slot instead of the Admin
+  settings), `onCreated({ address, network })` (replaces the "View DAO" link) and `labels` (`title`, `description`,
+  `submit`, `success`).
+
+In `onCreated` mode it sets `preventCloseWhileBusy` (with `dialogId`): Cancel is disabled while the wallet prompt is
+open, and Escape is ignored then, while Cancel is disabled and from confirmation until the success action ("Proceed
+anyway" included), so a signed deployment always reaches `onCreated`. Other transaction dialogs and `/create/dao` are
+unchanged. Known gap: a wallet disconnect while the DAO is still indexing unmounts the dialogs (`requiresWallet`)
+without calling `onCreated` (the account can be added by address).
 
 ## Feature flag
 
@@ -1249,6 +1312,9 @@ src/modules/workspace/
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
 ├── dialogs/workspaceWelcomeDialog/{workspaceWelcomeDialog.tsx,index.ts}
+├── dialogs/workspaceCreateAccountDialog/{workspaceCreateAccountDialog.tsx,workspaceCreateAccountDialogDefinitions.ts,workspaceCreateAccountDialogNetwork.tsx,workspaceCreateAccountDialogSigners.tsx,index.ts}
+├── hooks/useWorkspaceCreateAccountDialog/{useWorkspaceCreateAccountDialog.ts,index.ts}
+├── hooks/useAddWorkspaceAccountAndOpen/{useAddWorkspaceAccountAndOpen.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
 ├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,workspaceGettingStarted.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
@@ -1325,8 +1391,9 @@ Keep it that way when extending this.
     that returns the Safes can only if it reports the networks it could not read.
   - To stay under the Safe API rate limit, Safe networks are read three at a time.
   - The "N found so far" count jumps from 0 to the total, as the stand-in returns one page.
-- **"Create a new account" leaves the dialog** for the DAO creation page (`/create/dao`) until accounts can be
-  created in place (APP-1499).
+- **A failed add from the All Accounts "Create account" entry shows no message.** The DAO is deployed, but when
+  `useAddWorkspaceAccountAndOpen` rejects the failure is only logged (`monitoringUtils.logError`); the account can
+  still be added by address.
 - **Search in `DataListSelect` shows the first page of matches only:** pagination is hidden while searching, as it
   was in the withdraw asset selector, so matches past it need a narrower search.
 - **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.
