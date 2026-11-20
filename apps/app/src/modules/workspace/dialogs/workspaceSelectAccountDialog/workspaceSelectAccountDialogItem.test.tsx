@@ -2,6 +2,7 @@ import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
@@ -36,6 +37,13 @@ describe('<WorkspaceSelectAccountDialogItem /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    it('badges the avatar with the logo of the network of the account', () => {
+        render(createTestComponent());
+
+        const { name, logo } = networkDefinitions[Network.ETHEREUM_SEPOLIA];
+        expect(screen.getByRole('img', { name })).toHaveAttribute('src', logo);
+    });
 
     it('displays the type of the account when not in multi-select mode', () => {
         render(createTestComponent());
