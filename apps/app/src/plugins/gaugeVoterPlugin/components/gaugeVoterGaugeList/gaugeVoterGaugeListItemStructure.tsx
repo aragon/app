@@ -120,7 +120,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
 
     const gaugeName = gauge.name ?? addressUtils.truncateAddress(gauge.address);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="flex size-full items-center justify-center bg-accent-solid text-accent-inverse">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -153,7 +153,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             onClick={() => onViewDetails?.(gauge)}
         >
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+            <div className="flex min-w-0 grow items-center gap-3 border-b border-surface-secondary pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
                 <Avatar
                     alt="Gauge icon"
                     fallback={avatarFallback}
@@ -162,14 +162,14 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     src={avatarSrc}
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate text-base text-neutral-800 md:text-lg">
+                    <p className="truncate text-base text-surface-primary md:text-lg">
                         <AddressOutput
                             address={gauge.address}
                             copy={false}
                             label={gauge.name ?? undefined}
                         />
                     </p>
-                    <p className="truncate text-sm text-neutral-500">
+                    <p className="truncate text-sm text-surface-secondary">
                         <AddressOutput address={gauge.address} />
                     </p>
                 </div>
@@ -178,18 +178,18 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             {/* Middle section on mobile - Total votes and Your votes side by side */}
             <div className="flex items-start justify-between gap-4 md:contents">
                 <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
-                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                    <p className="text-xs font-semibold tracking-wider text-surface-secondary uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
                         )}
                     </p>
-                    <p className="text-base text-neutral-800 md:text-lg">
+                    <p className="text-base text-surface-primary md:text-lg">
                         {formattedTotalVotes}{' '}
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes',
                         )}
                     </p>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-surface-secondary">
                         {formattedPercentage
                             ? `${formattedPercentage} of total`
                             : '-- of total'}
@@ -197,7 +197,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                 </div>
 
                 <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
-                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                    <p className="text-xs font-semibold tracking-wider text-surface-secondary uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
                         )}
@@ -209,15 +209,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                                 t(
                                     'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes',
                                 ) ? (
-                                <p className="text-right text-base text-neutral-500 md:text-lg">
+                                <p className="text-right text-base text-surface-secondary md:text-lg">
                                     {displayUserVotes}
                                 </p>
                             ) : (
                                 <>
-                                    <span className="text-base text-neutral-800 md:text-lg">
+                                    <span className="text-base text-surface-primary md:text-lg">
                                         {displayUserVotes}
                                     </span>
-                                    <span className="text-sm text-neutral-500 md:text-base">
+                                    <span className="text-sm text-surface-secondary md:text-base">
                                         {tokenSymbol}
                                     </span>
                                 </>

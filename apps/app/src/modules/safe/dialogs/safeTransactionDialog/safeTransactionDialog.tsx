@@ -754,7 +754,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 description={t(`${translationKey}.description`)}
             >
                 {statusMessage != null && (
-                    <p className="text-neutral-500">{statusMessage}</p>
+                    <p className="text-surface-secondary">{statusMessage}</p>
                 )}
                 {error != null && <p className="text-critical-700">{error}</p>}
                 {prepared != null && (

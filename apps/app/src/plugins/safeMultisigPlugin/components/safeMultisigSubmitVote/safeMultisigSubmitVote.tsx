@@ -478,7 +478,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                             <>
                                                 {' '}
                                                 <Link
-                                                    className="text-primary-400 hover:text-primary-600"
+                                                    className="text-link-default hover:text-primary-600"
                                                     href={blockerProposalUrl}
                                                 >
                                                     {blockerProposalSlug}

@@ -76,7 +76,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
-                'border-surface-selected shadow-primary hover:border-surface-selected hover:shadow-primary!':
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
                 'border-neutral-100 bg-surface-secondary': isDisabled,
             })}
@@ -95,10 +95,10 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col">
-                        <span className="truncate text-base leading-tight text-neutral-800">
+                        <span className="truncate text-base leading-tight text-surface-primary">
                             {name ?? truncatedAddress}
                         </span>
-                        <span className="truncate text-sm leading-tight text-neutral-500">
+                        <span className="truncate text-sm leading-tight text-surface-secondary">
                             {name != null
                                 ? `${networkName} · ${truncatedAddress}`
                                 : networkName}

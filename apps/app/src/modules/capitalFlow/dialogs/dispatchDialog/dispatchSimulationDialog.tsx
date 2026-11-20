@@ -172,7 +172,7 @@ export const DispatchSimulationDialog: React.FC<
                     {isLoading && (
                         <Card className="flex flex-col items-center justify-center gap-4 p-8">
                             <Spinner size="lg" variant="primary" />
-                            <p className="text-neutral-500">
+                            <p className="text-surface-secondary">
                                 {t(
                                     'app.capitalFlow.dispatchSimulationDialog.loading',
                                 )}
@@ -188,7 +188,7 @@ export const DispatchSimulationDialog: React.FC<
                         >
                             <div className="flex items-start gap-3">
                                 <Icon
-                                    className="mt-0.5 shrink-0 text-critical-500"
+                                    className="mt-0.5 shrink-0 icon-critical-primary"
                                     icon={IconType.WARNING}
                                     size="md"
                                 />

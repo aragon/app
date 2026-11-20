@@ -148,7 +148,7 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
+                        'flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 pr-3 text-surface-default focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-neutral-50 active:text-surface-active',
                         className,
                     )}
                     type="button"
@@ -159,11 +159,11 @@ export const WorkspaceAccountSelector: React.FC<
                         src={getOptionAvatar(activeOption)}
                     />
                     <span className="flex min-w-0 grow flex-col text-left leading-tight">
-                        <span className="truncate text-base text-neutral-800">
+                        <span className="truncate text-base text-surface-primary">
                             {activeOption?.label}
                         </span>
                         {subtitle !== activeOption?.label && (
-                            <span className="truncate text-sm text-neutral-500">
+                            <span className="truncate text-sm text-surface-secondary">
                                 {subtitle}
                             </span>
                         )}
@@ -202,7 +202,7 @@ export const WorkspaceAccountSelector: React.FC<
                                     addressUtils.truncateAddress(
                                         option.account.address,
                                     ) && (
-                                    <span className="truncate text-sm text-neutral-500">
+                                    <span className="truncate text-sm text-surface-secondary">
                                         {addressUtils.truncateAddress(
                                             option.account.address,
                                         )}
@@ -210,7 +210,7 @@ export const WorkspaceAccountSelector: React.FC<
                                 )}
                         </span>
                         {option.isExternal && (
-                            <span className="shrink-0 text-sm text-neutral-500">
+                            <span className="shrink-0 text-sm text-surface-secondary">
                                 {t(
                                     'app.workspace.workspaceAccountSelector.notInWorkspace',
                                 )}

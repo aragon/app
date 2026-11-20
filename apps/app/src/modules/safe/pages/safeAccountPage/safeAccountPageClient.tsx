@@ -203,7 +203,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                                     'app.safe.safeAccountPage.aside.details.chain',
                                 )}
                             >
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {networkDefinition?.name}
                                 </p>
                             </DefinitionList.Item>
@@ -216,7 +216,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                                     term={row.term}
                                 >
                                     {row.link == null ? (
-                                        <p className="text-neutral-500">
+                                        <p className="text-surface-secondary">
                                             {row.definition}
                                         </p>
                                     ) : (

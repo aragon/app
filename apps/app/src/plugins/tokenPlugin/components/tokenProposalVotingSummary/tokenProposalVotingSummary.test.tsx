@@ -199,7 +199,7 @@ describe('<TokenProposalVotingSummary /> component', () => {
             'app.plugins.token.tokenProposalVotingSummary.approved',
         );
         expect(status).toBeInTheDocument();
-        expect(status).toHaveClass('text-success-800');
+        expect(status).toHaveClass('text-success-primary');
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
@@ -218,7 +218,7 @@ describe('<TokenProposalVotingSummary /> component', () => {
             'app.plugins.token.tokenProposalVotingSummary.vetoed',
         );
         expect(status).toBeInTheDocument();
-        expect(status).toHaveClass('text-critical-800');
+        expect(status).toHaveClass('text-critical-primary');
     });
 
     it('displays the not-approved status when proposal has failed and support is not reached', () => {
@@ -233,7 +233,7 @@ describe('<TokenProposalVotingSummary /> component', () => {
             'app.plugins.token.tokenProposalVotingSummary.notApproved',
         );
         expect(status).toBeInTheDocument();
-        expect(status).toHaveClass('text-neutral-500');
+        expect(status).toHaveClass('text-surface-secondary');
     });
 
     it('displays the not-vetoed status when veto proposal is executed and support is not reached', () => {

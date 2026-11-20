@@ -54,12 +54,12 @@ export const PermissionNodeDetailPanel: React.FC<
 
     return (
         <div
-            className="absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md"
+            className="absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-surface-primary shadow-surface-md"
             ref={panelRef}
             style={style}
         >
             <div
-                className="flex cursor-grab touch-none items-start justify-between gap-3 border-b border-neutral-100 p-4 select-none active:cursor-grabbing"
+                className="flex cursor-grab touch-none items-start justify-between gap-3 border-b border-surface-secondary p-4 select-none active:cursor-grabbing"
                 {...headerProps}
             >
                 <div className="flex min-w-0 flex-col gap-1">
@@ -79,7 +79,7 @@ export const PermissionNodeDetailPanel: React.FC<
                             <Tag label={node.tag} variant="primary" />
                         )}
                     </div>
-                    <p className="truncate text-sm text-neutral-500">
+                    <p className="truncate text-sm text-surface-secondary">
                         {node.versionName ?? t(getPermissionNodeTypeKey(node))}
                     </p>
                 </div>

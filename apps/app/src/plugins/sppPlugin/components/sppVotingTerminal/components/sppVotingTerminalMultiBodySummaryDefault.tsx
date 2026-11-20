@@ -43,7 +43,7 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
     });
 
     return (
-        <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+        <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
             <AddressOutput
                 address={body}
                 copy={false}

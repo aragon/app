@@ -198,7 +198,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                         <Heading as="h3" size="h4">
                             {name}
                         </Heading>
-                        <p className="text-sm leading-normal text-neutral-500">
+                        <p className="text-sm leading-normal text-surface-secondary">
                             {t('app.workspace.publishWorkspaceDialog.summary', {
                                 accounts: accounts.length,
                                 targets: targets.length,
@@ -207,7 +207,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                     </div>
                 </div>
                 {description !== '' && (
-                    <p className="text-base leading-normal text-neutral-500">
+                    <p className="text-base leading-normal text-surface-secondary">
                         {description}
                     </p>
                 )}

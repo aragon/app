@@ -69,9 +69,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     return (
         <html className="h-full" data-theme={themeAttribute} lang="en">
-            <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
+            <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-neutral-25">
                 <NextTopLoader
-                    color="var(--color-primary-400)"
+                    color="var(--guk-bg-accent-solid)"
                     easing="ease-in-out"
                     height={4}
                     shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"

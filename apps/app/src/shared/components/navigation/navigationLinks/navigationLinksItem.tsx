@@ -49,10 +49,10 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
     const linkClassNames = classNames(
-        'truncate text-base leading-tight font-normal text-neutral-500 hover:text-neutral-800 active:text-neutral-800',
-        'group flex items-center py-3 focus-ring-primary',
-        { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
-        { 'bg-neutral-50': isActive && variant === 'column' },
+        'truncate text-base leading-tight font-normal text-link-secondary-default hover:text-neutral-800 active:text-link-secondary-active',
+        'group flex items-center py-3 focus-ring ring-accent-focus',
+        { 'rounded-xl px-4 hover:bg-surface-hover': variant === 'column' },
+        { 'bg-surface-selected': isActive && variant === 'column' },
         { 'text-neutral-800': isActive },
         { 'gap-2': iconSide === 'left' },
         { 'flex-row-reverse justify-between': iconSide === 'right' },
@@ -62,10 +62,10 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const iconClassNames = classNames(
         isActive
             ? variant === 'row'
-                ? 'text-primary-400'
+                ? 'icon-accent-selected'
                 : 'text-neutral-800'
-            : 'text-neutral-300',
-        'group-active:text-neutral-500',
+            : 'icon-surface-default',
+        'group-active:icon-surface-active',
     );
 
     return (

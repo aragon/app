@@ -61,11 +61,13 @@ const ItemIcon: React.FC<IItemIconProps> = ({ groupKind, item }) => {
         <div
             className={classNames(
                 'flex size-8 items-center justify-center overflow-hidden rounded-full',
-                isBurn ? 'bg-critical-100' : 'bg-neutral-50',
+                isBurn ? 'bg-critical-subtle' : 'bg-surface-secondary',
             )}
         >
             <Icon
-                className={isBurn ? 'text-critical-500' : 'text-neutral-300'}
+                className={
+                    isBurn ? 'icon-critical-primary' : 'icon-surface-secondary'
+                }
                 icon={iconType}
                 size="md"
             />
@@ -94,7 +96,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
     showFallbackAddress,
 }) => (
     <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="min-w-full overflow-hidden text-base leading-tight text-ellipsis whitespace-nowrap text-neutral-800">
+        <p className="min-w-full overflow-hidden text-base leading-tight text-ellipsis whitespace-nowrap text-surface-primary">
             {item.label}
         </p>
 
@@ -109,7 +111,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
         )}
 
         {showFallbackAddress && (
-            <p className="text-sm leading-tight text-neutral-500">
+            <p className="text-sm leading-tight text-surface-secondary">
                 <AddressOutput address={item.address} />
             </p>
         )}
@@ -131,7 +133,7 @@ const ItemTokenDeltas: React.FC<IItemTokenDeltasProps> = ({ item }) => {
     return (
         <div
             className={classNames(
-                'flex h-full flex-col items-end text-right text-base leading-tight text-neutral-800',
+                'flex h-full flex-col items-end text-right text-base leading-tight text-surface-primary',
                 sortedTokens.length > 1 ? 'gap-1' : 'gap-0',
             )}
         >
@@ -170,7 +172,7 @@ export const SimulationFlowVisualizationItem: React.FC<
     const showFallbackAddress = addressHref == null && !compact;
 
     return (
-        <div className="w-full rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral-sm">
+        <div className="w-full rounded-xl border border-surface-secondary bg-surface-primary p-6 shadow-surface-sm">
             <div className="flex items-center gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                     <ItemIcon groupKind={groupKind} item={item} />

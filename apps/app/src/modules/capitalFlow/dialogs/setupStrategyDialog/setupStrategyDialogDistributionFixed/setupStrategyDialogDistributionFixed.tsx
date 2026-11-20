@@ -20,12 +20,12 @@ export const SetupStrategyDialogDistributionFixed: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+                <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionFixed.token.label',
                     )}
                 </p>
-                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                <p className="text-sm leading-normal font-normal text-surface-secondary md:text-base">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionFixed.token.helpText',
                     )}

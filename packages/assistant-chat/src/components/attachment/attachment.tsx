@@ -95,12 +95,12 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
                     <Dialog.Title className="sr-only">
                         {chatCopy.attachments.previewTitle}
                     </Dialog.Title>
-                    <div className="relative mx-auto flex max-h-[80dvh] w-full items-center justify-center overflow-hidden rounded-xl bg-neutral-0">
+                    <div className="relative mx-auto flex max-h-[80dvh] w-full items-center justify-center overflow-hidden rounded-xl bg-surface-primary">
                         <AttachmentPreview src={src} />
                     </div>
                     <Dialog.Close asChild={true}>
                         <TooltipIconButton
-                            className="absolute top-4 right-4 bg-neutral-0/80 text-neutral-800 hover:bg-neutral-0"
+                            className="absolute top-4 right-4 bg-neutral-0/80 text-surface-primary hover:bg-neutral-0"
                             tooltip={chatCopy.attachments.closePreview}
                             variant="unstyled"
                         >
@@ -190,10 +190,10 @@ const AttachmentUI: React.FC = () => {
                                   : ''
                         }`}
                         className={classNames(
-                            'relative size-14 cursor-pointer overflow-hidden rounded-xl border bg-neutral-50 transition-opacity hover:opacity-75',
+                            'relative size-14 cursor-pointer overflow-hidden rounded-xl border bg-surface-secondary transition-opacity hover:opacity-75',
                             isError
-                                ? 'border-critical-400'
-                                : 'border-neutral-100',
+                                ? 'border-critical-primary'
+                                : 'border-surface-secondary',
                         )}
                         type="button"
                     >
@@ -229,7 +229,7 @@ const AttachmentUI: React.FC = () => {
 const AttachmentRemove: React.FC = () => (
     <AttachmentPrimitive.Remove asChild={true}>
         <TooltipIconButton
-            className="absolute end-1.5 top-1.5 size-3.5 bg-neutral-0 text-neutral-800 shadow-sm hover:bg-neutral-0 hover:text-critical-600"
+            className="absolute end-1.5 top-1.5 size-3.5 bg-surface-default text-neutral-800 shadow-sm hover:bg-neutral-0 hover:text-critical-600"
             side="top"
             size="none"
             tooltip={chatCopy.attachments.remove}

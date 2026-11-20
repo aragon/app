@@ -53,7 +53,7 @@ export const WorkspaceTodoPreview: React.FC<IWorkspaceTodoPreviewProps> = (
     const renderContent = () => {
         if (state === 'initialLoading') {
             return (
-                <Card className="flex flex-col border border-neutral-100">
+                <Card className="flex flex-col border border-surface-secondary">
                     <WorkspaceTodoPreviewItemSkeleton />
                     <WorkspaceTodoPreviewItemSkeleton />
                 </Card>
@@ -70,7 +70,7 @@ export const WorkspaceTodoPreview: React.FC<IWorkspaceTodoPreviewProps> = (
 
         return (
             <>
-                <Card className="flex flex-col border border-neutral-100">
+                <Card className="flex flex-col border border-surface-secondary">
                     {todoList.slice(0, previewSize).map((todo) => (
                         <WorkspaceTodoPreviewItem
                             key={workspaceTodoUtils.getTodoKey(todo)}

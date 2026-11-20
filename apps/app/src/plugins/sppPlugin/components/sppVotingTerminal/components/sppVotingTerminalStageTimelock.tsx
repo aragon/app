@@ -51,7 +51,7 @@ export const SppVotingTerminalStageTimelock: React.FC<
 
     return (
         <CardEmptyState
-            className="border border-neutral-100"
+            className="border border-surface-secondary"
             description={t(
                 `app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.description`,
                 { date },

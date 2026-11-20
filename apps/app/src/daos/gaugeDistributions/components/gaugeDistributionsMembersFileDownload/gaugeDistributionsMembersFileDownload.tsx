@@ -63,7 +63,7 @@ export const GaugeDistributionsMembersFileDownload: React.FC<
         >
             {downloadedFileName && (
                 <Card className="px-6 py-2 shadow-surface-sm">
-                    <p className="text-sm text-neutral-400">
+                    <p className="text-sm text-surface-tertiary">
                         {t(
                             'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.downloadedFile',
                             {

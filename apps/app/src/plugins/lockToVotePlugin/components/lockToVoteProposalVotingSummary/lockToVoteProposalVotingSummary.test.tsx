@@ -210,7 +210,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal, isExecuted: true }));
 
         const statusText = screen.getByText(`${translationPrefix}.approved`);
-        expect(statusText).toHaveClass('text-success-800');
+        expect(statusText).toHaveClass('text-success-primary');
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
@@ -225,7 +225,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal, isVeto: true }));
 
         const statusText = screen.getByText(`${translationPrefix}.vetoed`);
-        expect(statusText).toHaveClass('text-critical-800');
+        expect(statusText).toHaveClass('text-critical-primary');
     });
 
     it('displays the not-approved status when proposal has failed and support is not reached', () => {
@@ -239,7 +239,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal }));
 
         const statusText = screen.getByText(`${translationPrefix}.notApproved`);
-        expect(statusText).toHaveClass('text-neutral-500');
+        expect(statusText).toHaveClass('text-surface-secondary');
     });
 
     it('displays the not-vetoed status when veto proposal is executed and support is not reached', () => {
@@ -254,7 +254,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         const statusText = screen.getByText(`${translationPrefix}.notVetoed`);
-        expect(statusText).toHaveClass('text-neutral-500');
+        expect(statusText).toHaveClass('text-surface-secondary');
     });
 
     it('displays the support progress when the proposal supply is unknown', () => {

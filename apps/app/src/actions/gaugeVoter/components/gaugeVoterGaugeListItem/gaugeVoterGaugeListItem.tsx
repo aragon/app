@@ -32,7 +32,7 @@ export const GaugeVoterGaugeListItem: React.FC<
     const gaugeName = gauge.name ?? 'NA';
     const avatarSrc = ipfsUtils.cidToSrc(gauge.avatar);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="flex size-full items-center justify-center bg-accent-solid text-accent-inverse">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -40,7 +40,7 @@ export const GaugeVoterGaugeListItem: React.FC<
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', className, {
-                'border-surface-selected shadow-primary hover:border-surface-selected hover:shadow-primary!':
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
             })}
             {...otherProps}
@@ -53,8 +53,10 @@ export const GaugeVoterGaugeListItem: React.FC<
                         src={avatarSrc}
                     />
                     <div className="flex flex-col gap-1 leading-tight font-normal">
-                        <p className="text-lg text-neutral-800">{gauge.name}</p>
-                        <p className="text-sm text-neutral-500">
+                        <p className="text-lg text-surface-primary">
+                            {gauge.name}
+                        </p>
+                        <p className="text-sm text-surface-secondary">
                             <AddressOutput
                                 address={gauge.address}
                                 copy={false}

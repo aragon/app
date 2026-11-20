@@ -30,7 +30,7 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
             <Heading className="text-3xl! md:text-4xl!" size="h1">
                 {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
                 {displayName != null && (
-                    <span className="text-primary-400">{displayName}</span>
+                    <span className="text-accent-primary">{displayName}</span>
                 )}
             </Heading>
             <CardEmptyState
