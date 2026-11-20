@@ -1,4 +1,13 @@
-import { addressUtils, DataList, Tag } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    Card,
+    DataList,
+    Dropdown,
+    IconType,
+    Tag,
+} from '@aragon/gov-ui-kit';
+import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
@@ -20,9 +29,17 @@ export interface IWorkspaceAccountItemProps {
      */
     accountInfo?: IWorkspaceAccountInfo;
     /**
+     * DAO of the account, for the name and avatar the registry does not store. Undefined for other accounts.
+     */
+    dao?: IDao;
+    /**
      * ID of the workspace the account belongs to, which the row links into.
      */
     workspaceId: string;
+    /**
+     * Renders the row with a "Remove from workspace" menu instead of a link when set.
+     */
+    onRemove?: () => void;
 }
 
 /**
@@ -38,7 +55,7 @@ export interface IWorkspaceAccountItemProps {
 export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     props,
 ) => {
-    const { account, accountInfo, workspaceId } = props;
+    const { account, accountInfo, dao, workspaceId, onRemove } = props;
 
     const { t } = useTranslations();
 
@@ -48,33 +65,66 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     const networkName = networkDefinitions[network].name;
     const truncatedAddress = addressUtils.truncateAddress(address);
 
-    const name = workspaceUtils.getAccountName(account, accountInfo);
-    const accountUrl = workspaceUtils.getAccountScopeUrl(
-        workspaceId,
-        account.id,
-        'overview',
-    );
+    const name =
+        dao?.name ?? workspaceUtils.getAccountName(account, accountInfo);
+    const avatar = dao?.avatar ?? metadata?.avatar;
 
-    return (
-        <DataList.Item
-            className="flex items-center gap-3 p-4 md:p-6"
-            href={accountUrl}
-        >
-            <WorkspaceAccountAvatar
-                avatar={metadata?.avatar}
-                name={name}
-                type={type}
-            />
+    const content = (
+        <>
+            <WorkspaceAccountAvatar avatar={avatar} name={name} type={type} />
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate text-base leading-tight text-neutral-800">
                     {name ?? truncatedAddress}
                 </span>
-                <span className="truncate text-sm leading-tight text-neutral-500">
-                    {name != null
-                        ? `${networkName} · ${truncatedAddress}`
-                        : networkName}
+                <span className="flex gap-1 truncate text-sm leading-tight">
+                    <span className="text-neutral-800">{networkName}</span>
+                    {name != null && (
+                        <span className="text-neutral-500">
+                            {truncatedAddress}
+                        </span>
+                    )}
                 </span>
             </div>
+        </>
+    );
+
+    // A menu cannot sit inside a link, so a removable row is not one.
+    if (onRemove != null) {
+        return (
+            <Card className="flex items-center gap-3 p-4 md:p-6">
+                {content}
+                <Dropdown.Container
+                    constrainContentWidth={false}
+                    customTrigger={
+                        <Button
+                            aria-label={t(
+                                'app.workspace.workspaceAccountItem.menu',
+                            )}
+                            iconLeft={IconType.DOTS_VERTICAL}
+                            size="md"
+                            variant="tertiary"
+                        />
+                    }
+                    size="md"
+                >
+                    <Dropdown.Item onSelect={onRemove}>
+                        {t('app.workspace.workspaceAccountItem.remove')}
+                    </Dropdown.Item>
+                </Dropdown.Container>
+            </Card>
+        );
+    }
+
+    return (
+        <DataList.Item
+            className="flex items-center gap-3 p-4 md:p-6"
+            href={workspaceUtils.getAccountScopeUrl(
+                workspaceId,
+                account.id,
+                'overview',
+            )}
+        >
+            {content}
             <Tag
                 className="shrink-0"
                 label={t(

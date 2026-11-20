@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Container } from '@/shared/components/container';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
@@ -19,6 +20,8 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    const exploreHref = isEnabled('workspaces') ? '/explore' : '/';
 
     const year = new Date().getFullYear();
 
@@ -61,7 +64,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
                             className={linkClassNames}
-                            href={link}
+                            href={label === 'explore' ? exploreHref : link}
                             key={label}
                             target={target}
                         >

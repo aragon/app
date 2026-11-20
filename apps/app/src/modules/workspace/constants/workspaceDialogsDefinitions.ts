@@ -1,15 +1,27 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { PublishWorkspaceDialog } from '../dialogs/publishWorkspaceDialog';
+import { WorkspaceEditDetailsDialog } from '../dialogs/workspaceEditDetailsDialog';
 import { WorkspaceSelectAccountDialog } from '../dialogs/workspaceSelectAccountDialog';
+import { WorkspaceWelcomeDialog } from '../dialogs/workspaceWelcomeDialog';
 import { WorkspaceDialogId } from './workspaceDialogId';
 
 export const workspaceDialogsDefinitions: Record<
     WorkspaceDialogId,
     IDialogComponentDefinitions
 > = {
+    // Not `requiresWallet`: workspaces are stored locally.
+    [WorkspaceDialogId.EDIT_DETAILS]: {
+        Component: WorkspaceEditDetailsDialog,
+    },
     // Not `requiresWallet`: workspaces are stored locally (see `createWorkspace.md` → Ownership).
     [WorkspaceDialogId.PUBLISH_WORKSPACE]: {
         Component: PublishWorkspaceDialog,
+    },
+    // Not `requiresWallet`: the dialog only greets and closes, nothing it does needs a connected wallet.
+    // `lg` (640px) keeps each feature description on one line, as the artboard does.
+    [WorkspaceDialogId.WORKSPACE_WELCOME]: {
+        Component: WorkspaceWelcomeDialog,
+        size: 'lg',
     },
     // Deliberately not `requiresWallet`: picking an account and a process comes before connecting, exactly as on
     // the DAO pages, where neither SELECT_PLUGIN nor PERMISSION_CHECK is flagged and `usePermissionCheckGuard`

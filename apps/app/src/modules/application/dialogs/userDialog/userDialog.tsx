@@ -33,6 +33,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { close, open } = useDialogContext();
     const { isEnabled } = useFeatureFlags();
     const isAragonProfileEnabled = isEnabled('aragonProfiles');
+    const isWorkspacesEnabled = isEnabled('workspaces');
     const { address, chainId } = useWalletAccount();
     const { disconnect } = useDisconnect();
 
@@ -69,7 +70,15 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             params: { mode: 'edit' },
         });
 
-    const handleDisconnect = () => void disconnect();
+    // With workspaces on, the home route is the sign-in landing, which is where a disconnected user belongs. With
+    // the flag off that route is the Explore list instead, so the user stays where they are.
+    const handleDisconnect = async () => {
+        await disconnect();
+
+        if (isWorkspacesEnabled) {
+            router.replace('/');
+        }
+    };
 
     const handleMyDaosClick = () => {
         router.push(

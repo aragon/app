@@ -1,6 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
@@ -21,6 +21,8 @@ describe('<WorkspaceSelector /> component', () => {
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
     const pushMock = jest.fn();
+    const importWorkspaceSpy = jest.spyOn(workspaceService, 'importWorkspace');
+    const alertSpy = jest.spyOn(window, 'alert');
 
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
         id: 'first',
@@ -57,9 +59,15 @@ describe('<WorkspaceSelector /> component', () => {
         useRouterSpy.mockReset();
         usePathnameSpy.mockReset();
         pushMock.mockReset();
+        importWorkspaceSpy.mockReset();
+        alertSpy.mockReset();
     });
 
+    let queryClient: QueryClient;
+
     const createTestComponent = (props?: Partial<IWorkspaceSelectorProps>) => {
+        queryClient = new QueryClient(queryClientConfig);
+
         const completeProps: IWorkspaceSelectorProps = {
             workspaceId: firstWorkspace.id,
             ...props,
@@ -67,7 +75,7 @@ describe('<WorkspaceSelector /> component', () => {
 
         return (
             <GukModulesProvider>
-                <ReactQueryWrapper client={new QueryClient(queryClientConfig)}>
+                <ReactQueryWrapper client={queryClient}>
                     <WorkspaceSelector {...completeProps} />
                 </ReactQueryWrapper>
             </GukModulesProvider>
@@ -88,15 +96,22 @@ describe('<WorkspaceSelector /> component', () => {
     });
 
     it('lists every workspace followed by the create workspace item', async () => {
+        getWorkspaceListSpy.mockResolvedValue([
+            firstWorkspace,
+            secondWorkspace,
+            buildWorkspace({ id: 'third', name: 'Third Workspace' }),
+        ]);
         render(createTestComponent());
 
         await openDropdown();
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(5);
         expect(items[0]).toHaveTextContent('First Workspace');
         expect(items[1]).toHaveTextContent('Second Workspace');
-        expect(items[2]).toHaveTextContent(/workspaceSelector\.create$/);
+        expect(items[2]).toHaveTextContent('Third Workspace');
+        expect(items[3]).toHaveTextContent(/workspaceSelector\.create$/);
+        expect(items[4]).toHaveTextContent(/workspaceSelector\.import$/);
     });
 
     it('opens the overview of the selected workspace', async () => {
@@ -119,5 +134,97 @@ describe('<WorkspaceSelector /> component', () => {
         expect(pushMock).toHaveBeenCalledWith(
             '/create/workspace?returnTo=%2Fworkspace%2Ffirst%2Fall%2Fproposals',
         );
+    });
+
+    it('reads the workspace list again when the workspace changes', async () => {
+        const { rerender } = render(createTestComponent());
+        await openDropdown();
+        expect(
+            await screen.findByRole('menuitem', { name: /Second Workspace/ }),
+        ).toBeInTheDocument();
+        await userEvent.keyboard('{Escape}');
+
+        getWorkspaceListSpy.mockResolvedValue([
+            buildWorkspace({ id: 'imported', name: 'Imported Workspace' }),
+        ]);
+        rerender(
+            <GukModulesProvider>
+                <ReactQueryWrapper client={queryClient}>
+                    <WorkspaceSelector workspaceId="imported" />
+                </ReactQueryWrapper>
+            </GukModulesProvider>,
+        );
+        await openDropdown();
+
+        expect(
+            await screen.findByRole('menuitem', { name: /Imported Workspace/ }),
+        ).toBeInTheDocument();
+    });
+
+    describe('workspace import', () => {
+        const getFileInput = () =>
+            screen.getByLabelText('app.workspace.workspaceSelector.import');
+
+        // jsdom implements no `Blob.text`, which the browser reads the file with.
+        const buildFile = (content: string) => {
+            const file = new File([content], 'workspace.json', {
+                type: 'application/json',
+            });
+            file.text = () => Promise.resolve(content);
+
+            return file;
+        };
+
+        it('opens the file picker from the import workspace item', async () => {
+            render(createTestComponent());
+            const clickSpy = jest.spyOn(getFileInput(), 'click');
+
+            await openDropdown();
+            await userEvent.click(
+                await screen.findByText(/workspaceSelector\.import$/),
+            );
+
+            expect(clickSpy).toHaveBeenCalledTimes(1);
+        });
+
+        it('imports the selected file and opens the imported workspace', async () => {
+            const imported = buildWorkspace({
+                id: 'imported',
+                name: 'Imported',
+            });
+            importWorkspaceSpy.mockResolvedValue(imported);
+            render(createTestComponent());
+
+            await userEvent.upload(getFileInput(), buildFile('{"version":1}'));
+
+            await waitFor(() =>
+                expect(importWorkspaceSpy).toHaveBeenCalledWith(
+                    '{"version":1}',
+                ),
+            );
+            await waitFor(() =>
+                expect(pushMock).toHaveBeenCalledWith(
+                    '/workspace/imported/all/overview',
+                ),
+            );
+        });
+
+        it('alerts and stays on the page when the file cannot be imported', async () => {
+            importWorkspaceSpy.mockRejectedValue(new Error('invalid'));
+            alertSpy.mockImplementation(jest.fn());
+            render(createTestComponent());
+
+            await userEvent.upload(getFileInput(), buildFile('{'));
+
+            await waitFor(() =>
+                expect(importWorkspaceSpy).toHaveBeenCalledWith('{'),
+            );
+            await waitFor(() =>
+                expect(alertSpy).toHaveBeenCalledWith(
+                    'app.workspace.workspaceSelector.importError',
+                ),
+            );
+            expect(pushMock).not.toHaveBeenCalled();
+        });
     });
 });

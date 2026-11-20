@@ -27,6 +27,14 @@ export interface IWorkspaceWizardProps {
      */
     initialActiveStep?: WorkspaceWizardStep;
     /**
+     * Steps the wizard renders, all of them in the order the enum declares them when not set.
+     */
+    steps?: WorkspaceWizardStep[];
+    /**
+     * Actions rendered beside the submit button of a step, e.g. a way to skip an optional one.
+     */
+    secondaryActions?: Partial<Record<WorkspaceWizardStep, ReactNode>>;
+    /**
      * Product flow reported by the wizard analytics, e.g. `create_workspace`.
      */
     analyticsFlow: string;
@@ -51,6 +59,8 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
         translationNamespace,
         defaultValues,
         initialActiveStep,
+        steps: stepFilter,
+        secondaryActions,
         analyticsFlow,
         onSubmit,
     } = props;
@@ -59,11 +69,16 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
 
     const steps = useMemo(
         () =>
-            buildWorkspaceWizardSteps(translationNamespace).map((step) => ({
-                ...step,
-                meta: { ...step.meta, name: t(step.meta.name) },
-            })),
-        [translationNamespace, t],
+            buildWorkspaceWizardSteps(translationNamespace)
+                .filter(
+                    (step) =>
+                        stepFilter == null || stepFilter.includes(step.id),
+                )
+                .map((step) => ({
+                    ...step,
+                    meta: { ...step.meta, name: t(step.meta.name) },
+                })),
+        [translationNamespace, t, stepFilter],
     );
 
     // The final step is named after the submit action.
@@ -95,6 +110,7 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
                         `${translationNamespace}.steps.${step.id}.description`,
                     )}
                     key={step.id}
+                    secondaryAction={secondaryActions?.[step.id]}
                     title={t(`${translationNamespace}.steps.${step.id}.title`)}
                     {...step}
                 >

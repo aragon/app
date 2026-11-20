@@ -10,6 +10,10 @@ export interface ICreateWorkspaceFormMetadataProps {
      * Prefix to prepend to all the metadata form fields.
      */
     fieldPrefix?: string;
+    /**
+     * Stacks the resource fields, for narrow containers such as dialogs.
+     */
+    isStacked?: boolean;
 }
 
 const nameMaxLength = 128;
@@ -18,7 +22,7 @@ const descriptionMaxLength = 480;
 export const CreateWorkspaceFormMetadata: React.FC<
     ICreateWorkspaceFormMetadataProps
 > = (props) => {
-    const { fieldPrefix } = props;
+    const { fieldPrefix, isStacked } = props;
 
     const { t } = useTranslations();
 
@@ -64,6 +68,7 @@ export const CreateWorkspaceFormMetadata: React.FC<
                 helpText={t(
                     'app.workspace.createWorkspaceForm.metadata.resources.helpText',
                 )}
+                isStacked={isStacked}
                 name="resources"
             />
         </div>
