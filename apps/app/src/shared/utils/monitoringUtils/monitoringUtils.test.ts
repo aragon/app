@@ -152,10 +152,11 @@ describe('monitoring utils', () => {
             expect(result?.level).toEqual('info');
         });
 
-        it('tags wallet-side cancellations surfaced as RPC errors as expected/info', () => {
+        it('tags wallet-side failures surfaced as RPC errors as expected/info', () => {
             const cancellationMessages = [
                 'TransactionExecutionError: An unknown RPC error occurred. Details: User disapproved requested methods',
                 'TransactionExecutionError: An internal error was received. Details: User cancelled action on Trezor device (Passphrase dismissed)',
+                'TransactionExecutionError: Invalid parameters were provided to the RPC method. Details: Invalid parameters: must provide an Ethereum address.',
             ];
 
             cancellationMessages.forEach((message) => {
@@ -175,6 +176,17 @@ describe('monitoring utils', () => {
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toEqual('expected');
             expect(result?.level).toEqual('info');
+        });
+
+        it('keeps a request refused by the RPC relay as an error, even for an ENS lookup', () => {
+            const result = monitoringUtils.beforeSend(
+                buildEvent(
+                    'HTTP request failed.\n\nStatus: 403\nURL: /api/rpc/1\nRequest body: {"method":"eth_call"}\n\nContract Call:\n  function: reverseWithGateways(bytes reverseName)',
+                ),
+            );
+            expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toBeUndefined();
+            expect(result?.level).toBeUndefined();
         });
 
         it('keeps unhandled wallet rejections (EIP-1193 code 4001) tagged expected', () => {
@@ -278,6 +290,122 @@ describe('monitoring utils', () => {
         });
     });
 
+    describe('delivery before the function is suspended', () => {
+        const requestContextKey = Symbol.for('@vercel/request-context');
+        const host = globalThis as Record<symbol, unknown>;
+        const waitUntil = jest.fn();
+
+        beforeEach(() => {
+            host[requestContextKey] = { get: () => ({ waitUntil }) };
+        });
+
+        afterEach(() => {
+            delete host[requestContextKey];
+            waitUntil.mockReset();
+        });
+
+        it.each([
+            ['logError', () => monitoringUtils.logError(new Error('test'))],
+            ['logMessage', () => monitoringUtils.logMessage('test')],
+            [
+                'incrementCounter',
+                () => monitoringUtils.incrementCounter('test'),
+            ],
+            [
+                'logRequestError',
+                () =>
+                    monitoringUtils.logRequestError(
+                        new Error('test'),
+                        { path: '/', method: 'GET', headers: {} },
+                        {
+                            routerKind: 'App Router',
+                            routePath: '/',
+                            routeType: 'route',
+                        },
+                    ),
+            ],
+        ])(
+            'keeps the function running until the capture of %s is sent',
+            (_name, capture) => {
+                capture();
+                expect(waitUntil).toHaveBeenCalledWith(expect.any(Promise));
+            },
+        );
+
+        it('captures without a request context', () => {
+            delete host[requestContextKey];
+            expect(() => monitoringUtils.logMessage('test')).not.toThrow();
+            expect(waitUntil).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('serverTracesSampler', () => {
+        const sample = (
+            headers?: Record<string, string>,
+            parentSampleRate?: number,
+        ) =>
+            monitoringUtils.serverTracesSampler({
+                name: 'GET /',
+                normalizedRequest: headers && { headers },
+                inheritOrSampleWith: (fallback) => parentSampleRate ?? fallback,
+            });
+
+        it('never records the trace of an uptime probe', () => {
+            const headers = { 'user-agent': 'Blackbox Exporter/0.26.0' };
+            expect(sample(headers, 1)).toEqual(0);
+        });
+
+        it('records browser requests more often than other requests', () => {
+            const browser = sample({ 'sec-fetch-mode': 'navigate' });
+            expect(browser).toBeGreaterThan(sample({ 'user-agent': 'curl' }));
+        });
+
+        it('applies the lower rate to a request without readable headers', () => {
+            expect(sample()).toEqual(sample({ 'user-agent': 'curl' }));
+        });
+
+        it('keeps the sampling decision of the parent trace', () => {
+            expect(sample({ 'user-agent': 'curl' }, 1)).toEqual(1);
+        });
+    });
+
+    describe('browserTracesSampler', () => {
+        it('applies the browser rate to a trace started in the browser', () => {
+            const inheritOrSampleWith = (fallback: number) => fallback;
+            const name = 'navigation';
+            const rate = monitoringUtils.browserTracesSampler({
+                name,
+                inheritOrSampleWith,
+            });
+            const browserRequestRate = monitoringUtils.serverTracesSampler({
+                name,
+                normalizedRequest: { headers: { 'sec-fetch-mode': 'cors' } },
+                inheritOrSampleWith,
+            });
+            expect(rate).toEqual(browserRequestRate);
+        });
+
+        it('keeps the sampling decision of the document request', () => {
+            const rate = monitoringUtils.browserTracesSampler({
+                name: 'pageload',
+                inheritOrSampleWith: () => 1,
+            });
+            expect(rate).toEqual(1);
+        });
+    });
+
+    describe('shouldSampleReplay', () => {
+        it('samples a replay for an unclassified error', () => {
+            const event = { tags: { foo: 'bar' } } as never;
+            expect(monitoringUtils.shouldSampleReplay(event)).toBeTruthy();
+        });
+
+        it('skips the replay of an error tagged as noise', () => {
+            const event = { tags: { noise_class: 'expected' } } as never;
+            expect(monitoringUtils.shouldSampleReplay(event)).toBeFalsy();
+        });
+    });
+
     describe('toError', () => {
         it('rebuilds an Error from a serialized error so Sentry titles and groups it by name and message', () => {
             const serialized = {
@@ -314,6 +442,7 @@ describe('monitoring utils', () => {
             { env: 'staging', result: true },
             { env: 'development', result: true },
             { env: 'production', result: true },
+            { env: 'occ', result: true },
             { env: 'local', result: false },
             { env: 'unknown', result: false },
         ])('returns $result for $env environment', ({ env, result }) => {

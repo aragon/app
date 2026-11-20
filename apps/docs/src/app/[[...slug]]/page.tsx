@@ -12,6 +12,7 @@ import {
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { MdxLink } from '../../components/mdxLink';
 import { PagePager } from '../../components/pagePager';
 import { draftNotice, toCanonicalUrl, toMarkdownRoute } from '../../lib/site';
 import { source } from '../../lib/source';
@@ -69,7 +70,7 @@ export default async function Page({ params }: IPageProps) {
                         {draftNotice}
                     </Callout>
                 )}
-                <Body components={defaultMdxComponents} />
+                <Body components={{ ...defaultMdxComponents, a: MdxLink }} />
             </DocsBody>
             {/* The date of the page's last change in the knowledge base (prepareContent.ts). */}
             {page.data.lastModified != null && (

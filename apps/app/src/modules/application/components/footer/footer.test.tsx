@@ -1,7 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import * as useWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import * as useApplicationVersion from '@/shared/hooks/useApplicationVersion';
-import { Footer, type IFooterProps } from './footer';
 import { footerLinks } from './footerLinks';
+import { Footer, FooterSidebar, type IFooterProps } from './index';
 
 jest.mock('../../../../shared/components/aragonLogo', () => ({
     AragonLogo: () => <div data-testid="aragon-logo-mock" />,
@@ -12,19 +14,41 @@ describe('<Footer /> component', () => {
         useApplicationVersion,
         'useApplicationVersion',
     );
+    const useWalletConnectedSpy = jest.spyOn(
+        useWalletConnected,
+        'useWalletConnected',
+    );
 
-    const createTestComponent = (props?: Partial<IFooterProps>) => {
+    const createTestComponent = (
+        props?: Partial<IFooterProps>,
+        workspacesEnabled = false,
+    ) => {
         const completeProps: IFooterProps = { ...props };
 
-        return <Footer {...completeProps} />;
+        return (
+            <FeatureFlagsProvider
+                initialSnapshot={[
+                    {
+                        key: 'workspaces',
+                        name: 'Workspaces',
+                        description: '',
+                        enabled: workspacesEnabled,
+                    },
+                ]}
+            >
+                <Footer {...completeProps} />
+            </FeatureFlagsProvider>
+        );
     };
 
     beforeEach(() => {
         jest.useFakeTimers();
+        useWalletConnectedSpy.mockReturnValue(false);
     });
 
     afterEach(() => {
         jest.useRealTimers();
+        useWalletConnectedSpy.mockReset();
     });
 
     it('renders the aragon logo', () => {
@@ -51,6 +75,33 @@ describe('<Footer /> component', () => {
             expect(linkElement.href).toMatch(link.link);
         });
     });
+
+    it('routes Explore to its dedicated page when workspaces are enabled', () => {
+        render(createTestComponent(undefined, true));
+
+        expect(
+            screen.getByRole('link', {
+                name: /footer.link.explore/,
+            }),
+        ).toHaveAttribute('href', '/explore');
+    });
+
+    it.each([
+        [false, '/'],
+        [true, '/explore'],
+    ])(
+        'routes the sidebar branding for wallet connection %s',
+        (isConnected, href) => {
+            useWalletConnectedSpy.mockReturnValue(isConnected);
+            render(<FooterSidebar />);
+
+            expect(
+                screen.getByRole('link', {
+                    name: /footer.governed/,
+                }),
+            ).toHaveAttribute('href', href);
+        },
+    );
 
     it('renders the copyright info', () => {
         jest.setSystemTime(new Date(2021, 2, 1));

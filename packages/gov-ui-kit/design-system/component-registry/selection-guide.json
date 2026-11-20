@@ -5,10 +5,10 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "202f9711af28beea71796063e2c29a88b1afa9714ba526127405d5f1aae188ad",
-            "totalRecords": 394,
-            "entryCount": 145,
-            "uiEntryCount": 138,
+            "sha256": "fb47cd97f0a7c07d3839e78ca2d0a6d36fc7f1796aebd6dffc57f90ea883a3b1",
+            "totalRecords": 398,
+            "entryCount": 147,
+            "uiEntryCount": 140,
             "utilityEntryCount": 7,
             "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
         },
@@ -462,7 +462,7 @@
                 "package": "@aragon/gov-ui-kit",
                 "name": "Avatar"
             },
-            "description": "Generic image avatar with size variants and a fallback.",
+            "description": "Generic image avatar with size variants, a fallback and an optional corner badge (e.g. a network logo).",
             "useWhen": [
                 "Displaying a user/entity image where no domain avatar applies"
             ],
@@ -472,7 +472,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:78",
+                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:134",
                 "stories": [
                     "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
                 ]
@@ -523,6 +523,33 @@
                 "source": "kit:src/core/components/avatars/avatarIcon/avatarIcon.tsx:83",
                 "stories": [
                     "kit:src/core/components/avatars/avatarIcon/avatarIcon.stories.tsx:1"
+                ]
+            }
+        },
+        {
+            "id": "govkit:AvatarStack",
+            "kind": "component",
+            "name": "AvatarStack",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AvatarStack"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [
+                "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
+                "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
+                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140",
+                "stories": [
+                    "kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1"
                 ]
             }
         },
@@ -1519,7 +1546,7 @@
                 "Compound export with members: Dropdown.Container, Dropdown.Item."
             ],
             "references": {
-                "source": "kit:src/core/components/dropdown/index.ts:7",
+                "source": "kit:src/core/components/dropdown/index.ts:9",
                 "stories": []
             }
         },
@@ -1542,6 +1569,31 @@
                 "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
+                ]
+            }
+        },
+        {
+            "id": "govkit:DropdownGroup",
+            "kind": "component",
+            "name": "Dropdown.Group",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "Dropdown"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [
+                "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
+            ],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17",
+                "stories": [
+                    "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1"
                 ]
             }
         },
@@ -1624,7 +1676,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:24",
+                "source": "kit:src/modules/utils/ensUtils/ensUtils.ts:30",
                 "stories": []
             }
         },

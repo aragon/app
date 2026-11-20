@@ -12,7 +12,7 @@ import {
 
 jest.mock('@/modules/application/components/layouts/layoutWizard', () => ({
     LayoutWizard: (props: ILayoutWizardProps) => (
-        <div data-testid="layout-wizard-mock">
+        <div data-exit-path={props.exitPath} data-testid="layout-wizard-mock">
             {typeof props.name === 'string'
                 ? props.name
                 : mockTranslations.tMock(...props.name)}
@@ -47,6 +47,39 @@ describe('<LayoutWizardCreateProposal /> component', () => {
 
         return Component;
     };
+
+    it('exits the wizard to the proposals of the DAO by default', async () => {
+        fetchQuerySpy.mockResolvedValue(generateDao());
+        getDaoPluginsSpy.mockReturnValue([]);
+        render(await createTestComponent());
+
+        expect(screen.getByTestId('layout-wizard-mock')).toHaveAttribute(
+            'data-exit-path',
+            `/dao/${Network.ETHEREUM_SEPOLIA}/${daoAddress}/proposals/`,
+        );
+    });
+
+    it('exits the wizard to the given exit path', async () => {
+        fetchQuerySpy.mockResolvedValue(generateDao());
+        getDaoPluginsSpy.mockReturnValue([]);
+        render(await createTestComponent({ exitPath: '/workspace/exit' }));
+
+        expect(screen.getByTestId('layout-wizard-mock')).toHaveAttribute(
+            'data-exit-path',
+            '/workspace/exit',
+        );
+    });
+
+    it('links the error state to the given exit path when the DAO cannot be read', async () => {
+        fetchQuerySpy.mockRejectedValue(new Error('fetch DAO error'));
+        render(await createTestComponent({ exitPath: '/workspace/exit' }));
+
+        expect(
+            screen.getByRole('link', {
+                name: /layoutWizardCreateProposal\.error\.action/,
+            }),
+        ).toHaveAttribute('href', '/workspace/exit');
+    });
 
     it('renders error feedback on fetch DAO error', async () => {
         fetchQuerySpy.mockImplementation(() => {

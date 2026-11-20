@@ -56,12 +56,16 @@ export const MemberAvatar: React.FC<IMemberAvatarProps> = (props) => {
 
     const { data: ensAvatarData, isLoading: avatarLoading } = useEnsAvatar({
         name: resolvedName ? normalize(resolvedName) : undefined,
+        assetGatewayUrls: ensUtils.avatarGatewayUrls,
         query: { enabled: resolvedName != null && avatarSrc == null },
         chainId,
         config: wagmiConfig,
     });
+    // Only once the avatar lookup is done: the metadata service caches by name, so it can serve the previous image.
     const ensMetadataAvatarSrc =
-        resolvedName == null ? undefined : `https://metadata.ens.domains/mainnet/avatar/${normalize(resolvedName)}`;
+        resolvedName == null || avatarLoading
+            ? undefined
+            : `https://metadata.ens.domains/mainnet/avatar/${normalize(resolvedName)}`;
     const resolvedAvatarSrc = avatarSrc ?? ensAvatarData ?? ensMetadataAvatarSrc;
     // Match Ethereum Blockies' lowercase seed convention so security icons stay comparable across apps.
     const blockiesSrc =

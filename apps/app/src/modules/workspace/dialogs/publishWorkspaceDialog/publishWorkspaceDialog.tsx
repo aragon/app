@@ -5,19 +5,16 @@ import {
     Avatar,
     Dialog,
     Heading,
-    type IInputFileAvatarValue,
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { usePinFile } from '@/shared/api/ipfsService/mutations';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
 import {
     useCreateWorkspace,
@@ -28,10 +25,12 @@ import type {
     ICreateWorkspaceFormAccount,
     ICreateWorkspaceFormData,
 } from '../../components/createWorkspaceForm';
+import { useResolveWorkspaceAvatar } from '../../hooks/useResolveWorkspaceAvatar';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
 } from '../../utils/workspaceUtils';
+import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 import { publishWorkspaceDialogUtils } from './publishWorkspaceDialogUtils';
 
 export interface IPublishWorkspaceDialogParams {
@@ -72,7 +71,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
 
     const [status, setStatus] = useState<PublishWorkspaceStatus>('idle');
 
-    const { mutateAsync: pinFile } = usePinFile();
+    const resolveAvatarUri = useResolveWorkspaceAvatar();
     const { mutateAsync: createWorkspace, data: createdWorkspace } =
         useCreateWorkspace();
     const { mutateAsync: updateWorkspace } = useUpdateWorkspace();
@@ -80,17 +79,6 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     // An update keeps the ID of the workspace, a creation gets one assigned by the registry.
     const savedWorkspaceId = workspaceId ?? createdWorkspace?.id;
     const queryClient = useQueryClient();
-
-    // A newly selected file is pinned, while an avatar carried over from the stored workspace keeps its URI.
-    const resolveAvatarUri = async (value?: IInputFileAvatarValue) => {
-        if (value?.file != null) {
-            const { IpfsHash } = await pinFile({ body: value.file });
-
-            return ipfsUtils.cidToUri(IpfsHash);
-        }
-
-        return value?.url != null ? ipfsUtils.srcToUri(value.url) : undefined;
-    };
 
     // Resolves the type of every account in one call, the authoritative read right before the workspace is stored.
     const resolveAccountInfos = async (
@@ -150,6 +138,11 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
             ]);
 
             setStatus('success');
+            // The user enters a workspace they just created: owe them the welcome dialog once (see
+            // `workspaceWelcomeUtils`). An update is not a creation, so it owes nothing.
+            if (!isUpdate) {
+                workspaceWelcomeUtils.markPendingWelcome();
+            }
         } catch {
             setStatus('error');
         }

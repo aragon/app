@@ -159,4 +159,19 @@ describe('<ResourcesInputItem /> component', () => {
 
         expect(screen.getByText('0/40')).toBeInTheDocument();
     });
+
+    it('removes the item with a remove button instead of a menu when stacked', async () => {
+        const remove = jest.fn();
+        render(createTestComponent({ isStacked: true, remove, index: 2 }));
+
+        // The remove button is the only action: no menu trigger.
+        expect(screen.getAllByRole('button')).toHaveLength(1);
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /resourcesInput.item.removeResource/,
+            }),
+        );
+
+        expect(remove).toHaveBeenCalledWith(2);
+    });
 });

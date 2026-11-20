@@ -156,4 +156,46 @@ describe('<PluginFilterComponent /> component', () => {
         expect(screen.getByText('component-2')).toBeInTheDocument();
         expect(onValueChange).toHaveBeenCalledWith(plugins[1]);
     });
+
+    it('renders the plugins as dropdown items and updates the active plugin on item select when variant is dropdown', async () => {
+        const onValueChange = jest.fn();
+        const plugins = [
+            generateFilterComponentPlugin({
+                id: '1',
+                uniqueId: '1',
+                label: 'plugin1',
+            }),
+            generateFilterComponentPlugin({
+                id: '2',
+                uniqueId: '2',
+                label: 'plugin2',
+            }),
+        ];
+        getSlotComponentSpy.mockImplementation(
+            (params: { pluginId: string }) => () =>
+                `component-${params.pluginId}`,
+        );
+        render(
+            createTestComponent({
+                plugins,
+                onValueChange,
+                variant: 'dropdown',
+            }),
+        );
+
+        expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
+        expect(screen.getByText('component-1')).toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('button', { name: plugins[0].label }),
+        );
+        await userEvent.click(
+            screen.getByRole('menuitem', { name: plugins[1].label }),
+        );
+        expect(screen.getByText('component-2')).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: plugins[1].label }),
+        ).toBeInTheDocument();
+        expect(onValueChange).toHaveBeenCalledWith(plugins[1]);
+    });
 });

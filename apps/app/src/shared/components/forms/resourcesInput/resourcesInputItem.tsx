@@ -5,6 +5,7 @@ import {
     IconType,
     InputText,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -22,6 +23,11 @@ export interface IResourcesInputItemProps {
      * Callback to remove the resource item.
      */
     remove: (index: number) => void;
+    /**
+     * Stacks the fields with a remove button instead of a row with a menu.
+     * @default false
+     */
+    isStacked?: boolean;
 }
 
 type ResourcesInputItemBaseForm = Record<string, string>;
@@ -29,7 +35,7 @@ type ResourcesInputItemBaseForm = Record<string, string>;
 export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
     props,
 ) => {
-    const { name, index, remove } = props;
+    const { name, index, remove, isStacked = false } = props;
 
     const { t } = useTranslations();
 
@@ -74,7 +80,11 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
             : undefined;
 
     return (
-        <Card className="shadow-neutral-sm flex flex-col gap-3 p-6 md:flex-row md:gap-2">
+        <Card
+            className={classNames('flex flex-col gap-3 p-6 shadow-neutral-sm', {
+                'md:flex-row md:gap-2': !isStacked,
+            })}
+        >
             <InputText
                 placeholder={t(
                     'app.shared.resourcesInput.item.linkInput.placeholder',
@@ -88,23 +98,35 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
                 placeholder={namePlaceholder}
                 {...nameField}
             />
-            <div className="mt-0 md:mt-9">
-                <Dropdown.Container
-                    constrainContentWidth={false}
-                    customTrigger={
-                        <Button
-                            iconLeft={IconType.DOTS_VERTICAL}
-                            size="lg"
-                            variant="tertiary"
-                        />
-                    }
-                    size="md"
+            {isStacked ? (
+                <Button
+                    className="w-fit"
+                    iconLeft={IconType.CLOSE}
+                    onClick={() => remove(index)}
+                    size="sm"
+                    variant="tertiary"
                 >
-                    <Dropdown.Item onClick={() => remove(index)}>
-                        {t('app.shared.resourcesInput.item.removeResource')}
-                    </Dropdown.Item>
-                </Dropdown.Container>
-            </div>
+                    {t('app.shared.resourcesInput.item.removeResource')}
+                </Button>
+            ) : (
+                <div className="mt-0 md:mt-9">
+                    <Dropdown.Container
+                        constrainContentWidth={false}
+                        customTrigger={
+                            <Button
+                                iconLeft={IconType.DOTS_VERTICAL}
+                                size="lg"
+                                variant="tertiary"
+                            />
+                        }
+                        size="md"
+                    >
+                        <Dropdown.Item onClick={() => remove(index)}>
+                            {t('app.shared.resourcesInput.item.removeResource')}
+                        </Dropdown.Item>
+                    </Dropdown.Container>
+                </div>
+            )}
         </Card>
     );
 };

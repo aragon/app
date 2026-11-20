@@ -106,7 +106,12 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
 
     return (
         <RadixDropdown.Root defaultOpen={defaultOpen} onOpenChange={handleOpenChange} open={open} {...otherProps}>
-            <RadixDropdown.Trigger asChild={true} className="group" disabled={disabled}>
+            <RadixDropdown.Trigger
+                asChild={true}
+                className="group"
+                data-guk-dropdown-trigger="true"
+                disabled={disabled}
+            >
                 {customTrigger ?? (
                     <Button
                         className={isOpen ? 'border-neutral-300' : undefined}
@@ -125,7 +130,7 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
                 <RadixDropdown.Content
                     align={align}
                     className={classNames(
-                        'bg-neutral-0 shadow-neutral-sm flex min-w-48 flex-col gap-1.5 overflow-auto rounded-xl border border-neutral-100 p-2',
+                        'flex min-w-48 flex-col gap-1.5 overflow-auto rounded-xl border border-neutral-100 bg-neutral-0 p-2 shadow-neutral-sm',
                         'z-[var(--guk-dropdown-container-content-z-index)]',
                         { 'max-h-[var(--radix-dropdown-menu-content-available-height)]': constrainContentHeight },
                         { 'max-w-[var(--radix-dropdown-menu-content-available-width)]': constrainContentWidth },

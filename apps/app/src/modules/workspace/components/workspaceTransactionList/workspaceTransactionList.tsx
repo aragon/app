@@ -333,6 +333,10 @@ export const WorkspaceTransactionList: React.FC<
                                 dao={dao}
                                 index={index}
                                 key={itemId}
+                                nonceRivalsState={workspaceTransactionUtils.getNonceRivalsState(
+                                    transaction,
+                                    transactions,
+                                )}
                                 transaction={transaction}
                                 value={itemId}
                             />

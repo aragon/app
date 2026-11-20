@@ -49,3 +49,45 @@ export interface IAddWorkspaceAccountParams
         IGetWorkspaceUrlParams,
         IAddWorkspaceAccountBody
     > {}
+
+/**
+ * Body of the update-workspace-details request: the fields the workspace admin page edits.
+ */
+export interface IUpdateWorkspaceDetailsBody
+    extends Pick<IWorkspace, 'name' | 'description' | 'avatar' | 'links'> {}
+
+export interface IUpdateWorkspaceDetailsParams
+    extends IRequestUrlBodyParams<
+        IGetWorkspaceUrlParams,
+        IUpdateWorkspaceDetailsBody
+    > {}
+
+/**
+ * Body of the remove-workspace-account request.
+ */
+export interface IRemoveWorkspaceAccountBody {
+    /**
+     * ID of the account to remove from the workspace.
+     */
+    accountId: string;
+}
+
+export interface IRemoveWorkspaceAccountParams
+    extends IRequestUrlBodyParams<
+        IGetWorkspaceUrlParams,
+        IRemoveWorkspaceAccountBody
+    > {}
+
+/**
+ * A single workspace as exported to a file, without its ID so an import is assigned a new one.
+ */
+export interface IWorkspaceExport {
+    /**
+     * Version of the export format.
+     */
+    version: 1;
+    /**
+     * The exported workspace.
+     */
+    workspace: Omit<IWorkspace, 'id'>;
+}

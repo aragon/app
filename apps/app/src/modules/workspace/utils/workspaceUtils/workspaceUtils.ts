@@ -1,4 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+
 import { getAddress } from 'viem';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
@@ -15,6 +16,7 @@ import {
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 
 /**
  * A network and address pair, i.e. what identifies a workspace account or target.
@@ -72,7 +74,8 @@ interface IWorkspaceSectionScopes {
      */
     isAllAccounts: boolean;
     /**
-     * Account types of each route under the section, keyed by its segment. A route left out gets the section's types.
+     * Account types of each route under the section, keyed by its static segment (`execute`, or `proposal` under
+     * `[pluginAddress]`). A route left out gets the section's types.
      */
     subsections?: Readonly<Record<string, readonly WorkspaceAccountType[]>>;
 }
@@ -107,6 +110,8 @@ const workspaceSectionScopes = {
         isAllAccounts: false,
         subsections: {
             execute: [WorkspaceAccountType.DAO],
+            proposal: [WorkspaceAccountType.DAO],
+            transaction: [WorkspaceAccountType.SAFE],
         },
     },
 } satisfies Readonly<
@@ -211,6 +216,14 @@ class WorkspaceUtils {
 
         return path != null ? `${baseUrl}/${path}` : baseUrl;
     };
+
+    /**
+     * URL of the admin page of a workspace.
+     * @param workspaceId - ID of the workspace.
+     * @returns The admin page URL.
+     */
+    getWorkspaceAdminUrl = (workspaceId: string): string =>
+        this.getWorkspaceUrl(workspaceId, 'admin');
 
     /**
      * URL of the edit wizard of a workspace.
@@ -418,13 +431,15 @@ class WorkspaceUtils {
      */
     buildWorkspaceId = (name: string, existingIds: string[] = []): string => {
         const slug = this.slugify(name);
+        // A workspace that took a demo ID would open the fixture in its place, so those are never handed out.
+        const takenIds = [...existingIds, ...Object.keys(workspaceDemoFixture)];
 
-        if (!existingIds.includes(slug)) {
+        if (!takenIds.includes(slug)) {
             return slug;
         }
 
         let suffix = 2;
-        while (existingIds.includes(`${slug}-${suffix.toString()}`)) {
+        while (takenIds.includes(`${slug}-${suffix.toString()}`)) {
             suffix += 1;
         }
 

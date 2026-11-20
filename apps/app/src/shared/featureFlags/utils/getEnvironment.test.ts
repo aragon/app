@@ -15,6 +15,12 @@ describe('getEnvironment', () => {
         expect(env).toBe('local');
     });
 
+    it('recognises the occ environment', () => {
+        process.env.NEXT_PUBLIC_ENV = 'occ';
+
+        expect(getEnvironment()).toBe('occ');
+    });
+
     it('falls back to production when NEXT_PUBLIC_ENV is missing or invalid', () => {
         process.env.NEXT_PUBLIC_ENV = undefined;
         expect(getEnvironment()).toBe('production');

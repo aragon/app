@@ -65,7 +65,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
 
     return (
         <ThreadPrimitive.Root
-            className="bg-neutral-0 flex h-full min-h-0 flex-1 flex-col"
+            className="flex h-full min-h-0 flex-1 flex-col bg-neutral-0"
             style={
                 {
                     '--thread-max-width': '100%',
@@ -96,7 +96,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                         </ThreadPrimitive.Messages>
                     </div>
 
-                    <ThreadPrimitive.ViewportFooter className="bg-neutral-0 sticky bottom-0 flex flex-col gap-3 overflow-visible rounded-t-(--composer-radius) pb-4 md:pb-6">
+                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-3 overflow-visible rounded-t-(--composer-radius) bg-neutral-0 pb-4 md:pb-6">
                         <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
@@ -238,7 +238,7 @@ const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
 
     return (
         <a
-            className="focus-ring-primary rounded-sm underline underline-offset-2 hover:text-neutral-600"
+            className="rounded-sm underline underline-offset-2 focus-ring-primary hover:text-neutral-600"
             href={href}
             rel="noopener noreferrer"
             target="_blank"
@@ -286,7 +286,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="focus-ring-primary mx-auto cursor-pointer rounded-sm text-xs text-neutral-500 underline underline-offset-2"
+            className="mx-auto cursor-pointer rounded-sm text-xs text-neutral-500 underline underline-offset-2 focus-ring-primary"
             onClick={onViewRequests}
             type="button"
         >
@@ -324,7 +324,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="focus-ring-primary cursor-pointer rounded-full border border-neutral-100 px-3.5 py-1.5 text-sm whitespace-nowrap text-neutral-800 transition-colors hover:bg-neutral-50"
+                        className="cursor-pointer rounded-full border border-neutral-100 px-3.5 py-1.5 text-sm whitespace-nowrap text-neutral-800 transition-colors focus-ring-primary hover:bg-neutral-50"
                         type="button"
                     >
                         {suggestion.label}
@@ -370,7 +370,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="bg-neutral-0 focus-within:border-primary-400 data-[dragging=true]:border-primary-400 data-[dragging=true]:bg-primary-50 flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed">
+                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 bg-neutral-0 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-primary-400 data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
@@ -388,7 +388,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="caret-primary-400 max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-neutral-800 outline-none placeholder:text-neutral-300"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-neutral-800 caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -513,7 +513,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="border-critical-300 bg-critical-100/40 text-critical-800 mt-2 flex flex-col gap-1 rounded-xl border p-3 text-sm leading-normal">
+        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 text-sm leading-normal text-critical-800">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>

@@ -204,10 +204,11 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         key: 'workspaces',
         name: 'Workspaces',
         description:
-            'Enables the workspace feature: the create-workspace wizard, the workspace pages and the explore call to action. Workspaces are backed by a mocked local-storage registry, so this must stay off outside local. Preview stays off as it points at the development backend, which has no workspace endpoints yet.',
+            'Enables the workspace feature: the create-workspace wizard, the workspace pages and the explore call to action. Workspaces are kept in a local-storage registry. On locally and on OCC, the soft-launch environment (new.app.aragon.org); off everywhere else.',
         defaultValue: false,
         environments: {
             local: true,
+            occ: true,
         },
     },
 ];

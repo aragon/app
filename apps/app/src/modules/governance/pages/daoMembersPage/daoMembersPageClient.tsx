@@ -34,6 +34,10 @@ export interface IDaoMembersPageClientProps {
      * Featured delegates config from CMS.
      */
     featuredDelegates: IFeaturedDelegates[];
+    /**
+     * Whether to show body plugin filters in "dropdown" variant.
+     */
+    showFiltersAsDropdown?: boolean;
 }
 
 export const daoMembersPageFilterParam = 'members';
@@ -41,7 +45,7 @@ export const daoMembersPageFilterParam = 'members';
 export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
     props,
 ) => {
-    const { initialParams, featuredDelegates } = props;
+    const { initialParams, featuredDelegates, showFiltersAsDropdown } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
@@ -141,6 +145,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
                 <DaoMemberList.Container
                     featuredDelegatesTab={featuredDelegatesTab}
                     initialParams={initialParams}
+                    showFiltersAsDropdown={showFiltersAsDropdown}
                 />
             </Page.Main>
             <Page.Aside>

@@ -8,7 +8,7 @@ import { WorkspaceWizard } from '../../components/workspaceWizard';
 import { WorkspaceDialogId } from '../../constants/workspaceDialogId';
 import type { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import type { IPublishWorkspaceDialogParams } from '../../dialogs/publishWorkspaceDialog';
-import { workspaceEditPageUtils } from './workspaceEditPageUtils';
+import { workspaceFormUtils } from '../../utils/workspaceFormUtils';
 
 export interface IWorkspaceEditPageClientProps {
     /**
@@ -49,9 +49,7 @@ export const WorkspaceEditPageClient: React.FC<
         <Page.Main fullWidth={true}>
             <WorkspaceWizard
                 analyticsFlow="edit_workspace"
-                defaultValues={workspaceEditPageUtils.buildFormValues(
-                    workspace,
-                )}
+                defaultValues={workspaceFormUtils.buildFormValues(workspace)}
                 initialActiveStep={initialStep}
                 onSubmit={handleSubmit}
                 translationNamespace="app.workspace.workspaceEditPage"

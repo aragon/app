@@ -28,17 +28,32 @@ const executePermissionId = permissionNameUtils.getPermissionId(
 );
 
 /**
+ * The one view of a Safe this hook reads: whether an address is one of its current owners.
+ */
+const safeIsOwnerAbi = [
+    {
+        type: 'function',
+        name: 'isOwner',
+        stateMutability: 'view',
+        inputs: [{ name: 'owner', type: 'address' }],
+        outputs: [{ name: '', type: 'bool' }],
+    },
+] as const;
+
+/**
  * Checks which accounts of a workspace the connected wallet can execute transactions on.
  *
- * The plural counterpart of `useDaoExecutePermission`, which the DAO transactions page uses: it reads the very same
- * `dao.hasPermission(dao, wallet, EXECUTE_PERMISSION, "0x")` call, batched into one `useReadContracts` so that a
- * page aggregating several accounts can both hide its create action and tell which rows are selectable. Every entry
- * carries its own `chainId`, as the accounts of a workspace may span networks.
+ * A DAO account reads the very same `dao.hasPermission(dao, wallet, EXECUTE_PERMISSION, "0x")` call as
+ * `useDaoExecutePermission`, which the DAO transactions page uses. A Safe account has no PermissionManager: it reads
+ * `safe.isOwner(wallet)` instead, as only an owner can create a transaction on it from the app (the create dialog
+ * signs and proposes as that owner). Both are batched into one `useReadContracts`, so that a page aggregating several
+ * accounts can both hide its create action and tell which rows are selectable. Every entry carries its own `chainId`,
+ * as the accounts of a workspace may span networks.
  *
  * Every given account is reported rather than only the ones that were read, so callers can index the record
  * without defaulting. Only a read that answers in the affirmative reports `true`: a read that denies it, one that
- * could not run, one still in flight and an account type that is not read all report `false`.
- * @param accounts - Accounts to check. Only DAO accounts are read, see below.
+ * could not run and one still in flight all report `false`.
+ * @param accounts - Accounts to check.
  * @returns The permission of every given account keyed by account ID, and whether any read is still pending.
  */
 export const useWorkspaceAccountsExecutePermission = (
@@ -46,31 +61,30 @@ export const useWorkspaceAccountsExecutePermission = (
 ): IUseWorkspaceAccountsExecutePermissionResult => {
     const { address } = useWalletAccount();
 
-    // TODO(APP-1140): Safe accounts are deliberately left out of the batch and therefore always report `false`. A
-    // Safe has no PermissionManager, so its eligibility is a different question: the connected address must be one
-    // of its owners (`getOwners` / `isOwner`) or sit on its proposer list. Resolve that here and report those
-    // accounts as executable too — `useIsSafeContract` and the `brandId: 'safe'` permission enrichment in
-    // `shared/api/daoService/domain/daoPermission.ts` are the existing footholds. The create destination of a Safe
-    // needs the same follow-up, see `workspaceTransactionsPageClient`.
-    const daoAccounts = accounts.filter(
-        (account) => account.type === WorkspaceAccountType.DAO,
-    );
+    const contracts = accounts.map((account) => {
+        const chainId = networkDefinitions[account.network].id;
 
-    const contracts = daoAccounts.map(
-        (account) =>
-            ({
-                abi: permissionManagerAbi,
-                address: account.address as Hex,
-                functionName: 'hasPermission',
-                args: [
-                    account.address as Hex,
-                    address as Hex,
-                    executePermissionId,
-                    '0x',
-                ],
-                chainId: networkDefinitions[account.network].id,
-            }) as const,
-    );
+        return account.type === WorkspaceAccountType.SAFE
+            ? ({
+                  abi: safeIsOwnerAbi,
+                  address: account.address as Hex,
+                  functionName: 'isOwner',
+                  args: [address as Hex],
+                  chainId,
+              } as const)
+            : ({
+                  abi: permissionManagerAbi,
+                  address: account.address as Hex,
+                  functionName: 'hasPermission',
+                  args: [
+                      account.address as Hex,
+                      address as Hex,
+                      executePermissionId,
+                      '0x',
+                  ],
+                  chainId,
+              } as const);
+    });
 
     const enabled = address != null && contracts.length > 0;
 
@@ -81,11 +95,7 @@ export const useWorkspaceAccountsExecutePermission = (
 
     const permissions: Record<string, boolean> = {};
 
-    accounts.forEach((account) => {
-        permissions[account.id] = false;
-    });
-
-    daoAccounts.forEach((account, index) => {
+    accounts.forEach((account, index) => {
         const read = data?.[index];
 
         permissions[account.id] =

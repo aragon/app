@@ -61,8 +61,7 @@
             "cache": false
         },
         "lint": {
-            "cache": true,
-            "outputs": []
+            "cache": false
         },
         "lint:check": {
             "cache": true,

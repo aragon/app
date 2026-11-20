@@ -100,7 +100,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                             <div className="relative flex grow">
                                 {valueLabel && (
                                     <p
-                                        className="text-primary-400 absolute -top-5 text-xs whitespace-nowrap transition-all duration-500 ease-in-out"
+                                        className="absolute -top-5 text-xs whitespace-nowrap text-primary-400 transition-all duration-500 ease-in-out"
                                         style={valueLabelStyle}
                                     >
                                         {valueLabel}

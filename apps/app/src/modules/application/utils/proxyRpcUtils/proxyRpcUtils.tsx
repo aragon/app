@@ -29,7 +29,12 @@ export class ProxyRpcUtils {
     }
 
     request = async (request: NextRequest, { params }: IRpcRequestOptions) => {
-        if (await botIdUtils.isBot('rpc', { onError: 'allow' })) {
+        const shouldReject = await botIdUtils.shouldReject('rpc', {
+            onError: 'allow',
+            onFailedChallenge: 'allow',
+        });
+
+        if (shouldReject) {
             return NextResponse.json(
                 { error: 'Access denied' },
                 { status: 403 },

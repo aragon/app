@@ -6,8 +6,10 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import * as AppKit from '@reown/appkit/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
 import * as useDialogContext from '@/shared/components/dialogProvider';
@@ -31,8 +33,13 @@ describe('<UserDialog /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+    const replace = jest.fn();
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
 
     beforeEach(() => {
+        useRouterSpy.mockReturnValue({
+            replace,
+        } as unknown as AppRouterInstance);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useConnectionSpy.mockReturnValue(
             {} as unknown as wagmi.UseConnectionReturnType,
@@ -57,6 +64,8 @@ describe('<UserDialog /> component', () => {
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
         clipboardCopySpy.mockReset();
+        replace.mockReset();
+        useRouterSpy.mockReset();
     });
 
     const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
@@ -68,7 +77,20 @@ describe('<UserDialog /> component', () => {
         },
     ];
 
-    const createTestComponent = (props?: Partial<IUserDialogProps>) => {
+    const buildSnapshot = (workspaces: boolean): FeatureFlagSnapshot[] => [
+        ...featureFlagsSnapshot,
+        {
+            key: 'workspaces',
+            name: 'Workspaces',
+            description: 'Enables the workspace feature.',
+            enabled: workspaces,
+        },
+    ];
+
+    const createTestComponent = (
+        props?: Partial<IUserDialogProps>,
+        snapshot: FeatureFlagSnapshot[] = buildSnapshot(true),
+    ) => {
         const completeProps: IUserDialogProps = {
             location: { id: 'test' },
             ...props,
@@ -76,7 +98,7 @@ describe('<UserDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                <FeatureFlagsProvider initialSnapshot={snapshot}>
                     <UserDialog {...completeProps} />
                 </FeatureFlagsProvider>
             </GukModulesProvider>
@@ -196,8 +218,8 @@ describe('<UserDialog /> component', () => {
         expect(open).toHaveBeenCalled();
     });
 
-    it('disconnects when the logout icon button is clicked', async () => {
-        const disconnect = jest.fn();
+    it('disconnects without navigating away when logout is clicked', async () => {
+        const disconnect = jest.fn().mockResolvedValue(undefined);
         useConnectionSpy.mockReturnValue({
             address: '0x123',
         } as unknown as wagmi.UseConnectionReturnType);
@@ -211,7 +233,10 @@ describe('<UserDialog /> component', () => {
         render(createTestComponent());
 
         await userEvent.click(screen.getByTestId(IconType.LOGOUT));
+
         expect(disconnect).toHaveBeenCalled();
+        // Workspaces are on here, so the home route is the sign-in landing.
+        await waitFor(() => expect(replace).toHaveBeenCalledWith('/'));
     });
 
     it('closes the dialog when the user disconnects', () => {
@@ -227,5 +252,25 @@ describe('<UserDialog /> component', () => {
         const { rerender } = render(createTestComponent());
         rerender(createTestComponent());
         expect(close).toHaveBeenCalled();
+    });
+    it('stays on the page after logout when workspaces are off, where the home route is Explore', async () => {
+        const disconnect = jest.fn().mockResolvedValue(undefined);
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useDisconnectSpy.mockReturnValue({
+            disconnect,
+        } as unknown as ReturnType<typeof AppKit.useDisconnect>);
+
+        render(createTestComponent(undefined, buildSnapshot(false)));
+
+        await userEvent.click(screen.getByTestId(IconType.LOGOUT));
+
+        await waitFor(() => expect(disconnect).toHaveBeenCalled());
+        expect(replace).not.toHaveBeenCalled();
     });
 });

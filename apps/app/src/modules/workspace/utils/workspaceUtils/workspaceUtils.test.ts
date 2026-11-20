@@ -120,6 +120,14 @@ describe('workspace utils', () => {
         });
     });
 
+    describe('getWorkspaceAdminUrl', () => {
+        it('builds the url of the admin page', () => {
+            expect(workspaceUtils.getWorkspaceAdminUrl('demo')).toEqual(
+                '/workspace/demo/admin',
+            );
+        });
+    });
+
     describe('getWorkspaceEditUrl', () => {
         it('builds the url of the edit wizard', () => {
             expect(workspaceUtils.getWorkspaceEditUrl('demo')).toEqual(
@@ -347,6 +355,36 @@ describe('workspace utils', () => {
             },
         );
 
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...dao, subsection: 'proposal' }, expected: true },
+            { scope: { ...safe, subsection: 'proposal' }, expected: false },
+            { scope: { ...all, subsection: 'proposal' }, expected: false },
+        ])(
+            'returns $expected for the create/{pluginAddress}/proposal subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
+        it.each<{ scope: IWorkspaceSectionScope; expected: boolean }>([
+            { scope: { ...safe, subsection: 'transaction' }, expected: true },
+            { scope: { ...dao, subsection: 'transaction' }, expected: false },
+            { scope: { ...all, subsection: 'transaction' }, expected: false },
+            {
+                scope: { ...unknown, subsection: 'transaction' },
+                expected: false,
+            },
+        ])(
+            'returns $expected for the create/transaction subsection on $scope',
+            ({ scope, expected }) => {
+                expect(workspaceUtils.isSectionServed('create', scope)).toBe(
+                    expected,
+                );
+            },
+        );
+
         it('applies the section rule to a section that declares no subsections', () => {
             expect(
                 workspaceUtils.isSectionServed('settings', {
@@ -383,6 +421,8 @@ describe('workspace utils', () => {
         it('returns the routes a section restricts under it', () => {
             expect(workspaceUtils.getSubsections('create')).toEqual([
                 'execute',
+                'proposal',
+                'transaction',
             ]);
         });
 
@@ -409,6 +449,12 @@ describe('workspace utils', () => {
     });
 
     describe('resolveAccountScope', () => {
+        it('reads the admin page segment as the aggregated scope', () => {
+            expect(workspaceUtils.resolveAccountScope('admin')).toEqual(
+                workspaceAllAccountsSegment,
+            );
+        });
+
         const accountId =
             'ethereum-sepolia-0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
@@ -857,6 +903,16 @@ describe('workspace account routes', () => {
         );
     });
 
+    // A wizard is named by its static segment, also under a dynamic one (`[pluginAddress]/proposal`).
+    const readWizardRoutes = (dir: string) =>
+        readdirSync(dir, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .flatMap((entry) =>
+                entry.name.startsWith('[')
+                    ? readRouteFolders(join(dir, entry.name))
+                    : [entry.name],
+            );
+
     // An undeclared wizard route gets every type of its section (a new create wizard: DAO and Safe).
     it('every route folder under a wizard section is one of its subsections', () => {
         const wizardSections = readRouteFolders(accountWizardsDir).filter(
@@ -866,7 +922,7 @@ describe('workspace account routes', () => {
         expect(wizardSections).not.toHaveLength(0);
 
         wizardSections.forEach((section) => {
-            const routeFolders = readRouteFolders(
+            const routeFolders = readWizardRoutes(
                 join(accountWizardsDir, section),
             );
 
@@ -874,6 +930,20 @@ describe('workspace account routes', () => {
                 section,
                 routes: [...workspaceUtils.getSubsections(section)].sort(),
             });
+        });
+    });
+    describe('buildWorkspaceId', () => {
+        it('never hands out a demo workspace ID', () => {
+            // A workspace that took one would open the demo fixture in its place.
+            expect(workspaceUtils.buildWorkspaceId('Aragon Demo')).toBe(
+                'aragon-demo-2',
+            );
+        });
+
+        it('suffixes a slug already in use', () => {
+            expect(
+                workspaceUtils.buildWorkspaceId('Mine', ['mine', 'mine-2']),
+            ).toBe('mine-3');
         });
     });
 });

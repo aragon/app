@@ -61,7 +61,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     return (
         <html className="h-full" lang="en">
-            <body className="has-[[data-app-sidebar]]:bg-neutral-25 flex h-full flex-col bg-neutral-50">
+            <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
                 <NextTopLoader
                     color="var(--color-primary-400)"
                     easing="ease-in-out"
@@ -91,7 +91,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                                     {isDebugPanelEnabled && <DebugPanelLazy />}
                                 </ErrorBoundary>
                                 {/* The sidebar carries the footer content while it is shown (see LayoutSidebar). */}
-                                <Footer className="lg:group-has-[[data-app-sidebar]]/app:hidden" />
+                                <Footer className="group-has-[[data-ftue-landing]]/app:hidden lg:group-has-[[data-app-sidebar]]/app:hidden" />
                             </div>
                             <SupportChatPanel />
                         </div>

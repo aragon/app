@@ -8,7 +8,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 export interface ITelegramSubscriptionCardProps {
     /**
      * ID of the DAO, forwarded to the bot as its `start` parameter so the subscription is
-     * bound to this DAO (e.g. `ethereum-sepolia-0x2da3...`).
+     * bound to this DAO (e.g. `ethereum-sepolia-0x2da3...`). The app code of the environment
+     * (`NEXT_PUBLIC_TELEGRAM_APP_CODE`), when set, follows it after an underscore.
      */
     daoId: string;
 }
@@ -32,7 +33,9 @@ export const TelegramSubscriptionCard: React.FC<
         return null;
     }
 
-    const subscribeUrl = `https://t.me/${encodeURIComponent(botName)}?start=${encodeURIComponent(daoId)}`;
+    const appCode = process.env.NEXT_PUBLIC_TELEGRAM_APP_CODE;
+    const startPayload = appCode ? `${daoId}_${appCode}` : daoId;
+    const subscribeUrl = `https://t.me/${encodeURIComponent(botName)}?start=${encodeURIComponent(startPayload)}`;
 
     return (
         <Page.AsideCard

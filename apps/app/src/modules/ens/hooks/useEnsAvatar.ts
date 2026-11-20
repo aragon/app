@@ -1,3 +1,4 @@
+import { ensUtils } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { normalize } from 'viem/ens';
 // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsAvatar (centralises chainId and cache)
@@ -38,6 +39,7 @@ export function useEnsAvatar(name: string | null | undefined) {
     const result = useWagmiEnsAvatar({
         name: normalizedName,
         chainId: ensChainId,
+        assetGatewayUrls: ensUtils.avatarGatewayUrls,
         query: {
             enabled: normalizedName != null,
             staleTime: ensCache.staleTime,

@@ -29,6 +29,7 @@ import { transactionExecutionUtils } from '@/modules/finance/utils/transactionEx
 import { SafeExecutionDetails } from '@/modules/safe/components/safeExecutionDetails';
 import { SafeTransactionSimulation } from '@/modules/safe/components/safeTransactionSimulation';
 import { SafeTransactionVoting } from '@/modules/safe/components/safeTransactionVoting';
+import { safeTransactionUtils } from '@/modules/safe/utils/safeTransactionUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -68,6 +69,11 @@ export interface IWorkspaceTransactionListItemProps
      * decoded in the context of the DAO, so it is rendered as a block-explorer row instead.
      */
     dao?: IDao;
+    /**
+     * State of the other pending transactions queued on the nonce of a pending Safe transaction
+     * (`workspaceTransactionUtils.getNonceRivalsState`), which changes when its rejection is signed.
+     */
+    nonceRivalsState?: string;
 }
 
 /**
@@ -88,6 +94,12 @@ const getSafeRowState = (transaction: IWorkspaceTransaction) =>
     workspaceTransactionUtils.isPendingExecution(transaction)
         ? `pending-${transaction.confirmations.toString()}`
         : 'executed';
+
+/**
+ * What a Safe state change is awaited on: the row itself after a confirmation or an execution, its nonce rivals after
+ * a rejection, which queues next to the row and leaves it as it is.
+ */
+type SafeStateSubject = 'row' | 'nonceRivals';
 
 type TransactionHeaderCopy = ReturnType<
     typeof useGukModulesContext
@@ -190,6 +202,10 @@ interface IBuildExecutionDisplayParams {
      */
     row: ExecutionRow;
     /**
+     * Whether the execution is the onchain rejection of its Safe nonce.
+     */
+    isRejection: boolean;
+    /**
      * Slug of the proposal that triggered the execution, when known.
      */
     proposalSlug?: string;
@@ -259,7 +275,7 @@ const buildExecutionStatus = (
 const buildExecutionDisplay = (
     params: IBuildExecutionDisplayParams,
 ): ITransactionHeaderDisplay => {
-    const { row, proposalSlug, accountName, t } = params;
+    const { row, isRejection, proposalSlug, accountName, t } = params;
     const { transaction } = row;
 
     // An execution is identified by the proposal behind it, else, for a Safe transaction, by its account and nonce.
@@ -280,8 +296,8 @@ const buildExecutionDisplay = (
               );
 
     return {
-        icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
-        iconVariant: 'neutral',
+        icon: isRejection ? IconType.CLOSE : IconType.BLOCKCHAIN_SMARTCONTRACT,
+        iconVariant: isRejection ? 'critical' : 'neutral',
         title,
         identifier: proposalSlug?.toUpperCase() ?? safeTransactionIdentifier,
         status: buildExecutionStatus(transaction, t),
@@ -312,12 +328,14 @@ const buildTransferDisplay = (
  * Workspace transaction rendered as an expandable accordion item: executions expand to their summary and decoded actions
  * (read from the Safe of a Safe account, in the context of the DAO otherwise), transfers to the transferred asset.
  * Safe transactions still waiting to be executed are listed with their confirmation status and expand to their voting
- * card, where owners confirm or execute them, and their Tenderly simulation, above their decoded actions. Must be rendered inside an `<Accordion.Container />`.
+ * card, where owners confirm, execute or reject them, and their Tenderly simulation, above their decoded actions. The
+ * onchain rejection of a Safe nonce is listed as one and has neither actions nor a simulation. Must be rendered inside
+ * an `<Accordion.Container />`.
  */
 export const WorkspaceTransactionListItem: React.FC<
     IWorkspaceTransactionListItemProps
 > = (props) => {
-    const { transaction, value, index, account, dao } = props;
+    const { transaction, value, index, account, dao, nonceRivalsState } = props;
 
     const { t } = useTranslations();
     const { copy } = useGukModulesContext();
@@ -328,12 +346,20 @@ export const WorkspaceTransactionListItem: React.FC<
     const accountName =
         account == null ? undefined : workspaceUtils.getAccountName(account);
 
-    // Rows come from the backend store, which learns of a confirmation once it syncs the Safe and of an execution once
-    // it indexes the execution event: a single refresh right after the change usually reads the old row, so the rows
-    // are refreshed until this one changes or the attempts run out.
-    const [awaitedRowState, setAwaitedRowState] = useState<string>();
-    const isAwaitingSafeState =
-        awaitedRowState === getSafeRowState(transaction);
+    // Rows come from the backend store, which learns of a confirmation or a rejection once it syncs the Safe and of an
+    // execution once it indexes the execution event: a single refresh right after the change usually reads the old
+    // rows, so they are refreshed until the change reaches them or the attempts run out. Each change is awaited on
+    // its own subject only, as the sync can drop the rivals of an executed transaction before its execution is indexed.
+    const safeStates: Record<SafeStateSubject, string> = {
+        row: getSafeRowState(transaction),
+        nonceRivals: nonceRivalsState ?? '',
+    };
+    const [awaited, setAwaited] = useState<{
+        subject: SafeStateSubject;
+        state: string;
+    }>();
+    const awaitedSubjectState =
+        awaited == null ? undefined : safeStates[awaited.subject];
 
     const refreshTransactions = useCallback(
         () =>
@@ -344,7 +370,13 @@ export const WorkspaceTransactionListItem: React.FC<
     );
 
     useEffect(() => {
-        if (!isAwaitingSafeState) {
+        if (awaited == null) {
+            return;
+        }
+
+        // The change reached the rows. The wait ends here, as the rivals of a nonce can return to an earlier state.
+        if (awaited.state !== awaitedSubjectState) {
+            setAwaited(undefined);
             return;
         }
 
@@ -355,15 +387,15 @@ export const WorkspaceTransactionListItem: React.FC<
 
             if (attempts >= safeStateRefreshAttempts) {
                 clearInterval(interval);
-                setAwaitedRowState(undefined);
+                setAwaited(undefined);
             }
         }, safeStateRefreshInterval);
 
         return () => clearInterval(interval);
-    }, [isAwaitingSafeState, refreshTransactions]);
+    }, [awaited, awaitedSubjectState, refreshTransactions]);
 
-    const handleSafeStateChange = () => {
-        setAwaitedRowState(getSafeRowState(transaction));
+    const awaitSafeState = (subject: SafeStateSubject) => {
+        setAwaited({ subject, state: safeStates[subject] });
         refreshTransactions();
     };
 
@@ -372,6 +404,17 @@ export const WorkspaceTransactionListItem: React.FC<
             <TransactionList.Item index={index} transaction={row.transaction} />
         );
     }
+
+    // A rejection shares the nonce, and so the identifier, of the transaction it rejects: the row says which one it is.
+    const isRejection =
+        row.kind === 'safe' &&
+        row.transaction.nonce != null &&
+        safeTransactionUtils.isRejection({
+            safeTxHash: row.safeTxHash,
+            nonce: row.transaction.nonce,
+            safeAddress: row.transaction.account.address,
+            chainId: networkDefinitions[row.transaction.network].id,
+        });
 
     const {
         icon,
@@ -384,6 +427,7 @@ export const WorkspaceTransactionListItem: React.FC<
         ? buildTransferDisplay(row.transaction, headerCopy)
         : buildExecutionDisplay({
               row,
+              isRejection,
               proposalSlug: row.transaction.proposalSlug,
               accountName,
               t,
@@ -406,7 +450,14 @@ export const WorkspaceTransactionListItem: React.FC<
                             variant={iconVariant}
                         />
                     }
-                    description={formattedDate}
+                    description={
+                        isRejection
+                            ? t(
+                                  'app.workspace.workspaceTransactionList.item.rejection',
+                                  { date: formattedDate },
+                              )
+                            : formattedDate
+                    }
                     identifier={identifier}
                     tag={status}
                     title={
@@ -446,23 +497,34 @@ export const WorkspaceTransactionListItem: React.FC<
                             <>
                                 <SafeTransactionVoting
                                     network={row.transaction.network}
-                                    onSafeStateChange={handleSafeStateChange}
+                                    onRejectionSigned={() =>
+                                        awaitSafeState('nonceRivals')
+                                    }
+                                    onSafeStateChange={() =>
+                                        awaitSafeState('row')
+                                    }
                                     safeAddress={
                                         row.transaction.account.address
                                     }
                                     safeTxHash={row.safeTxHash}
                                 />
-                                <SafeTransactionSimulation
-                                    actionCount={row.transaction.actionCount}
-                                    network={row.transaction.network}
-                                    safeAddress={
-                                        row.transaction.account.address
-                                    }
-                                    safeTxHash={row.safeTxHash}
-                                />
+                                {/* A rejection performs no action, so it has nothing to simulate. */}
+                                {!isRejection && (
+                                    <SafeTransactionSimulation
+                                        actionCount={
+                                            row.transaction.actionCount
+                                        }
+                                        network={row.transaction.network}
+                                        safeAddress={
+                                            row.transaction.account.address
+                                        }
+                                        safeTxHash={row.safeTxHash}
+                                    />
+                                )}
                             </>
                         )}
                         <SafeExecutionDetails
+                            isRejection={isRejection}
                             safeAddress={row.transaction.account.address}
                             safeTxHash={row.safeTxHash}
                             transaction={row.transaction}

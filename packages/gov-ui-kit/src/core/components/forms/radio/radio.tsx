@@ -30,7 +30,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
     const randomId = useRandomId(id);
 
     const itemClasses = classNames(
-        'group peer focus-ring-primary cursor-pointer rounded-full outline-hidden disabled:cursor-default',
+        'group peer cursor-pointer rounded-full outline-hidden focus-ring-primary disabled:cursor-default',
         { 'order-2': labelPosition === 'left' },
     );
 
@@ -53,7 +53,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
                 {...otherProps}
             >
                 <Icon
-                    className="group-hover:text-primary-400 text-neutral-300 group-disabled:text-neutral-300 group-data-[state=checked]:hidden"
+                    className="text-neutral-300 group-hover:text-primary-400 group-disabled:text-neutral-300 group-data-[state=checked]:hidden"
                     icon={IconType.RADIO}
                 />
                 <RadioGroupIndicator className="text-primary-400 group-disabled:text-neutral-300">

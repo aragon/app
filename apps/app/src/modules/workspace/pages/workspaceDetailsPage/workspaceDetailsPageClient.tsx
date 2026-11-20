@@ -7,6 +7,8 @@ import {
     EmptyState,
     Link,
 } from '@aragon/gov-ui-kit';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -48,6 +50,7 @@ export const WorkspaceDetailsPageClient: React.FC<
     const { workspaceId } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
 
     const { data: workspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -136,9 +139,6 @@ export const WorkspaceDetailsPageClient: React.FC<
                         {accounts.length === 0 && (
                             <Card className="py-10">
                                 <EmptyState
-                                    description={t(
-                                        'app.workspace.workspaceDetailsPage.emptyAccounts.description',
-                                    )}
                                     heading={t(
                                         'app.workspace.workspaceDetailsPage.emptyAccounts.heading',
                                     )}
@@ -151,6 +151,15 @@ export const WorkspaceDetailsPageClient: React.FC<
                                             workspaceId,
                                             WorkspaceWizardStep.ACCOUNTS,
                                         ),
+                                    }}
+                                    secondaryButton={{
+                                        label: t(
+                                            'app.workspace.workspaceDetailsPage.emptyAccounts.createAction',
+                                        ),
+                                        onClick: () =>
+                                            open(
+                                                CreateDaoDialogId.CREATE_DAO_DETAILS,
+                                            ),
                                     }}
                                 />
                             </Card>
@@ -181,7 +190,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                             <div className="flex flex-col gap-3 md:gap-2">
                                 {targets.map((target) => (
                                     <Card
-                                        className="shadow-neutral-sm flex flex-col gap-1 p-4 md:p-6"
+                                        className="flex flex-col gap-1 p-4 shadow-neutral-sm md:p-6"
                                         key={`${target.network}-${target.address}`}
                                     >
                                         <span className="text-sm leading-normal text-neutral-500">

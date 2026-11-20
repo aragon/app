@@ -40,25 +40,28 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
             </ReactQueryWrapper>
         );
     };
+    const oneEmptyAccount = {
+        accounts: [{ address: '', network: Network.ETHEREUM_SEPOLIA }],
+    };
 
-    it('renders one account row by default', () => {
+    it('starts without an account row because accounts are optional', () => {
         render(createTestComponent());
 
         expect(
             screen.getByText(/createWorkspaceForm.accounts.label/),
         ).toBeInTheDocument();
         expect(
-            screen.getAllByPlaceholderText(
+            screen.queryByPlaceholderText(
                 /createWorkspaceForm.address.placeholder/,
             ),
-        ).toHaveLength(1);
+        ).not.toBeInTheDocument();
     });
 
     const openRowMenu = () =>
         userEvent.click(screen.getByTestId(IconType.DOTS_VERTICAL));
 
     it('allows removing the only account row, accounts being optional', async () => {
-        render(createTestComponent());
+        render(createTestComponent(undefined, oneEmptyAccount));
 
         await openRowMenu();
         await userEvent.click(
@@ -85,7 +88,7 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
             screen.getAllByPlaceholderText(
                 /createWorkspaceForm.address.placeholder/,
             ),
-        ).toHaveLength(2);
+        ).toHaveLength(1);
     });
 
     it('resolves a filled in account address through the workspace accounts API', async () => {
@@ -110,7 +113,7 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
     });
 
     it('hides the account metadata fields until the metadata section is opened', async () => {
-        render(createTestComponent());
+        render(createTestComponent(undefined, oneEmptyAccount));
 
         expect(
             screen.queryByText(/accounts.metadata.title/),
@@ -129,7 +132,7 @@ describe('<CreateWorkspaceFormAccounts /> component', () => {
     });
 
     it('closes the account metadata section again', async () => {
-        render(createTestComponent());
+        render(createTestComponent(undefined, oneEmptyAccount));
 
         await userEvent.click(
             screen.getByRole('button', { name: /accounts.metadata.show/ }),

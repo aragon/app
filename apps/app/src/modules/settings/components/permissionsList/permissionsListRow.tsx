@@ -71,7 +71,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
 
     return (
         <>
-            <div className="bg-neutral-0 flex flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:hidden">
+            <div className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:hidden">
                 <div className="flex items-start justify-between gap-3">
                     <p className="min-w-0 truncate font-mono text-lg leading-tight text-neutral-800">
                         {permissionName}

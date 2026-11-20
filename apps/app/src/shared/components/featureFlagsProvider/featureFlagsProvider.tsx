@@ -145,8 +145,11 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (
     );
 };
 
+export const useOptionalFeatureFlags = (): IFeatureFlagsContextValue | null =>
+    useContext(featureFlagsContext);
+
 export const useFeatureFlags = (): IFeatureFlagsContextValue => {
-    const context = useContext(featureFlagsContext);
+    const context = useOptionalFeatureFlags();
 
     if (context == null) {
         throw new Error(

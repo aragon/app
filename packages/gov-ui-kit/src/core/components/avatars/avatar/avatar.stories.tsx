@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Avatar } from './avatar';
+import { Avatar, type AvatarSize } from './avatar';
 import style from './index.css?raw';
 
 const meta: Meta<typeof Avatar> = {
@@ -42,7 +42,46 @@ export const CustomFallback: Story = {
     args: {
         src: 'broken-image',
         size: 'lg',
-        fallback: <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">SO</span>,
+        fallback: <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">SO</span>,
+    },
+};
+
+/**
+ * Avatar fallback text at every supported size.
+ */
+export const AllSizes: Story = {
+    render: () => (
+        <div className="flex items-center gap-4">
+            {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] satisfies AvatarSize[]).map((size) => (
+                <Avatar
+                    fallback={
+                        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+                            AB
+                        </span>
+                    }
+                    key={size}
+                    size={size}
+                />
+            ))}
+        </div>
+    ),
+};
+
+/**
+ * Avatar component with a badge, e.g. a network logo, sized from the avatar size.
+ */
+export const WithBadge: Story = {
+    args: {
+        src: 'https://aragon-1.mypinata.cloud/ipfs/QmX4q3fu1QkSfdVFUAmSUWziCmnXtitp2TVKLbrFVBcPvv',
+        size: 'md',
+        badge: (
+            <img
+                alt=""
+                height={16}
+                src="https://assets.coingecko.com/coins/images/279/standard/ethereum.png"
+                width={16}
+            />
+        ),
     },
 };
 

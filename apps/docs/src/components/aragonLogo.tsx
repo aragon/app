@@ -7,7 +7,7 @@ import type { ComponentProps } from 'react';
 export const AragonLogo = ({ className, ...props }: ComponentProps<'svg'>) => (
     <svg
         aria-label="Aragon"
-        className={className ?? 'text-primary-400 h-7 w-auto'}
+        className={className ?? 'h-7 w-auto text-primary-400'}
         fill="none"
         role="img"
         viewBox="0 0 162 40"
