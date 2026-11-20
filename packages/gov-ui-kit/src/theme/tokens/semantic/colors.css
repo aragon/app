@@ -558,6 +558,8 @@
         --guk-bg-critical-subtle-tag: var(--color-critical-200);
         /* verified from code */
         --guk-bg-success-solid-progress: var(--color-success-400);
+        /* verified from code */
+        --guk-bg-body-sidebar: var(--color-neutral-25);
     }
 
     [data-theme="next"] {
@@ -771,6 +773,7 @@
         --guk-bg-warning-subtle-tag: var(--guk-bg-warning-subtle);
         --guk-bg-critical-subtle-tag: var(--guk-bg-critical-subtle);
         --guk-bg-success-solid-progress: var(--guk-bg-success-solid);
+        --guk-bg-body-sidebar: var(--guk-bg-body);
     }
 
     [data-theme="dark"] {
@@ -984,6 +987,7 @@
         --guk-bg-warning-subtle-tag: var(--guk-bg-warning-subtle);
         --guk-bg-critical-subtle-tag: var(--guk-bg-critical-subtle);
         --guk-bg-success-solid-progress: var(--guk-bg-success-solid);
+        --guk-bg-body-sidebar: var(--guk-bg-body);
     }
 }
 
@@ -1811,6 +1815,10 @@
 
 @utility bg-success-solid-progress {
     background-color: var(--guk-bg-success-solid-progress);
+}
+
+@utility bg-body-sidebar {
+    background-color: var(--guk-bg-body-sidebar);
 }
 
 @utility border-t-surface-primary {
@@ -3019,6 +3027,10 @@
 
 @utility fill-bg-success-solid-progress {
     @apply fill-(color:--guk-bg-success-solid-progress);
+}
+
+@utility fill-bg-body-sidebar {
+    @apply fill-(color:--guk-bg-body-sidebar);
 }
 
 @utility fill-icon-surface-primary {

@@ -97,6 +97,11 @@
         "bg/success/solid-progress": {
             "alias": "bg/success/solid",
             "note": "Code-only, pending design review (P-51): the Progress success bar. Figma binds bg/success/tertiary (code bg/success/solid), but today's bar is success-400 while bg/success/solid is fixed at success-500 by the success ping dot: conflict C-02 (A-16). The default theme keeps success-400 through its parity override; \"next\" and \"dark\" follow bg/success/solid. Collapses into bg/success/solid when the default switches to the Figma values (T-04)."
+        },
+        "bg/body-sidebar": {
+            "alias": "bg/body",
+            "usedBy": "app",
+            "note": "Code-only component-level alias, PROVISIONAL (P-66): page background of the sidebar layout. Today's colour (neutral-25) differs from bg/body (default neutral-50), the role-right token (app map). The default theme keeps neutral-25 through its parity override; \"next\" and \"dark\" follow bg/body. Collapses into bg/body when the default switches to the Figma values (T-04). Used by: layoutRoot (app)."
         }
     },
     "utilities": {

@@ -674,6 +674,10 @@
         "bg/surface/secondary-inverse": {
             "value": "neutral-500",
             "evidence": "component map: useInputProps (text-input caret)"
+        },
+        "bg/body-sidebar": {
+            "value": "neutral-25",
+            "evidence": "layoutRoot (app): component-level alias of bg/body (P-66, PROVISIONAL)"
         }
     }
 }
