@@ -678,6 +678,330 @@
         "bg/body-sidebar": {
             "value": "neutral-25",
             "evidence": "layoutRoot (app): component-level alias of bg/body (P-66, PROVISIONAL)"
+        },
+        "border/surface/active-accordion": {
+            "value": "neutral-200",
+            "evidence": "accordionItem: component-level alias of border/surface/active (P-66, PROVISIONAL)"
+        },
+        "border/surface/active-card": {
+            "value": "neutral-300",
+            "evidence": "dataListItem, assetTransferAddress: component-level alias of border/surface/active (P-66, PROVISIONAL)"
+        },
+        "border/surface/active-control": {
+            "value": "neutral-200",
+            "evidence": "dialogHeader, navigationTrigger (app): component-level alias of border/surface/active (P-66, PROVISIONAL)"
+        },
+        "bg/surface/active-control": {
+            "value": "neutral-50",
+            "evidence": "dialogHeader, wallet, navigationDaoHome (app), navigationSidebarAccount (app), navigationWizard (app), workspaceAccountSelector (app), workspaceSelector (app), navigationTrigger (app): component-level alias of bg/surface/active (P-66, PROVISIONAL)"
+        },
+        "icon/surface/disabled-accordion": {
+            "value": "neutral-100",
+            "evidence": "accordionItemHeader: component-level alias of icon/surface/disabled (P-66, PROVISIONAL)"
+        },
+        "bg/surface/tertiary-avatar": {
+            "value": "neutral-200",
+            "evidence": "avatar: component-level alias of bg/surface/tertiary (P-66, PROVISIONAL)"
+        },
+        "icon/critical/primary-avatar": {
+            "value": "critical-600",
+            "evidence": "avatarIcon: component-level alias of icon/critical/primary (P-66, PROVISIONAL)"
+        },
+        "icon/info/primary-avatar": {
+            "value": "info-600",
+            "evidence": "avatarIcon: component-level alias of icon/info/primary (P-66, PROVISIONAL)"
+        },
+        "icon/success/primary-avatar": {
+            "value": "success-600",
+            "evidence": "avatarIcon: component-level alias of icon/success/primary (P-66, PROVISIONAL)"
+        },
+        "icon/warning/primary-avatar": {
+            "value": "warning-600",
+            "evidence": "avatarIcon: component-level alias of icon/warning/primary (P-66, PROVISIONAL)"
+        },
+        "text/link/hover-action": {
+            "value": "primary-600",
+            "evidence": "collapsible, assetInput (app), safeMultisigSubmitVote (app): component-level alias of text/link/hover (P-66, PROVISIONAL)"
+        },
+        "text/link/active-action": {
+            "value": "primary-800",
+            "evidence": "collapsible: component-level alias of text/link/active (P-66, PROVISIONAL)"
+        },
+        "icon/accent/hover-action": {
+            "value": "primary-500",
+            "evidence": "collapsible: component-level alias of icon/accent/hover (P-66, PROVISIONAL)"
+        },
+        "icon/accent/active-action": {
+            "value": "primary-700",
+            "evidence": "collapsible: component-level alias of icon/accent/active (P-66, PROVISIONAL)"
+        },
+        "icon/surface/primary-item": {
+            "value": "neutral-500",
+            "evidence": "dataListActionItem, safePendingTransactionListItem (app), attachment (app): component-level alias of icon/surface/primary (P-66, PROVISIONAL)"
+        },
+        "bg/surface/hover-lift": {
+            "value": "neutral-0",
+            "evidence": "dataListActionItem, attachment (app): component-level alias of bg/surface/hover (P-66, PROVISIONAL)"
+        },
+        "bg/surface/transparent-active-item": {
+            "value": "color-mix(in srgb, var(--color-neutral-400) 8%, transparent)",
+            "evidence": "dataListItem: component-level alias of bg/surface/transparent-active (P-66, PROVISIONAL)"
+        },
+        "text/critical/primary-title": {
+            "value": "critical-600",
+            "evidence": "dialogAlertHeader: component-level alias of text/critical/primary (P-66, PROVISIONAL)"
+        },
+        "text/info/primary-title": {
+            "value": "info-600",
+            "evidence": "dialogAlertHeader: component-level alias of text/info/primary (P-66, PROVISIONAL)"
+        },
+        "text/success/primary-title": {
+            "value": "success-600",
+            "evidence": "dialogAlertHeader: component-level alias of text/success/primary (P-66, PROVISIONAL)"
+        },
+        "text/warning/primary-title": {
+            "value": "warning-600",
+            "evidence": "dialogAlertHeader: component-level alias of text/warning/primary (P-66, PROVISIONAL)"
+        },
+        "text/surface/hover-label": {
+            "value": "neutral-800",
+            "evidence": "dropdownItem, checkbox, radio, autocompleteInputItem (app), tooltipIconButton (app): component-level alias of text/surface/hover (P-66, PROVISIONAL)"
+        },
+        "text/link/secondary-hover-nav": {
+            "value": "neutral-800",
+            "evidence": "tabsTrigger, footerSidebar (app), navigationLinksItem (app), siteFooter (app): component-level alias of text/link/secondary-hover (P-66, PROVISIONAL)"
+        },
+        "icon/surface/default-control": {
+            "value": "neutral-400",
+            "evidence": "checkbox, inputFileAvatar, inputSearch: component-level alias of icon/surface/default (P-66, PROVISIONAL)"
+        },
+        "icon/surface/hover-control": {
+            "value": "neutral-600",
+            "evidence": "inputFileAvatar: component-level alias of icon/surface/hover (P-66, PROVISIONAL)"
+        },
+        "icon/surface/active-control": {
+            "value": "neutral-600",
+            "evidence": "inputSearch, tabsTrigger: component-level alias of icon/surface/active (P-66, PROVISIONAL)"
+        },
+        "icon/surface/disabled-control": {
+            "value": "neutral-200",
+            "evidence": "inputFileAvatar, tabsTrigger: component-level alias of icon/surface/disabled (P-66, PROVISIONAL)"
+        },
+        "icon/surface/default-tab": {
+            "value": "neutral-500",
+            "evidence": "tabsTrigger: component-level alias of icon/surface/default (P-66, PROVISIONAL)"
+        },
+        "icon/surface/hover-tab": {
+            "value": "neutral-300",
+            "evidence": "tabsTrigger: component-level alias of icon/surface/hover (P-66, PROVISIONAL)"
+        },
+        "icon/surface/default-clear": {
+            "value": "neutral-600",
+            "evidence": "inputSearch: component-level alias of icon/surface/default (P-66, PROVISIONAL)"
+        },
+        "icon/surface/default-card": {
+            "value": "neutral-500",
+            "evidence": "checkboxCard, radioCard: component-level alias of icon/surface/default (P-66, PROVISIONAL)"
+        },
+        "border/surface/disabled-card": {
+            "value": "neutral-300",
+            "evidence": "checkboxCard, radioCard: component-level alias of border/surface/disabled (P-66, PROVISIONAL)"
+        },
+        "border/surface/disabled-toggle": {
+            "value": "neutral-100",
+            "evidence": "toggle, tokenVotingOptionToggle (app): component-level alias of border/surface/disabled (P-66, PROVISIONAL)"
+        },
+        "border/surface/disabled-item": {
+            "value": "neutral-100",
+            "evidence": "workspaceSelectAccountDialogItem (app), processDataListItem (app): component-level alias of border/surface/disabled (P-66, PROVISIONAL)"
+        },
+        "border/warning/default-input": {
+            "value": "warning-500",
+            "evidence": "inputContainer: component-level alias of border/warning/default (P-66, PROVISIONAL)"
+        },
+        "border/critical/default-input": {
+            "value": "critical-500",
+            "evidence": "inputContainer, inputFileAvatar: component-level alias of border/critical/default (P-66, PROVISIONAL)"
+        },
+        "border/warning/hover-input": {
+            "value": "warning-600",
+            "evidence": "inputContainer: component-level alias of border/warning/hover (P-66, PROVISIONAL)"
+        },
+        "border/critical/hover-input": {
+            "value": "critical-600",
+            "evidence": "inputContainer, inputFileAvatar: component-level alias of border/critical/hover (P-66, PROVISIONAL)"
+        },
+        "border/warning/hover-file-avatar": {
+            "value": "warning-400",
+            "evidence": "inputFileAvatar: component-level alias of border/warning/hover (P-66, PROVISIONAL)"
+        },
+        "border/warning/active-control": {
+            "value": "warning-500",
+            "evidence": "inputContainer: component-level alias of border/warning/active (P-66, PROVISIONAL)"
+        },
+        "border/critical/active-control": {
+            "value": "critical-500",
+            "evidence": "inputContainer, tokenVotingOptionToggle (app): component-level alias of border/critical/active (P-66, PROVISIONAL)"
+        },
+        "text/warning/primary-input": {
+            "value": "warning-600",
+            "evidence": "inputText: component-level alias of text/warning/primary (P-66, PROVISIONAL)"
+        },
+        "text/critical/primary-input": {
+            "value": "critical-600",
+            "evidence": "inputText: component-level alias of text/critical/primary (P-66, PROVISIONAL)"
+        },
+        "border/warning/primary-input": {
+            "value": "warning-600",
+            "evidence": "inputText: component-level alias of border/warning/primary (P-66, PROVISIONAL)"
+        },
+        "border/critical/primary-input": {
+            "value": "critical-600",
+            "evidence": "inputText: component-level alias of border/critical/primary (P-66, PROVISIONAL)"
+        },
+        "icon/warning/primary-input": {
+            "value": "warning-600",
+            "evidence": "inputText: component-level alias of icon/warning/primary (P-66, PROVISIONAL)"
+        },
+        "icon/critical/primary-input": {
+            "value": "critical-600",
+            "evidence": "inputText: component-level alias of icon/critical/primary (P-66, PROVISIONAL)"
+        },
+        "border/surface/default-switch": {
+            "value": "neutral-200",
+            "evidence": "switch: component-level alias of border/surface/default (P-66, PROVISIONAL)"
+        },
+        "border/warning/primary-spinner": {
+            "value": "warning-300",
+            "evidence": "spinner: component-level alias of border/warning/primary (P-66, PROVISIONAL)"
+        },
+        "border/critical/primary-spinner": {
+            "value": "critical-300",
+            "evidence": "spinner: component-level alias of border/critical/primary (P-66, PROVISIONAL)"
+        },
+        "bg/accent/solid-ping": {
+            "value": "primary-500",
+            "evidence": "statePingAnimation: component-level alias of bg/accent/solid (P-66, PROVISIONAL)"
+        },
+        "border/surface/hover-tab": {
+            "value": "neutral-800",
+            "evidence": "tabsTrigger: component-level alias of border/surface/hover (P-66, PROVISIONAL)"
+        },
+        "bg/info/solid-tooltip": {
+            "value": "info-300",
+            "evidence": "tooltip: component-level alias of bg/info/solid (P-66, PROVISIONAL)"
+        },
+        "bg/success/solid-tooltip": {
+            "value": "success-300",
+            "evidence": "tooltip: component-level alias of bg/success/solid (P-66, PROVISIONAL)"
+        },
+        "bg/warning/solid-tooltip": {
+            "value": "warning-300",
+            "evidence": "tooltip: component-level alias of bg/warning/solid (P-66, PROVISIONAL)"
+        },
+        "icon/surface/default-asset-transfer": {
+            "value": "primary-300",
+            "evidence": "assetTransferAddress: component-level alias of icon/surface/default (P-66, PROVISIONAL)"
+        },
+        "text/critical/primary-message": {
+            "value": "critical-600",
+            "evidence": "cryptexMembersFileDownloadDialog (app), gaugeDistributionsMembersFileDownloadDialog (app), capitalDistributorTestMembersFileDownloadDialog (app), dispatchSimulationDialog (app), thread (app): component-level alias of text/critical/primary (P-66, PROVISIONAL)"
+        },
+        "text/critical/primary-tx-error": {
+            "value": "critical-700",
+            "evidence": "dispatchSimulationDialog (app), safeCreateTransactionDialog (app), safeTransactionDialog (app): component-level alias of text/critical/primary (P-66, PROVISIONAL)"
+        },
+        "border/critical/primary-dispatch": {
+            "value": "critical-200",
+            "evidence": "dispatchSimulationDialog (app): component-level alias of border/critical/primary (P-66, PROVISIONAL)"
+        },
+        "border/critical/primary-chat-error": {
+            "value": "critical-300",
+            "evidence": "thread (app): component-level alias of border/critical/primary (P-66, PROVISIONAL)"
+        },
+        "text/surface/default-wizard": {
+            "value": "neutral-300",
+            "evidence": "navigationWizard (app): component-level alias of text/surface/default (P-66, PROVISIONAL)"
+        },
+        "text/surface/tertiary-hint": {
+            "value": "neutral-300",
+            "evidence": "adminOnboarding (app), workspaceSelectAccountDialogItem (app), processDataListItem (app), markdownText (app), thread (app): component-level alias of text/surface/tertiary (P-66, PROVISIONAL)"
+        },
+        "text/accent/inverse-brand": {
+            "value": "primary-50",
+            "evidence": "exploreDaosPageClient (app), siteHeader (app): component-level alias of text/accent/inverse (P-66, PROVISIONAL)"
+        },
+        "text/surface/primary-detail": {
+            "value": "neutral-700",
+            "evidence": "daoPermissionsPageClient (app), safeProposalTransactionDialog (app), permissionDetailPanel (app): component-level alias of text/surface/primary (P-66, PROVISIONAL)"
+        },
+        "text/surface/primary-panel-title": {
+            "value": "neutral-900",
+            "evidence": "permissionDetailPanel (app), permissionNodeDetailPanel (app): component-level alias of text/surface/primary (P-66, PROVISIONAL)"
+        },
+        "border/surface/secondary-panel": {
+            "value": "neutral-200",
+            "evidence": "permissionDetailPanel (app), permissionNodeDetailPanel (app), permissionsGraph (app), permissionsGraphSkeleton (app), page (app), not-found (app), markdownText (app): component-level alias of border/surface/secondary (P-66, PROVISIONAL)"
+        },
+        "border/surface/hover-graph-node": {
+            "value": "primary-300",
+            "evidence": "permissionGraphNode (app): component-level alias of border/surface/hover (P-66, PROVISIONAL)"
+        },
+        "border/surface/default-graph-node": {
+            "value": "neutral-300",
+            "evidence": "permissionGraphNode (app): component-level alias of border/surface/default (P-66, PROVISIONAL)"
+        },
+        "bg/surface/secondary-skeleton": {
+            "value": "neutral-200",
+            "evidence": "gaugeVoterGaugeListItemSkeleton (app): component-level alias of bg/surface/secondary (P-66, PROVISIONAL)"
+        },
+        "border/accent/primary-terminal": {
+            "value": "primary-100",
+            "evidence": "gaugeVoterVotingTerminal (app): component-level alias of border/accent/primary (P-66, PROVISIONAL)"
+        },
+        "border/accent/primary-cta": {
+            "value": "primary-200",
+            "evidence": "ctaCard (app): component-level alias of border/accent/primary (P-66, PROVISIONAL)"
+        },
+        "border/success/active-control": {
+            "value": "success-500",
+            "evidence": "tokenVotingOptionToggle (app): component-level alias of border/success/active (P-66, PROVISIONAL)"
+        },
+        "text/surface/selected-label": {
+            "value": "neutral-800",
+            "evidence": "tokenVotingOptionToggle (app), navigationLinksItem (app): component-level alias of text/surface/selected (P-66, PROVISIONAL)"
+        },
+        "icon/accent/selected-nav": {
+            "value": "neutral-800",
+            "evidence": "navigationLinksItem (app): component-level alias of icon/accent/selected (P-66, PROVISIONAL)"
+        },
+        "text/surface/default-attachment": {
+            "value": "neutral-800",
+            "evidence": "attachment (app): component-level alias of text/surface/default (P-66, PROVISIONAL)"
+        },
+        "text/critical/hover-attachment": {
+            "value": "critical-600",
+            "evidence": "attachment (app): component-level alias of text/critical/hover (P-66, PROVISIONAL)"
+        },
+        "icon/critical/primary-chat": {
+            "value": "critical-600",
+            "evidence": "attachment (app), createTicketCard (app): component-level alias of icon/critical/primary (P-66, PROVISIONAL)"
+        },
+        "icon/success/primary-chat": {
+            "value": "success-600",
+            "evidence": "createTicketCard (app): component-level alias of icon/success/primary (P-66, PROVISIONAL)"
+        },
+        "text/surface/secondary-ticket": {
+            "value": "neutral-600",
+            "evidence": "createTicketCard (app): component-level alias of text/surface/secondary (P-66, PROVISIONAL)"
+        },
+        "border/surface/default-composer": {
+            "value": "neutral-200",
+            "evidence": "thread (app): component-level alias of border/surface/default (P-66, PROVISIONAL)"
+        },
+        "bg/surface/hover-icon-button": {
+            "value": "neutral-100",
+            "evidence": "tooltipIconButton (app): component-level alias of bg/surface/hover (P-66, PROVISIONAL)"
         }
     }
 }
