@@ -16,6 +16,12 @@ The final value is resolved in this priority order:
 Local override (cookie) > CMS override > Environment-specific (code) > Default (code)
 ```
 
+An environment with a base (`occ` on `production`) takes the base after each own level:
+
+```
+Local override (cookie) > CMS (environment) > Code (environment) > CMS (base) > Code (base) > Default (code)
+```
+
 ## Usage
 
 ### Server-side
@@ -147,6 +153,7 @@ The CMS file is located at:
 - `development` - Development environment
 - `staging` - Staging environment
 - `production` - Production environment
+- `occ` - OCC soft-launch environment (new.app.aragon.org); falls back to the `production` value (CMS, then code) when it has none of its own
 
 ## Local Overrides (Debugging)
 
@@ -242,6 +249,7 @@ featureFlags/
 ├── featureFlags.ts                  # Main service class
 ├── utils/
 │   ├── getEnvironment.ts            # Environment resolver
+│   ├── getEnvironmentValue.ts       # Per-environment value lookup with base-environment fallback
 │   └── cookieOverrides.ts           # Cookie parsing/serialization
 └── providers/
     └── githubProvider.ts            # GitHub CMS provider implementation

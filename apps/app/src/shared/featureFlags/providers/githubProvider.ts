@@ -1,16 +1,18 @@
 import type { ICmsFeatureFlagsResponse } from '@/shared/api/cmsService';
 import { cmsService } from '@/shared/api/cmsService';
-import type {
-    FeatureFlagEnvironment,
-    FeatureFlagOverrides,
-    IFeatureFlagsProvider,
+import {
+    FEATURE_FLAG_BASE_ENVIRONMENTS,
+    type FeatureFlagEnvironment,
+    type FeatureFlagOverrides,
+    type IFeatureFlagsProvider,
 } from '../featureFlags.api';
 import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
+import { getEnvironmentValue } from '../utils/getEnvironmentValue';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     value != null && typeof value === 'object' && !Array.isArray(value);
 
-const getEnvironmentValue = (
+const getCmsValue = (
     value: unknown,
     env: FeatureFlagEnvironment,
 ): boolean | undefined => {
@@ -20,9 +22,7 @@ const getEnvironmentValue = (
     }
 
     if (isRecord(value)) {
-        const envValue = value[env];
-
-        return typeof envValue === 'boolean' ? envValue : undefined;
+        return getEnvironmentValue(value, env);
     }
 };
 
@@ -40,7 +40,7 @@ const loadCmsOverrides = async (
 
     const entries = Object.entries(response).reduce<[string, boolean][]>(
         (accumulator, [key, value]) => {
-            const envValue = getEnvironmentValue(value, environment);
+            const envValue = getCmsValue(value, environment);
 
             if (envValue == null) {
                 return accumulator;
@@ -62,7 +62,7 @@ export type GithubCmsCookieSourceGetter = () =>
 
 /**
  * Single provider implementation that merges:
- * - CMS overrides for a given environment
+ * - CMS overrides for a given environment (`loadBaseOverrides` gives those of its base environment)
  * - cookie-based local overrides (for the current request/session)
  *
  * Server and client wrappers are responsible for providing the correct
@@ -79,6 +79,15 @@ export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
         this.environment = environment;
         this.getCookieSource = getCookieSource;
     }
+
+    loadBaseOverrides = (): Promise<FeatureFlagOverrides> => {
+        const baseEnvironment =
+            FEATURE_FLAG_BASE_ENVIRONMENTS[this.environment];
+
+        return baseEnvironment != null
+            ? loadCmsOverrides(baseEnvironment)
+            : Promise.resolve({});
+    };
 
     loadOverrides = async (): Promise<FeatureFlagOverrides> => {
         const [cmsOverrides, cookieSource] = await Promise.all([

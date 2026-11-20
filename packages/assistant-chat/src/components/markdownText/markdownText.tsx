@@ -10,6 +10,7 @@ import { memo, useState } from 'react';
 import remarkGfm from 'remark-gfm';
 import { chatCopy } from '../../copy';
 import { TooltipIconButton } from '../tooltipIconButton';
+import { resolveAppLink } from './resolveAppLink';
 
 // Port of the assistant-ui registry markdown-text: the assistant reply rendered as markdown with
 // the registry's element styling remapped to the Aragon theme tokens. Deliberate deviations:
@@ -151,12 +152,13 @@ const defaultComponents = memoizeMarkdownComponents({
             {...props}
         />
     ),
-    a: ({ className, ...props }) => (
+    a: ({ className, href, ...props }) => (
         <a
             className={classNames(
                 'text-primary-400 underline underline-offset-2 hover:text-primary-500',
                 className,
             )}
+            href={resolveAppLink(href, globalThis.location?.origin)}
             rel="noreferrer"
             target="_blank"
             {...props}
