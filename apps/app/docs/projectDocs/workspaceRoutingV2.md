@@ -142,3 +142,11 @@ then writes the resolved params into the URL (`router.replace`).
      - An invalid account in the path is a 404, not a fallback (unlike the `ws` and `scope` params in Q3): the page
        account is a required path param.
      - Temporary redirect (307, Next.js `redirect()`), so the canonical form can still change.
+8. **Workspace ID format.** `ws` puts the workspace ID in every URL, so its format now matters.
+   - Today there are two formats: a slug of the name for created workspaces (`buildWorkspaceId`, `-2`, `-3`… on
+     collision), and `my-workspace-{8 random chars}` for the default one (`buildDefaultWorkspace`).
+   - The ID never changes on rename, so the URL can show a stale name.
+   - Slugs and incrementing numbers are only unique within one device's registry. Published, shared workspaces need
+     globally unique IDs.
+   - DECISION: opaque, globally unique IDs (UUID, `crypto.randomUUID()`) for every workspace, the default one
+     included. The name is display-only and never part of the ID.
