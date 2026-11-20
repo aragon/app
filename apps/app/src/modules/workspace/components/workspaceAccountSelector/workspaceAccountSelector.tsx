@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    AvatarIcon,
+    type AvatarSize,
     AvatarStack,
     addressUtils,
     DaoAvatar,
@@ -27,7 +27,7 @@ import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAccountSelectorProps {
     /**
-     * ID of the workspace, whose avatar represents the aggregated option.
+     * ID of the workspace whose accounts are displayed.
      */
     workspaceId: string;
     /**
@@ -142,6 +142,24 @@ export const WorkspaceAccountSelector: React.FC<
                 src={getOptionAvatar(option)}
             />
         ));
+    // The trigger lets the stack size itself to its slot; the menu pins it to the size of the account rows.
+    const renderAllAccountsAvatar = (size?: AvatarSize) =>
+        accountAvatars.length > 0 ? (
+            <AvatarStack
+                aria-hidden={true}
+                avatars={accountAvatars}
+                className="shrink-0"
+                size={size}
+            />
+        ) : (
+            <DaoAvatar
+                aria-hidden={true}
+                className="shrink-0"
+                name={workspace?.name}
+                size={size ?? 'md'}
+                src={ipfsUtils.cidToSrc(workspace?.avatar)}
+            />
+        );
     const activeOptionAddress =
         activeOption?.account == null
             ? undefined
@@ -161,18 +179,7 @@ export const WorkspaceAccountSelector: React.FC<
                 >
                     <span className="flex w-11 shrink-0 items-center">
                         {activeOption?.isAllAccounts ? (
-                            accountAvatars.length > 0 ? (
-                                <AvatarStack
-                                    aria-hidden={true}
-                                    avatars={accountAvatars}
-                                />
-                            ) : (
-                                <DaoAvatar
-                                    name={workspace?.name}
-                                    size="md"
-                                    src={ipfsUtils.cidToSrc(workspace?.avatar)}
-                                />
-                            )
+                            renderAllAccountsAvatar()
                         ) : (
                             <DaoAvatar
                                 name={activeOption?.label}
@@ -211,12 +218,7 @@ export const WorkspaceAccountSelector: React.FC<
                      * allowed here. */}
                     <span className="flex min-w-0 items-center gap-3">
                         {option.isAllAccounts ? (
-                            <AvatarIcon
-                                className="shrink-0"
-                                icon={IconType.RICHTEXT_LIST_UNORDERED}
-                                size="sm"
-                                variant="primary"
-                            />
+                            renderAllAccountsAvatar('sm')
                         ) : (
                             <DaoAvatar
                                 className="shrink-0"

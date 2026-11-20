@@ -273,12 +273,12 @@ Avatar-shaped frame rendering an Icon with variant styling.
 
 - Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.
 - The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.
-- Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.
+- Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.
 - Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed.
 
 **References**
 
-- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140`
+- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:141`
 - `kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1`
 
 ### Breadcrumbs
@@ -763,11 +763,12 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 **Usage notes**
 
 - Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.
+- The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.
 - Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own.
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17`
+- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:19`
 - `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1`
 
 ### Dropdown.Item

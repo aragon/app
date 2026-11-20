@@ -48,6 +48,10 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      */
     disableNext?: boolean;
     /**
+     * Hides the right caret on the next or submit button.
+     */
+    hideNextIcon?: boolean;
+    /**
      * Action rendered beside the submit button, e.g. skipping an optional step. It owns its own submit behaviour.
      */
     secondaryAction?: ReactNode;
@@ -61,6 +65,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         className,
         nextDropdownItems,
         disableNext = false,
+        hideNextIcon = false,
         secondaryAction,
         ...otherProps
     } = props;
@@ -143,7 +148,11 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                                 {secondaryAction}
                                 <Button
                                     disabled={disableNext}
-                                    iconRight={IconType.CHEVRON_RIGHT}
+                                    iconRight={
+                                        hideNextIcon
+                                            ? undefined
+                                            : IconType.CHEVRON_RIGHT
+                                    }
                                     size="lg"
                                     type="submit"
                                     variant={submitVariant}

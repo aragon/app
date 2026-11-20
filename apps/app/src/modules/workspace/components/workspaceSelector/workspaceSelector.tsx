@@ -146,7 +146,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                     {t('app.workspace.workspaceSelector.create')}
                 </Dropdown.Item>
                 <Dropdown.Item
-                    icon={IconType.WITHDRAW}
+                    icon={IconType.DEPOSIT}
                     iconPosition="left"
                     onSelect={() => fileInputRef.current?.click()}
                 >
