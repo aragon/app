@@ -396,3 +396,13 @@
 {"ts":"2026-11-17T14:14:30.647Z","tool":"Edit","file":"apps/app/src/modules/application/utils/proxyRpcUtils/proxyRpcUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-11-17T14:14:40.463Z","tool":"Edit","file":"apps/app/src/modules/application/utils/proxyRpcUtils/proxyRpcUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":5,"adapter":"claude"}
 {"ts":"2026-11-17T14:14:44.837Z","tool":"Edit","file":"apps/app/src/modules/application/utils/proxyRpcUtils/proxyRpcUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:06.436Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:16.197Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:16.988Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:17.779Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:17.779Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:18.571Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:47:18.571Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:48:17.048Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:48:20.958Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-18T13:48:31.026Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
