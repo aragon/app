@@ -13,7 +13,6 @@ import {
     ReactQueryWrapper,
 } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
@@ -21,10 +20,8 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
-import * as useAddWorkspaceAccountAndOpenModule from '../../hooks/useAddWorkspaceAccountAndOpen';
 import * as useWorkspaceAccountOptionsHook from '../../hooks/useWorkspaceAccountOptions';
 import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
-import * as useWorkspaceCreateAccountDialogModule from '../../hooks/useWorkspaceCreateAccountDialog';
 import {
     type IWorkspaceAccountSelectorProps,
     WorkspaceAccountSelector,
@@ -126,15 +123,8 @@ describe('<WorkspaceAccountSelector /> component', () => {
         });
 
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const useAddAndOpenSpy = jest.spyOn(
-        useAddWorkspaceAccountAndOpenModule,
-        'useAddWorkspaceAccountAndOpen',
-    );
-    const addAndOpenMock = jest.fn();
 
     beforeEach(() => {
-        addAndOpenMock.mockResolvedValue(undefined);
-        useAddAndOpenSpy.mockReturnValue(addAndOpenMock);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         getWorkspaceSpy.mockResolvedValue(workspace);
         getDaoSpy.mockResolvedValue(
@@ -158,8 +148,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         cidToSrcSpy.mockReset();
         useWorkspaceAccountOptionsSpy.mockReset();
         usePathnameSpy.mockReset();
-        useAddAndOpenSpy.mockReset();
-        addAndOpenMock.mockReset();
     });
 
     const createTestComponent = (
@@ -226,7 +214,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
     });
 
-    it('lists every option with its avatar, using a list icon for the aggregated option, then the add and create account items', async () => {
+    it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
         render(createTestComponent());
 
         await waitFor(() =>
@@ -235,14 +223,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(screen.getByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(4);
+        expect(items).toHaveLength(3);
         expect(items[0]).toHaveTextContent('All accounts');
         expect(items[1]).toHaveTextContent('Demo DAO');
         expect(items[2]).toHaveTextContent(
             /workspaceAccountSelector\.addAccount$/,
-        );
-        expect(items[3]).toHaveTextContent(
-            /workspaceAccountSelector\.createAccount$/,
         );
         expect(
             within(items[0]).getByTestId('RICHTEXT_LIST_UNORDERED'),
@@ -268,57 +253,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
             useWorkspaceAddAccountsDialogModule.useWorkspaceAddAccountsDialog,
         ).toHaveBeenCalledWith('test-workspace');
         expect(openAddAccounts).toHaveBeenCalled();
-    });
-
-    it('opens the create account dialog from All Accounts, then adds and opens the account', async () => {
-        const openCreateAccount = jest.fn();
-        jest.spyOn(
-            useWorkspaceCreateAccountDialogModule,
-            'useWorkspaceCreateAccountDialog',
-        ).mockReturnValue(openCreateAccount);
-        render(createTestComponent());
-
-        await userEvent.click(screen.getByRole('button'));
-        await userEvent.click(
-            await screen.findByRole('menuitem', {
-                name: /workspaceAccountSelector\.createAccount$/,
-            }),
-        );
-
-        expect(useAddAndOpenSpy).toHaveBeenCalledWith('test-workspace');
-        const { onCreated } = openCreateAccount.mock.calls[0][0] as {
-            onCreated: (account: IWorkspaceAccount) => void;
-        };
-        onCreated(daoAccount);
-        expect(addAndOpenMock).toHaveBeenCalledWith(daoAccount);
-    });
-
-    it('logs a failed add of a created account', async () => {
-        const error = new Error('add failed');
-        addAndOpenMock.mockRejectedValueOnce(error);
-        const logErrorSpy = jest
-            .spyOn(monitoringUtils, 'logError')
-            .mockImplementation(jest.fn());
-        const openCreateAccount = jest.fn();
-        jest.spyOn(
-            useWorkspaceCreateAccountDialogModule,
-            'useWorkspaceCreateAccountDialog',
-        ).mockReturnValue(openCreateAccount);
-        render(createTestComponent());
-
-        await userEvent.click(screen.getByRole('button'));
-        await userEvent.click(
-            await screen.findByRole('menuitem', {
-                name: /workspaceAccountSelector\.createAccount$/,
-            }),
-        );
-        const { onCreated } = openCreateAccount.mock.calls[0][0] as {
-            onCreated: (account: IWorkspaceAccount) => void;
-        };
-        onCreated(daoAccount);
-
-        await waitFor(() => expect(logErrorSpy).toHaveBeenCalledWith(error));
-        logErrorSpy.mockRestore();
     });
 
     it.each([
@@ -483,7 +417,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('offers to add or create an account in a workspace holding none', async () => {
+    it('offers to add an account to a workspace holding none', async () => {
         getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
         mockAccountOptions({ options: [allAccountsOption] });
         render(createTestComponent());
@@ -494,7 +428,6 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(items.map((item) => item.textContent)).toEqual([
             'All accounts',
             expect.stringMatching(/workspaceAccountSelector\.addAccount$/),
-            expect.stringMatching(/workspaceAccountSelector\.createAccount$/),
         ]);
     });
 

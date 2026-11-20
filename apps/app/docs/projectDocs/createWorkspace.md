@@ -1142,10 +1142,9 @@ What `onCreated` does per entry point:
 | --- | --- |
 | Getting started (both buttons) | Ticks the new account in the selection, keeping existing ticks |
 | Add accounts footer | Same; the Add accounts dialog stays open |
-| All Accounts dropdown "Create account" | `useAddWorkspaceAccountAndOpen`: adds it to the workspace, refreshes the workspace and list, opens its overview |
 
-The "Create account" item sits after "Add account" in the All Accounts dropdown. A created row is named through the
-accounts lookup (see Add accounts above).
+A created row is named through the accounts lookup (see Add accounts above). The All Accounts dropdown offers only
+"Add account": creating goes through the Add accounts dialog.
 
 Shared pieces it relies on:
 
@@ -1314,7 +1313,6 @@ src/modules/workspace/
 ├── dialogs/workspaceWelcomeDialog/{workspaceWelcomeDialog.tsx,index.ts}
 ├── dialogs/workspaceCreateAccountDialog/{workspaceCreateAccountDialog.tsx,workspaceCreateAccountDialogDefinitions.ts,workspaceCreateAccountDialogNetwork.tsx,workspaceCreateAccountDialogSigners.tsx,index.ts}
 ├── hooks/useWorkspaceCreateAccountDialog/{useWorkspaceCreateAccountDialog.ts,index.ts}
-├── hooks/useAddWorkspaceAccountAndOpen/{useAddWorkspaceAccountAndOpen.ts,index.ts}
 ├── pages/createWorkspacePage/{createWorkspacePage.tsx,createWorkspacePageClient.tsx,index.ts}
 ├── pages/workspaceEntryPage/{workspaceEntryPage.tsx,workspaceEntryPageClient.tsx,workspaceGettingStarted.tsx,index.ts}
 ├── components/workspaceAccountSelector/{workspaceAccountSelector.tsx,index.ts}
@@ -1391,9 +1389,6 @@ Keep it that way when extending this.
     that returns the Safes can only if it reports the networks it could not read.
   - To stay under the Safe API rate limit, Safe networks are read three at a time.
   - The "N found so far" count jumps from 0 to the total, as the stand-in returns one page.
-- **A failed add from the All Accounts "Create account" entry shows no message.** The DAO is deployed, but when
-  `useAddWorkspaceAccountAndOpen` rejects the failure is only logged (`monitoringUtils.logError`); the account can
-  still be added by address.
 - **Search in `DataListSelect` shows the first page of matches only:** pagination is hidden while searching, as it
   was in the withdraw asset selector, so matches past it need a narrower search.
 - **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.

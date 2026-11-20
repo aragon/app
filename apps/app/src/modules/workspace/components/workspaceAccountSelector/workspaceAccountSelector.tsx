@@ -15,15 +15,12 @@ import { useMemo } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { useWorkspace, WorkspaceAccountType } from '../../api/workspaceService';
-import { useAddWorkspaceAccountAndOpen } from '../../hooks/useAddWorkspaceAccountAndOpen';
 import {
     type IWorkspaceAccountOption,
     useWorkspaceAccountOptions,
 } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
-import { useWorkspaceCreateAccountDialog } from '../../hooks/useWorkspaceCreateAccountDialog';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
@@ -105,16 +102,6 @@ export const WorkspaceAccountSelector: React.FC<
     );
 
     const handleAddAccounts = useWorkspaceAddAccountsDialog(workspaceId);
-    const openCreateAccount = useWorkspaceCreateAccountDialog();
-    const addAccountAndOpen = useAddWorkspaceAccountAndOpen(workspaceId);
-    // A failed add has no UI message yet: it is logged, and the account can still be added by address.
-    const handleCreateAccount = () =>
-        openCreateAccount({
-            onCreated: (account) =>
-                addAccountAndOpen(account).catch((error: unknown) =>
-                    monitoringUtils.logError(error),
-                ),
-        });
 
     // Hidden while nothing is known yet — before the workspace read only the aggregated option exists — then shown
     // even for a workspace holding no account: its Add account item is how one gets added from here.
@@ -263,13 +250,6 @@ export const WorkspaceAccountSelector: React.FC<
                 onSelect={handleAddAccounts}
             >
                 {t('app.workspace.workspaceAccountSelector.addAccount')}
-            </Dropdown.Item>
-            <Dropdown.Item
-                icon={IconType.PLUS}
-                iconPosition="left"
-                onSelect={handleCreateAccount}
-            >
-                {t('app.workspace.workspaceAccountSelector.createAccount')}
             </Dropdown.Item>
         </Dropdown.Container>
     );
