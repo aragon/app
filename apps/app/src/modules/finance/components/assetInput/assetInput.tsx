@@ -313,7 +313,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center self-end pr-4">
                     <button
-                        className="flex cursor-pointer gap-x-1 text-link-default hover:text-primary-600"
+                        className="flex cursor-pointer gap-x-1 text-link-default hover:text-link-hover-action"
                         onClick={handleMaxAmount}
                         type="button"
                     >

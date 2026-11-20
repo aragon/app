@@ -100,7 +100,7 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
                     </div>
                     <Dialog.Close asChild={true}>
                         <TooltipIconButton
-                            className="absolute top-4 right-4 bg-neutral-0/80 text-surface-primary hover:bg-neutral-0"
+                            className="absolute top-4 right-4 bg-neutral-0/80 text-surface-primary hover:bg-surface-hover-lift"
                             tooltip={chatCopy.attachments.closePreview}
                             variant="unstyled"
                         >
@@ -120,7 +120,7 @@ const AttachmentThumb: React.FC = () => {
         return (
             <div className="flex h-full w-full items-center justify-center">
                 <Icon
-                    className="text-neutral-500"
+                    className="icon-surface-primary-item"
                     icon={IconType.COPY}
                     size="lg"
                 />
@@ -212,7 +212,7 @@ const AttachmentUI: React.FC = () => {
                                 className="absolute inset-0 flex items-center justify-center bg-critical-100/60"
                             >
                                 <Icon
-                                    className="text-critical-600"
+                                    className="icon-critical-primary-chat"
                                     icon={IconType.WARNING}
                                     size="md"
                                 />
@@ -229,7 +229,7 @@ const AttachmentUI: React.FC = () => {
 const AttachmentRemove: React.FC = () => (
     <AttachmentPrimitive.Remove asChild={true}>
         <TooltipIconButton
-            className="absolute end-1.5 top-1.5 size-3.5 bg-surface-default text-neutral-800 shadow-sm hover:bg-neutral-0 hover:text-critical-600"
+            className="absolute end-1.5 top-1.5 size-3.5 bg-surface-default text-surface-default-attachment shadow-sm hover:bg-surface-hover-lift hover:text-critical-hover-attachment"
             side="top"
             size="none"
             tooltip={chatCopy.attachments.remove}

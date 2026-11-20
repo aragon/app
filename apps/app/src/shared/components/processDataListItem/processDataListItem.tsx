@@ -60,7 +60,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             className={classNames('px-4 py-3 md:p-6', {
                 'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
-                'border-neutral-100 bg-surface-secondary': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}
             key={address}
             {...otherProps}
@@ -90,7 +90,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-neutral-300 md:text-base">
+                    <div className="text-sm text-surface-tertiary-hint md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link
                             href={daoUtils.getDaoUrl(

@@ -49,11 +49,11 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
     const linkClassNames = classNames(
-        'truncate text-base leading-tight font-normal text-link-secondary-default hover:text-neutral-800 active:text-link-secondary-active',
+        'truncate text-base leading-tight font-normal text-link-secondary-default hover:text-link-secondary-hover-nav active:text-link-secondary-active',
         'group flex items-center py-3 focus-ring ring-accent-focus',
         { 'rounded-xl px-4 hover:bg-surface-hover': variant === 'column' },
         { 'bg-surface-selected': isActive && variant === 'column' },
-        { 'text-neutral-800': isActive },
+        { 'text-surface-selected-label': isActive },
         { 'gap-2': iconSide === 'left' },
         { 'flex-row-reverse justify-between': iconSide === 'right' },
         className,
@@ -63,7 +63,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
         isActive
             ? variant === 'row'
                 ? 'icon-accent-selected'
-                : 'text-neutral-800'
+                : 'icon-accent-selected-nav'
             : 'icon-surface-default',
         'group-active:icon-surface-active',
     );

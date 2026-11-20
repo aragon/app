@@ -18,7 +18,7 @@ const links = [
 ];
 
 const linkClassName =
-    'truncate border-surface-secondary border-b py-4 text-base text-link-secondary-default leading-tight transition-colors last:border-none hover:text-neutral-800 md:border-none md:py-0';
+    'truncate border-surface-secondary border-b py-4 text-base text-link-secondary-default leading-tight transition-colors last:border-none hover:text-link-secondary-hover-nav md:border-none md:py-0';
 
 /**
  * The footer of the app (apps/app/src/modules/application/components/footer), below the whole

@@ -54,7 +54,7 @@ export const PermissionNodeDetailPanel: React.FC<
 
     return (
         <div
-            className="absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-surface-primary shadow-surface-md"
+            className="absolute z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-surface-secondary-panel bg-surface-primary shadow-surface-md"
             ref={panelRef}
             style={style}
         >
@@ -67,11 +67,11 @@ export const PermissionNodeDetailPanel: React.FC<
                         {isAddressLabel ? (
                             <AddressOutput
                                 address={node.address}
-                                className="font-medium text-neutral-900"
+                                className="font-medium text-surface-primary-panel-title"
                                 copy={false}
                             />
                         ) : (
-                            <p className="truncate font-medium text-neutral-900">
+                            <p className="truncate font-medium text-surface-primary-panel-title">
                                 {node.label}
                             </p>
                         )}

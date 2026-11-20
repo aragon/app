@@ -86,12 +86,13 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             )}
             <div
                 className={classNames(
-                    'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-surface-primary px-4 py-3 transition-colors hover:border-primary-300',
+                    'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-surface-primary px-4 py-3 transition-colors hover:border-surface-hover-graph-node',
                     isSelected && 'border-surface-selected shadow-primary-lg',
                     selectionRole != null
                         ? 'rounded-xl rounded-tl-none'
                         : 'rounded-xl',
-                    !isSelected && 'border-neutral-300 shadow-surface-sm',
+                    !isSelected &&
+                        'border-surface-default-graph-node shadow-surface-sm',
                 )}
             >
                 <InteractiveAncestorContext.Provider value={true}>

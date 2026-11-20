@@ -60,7 +60,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                             <h1 className="text-3xl leading-tight font-normal text-accent-inverse md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-lg leading-normal font-normal text-primary-50 md:text-2xl">
+                            <h3 className="text-lg leading-normal font-normal text-accent-inverse-brand md:text-2xl">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>

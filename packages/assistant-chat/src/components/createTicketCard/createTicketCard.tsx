@@ -65,7 +65,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
             <div className={cardClassName}>
                 <div className="flex items-center gap-2">
                     <Icon
-                        className="text-success-600"
+                        className="icon-success-primary-chat"
                         icon={IconType.SUCCESS}
                         size="md"
                     />
@@ -106,7 +106,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
             <div className={cardClassName}>
                 <div className="flex items-center gap-2">
                     <Icon
-                        className="text-critical-600"
+                        className="icon-critical-primary-chat"
                         icon={IconType.WARNING}
                         size="md"
                     />
@@ -181,7 +181,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 </Heading>
             )}
             {args.description != null && (
-                <p className="text-sm leading-normal whitespace-pre-wrap text-neutral-600">
+                <p className="text-sm leading-normal whitespace-pre-wrap text-surface-secondary-ticket">
                     {args.description}
                 </p>
             )}
@@ -190,7 +190,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                     <p className="text-sm leading-normal font-semibold text-surface-primary">
                         {chatCopy.ticketCard.stepsLabel}
                     </p>
-                    <ol className="list-decimal pl-5 text-sm leading-normal text-neutral-600">
+                    <ol className="list-decimal pl-5 text-sm leading-normal text-surface-secondary-ticket">
                         {steps.map((step, index) => (
                             // biome-ignore lint/suspicious/noArrayIndexKey: steps are positional and may repeat verbatim
                             <li key={`step-${index}`}>{step}</li>

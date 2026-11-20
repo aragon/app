@@ -197,7 +197,7 @@ export const SafePendingTransactionListItem: React.FC<
                     >
                         <Icon
                             aria-hidden={true}
-                            className="text-neutral-500"
+                            className="icon-surface-primary-item"
                             icon={IconType.CHECKMARK}
                             size="sm"
                         />

@@ -17,14 +17,14 @@
     "summary": {
         "files": 226,
         "occurrences": 832,
-        "converted": 697,
-        "unconverted": 135,
+        "converted": 779,
+        "unconverted": 53,
         "unconvertedByReason": {
             "ordering": 5,
             "brand": 12,
-            "conflict": 98,
             "no-token": 12,
             "no-css": 1,
+            "conflict": 16,
             "no-utility": 7
         }
     },
@@ -36,32 +36,53 @@
         "bg-body-sidebar": 1,
         "bg-brand-solid": 3,
         "bg-critical-subtle": 1,
+        "bg-surface-active-control": 6,
         "bg-surface-default": 10,
         "bg-surface-disabled": 1,
         "bg-surface-hover": 5,
+        "bg-surface-hover-icon-button": 1,
+        "bg-surface-hover-lift": 2,
         "bg-surface-primary": 34,
         "bg-surface-secondary": 12,
         "bg-surface-secondary-inverse": 1,
+        "bg-surface-secondary-skeleton": 9,
         "bg-surface-selected": 1,
         "bg-surface-tertiary": 14,
         "bg-warning-subtle": 1,
         "border-accent-active": 4,
+        "border-accent-primary-cta": 1,
+        "border-accent-primary-terminal": 1,
         "border-accent-secondary": 3,
+        "border-critical-active-control": 1,
         "border-critical-primary": 1,
+        "border-critical-primary-chat-error": 1,
+        "border-critical-primary-dispatch": 1,
+        "border-success-active-control": 1,
+        "border-surface-active-control": 1,
         "border-surface-default": 9,
+        "border-surface-default-composer": 1,
+        "border-surface-default-graph-node": 1,
+        "border-surface-disabled-item": 2,
+        "border-surface-disabled-toggle": 1,
         "border-surface-hover": 9,
+        "border-surface-hover-graph-node": 1,
         "border-surface-secondary": 75,
+        "border-surface-secondary-panel": 7,
         "border-surface-selected": 5,
         "gradient-brand-primary": 1,
         "gradient-surface-primary": 2,
         "gradient-surface-secondary": 1,
         "icon-accent-inverse": 1,
         "icon-accent-selected": 1,
+        "icon-accent-selected-nav": 1,
         "icon-brand-primary": 4,
         "icon-critical-primary": 2,
+        "icon-critical-primary-chat": 2,
+        "icon-success-primary-chat": 1,
         "icon-surface-active": 1,
         "icon-surface-default": 3,
         "icon-surface-primary": 1,
+        "icon-surface-primary-item": 2,
         "icon-surface-secondary": 3,
         "icon-warning-primary": 2,
         "ring-accent-focus": 15,
@@ -71,24 +92,38 @@
         "shadow-surface-md": 8,
         "shadow-surface-sm": 9,
         "text-accent-inverse": 10,
+        "text-accent-inverse-brand": 2,
         "text-accent-primary": 11,
+        "text-critical-hover-attachment": 1,
         "text-critical-primary": 8,
+        "text-critical-primary-message": 5,
+        "text-critical-primary-tx-error": 3,
         "text-info-primary": 1,
         "text-link-active": 1,
         "text-link-default": 4,
         "text-link-hover": 2,
+        "text-link-hover-action": 2,
         "text-link-secondary-active": 1,
         "text-link-secondary-default": 4,
         "text-link-secondary-hover": 1,
+        "text-link-secondary-hover-nav": 4,
         "text-success-primary": 6,
         "text-surface-active": 4,
         "text-surface-default": 8,
+        "text-surface-default-attachment": 1,
+        "text-surface-default-wizard": 1,
         "text-surface-disabled": 1,
         "text-surface-hover": 1,
+        "text-surface-hover-label": 3,
         "text-surface-placeholder": 2,
         "text-surface-primary": 127,
+        "text-surface-primary-detail": 3,
+        "text-surface-primary-panel-title": 3,
         "text-surface-secondary": 225,
+        "text-surface-secondary-ticket": 2,
+        "text-surface-selected-label": 2,
         "text-surface-tertiary": 24,
+        "text-surface-tertiary-hint": 6,
         "text-warning-primary": 2
     },
     "aliasCandidates": {
@@ -105,12 +140,6 @@
                     "info-400": 1
                 }
             },
-            "bg/surface/active": {
-                "classes": 6,
-                "todayValues": {
-                    "neutral-50": 6
-                }
-            },
             "bg/surface/default": {
                 "classes": 2,
                 "todayValues": {
@@ -119,17 +148,9 @@
                 }
             },
             "bg/surface/hover": {
-                "classes": 4,
+                "classes": 1,
                 "todayValues": {
-                    "neutral-700": 1,
-                    "neutral-0": 2,
-                    "neutral-100": 1
-                }
-            },
-            "bg/surface/secondary": {
-                "classes": 9,
-                "todayValues": {
-                    "neutral-200": 9
+                    "neutral-700": 1
                 }
             },
             "bg/surface/tertiary": {
@@ -151,92 +172,11 @@
                     "primary-300": 3
                 }
             },
-            "border/accent/primary": {
-                "classes": 2,
-                "todayValues": {
-                    "primary-100": 1,
-                    "primary-200": 1
-                }
-            },
-            "border/critical/active": {
-                "classes": 1,
-                "todayValues": {
-                    "critical-500": 1
-                }
-            },
-            "border/critical/primary": {
-                "classes": 2,
-                "todayValues": {
-                    "critical-200": 1,
-                    "critical-300": 1
-                }
-            },
-            "border/success/active": {
-                "classes": 1,
-                "todayValues": {
-                    "success-500": 1
-                }
-            },
-            "border/surface/active": {
-                "classes": 1,
-                "todayValues": {
-                    "neutral-200": 1
-                }
-            },
             "border/surface/default": {
-                "classes": 4,
+                "classes": 2,
                 "todayValues": {
-                    "neutral-300": 1,
-                    "neutral-200": 2,
+                    "neutral-200": 1,
                     "neutral-700": 1
-                }
-            },
-            "border/surface/disabled": {
-                "classes": 3,
-                "todayValues": {
-                    "neutral-100": 3
-                }
-            },
-            "border/surface/hover": {
-                "classes": 1,
-                "todayValues": {
-                    "primary-300": 1
-                }
-            },
-            "border/surface/secondary": {
-                "classes": 7,
-                "todayValues": {
-                    "neutral-200": 7
-                }
-            },
-            "icon/accent/selected": {
-                "classes": 1,
-                "todayValues": {
-                    "neutral-800": 1
-                }
-            },
-            "icon/critical/primary": {
-                "classes": 2,
-                "todayValues": {
-                    "critical-600": 2
-                }
-            },
-            "icon/success/primary": {
-                "classes": 1,
-                "todayValues": {
-                    "success-600": 1
-                }
-            },
-            "icon/surface/primary": {
-                "classes": 2,
-                "todayValues": {
-                    "neutral-500": 2
-                }
-            },
-            "text/accent/inverse": {
-                "classes": 2,
-                "todayValues": {
-                    "primary-50": 2
                 }
             },
             "text/accent/secondary": {
@@ -245,73 +185,10 @@
                     "primary-700": 1
                 }
             },
-            "text/critical/hover": {
-                "classes": 1,
-                "todayValues": {
-                    "critical-600": 1
-                }
-            },
-            "text/critical/primary": {
-                "classes": 8,
-                "todayValues": {
-                    "critical-600": 5,
-                    "critical-700": 3
-                }
-            },
-            "text/link/hover": {
-                "classes": 2,
-                "todayValues": {
-                    "primary-600": 2
-                }
-            },
-            "text/link/secondary-hover": {
-                "classes": 4,
-                "todayValues": {
-                    "neutral-800": 4
-                }
-            },
-            "text/surface/default": {
-                "classes": 2,
-                "todayValues": {
-                    "neutral-300": 1,
-                    "neutral-800": 1
-                }
-            },
-            "text/surface/hover": {
-                "classes": 3,
-                "todayValues": {
-                    "neutral-800": 3
-                }
-            },
             "text/surface/inverse": {
                 "classes": 1,
                 "todayValues": {
                     "neutral-0": 1
-                }
-            },
-            "text/surface/primary": {
-                "classes": 6,
-                "todayValues": {
-                    "neutral-700": 3,
-                    "neutral-900": 3
-                }
-            },
-            "text/surface/secondary": {
-                "classes": 2,
-                "todayValues": {
-                    "neutral-600": 2
-                }
-            },
-            "text/surface/selected": {
-                "classes": 2,
-                "todayValues": {
-                    "neutral-800": 2
-                }
-            },
-            "text/surface/tertiary": {
-                "classes": 6,
-                "todayValues": {
-                    "neutral-300": 6
                 }
             }
         },
@@ -1530,8 +1407,8 @@
             {
                 "line": 72,
                 "old": "text-neutral-800",
-                "new": null,
-                "note": "asserts the current-page label colour, which stays primitive (conflict: text/surface/selected is primary-400)"
+                "new": "text-surface-selected-label",
+                "note": "asserts the current-page label colour: follows the component (component-level alias text/surface/selected-label, P-66)"
             },
             {
                 "line": 82,
@@ -1542,8 +1419,8 @@
             {
                 "line": 86,
                 "old": "text-neutral-800",
-                "new": null,
-                "note": "asserts the current-page label colour, which stays primitive (conflict: text/surface/selected is primary-400)"
+                "new": "text-surface-selected-label",
+                "note": "asserts the current-page label colour: follows the component (component-level alias text/surface/selected-label, P-66)"
             },
             {
                 "line": 87,
@@ -1554,8 +1431,8 @@
             {
                 "line": 98,
                 "old": "text-neutral-800",
-                "new": null,
-                "note": "asserts the current-page label colour, which stays primitive (conflict: text/surface/selected is primary-400)"
+                "new": "text-surface-selected-label",
+                "note": "asserts the current-page label colour: follows the component (component-level alias text/surface/selected-label, P-66)"
             }
         ]
     },
@@ -2024,10 +1901,9 @@
             {
                 "line": 140,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-message",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/primary-message holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-600`)"
             }
         ],
         "apps/app/src/daos/gaugeDistributions/components/gaugeDistributionsMembersFileDownload/gaugeDistributionsMembersFileDownload.tsx": [
@@ -2043,10 +1919,9 @@
             {
                 "line": 247,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-message",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/primary-message holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-600`)"
             }
         ],
         "apps/app/src/daos/katana/components/capitalDistributorTestMembersFileDownload.tsx": [
@@ -2062,10 +1937,9 @@
             {
                 "line": 245,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-message",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/primary-message holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-600`)"
             }
         ],
         "apps/app/src/daos/xmaquina/components/xmaquinaPageHeader/xmaquinaActionItem.tsx": [
@@ -2210,10 +2084,9 @@
             {
                 "line": 25,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/link/secondary-hover",
+                "new": "hover:text-link-secondary-hover-nav",
                 "part": "sidebar footer link, hover",
-                "reason": "conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/link/secondary-hover-nav holds today's neutral-800 in the default theme and follows text/link/secondary-hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`)"
             },
             {
                 "line": 36,
@@ -2225,10 +2098,9 @@
             {
                 "line": 36,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/link/secondary-hover",
+                "new": "hover:text-link-secondary-hover-nav",
                 "part": "sidebar footer link, hover",
-                "reason": "conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/link/secondary-hover-nav holds today's neutral-800 in the default theme and follows text/link/secondary-hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`)"
             }
         ],
         "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.tsx": [
@@ -2302,10 +2174,9 @@
             {
                 "line": 29,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "`buttonClassName` fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             },
             {
                 "line": 29,
@@ -2354,10 +2225,9 @@
             {
                 "line": 52,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "<button> fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             },
             {
                 "line": 62,
@@ -2392,10 +2262,9 @@
             {
                 "line": 131,
                 "old": "text-neutral-300",
-                "new": null,
-                "token": "text/surface/default",
+                "new": "text-surface-default-wizard",
                 "part": "`linkClassName` text",
-                "reason": "conflict: text/surface/default has default value `neutral-500`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/default-wizard holds today's neutral-300 in the default theme and follows text/surface/default in \"next\" and \"dark\". Was unconverted (conflict: text/surface/default has default value `neutral-500`, today `neutral-300`)"
             },
             {
                 "line": 132,
@@ -2414,10 +2283,9 @@
             {
                 "line": 132,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "`linkClassName` fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             },
             {
                 "line": 132,
@@ -2809,10 +2677,9 @@
             {
                 "line": 186,
                 "old": "border-critical-200!",
-                "new": null,
-                "token": "border/critical/primary",
+                "new": "border-critical-primary-dispatch!",
                 "part": "<Card> border",
-                "reason": "conflict: border/critical/primary has default value `critical-400`, today `critical-200`"
+                "reason": "component-level alias token (P-66): border/critical/primary-dispatch holds today's critical-200 in the default theme and follows border/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: border/critical/primary has default value `critical-400`, today `critical-200`)"
             },
             {
                 "line": 191,
@@ -2824,18 +2691,16 @@
             {
                 "line": 196,
                 "old": "text-critical-700",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-tx-error",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-700`"
+                "reason": "component-level alias token (P-66): text/critical/primary-tx-error holds today's critical-700 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-700`)"
             },
             {
                 "line": 203,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-message",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/primary-message holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-600`)"
             }
         ],
         "apps/app/src/modules/capitalFlow/dialogs/routerSelectorDialog/routerSelectorDialog.tsx": [
@@ -3163,10 +3028,9 @@
             {
                 "line": 67,
                 "old": "text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "text-surface-tertiary-hint",
                 "part": "<span> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             },
             {
                 "line": 70,
@@ -3238,10 +3102,9 @@
             {
                 "line": 63,
                 "old": "text-primary-50",
-                "new": null,
-                "token": "text/accent/inverse",
+                "new": "text-accent-inverse-brand",
                 "part": "explore hero subtitle on the brand fill",
-                "reason": "conflict: text/accent/inverse has default value `neutral-0`, today `primary-50` (light-blue text on the brand fill; the inverse token is white)"
+                "reason": "component-level alias token (P-66): text/accent/inverse-brand holds today's primary-50 in the default theme and follows text/accent/inverse in \"next\" and \"dark\". Was unconverted (conflict: text/accent/inverse has default value `neutral-0`, today `primary-50` (light-blue text on the brand fill; the inverse token is white))"
             }
         ],
         "apps/app/src/modules/finance/components/allAssetsStats/allAssetsStats.tsx": [
@@ -3278,10 +3141,9 @@
             {
                 "line": 316,
                 "old": "hover:text-primary-600",
-                "new": null,
-                "token": "text/link/hover",
+                "new": "hover:text-link-hover-action",
                 "part": "\"Max\" text button, hover",
-                "reason": "conflict: text/link/hover has default value `primary-500`, today `primary-600`"
+                "reason": "component-level alias token (P-66): text/link/hover-action holds today's primary-600 in the default theme and follows text/link/hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/hover has default value `primary-500`, today `primary-600`)"
             },
             {
                 "line": 321,
@@ -3501,10 +3363,9 @@
             {
                 "line": 217,
                 "old": "text-neutral-700",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-detail",
                 "part": "<div> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`"
+                "reason": "component-level alias token (P-66): text/surface/primary-detail holds today's neutral-700 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`)"
             }
         ],
         "apps/app/src/modules/safe/components/safeExecutionDetails/safeExecutionDetails.tsx": [
@@ -3541,10 +3402,9 @@
             {
                 "line": 200,
                 "old": "text-neutral-500",
-                "new": null,
-                "token": "icon/surface/primary",
+                "new": "icon-surface-primary-item",
                 "part": "<Icon> icon",
-                "reason": "conflict: icon/surface/primary has default value `neutral-400`, today `neutral-500`"
+                "reason": "component-level alias token (P-66): icon/surface/primary-item holds today's neutral-500 in the default theme and follows icon/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: icon/surface/primary has default value `neutral-400`, today `neutral-500`)"
             }
         ],
         "apps/app/src/modules/safe/components/safePendingTransactionList/safeProposalReportLink.tsx": [
@@ -3706,20 +3566,18 @@
             {
                 "line": 507,
                 "old": "text-critical-700",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-tx-error",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-700`"
+                "reason": "component-level alias token (P-66): text/critical/primary-tx-error holds today's critical-700 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-700`)"
             }
         ],
         "apps/app/src/modules/safe/dialogs/safeProposalTransactionDialog/safeProposalTransactionDialog.tsx": [
             {
                 "line": 1780,
                 "old": "text-neutral-700",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-detail",
                 "part": "<div> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`"
+                "reason": "component-level alias token (P-66): text/surface/primary-detail holds today's neutral-700 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`)"
             }
         ],
         "apps/app/src/modules/safe/dialogs/safeTransactionDialog/safeTransactionDialog.tsx": [
@@ -3733,10 +3591,9 @@
             {
                 "line": 759,
                 "old": "text-critical-700",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-tx-error",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-700`"
+                "reason": "component-level alias token (P-66): text/critical/primary-tx-error holds today's critical-700 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-700`)"
             }
         ],
         "apps/app/src/modules/safe/pages/safeAccountPage/safeAccountPageClient.tsx": [
@@ -3919,10 +3776,9 @@
             {
                 "line": 35,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<div> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 35,
@@ -3948,10 +3804,9 @@
             {
                 "line": 44,
                 "old": "text-neutral-900",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-panel-title",
                 "part": "<p> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`"
+                "reason": "component-level alias token (P-66): text/surface/primary-panel-title holds today's neutral-900 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`)"
             },
             {
                 "line": 48,
@@ -3963,10 +3818,9 @@
             {
                 "line": 48,
                 "old": "text-neutral-700",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-detail",
                 "part": "<p> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`"
+                "reason": "component-level alias token (P-66): text/surface/primary-detail holds today's neutral-700 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-700`)"
             }
         ],
         "apps/app/src/modules/settings/components/permissionsGraph/permissionGraphNode.tsx": [
@@ -4001,10 +3855,9 @@
             {
                 "line": 89,
                 "old": "hover:border-primary-300",
-                "new": null,
-                "token": "border/surface/hover",
+                "new": "hover:border-surface-hover-graph-node",
                 "part": "graph node, hover border",
-                "reason": "conflict: border/surface/hover has default value `neutral-200`, today `primary-300`"
+                "reason": "component-level alias token (P-66): border/surface/hover-graph-node holds today's primary-300 in the default theme and follows border/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: border/surface/hover has default value `neutral-200`, today `primary-300`)"
             },
             {
                 "line": 90,
@@ -4023,10 +3876,9 @@
             {
                 "line": 94,
                 "old": "border-neutral-300",
-                "new": null,
-                "token": "border/surface/default",
+                "new": "border-surface-default-graph-node",
                 "part": "graph node, unselected border",
-                "reason": "conflict: border/surface/default has default value `neutral-100`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): border/surface/default-graph-node holds today's neutral-300 in the default theme and follows border/surface/default in \"next\" and \"dark\". Was unconverted (conflict: border/surface/default has default value `neutral-100`, today `neutral-300`)"
             },
             {
                 "line": 94,
@@ -4054,10 +3906,9 @@
             {
                 "line": 57,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<div> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 57,
@@ -4083,18 +3934,16 @@
             {
                 "line": 70,
                 "old": "text-neutral-900",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-panel-title",
                 "part": "<AddressOutput> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`"
+                "reason": "component-level alias token (P-66): text/surface/primary-panel-title holds today's neutral-900 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`)"
             },
             {
                 "line": 74,
                 "old": "text-neutral-900",
-                "new": null,
-                "token": "text/surface/primary",
+                "new": "text-surface-primary-panel-title",
                 "part": "<p> text",
-                "reason": "conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`"
+                "reason": "component-level alias token (P-66): text/surface/primary-panel-title holds today's neutral-900 in the default theme and follows text/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/primary has default value `neutral-800`, today `neutral-900`)"
             },
             {
                 "line": 82,
@@ -4108,10 +3957,9 @@
             {
                 "line": 118,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<div> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 118,
@@ -4132,10 +3980,9 @@
             {
                 "line": 5,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<div> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             }
         ],
         "apps/app/src/modules/settings/components/permissionsGraph/permissionStackNode.tsx": [
@@ -4535,10 +4382,9 @@
             {
                 "line": 151,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "<button> fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             },
             {
                 "line": 151,
@@ -4663,10 +4509,9 @@
             {
                 "line": 63,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "<button> fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             },
             {
                 "line": 63,
@@ -4756,10 +4601,9 @@
             {
                 "line": 81,
                 "old": "border-neutral-100",
-                "new": null,
-                "token": "border/surface/disabled",
+                "new": "border-surface-disabled-item",
                 "part": "account item, disabled border",
-                "reason": "conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`"
+                "reason": "component-level alias token (P-66): border/surface/disabled-item holds today's neutral-100 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`)"
             },
             {
                 "line": 98,
@@ -4778,10 +4622,9 @@
             {
                 "line": 116,
                 "old": "text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "text-surface-tertiary-hint",
                 "part": "<div> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             }
         ],
         "apps/app/src/modules/workspace/pages/workspaceAccountSettingsPage/workspaceSafeSettingsPageClient.tsx": [
@@ -5018,74 +4861,65 @@
             {
                 "line": 8,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 10,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 11,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 20,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 21,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 22,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 28,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 30,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             },
             {
                 "line": 37,
                 "old": "bg-neutral-200",
-                "new": null,
-                "token": "bg/surface/secondary",
+                "new": "bg-surface-secondary-skeleton",
                 "part": "<div> fill",
-                "reason": "conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): bg/surface/secondary-skeleton holds today's neutral-200 in the default theme and follows bg/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/secondary has default value `neutral-50`, today `neutral-200`)"
             }
         ],
         "apps/app/src/plugins/gaugeVoterPlugin/components/gaugeVoterGaugeList/gaugeVoterGaugeListItemStructure.tsx": [
@@ -5291,10 +5125,9 @@
             {
                 "line": 93,
                 "old": "border-primary-100",
-                "new": null,
-                "token": "border/accent/primary",
+                "new": "border-accent-primary-terminal",
                 "part": "`wrapperClassName` border",
-                "reason": "conflict: border/accent/primary has default value `primary-300`, today `primary-100`"
+                "reason": "component-level alias token (P-66): border/accent/primary-terminal holds today's primary-100 in the default theme and follows border/accent/primary in \"next\" and \"dark\". Was unconverted (conflict: border/accent/primary has default value `primary-300`, today `primary-100`)"
             },
             {
                 "line": 93,
@@ -5780,10 +5613,9 @@
             {
                 "line": 481,
                 "old": "hover:text-primary-600",
-                "new": null,
-                "token": "text/link/hover",
+                "new": "hover:text-link-hover-action",
                 "part": "Safe app link, hover",
-                "reason": "conflict: text/link/hover has default value `primary-500`, today `primary-600`"
+                "reason": "component-level alias token (P-66): text/link/hover-action holds today's primary-600 in the default theme and follows text/link/hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/hover has default value `primary-500`, today `primary-600`)"
             }
         ],
         "apps/app/src/plugins/sppPlugin/components/sppVotingTerminal/components/sppStageStatus.tsx": [
@@ -5962,10 +5794,9 @@
             {
                 "line": 35,
                 "old": "active:border-success-500",
-                "new": null,
-                "token": "border/success/active",
+                "new": "active:border-success-active-control",
                 "part": "`variantToClassNames` border, active",
-                "reason": "conflict: border/success/active has default value `success-600`, today `success-500`"
+                "reason": "component-level alias token (P-66): border/success/active-control holds today's success-500 in the default theme and follows border/success/active in \"next\" and \"dark\". Was unconverted (conflict: border/success/active has default value `success-600`, today `success-500`)"
             },
             {
                 "line": 36,
@@ -5998,10 +5829,9 @@
             {
                 "line": 40,
                 "old": "data-[state=on]:text-neutral-800",
-                "new": null,
-                "token": "text/surface/selected",
+                "new": "data-[state=on]:text-surface-selected-label",
                 "part": "`variantToClassNames` text, selected",
-                "reason": "conflict: text/surface/selected has default value `primary-400`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/selected-label holds today's neutral-800 in the default theme and follows text/surface/selected in \"next\" and \"dark\". Was unconverted (conflict: text/surface/selected has default value `primary-400`, today `neutral-800`)"
             },
             {
                 "line": 40,
@@ -6013,10 +5843,9 @@
             {
                 "line": 43,
                 "old": "active:border-critical-500",
-                "new": null,
-                "token": "border/critical/active",
+                "new": "active:border-critical-active-control",
                 "part": "`variantToClassNames` border, active",
-                "reason": "conflict: border/critical/active has default value `critical-600`, today `critical-500`"
+                "reason": "component-level alias token (P-66): border/critical/active-control holds today's critical-500 in the default theme and follows border/critical/active in \"next\" and \"dark\". Was unconverted (conflict: border/critical/active has default value `critical-600`, today `critical-500`)"
             },
             {
                 "line": 44,
@@ -6084,10 +5913,9 @@
             {
                 "line": 83,
                 "old": "disabled:border-neutral-100",
-                "new": null,
-                "token": "border/surface/disabled",
+                "new": "disabled:border-surface-disabled-toggle",
                 "part": "`toggleClasses` border, disabled",
-                "reason": "conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`"
+                "reason": "component-level alias token (P-66): border/surface/disabled-toggle holds today's neutral-100 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`)"
             },
             {
                 "line": 83,
@@ -6154,10 +5982,9 @@
             {
                 "line": 94,
                 "old": "border-primary-200!",
-                "new": null,
-                "token": "border/accent/primary",
+                "new": "border-accent-primary-cta!",
                 "part": "<Card> border",
-                "reason": "conflict: border/accent/primary has default value `primary-300`, today `primary-200`"
+                "reason": "component-level alias token (P-66): border/accent/primary-cta holds today's primary-200 in the default theme and follows border/accent/primary in \"next\" and \"dark\". Was unconverted (conflict: border/accent/primary has default value `primary-300`, today `primary-200`)"
             },
             {
                 "line": 94,
@@ -6249,10 +6076,9 @@
             {
                 "line": 28,
                 "old": "text-neutral-800",
-                "new": null,
-                "token": "text/surface/hover",
+                "new": "text-surface-hover-label",
                 "part": "autocomplete item, keyboard highlight label",
-                "reason": "conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`)"
             },
             {
                 "line": 29,
@@ -6478,10 +6304,9 @@
             {
                 "line": 52,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/link/secondary-hover",
+                "new": "hover:text-link-secondary-hover-nav",
                 "part": "navigation link, hover",
-                "reason": "conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/link/secondary-hover-nav holds today's neutral-800 in the default theme and follows text/link/secondary-hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`)"
             },
             {
                 "line": 52,
@@ -6514,10 +6339,9 @@
             {
                 "line": 56,
                 "old": "text-neutral-800",
-                "new": null,
-                "token": "text/surface/selected",
+                "new": "text-surface-selected-label",
                 "part": "navigation link, current page label",
-                "reason": "conflict: text/surface/selected has default value `primary-400`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/selected-label holds today's neutral-800 in the default theme and follows text/surface/selected in \"next\" and \"dark\". Was unconverted (conflict: text/surface/selected has default value `primary-400`, today `neutral-800`)"
             },
             {
                 "line": 65,
@@ -6529,10 +6353,9 @@
             {
                 "line": 66,
                 "old": "text-neutral-800",
-                "new": null,
-                "token": "icon/accent/selected",
+                "new": "icon-accent-selected-nav",
                 "part": "navigation link icon (column), current page",
-                "reason": "conflict: icon/accent/selected has default value `primary-400`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): icon/accent/selected-nav holds today's neutral-800 in the default theme and follows icon/accent/selected in \"next\" and \"dark\". Was unconverted (conflict: icon/accent/selected has default value `primary-400`, today `neutral-800`)"
             },
             {
                 "line": 67,
@@ -6604,18 +6427,16 @@
             {
                 "line": 14,
                 "old": "active:border-neutral-200",
-                "new": null,
-                "token": "border/surface/active",
+                "new": "active:border-surface-active-control",
                 "part": "<button> border, active",
-                "reason": "conflict: border/surface/active has default value `neutral-400`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/active-control holds today's neutral-200 in the default theme and follows border/surface/active in \"next\" and \"dark\". Was unconverted (conflict: border/surface/active has default value `neutral-400`, today `neutral-200`)"
             },
             {
                 "line": 14,
                 "old": "active:bg-neutral-50",
-                "new": null,
-                "token": "bg/surface/active",
+                "new": "active:bg-surface-active-control",
                 "part": "<button> fill, active",
-                "reason": "conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/active has default value `neutral-0`, today `neutral-50`)"
             }
         ],
         "apps/app/src/shared/components/page/pageHeader/pageHeader.tsx": [
@@ -6737,10 +6558,9 @@
             {
                 "line": 63,
                 "old": "border-neutral-100",
-                "new": null,
-                "token": "border/surface/disabled",
+                "new": "border-surface-disabled-item",
                 "part": "process item, disabled border",
-                "reason": "conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`"
+                "reason": "component-level alias token (P-66): border/surface/disabled-item holds today's neutral-100 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: border/surface/disabled has default value `neutral-200`, today `neutral-100`)"
             },
             {
                 "line": 77,
@@ -6766,10 +6586,9 @@
             {
                 "line": 93,
                 "old": "text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "text-surface-tertiary-hint",
                 "part": "<div> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             }
         ],
         "apps/app/src/shared/components/statCard/statCard.tsx": [
@@ -7028,10 +6847,9 @@
             {
                 "line": 45,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<DocsTitle> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 45,
@@ -7075,10 +6893,9 @@
             {
                 "line": 10,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<DocsTitle> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 10,
@@ -7124,10 +6941,9 @@
             {
                 "line": 21,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/link/secondary-hover",
+                "new": "hover:text-link-secondary-hover-nav",
                 "part": "docs footer link, hover",
-                "reason": "conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/link/secondary-hover-nav holds today's neutral-800 in the default theme and follows text/link/secondary-hover in \"next\" and \"dark\". Was unconverted (conflict: text/link/secondary-hover has default value `neutral-600`, today `neutral-800`)"
             },
             {
                 "line": 29,
@@ -7183,10 +6999,9 @@
             {
                 "line": 35,
                 "old": "text-primary-50",
-                "new": null,
-                "token": "text/accent/inverse",
+                "new": "text-accent-inverse-brand",
                 "part": "docs banner links on the brand fill",
-                "reason": "conflict: text/accent/inverse has default value `neutral-0`, today `primary-50` (light-blue link text on the brand fill; the inverse token is white)"
+                "reason": "component-level alias token (P-66): text/accent/inverse-brand holds today's primary-50 in the default theme and follows text/accent/inverse in \"next\" and \"dark\". Was unconverted (conflict: text/accent/inverse has default value `neutral-0`, today `primary-50` (light-blue link text on the brand fill; the inverse token is white))"
             },
             {
                 "line": 35,
@@ -7228,18 +7043,16 @@
             {
                 "line": 103,
                 "old": "hover:bg-neutral-0",
-                "new": null,
-                "token": "bg/surface/hover",
+                "new": "hover:bg-surface-hover-lift",
                 "part": "<TooltipIconButton> fill, hover",
-                "reason": "conflict: bg/surface/hover has default value `neutral-50`, today `neutral-0`"
+                "reason": "component-level alias token (P-66): bg/surface/hover-lift holds today's neutral-0 in the default theme and follows bg/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/hover has default value `neutral-50`, today `neutral-0`)"
             },
             {
                 "line": 123,
                 "old": "text-neutral-500",
-                "new": null,
-                "token": "icon/surface/primary",
+                "new": "icon-surface-primary-item",
                 "part": "<Icon> icon",
-                "reason": "conflict: icon/surface/primary has default value `neutral-400`, today `neutral-500`"
+                "reason": "component-level alias token (P-66): icon/surface/primary-item holds today's neutral-500 in the default theme and follows icon/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: icon/surface/primary has default value `neutral-400`, today `neutral-500`)"
             },
             {
                 "line": 193,
@@ -7279,10 +7092,9 @@
             {
                 "line": 215,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "icon/critical/primary",
+                "new": "icon-critical-primary-chat",
                 "part": "<Icon> icon",
-                "reason": "conflict: icon/critical/primary has default value `critical-500`, today `critical-600`"
+                "reason": "component-level alias token (P-66): icon/critical/primary-chat holds today's critical-600 in the default theme and follows icon/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: icon/critical/primary has default value `critical-500`, today `critical-600`)"
             },
             {
                 "line": 232,
@@ -7294,26 +7106,23 @@
             {
                 "line": 232,
                 "old": "text-neutral-800",
-                "new": null,
-                "token": "text/surface/default",
+                "new": "text-surface-default-attachment",
                 "part": "<TooltipIconButton> text",
-                "reason": "conflict: text/surface/default has default value `neutral-500`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/default-attachment holds today's neutral-800 in the default theme and follows text/surface/default in \"next\" and \"dark\". Was unconverted (conflict: text/surface/default has default value `neutral-500`, today `neutral-800`)"
             },
             {
                 "line": 232,
                 "old": "hover:bg-neutral-0",
-                "new": null,
-                "token": "bg/surface/hover",
+                "new": "hover:bg-surface-hover-lift",
                 "part": "<TooltipIconButton> fill, hover",
-                "reason": "conflict: bg/surface/hover has default value `neutral-50`, today `neutral-0`"
+                "reason": "component-level alias token (P-66): bg/surface/hover-lift holds today's neutral-0 in the default theme and follows bg/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/hover has default value `neutral-50`, today `neutral-0`)"
             },
             {
                 "line": 232,
                 "old": "hover:text-critical-600",
-                "new": null,
-                "token": "text/critical/hover",
+                "new": "hover:text-critical-hover-attachment",
                 "part": "<TooltipIconButton> text, hover",
-                "reason": "conflict: text/critical/hover has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/hover-attachment holds today's critical-600 in the default theme and follows text/critical/hover in \"next\" and \"dark\". Was unconverted (conflict: text/critical/hover has default value `critical-800`, today `critical-600`)"
             }
         ],
         "packages/assistant-chat/src/components/chatHeader/aragonMark.tsx": [
@@ -7417,10 +7226,9 @@
             {
                 "line": 68,
                 "old": "text-success-600",
-                "new": null,
-                "token": "icon/success/primary",
+                "new": "icon-success-primary-chat",
                 "part": "<Icon> icon",
-                "reason": "conflict: icon/success/primary has default value `success-500`, today `success-600`"
+                "reason": "component-level alias token (P-66): icon/success/primary-chat holds today's success-600 in the default theme and follows icon/success/primary in \"next\" and \"dark\". Was unconverted (conflict: icon/success/primary has default value `success-500`, today `success-600`)"
             },
             {
                 "line": 79,
@@ -7439,10 +7247,9 @@
             {
                 "line": 109,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "icon/critical/primary",
+                "new": "icon-critical-primary-chat",
                 "part": "<Icon> icon",
-                "reason": "conflict: icon/critical/primary has default value `critical-500`, today `critical-600`"
+                "reason": "component-level alias token (P-66): icon/critical/primary-chat holds today's critical-600 in the default theme and follows icon/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: icon/critical/primary has default value `critical-500`, today `critical-600`)"
             },
             {
                 "line": 117,
@@ -7461,10 +7268,9 @@
             {
                 "line": 184,
                 "old": "text-neutral-600",
-                "new": null,
-                "token": "text/surface/secondary",
+                "new": "text-surface-secondary-ticket",
                 "part": "<p> text",
-                "reason": "conflict: text/surface/secondary has default value `neutral-500`, today `neutral-600`"
+                "reason": "component-level alias token (P-66): text/surface/secondary-ticket holds today's neutral-600 in the default theme and follows text/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/secondary has default value `neutral-500`, today `neutral-600`)"
             },
             {
                 "line": 190,
@@ -7476,10 +7282,9 @@
             {
                 "line": 193,
                 "old": "text-neutral-600",
-                "new": null,
-                "token": "text/surface/secondary",
+                "new": "text-surface-secondary-ticket",
                 "part": "<ol> text",
-                "reason": "conflict: text/surface/secondary has default value `neutral-500`, today `neutral-600`"
+                "reason": "component-level alias token (P-66): text/surface/secondary-ticket holds today's neutral-600 in the default theme and follows text/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/secondary has default value `neutral-500`, today `neutral-600`)"
             },
             {
                 "line": 205,
@@ -7556,10 +7361,9 @@
             {
                 "line": 168,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/secondary",
+                "new": "border-surface-secondary-panel",
                 "part": "<blockquote> border",
-                "reason": "conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/secondary-panel holds today's neutral-200 in the default theme and follows border/surface/secondary in \"next\" and \"dark\". Was unconverted (conflict: border/surface/secondary has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 168,
@@ -7571,18 +7375,16 @@
             {
                 "line": 177,
                 "old": "marker:text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "marker:text-surface-tertiary-hint",
                 "part": "<ul> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             },
             {
                 "line": 186,
                 "old": "marker:text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "marker:text-surface-tertiary-hint",
                 "part": "<ol> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             },
             {
                 "line": 194,
@@ -7764,10 +7566,9 @@
             {
                 "line": 373,
                 "old": "border-neutral-200",
-                "new": null,
-                "token": "border/surface/default",
+                "new": "border-surface-default-composer",
                 "part": "<div> border",
-                "reason": "conflict: border/surface/default has default value `neutral-100`, today `neutral-200`"
+                "reason": "component-level alias token (P-66): border/surface/default-composer holds today's neutral-200 in the default theme and follows border/surface/default in \"next\" and \"dark\". Was unconverted (conflict: border/surface/default has default value `neutral-100`, today `neutral-200`)"
             },
             {
                 "line": 373,
@@ -7800,10 +7601,9 @@
             {
                 "line": 380,
                 "old": "text-neutral-300",
-                "new": null,
-                "token": "text/surface/tertiary",
+                "new": "text-surface-tertiary-hint",
                 "part": "<p> text",
-                "reason": "conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`"
+                "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
             },
             {
                 "line": 391,
@@ -7829,10 +7629,9 @@
             {
                 "line": 441,
                 "old": "text-critical-600",
-                "new": null,
-                "token": "text/critical/primary",
+                "new": "text-critical-primary-message",
                 "part": "<p> text",
-                "reason": "conflict: text/critical/primary has default value `critical-800`, today `critical-600`"
+                "reason": "component-level alias token (P-66): text/critical/primary-message holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: text/critical/primary has default value `critical-800`, today `critical-600`)"
             },
             {
                 "line": 441,
@@ -7844,10 +7643,9 @@
             {
                 "line": 516,
                 "old": "border-critical-300",
-                "new": null,
-                "token": "border/critical/primary",
+                "new": "border-critical-primary-chat-error",
                 "part": "<ErrorPrimitive.Root> border",
-                "reason": "conflict: border/critical/primary has default value `critical-400`, today `critical-300`"
+                "reason": "component-level alias token (P-66): border/critical/primary-chat-error holds today's critical-300 in the default theme and follows border/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: border/critical/primary has default value `critical-400`, today `critical-300`)"
             },
             {
                 "line": 516,
@@ -7903,18 +7701,16 @@
             {
                 "line": 39,
                 "old": "hover:bg-neutral-100",
-                "new": null,
-                "token": "bg/surface/hover",
+                "new": "hover:bg-surface-hover-icon-button",
                 "part": "`variantClasses` fill, hover",
-                "reason": "conflict: bg/surface/hover has default value `neutral-50`, today `neutral-100`"
+                "reason": "component-level alias token (P-66): bg/surface/hover-icon-button holds today's neutral-100 in the default theme and follows bg/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: bg/surface/hover has default value `neutral-50`, today `neutral-100`)"
             },
             {
                 "line": 39,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/surface/hover",
+                "new": "hover:text-surface-hover-label",
                 "part": "`variantClasses` text, hover",
-                "reason": "conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`)"
             },
             {
                 "line": 41,
@@ -7947,10 +7743,9 @@
             {
                 "line": 41,
                 "old": "hover:text-neutral-800",
-                "new": null,
-                "token": "text/surface/hover",
+                "new": "hover:text-surface-hover-label",
                 "part": "`variantClasses` text, hover",
-                "reason": "conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: text/surface/hover has default value `neutral-500`, today `neutral-800`)"
             },
             {
                 "line": 42,

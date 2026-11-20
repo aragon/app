@@ -165,7 +165,7 @@ const defaultComponents = memoizeMarkdownComponents({
     blockquote: ({ className, ...props }) => (
         <blockquote
             className={classNames(
-                'my-3 border-s-2 border-neutral-200 ps-4 text-surface-secondary',
+                'my-3 border-s-2 border-surface-secondary-panel ps-4 text-surface-secondary',
                 className,
             )}
             {...props}
@@ -174,7 +174,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ul: ({ className, ...props }) => (
         <ul
             className={classNames(
-                'my-3 ms-5 list-disc marker:text-neutral-300 [&>li]:mt-1',
+                'my-3 ms-5 list-disc marker:text-surface-tertiary-hint [&>li]:mt-1',
                 className,
             )}
             {...props}
@@ -183,7 +183,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ol: ({ className, ...props }) => (
         <ol
             className={classNames(
-                'my-3 ms-5 list-decimal marker:text-neutral-300 [&>li]:mt-1',
+                'my-3 ms-5 list-decimal marker:text-surface-tertiary-hint [&>li]:mt-1',
                 className,
             )}
             {...props}

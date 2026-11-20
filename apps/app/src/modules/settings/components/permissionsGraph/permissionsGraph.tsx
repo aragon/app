@@ -115,7 +115,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     return (
         <div
             className={classNames(
-                'overflow-hidden border border-neutral-200 bg-surface-primary',
+                'overflow-hidden border border-surface-secondary-panel bg-surface-primary',
                 isFullScreen
                     ? 'fixed top-0 left-0 z-[var(--guk-text-area-rich-text-expanded-z-index)] h-screen w-screen rounded-none'
                     : 'relative h-[640px] rounded-lg',

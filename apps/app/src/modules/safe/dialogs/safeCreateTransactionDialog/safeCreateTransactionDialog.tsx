@@ -504,7 +504,9 @@ export const SafeCreateTransactionDialog: React.FC<
                 {statusMessage != null && (
                     <p className="text-surface-secondary">{statusMessage}</p>
                 )}
-                {error != null && <p className="text-critical-700">{error}</p>}
+                {error != null && (
+                    <p className="text-critical-primary-tx-error">{error}</p>
+                )}
                 {prepared != null && (
                     <SafeTransactionReviewContent
                         // Remounted on a rebuilt transaction, so its verdict is reported again for the new payload.

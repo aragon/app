@@ -32,7 +32,7 @@ export const SiteHeader = () => (
             <nav className="flex items-center gap-8">
                 {links.map((link) => (
                     <a
-                        className="inline-flex items-center gap-1.5 text-base leading-tight whitespace-nowrap text-primary-50 transition-colors hover:text-accent-inverse max-md:hidden"
+                        className="inline-flex items-center gap-1.5 text-base leading-tight whitespace-nowrap text-accent-inverse-brand transition-colors hover:text-accent-inverse max-md:hidden"
                         href={link.url}
                         key={link.url}
                         rel="noopener noreferrer"

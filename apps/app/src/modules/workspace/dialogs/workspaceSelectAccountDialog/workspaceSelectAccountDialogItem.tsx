@@ -78,7 +78,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
             className={classNames('px-4 py-3 md:p-6', {
                 'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
-                'border-neutral-100 bg-surface-secondary': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}
             {...otherProps}
             {...(isDisabled ? { onClick: undefined } : {})}
@@ -113,7 +113,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-neutral-300 md:text-base">
+                    <div className="text-sm text-surface-tertiary-hint md:text-base">
                         {t(
                             'app.workspace.workspaceSelectAccountDialogItem.notEligible',
                         )}

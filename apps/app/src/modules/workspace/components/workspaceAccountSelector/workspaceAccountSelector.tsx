@@ -148,7 +148,7 @@ export const WorkspaceAccountSelector: React.FC<
             customTrigger={
                 <button
                     className={classNames(
-                        'flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 pr-3 text-surface-default focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-neutral-50 active:text-surface-active',
+                        'flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 pr-3 text-surface-default focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
                         className,
                     )}
                     type="button"

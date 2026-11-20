@@ -370,14 +370,14 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-neutral-200 bg-surface-default p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-accent-active focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-accent-active data-[dragging=true]:bg-primary-50">
+                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-surface-default-composer bg-surface-default p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-accent-active focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-accent-active data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="px-2.5 text-xs leading-normal text-neutral-300">
+                        <p className="px-2.5 text-xs leading-normal text-surface-tertiary-hint">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -438,7 +438,9 @@ const ComposerCharacterCount: React.FC = () => {
         <p
             className={classNames(
                 'text-xs tabular-nums',
-                length >= limit ? 'text-critical-600' : 'text-surface-tertiary',
+                length >= limit
+                    ? 'text-critical-primary-message'
+                    : 'text-surface-tertiary',
             )}
         >
             {chatCopy.composer.characterCount(
@@ -513,7 +515,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 text-sm leading-normal text-critical-primary">
+        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-3 text-sm leading-normal text-critical-primary">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>

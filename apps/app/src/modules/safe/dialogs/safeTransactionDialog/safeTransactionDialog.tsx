@@ -756,7 +756,9 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 {statusMessage != null && (
                     <p className="text-surface-secondary">{statusMessage}</p>
                 )}
-                {error != null && <p className="text-critical-700">{error}</p>}
+                {error != null && (
+                    <p className="text-critical-primary-tx-error">{error}</p>
+                )}
                 {prepared != null && (
                     <SafeTransactionReviewContent
                         network={network}

@@ -25,7 +25,7 @@ export const AutocompleteInputItem = forwardRef<
     const itemClassName = classNames(
         'flex flex-row items-center justify-between gap-4 rounded-lg px-3 py-2 hover:cursor-pointer',
         'leading-tight font-normal',
-        { 'bg-surface-hover text-neutral-800': isActive },
+        { 'bg-surface-hover text-surface-hover-label': isActive },
         { 'text-surface-default': !isActive },
         className,
     );

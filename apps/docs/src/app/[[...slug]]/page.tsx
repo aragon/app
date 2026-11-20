@@ -42,7 +42,7 @@ export default async function Page({ params }: IPageProps) {
             full={page.data.full}
             toc={page.data.toc}
         >
-            <DocsTitle className="border-b border-neutral-200 pb-3 text-2xl leading-tight font-normal text-surface-primary md:text-3xl">
+            <DocsTitle className="border-b border-surface-secondary-panel pb-3 text-2xl leading-tight font-normal text-surface-primary md:text-3xl">
                 {page.data.title}
             </DocsTitle>
             {/* The markdown copy of the page, which the build publishes next to it: copy it, or open

@@ -36,9 +36,9 @@ const variantClasses: Record<
     NonNullable<ITooltipIconButtonProps['variant']>,
     string
 > = {
-    ghost: 'text-surface-default hover:bg-neutral-100 hover:text-neutral-800',
+    ghost: 'text-surface-default hover:bg-surface-hover-icon-button hover:text-surface-hover-label',
     outline:
-        'border border-surface-secondary bg-surface-default text-surface-default shadow-sm hover:bg-surface-hover hover:text-neutral-800',
+        'border border-surface-secondary bg-surface-default text-surface-default shadow-sm hover:bg-surface-hover hover:text-surface-hover-label',
     primary: 'bg-accent-default text-accent-inverse hover:bg-accent-hover',
     unstyled: '',
 };

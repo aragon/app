@@ -32,15 +32,15 @@ export interface ITokenVotingOptionToggleProps
 
 const variantToClassNames: Record<TokenVotingOptionToggleVariant, string[]> = {
     success: [
-        'active:border-success-500',
+        'active:border-success-active-control',
         'data-[state=on]:enabled:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
     ],
     neutral: [
         'active:border-accent-active',
-        'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-neutral-800 data-[state=on]:shadow-accent-sm',
+        'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-surface-selected-label data-[state=on]:shadow-accent-sm',
     ],
     critical: [
-        'active:border-critical-500',
+        'active:border-critical-active-control',
         'data-[state=on]:enabled:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
     ],
 };
@@ -80,7 +80,7 @@ export const TokenVotingOptionToggle: React.FC<
         'border-surface-default text-surface-default focus-ring ring-accent-focus shadow-surface-sm',
         'active:shadow-none',
         'hover:border-surface-hover hover:shadow-surface-default',
-        'disabled:cursor-default disabled:border-neutral-100 disabled:bg-surface-disabled disabled:text-surface-disabled',
+        'disabled:cursor-default disabled:border-surface-disabled-toggle disabled:bg-surface-disabled disabled:text-surface-disabled',
         variantToClassNames[variant],
         className,
     );
