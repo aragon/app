@@ -25,7 +25,7 @@ Today every page sits under `/workspace/{workspaceId}/{accountId | all}/{section
 | Term | Meaning |
 | --- | --- |
 | Workspace (`ws`) | The workspace whose navigation, accounts and customizations frame the page. Default: "My workspace" |
-| Scope (`scope`) | The account selector's value: one account ID (`{network}-{address}`), or none for "All accounts" |
+| Scope (`scope`) | The account selector's value: one account ID (`{network}-{address}`), or none for "All accounts". It may name an account outside `ws`: the selector shows it as an external option and the banner offers to add it |
 | Page account | The account an entity page shows (proposal, member, settings). Always in the path (same as any other required page param)|
 
 **Rule:** changing the scope never changes the page account, and opening an account page never changes the scope.
@@ -35,7 +35,8 @@ Today every page sits under `/workspace/{workspaceId}/{accountId | all}/{section
 | Page | URL |
 | --- | --- |
 | Section, aggregated over the scope | `/proposals`, `/assets`, `/members`, `/transactions`, `/overview`, `/todos` |
-| Account page | `/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/{network}/{address}/members` |
+| Account page | `/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/{network}/{address}/settings` |
+| Account section (redirect only) | `/{network}/{address}/proposals` → `/proposals?scope={network}-{address}`, `/{network}/{address}` → `/overview?scope=…` |
 | Workspace page | `/workspace/{workspaceId}/settings` (the workspace is the subject, so it stays in the path) |
 
 - **Note:** legacy routes (`/`, `/dao/…`, `/safe/…`) must stay unchanged for now, so we must consider prefixing the
@@ -117,6 +118,7 @@ then writes the resolved params into the URL (`router.replace`).
    - DECISION: we won't consider it for now, not needed for the first version.
 3. What if given param, `ws` or `scope` is not valid?
    - Invalid means either malformed or "not found"
+   - For `scope`, "not found" means the account does not exist. An account outside `ws` is valid (external option).
    - DECISION: we should remove such a param so that it falls back to default case
 4. What happens if someone opens an account-specific page link with a different account filter in the query param?
    - User would see an account-specific page and the account selector would still show account specified by the `scope` param
@@ -125,4 +127,17 @@ then writes the resolved params into the URL (`router.replace`).
    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with "All accounts" selected)
 6. A `/{network}/{address}/…` route at the root catches everything. Static routes like `/proposals` still win, but any unknown path would hit that route, which then has to check the network and return a 404. The legacy-prefix note already says the routes need a prefix. Something like `/account/{network}/{address}/…` would solve both problems.
 7. `/members?scope=A` and `/{network}/{address}/members` show the same data.
-  - Say when each one is used, e.g. the selector only sets scope and never navigates to account pages.
+   - Say when each one is used, e.g. the selector only sets scope and never navigates to account pages.
+   - Removing `scope` (the selector navigates to account routes) was considered and rejected: the selector would be
+     read from the path, which brings back **One segment, two jobs.** and closes the door to a multi-account scope.
+   - DECISION: one canonical URL per view. Account section URLs only redirect:
+     - `/{network}/{address}/{section}` → `/{section}?scope={network}-{address}`, and `/{network}/{address}` →
+       `/overview?scope=…`. The section page renders the account-specific view when `scope` is set (e.g. plugin
+       members).
+     - Real account pages are only entity pages (proposal, member) and account-only pages (settings, permissions).
+     - Internal links are built canonical by the link helper and never hit the redirect; it serves typed, shared and
+       external links only.
+     - An incoming `ws` is carried over; without one, none is added ("My workspace").
+     - An invalid account in the path is a 404, not a fallback (unlike the `ws` and `scope` params in Q3): the page
+       account is a required path param.
+     - Temporary redirect (307, Next.js `redirect()`), so the canonical form can still change.
