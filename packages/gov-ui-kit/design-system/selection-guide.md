@@ -763,11 +763,12 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 **Usage notes**
 
 - Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.
+- The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.
 - Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own.
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17`
+- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:19`
 - `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1`
 
 ### Dropdown.Item

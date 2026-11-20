@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "fa82de9c7c47790b2c50dad8a81e07e9e4d6dcf8dc371c38fe6b5586a695ce70",
+            "sha256": "cb7752a87062b7f953ef06eb577cda3949ad637d4bbbd2c03ae16bc8d25b3c36",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -1586,12 +1586,13 @@
             "keyProps": [],
             "usageNotes": [
                 "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.",
                 "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17",
+                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:19",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1"
                 ]

@@ -6,11 +6,9 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "89bfd83812d655bca941e06f551ef02986a2b1a3",
+            "commit": "297dfd8ceef31a225b4f0613b525b84bc6249a80",
             "dirty": [
-                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
-                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.test.tsx",
-                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.tsx"
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx"
             ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -2857,7 +2855,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
                     "line": 1,
-                    "sha256": "6ea3ae76f84666b53a971ea308e2c8c0933ac5c4c6b089d5822e26e76f78c8d5"
+                    "sha256": "8a1ff51a6639f3c5591b2f803500e8181728a803b3397c28a7955127ac9fba26"
                 }
             ],
             "docs": [],
@@ -3081,7 +3079,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "59904829c3bc62a837f2a46c1c60cda539b039e2628db41881505b1d77bdb617"
+                "sha256": "90062ab858842a19ff81e463ed2e1110e3d7fa592ff53d8f7c78cff6de46eba1"
             },
             "props": [],
             "stories": [],
@@ -8661,15 +8659,15 @@
                     "source": {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
-                        "line": 17,
-                        "sha256": "5cd5f063790774293745224dbff626e5bf852b98b5c490a574d96f2b79ff7e54"
+                        "line": 19,
+                        "sha256": "b51288a79bf165a0e90d8eb4271aba0ba1f9369d2167cdb57971fb32ad3d545c"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
                             "line": 5,
-                            "sha256": "5cd5f063790774293745224dbff626e5bf852b98b5c490a574d96f2b79ff7e54"
+                            "sha256": "b51288a79bf165a0e90d8eb4271aba0ba1f9369d2167cdb57971fb32ad3d545c"
                         }
                     ],
                     "stories": [
@@ -8928,15 +8926,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
-                "line": 17,
-                "sha256": "5cd5f063790774293745224dbff626e5bf852b98b5c490a574d96f2b79ff7e54"
+                "line": 19,
+                "sha256": "b51288a79bf165a0e90d8eb4271aba0ba1f9369d2167cdb57971fb32ad3d545c"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
                     "line": 5,
-                    "sha256": "5cd5f063790774293745224dbff626e5bf852b98b5c490a574d96f2b79ff7e54"
+                    "sha256": "b51288a79bf165a0e90d8eb4271aba0ba1f9369d2167cdb57971fb32ad3d545c"
                 }
             ],
             "stories": [
@@ -8958,6 +8956,7 @@
             "docs": [],
             "usageNotes": [
                 "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.",
                 "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
             ],
             "intent": {
@@ -11051,7 +11050,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
                     "line": 1,
-                    "sha256": "6ea3ae76f84666b53a971ea308e2c8c0933ac5c4c6b089d5822e26e76f78c8d5"
+                    "sha256": "8a1ff51a6639f3c5591b2f803500e8181728a803b3397c28a7955127ac9fba26"
                 }
             ],
             "docs": [],
@@ -14004,7 +14003,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx",
                 "line": 5,
-                "sha256": "5cd5f063790774293745224dbff626e5bf852b98b5c490a574d96f2b79ff7e54"
+                "sha256": "b51288a79bf165a0e90d8eb4271aba0ba1f9369d2167cdb57971fb32ad3d545c"
             },
             "props": [],
             "stories": [

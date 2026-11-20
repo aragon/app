@@ -142,10 +142,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                 header={
                     <Dropdown.Group>
                         <WorkspaceSelector workspaceId={workspaceId} />
-                        <WorkspaceAccountSelector
-                            className="border-t!"
-                            workspaceId={workspaceId}
-                        />
+                        <WorkspaceAccountSelector workspaceId={workspaceId} />
                     </Dropdown.Group>
                 }
             />
@@ -206,7 +203,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                         <Dropdown.Group>
                             <WorkspaceSelector workspaceId={workspaceId} />
                             <WorkspaceAccountSelector
-                                className="border-t!"
                                 workspaceId={workspaceId}
                             />
                         </Dropdown.Group>
