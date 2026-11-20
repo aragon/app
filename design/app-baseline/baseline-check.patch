@@ -1,0 +1,534 @@
+diff --git a/capture.sh b/capture.sh
+index 4410896..d8b034b 100755
+--- a/capture.sh
++++ b/capture.sh
+@@ -10,10 +10,14 @@ if [ "$#" -gt 1 ] || { [ "$#" -eq 1 ] && [ "$1" != "--update" ]; }; then
+     exit 1
+ fi
+ 
+-rm -rf "$HERE/out/shots" "$HERE/out/failures"
++OUT="${BASELINE_OUT:-$HERE/out}"
++rm -rf "$OUT/shots" "$OUT/failures"
++# Every script runs even when an earlier one failed, so one run reports every failure.
++status=0
+ for script in capture-pages capture-wizards capture-dialogs; do
+-    node "$HERE/$script.cjs"
++    node "$HERE/$script.cjs" || status=1
+ done
++[ "$status" -eq 0 ] || { echo "capture.sh: at least one capture failed (see above)" >&2; exit 1; }
+ 
+ if [ "${1:-}" = "--update" ]; then
+     # Every script succeeded: the reference set becomes exactly this run's screenshots.
+diff --git a/compare-shots.cjs b/compare-shots.cjs
+new file mode 100644
+index 0000000..65d9e5b
+--- /dev/null
++++ b/compare-shots.cjs
+@@ -0,0 +1,129 @@
++'use strict';
++// App against app: compares two screenshot folders (e.g. a saved baseline and a new out/shots) pixel by pixel.
++// Usage: node compare-shots.cjs <baseline dir> <new dir> [--tolerance <0-255>] [--threshold <pixels>]
++//          [--exclude <name,...>] [--diff <dir>]
++//   --tolerance  a pixel differs when one of its channels is off by more than this (default 0: any change)
++//   --threshold  a shot fails when more than this many pixels differ (default 0)
++//   --exclude    shot names (without .webp) reported but never failed
++//   --diff       writes <name>.png (baseline | new | difference in red) for every differing shot
++// Exits 1 when a shot differs beyond the threshold, changes size, or exists in only one folder.
++const fs = require('node:fs');
++const path = require('node:path');
++const { deps } = require('./lib.cjs');
++
++const args = process.argv.slice(2);
++const opt = (name, fallback) => {
++    const i = args.indexOf(name);
++    if (i === -1) {
++        return fallback;
++    }
++    const value = args[i + 1];
++    args.splice(i, 2);
++    return value;
++};
++const tolerance = Number(opt('--tolerance', 0));
++const threshold = Number(opt('--threshold', 0));
++const exclude = new Set((opt('--exclude', '') || '').split(',').filter(Boolean));
++const diffDir = opt('--diff', null);
++if (args.length !== 2) {
++    console.error('Usage: node compare-shots.cjs <baseline dir> <new dir> [--tolerance n] [--threshold n] [--exclude a,b] [--diff dir]');
++    process.exit(1);
++}
++const [aDir, bDir] = args;
++const sharp = deps.sharp;
++
++const list = (dir) => new Set(fs.readdirSync(dir).filter((f) => f.endsWith('.webp')).map((f) => f.slice(0, -5)));
++
++const raw = async (file) => {
++    const { data, info } = await sharp(file).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
++    return { data, width: info.width, height: info.height };
++};
++
++const main = async () => {
++    const started = Date.now();
++    const a = list(aDir);
++    const b = list(bDir);
++    const names = [...new Set([...a, ...b])].sort();
++    const rows = [];
++    let failed = 0;
++    for (const name of names) {
++        const excluded = exclude.has(name);
++        if (!a.has(name) || !b.has(name)) {
++            rows.push(`${excluded ? 'excl' : 'FAIL'} ${name}: only in ${a.has(name) ? 'baseline' : 'new'}`);
++            failed += excluded ? 0 : 1;
++            continue;
++        }
++        const fa = path.join(aDir, `${name}.webp`);
++        const fb = path.join(bDir, `${name}.webp`);
++        if (fs.readFileSync(fa).equals(fs.readFileSync(fb))) {
++            continue; // byte-identical
++        }
++        const [x, y] = await Promise.all([raw(fa), raw(fb)]);
++        if (x.width !== y.width || x.height !== y.height) {
++            rows.push(`${excluded ? 'excl' : 'FAIL'} ${name}: size ${x.width}x${x.height} -> ${y.width}x${y.height}`);
++            failed += excluded ? 0 : 1;
++            continue;
++        }
++        let count = 0;
++        let maxDelta = 0;
++        let box = null;
++        const mask = diffDir ? Buffer.alloc(x.width * x.height) : null;
++        for (let p = 0, i = 0; i < x.data.length; p++, i += 4) {
++            let d = 0;
++            for (let c = 0; c < 4; c++) {
++                d = Math.max(d, Math.abs(x.data[i + c] - y.data[i + c]));
++            }
++            if (d > tolerance) {
++                count++;
++                const px = p % x.width;
++                const py = (p - px) / x.width;
++                box = box
++                    ? [Math.min(box[0], px), Math.min(box[1], py), Math.max(box[2], px), Math.max(box[3], py)]
++                    : [px, py, px, py];
++                if (mask) {
++                    mask[p] = 1;
++                }
++            }
++            maxDelta = Math.max(maxDelta, d);
++        }
++        if (count === 0) {
++            continue; // differs only within the tolerance (or only in encoding)
++        }
++        const bad = count > threshold && !excluded;
++        failed += bad ? 1 : 0;
++        rows.push(
++            `${bad ? 'FAIL' : excluded ? 'excl' : 'ok~ '} ${name}: ${count} px differ (max channel delta ${maxDelta}, box ${box[0]},${box[1]}-${box[2]},${box[3]})`,
++        );
++        if (diffDir) {
++            fs.mkdirSync(diffDir, { recursive: true });
++            const d = Buffer.from(y.data);
++            for (let p = 0; p < mask.length; p++) {
++                if (mask[p]) {
++                    d[p * 4] = 255;
++                    d[p * 4 + 1] = 0;
++                    d[p * 4 + 2] = 0;
++                    d[p * 4 + 3] = 255;
++                }
++            }
++            const w = x.width;
++            const h = x.height;
++            const img = (data) => ({ input: data, raw: { width: w, height: h, channels: 4 } });
++            await sharp({ create: { width: w * 3, height: h, channels: 4, background: '#fff' } })
++                .composite([
++                    { ...img(x.data), left: 0, top: 0 },
++                    { ...img(y.data), left: w, top: 0 },
++                    { ...img(d), left: 2 * w, top: 0 },
++                ])
++                .png()
++                .toFile(path.join(diffDir, `${name}.png`));
++        }
++    }
++    for (const row of rows) {
++        console.log(row);
++    }
++    console.log(
++        `\n${names.length} shot(s) compared, ${rows.length} differ (tolerance ${tolerance}, threshold ${threshold} px), ${failed} failing; ${((Date.now() - started) / 1000).toFixed(1)}s`,
++    );
++    process.exit(failed > 0 ? 1 : 0);
++};
++main();
+diff --git a/coverage-preload.cjs b/coverage-preload.cjs
+new file mode 100644
+index 0000000..c11f315
+--- /dev/null
++++ b/coverage-preload.cjs
+@@ -0,0 +1,10 @@
++'use strict';
++// Loaded into every Node process of `next dev` when BASELINE_COVERAGE=1 (start.sh): SIGUSR2 writes this process's V8
++// coverage into NODE_V8_COVERAGE without stopping it.
++process.on('SIGUSR2', () => {
++    try {
++        require('node:v8').takeCoverage();
++    } catch {
++        // NODE_V8_COVERAGE not set: nothing to write.
++    }
++});
+diff --git a/coverage-report.cjs b/coverage-report.cjs
+new file mode 100644
+index 0000000..f700195
+--- /dev/null
++++ b/coverage-report.cjs
+@@ -0,0 +1,90 @@
++'use strict';
++// Colour-class coverage report. Usage: node coverage-report.cjs <out dir> [<node v8 coverage dir>]
++// Combines the browser coverage written by the capture scripts (<out>/coverage/client-*.json) with the server's
++// NODE_V8_COVERAGE files, and lists every apps/app/src file (tests and stories excluded) that contains a primitive
++// colour class, as covered (a colour literal in code that executed, client or server) or not.
++const fs = require('node:fs');
++const path = require('node:path');
++const { REPO } = require('./lib.cjs');
++const { COLOR, analyse, merge } = require('./coverage.cjs');
++
++const [outDir, serverDir] = process.argv.slice(2);
++const SRC = path.join(REPO, 'apps', 'app', 'src');
++
++const client = {};
++const perJob = {};
++for (const f of fs.readdirSync(path.join(outDir, 'coverage'))) {
++    if (f.startsWith('client-')) {
++        const data = JSON.parse(fs.readFileSync(path.join(outDir, 'coverage', f), 'utf8'));
++        perJob[f.slice(7, -5)] = data;
++        merge(client, data);
++    }
++}
++const server = {};
++if (serverDir) {
++    const sources = new Map();
++    for (const f of fs.readdirSync(serverDir)) {
++        const { result } = JSON.parse(fs.readFileSync(path.join(serverDir, f), 'utf8'));
++        for (const script of result) {
++            if (!script.url.includes('/.next/dev/server/chunks/')) {
++                continue;
++            }
++            const file = new URL(script.url).pathname;
++            if (!sources.has(file)) {
++                sources.set(file, fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '');
++            }
++            merge(server, analyse(sources.get(file), script.functions));
++        }
++    }
++}
++
++const files = [];
++const walk = (dir) => {
++    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
++        const full = path.join(dir, e.name);
++        if (e.isDirectory()) {
++            walk(full);
++        } else if (/\.(tsx?|css)$/.test(e.name) && !/\.(test|stories)\.tsx?$/.test(e.name) && !full.includes('__mocks__')) {
++            const text = fs.readFileSync(full, 'utf8');
++            const n = text.match(COLOR)?.length ?? 0;
++            if (n > 0) {
++                files.push({ file: path.relative(SRC, full), n });
++            }
++        }
++    }
++};
++walk(SRC);
++
++const rows = files.map(({ file, n }) => {
++    const c = client[file]?.hit ?? 0;
++    const s = server[file]?.hit ?? 0;
++    const seen = file in client || file in server;
++    return { file, classes: n, client: c, server: s, covered: c > 0 || s > 0, loaded: seen };
++});
++const covered = rows.filter((r) => r.covered);
++const report = {
++    totalFiles: rows.length,
++    totalClasses: rows.reduce((a, r) => a + r.classes, 0),
++    coveredFiles: covered.length,
++    coveredClassesInCoveredFiles: covered.reduce((a, r) => a + r.classes, 0),
++    rows,
++    jobsPerFile: Object.fromEntries(
++        rows.map((r) => [r.file, Object.keys(perJob).filter((j) => (perJob[j][r.file]?.hit ?? 0) > 0)]),
++    ),
++};
++fs.writeFileSync(path.join(outDir, 'coverage-report.json'), JSON.stringify(report, null, 1));
++console.log(
++    `${report.coveredFiles}/${report.totalFiles} colour-bearing files covered (${report.coveredClassesInCoveredFiles}/${report.totalClasses} class occurrences in covered files)`,
++);
++const byModule = {};
++for (const r of rows.filter((x) => !x.covered)) {
++    const parts = r.file.split('/');
++    const mod = parts[0] === 'modules' || parts[0] === 'plugins' || parts[0] === 'actions' ? parts.slice(0, 2).join('/') : parts[0];
++    (byModule[mod] ??= []).push(`${r.file} (${r.classes}${r.loaded ? ', loaded, not executed' : ''})`);
++}
++for (const [mod, list] of Object.entries(byModule).sort()) {
++    console.log(`\n${mod}: ${list.length}`);
++    for (const l of list) {
++        console.log(`  ${l}`);
++    }
++}
+diff --git a/coverage.cjs b/coverage.cjs
+new file mode 100644
+index 0000000..6622b11
+--- /dev/null
++++ b/coverage.cjs
+@@ -0,0 +1,106 @@
++'use strict';
++// Colour-class coverage (opt-in: BASELINE_COVERAGE=1). Records, per capture job, which apps/app/src modules had a
++// primitive colour class literal (e.g. "text-neutral-500") in code that actually executed in the browser, using
++// Chromium's precise (block) JS coverage on the Turbopack dev chunks. The server side is measured separately with
++// NODE_V8_COVERAGE (see coverage-report.cjs). Output: $BASELINE_OUT/coverage/client-<job>.json
++const fs = require('node:fs');
++const path = require('node:path');
++
++const ENABLED = process.env.BASELINE_COVERAGE === '1';
++const COLOR =
++    /(?:bg|text|border|ring|shadow|fill|stroke|from|to|via|divide|outline|decoration|caret)-(?:primary|neutral|info|success|warning|critical)-\d+/g;
++// A module definition in a Turbopack chunk: its key at the start of a line, followed by its factory. (References to
++// other modules inside a factory use the same key strings, but never at the start of a line followed by ", (".)
++const MODULE_KEY = /^"\[project\]\/apps\/app\/src\/([^" ]+) \[[^\]]+\] \([^)]*\)[^"]*", \(/gm;
++// Any module definition (app, packages, node_modules): where an app module's segment ends.
++const ANY_MODULE_KEY = /^"\[project\]\/[^"]+", \(/gm;
++
++// For one script: its source and V8 function ranges -> { file: {hit, total} } of colour literals per app module.
++const analyse = (source, functions) => {
++    const ranges = [];
++    for (const fn of functions) {
++        for (const r of fn.ranges) {
++            ranges.push(r);
++        }
++    }
++    const countAt = (offset) => {
++        // The innermost range that contains the offset decides (V8 block coverage semantics).
++        let best = null;
++        for (const r of ranges) {
++            if (r.startOffset <= offset && offset < r.endOffset) {
++                if (best == null || r.endOffset - r.startOffset <= best.endOffset - best.startOffset) {
++                    best = r;
++                }
++            }
++        }
++        return best ? best.count : 0;
++    };
++    const keys = [];
++    for (const m of source.matchAll(MODULE_KEY)) {
++        keys.push({ file: m[1], at: m.index });
++    }
++    const result = {};
++    for (let i = 0; i < keys.length; i++) {
++        const { file, at } = keys[i];
++        if (/\.(test|stories)\.tsx?$/.test(file)) {
++            continue;
++        }
++        ANY_MODULE_KEY.lastIndex = at + 1;
++        const end = ANY_MODULE_KEY.exec(source)?.index ?? source.length;
++        const segment = source.slice(at, end);
++        for (const m of segment.matchAll(COLOR)) {
++            const entry = (result[file] ??= { hit: 0, total: 0 });
++            entry.total++;
++            if (countAt(at + m.index) > 0) {
++                entry.hit++;
++            }
++        }
++    }
++    return result;
++};
++
++const merge = (into, from) => {
++    for (const [file, { hit, total }] of Object.entries(from)) {
++        const e = (into[file] ??= { hit: 0, total: 0 });
++        e.hit = Math.max(e.hit, hit);
++        e.total = Math.max(e.total, total);
++    }
++    return into;
++};
++
++// Wraps context.newPage so that every page records JS coverage from its first script on.
++const instrument = (context) => {
++    if (!ENABLED) {
++        return;
++    }
++    const newPage = context.newPage.bind(context);
++    context.coveragePages = [];
++    context.newPage = async (...args) => {
++        const page = await newPage(...args);
++        await page.coverage.startJSCoverage({ resetOnNavigation: false });
++        context.coveragePages.push(page);
++        return page;
++    };
++};
++
++// Collects the coverage of every instrumented page of a context (before it is closed) for a job.
++const collect = async (context, jobName, outDir) => {
++    if (!ENABLED || !context.coveragePages) {
++        return;
++    }
++    const acc = {};
++    for (const page of context.coveragePages) {
++        const entries = await page.coverage.stopJSCoverage().catch(() => []);
++        for (const entry of entries) {
++            if (!entry.url.includes('/_next/static/chunks/') || !entry.source) {
++                continue;
++            }
++            merge(acc, analyse(entry.source, entry.functions));
++        }
++    }
++    const dir = path.join(outDir, 'coverage');
++    fs.mkdirSync(dir, { recursive: true });
++    fs.writeFileSync(path.join(dir, `client-${jobName}.json`), JSON.stringify(acc));
++};
++
++module.exports = { ENABLED, COLOR, MODULE_KEY, analyse, merge, instrument, collect };
+diff --git a/lib.cjs b/lib.cjs
+index 769da0e..84cf975 100644
+--- a/lib.cjs
++++ b/lib.cjs
+@@ -6,11 +6,13 @@ const path = require('node:path');
+ 
+ const HERE = __dirname;
+ const DESIGN = path.join(HERE, '..');
+-const REPO = path.join(DESIGN, '..');
++// BASELINE_REPO: the checkout whose apps/app is captured (default: the checkout this folder is in).
++const REPO = path.resolve(process.env.BASELINE_REPO ?? path.join(DESIGN, '..'));
+ const APP_DIR = path.join(REPO, 'apps', 'app');
+ const CANVAS = path.join(DESIGN, 'canvas');
+-const REFERENCE = path.join(DESIGN, 'reference');
+-const OUT = path.join(HERE, 'out');
++const REFERENCE = path.resolve(process.env.BASELINE_REFERENCE ?? path.join(DESIGN, 'reference'));
++// BASELINE_OUT: where screenshots, logs and pidfiles go (default ./out).
++const OUT = path.resolve(process.env.BASELINE_OUT ?? path.join(HERE, 'out'));
+ const SHOTS = path.join(OUT, 'shots');
+ const FAILURES = path.join(OUT, 'failures');
+ 
+@@ -276,6 +278,7 @@ const newContext = async (browser, opts = {}) => {
+         locale: 'en-US',
+         timezoneId: 'UTC',
+     });
++    require('./coverage.cjs').instrument(context);
+     context.setDefaultTimeout(30_000);
+     context.setDefaultNavigationTimeout(NAV_TIMEOUT);
+     // Date is frozen at the reference time; timers and requestAnimationFrame keep running.
+@@ -305,6 +308,19 @@ const newContext = async (browser, opts = {}) => {
+     context.on('request', (request) => touch(request, false));
+     context.on('requestfinished', (request) => touch(request, true));
+     context.on('requestfailed', (request) => touch(request, true));
++    // A request to the app that fails or answers a server error shows up as an error or empty state in the
++    // screenshot (an overloaded dev server did this), which no other check notices: fail the capture instead.
++    context.on('requestfailed', (request) => {
++        const failure = request.failure()?.errorText ?? '';
++        if (request.url().startsWith(APP_URL) && !/ERR_ABORTED/.test(failure)) {
++            state.errors.push(`request failed: ${request.url().slice(0, 120)} (${failure})`);
++        }
++    });
++    context.on('response', (response) => {
++        if (response.url().startsWith(APP_URL) && response.status() >= 500) {
++            state.errors.push(`HTTP ${response.status()}: ${response.url().slice(0, 120)}`);
++        }
++    });
+     context.on('weberror', (webError) =>
+         state.errors.push(`page error: ${String(webError.error())}`),
+     );
+@@ -623,6 +639,7 @@ const runCapture = async (jobs, match) => {
+             }
+             // A job that fails leaves its context open: keep what was on screen, then close it.
+             for (const context of browser.contexts()) {
++                await require('./coverage.cjs').collect(context, job.name, OUT);
+                 for (const page of failed ? context.pages() : []) {
+                     fs.mkdirSync(FAILURES, { recursive: true });
+                     await page
+diff --git a/server-preload.cjs b/server-preload.cjs
+index 1e8fd43..e37699e 100644
+--- a/server-preload.cjs
++++ b/server-preload.cjs
+@@ -21,6 +21,22 @@ globalThis.Date = new Proxy(RealDate, {
+         key === 'now' ? () => NOW_MS : Reflect.get(target, key),
+ });
+ 
++// Vercel BotID: outside development (next start) its server check needs a Vercel request context and the BotID
++// service, and the app's pin actions fail closed without them ("Unable to pin data on IPFS"). Give it a minimal
++// request context and answer its classification call with "human" (see the fetch override below).
++const BOTID_URL = 'https://botid.baseline.test/';
++process.env.OVERRIDE_BOTID_SERVER_URL = BOTID_URL;
++const REQUEST_CONTEXT = Symbol.for('@vercel/request-context');
++if (process.env.BASELINE_MODE === 'prod' && globalThis[REQUEST_CONTEXT] == null) {
++    globalThis[REQUEST_CONTEXT] = {
++        get: () => ({
++            headers: { 'x-vercel-oidc-token': 'mock' },
++            url: '',
++            mutateResponseHeadersBeforeFlush: () => undefined,
++        }),
++    };
++}
++
+ const realFetch = globalThis.fetch;
+ const reply = (status, body) =>
+     Promise.resolve(
+@@ -42,6 +58,9 @@ globalThis.fetch = (input, init) => {
+             ? reply(200, fs.readFileSync(file))
+             : reply(404, '{}');
+     }
++    if (url.startsWith(BOTID_URL)) {
++        return reply(200, JSON.stringify({ isBot: false, isVerifiedBot: false, bypassed: false }));
++    }
+     if (url.startsWith('https://api.pinata.cloud/')) {
+         return reply(200, JSON.stringify(PINATA_REPLY));
+     }
+diff --git a/start.sh b/start.sh
+index 1d4a11f..2da954b 100755
+--- a/start.sh
++++ b/start.sh
+@@ -4,8 +4,8 @@
+ set -euo pipefail
+ 
+ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+-APP_DIR="$(cd "$HERE/../../apps/app" && pwd)"
+-OUT="$HERE/out"
++APP_DIR="$(cd "${BASELINE_REPO:-$HERE/../..}/apps/app" && pwd)"
++OUT="${BASELINE_OUT:-$HERE/out}"
+ export MOCK_PORT="${MOCK_PORT:-4100}"
+ export APP_PORT="${APP_PORT:-3000}"
+ START_TIMEOUT="${START_TIMEOUT:-2400}" # seconds; the first compile of the app can take many minutes
+@@ -31,7 +31,7 @@ node "$HERE/mock-server.cjs" >"$OUT/mock-server.log" 2>&1 </dev/null &
+ echo $! >"$OUT/mock.pid"
+ 
+ # Next.js keeps the CMS files it fetched on disk; drop them so the server reads the snapshot in ./cms.
+-rm -rf "$APP_DIR/.next/dev/cache/fetch-cache"
++rm -rf "$APP_DIR/.next/dev/cache/fetch-cache" "$APP_DIR/.next/cache/fetch-cache"
+ (
+     # The app's local configuration plus the mock overrides, as process environment (it wins over .env* files, and
+     # nothing is written into apps/app).
+@@ -48,7 +48,22 @@ rm -rf "$APP_DIR/.next/dev/cache/fetch-cache"
+     export NEXT_SECRET_SAFE_API_KEY=mock
+     export NEXT_TELEMETRY_DISABLED=1 TZ=UTC
+     export NODE_OPTIONS="${NODE_OPTIONS:-} --require \"$HERE/server-preload.cjs\""
++    if [ "${BASELINE_COVERAGE:-}" = 1 ]; then
++        # Server-side colour-class coverage (coverage-report.cjs): V8 coverage of every Node process, written on SIGUSR2.
++        export NODE_V8_COVERAGE="$OUT/v8-coverage"
++        rm -rf "$NODE_V8_COVERAGE"
++        export NODE_OPTIONS="$NODE_OPTIONS --require \"$HERE/coverage-preload.cjs\""
++    fi
+     cd "$APP_DIR"
++    if [ "${BASELINE_MODE:-dev}" = prod ]; then
++        # Production build and server: no dev overlays, no on-demand compilation, no hot reload, far less memory.
++        # BASELINE_SKIP_BUILD=1 reuses the existing build (same commit, servers restarted).
++        if [ "${BASELINE_SKIP_BUILD:-}" != 1 ] || [ ! -f .next/BUILD_ID ]; then
++            ./node_modules/.bin/next build
++        fi
++        export BASELINE_MODE=prod
++        exec ./node_modules/.bin/next start -p "$APP_PORT"
++    fi
+     exec ./node_modules/.bin/next dev -p "$APP_PORT"
+ ) >"$OUT/next-dev.log" 2>&1 </dev/null &
+ echo $! >"$OUT/app.pid"
+diff --git a/stop.sh b/stop.sh
+index 0f34849..cb92e18 100755
+--- a/stop.sh
++++ b/stop.sh
+@@ -3,7 +3,7 @@
+ set -euo pipefail
+ 
+ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+-OUT="$HERE/out"
++OUT="${BASELINE_OUT:-$HERE/out}"
+ MOCK_PORT="${MOCK_PORT:-4100}"
+ APP_PORT="${APP_PORT:-3000}"
+ 
