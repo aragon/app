@@ -66,12 +66,13 @@ export const WorkspaceGettingStarted: React.FC = () => {
         }
     };
 
-    // Another wallet account starts from an empty selection.
+    // Another wallet account starts from an empty selection, on the list.
     const [selectionAddress, setSelectionAddress] = useState(address);
     if (selectionAddress !== address) {
         setSelectionAddress(address);
         setSelected([]);
         setHasAddedByAddress(false);
+        setIsAddressViewOpen(false);
     }
 
     // Prefetched, so a disconnect leaves at once.
