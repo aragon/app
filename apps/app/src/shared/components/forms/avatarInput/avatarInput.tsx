@@ -15,6 +15,14 @@ export type AvatarInputBaseForm = Record<
 const defaultMaxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
 const defaultMaxDimension = 1024;
 
+// The image formats the pin action accepts (ipfsService.validateFile)
+const acceptedFileTypes = {
+    'image/png': [],
+    'image/gif': [],
+    'image/jpeg': ['.jpg', '.jpeg'],
+    'image/webp': [],
+};
+
 export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
     const {
         name,
@@ -57,6 +65,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
 
     return (
         <InputFileAvatar
+            acceptedFileTypes={acceptedFileTypes}
             helpText={helpText ?? defaultHelpText}
             isOptional={isOptional}
             maxDimension={maxDimension}
