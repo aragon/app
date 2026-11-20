@@ -132,6 +132,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     <WorkspaceAccountAvatar
                         avatar={avatar}
                         name={name}
+                        network={network}
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col gap-1">

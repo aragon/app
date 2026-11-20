@@ -7,6 +7,7 @@ import safeWallet from '@/assets/images/safeWallet.png';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
     generateDialogContext,
@@ -431,6 +432,27 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ]);
     });
 
+    it('badges each account option with its network, not the aggregated one', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, safeOption] });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const { name, logo } = networkDefinitions[Network.ETHEREUM_SEPOLIA];
+        const item = await screen.findByRole('menuitem', {
+            name: /Treasury Safe/,
+        });
+        expect(await within(item).findByRole('img', { name })).toHaveAttribute(
+            'src',
+            logo,
+        );
+        const allItem = screen.getByRole('menuitem', { name: /All accounts/ });
+        expect(
+            within(allItem).queryByRole('img', { name }),
+        ).not.toBeInTheDocument();
+    });
+
     it('renders a Safe option with the Safe wallet avatar', async () => {
         stubImageLoading();
         mockAccountOptions({ options: [allAccountsOption, safeOption] });
@@ -441,10 +463,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         const item = await screen.findByRole('menuitem', {
             name: /Treasury Safe/,
         });
-        expect(await within(item).findByRole('img')).toHaveAttribute(
-            'src',
-            safeWallet.src,
-        );
+        expect(
+            await within(item).findByRole('img', {
+                name: /workspaceAccountAvatar\.safe/,
+            }),
+        ).toHaveAttribute('src', safeWallet.src);
     });
 
     it('prefers the stored avatar of a Safe option', async () => {
@@ -464,10 +487,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         const item = await screen.findByRole('menuitem', {
             name: /Treasury Safe/,
         });
-        expect(await within(item).findByRole('img')).toHaveAttribute(
-            'src',
-            'https://ipfs/safe-cid',
-        );
+        expect(
+            await within(item).findByRole('img', {
+                name: /workspaceAccountAvatar\.safe/,
+            }),
+        ).toHaveAttribute('src', 'https://ipfs/safe-cid');
     });
 
     it('renders the selector for a workspace holding one Safe, with the Safe avatar on the trigger', async () => {
@@ -485,6 +509,8 @@ describe('<WorkspaceAccountSelector /> component', () => {
             'src',
             safeWallet.src,
         );
+        // No network badge.
+        expect(within(trigger).getAllByRole('img')).toHaveLength(1);
     });
 
     describe('external option', () => {
@@ -513,6 +539,24 @@ describe('<WorkspaceAccountSelector /> component', () => {
                 activeOption: externalOption,
                 isAllAccounts: false,
             });
+        });
+
+        it('shows the initials of an external option not resolved yet', async () => {
+            const unplacedOption = { ...externalOption, account: undefined };
+            mockAccountOptions({
+                options: [allAccountsOption, daoOption, unplacedOption],
+                accountId: unplacedOption.id,
+                activeOption: unplacedOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const externalItem = await screen.findByRole('menuitem', {
+                name: /External DAO/,
+            });
+            expect(within(externalItem).getByText('ED')).toBeInTheDocument();
         });
 
         it('marks only the external option as not part of the workspace', async () => {
@@ -558,7 +602,9 @@ describe('<WorkspaceAccountSelector /> component', () => {
                 name: /External DAO/,
             });
             expect(
-                await within(externalItem).findByRole('img'),
+                await within(externalItem).findByRole('img', {
+                    name: 'avatar',
+                }),
             ).toHaveAttribute('src', 'https://ipfs/external-cid');
         });
     });

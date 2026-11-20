@@ -141,6 +141,15 @@ describe('<WorkspaceAccountItem /> component', () => {
         );
     });
 
+    it('badges the avatar with the network of the account', () => {
+        render(createTestComponent());
+
+        expect(WorkspaceAccountAvatar).toHaveBeenLastCalledWith(
+            expect.objectContaining({ network: Network.ETHEREUM_SEPOLIA }),
+            undefined,
+        );
+    });
+
     describe('with a remove action', () => {
         it('renders a row with a menu instead of a link', () => {
             render(createTestComponent({ onRemove: jest.fn() }));
