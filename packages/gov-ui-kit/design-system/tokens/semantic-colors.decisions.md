@@ -23,6 +23,9 @@ extraction of 41 pages + Buttons); their comparison with the code, row by row: `
 | O-05 | No deviation from today's code without an argument; each one is argued individually, by related patterns. |
 | O-06 | The palette change (true grey, standard green) is reviewed independently of the semantic layer; probably wanted. |
 | O-07 | Work happens on one branch cut from `docs/design-prototypes`; kit and prototype commits stay separate. |
+| O-08 | The default stays today's colours. The palette change ("Next") and Dark remain previews behind the developer-only debug panel; nothing switches the default (20 November 2026). This settles L-01 and T-04 for now: no value switch is planned. |
+| O-09 | No user-facing theme toggle. The debug panel is not available to users, and that is the only place the switch lives (20 November 2026). Settles the toggle half of T-10. |
+| O-10 | The goal is a working branch. When and how it merges or releases is the owner's call and not part of this work (20 November 2026). T-05 (removing primitive classes in a major release) is out of scope until the owner raises it. |
 
 ## 2. Provisional decisions (made by Claude; review each)
 
