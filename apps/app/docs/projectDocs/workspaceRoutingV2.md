@@ -35,12 +35,12 @@ Today every page sits under `/workspace/{workspaceId}/{accountId | all}/{section
 | Page | URL |
 | --- | --- |
 | Section, aggregated over the scope | `/proposals`, `/assets`, `/members`, `/transactions`, `/overview`, `/todos` |
-| Account page | `/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/{network}/{address}/settings` |
-| Account section (redirect only) | `/{network}/{address}/proposals` → `/proposals?scope={network}-{address}`, `/{network}/{address}` → `/overview?scope=…` |
+| Account page | `/account/{network}/{address}/proposals/{pluginAddress}/{proposalSlug}`, `/account/{network}/{address}/settings` |
+| Account section (redirect only) | `/account/{network}/{address}/proposals` → `/proposals?scope={network}-{address}`, `/account/{network}/{address}` → `/overview?scope=…` |
 | Workspace page | `/workspace/{workspaceId}/settings` (the workspace is the subject, so it stays in the path) |
 
-- **Note:** legacy routes (`/`, `/dao/…`, `/safe/…`) must stay unchanged for now, so we must consider prefixing the
-  new routes.
+- **Note:** legacy routes (`/`, `/dao/…`, `/safe/…`) must stay unchanged for now. Account routes are prefixed with
+  `/account/` (see open question 6); section routes are static names no legacy route uses, so they stay at the root.
 - The current `/workspace/{workspaceId}/…` routes are removed without redirects. They sit behind the workspace
   feature flag, which has never been on in production.
 - A page account that is not in the workspace renders normally; the banner offers to add it (as external accounts
@@ -126,14 +126,15 @@ then writes the resolved params into the URL (`router.replace`).
 5. Do we even need `scope` query param? (if you want to see specific accounts then you have the page route with accounts in it)
    - See **One segment, two jobs.** section from the Context section above (we wouldn't be able to see an account specific page with "All accounts" selected)
 6. A `/{network}/{address}/…` route at the root catches everything. Static routes like `/proposals` still win, but any unknown path would hit that route, which then has to check the network and return a 404. The legacy-prefix note already says the routes need a prefix. Something like `/account/{network}/{address}/…` would solve both problems.
-7. `/members?scope=A` and `/{network}/{address}/members` show the same data.
+   - DECISION: `/account/{network}/{address}/…`.
+7. `/members?scope=A` and `/account/{network}/{address}/members` show the same data.
    - Say when each one is used, e.g. the selector only sets scope and never navigates to account pages.
    - Removing `scope` (the selector navigates to account routes) was considered and rejected: the selector would be
      read from the path, which brings back **One segment, two jobs.** and closes the door to a multi-account scope.
    - DECISION: one canonical URL per view. Account section URLs only redirect:
-     - `/{network}/{address}/{section}` → `/{section}?scope={network}-{address}`, and `/{network}/{address}` →
-       `/overview?scope=…`. The section page renders the account-specific view when `scope` is set (e.g. plugin
-       members).
+     - `/account/{network}/{address}/{section}` → `/{section}?scope={network}-{address}`, and
+       `/account/{network}/{address}` → `/overview?scope=…`. The section page renders the account-specific view when
+       `scope` is set (e.g. plugin members).
      - Real account pages are only entity pages (proposal, member) and account-only pages (settings, permissions).
      - Internal links are built canonical by the link helper and never hit the redirect; it serves typed, shared and
        external links only.
