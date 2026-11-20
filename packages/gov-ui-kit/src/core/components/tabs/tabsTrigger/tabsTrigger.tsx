@@ -27,18 +27,18 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
         'group line-clamp-1 flex items-center gap-x-4 rounded-t border-surface-selected py-3 text-base leading-tight font-normal', // Base
         'active:data-[state=active]:text-surface-active active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-border-surface-selected', // Active state
         'focus:outline-hidden', // Focus state
-        { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-neutral-800': isUnderlined && !disabled }, //  Underlined & enabled variant
+        { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-border-surface-hover-tab': isUnderlined && !disabled }, //  Underlined & enabled variant
         'data-[state=active]:text-surface-primary data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-border-surface-selected', // Active selection
-        { 'cursor-pointer text-link-secondary-default hover:text-neutral-800': !disabled }, // Enabled state
+        { 'cursor-pointer text-link-secondary-default hover:text-link-secondary-hover-nav': !disabled }, // Enabled state
         { 'text-surface-disabled': disabled }, // Disabled state
         className,
     );
 
     const iconClassNames = classNames(
         'group-data-[state=active]:text-neutral-800', // Base
-        { 'text-neutral-200': disabled }, // Disabled state
-        { 'text-neutral-500 group-hover:text-neutral-300': !disabled }, // Enabled state
-        { 'group-focus:text-neutral-500 group-active:text-neutral-600': !disabled }, // Enabled & Active/Focus states
+        { 'icon-surface-disabled-control': disabled }, // Disabled state
+        { 'icon-surface-default-tab group-hover:icon-surface-hover-tab': !disabled }, // Enabled state
+        { 'group-focus:text-neutral-500 group-active:icon-surface-active-control': !disabled }, // Enabled & Active/Focus states
     );
 
     return (

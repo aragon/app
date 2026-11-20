@@ -32,11 +32,11 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
         { 'bg-transparent': variant === 'select' }, // Default select
         { 'cursor-pointer focus-ring ring-accent-focus': isInteractiveElement }, // Interactive default state
         {
-            'hover:border-surface-hover hover:shadow-surface-default active:border-neutral-300':
+            'hover:border-surface-hover hover:shadow-surface-default active:border-surface-active-card':
                 isInteractiveElement && variant === 'primary',
         }, // Interactive hover state (primary)
         {
-            'hover:bg-surface-transparent-hover focus-visible:bg-surface-transparent-hover active:bg-neutral-400/8':
+            'hover:bg-surface-transparent-hover focus-visible:bg-surface-transparent-hover active:bg-surface-transparent-active-item':
                 isInteractiveElement && variant === 'select',
         }, // Interactive hover state (select)
         { 'cursor-default focus:outline-hidden': !isInteractiveElement }, // Non-interactive default state

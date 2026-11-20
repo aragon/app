@@ -87,7 +87,7 @@
             "part": "item container, open (expanded) state",
             "state": "open",
             "codeClassBefore": "data-[state=open]:border-neutral-200",
-            "codeClassNow": "data-[state=open]:border-neutral-200",
+            "codeClassNow": "data-[state=open]:border-surface-active-accordion",
             "today": "neutral-200",
             "figmaToken": "border/surface/active",
             "figmaTokenCode": "border/surface/active",
@@ -97,8 +97,9 @@
             "figmaRef": "AccordionItem @S, IsOpen=True (Default/Focus)",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list",
-            "note": "Figma treats an open item like a pressed one (bg/surface/active + border/surface/active)."
+            "action": "component-level alias (P-66)",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow border/surface/active (the Figma binding). The value conflict itself stays on the review list.",
+            "codeTokenNow": "border/surface/active-accordion"
         },
         {
             "file": "src/core/components/accordion/accordionItem/accordionItem.tsx",
@@ -318,7 +319,7 @@
             "part": "chevron AvatarIcon override, disabled",
             "state": "disabled",
             "codeClassBefore": "group-data-disabled:text-neutral-100",
-            "codeClassNow": "group-data-disabled:text-neutral-100",
+            "codeClassNow": "group-data-disabled:icon-surface-disabled-accordion",
             "today": "neutral-100",
             "figmaToken": "icon/surface/disabled",
             "figmaTokenCode": "icon/surface/disabled",
@@ -328,7 +329,9 @@
             "figmaRef": "_AccordionTrigger VisualTrigger/Icon, State=Disabled",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/disabled-accordion",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-100; \"next\" and \"dark\" follow icon/surface/disabled (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/alerts/alertCard/alertCard.tsx",
@@ -840,7 +843,7 @@
             "part": "avatar loading placeholder fill",
             "state": "loading",
             "codeClassBefore": "bg-neutral-200",
-            "codeClassNow": "bg-neutral-200",
+            "codeClassNow": "bg-surface-tertiary-avatar",
             "today": "neutral-200",
             "figmaToken": "bg/surface/tertiary",
             "figmaTokenCode": "bg/surface/tertiary",
@@ -850,8 +853,9 @@
             "figmaRef": "_AvatarFallback image F, Type=Default",
             "confidence": "low",
             "verdict": "uncertain",
-            "action": "none",
-            "note": "Figma has no loading state for Avatar; the fallback disc is the nearest layer."
+            "action": "component-level alias (P-66)",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow bg/surface/tertiary (the Figma binding). The value conflict itself stays on the review list.",
+            "codeTokenNow": "bg/surface/tertiary-avatar"
         },
         {
             "file": "src/core/components/avatars/avatar/avatar.tsx",
@@ -859,7 +863,7 @@
             "part": "avatar placeholder fill (no fallback)",
             "state": "default",
             "codeClassBefore": "bg-neutral-200",
-            "codeClassNow": "bg-neutral-200",
+            "codeClassNow": "bg-surface-tertiary-avatar",
             "today": "neutral-200",
             "figmaToken": "bg/surface/tertiary",
             "figmaTokenCode": "bg/surface/tertiary",
@@ -869,7 +873,9 @@
             "figmaRef": "_AvatarFallback image F, Type=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/surface/tertiary-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow bg/surface/tertiary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
@@ -917,7 +923,7 @@
             "part": "icon (critical)",
             "state": "default",
             "codeClassBefore": "text-critical-600",
-            "codeClassNow": "text-critical-600",
+            "codeClassNow": "icon-critical-primary-avatar",
             "today": "critical-600",
             "figmaToken": "icon/critical/primary",
             "figmaTokenCode": "icon/critical/primary",
@@ -927,7 +933,9 @@
             "figmaRef": "AvatarIcon Icon, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/critical/primary-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow icon/critical/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
@@ -935,7 +943,7 @@
             "part": "icon (info)",
             "state": "default",
             "codeClassBefore": "text-info-600",
-            "codeClassNow": "text-info-600",
+            "codeClassNow": "icon-info-primary-avatar",
             "today": "info-600",
             "figmaToken": "icon/info/primary",
             "figmaTokenCode": "icon/info/primary",
@@ -945,7 +953,9 @@
             "figmaRef": "AvatarIcon Icon, Variant=Info",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/info/primary-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's info-600; \"next\" and \"dark\" follow icon/info/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
@@ -953,7 +963,7 @@
             "part": "icon (success)",
             "state": "default",
             "codeClassBefore": "text-success-600",
-            "codeClassNow": "text-success-600",
+            "codeClassNow": "icon-success-primary-avatar",
             "today": "success-600",
             "figmaToken": "icon/success/primary",
             "figmaTokenCode": "icon/success/primary",
@@ -963,7 +973,9 @@
             "figmaRef": "AvatarIcon Icon, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/success/primary-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-600; \"next\" and \"dark\" follow icon/success/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
@@ -971,7 +983,7 @@
             "part": "icon (warning)",
             "state": "default",
             "codeClassBefore": "text-warning-600",
-            "codeClassNow": "text-warning-600",
+            "codeClassNow": "icon-warning-primary-avatar",
             "today": "warning-600",
             "figmaToken": "icon/warning/primary",
             "figmaTokenCode": "icon/warning/primary",
@@ -981,7 +993,9 @@
             "figmaRef": "AvatarIcon Icon, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/warning/primary-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow icon/warning/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
@@ -1336,12 +1350,14 @@
             "part": "toggle text button",
             "state": "hover",
             "codeClassBefore": "hover:text-primary-600",
-            "codeClassNow": "hover:text-primary-600",
+            "codeClassNow": "hover:text-link-hover-action",
             "today": "primary-600",
             "figmaRef": "Collapsible has no hover variant",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/link/hover-action",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-600; \"next\" and \"dark\" follow text/link/hover (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1349,12 +1365,14 @@
             "part": "toggle text button",
             "state": "pressed",
             "codeClassBefore": "active:text-primary-800",
-            "codeClassNow": "active:text-primary-800",
+            "codeClassNow": "active:text-link-active-action",
             "today": "primary-800",
             "figmaRef": "Collapsible has no pressed variant",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/link/active-action",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-800; \"next\" and \"dark\" follow text/link/active (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1382,12 +1400,14 @@
             "part": "toggle chevron icon",
             "state": "hover",
             "codeClassBefore": "group-hover:text-primary-500",
-            "codeClassNow": "group-hover:text-primary-500",
+            "codeClassNow": "group-hover:icon-accent-hover-action",
             "today": "primary-500",
             "figmaRef": "Collapsible has no hover variant",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/accent/hover-action",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-500; \"next\" and \"dark\" follow icon/accent/hover (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/collapsible/collapsible.tsx",
@@ -1395,12 +1415,14 @@
             "part": "toggle chevron icon",
             "state": "pressed",
             "codeClassBefore": "group-active:text-primary-700",
-            "codeClassNow": "group-active:text-primary-700",
+            "codeClassNow": "group-active:icon-accent-active-action",
             "today": "primary-700",
             "figmaRef": "Collapsible has no pressed variant",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/accent/active-action",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-700; \"next\" and \"dark\" follow icon/accent/active (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -1520,7 +1542,7 @@
             "part": "icon well (primary), default state",
             "state": "default",
             "codeClassBefore": "bg-primary-50",
-            "codeClassNow": "bg-primary-50",
+            "codeClassNow": "bg-accent-subtle",
             "today": "primary-50",
             "figmaToken": "bg/accent/primary-inverse",
             "figmaTokenCode": "bg/accent/subtle",
@@ -1530,8 +1552,9 @@
             "figmaRef": "AvatarIcon instance, no fill override (would be AvatarIcon Primary)",
             "confidence": "low",
             "verdict": "uncertain",
-            "action": "none",
-            "note": "Inferred from the nested AvatarIcon variant, not bound on the ActionItem itself."
+            "action": "converted to the role by the grammar (P-66)",
+            "note": "icon well (primary): a static pale fill, the role AvatarIcon wells use (bg/accent/subtle, today primary-50); the map had named the pressable-state token bg/accent/default. Same as the inferred Figma row (uncertain, P-34).",
+            "codeTokenNow": "bg/accent/subtle"
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -1539,7 +1562,7 @@
             "part": "icon well (neutral), default state",
             "state": "default",
             "codeClassBefore": "bg-neutral-50",
-            "codeClassNow": "bg-neutral-50",
+            "codeClassNow": "bg-surface-secondary",
             "today": "neutral-50",
             "figmaToken": "bg/surface/secondary",
             "figmaTokenCode": "bg/surface/secondary",
@@ -1549,8 +1572,9 @@
             "figmaRef": "AvatarIcon instance, no fill override (would be AvatarIcon Neutral)",
             "confidence": "low",
             "verdict": "uncertain",
-            "action": "none",
-            "note": "Inferred from the nested AvatarIcon variant, not bound on the ActionItem itself."
+            "action": "converted to the role by the grammar (P-66)",
+            "note": "icon well (neutral): a static pale fill, the role AvatarIcon wells use (bg/surface/secondary, today neutral-50); the map had named the pressable-state token bg/surface/default. Same as the inferred Figma row (uncertain, P-34).",
+            "codeTokenNow": "bg/surface/secondary"
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -1574,7 +1598,7 @@
             "part": "icon (neutral)",
             "state": "default",
             "codeClassBefore": "text-neutral-500",
-            "codeClassNow": "text-neutral-500",
+            "codeClassNow": "icon-surface-primary-item",
             "today": "neutral-500",
             "figmaToken": "icon/surface/primary",
             "figmaTokenCode": "icon/surface/primary",
@@ -1584,7 +1608,9 @@
             "figmaRef": "_DataList / ActionItem AvatarIcon>icon, Variant=Secondary",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/primary-item",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-500; \"next\" and \"dark\" follow icon/surface/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -1608,13 +1634,14 @@
             "part": "icon well, hover / focus / active",
             "state": "hover",
             "codeClassBefore": "group-hover:bg-neutral-0",
-            "codeClassNow": "group-hover:bg-neutral-0",
+            "codeClassNow": "group-hover:bg-surface-hover-lift",
             "today": "neutral-0",
             "figmaRef": "no fill override on the AvatarIcon in hover",
             "confidence": "low",
             "verdict": "no-figma-match",
-            "action": "none",
-            "note": "Figma well does not change on hover."
+            "action": "component-level alias (P-66)",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-0; \"next\" and \"dark\" follow bg/surface/hover (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list.",
+            "codeTokenNow": "bg/surface/hover-lift"
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -1622,12 +1649,14 @@
             "part": "icon well, hover / focus / active",
             "state": "focus",
             "codeClassBefore": "group-focus-visible:bg-neutral-0",
-            "codeClassNow": "group-focus-visible:bg-neutral-0",
+            "codeClassNow": "group-focus-visible:bg-surface-hover-lift",
             "today": "neutral-0",
             "figmaRef": "no fill override on the AvatarIcon in focus",
             "confidence": "low",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/surface/hover-lift",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-0; \"next\" and \"dark\" follow bg/surface/hover (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
@@ -2218,7 +2247,7 @@
             "part": "interactive item (primary), hover / active",
             "state": "pressed",
             "codeClassBefore": "active:border-neutral-300",
-            "codeClassNow": "active:border-neutral-300",
+            "codeClassNow": "active:border-surface-active-card",
             "today": "neutral-300",
             "figmaToken": "border/surface/active",
             "figmaTokenCode": "border/surface/active",
@@ -2228,7 +2257,9 @@
             "figmaRef": "DataList / Item @S, Variants=Primary State=Active",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/active-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-300; \"next\" and \"dark\" follow border/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dataList/dataListItem/dataListItem.tsx",
@@ -2277,7 +2308,7 @@
             "part": "interactive item (secondary), hover / focus / active overlay",
             "state": "pressed",
             "codeClassBefore": "active:bg-neutral-400/8",
-            "codeClassNow": "active:bg-neutral-400/8",
+            "codeClassNow": "active:bg-surface-transparent-active-item",
             "today": "neutral-400/8",
             "figmaToken": "bg/surface/transparent-active",
             "figmaTokenCode": "bg/surface/transparent-active",
@@ -2287,7 +2318,9 @@
             "figmaRef": "DataList / Item @F@8, Variants=Secondary State=Active",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/surface/transparent-active-item",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's color-mix(in srgb, var(--color-neutral-400) 8%, transparent); \"next\" and \"dark\" follow bg/surface/transparent-active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dataList/dataListItem/dataListItem.tsx",
@@ -2562,7 +2595,7 @@
             "part": "close button, focus / hover / active",
             "state": "pressed",
             "codeClassBefore": "active:border-neutral-200",
-            "codeClassNow": "active:border-neutral-200",
+            "codeClassNow": "active:border-surface-active-control",
             "today": "neutral-200",
             "figmaToken": "border/surface/active",
             "figmaTokenCode": "border/surface/active",
@@ -2572,7 +2605,9 @@
             "figmaRef": "Button Tertiary @S, Active (via the instance)",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow border/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2580,7 +2615,7 @@
             "part": "close button, focus / hover / active",
             "state": "pressed",
             "codeClassBefore": "active:bg-neutral-50",
-            "codeClassNow": "active:bg-neutral-50",
+            "codeClassNow": "active:bg-surface-active-control",
             "today": "neutral-50",
             "figmaToken": "bg/surface/active",
             "figmaTokenCode": "bg/surface/active",
@@ -2590,7 +2625,9 @@
             "figmaRef": "Button Tertiary @F, Active (via the instance)",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/surface/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-50; \"next\" and \"dark\" follow bg/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
@@ -2758,7 +2795,7 @@
             "part": "title (critical)",
             "state": "default",
             "codeClassBefore": "text-critical-600",
-            "codeClassNow": "text-critical-600",
+            "codeClassNow": "text-critical-primary-title",
             "today": "critical-600",
             "figmaToken": "text/critical/primary",
             "figmaTokenCode": "text/critical/primary",
@@ -2768,7 +2805,9 @@
             "figmaRef": "_DialogAlert / Header Title, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/critical/primary-title",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow text/critical/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -2776,7 +2815,7 @@
             "part": "title (info)",
             "state": "default",
             "codeClassBefore": "text-info-600",
-            "codeClassNow": "text-info-600",
+            "codeClassNow": "text-info-primary-title",
             "today": "info-600",
             "figmaToken": "text/info/primary",
             "figmaTokenCode": "text/info/primary",
@@ -2786,7 +2825,9 @@
             "figmaRef": "_DialogAlert / Header Title, Variant=Info",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/info/primary-title",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's info-600; \"next\" and \"dark\" follow text/info/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -2794,7 +2835,7 @@
             "part": "title (success)",
             "state": "default",
             "codeClassBefore": "text-success-600",
-            "codeClassNow": "text-success-600",
+            "codeClassNow": "text-success-primary-title",
             "today": "success-600",
             "figmaToken": "text/success/primary",
             "figmaTokenCode": "text/success/primary",
@@ -2804,7 +2845,9 @@
             "figmaRef": "_DialogAlert / Header Title, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/success/primary-title",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-600; \"next\" and \"dark\" follow text/success/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -2812,7 +2855,7 @@
             "part": "title (warning)",
             "state": "default",
             "codeClassBefore": "text-warning-600",
-            "codeClassNow": "text-warning-600",
+            "codeClassNow": "text-warning-primary-title",
             "today": "warning-600",
             "figmaToken": "text/warning/primary",
             "figmaTokenCode": "text/warning/primary",
@@ -2822,7 +2865,9 @@
             "figmaRef": "_DialogAlert / Header Title, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/warning/primary-title",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow text/warning/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
@@ -3141,7 +3186,7 @@
             "part": "menu item, hover",
             "state": "hover",
             "codeClassBefore": "hover:text-neutral-800",
-            "codeClassNow": "hover:text-neutral-800",
+            "codeClassNow": "hover:text-surface-hover-label",
             "today": "neutral-800",
             "figmaToken": "text/surface/hover",
             "figmaTokenCode": "text/surface/hover",
@@ -3151,7 +3196,9 @@
             "figmaRef": "Dropdown / MenuItem Label, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/surface/hover-label",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow text/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
@@ -3179,7 +3226,7 @@
             "part": "menu item, highlighted (keyboard/pointer highlight = hover)",
             "state": "hover",
             "codeClassBefore": "data-highlighted:text-neutral-800",
-            "codeClassNow": "data-highlighted:text-neutral-800",
+            "codeClassNow": "data-highlighted:text-surface-hover-label",
             "today": "neutral-800",
             "figmaToken": "text/surface/hover",
             "figmaTokenCode": "text/surface/hover",
@@ -3189,7 +3236,9 @@
             "figmaRef": "Dropdown / MenuItem Label, State=Hover",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/surface/hover-label",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow text/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
@@ -3233,12 +3282,14 @@
             "part": "unchecked box icon, default",
             "state": "default",
             "codeClassBefore": "text-neutral-400",
-            "codeClassNow": "text-neutral-400",
+            "codeClassNow": "icon-surface-default-control",
             "today": "neutral-400",
             "figmaRef": "_Checkbox / Item: no icon override in State=Default IsChecked=False (Icon component default)",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-400; \"next\" and \"dark\" follow icon/surface/default (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/checkbox/checkbox.tsx",
@@ -3346,7 +3397,7 @@
             "part": "label, hover",
             "state": "hover",
             "codeClassBefore": "group-hover/root:text-neutral-800",
-            "codeClassNow": "group-hover/root:text-neutral-800",
+            "codeClassNow": "group-hover/root:text-surface-hover-label",
             "today": "neutral-800",
             "figmaToken": "text/surface/hover",
             "figmaTokenCode": "text/surface/hover",
@@ -3356,7 +3407,9 @@
             "figmaRef": "_Checkbox / Item Label, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/surface/hover-label",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow text/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/checkbox/checkbox.tsx",
@@ -3560,7 +3613,7 @@
             "part": "card container, checked + disabled",
             "state": "disabled",
             "codeClassBefore": "disabled:border-neutral-300",
-            "codeClassNow": "disabled:border-neutral-300",
+            "codeClassNow": "disabled:border-surface-disabled-card",
             "today": "neutral-300",
             "figmaToken": "border/surface/disabled",
             "figmaTokenCode": "border/surface/disabled",
@@ -3570,7 +3623,9 @@
             "figmaRef": "_Checkbox / Card @S, State=Disabled IsChecked=True",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/disabled-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-300; \"next\" and \"dark\" follow border/surface/disabled (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
@@ -3778,7 +3833,7 @@
             "part": "checked mark",
             "state": "disabled",
             "codeClassBefore": "group-data-disabled:text-neutral-500",
-            "codeClassNow": "group-data-disabled:text-neutral-500",
+            "codeClassNow": "group-data-disabled:icon-surface-default-card",
             "today": "neutral-500",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -3788,7 +3843,9 @@
             "figmaRef": "_Checkbox / Card IconWrapper/Icon, State=Disabled IsChecked=True",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-500; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/hooks/useInputProps.ts",
@@ -4016,7 +4073,7 @@
             "part": "field (warning), default",
             "state": "default",
             "codeClassBefore": "border-warning-500",
-            "codeClassNow": "border-warning-500",
+            "codeClassNow": "border-warning-default-input",
             "today": "warning-500",
             "figmaToken": "border/warning/default",
             "figmaTokenCode": "border/warning/default",
@@ -4026,7 +4083,9 @@
             "figmaRef": "Input / Text @S, Variant=Warning State=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/default-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-500; \"next\" and \"dark\" follow border/warning/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4070,7 +4129,7 @@
             "part": "field (warning), hover",
             "state": "hover",
             "codeClassBefore": "hover:border-warning-600",
-            "codeClassNow": "hover:border-warning-600",
+            "codeClassNow": "hover:border-warning-hover-input",
             "today": "warning-600",
             "figmaToken": "border/warning/hover",
             "figmaTokenCode": "border/warning/hover",
@@ -4080,7 +4139,9 @@
             "figmaRef": "Input / Text @S, Variant=Warning State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/hover-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow border/warning/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4140,12 +4201,14 @@
             "part": "field (warning), focused + hover (active)",
             "state": "hover + focus",
             "codeClassBefore": "focus-within:hover:border-warning-500",
-            "codeClassNow": "focus-within:hover:border-warning-500",
+            "codeClassNow": "focus-within:hover:border-warning-active-control",
             "today": "warning-500",
             "figmaRef": "no focus+hover variant in Figma",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-500; \"next\" and \"dark\" follow border/warning/active (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4169,7 +4232,7 @@
             "part": "field (critical), default",
             "state": "default",
             "codeClassBefore": "border-critical-500",
-            "codeClassNow": "border-critical-500",
+            "codeClassNow": "border-critical-default-input",
             "today": "critical-500",
             "figmaToken": "border/critical/default",
             "figmaTokenCode": "border/critical/default",
@@ -4179,7 +4242,9 @@
             "figmaRef": "Input / Text @S, Variant=Critical State=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/default-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-500; \"next\" and \"dark\" follow border/critical/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4223,7 +4288,7 @@
             "part": "field (critical), hover",
             "state": "hover",
             "codeClassBefore": "hover:border-critical-600",
-            "codeClassNow": "hover:border-critical-600",
+            "codeClassNow": "hover:border-critical-hover-input",
             "today": "critical-600",
             "figmaToken": "border/critical/hover",
             "figmaTokenCode": "border/critical/hover",
@@ -4233,7 +4298,9 @@
             "figmaRef": "Input / Text @S, Variant=Critical State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/hover-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow border/critical/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4293,12 +4360,14 @@
             "part": "field (critical), focused + hover (active)",
             "state": "hover + focus",
             "codeClassBefore": "focus-within:hover:border-critical-500",
-            "codeClassNow": "focus-within:hover:border-critical-500",
+            "codeClassNow": "focus-within:hover:border-critical-active-control",
             "today": "critical-500",
             "figmaRef": "no focus+hover variant in Figma",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-500; \"next\" and \"dark\" follow border/critical/active (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
@@ -4498,7 +4567,7 @@
             "part": "add icon (default), default / hover",
             "state": "default",
             "codeClassBefore": "text-neutral-400",
-            "codeClassNow": "text-neutral-400",
+            "codeClassNow": "icon-surface-default-control",
             "today": "neutral-400",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -4508,7 +4577,9 @@
             "figmaRef": "Input / FileAvatar DropZone/Icon, State=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-400; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4516,7 +4587,7 @@
             "part": "add icon (default), default / hover",
             "state": "hover",
             "codeClassBefore": "group-hover:text-neutral-600",
-            "codeClassNow": "group-hover:text-neutral-600",
+            "codeClassNow": "group-hover:icon-surface-hover-control",
             "today": "neutral-600",
             "figmaToken": "icon/surface/hover",
             "figmaTokenCode": "icon/surface/hover",
@@ -4526,7 +4597,9 @@
             "figmaRef": "Input / FileAvatar DropZone/Icon, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/hover-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-600; \"next\" and \"dark\" follow icon/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4549,12 +4622,14 @@
             "part": "drop zone (warning), default / hover / focus ring",
             "state": "hover",
             "codeClassBefore": "hover:border-warning-400",
-            "codeClassNow": "hover:border-warning-400",
+            "codeClassNow": "hover:border-warning-hover-file-avatar",
             "today": "warning-400",
             "figmaRef": "Input / FileAvatar has no Warning variant",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/hover-file-avatar",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-400; \"next\" and \"dark\" follow border/warning/hover (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4607,7 +4682,7 @@
             "part": "drop zone (critical), default / hover / focus ring",
             "state": "default",
             "codeClassBefore": "border-critical-500",
-            "codeClassNow": "border-critical-500",
+            "codeClassNow": "border-critical-default-input",
             "today": "critical-500",
             "figmaToken": "border/critical/default",
             "figmaTokenCode": "border/critical/default",
@@ -4617,7 +4692,9 @@
             "figmaRef": "Input / FileAvatar DropZone S, Variant=Critical State=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/default-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-500; \"next\" and \"dark\" follow border/critical/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4625,7 +4702,7 @@
             "part": "drop zone (critical), default / hover / focus ring",
             "state": "hover",
             "codeClassBefore": "hover:border-critical-600",
-            "codeClassNow": "hover:border-critical-600",
+            "codeClassNow": "hover:border-critical-hover-input",
             "today": "critical-600",
             "figmaToken": "border/critical/hover",
             "figmaTokenCode": "border/critical/hover",
@@ -4635,7 +4712,9 @@
             "figmaRef": "Input / FileAvatar DropZone S, Variant=Critical State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/hover-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow border/critical/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4704,12 +4783,14 @@
             "part": "add icon, disabled",
             "state": "disabled",
             "codeClassBefore": "text-neutral-200",
-            "codeClassNow": "text-neutral-200",
+            "codeClassNow": "icon-surface-disabled-control",
             "today": "neutral-200",
             "figmaRef": "Input / FileAvatar has no Disabled state",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/disabled-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow icon/surface/disabled (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
@@ -4814,7 +4895,7 @@
             "part": "search icon, default / focused (active)",
             "state": "default",
             "codeClassBefore": "text-neutral-400",
-            "codeClassNow": "text-neutral-400",
+            "codeClassNow": "icon-surface-default-control",
             "today": "neutral-400",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -4824,7 +4905,9 @@
             "figmaRef": "Input / Search WrapperIcon/Icon, State=Default",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-400; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputSearch/inputSearch.tsx",
@@ -4832,7 +4915,7 @@
             "part": "search icon, default / focused (active)",
             "state": "default",
             "codeClassBefore": "text-neutral-600",
-            "codeClassNow": "text-neutral-600",
+            "codeClassNow": "icon-surface-active-control",
             "today": "neutral-600",
             "figmaToken": "icon/surface/active",
             "figmaTokenCode": "icon/surface/active",
@@ -4842,7 +4925,9 @@
             "figmaRef": "Input / Search WrapperIcon/Icon, State=Focus",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-600; \"next\" and \"dark\" follow icon/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputSearch/inputSearch.tsx",
@@ -4850,7 +4935,7 @@
             "part": "clear icon (no state change)",
             "state": "default",
             "codeClassBefore": "text-neutral-600",
-            "codeClassNow": "text-neutral-600",
+            "codeClassNow": "icon-surface-default-clear",
             "today": "neutral-600",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -4860,7 +4945,9 @@
             "figmaRef": "Input / Search Icon (clear), HasValue=True",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-clear",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-600; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -4943,12 +5030,14 @@
             "part": "addon (warning)",
             "state": "default",
             "codeClassBefore": "border-warning-600",
-            "codeClassNow": "border-warning-600",
+            "codeClassNow": "border-warning-primary-input",
             "today": "warning-600",
             "figmaRef": "no stroke on the Figma addon",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow border/warning/primary (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -4956,7 +5045,7 @@
             "part": "addon (warning)",
             "state": "default",
             "codeClassBefore": "text-warning-600",
-            "codeClassNow": "text-warning-600",
+            "codeClassNow": "text-warning-primary-input",
             "today": "warning-600",
             "figmaToken": "text/warning/primary",
             "figmaTokenCode": "text/warning/primary",
@@ -4966,7 +5055,9 @@
             "figmaRef": "Input / Text Addon/Label, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/warning/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow text/warning/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -4994,12 +5085,14 @@
             "part": "addon (critical)",
             "state": "default",
             "codeClassBefore": "border-critical-600",
-            "codeClassNow": "border-critical-600",
+            "codeClassNow": "border-critical-primary-input",
             "today": "critical-600",
             "figmaRef": "no stroke on the Figma addon",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow border/critical/primary (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -5007,7 +5100,7 @@
             "part": "addon (critical)",
             "state": "default",
             "codeClassBefore": "text-critical-600",
-            "codeClassNow": "text-critical-600",
+            "codeClassNow": "text-critical-primary-input",
             "today": "critical-600",
             "figmaToken": "text/critical/primary",
             "figmaTokenCode": "text/critical/primary",
@@ -5017,7 +5110,9 @@
             "figmaRef": "Input / Text Addon/Label, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/critical/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow text/critical/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -5095,12 +5190,14 @@
             "part": "field icon (warning)",
             "state": "default",
             "codeClassBefore": "text-warning-600",
-            "codeClassNow": "text-warning-600",
+            "codeClassNow": "icon-warning-primary-input",
             "today": "warning-600",
             "figmaRef": "Input / Text has no field icon",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/warning/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-600; \"next\" and \"dark\" follow icon/warning/primary (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -5108,12 +5205,14 @@
             "part": "field icon (critical)",
             "state": "default",
             "codeClassBefore": "text-critical-600",
-            "codeClassNow": "text-critical-600",
+            "codeClassNow": "icon-critical-primary-input",
             "today": "critical-600",
             "figmaRef": "Input / Text has no field icon",
             "confidence": "high",
             "verdict": "no-figma-match",
-            "action": "none"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/critical/primary-input",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-600; \"next\" and \"dark\" follow icon/critical/primary (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/inputText/inputText.tsx",
@@ -5172,7 +5271,7 @@
             "part": "label, hover",
             "state": "hover",
             "codeClassBefore": "hover:text-neutral-800",
-            "codeClassNow": "hover:text-neutral-800",
+            "codeClassNow": "hover:text-surface-hover-label",
             "today": "neutral-800",
             "figmaToken": "text/surface/hover",
             "figmaTokenCode": "text/surface/hover",
@@ -5182,7 +5281,9 @@
             "figmaRef": "_Radio / Item Label, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/surface/hover-label",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow text/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/radio/radio.tsx",
@@ -5521,7 +5622,7 @@
             "part": "card container, checked + disabled",
             "state": "disabled + selected",
             "codeClassBefore": "disabled:data-[state=checked]:border-neutral-300",
-            "codeClassNow": "disabled:data-[state=checked]:border-neutral-300",
+            "codeClassNow": "disabled:data-[state=checked]:border-surface-disabled-card",
             "today": "neutral-300",
             "figmaToken": "border/surface/disabled",
             "figmaTokenCode": "border/surface/disabled",
@@ -5531,7 +5632,9 @@
             "figmaRef": "_Radio / Card @S, State=Disabled IsChecked=True",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/disabled-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-300; \"next\" and \"dark\" follow border/surface/disabled (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/radioCard/radioCard.tsx",
@@ -5699,7 +5802,7 @@
             "part": "checked radio icon",
             "state": "disabled",
             "codeClassBefore": "group-disabled:text-neutral-500",
-            "codeClassNow": "group-disabled:text-neutral-500",
+            "codeClassNow": "group-disabled:icon-surface-default-card",
             "today": "neutral-500",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -5709,7 +5812,9 @@
             "figmaRef": "_Radio / Card IconWrapper/Icon, State=Disabled IsChecked=True",
             "confidence": "medium",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-500; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -5717,7 +5822,7 @@
             "part": "track, default / focus ring",
             "state": "default",
             "codeClassBefore": "border-neutral-200",
-            "codeClassNow": "border-neutral-200",
+            "codeClassNow": "border-surface-default-switch",
             "today": "neutral-200",
             "figmaToken": "border/surface/default",
             "figmaTokenCode": "border/surface/default",
@@ -5727,7 +5832,9 @@
             "figmaRef": "Switch Switch S, IsChecked=False",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/default-switch",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow border/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/forms/switch/switch.tsx",
@@ -6503,7 +6610,7 @@
             "part": "track (warning)",
             "state": "default",
             "codeClassBefore": "border-warning-300",
-            "codeClassNow": "border-warning-300",
+            "codeClassNow": "border-warning-primary-spinner",
             "today": "warning-300",
             "figmaToken": "border/warning/primary",
             "figmaTokenCode": "border/warning/primary",
@@ -6513,7 +6620,9 @@
             "figmaRef": "Spinner background S, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/warning/primary-spinner",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-300; \"next\" and \"dark\" follow border/warning/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6521,7 +6630,7 @@
             "part": "track (critical)",
             "state": "default",
             "codeClassBefore": "border-critical-300",
-            "codeClassNow": "border-critical-300",
+            "codeClassNow": "border-critical-primary-spinner",
             "today": "critical-300",
             "figmaToken": "border/critical/primary",
             "figmaTokenCode": "border/critical/primary",
@@ -6531,7 +6640,9 @@
             "figmaRef": "Spinner background S, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/critical/primary-spinner",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-300; \"next\" and \"dark\" follow border/critical/primary (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/spinner/spinner.tsx",
@@ -6757,7 +6868,7 @@
             "part": "ping dot (primary)",
             "state": "default",
             "codeClassBefore": "bg-primary-500",
-            "codeClassNow": "bg-primary-500",
+            "codeClassNow": "bg-accent-solid-ping",
             "today": "primary-500",
             "figmaToken": "icon/accent/primary",
             "figmaTokenCode": "icon/accent/primary",
@@ -6767,7 +6878,9 @@
             "figmaRef": "StatePingAnimation Dot F, Variant=Primary",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/accent/solid-ping",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-500; \"next\" and \"dark\" follow bg/accent/solid (the role by the grammar; no usable Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
@@ -6956,7 +7069,7 @@
             "part": "trigger (underlined), hover underline",
             "state": "hover",
             "codeClassBefore": "hover:shadow-neutral-800",
-            "codeClassNow": "hover:shadow-neutral-800",
+            "codeClassNow": "hover:shadow-border-surface-hover-tab",
             "today": "neutral-800",
             "figmaToken": "border/surface/hover",
             "figmaTokenCode": "border/surface/hover",
@@ -6966,7 +7079,9 @@
             "figmaRef": "_Tabs / Trigger @S, HasUnderline=True State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/hover-tab",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow border/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7034,7 +7149,7 @@
             "part": "trigger label, default / hover",
             "state": "hover",
             "codeClassBefore": "hover:text-neutral-800",
-            "codeClassNow": "hover:text-neutral-800",
+            "codeClassNow": "hover:text-link-secondary-hover-nav",
             "today": "neutral-800",
             "figmaToken": "text/link/secondary-hover",
             "figmaTokenCode": "text/link/secondary-hover",
@@ -7044,7 +7159,9 @@
             "figmaRef": "_Tabs / Trigger Label, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "text/link/secondary-hover-nav",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-800; \"next\" and \"dark\" follow text/link/secondary-hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7090,7 +7207,7 @@
             "part": "trigger icon, disabled",
             "state": "disabled",
             "codeClassBefore": "text-neutral-200",
-            "codeClassNow": "text-neutral-200",
+            "codeClassNow": "icon-surface-disabled-control",
             "today": "neutral-200",
             "figmaToken": "icon/surface/disabled",
             "figmaTokenCode": "icon/surface/disabled",
@@ -7100,7 +7217,9 @@
             "figmaRef": "_Tabs / Trigger Icon, State=Disabled",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/disabled-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-200; \"next\" and \"dark\" follow icon/surface/disabled (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7108,7 +7227,7 @@
             "part": "trigger icon, default / hover",
             "state": "default",
             "codeClassBefore": "text-neutral-500",
-            "codeClassNow": "text-neutral-500",
+            "codeClassNow": "icon-surface-default-tab",
             "today": "neutral-500",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -7118,7 +7237,9 @@
             "figmaRef": "_Tabs / Trigger Icon, State=Default IsSelected=False",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-tab",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-500; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7126,7 +7247,7 @@
             "part": "trigger icon, default / hover",
             "state": "hover",
             "codeClassBefore": "group-hover:text-neutral-300",
-            "codeClassNow": "group-hover:text-neutral-300",
+            "codeClassNow": "group-hover:icon-surface-hover-tab",
             "today": "neutral-300",
             "figmaToken": "icon/surface/hover",
             "figmaTokenCode": "icon/surface/hover",
@@ -7136,7 +7257,9 @@
             "figmaRef": "_Tabs / Trigger Icon, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/hover-tab",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-300; \"next\" and \"dark\" follow icon/surface/hover (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
@@ -7162,7 +7285,7 @@
             "part": "trigger icon, focus / active",
             "state": "pressed",
             "codeClassBefore": "group-active:text-neutral-600",
-            "codeClassNow": "group-active:text-neutral-600",
+            "codeClassNow": "group-active:icon-surface-active-control",
             "today": "neutral-600",
             "figmaToken": "icon/surface/active",
             "figmaTokenCode": "icon/surface/active",
@@ -7172,7 +7295,9 @@
             "figmaRef": "_Tabs / Trigger Icon, State=Active",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-600; \"next\" and \"dark\" follow icon/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tag/tag.tsx",
@@ -7649,7 +7774,7 @@
             "part": "toggle, disabled",
             "state": "disabled",
             "codeClassBefore": "disabled:border-neutral-100",
-            "codeClassNow": "disabled:border-neutral-100",
+            "codeClassNow": "disabled:border-surface-disabled-toggle",
             "today": "neutral-100",
             "figmaToken": "border/surface/disabled",
             "figmaTokenCode": "border/surface/disabled",
@@ -7659,7 +7784,9 @@
             "figmaRef": "Toggle @S, State=Disabled",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/disabled-toggle",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-100; \"next\" and \"dark\" follow border/surface/disabled (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/toggles/toggle/toggle.tsx",
@@ -7725,7 +7852,7 @@
             "part": "arrow (info)",
             "state": "default",
             "codeClassBefore": "fill-info-300",
-            "codeClassNow": "fill-info-300",
+            "codeClassNow": "fill-bg-info-solid-tooltip",
             "today": "info-300",
             "figmaToken": "bg/info/tertiary",
             "figmaTokenCode": "bg/info/solid",
@@ -7735,7 +7862,9 @@
             "figmaRef": "Tooltip Arrow F, Variant=Info",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/info/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's info-300; \"next\" and \"dark\" follow bg/info/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -7763,7 +7892,7 @@
             "part": "arrow (success)",
             "state": "default",
             "codeClassBefore": "fill-success-300",
-            "codeClassNow": "fill-success-300",
+            "codeClassNow": "fill-bg-success-solid-tooltip",
             "today": "success-300",
             "figmaToken": "bg/success/tertiary",
             "figmaTokenCode": "bg/success/solid",
@@ -7773,7 +7902,9 @@
             "figmaRef": "Tooltip Arrow F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/success/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-300; \"next\" and \"dark\" follow bg/success/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -7781,7 +7912,7 @@
             "part": "arrow (warning)",
             "state": "default",
             "codeClassBefore": "fill-warning-300",
-            "codeClassNow": "fill-warning-300",
+            "codeClassNow": "fill-bg-warning-solid-tooltip",
             "today": "warning-300",
             "figmaToken": "bg/warning/tertiary",
             "figmaTokenCode": "bg/warning/solid",
@@ -7791,7 +7922,9 @@
             "figmaRef": "Tooltip Arrow F, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/warning/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-300; \"next\" and \"dark\" follow bg/warning/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -7851,7 +7984,7 @@
             "part": "bubble (info)",
             "state": "default",
             "codeClassBefore": "bg-info-300",
-            "codeClassNow": "bg-info-300",
+            "codeClassNow": "bg-info-solid-tooltip",
             "today": "info-300",
             "figmaToken": "bg/info/tertiary",
             "figmaTokenCode": "bg/info/solid",
@@ -7861,7 +7994,9 @@
             "figmaRef": "Tooltip @F, Variant=Info",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/info/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's info-300; \"next\" and \"dark\" follow bg/info/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -7962,7 +8097,7 @@
             "part": "bubble (success)",
             "state": "default",
             "codeClassBefore": "bg-success-300",
-            "codeClassNow": "bg-success-300",
+            "codeClassNow": "bg-success-solid-tooltip",
             "today": "success-300",
             "figmaToken": "bg/success/tertiary",
             "figmaTokenCode": "bg/success/solid",
@@ -7972,7 +8107,9 @@
             "figmaRef": "Tooltip @F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/success/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-300; \"next\" and \"dark\" follow bg/success/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -8014,7 +8151,7 @@
             "part": "bubble (warning)",
             "state": "default",
             "codeClassBefore": "bg-warning-300",
-            "codeClassNow": "bg-warning-300",
+            "codeClassNow": "bg-warning-solid-tooltip",
             "today": "warning-300",
             "figmaToken": "bg/warning/tertiary",
             "figmaTokenCode": "bg/warning/solid",
@@ -8024,7 +8161,9 @@
             "figmaRef": "Tooltip @F, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/warning/solid-tooltip",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-300; \"next\" and \"dark\" follow bg/warning/solid (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
@@ -8419,7 +8558,7 @@
             "part": "address panel, active",
             "state": "pressed",
             "codeClassBefore": "active:border-neutral-300",
-            "codeClassNow": "active:border-neutral-300",
+            "codeClassNow": "active:border-surface-active-card",
             "today": "neutral-300",
             "figmaToken": "border/surface/active",
             "figmaTokenCode": "border/surface/active",
@@ -8429,7 +8568,9 @@
             "figmaRef": "_AssetTransfer / Address @S, State=Active",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "border/surface/active-card",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-300; \"next\" and \"dark\" follow border/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
@@ -8512,7 +8653,7 @@
             "part": "link-out icon, default / hover / active",
             "state": "hover",
             "codeClassBefore": "group-hover:text-primary-300",
-            "codeClassNow": "group-hover:text-primary-300",
+            "codeClassNow": "group-hover:icon-surface-default-asset-transfer",
             "today": "primary-300",
             "figmaToken": "icon/surface/default",
             "figmaTokenCode": "icon/surface/default",
@@ -8522,7 +8663,9 @@
             "figmaRef": "_AssetTransfer / Address warpper/Icon, State=Hover",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "icon/surface/default-asset-transfer",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's primary-300; \"next\" and \"dark\" follow icon/surface/default (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
@@ -10152,7 +10295,7 @@
             "part": "wallet button, focus / hover / active",
             "state": "pressed",
             "codeClassBefore": "active:bg-neutral-50",
-            "codeClassNow": "active:bg-neutral-50",
+            "codeClassNow": "active:bg-surface-active-control",
             "today": "neutral-50",
             "figmaToken": "bg/surface/active",
             "figmaTokenCode": "bg/surface/active",
@@ -10162,7 +10305,9 @@
             "figmaRef": "Wallet @F, State=Active",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-66)",
+            "codeTokenNow": "bg/surface/active-control",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's neutral-50; \"next\" and \"dark\" follow bg/surface/active (the Figma binding). The value conflict itself stays on the review list."
         },
         {
             "file": "src/modules/components/wallet/wallet.tsx",

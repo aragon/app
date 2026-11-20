@@ -32,7 +32,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     const closeButtonClassNames = classNames(
         'group cursor-pointer rounded-full border border-surface-default bg-surface-default p-1 outline-hidden', // Default
         'absolute top-3 right-3 md:top-4 md:right-4', // Positioning
-        'focus-ring ring-accent-focus hover:border-surface-hover active:border-neutral-200 active:bg-neutral-50', // Hover/Active/Focus states
+        'focus-ring ring-accent-focus hover:border-surface-hover active:border-surface-active-control active:bg-surface-active-control', // Hover/Active/Focus states
     );
 
     return (

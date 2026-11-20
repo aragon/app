@@ -69,7 +69,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             >
                 <Icon
                     className={classNames(
-                        'hidden text-neutral-400 group-data-[state=unchecked]/checkbox:block',
+                        'hidden icon-surface-default-control group-data-[state=unchecked]/checkbox:block',
                         'group-hover/root:icon-accent-hover group-data-disabled/checkbox:icon-surface-disabled',
                     )}
                     icon={IconType.CHECKBOX}
@@ -91,7 +91,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             <label
                 className={classNames(
                     'cursor-pointer text-sm leading-tight font-normal text-surface-default md:text-base',
-                    'group-hover/root:text-neutral-800',
+                    'group-hover/root:text-surface-hover-label',
                     'peer-data-disabled:cursor-default peer-data-disabled:text-surface-default peer-data-[state=unchecked]:peer-data-disabled:text-surface-disabled',
                     { 'pl-2 md:pl-3': labelPosition === 'right' },
                     { 'pr-2 md:pr-3': labelPosition === 'left' },

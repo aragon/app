@@ -21,10 +21,10 @@ const dialogAlertVariantToIcon: Record<DialogAlertVariant, IconType> = {
 };
 
 const dialogAlertVariantToTitleClass: Record<DialogAlertVariant, string> = {
-    critical: 'text-critical-600',
-    info: 'text-info-600',
-    success: 'text-success-600',
-    warning: 'text-warning-600',
+    critical: 'text-critical-primary-title',
+    info: 'text-info-primary-title',
+    success: 'text-success-primary-title',
+    warning: 'text-warning-primary-title',
 };
 
 export const DialogAlertHeader: React.FC<IDialogAlertHeaderProps> = (props) => {

@@ -13,16 +13,16 @@ const variantToClassNames: Record<InputVariant | 'disabled', string[]> = {
         'focus-within:hover:border-accent-active focus-within:hover:shadow-accent-default', // Focus + Hover state
     ],
     warning: [
-        'border-warning-500 bg-surface-default shadow-warning-sm', // Default state
-        'hover:border-warning-600 hover:shadow-warning-default', // Hover state
+        'border-warning-default-input bg-surface-default shadow-warning-sm', // Default state
+        'hover:border-warning-hover-input hover:shadow-warning-default', // Hover state
         'focus-within:border-warning-active focus-within:shadow-warning-default', // Focus state
-        'focus-within:hover:border-warning-500 focus-within:hover:shadow-warning-default', // Focus + Hover state
+        'focus-within:hover:border-warning-active-control focus-within:hover:shadow-warning-default', // Focus + Hover state
     ],
     critical: [
-        'border-critical-500 bg-surface-default shadow-critical-sm', // Default state
-        'hover:border-critical-600 hover:shadow-critical-default', // Hover state
+        'border-critical-default-input bg-surface-default shadow-critical-sm', // Default state
+        'hover:border-critical-hover-input hover:shadow-critical-default', // Hover state
         'focus-within:border-critical-active focus-within:shadow-critical-default', // Focus state
-        'focus-within:hover:border-critical-500 focus-within:hover:shadow-critical-default', // Focus + Hover state
+        'focus-within:hover:border-critical-active-control focus-within:hover:shadow-critical-default', // Focus + Hover state
     ],
     disabled: ['border-surface-disabled bg-surface-disabled'],
 };

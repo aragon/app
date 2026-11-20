@@ -26,13 +26,13 @@ const variantRowClasses: Record<DataListActionItemVariant, string> = {
 };
 
 const variantAvatarClasses: Record<DataListActionItemVariant, string> = {
-    primary: 'bg-primary-50',
-    neutral: 'bg-neutral-50',
+    primary: 'bg-accent-subtle',
+    neutral: 'bg-surface-secondary',
 };
 
 const variantIconClasses: Record<DataListActionItemVariant, string> = {
     primary: 'icon-accent-primary',
-    neutral: 'text-neutral-500',
+    neutral: 'icon-surface-primary-item',
 };
 
 export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) => {
@@ -52,7 +52,7 @@ export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) =>
             <span
                 className={classNames(
                     'flex size-6 shrink-0 items-center justify-center rounded-full transition-colors md:size-8',
-                    'group-hover:bg-neutral-0 group-focus-visible:bg-neutral-0 group-active:bg-surface-active',
+                    'group-hover:bg-surface-hover-lift group-focus-visible:bg-surface-hover-lift group-active:bg-surface-active',
                     variantAvatarClasses[variant],
                 )}
             >

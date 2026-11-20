@@ -61,7 +61,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                     <>
                         {children}
                         <AvatarIcon
-                            className="transition-transform group-data-disabled:bg-surface-disabled group-data-disabled:text-neutral-100 group-data-[state=open]:rotate-180"
+                            className="transition-transform group-data-disabled:bg-surface-disabled group-data-disabled:icon-surface-disabled-accordion group-data-[state=open]:rotate-180"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </>

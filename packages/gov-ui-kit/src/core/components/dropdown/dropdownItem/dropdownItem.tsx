@@ -106,8 +106,8 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
                 'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-surface-default data-disabled:text-surface-disabled', // Disabled
                 { 'bg-surface-default text-surface-default': !selected && !disabled }, // Not selected
                 { 'bg-surface-selected text-surface-active': selected && !disabled }, // Selected
-                { 'hover:bg-surface-hover hover:text-neutral-800': !disabled }, // Hover
-                { 'data-highlighted:bg-surface-hover data-highlighted:text-neutral-800': !disabled }, // Highlighted
+                { 'hover:bg-surface-hover hover:text-surface-hover-label': !disabled }, // Hover
+                { 'data-highlighted:bg-surface-hover data-highlighted:text-surface-hover-label': !disabled }, // Highlighted
                 { 'flex-row justify-between': iconPosition === 'right' },
                 { 'flex-row-reverse justify-end': iconPosition === 'left' && icon != null },
                 className,

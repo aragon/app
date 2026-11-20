@@ -57,7 +57,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     const randomId = useRandomId(id);
 
     const switchClassNames = classNames(
-        'group peer w-10 cursor-default rounded-[40px] border border-neutral-200 bg-surface-default p-1 focus-ring ring-accent-focus shadow-surface-sm', // Default
+        'group peer w-10 cursor-default rounded-[40px] border border-surface-default-switch bg-surface-default p-1 focus-ring ring-accent-focus shadow-surface-sm', // Default
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // Checked
         'disabled:bg-surface-disabled disabled:data-[state=checked]:border-surface-disabled disabled:data-[state=checked]:shadow-none', // Disabled
     );

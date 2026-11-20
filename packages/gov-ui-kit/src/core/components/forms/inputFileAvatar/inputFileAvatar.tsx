@@ -13,23 +13,23 @@ const stateToClassNames: Record<InputVariant | 'disabled', { containerClasses: s
         containerClasses: [
             'border-[1px] border-surface-default hover:border-surface-hover border-dashed cursor-pointer focus-ring ring-accent-focus',
         ],
-        addIconClasses: ['text-neutral-400 group-hover:text-neutral-600'],
+        addIconClasses: ['icon-surface-default-control group-hover:icon-surface-hover-control'],
     },
     warning: {
         containerClasses: [
-            'border-[1px] border-warning-default hover:border-warning-400 border-dashed cursor-pointer focus-ring ring-warning-focus',
+            'border-[1px] border-warning-default hover:border-warning-hover-file-avatar border-dashed cursor-pointer focus-ring ring-warning-focus',
         ],
         addIconClasses: ['icon-warning-default group-hover:icon-warning-hover'],
     },
     critical: {
         containerClasses: [
-            'border-[1px] border-critical-500 hover:border-critical-600 border-dashed cursor-pointer focus-ring ring-critical-focus',
+            'border-[1px] border-critical-default-input hover:border-critical-hover-input border-dashed cursor-pointer focus-ring ring-critical-focus',
         ],
         addIconClasses: ['icon-critical-default group-hover:icon-critical-hover'],
     },
     disabled: {
         containerClasses: ['border-[1px] border-surface-disabled'],
-        addIconClasses: ['text-neutral-200'],
+        addIconClasses: ['icon-surface-disabled-control'],
     },
 };
 

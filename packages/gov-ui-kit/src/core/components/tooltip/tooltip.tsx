@@ -53,18 +53,18 @@ export interface ITooltipProps {
 
 const variantToArrowFill: Record<TooltipVariant, string> = {
     critical: 'fill-critical-300',
-    info: 'fill-info-300',
+    info: 'fill-bg-info-solid-tooltip',
     neutral: 'fill-bg-surface-tertiary-inverse',
-    success: 'fill-success-300',
-    warning: 'fill-warning-300',
+    success: 'fill-bg-success-solid-tooltip',
+    warning: 'fill-bg-warning-solid-tooltip',
 };
 
 const variantToContentClassName: Record<TooltipVariant, string> = {
     critical: 'bg-critical-300 text-critical-secondary shadow-critical-md',
-    info: 'bg-info-300 text-info-secondary shadow-info-md',
+    info: 'bg-info-solid-tooltip text-info-secondary shadow-info-md',
     neutral: 'bg-surface-tertiary-inverse text-surface-inverse shadow-surface-md',
-    success: 'bg-success-300 text-success-secondary shadow-success-md',
-    warning: 'bg-warning-300 text-warning-secondary shadow-warning-md',
+    success: 'bg-success-solid-tooltip text-success-secondary shadow-success-md',
+    warning: 'bg-warning-solid-tooltip text-warning-secondary shadow-warning-md',
 };
 
 export const Tooltip: React.FC<ITooltipProps> = (props) => {

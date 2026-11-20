@@ -68,8 +68,8 @@ const variantToClassNames: Record<SpinnerVariant, string> = {
     primary: 'border-accent-default',
     primaryInverted: 'border-accent-primary-inverse',
     success: 'border-success-default',
-    warning: 'border-warning-300',
-    critical: 'border-critical-300',
+    warning: 'border-warning-primary-spinner',
+    critical: 'border-critical-primary-spinner',
 };
 
 const variantToLoadingClassNames: Record<SpinnerVariant, string> = {

@@ -14,7 +14,7 @@ export interface IStatePingAnimationProps extends ComponentPropsWithoutRef<'span
 
 const variantToBgClassName: Record<StatePingAnimationVariant, string> = {
     info: 'bg-info-solid',
-    primary: 'bg-primary-500',
+    primary: 'bg-accent-solid-ping',
     success: 'bg-success-solid',
     warning: 'bg-warning-solid',
     critical: 'bg-critical-solid',

@@ -36,7 +36,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
 
     const labelClasses = classNames(
         'cursor-pointer text-base leading-tight text-surface-default', // default
-        'hover:text-neutral-800', // hover
+        'hover:text-surface-hover-label', // hover
         'peer-disabled:cursor-default peer-data-[state=unchecked]:peer-disabled:text-surface-disabled', // unchecked and disabled
         { 'pr-2 md:pr-3': labelPosition === 'left' },
         { 'pl-2 md:pl-3': labelPosition === 'right' },

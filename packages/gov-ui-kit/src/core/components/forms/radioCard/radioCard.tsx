@@ -57,7 +57,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
         'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
         'disabled:cursor-default disabled:border-surface-disabled disabled:bg-surface-disabled disabled:shadow-none', // disabled
-        'disabled:data-[state=checked]:border-neutral-300 disabled:data-[state=checked]:shadow-none', // disabled & checked
+        'disabled:data-[state=checked]:border-surface-disabled-card disabled:data-[state=checked]:shadow-none', // disabled & checked
         className,
     );
 
@@ -97,7 +97,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                     <Icon className="icon-surface-default group-data-[state=checked]:hidden" icon={IconType.RADIO} />
                     <RadioGroupIndicator>
                         <Icon
-                            className="icon-accent-selected group-disabled:text-neutral-500"
+                            className="icon-accent-selected group-disabled:icon-surface-default-card"
                             icon={IconType.RADIO_SELECTED}
                         />
                     </RadioGroupIndicator>

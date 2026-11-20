@@ -104,8 +104,8 @@ export const Avatar: React.FC<IAvatarProps> = (props) => {
             <RadixAvatar.Fallback
                 className={classNames(
                     'size-full rounded-[inherit]',
-                    { 'animate-pulse bg-neutral-200': imgLoading },
-                    { 'bg-neutral-200': !fallback },
+                    { 'animate-pulse bg-surface-tertiary-avatar': imgLoading },
+                    { 'bg-surface-tertiary-avatar': !fallback },
                     { 'flex items-center justify-center': showFallback },
                 )}
                 data-testid="fallback"

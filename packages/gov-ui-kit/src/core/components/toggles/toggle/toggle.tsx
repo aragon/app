@@ -27,7 +27,7 @@ export const Toggle: React.FC<IToggleProps> = (props) => {
         'data-[state=off]:hover:enabled:border-surface-hover data-[state=off]:hover:enabled:shadow-surface-default', // Default hover state
         'data-state-on:enabled:shadow-accent-sm data-[state=on]:enabled:border-surface-selected data-[state=on]:enabled:bg-surface-default data-[state=on]:enabled:text-surface-selected', // Active state
         'data-[state=on]:hover:enabled:shadow-accent-default', // Active hover state
-        'disabled:cursor-default disabled:border-neutral-100 disabled:bg-surface-disabled disabled:text-surface-disabled', // Disabled state
+        'disabled:cursor-default disabled:border-surface-disabled-toggle disabled:bg-surface-disabled disabled:text-surface-disabled', // Disabled state
         className,
     );
 

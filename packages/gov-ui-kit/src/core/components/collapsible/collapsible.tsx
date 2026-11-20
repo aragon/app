@@ -206,13 +206,13 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                         <button
                             aria-controls={contentId}
                             aria-expanded={isOpen}
-                            className="group flex cursor-pointer items-center text-link-default hover:text-primary-600 active:text-primary-800"
+                            className="group flex cursor-pointer items-center text-link-default hover:text-link-hover-action active:text-link-active-action"
                             onClick={toggle}
                             type="button"
                         >
                             {isOpen ? buttonLabelOpened : buttonLabelClosed}
                             <Icon
-                                className="ml-2 icon-accent-default group-hover:text-primary-500 group-active:text-primary-700"
+                                className="ml-2 icon-accent-default group-hover:icon-accent-hover-action group-active:icon-accent-active-action"
                                 icon={isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN}
                                 size="sm"
                             />

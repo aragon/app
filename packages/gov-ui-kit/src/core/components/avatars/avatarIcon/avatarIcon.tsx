@@ -37,10 +37,10 @@ export interface IAvatarIconProps extends HTMLAttributes<HTMLSpanElement> {
 const avatarVariantToIconClassNames: Record<AvatarIconVariant, string> = {
     neutral: 'icon-surface-primary',
     primary: 'icon-accent-primary',
-    critical: 'text-critical-600',
-    info: 'text-info-600',
-    success: 'text-success-600',
-    warning: 'text-warning-600',
+    critical: 'icon-critical-primary-avatar',
+    info: 'icon-info-primary-avatar',
+    success: 'icon-success-primary-avatar',
+    warning: 'icon-warning-primary-avatar',
 };
 
 const avatarVariantToContainerClassNames: Record<AvatarIconVariant | 'white', string> = {

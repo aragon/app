@@ -35,7 +35,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
             className={classNames(
                 'group relative h-20 border-surface-default', // default
                 'hover:border-surface-hover hover:shadow-surface-md', // hover
-                'active:border-neutral-300 active:shadow-none', // active
+                'active:border-surface-active-card active:shadow-none', // active
                 'md:w-1/2', // responsive
                 {
                     'rounded-t-xl md:rounded-l-xl md:rounded-r-none': txRole === 'sender', // sender base
@@ -82,7 +82,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                             label={resolvedUserHandle}
                         />
                         <Icon
-                            className="float-right icon-surface-default group-hover:text-primary-300 group-active:icon-accent-active"
+                            className="float-right icon-surface-default group-hover:icon-surface-default-asset-transfer group-active:icon-accent-active"
                             icon={IconType.LINK_EXTERNAL}
                             size="sm"
                         />

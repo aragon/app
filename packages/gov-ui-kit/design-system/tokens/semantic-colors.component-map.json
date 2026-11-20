@@ -17,16 +17,16 @@
     "summary": {
         "files": 83,
         "occurrences": 546,
-        "converted": 452,
-        "unconverted": 94,
+        "converted": 527,
+        "unconverted": 19,
         "unconvertedByReason": {
-            "conflict": 78,
             "no-token": 9,
             "comment": 1,
             "ordering": 4,
-            "no-utility": 2
+            "no-utility": 2,
+            "conflict": 3
         },
-        "tokensUsed": 114,
+        "tokensUsed": 169,
         "storyFiles": 17,
         "storyOccurrences": 49,
         "testFiles": 4,
@@ -146,7 +146,62 @@
         "gradient/surface/primary": "neutral-50",
         "gradient/surface/primary-transparent": "color-mix(in srgb, var(--color-neutral-50) 0%, transparent)",
         "gradient/surface/secondary": "neutral-0",
-        "gradient/surface/secondary-transparent": "color-mix(in srgb, var(--color-neutral-0) 0%, transparent)"
+        "gradient/surface/secondary-transparent": "color-mix(in srgb, var(--color-neutral-0) 0%, transparent)",
+        "border/surface/active-accordion": "neutral-200",
+        "border/surface/active-card": "neutral-300",
+        "border/surface/active-control": "neutral-200",
+        "bg/surface/active-control": "neutral-50",
+        "icon/surface/disabled-accordion": "neutral-100",
+        "bg/surface/tertiary-avatar": "neutral-200",
+        "icon/critical/primary-avatar": "critical-600",
+        "icon/info/primary-avatar": "info-600",
+        "icon/success/primary-avatar": "success-600",
+        "icon/warning/primary-avatar": "warning-600",
+        "text/link/hover-action": "primary-600",
+        "text/link/active-action": "primary-800",
+        "icon/accent/hover-action": "primary-500",
+        "icon/accent/active-action": "primary-700",
+        "icon/surface/primary-item": "neutral-500",
+        "bg/surface/hover-lift": "neutral-0",
+        "bg/surface/transparent-active-item": "color-mix(in srgb, var(--color-neutral-400) 8%, transparent)",
+        "text/critical/primary-title": "critical-600",
+        "text/info/primary-title": "info-600",
+        "text/success/primary-title": "success-600",
+        "text/warning/primary-title": "warning-600",
+        "text/surface/hover-label": "neutral-800",
+        "text/link/secondary-hover-nav": "neutral-800",
+        "icon/surface/default-control": "neutral-400",
+        "icon/surface/hover-control": "neutral-600",
+        "icon/surface/active-control": "neutral-600",
+        "icon/surface/disabled-control": "neutral-200",
+        "icon/surface/default-tab": "neutral-500",
+        "icon/surface/hover-tab": "neutral-300",
+        "icon/surface/default-clear": "neutral-600",
+        "icon/surface/default-card": "neutral-500",
+        "border/surface/disabled-card": "neutral-300",
+        "border/surface/disabled-toggle": "neutral-100",
+        "border/warning/default-input": "warning-500",
+        "border/critical/default-input": "critical-500",
+        "border/warning/hover-input": "warning-600",
+        "border/critical/hover-input": "critical-600",
+        "border/warning/hover-file-avatar": "warning-400",
+        "border/warning/active-control": "warning-500",
+        "border/critical/active-control": "critical-500",
+        "text/warning/primary-input": "warning-600",
+        "text/critical/primary-input": "critical-600",
+        "border/warning/primary-input": "warning-600",
+        "border/critical/primary-input": "critical-600",
+        "icon/warning/primary-input": "warning-600",
+        "icon/critical/primary-input": "critical-600",
+        "border/surface/default-switch": "neutral-200",
+        "border/warning/primary-spinner": "warning-300",
+        "border/critical/primary-spinner": "critical-300",
+        "bg/accent/solid-ping": "primary-500",
+        "border/surface/hover-tab": "neutral-800",
+        "bg/info/solid-tooltip": "info-300",
+        "bg/success/solid-tooltip": "success-300",
+        "bg/warning/solid-tooltip": "warning-300",
+        "icon/surface/default-asset-transfer": "primary-300"
     },
     "additions": {
         "shadow/surface/md": {
@@ -176,833 +231,229 @@
         "bg/success/solid-progress": {
             "uses": 1,
             "justification": "Code-only, pending design review (P-51): component-level alias of bg/success/solid for the Progress success bar. Today's bar (success-400) differs from the token the designer binds (bg/success/tertiary = bg/success/solid, fixed at success-500 by the success ping dot): conflict C-02. Default theme success-400; \"next\" and \"dark\" follow bg/success/solid. Collapses into bg/success/solid when the default switches to the Figma values."
+        },
+        "border/surface/active-accordion": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/active for open accordion item border (Figma binds border/surface/active, A-06). Default theme neutral-200; \"next\" and \"dark\" follow border/surface/active. Collapses into border/surface/active at the value switch (T-04)."
+        },
+        "border/surface/active-card": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/active for pressed border of pressable cards: data-list item, asset-transfer address panel (A-07). Default theme neutral-300; \"next\" and \"dark\" follow border/surface/active. Collapses into border/surface/active at the value switch (T-04)."
+        },
+        "border/surface/active-control": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/active for pressed border of small custom controls: dialog close, navigation menu trigger (A-07). Default theme neutral-200; \"next\" and \"dark\" follow border/surface/active. Collapses into border/surface/active at the value switch (T-04). Also used by the app."
+        },
+        "bg/surface/active-control": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/surface/active for pressed fill of custom pressables outside Button: dialog close, wallet, navigation and workspace selectors (A-08). Default theme neutral-50; \"next\" and \"dark\" follow bg/surface/active. Collapses into bg/surface/active at the value switch (T-04). Also used by the app."
+        },
+        "icon/surface/disabled-accordion": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/disabled for disabled accordion chevron (C-06, A-21). Default theme neutral-100; \"next\" and \"dark\" follow icon/surface/disabled. Collapses into icon/surface/disabled at the value switch (T-04)."
+        },
+        "bg/surface/tertiary-avatar": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/surface/tertiary for avatar placeholder and loading disc (A-20, D-04). Default theme neutral-200; \"next\" and \"dark\" follow bg/surface/tertiary. Collapses into bg/surface/tertiary at the value switch (T-04)."
+        },
+        "icon/critical/primary-avatar": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/critical/primary for status icon of AvatarIcon (critical) (C-04, A-11). Default theme critical-600; \"next\" and \"dark\" follow icon/critical/primary. Collapses into icon/critical/primary at the value switch (T-04)."
+        },
+        "icon/info/primary-avatar": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/info/primary for status icon of AvatarIcon (info) (C-04, A-11). Default theme info-600; \"next\" and \"dark\" follow icon/info/primary. Collapses into icon/info/primary at the value switch (T-04)."
+        },
+        "icon/success/primary-avatar": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/success/primary for status icon of AvatarIcon (success) (C-04, A-11). Default theme success-600; \"next\" and \"dark\" follow icon/success/primary. Collapses into icon/success/primary at the value switch (T-04)."
+        },
+        "icon/warning/primary-avatar": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/warning/primary for status icon of AvatarIcon (warning) (C-04, A-11). Default theme warning-600; \"next\" and \"dark\" follow icon/warning/primary. Collapses into icon/warning/primary at the value switch (T-04)."
+        },
+        "text/link/hover-action": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/link/hover for hover label of inline text actions styled as links: collapsible toggle, the asset input \"Max\", the Safe app link (C-05). Default theme primary-600; \"next\" and \"dark\" follow text/link/hover. Collapses into text/link/hover at the value switch (T-04). Also used by the app."
+        },
+        "text/link/active-action": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/link/active for pressed label of the collapsible toggle (C-05). Default theme primary-800; \"next\" and \"dark\" follow text/link/active. Collapses into text/link/active at the value switch (T-04)."
+        },
+        "icon/accent/hover-action": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/accent/hover for hover chevron of the collapsible toggle (C-05). Default theme primary-500; \"next\" and \"dark\" follow icon/accent/hover. Collapses into icon/accent/hover at the value switch (T-04)."
+        },
+        "icon/accent/active-action": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/accent/active for pressed chevron of the collapsible toggle (C-05). Default theme primary-700; \"next\" and \"dark\" follow icon/accent/active. Collapses into icon/accent/active at the value switch (T-04)."
+        },
+        "icon/surface/primary-item": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/primary for static icon of list items: data-list action item (neutral), Safe pending transaction item, chat attachment (A-21). Default theme neutral-500; \"next\" and \"dark\" follow icon/surface/primary. Collapses into icon/surface/primary at the value switch (T-04). Also used by the app."
+        },
+        "bg/surface/hover-lift": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/surface/hover for hover fill that lifts a grey or translucent part to white: data-list action item icon well (hover / focus), chat attachment buttons. Default theme neutral-0; \"next\" and \"dark\" follow bg/surface/hover. Collapses into bg/surface/hover at the value switch (T-04). Also used by the app."
+        },
+        "bg/surface/transparent-active-item": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/surface/transparent-active for pressed tint of the secondary data-list item (C-11, A-09). Default theme color-mix(in srgb, var(--color-neutral-400) 8%, transparent); \"next\" and \"dark\" follow bg/surface/transparent-active. Collapses into bg/surface/transparent-active at the value switch (T-04)."
+        },
+        "text/critical/primary-title": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/critical/primary for alert-dialog title (critical) (C-04, A-12). Default theme critical-600; \"next\" and \"dark\" follow text/critical/primary. Collapses into text/critical/primary at the value switch (T-04)."
+        },
+        "text/info/primary-title": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/info/primary for alert-dialog title (info) (C-04, A-12). Default theme info-600; \"next\" and \"dark\" follow text/info/primary. Collapses into text/info/primary at the value switch (T-04)."
+        },
+        "text/success/primary-title": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/success/primary for alert-dialog title (success) (C-04, A-12). Default theme success-600; \"next\" and \"dark\" follow text/success/primary. Collapses into text/success/primary at the value switch (T-04)."
+        },
+        "text/warning/primary-title": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/warning/primary for alert-dialog title (warning) (C-04, A-12). Default theme warning-600; \"next\" and \"dark\" follow text/warning/primary. Collapses into text/warning/primary at the value switch (T-04)."
+        },
+        "text/surface/hover-label": {
+            "uses": 4,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/surface/hover for label that darkens on hover or keyboard highlight: dropdown item, checkbox, radio, autocomplete item, chat icon button (C-07, A-01). Default theme neutral-800; \"next\" and \"dark\" follow text/surface/hover. Collapses into text/surface/hover at the value switch (T-04). Also used by the app."
+        },
+        "text/link/secondary-hover-nav": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/link/secondary-hover for hover label of tabs, navigation and footer links (C-07, A-01). Default theme neutral-800; \"next\" and \"dark\" follow text/link/secondary-hover. Collapses into text/link/secondary-hover at the value switch (T-04). Also used by the app."
+        },
+        "icon/surface/default-control": {
+            "uses": 3,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/default for default icon of form controls: unchecked checkbox, file-avatar add icon, search icon (C-06, A-21). Default theme neutral-400; \"next\" and \"dark\" follow icon/surface/default. Collapses into icon/surface/default at the value switch (T-04)."
+        },
+        "icon/surface/hover-control": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/hover for hover icon of the file-avatar input (C-06, A-21). Default theme neutral-600; \"next\" and \"dark\" follow icon/surface/hover. Collapses into icon/surface/hover at the value switch (T-04)."
+        },
+        "icon/surface/active-control": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/active for focused / pressed icon of the search input and tabs (C-06, A-21). Default theme neutral-600; \"next\" and \"dark\" follow icon/surface/active. Collapses into icon/surface/active at the value switch (T-04)."
+        },
+        "icon/surface/disabled-control": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/disabled for disabled icon of the file-avatar input and tabs (C-06, A-21). Default theme neutral-200; \"next\" and \"dark\" follow icon/surface/disabled. Collapses into icon/surface/disabled at the value switch (T-04)."
+        },
+        "icon/surface/default-tab": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/default for tab trigger icon (C-06, A-21). Default theme neutral-500; \"next\" and \"dark\" follow icon/surface/default. Collapses into icon/surface/default at the value switch (T-04)."
+        },
+        "icon/surface/hover-tab": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/hover for tab trigger icon, hover (C-06, A-21). Default theme neutral-300; \"next\" and \"dark\" follow icon/surface/hover. Collapses into icon/surface/hover at the value switch (T-04)."
+        },
+        "icon/surface/default-clear": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/default for clear icon of the search input (C-06, A-21). Default theme neutral-600; \"next\" and \"dark\" follow icon/surface/default. Collapses into icon/surface/default at the value switch (T-04)."
+        },
+        "icon/surface/default-card": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/default for checked mark of a disabled checkbox / radio card (A-04). Default theme neutral-500; \"next\" and \"dark\" follow icon/surface/default. Collapses into icon/surface/default at the value switch (T-04)."
+        },
+        "border/surface/disabled-card": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/disabled for border of a checked + disabled checkbox / radio card (C-08, A-05). Default theme neutral-300; \"next\" and \"dark\" follow border/surface/disabled. Collapses into border/surface/disabled at the value switch (T-04)."
+        },
+        "border/surface/disabled-toggle": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/disabled for border of a disabled toggle: kit Toggle, vote option toggle (C-08, A-05). Default theme neutral-100; \"next\" and \"dark\" follow border/surface/disabled. Collapses into border/surface/disabled at the value switch (T-04). Also used by the app."
+        },
+        "border/warning/default-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/default for border of a warning input field (C-03, A-13). Default theme warning-500; \"next\" and \"dark\" follow border/warning/default. Collapses into border/warning/default at the value switch (T-04)."
+        },
+        "border/critical/default-input": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/critical/default for border of a critical input field and file-avatar drop zone (C-03, A-13). Default theme critical-500; \"next\" and \"dark\" follow border/critical/default. Collapses into border/critical/default at the value switch (T-04)."
+        },
+        "border/warning/hover-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/hover for hover border of a warning input field (C-03, A-13). Default theme warning-600; \"next\" and \"dark\" follow border/warning/hover. Collapses into border/warning/hover at the value switch (T-04)."
+        },
+        "border/critical/hover-input": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/critical/hover for hover border of a critical input field and file-avatar drop zone (C-03, A-13). Default theme critical-600; \"next\" and \"dark\" follow border/critical/hover. Collapses into border/critical/hover at the value switch (T-04)."
+        },
+        "border/warning/hover-file-avatar": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/hover for hover border of the warning file-avatar drop zone (C-03, A-13). Default theme warning-400; \"next\" and \"dark\" follow border/warning/hover. Collapses into border/warning/hover at the value switch (T-04)."
+        },
+        "border/warning/active-control": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/active for active border of a status control: focused + hover warning input field (C-03). Default theme warning-500; \"next\" and \"dark\" follow border/warning/active. Collapses into border/warning/active at the value switch (T-04)."
+        },
+        "border/critical/active-control": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/critical/active for active border of a status control: focused + hover critical input field, pressed vote option (no) (C-03). Default theme critical-500; \"next\" and \"dark\" follow border/critical/active. Collapses into border/critical/active at the value switch (T-04). Also used by the app."
+        },
+        "text/warning/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/warning/primary for input addon label (warning) (C-04, A-12). Default theme warning-600; \"next\" and \"dark\" follow text/warning/primary. Collapses into text/warning/primary at the value switch (T-04)."
+        },
+        "text/critical/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of text/critical/primary for input addon label (critical) (C-04, A-12). Default theme critical-600; \"next\" and \"dark\" follow text/critical/primary. Collapses into text/critical/primary at the value switch (T-04)."
+        },
+        "border/warning/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/primary for input addon border (warning) (C-03). Default theme warning-600; \"next\" and \"dark\" follow border/warning/primary. Collapses into border/warning/primary at the value switch (T-04)."
+        },
+        "border/critical/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/critical/primary for input addon border (critical) (C-03). Default theme critical-600; \"next\" and \"dark\" follow border/critical/primary. Collapses into border/critical/primary at the value switch (T-04)."
+        },
+        "icon/warning/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/warning/primary for input field icon (warning) (C-04). Default theme warning-600; \"next\" and \"dark\" follow icon/warning/primary. Collapses into icon/warning/primary at the value switch (T-04)."
+        },
+        "icon/critical/primary-input": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/critical/primary for input field icon (critical) (C-04). Default theme critical-600; \"next\" and \"dark\" follow icon/critical/primary. Collapses into icon/critical/primary at the value switch (T-04)."
+        },
+        "border/surface/default-switch": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/default for switch track border (C-08, A-05). Default theme neutral-200; \"next\" and \"dark\" follow border/surface/default. Collapses into border/surface/default at the value switch (T-04)."
+        },
+        "border/warning/primary-spinner": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/warning/primary for spinner track (warning) (C-03, A-18). Default theme warning-300; \"next\" and \"dark\" follow border/warning/primary. Collapses into border/warning/primary at the value switch (T-04)."
+        },
+        "border/critical/primary-spinner": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/critical/primary for spinner track (critical) (C-03, A-18). Default theme critical-300; \"next\" and \"dark\" follow border/critical/primary. Collapses into border/critical/primary at the value switch (T-04)."
+        },
+        "bg/accent/solid-ping": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/accent/solid for primary ping dot (A-17; ping dots stay on bg/*/solid, P-42). Default theme primary-500; \"next\" and \"dark\" follow bg/accent/solid. Collapses into bg/accent/solid at the value switch (T-04)."
+        },
+        "border/surface/hover-tab": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of border/surface/hover for hover underline of an underlined tab, drawn as a box-shadow (A-22). Default theme neutral-800; \"next\" and \"dark\" follow border/surface/hover. Collapses into border/surface/hover at the value switch (T-04)."
+        },
+        "bg/info/solid-tooltip": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/info/solid for status tooltip bubble and arrow (info) (C-02, A-15). Default theme info-300; \"next\" and \"dark\" follow bg/info/solid. Collapses into bg/info/solid at the value switch (T-04)."
+        },
+        "bg/success/solid-tooltip": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/success/solid for status tooltip bubble and arrow (success) (C-02, A-15). Default theme success-300; \"next\" and \"dark\" follow bg/success/solid. Collapses into bg/success/solid at the value switch (T-04)."
+        },
+        "bg/warning/solid-tooltip": {
+            "uses": 2,
+            "justification": "Code-only, pending design review (P-66): component-level alias of bg/warning/solid for status tooltip bubble and arrow (warning) (C-02, A-15). Default theme warning-300; \"next\" and \"dark\" follow bg/warning/solid. Collapses into bg/warning/solid at the value switch (T-04)."
+        },
+        "icon/surface/default-asset-transfer": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-66): component-level alias of icon/surface/default for asset-transfer link-out icon, hover (Figma binds icon/surface/default in every state, A-28). Default theme primary-300; \"next\" and \"dark\" follow icon/surface/default. Collapses into icon/surface/default at the value switch (T-04)."
         }
     },
     "conflicts": [
-        {
-            "file": "src/core/components/accordion/accordionItem/accordionItem.tsx",
-            "line": 22,
-            "old": "data-[state=open]:border-neutral-200",
-            "part": "accordionItem: item container, open (expanded) state",
-            "token": "border/surface/selected",
-            "needs": "neutral-200",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "checkboxCard card container, checked / indeterminate (selected)",
-                "radioCard card container, checked (selected)",
-                "switch track, checked (selected)",
-                "tabsTrigger trigger border colour (no border width is set; kept for the selected underline)",
-                "toggle toggle on (selected)"
-            ]
-        },
-        {
-            "file": "src/core/components/accordion/accordionItemHeader/accordionItemHeader.tsx",
-            "line": 64,
-            "old": "group-data-disabled:text-neutral-100",
-            "part": "accordionItemHeader: chevron AvatarIcon override, disabled",
-            "token": "icon/surface/disabled",
-            "needs": "neutral-100",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button (all) icon: group-aria-disabled:text-neutral-300)",
-                "checkbox unchecked box icon, hover / disabled",
-                "checkbox checked / indeterminate mark",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (disabled)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "radio checked dot icon"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatar/avatar.tsx",
-            "line": 107,
-            "old": "bg-neutral-200",
-            "part": "avatar: avatar loading placeholder fill",
-            "token": "bg/surface/tertiary",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-100",
-            "fixedBy": [
-                "progress track",
-                "tag tag (neutral)"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatar/avatar.tsx",
-            "line": 108,
-            "old": "bg-neutral-200",
-            "part": "avatar: avatar placeholder fill (no fallback)",
-            "token": "bg/surface/tertiary",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-100",
-            "fixedBy": [
-                "progress track",
-                "tag tag (neutral)"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
-            "line": 40,
-            "old": "text-critical-600",
-            "part": "avatarIcon: icon (critical)",
-            "token": "icon/critical/primary",
-            "needs": "critical-600",
-            "fixedAt": "critical-500",
-            "fixedBy": [
-                "alertCard status icon (critical)",
-                "alertInline status icon (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
-            "line": 41,
-            "old": "text-info-600",
-            "part": "avatarIcon: icon (info)",
-            "token": "icon/info/primary",
-            "needs": "info-600",
-            "fixedAt": "info-500",
-            "fixedBy": [
-                "alertCard status icon (info)",
-                "alertInline status icon (info)"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
-            "line": 42,
-            "old": "text-success-600",
-            "part": "avatarIcon: icon (success)",
-            "token": "icon/success/primary",
-            "needs": "success-600",
-            "fixedAt": "success-500",
-            "fixedBy": [
-                "alertCard status icon (success)",
-                "alertInline status icon (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/avatars/avatarIcon/avatarIcon.tsx",
-            "line": 43,
-            "old": "text-warning-600",
-            "part": "avatarIcon: icon (warning)",
-            "token": "icon/warning/primary",
-            "needs": "warning-600",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "alertCard status icon (warning)",
-                "alertInline status icon (warning)",
-                "smartContractFunctionDataListItemStructure warning icon"
-            ]
-        },
-        {
-            "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 209,
-            "old": "active:text-primary-800",
-            "part": "collapsible: toggle text button",
-            "token": "text/accent/active",
-            "needs": "primary-800",
-            "fixedAt": "primary-600",
-            "fixedBy": [
-                "Button (Button ghost: active:text-primary-600)"
-            ]
-        },
-        {
-            "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 209,
-            "old": "hover:text-primary-600",
-            "part": "collapsible: toggle text button",
-            "token": "text/accent/hover",
-            "needs": "primary-600",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button secondary, ghost: no hover text colour (stays text-primary-400))"
-            ]
-        },
-        {
-            "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 215,
-            "old": "group-active:text-primary-700",
-            "part": "collapsible: toggle chevron icon",
-            "token": "icon/accent/active",
-            "needs": "primary-700",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button secondary, ghost icon: group-active:text-primary-400)",
-                "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/collapsible/collapsible.tsx",
-            "line": 215,
-            "old": "group-hover:text-primary-500",
-            "part": "collapsible: toggle chevron icon",
-            "token": "icon/accent/hover",
-            "needs": "primary-500",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button secondary, ghost icon: group-hover:text-primary-400)",
-                "checkbox unchecked box icon, hover / disabled",
-                "radio unchecked circle icon, default / hover / disabled"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
-            "line": 29,
-            "old": "bg-primary-50",
-            "part": "dataListActionItem: icon well (primary), default state",
-            "token": "bg/accent/default",
-            "needs": "primary-50",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button primary: bg-primary-400)"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
-            "line": 30,
-            "old": "bg-neutral-50",
-            "part": "dataListActionItem: icon well (neutral), default state",
-            "token": "bg/surface/default",
-            "needs": "neutral-50",
-            "fixedAt": "neutral-0",
-            "fixedBy": [
-                "Button (Button tertiary: bg-neutral-0)",
-                "accordionItem item container (pressable), default",
-                "accordionItemHeader header background layer (pressable, default)",
-                "dataListFilter search field container, default (text is static)",
-                "dataListItem item container (primary), default",
-                "dialogHeader close button, default",
-                "dropdownItem menu item, default",
-                "checkboxCard card container, default / focus ring",
-                "inputContainer field (default), default",
-                "inputContainer field (warning), default",
-                "inputContainer field (critical), default",
-                "inputFileAvatar avatar preview button, default / hover",
-                "inputFileAvatar remove button, default / focus ring",
-                "radioCard card container, default / focus ring",
-                "switch track, default / focus ring",
-                "toggle toggle off, default",
-                "wallet wallet button, default"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
-            "line": 35,
-            "old": "text-neutral-500",
-            "part": "dataListActionItem: icon (neutral)",
-            "token": "icon/surface/primary",
-            "needs": "neutral-500",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "avatarIcon icon (neutral)",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (default)"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
-            "line": 55,
-            "old": "group-focus-visible:bg-neutral-0",
-            "part": "dataListActionItem: icon well, hover / focus / active",
-            "token": "bg/surface/hover",
-            "needs": "neutral-0",
-            "fixedAt": "neutral-50",
-            "fixedBy": [
-                "Button (Button tertiary: hover:bg-neutral-50)",
-                "dialogHeader close icon AvatarIcon override, hover",
-                "dropdownItem menu item, hover",
-                "dropdownItem menu item, highlighted (keyboard/pointer highlight = hover)"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
-            "line": 55,
-            "old": "group-hover:bg-neutral-0",
-            "part": "dataListActionItem: icon well, hover / focus / active",
-            "token": "bg/surface/hover",
-            "needs": "neutral-0",
-            "fixedAt": "neutral-50",
-            "fixedBy": [
-                "Button (Button tertiary: hover:bg-neutral-50)",
-                "dialogHeader close icon AvatarIcon override, hover",
-                "dropdownItem menu item, hover",
-                "dropdownItem menu item, highlighted (keyboard/pointer highlight = hover)"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListItem/dataListItem.tsx",
-            "line": 35,
-            "old": "active:border-neutral-300",
-            "part": "dataListItem: interactive item (primary), hover / active",
-            "token": "border/surface/active",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "Button (Button tertiary: active:border-neutral-400)",
-                "accordionItem item container, focus ring / active border"
-            ]
-        },
-        {
-            "file": "src/core/components/dataList/dataListItem/dataListItem.tsx",
-            "line": 39,
-            "old": "active:bg-neutral-400/8",
-            "part": "dataListItem: interactive item (secondary), hover / focus / active overlay",
-            "token": "bg/surface/transparent-active",
-            "needs": "color-mix(in srgb, var(--color-neutral-400) 8%, transparent)",
-            "fixedAt": "color-mix(in srgb, var(--color-neutral-800) 8%, transparent)",
-            "fixedBy": [
-                "dataListActionItem item (neutral): label text / pressed overlay"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-            "line": 35,
-            "old": "active:bg-neutral-50",
-            "part": "dialogHeader: close button, focus / hover / active",
-            "token": "bg/surface/active",
-            "needs": "neutral-50",
-            "fixedAt": "neutral-0",
-            "fixedBy": [
-                "Button (Button tertiary, ghost: active:bg-neutral-0)",
-                "dataListActionItem icon well, hover / focus / active"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-            "line": 35,
-            "old": "active:border-neutral-200",
-            "part": "dialogHeader: close button, focus / hover / active",
-            "token": "border/surface/active",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "Button (Button tertiary: active:border-neutral-400)",
-                "accordionItem item container, focus ring / active border"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
-            "line": 24,
-            "old": "text-critical-600",
-            "part": "dialogAlertHeader: title (critical)",
-            "token": "text/critical/primary",
-            "needs": "critical-600",
-            "fixedAt": "critical-800",
-            "fixedBy": [
-                "alertCard message text (critical)",
-                "alertInline message text (critical)",
-                "tag tag (critical)",
-                "actionSimulation error text",
-                "proposalVotingProgressItem value text (critical)",
-                "proposalVotingStatus status text (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
-            "line": 25,
-            "old": "text-info-600",
-            "part": "dialogAlertHeader: title (info)",
-            "token": "text/info/primary",
-            "needs": "info-600",
-            "fixedAt": "info-800",
-            "fixedBy": [
-                "alertCard message text (info)",
-                "alertInline message text (info)",
-                "tag tag (info)",
-                "proposalDataListItemStatus status text (active)"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
-            "line": 26,
-            "old": "text-success-600",
-            "part": "dialogAlertHeader: title (success)",
-            "token": "text/success/primary",
-            "needs": "success-600",
-            "fixedAt": "success-800",
-            "fixedBy": [
-                "alertCard message text (success)",
-                "alertInline message text (success)",
-                "tag tag (success)",
-                "actionSimulation status text (success)",
-                "proposalVotingProgressItem value text (success)",
-                "proposalVotingStatus status text (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
-            "line": 27,
-            "old": "text-warning-600",
-            "part": "dialogAlertHeader: title (warning)",
-            "token": "text/warning/primary",
-            "needs": "warning-600",
-            "fixedAt": "warning-800",
-            "fixedBy": [
-                "alertCard message text (warning)",
-                "alertInline message text (warning)",
-                "tag tag (warning)",
-                "actionSimulation status text (warning)",
-                "smartContractFunctionDataListItemStructure function label (warning / default)"
-            ]
-        },
-        {
-            "file": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-            "line": 109,
-            "old": "hover:text-neutral-800",
-            "part": "dropdownItem: menu item, hover",
-            "token": "text/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary: no hover text colour (stays text-neutral-500))"
-            ]
-        },
-        {
-            "file": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-            "line": 110,
-            "old": "data-highlighted:text-neutral-800",
-            "part": "dropdownItem: menu item, highlighted (keyboard/pointer highlight = hover)",
-            "token": "text/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary: no hover text colour (stays text-neutral-500))"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/checkbox/checkbox.tsx",
-            "line": 72,
-            "old": "text-neutral-400",
-            "part": "checkbox: unchecked box icon, default",
-            "token": "icon/surface/default",
-            "needs": "neutral-400",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button tertiary icon: text-neutral-300)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/checkbox/checkbox.tsx",
-            "line": 94,
-            "old": "group-hover/root:text-neutral-800",
-            "part": "checkbox: label, hover",
-            "token": "text/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary: no hover text colour (stays text-neutral-500))"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
-            "line": 80,
-            "old": "disabled:border-neutral-300",
-            "part": "checkboxCard: card container, checked + disabled",
-            "token": "border/surface/disabled",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-200",
-            "fixedBy": [
-                "accordionItem item container, disabled border",
-                "checkboxCard card container, unchecked + disabled",
-                "inputContainer field, disabled",
-                "inputFileAvatar drop zone, disabled",
-                "inputText addon (disabled input; fill and text keep their enabled colour)",
-                "radioCard card container, disabled",
-                "switch track, disabled"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
-            "line": 123,
-            "old": "group-data-disabled:text-neutral-500",
-            "part": "checkboxCard: checked mark",
-            "token": "icon/surface/disabled",
-            "needs": "neutral-500",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button (all) icon: group-aria-disabled:text-neutral-300)",
-                "checkbox unchecked box icon, hover / disabled",
-                "checkbox checked / indeterminate mark",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (disabled)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "radio checked dot icon"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 16,
-            "old": "border-warning-500",
-            "part": "inputContainer: field (warning), default",
-            "token": "border/warning/default",
-            "needs": "warning-500",
-            "fixedAt": "warning-300",
-            "fixedBy": [
-                "Button (Button warning: border-warning-300)",
-                "inputFileAvatar drop zone (warning), default / hover / focus ring"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 17,
-            "old": "hover:border-warning-600",
-            "part": "inputContainer: field (warning), hover",
-            "token": "border/warning/hover",
-            "needs": "warning-600",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "Button (Button warning: hover:border-warning-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 19,
-            "old": "focus-within:hover:border-warning-500",
-            "part": "inputContainer: field (warning), focused + hover (active)",
-            "token": "border/warning/active",
-            "needs": "warning-500",
-            "fixedAt": "warning-600",
-            "fixedBy": [
-                "Button (Button warning: active:border-warning-600)",
-                "inputContainer field (warning), focused (active)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 22,
-            "old": "border-critical-500",
-            "part": "inputContainer: field (critical), default",
-            "token": "border/critical/default",
-            "needs": "critical-500",
-            "fixedAt": "critical-300",
-            "fixedBy": [
-                "Button (Button critical: border-critical-300)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 23,
-            "old": "hover:border-critical-600",
-            "part": "inputContainer: field (critical), hover",
-            "token": "border/critical/hover",
-            "needs": "critical-600",
-            "fixedAt": "critical-500",
-            "fixedBy": [
-                "Button (Button critical: hover:border-critical-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputContainer/inputContainer.tsx",
-            "line": 25,
-            "old": "focus-within:hover:border-critical-500",
-            "part": "inputContainer: field (critical), focused + hover (active)",
-            "token": "border/critical/active",
-            "needs": "critical-500",
-            "fixedAt": "critical-600",
-            "fixedBy": [
-                "Button (Button critical: active:border-critical-600)",
-                "inputContainer field (critical), focused (active)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 16,
-            "old": "group-hover:text-neutral-600",
-            "part": "inputFileAvatar: add icon (default), default / hover",
-            "token": "icon/surface/hover",
-            "needs": "neutral-600",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-hover:text-neutral-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 16,
-            "old": "text-neutral-400",
-            "part": "inputFileAvatar: add icon (default), default / hover",
-            "token": "icon/surface/default",
-            "needs": "neutral-400",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button tertiary icon: text-neutral-300)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 20,
-            "old": "hover:border-warning-400",
-            "part": "inputFileAvatar: drop zone (warning), default / hover / focus ring",
-            "token": "border/warning/hover",
-            "needs": "warning-400",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "Button (Button warning: hover:border-warning-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 26,
-            "old": "border-critical-500",
-            "part": "inputFileAvatar: drop zone (critical), default / hover / focus ring",
-            "token": "border/critical/default",
-            "needs": "critical-500",
-            "fixedAt": "critical-300",
-            "fixedBy": [
-                "Button (Button critical: border-critical-300)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 26,
-            "old": "hover:border-critical-600",
-            "part": "inputFileAvatar: drop zone (critical), default / hover / focus ring",
-            "token": "border/critical/hover",
-            "needs": "critical-600",
-            "fixedAt": "critical-500",
-            "fixedBy": [
-                "Button (Button critical: hover:border-critical-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-            "line": 32,
-            "old": "text-neutral-200",
-            "part": "inputFileAvatar: add icon, disabled",
-            "token": "icon/surface/disabled",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button (all) icon: group-aria-disabled:text-neutral-300)",
-                "checkbox unchecked box icon, hover / disabled",
-                "checkbox checked / indeterminate mark",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (disabled)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "radio checked dot icon"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputSearch/inputSearch.tsx",
-            "line": 63,
-            "old": "text-neutral-400",
-            "part": "inputSearch: search icon, default / focused (active)",
-            "token": "icon/surface/default",
-            "needs": "neutral-400",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button tertiary icon: text-neutral-300)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputSearch/inputSearch.tsx",
-            "line": 63,
-            "old": "text-neutral-600",
-            "part": "inputSearch: search icon, default / focused (active)",
-            "token": "icon/surface/active",
-            "needs": "neutral-600",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-active:text-neutral-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputSearch/inputSearch.tsx",
-            "line": 79,
-            "old": "text-neutral-600",
-            "part": "inputSearch: clear icon (no state change)",
-            "token": "icon/surface/primary",
-            "needs": "neutral-600",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "avatarIcon icon (neutral)",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (default)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 10,
-            "old": "border-warning-600",
-            "part": "inputText: addon (warning)",
-            "token": "border/warning/primary",
-            "needs": "warning-600",
-            "fixedAt": "warning-400",
-            "fixedBy": [
-                "alertCard card border + shadow (warning)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 10,
-            "old": "text-warning-600",
-            "part": "inputText: addon (warning)",
-            "token": "text/warning/primary",
-            "needs": "warning-600",
-            "fixedAt": "warning-800",
-            "fixedBy": [
-                "alertCard message text (warning)",
-                "alertInline message text (warning)",
-                "tag tag (warning)",
-                "actionSimulation status text (warning)",
-                "smartContractFunctionDataListItemStructure function label (warning / default)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 11,
-            "old": "border-critical-600",
-            "part": "inputText: addon (critical)",
-            "token": "border/critical/primary",
-            "needs": "critical-600",
-            "fixedAt": "critical-400",
-            "fixedBy": [
-                "alertCard card border + shadow (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 11,
-            "old": "text-critical-600",
-            "part": "inputText: addon (critical)",
-            "token": "text/critical/primary",
-            "needs": "critical-600",
-            "fixedAt": "critical-800",
-            "fixedBy": [
-                "alertCard message text (critical)",
-                "alertInline message text (critical)",
-                "tag tag (critical)",
-                "actionSimulation error text",
-                "proposalVotingProgressItem value text (critical)",
-                "proposalVotingStatus status text (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 17,
-            "old": "text-warning-600",
-            "part": "inputText: field icon (warning)",
-            "token": "icon/warning/primary",
-            "needs": "warning-600",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "alertCard status icon (warning)",
-                "alertInline status icon (warning)",
-                "smartContractFunctionDataListItemStructure warning icon"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/inputText/inputText.tsx",
-            "line": 18,
-            "old": "text-critical-600",
-            "part": "inputText: field icon (critical)",
-            "token": "icon/critical/primary",
-            "needs": "critical-600",
-            "fixedAt": "critical-500",
-            "fixedBy": [
-                "alertCard status icon (critical)",
-                "alertInline status icon (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/radio/radio.tsx",
-            "line": 39,
-            "old": "hover:text-neutral-800",
-            "part": "radio: label, hover",
-            "token": "text/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary: no hover text colour (stays text-neutral-500))"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/radioCard/radioCard.tsx",
-            "line": 60,
-            "old": "disabled:data-[state=checked]:border-neutral-300",
-            "part": "radioCard: card container, checked + disabled",
-            "token": "border/surface/disabled",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-200",
-            "fixedBy": [
-                "accordionItem item container, disabled border",
-                "checkboxCard card container, unchecked + disabled",
-                "inputContainer field, disabled",
-                "inputFileAvatar drop zone, disabled",
-                "inputText addon (disabled input; fill and text keep their enabled colour)",
-                "radioCard card container, disabled",
-                "switch track, disabled"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/radioCard/radioCard.tsx",
-            "line": 100,
-            "old": "group-disabled:text-neutral-500",
-            "part": "radioCard: checked radio icon",
-            "token": "icon/surface/disabled",
-            "needs": "neutral-500",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button (all) icon: group-aria-disabled:text-neutral-300)",
-                "checkbox unchecked box icon, hover / disabled",
-                "checkbox checked / indeterminate mark",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (disabled)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "radio checked dot icon"
-            ]
-        },
-        {
-            "file": "src/core/components/forms/switch/switch.tsx",
-            "line": 60,
-            "old": "border-neutral-200",
-            "part": "switch: track, default / focus ring",
-            "token": "border/surface/default",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-100",
-            "fixedBy": [
-                "Button (Button tertiary: border-neutral-100)",
-                "accordionItem item container (pressable), default",
-                "dataListFilter search field container, default (text is static)",
-                "dataListItem item container (primary), default",
-                "dialogHeader close button, default",
-                "checkboxCard card container, unchecked (default)",
-                "inputContainer field (default), default",
-                "inputFileAvatar drop zone (default), default / hover / focus ring",
-                "radioCard card container, default / focus ring",
-                "toggle toggle off, default",
-                "assetTransferAddress address panel (pressable), default",
-                "wallet wallet button, default"
-            ]
-        },
-        {
-            "file": "src/core/components/spinner/spinner.tsx",
-            "line": 71,
-            "old": "border-warning-300",
-            "part": "spinner: track (warning)",
-            "token": "border/warning/primary",
-            "needs": "warning-300",
-            "fixedAt": "warning-400",
-            "fixedBy": [
-                "alertCard card border + shadow (warning)"
-            ]
-        },
-        {
-            "file": "src/core/components/spinner/spinner.tsx",
-            "line": 72,
-            "old": "border-critical-300",
-            "part": "spinner: track (critical)",
-            "token": "border/critical/primary",
-            "needs": "critical-300",
-            "fixedAt": "critical-400",
-            "fixedBy": [
-                "alertCard card border + shadow (critical)"
-            ]
-        },
         {
             "file": "src/core/components/spinner/spinner.tsx",
             "line": 76,
@@ -1014,119 +465,6 @@
             "fixedBy": [
                 "Button (Button tertiary: active:border-neutral-400)",
                 "accordionItem item container, focus ring / active border"
-            ]
-        },
-        {
-            "file": "src/core/components/states/statePingAnimation/statePingAnimation.tsx",
-            "line": 17,
-            "old": "bg-primary-500",
-            "part": "statePingAnimation: ping dot (primary)",
-            "token": "bg/accent/solid",
-            "needs": "primary-500",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "progress bar (primary)"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 30,
-            "old": "hover:shadow-neutral-800",
-            "part": "tabsTrigger: trigger (underlined), hover underline",
-            "token": "border/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-200",
-            "fixedBy": [
-                "accordionItem item container, hover",
-                "dataListFilter search field container, hover",
-                "dataListItem interactive item (primary), hover / active",
-                "dialogHeader close button, focus / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 32,
-            "old": "hover:text-neutral-800",
-            "part": "tabsTrigger: trigger label, default / hover",
-            "token": "text/surface/hover",
-            "needs": "neutral-800",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary: no hover text colour (stays text-neutral-500))"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 39,
-            "old": "text-neutral-200",
-            "part": "tabsTrigger: trigger icon, disabled",
-            "token": "icon/surface/disabled",
-            "needs": "neutral-200",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button (all) icon: group-aria-disabled:text-neutral-300)",
-                "checkbox unchecked box icon, hover / disabled",
-                "checkbox checked / indeterminate mark",
-                "checkboxCard unchecked box icon (no hover change)",
-                "inputText field icon (disabled)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "radio checked dot icon"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 40,
-            "old": "group-hover:text-neutral-300",
-            "part": "tabsTrigger: trigger icon, default / hover",
-            "token": "icon/surface/hover",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-hover:text-neutral-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 40,
-            "old": "text-neutral-500",
-            "part": "tabsTrigger: trigger icon, default / hover",
-            "token": "icon/surface/default",
-            "needs": "neutral-500",
-            "fixedAt": "neutral-300",
-            "fixedBy": [
-                "Button (Button tertiary icon: text-neutral-300)",
-                "radio unchecked circle icon, default / hover / disabled",
-                "assetTransferAddress link-out icon, default / hover / active"
-            ]
-        },
-        {
-            "file": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-            "line": 41,
-            "old": "group-active:text-neutral-600",
-            "part": "tabsTrigger: trigger icon, focus / active",
-            "token": "icon/surface/active",
-            "needs": "neutral-600",
-            "fixedAt": "neutral-500",
-            "fixedBy": [
-                "Button (Button tertiary icon: group-active:text-neutral-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/toggles/toggle/toggle.tsx",
-            "line": 30,
-            "old": "disabled:border-neutral-100",
-            "part": "toggle: toggle, disabled",
-            "token": "border/surface/disabled",
-            "needs": "neutral-100",
-            "fixedAt": "neutral-200",
-            "fixedBy": [
-                "accordionItem item container, disabled border",
-                "checkboxCard card container, unchecked + disabled",
-                "inputContainer field, disabled",
-                "inputFileAvatar drop zone, disabled",
-                "inputText addon (disabled input; fill and text keep their enabled colour)",
-                "radioCard card container, disabled",
-                "switch track, disabled"
             ]
         },
         {
@@ -1144,42 +482,6 @@
         },
         {
             "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 56,
-            "old": "fill-info-300",
-            "part": "tooltip: arrow (info)",
-            "token": "bg/info/solid",
-            "needs": "info-300",
-            "fixedAt": "info-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (info)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 58,
-            "old": "fill-success-300",
-            "part": "tooltip: arrow (success)",
-            "token": "bg/success/solid",
-            "needs": "success-300",
-            "fixedAt": "success-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 59,
-            "old": "fill-warning-300",
-            "part": "tooltip: arrow (warning)",
-            "token": "bg/warning/solid",
-            "needs": "warning-300",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (warning)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
             "line": 63,
             "old": "bg-critical-300",
             "part": "tooltip: bubble (critical)",
@@ -1189,82 +491,6 @@
             "fixedBy": [
                 "progress bar (critical)",
                 "statePingAnimation ping dot (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 64,
-            "old": "bg-info-300",
-            "part": "tooltip: bubble (info)",
-            "token": "bg/info/solid",
-            "needs": "info-300",
-            "fixedAt": "info-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (info)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 66,
-            "old": "bg-success-300",
-            "part": "tooltip: bubble (success)",
-            "token": "bg/success/solid",
-            "needs": "success-300",
-            "fixedAt": "success-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (success)"
-            ]
-        },
-        {
-            "file": "src/core/components/tooltip/tooltip.tsx",
-            "line": 67,
-            "old": "bg-warning-300",
-            "part": "tooltip: bubble (warning)",
-            "token": "bg/warning/solid",
-            "needs": "warning-300",
-            "fixedAt": "warning-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (warning)"
-            ]
-        },
-        {
-            "file": "src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
-            "line": 38,
-            "old": "active:border-neutral-300",
-            "part": "assetTransferAddress: address panel, active",
-            "token": "border/surface/active",
-            "needs": "neutral-300",
-            "fixedAt": "neutral-400",
-            "fixedBy": [
-                "Button (Button tertiary: active:border-neutral-400)",
-                "accordionItem item container, focus ring / active border"
-            ]
-        },
-        {
-            "file": "src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
-            "line": 85,
-            "old": "group-hover:text-primary-300",
-            "part": "assetTransferAddress: link-out icon, default / hover / active",
-            "token": "icon/accent/hover",
-            "needs": "primary-300",
-            "fixedAt": "primary-400",
-            "fixedBy": [
-                "Button (Button secondary, ghost icon: group-hover:text-primary-400)",
-                "checkbox unchecked box icon, hover / disabled",
-                "radio unchecked circle icon, default / hover / disabled"
-            ]
-        },
-        {
-            "file": "src/modules/components/wallet/wallet.tsx",
-            "line": 47,
-            "old": "active:bg-neutral-50",
-            "part": "wallet: wallet button, focus / hover / active",
-            "token": "bg/surface/active",
-            "needs": "neutral-50",
-            "fixedAt": "neutral-0",
-            "fixedBy": [
-                "Button (Button tertiary, ghost: active:bg-neutral-0)",
-                "dataListActionItem icon well, hover / focus / active"
             ]
         }
     ],
@@ -1570,10 +796,9 @@
             {
                 "line": 22,
                 "old": "data-[state=open]:border-neutral-200",
-                "new": null,
+                "new": "data-[state=open]:border-surface-active-accordion",
                 "part": "item container, open (expanded) state",
-                "reason": "conflict: role token border/surface/selected has default value `primary-400`, fixed by checkboxCard card container, checked / indeterminate (selected); radioCard card container, checked (selected); switch track, checked (selected); tabsTrigger trigger border colour (no border width is set; kept for the selected underline); +1 more; this part needs neutral-200 (open (expanded) is the selected state of a disclosure)",
-                "token": "border/surface/selected"
+                "reason": "component-level alias token (P-66): border/surface/active-accordion holds today's neutral-200 in the default theme and follows border/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/selected has default value `primary-400`, fixed by checkboxCard card container, checked / indeterminate (selected); radioCard card container, checked (selected); switch track, checked (selected); tabsTrigger trigger border colour (no border width is set; kept for the selected underline); +1 more; this part needs neutral-200 (open (expanded) is the selected state of a disclosure))"
             },
             {
                 "line": 22,
@@ -1657,10 +882,9 @@
             {
                 "line": 64,
                 "old": "group-data-disabled:text-neutral-100",
-                "new": null,
+                "new": "group-data-disabled:icon-surface-disabled-accordion",
                 "part": "chevron AvatarIcon override, disabled",
-                "reason": "conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-100 (disabled chevron; note the class sits on the AvatarIcon container while the inner Icon sets its own colour, so it has no visible effect today)",
-                "token": "icon/surface/disabled"
+                "reason": "component-level alias token (P-66): icon/surface/disabled-accordion holds today's neutral-100 in the default theme and follows icon/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-100 (disabled chevron; note the class sits on the AvatarIcon container while the inner Icon sets its own colour, so it has no visible effect today))"
             }
         ],
         "src/core/components/alerts/alertCard/alertCard.tsx": [
@@ -1853,18 +1077,16 @@
             {
                 "line": 107,
                 "old": "bg-neutral-200",
-                "new": null,
+                "new": "bg-surface-tertiary-avatar",
                 "part": "avatar loading placeholder fill",
-                "reason": "conflict: role token bg/surface/tertiary has default value `neutral-100`, fixed by progress track; tag tag (neutral); this part needs neutral-200 (static placeholder fill, lowest level)",
-                "token": "bg/surface/tertiary"
+                "reason": "component-level alias token (P-66): bg/surface/tertiary-avatar holds today's neutral-200 in the default theme and follows bg/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/tertiary has default value `neutral-100`, fixed by progress track; tag tag (neutral); this part needs neutral-200 (static placeholder fill, lowest level))"
             },
             {
                 "line": 108,
                 "old": "bg-neutral-200",
-                "new": null,
+                "new": "bg-surface-tertiary-avatar",
                 "part": "avatar placeholder fill (no fallback)",
-                "reason": "conflict: role token bg/surface/tertiary has default value `neutral-100`, fixed by progress track; tag tag (neutral); this part needs neutral-200 (static placeholder fill, lowest level)",
-                "token": "bg/surface/tertiary"
+                "reason": "component-level alias token (P-66): bg/surface/tertiary-avatar holds today's neutral-200 in the default theme and follows bg/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/tertiary has default value `neutral-100`, fixed by progress track; tag tag (neutral); this part needs neutral-200 (static placeholder fill, lowest level))"
             }
         ],
         "src/core/components/avatars/avatarIcon/avatarIcon.tsx": [
@@ -1885,34 +1107,30 @@
             {
                 "line": 40,
                 "old": "text-critical-600",
-                "new": null,
+                "new": "icon-critical-primary-avatar",
                 "part": "icon (critical)",
-                "reason": "conflict: role token icon/critical/primary has default value `critical-500`, fixed by alertCard status icon (critical); alertInline status icon (critical); this part needs critical-600",
-                "token": "icon/critical/primary"
+                "reason": "component-level alias token (P-66): icon/critical/primary-avatar holds today's critical-600 in the default theme and follows icon/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/critical/primary has default value `critical-500`, fixed by alertCard status icon (critical); alertInline status icon (critical); this part needs critical-600)"
             },
             {
                 "line": 41,
                 "old": "text-info-600",
-                "new": null,
+                "new": "icon-info-primary-avatar",
                 "part": "icon (info)",
-                "reason": "conflict: role token icon/info/primary has default value `info-500`, fixed by alertCard status icon (info); alertInline status icon (info); this part needs info-600",
-                "token": "icon/info/primary"
+                "reason": "component-level alias token (P-66): icon/info/primary-avatar holds today's info-600 in the default theme and follows icon/info/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/info/primary has default value `info-500`, fixed by alertCard status icon (info); alertInline status icon (info); this part needs info-600)"
             },
             {
                 "line": 42,
                 "old": "text-success-600",
-                "new": null,
+                "new": "icon-success-primary-avatar",
                 "part": "icon (success)",
-                "reason": "conflict: role token icon/success/primary has default value `success-500`, fixed by alertCard status icon (success); alertInline status icon (success); this part needs success-600",
-                "token": "icon/success/primary"
+                "reason": "component-level alias token (P-66): icon/success/primary-avatar holds today's success-600 in the default theme and follows icon/success/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/success/primary has default value `success-500`, fixed by alertCard status icon (success); alertInline status icon (success); this part needs success-600)"
             },
             {
                 "line": 43,
                 "old": "text-warning-600",
-                "new": null,
+                "new": "icon-warning-primary-avatar",
                 "part": "icon (warning)",
-                "reason": "conflict: role token icon/warning/primary has default value `warning-500`, fixed by alertCard status icon (warning); alertInline status icon (warning); smartContractFunctionDataListItemStructure warning icon; this part needs warning-600",
-                "token": "icon/warning/primary"
+                "reason": "component-level alias token (P-66): icon/warning/primary-avatar holds today's warning-600 in the default theme and follows icon/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/warning/primary has default value `warning-500`, fixed by alertCard status icon (warning); alertInline status icon (warning); smartContractFunctionDataListItemStructure warning icon; this part needs warning-600)"
             },
             {
                 "line": 47,
@@ -2065,18 +1283,16 @@
             {
                 "line": 209,
                 "old": "hover:text-primary-600",
-                "new": null,
+                "new": "hover:text-link-hover-action",
                 "part": "toggle text button",
-                "reason": "conflict: role token text/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost: no hover text colour (stays text-primary-400)); this part needs primary-600",
-                "token": "text/accent/hover"
+                "reason": "component-level alias token (P-66): text/link/hover-action holds today's primary-600 in the default theme and follows text/link/hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost: no hover text colour (stays text-primary-400)); this part needs primary-600)"
             },
             {
                 "line": 209,
                 "old": "active:text-primary-800",
-                "new": null,
+                "new": "active:text-link-active-action",
                 "part": "toggle text button",
-                "reason": "conflict: role token text/accent/active has default value `primary-600`, fixed by Button (Button ghost: active:text-primary-600); this part needs primary-800",
-                "token": "text/accent/active"
+                "reason": "component-level alias token (P-66): text/link/active-action holds today's primary-800 in the default theme and follows text/link/active in \"next\" and \"dark\". Was unconverted (conflict: role token text/accent/active has default value `primary-600`, fixed by Button (Button ghost: active:text-primary-600); this part needs primary-800)"
             },
             {
                 "line": 215,
@@ -2088,18 +1304,16 @@
             {
                 "line": 215,
                 "old": "group-hover:text-primary-500",
-                "new": null,
+                "new": "group-hover:icon-accent-hover-action",
                 "part": "toggle chevron icon",
-                "reason": "conflict: role token icon/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-hover:text-primary-400); checkbox unchecked box icon, hover / disabled; radio unchecked circle icon, default / hover / disabled; this part needs primary-500",
-                "token": "icon/accent/hover"
+                "reason": "component-level alias token (P-66): icon/accent/hover-action holds today's primary-500 in the default theme and follows icon/accent/hover in \"next\" and \"dark\". Was unconverted (conflict: role token icon/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-hover:text-primary-400); checkbox unchecked box icon, hover / disabled; radio unchecked circle icon, default / hover / disabled; this part needs primary-500)"
             },
             {
                 "line": 215,
                 "old": "group-active:text-primary-700",
-                "new": null,
+                "new": "group-active:icon-accent-active-action",
                 "part": "toggle chevron icon",
-                "reason": "conflict: role token icon/accent/active has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-active:text-primary-400); assetTransferAddress link-out icon, default / hover / active; this part needs primary-700",
-                "token": "icon/accent/active"
+                "reason": "component-level alias token (P-66): icon/accent/active-action holds today's primary-700 in the default theme and follows icon/accent/active in \"next\" and \"dark\". Was unconverted (conflict: role token icon/accent/active has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-active:text-primary-400); assetTransferAddress link-out icon, default / hover / active; this part needs primary-700)"
             }
         ],
         "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx": [
@@ -2148,18 +1362,16 @@
             {
                 "line": 29,
                 "old": "bg-primary-50",
-                "new": null,
+                "new": "bg-accent-subtle",
                 "part": "icon well (primary), default state",
-                "reason": "conflict: role token bg/accent/default has default value `primary-400`, fixed by Button (Button primary: bg-primary-400); this part needs primary-50 (the well changes colour on hover/active, so it takes state roles)",
-                "token": "bg/accent/default"
+                "reason": "role by the grammar (P-66): icon well (primary): a static pale fill, the role AvatarIcon wells use (bg/accent/subtle, today primary-50); the map had named the pressable-state token bg/accent/default. Same as the inferred Figma row (uncertain, P-34). Was unconverted (conflict: role token bg/accent/default has default value `primary-400`, fixed by Button (Button primary: bg-primary-400); this part needs primary-50 (the well changes colour on hover/active, so it takes state roles))"
             },
             {
                 "line": 30,
                 "old": "bg-neutral-50",
-                "new": null,
+                "new": "bg-surface-secondary",
                 "part": "icon well (neutral), default state",
-                "reason": "conflict: role token bg/surface/default has default value `neutral-0`, fixed by Button (Button tertiary: bg-neutral-0); accordionItem item container (pressable), default; accordionItemHeader header background layer (pressable, default); dataListFilter search field container, default (text is static); +13 more; this part needs neutral-50 (the well changes colour on hover/active, so it takes state roles)",
-                "token": "bg/surface/default"
+                "reason": "role by the grammar (P-66): icon well (neutral): a static pale fill, the role AvatarIcon wells use (bg/surface/secondary, today neutral-50); the map had named the pressable-state token bg/surface/default. Same as the inferred Figma row (uncertain, P-34). Was unconverted (conflict: role token bg/surface/default has default value `neutral-0`, fixed by Button (Button tertiary: bg-neutral-0); accordionItem item container (pressable), default; accordionItemHeader header background layer (pressable, default); dataListFilter search field container, default (text is static); +13 more; this part needs neutral-50 (the well changes colour on hover/active, so it takes state roles))"
             },
             {
                 "line": 34,
@@ -2171,10 +1383,9 @@
             {
                 "line": 35,
                 "old": "text-neutral-500",
-                "new": null,
+                "new": "icon-surface-primary-item",
                 "part": "icon (neutral)",
-                "reason": "conflict: role token icon/surface/primary has default value `neutral-400`, fixed by avatarIcon icon (neutral); checkboxCard unchecked box icon (no hover change); inputText field icon (default); this part needs neutral-500",
-                "token": "icon/surface/primary"
+                "reason": "component-level alias token (P-66): icon/surface/primary-item holds today's neutral-500 in the default theme and follows icon/surface/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/primary has default value `neutral-400`, fixed by avatarIcon icon (neutral); checkboxCard unchecked box icon (no hover change); inputText field icon (default); this part needs neutral-500)"
             },
             {
                 "line": 45,
@@ -2186,18 +1397,16 @@
             {
                 "line": 55,
                 "old": "group-hover:bg-neutral-0",
-                "new": null,
+                "new": "group-hover:bg-surface-hover-lift",
                 "part": "icon well, hover / focus / active",
-                "reason": "conflict: role token bg/surface/hover has default value `neutral-50`, fixed by Button (Button tertiary: hover:bg-neutral-50); dialogHeader close icon AvatarIcon override, hover; dropdownItem menu item, hover; dropdownItem menu item, highlighted (keyboard/pointer highlight = hover); this part needs neutral-0",
-                "token": "bg/surface/hover"
+                "reason": "component-level alias token (P-66): bg/surface/hover-lift holds today's neutral-0 in the default theme and follows bg/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/hover has default value `neutral-50`, fixed by Button (Button tertiary: hover:bg-neutral-50); dialogHeader close icon AvatarIcon override, hover; dropdownItem menu item, hover; dropdownItem menu item, highlighted (keyboard/pointer highlight = hover); this part needs neutral-0)"
             },
             {
                 "line": 55,
                 "old": "group-focus-visible:bg-neutral-0",
-                "new": null,
+                "new": "group-focus-visible:bg-surface-hover-lift",
                 "part": "icon well, hover / focus / active",
-                "reason": "conflict: role token bg/surface/hover has default value `neutral-50`, fixed by Button (Button tertiary: hover:bg-neutral-50); dialogHeader close icon AvatarIcon override, hover; dropdownItem menu item, hover; dropdownItem menu item, highlighted (keyboard/pointer highlight = hover); this part needs neutral-0 (keyboard focus is styled as hover here)",
-                "token": "bg/surface/hover"
+                "reason": "component-level alias token (P-66): bg/surface/hover-lift holds today's neutral-0 in the default theme and follows bg/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/hover has default value `neutral-50`, fixed by Button (Button tertiary: hover:bg-neutral-50); dialogHeader close icon AvatarIcon override, hover; dropdownItem menu item, hover; dropdownItem menu item, highlighted (keyboard/pointer highlight = hover); this part needs neutral-0 (keyboard focus is styled as hover here))"
             },
             {
                 "line": 55,
@@ -2420,10 +1629,9 @@
             {
                 "line": 35,
                 "old": "active:border-neutral-300",
-                "new": null,
+                "new": "active:border-surface-active-card",
                 "part": "interactive item (primary), hover / active",
-                "reason": "conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-300",
-                "token": "border/surface/active"
+                "reason": "component-level alias token (P-66): border/surface/active-card holds today's neutral-300 in the default theme and follows border/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-300)"
             },
             {
                 "line": 39,
@@ -2442,10 +1650,9 @@
             {
                 "line": 39,
                 "old": "active:bg-neutral-400/8",
-                "new": null,
+                "new": "active:bg-surface-transparent-active-item",
                 "part": "interactive item (secondary), hover / focus / active overlay",
-                "reason": "conflict: role token bg/surface/transparent-active has default value `color-mix(in srgb, var(--color-neutral-800) 8%, transparent)`, fixed by dataListActionItem item (neutral): label text / pressed overlay; this part needs color-mix(in srgb, var(--color-neutral-400) 8%, transparent)",
-                "token": "bg/surface/transparent-active"
+                "reason": "component-level alias token (P-66): bg/surface/transparent-active-item holds today's color-mix(in srgb, var(--color-neutral-400) 8%, transparent) in the default theme and follows bg/surface/transparent-active in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/transparent-active has default value `color-mix(in srgb, var(--color-neutral-800) 8%, transparent)`, fixed by dataListActionItem item (neutral): label text / pressed overlay; this part needs color-mix(in srgb, var(--color-neutral-400) 8%, transparent))"
             },
             {
                 "line": 84,
@@ -2558,18 +1765,16 @@
             {
                 "line": 35,
                 "old": "active:border-neutral-200",
-                "new": null,
+                "new": "active:border-surface-active-control",
                 "part": "close button, focus / hover / active",
-                "reason": "conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-200",
-                "token": "border/surface/active"
+                "reason": "component-level alias token (P-66): border/surface/active-control holds today's neutral-200 in the default theme and follows border/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-200)"
             },
             {
                 "line": 35,
                 "old": "active:bg-neutral-50",
-                "new": null,
+                "new": "active:bg-surface-active-control",
                 "part": "close button, focus / hover / active",
-                "reason": "conflict: role token bg/surface/active has default value `neutral-0`, fixed by Button (Button tertiary, ghost: active:bg-neutral-0); dataListActionItem icon well, hover / focus / active; this part needs neutral-50",
-                "token": "bg/surface/active"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/active has default value `neutral-0`, fixed by Button (Button tertiary, ghost: active:bg-neutral-0); dataListActionItem icon well, hover / focus / active; this part needs neutral-50)"
             },
             {
                 "line": 41,
@@ -2636,34 +1841,30 @@
             {
                 "line": 24,
                 "old": "text-critical-600",
-                "new": null,
+                "new": "text-critical-primary-title",
                 "part": "title (critical)",
-                "reason": "conflict: role token text/critical/primary has default value `critical-800`, fixed by alertCard message text (critical); alertInline message text (critical); tag tag (critical); actionSimulation error text; +2 more; this part needs critical-600",
-                "token": "text/critical/primary"
+                "reason": "component-level alias token (P-66): text/critical/primary-title holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/critical/primary has default value `critical-800`, fixed by alertCard message text (critical); alertInline message text (critical); tag tag (critical); actionSimulation error text; +2 more; this part needs critical-600)"
             },
             {
                 "line": 25,
                 "old": "text-info-600",
-                "new": null,
+                "new": "text-info-primary-title",
                 "part": "title (info)",
-                "reason": "conflict: role token text/info/primary has default value `info-800`, fixed by alertCard message text (info); alertInline message text (info); tag tag (info); proposalDataListItemStatus status text (active); this part needs info-600",
-                "token": "text/info/primary"
+                "reason": "component-level alias token (P-66): text/info/primary-title holds today's info-600 in the default theme and follows text/info/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/info/primary has default value `info-800`, fixed by alertCard message text (info); alertInline message text (info); tag tag (info); proposalDataListItemStatus status text (active); this part needs info-600)"
             },
             {
                 "line": 26,
                 "old": "text-success-600",
-                "new": null,
+                "new": "text-success-primary-title",
                 "part": "title (success)",
-                "reason": "conflict: role token text/success/primary has default value `success-800`, fixed by alertCard message text (success); alertInline message text (success); tag tag (success); actionSimulation status text (success); +2 more; this part needs success-600",
-                "token": "text/success/primary"
+                "reason": "component-level alias token (P-66): text/success/primary-title holds today's success-600 in the default theme and follows text/success/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/success/primary has default value `success-800`, fixed by alertCard message text (success); alertInline message text (success); tag tag (success); actionSimulation status text (success); +2 more; this part needs success-600)"
             },
             {
                 "line": 27,
                 "old": "text-warning-600",
-                "new": null,
+                "new": "text-warning-primary-title",
                 "part": "title (warning)",
-                "reason": "conflict: role token text/warning/primary has default value `warning-800`, fixed by alertCard message text (warning); alertInline message text (warning); tag tag (warning); actionSimulation status text (warning); +1 more; this part needs warning-600",
-                "token": "text/warning/primary"
+                "reason": "component-level alias token (P-66): text/warning/primary-title holds today's warning-600 in the default theme and follows text/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/warning/primary has default value `warning-800`, fixed by alertCard message text (warning); alertInline message text (warning); tag tag (warning); actionSimulation status text (warning); +1 more; this part needs warning-600)"
             },
             {
                 "line": 36,
@@ -2788,10 +1989,9 @@
             {
                 "line": 109,
                 "old": "hover:text-neutral-800",
-                "new": null,
+                "new": "hover:text-surface-hover-label",
                 "part": "menu item, hover",
-                "reason": "conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800",
-                "token": "text/surface/hover"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800)"
             },
             {
                 "line": 110,
@@ -2803,10 +2003,9 @@
             {
                 "line": 110,
                 "old": "data-highlighted:text-neutral-800",
-                "new": null,
+                "new": "data-highlighted:text-surface-hover-label",
                 "part": "menu item, highlighted (keyboard/pointer highlight = hover)",
-                "reason": "conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800",
-                "token": "text/surface/hover"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800)"
             },
             {
                 "line": 121,
@@ -2827,10 +2026,9 @@
             {
                 "line": 72,
                 "old": "text-neutral-400",
-                "new": null,
+                "new": "icon-surface-default-control",
                 "part": "unchecked box icon, default",
-                "reason": "conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400 (the box icon changes colour on hover, so it takes state roles)",
-                "token": "icon/surface/default"
+                "reason": "component-level alias token (P-66): icon/surface/default-control holds today's neutral-400 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400 (the box icon changes colour on hover, so it takes state roles))"
             },
             {
                 "line": 73,
@@ -2870,10 +2068,9 @@
             {
                 "line": 94,
                 "old": "group-hover/root:text-neutral-800",
-                "new": null,
+                "new": "group-hover/root:text-surface-hover-label",
                 "part": "label, hover",
-                "reason": "conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800",
-                "token": "text/surface/hover"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800)"
             },
             {
                 "line": 95,
@@ -2950,10 +2147,9 @@
             {
                 "line": 80,
                 "old": "disabled:border-neutral-300",
-                "new": null,
+                "new": "disabled:border-surface-disabled-card",
                 "part": "card container, checked + disabled",
-                "reason": "conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-300",
-                "token": "border/surface/disabled"
+                "reason": "component-level alias token (P-66): border/surface/disabled-card holds today's neutral-300 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-300)"
             },
             {
                 "line": 80,
@@ -3028,10 +2224,9 @@
             {
                 "line": 123,
                 "old": "group-data-disabled:text-neutral-500",
-                "new": null,
+                "new": "group-data-disabled:icon-surface-default-card",
                 "part": "checked mark",
-                "reason": "conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-500",
-                "token": "icon/surface/disabled"
+                "reason": "component-level alias token (P-66): icon/surface/default-card holds today's neutral-500 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-500)"
             }
         ],
         "src/core/components/forms/hooks/useInputProps.ts": [
@@ -3117,10 +2312,9 @@
             {
                 "line": 16,
                 "old": "border-warning-500",
-                "new": null,
+                "new": "border-warning-default-input",
                 "part": "field (warning), default",
-                "reason": "conflict: role token border/warning/default has default value `warning-300`, fixed by Button (Button warning: border-warning-300); inputFileAvatar drop zone (warning), default / hover / focus ring; this part needs warning-500",
-                "token": "border/warning/default"
+                "reason": "component-level alias token (P-66): border/warning/default-input holds today's warning-500 in the default theme and follows border/warning/default in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/default has default value `warning-300`, fixed by Button (Button warning: border-warning-300); inputFileAvatar drop zone (warning), default / hover / focus ring; this part needs warning-500)"
             },
             {
                 "line": 16,
@@ -3139,10 +2333,9 @@
             {
                 "line": 17,
                 "old": "hover:border-warning-600",
-                "new": null,
+                "new": "hover:border-warning-hover-input",
                 "part": "field (warning), hover",
-                "reason": "conflict: role token border/warning/hover has default value `warning-500`, fixed by Button (Button warning: hover:border-warning-500); this part needs warning-600",
-                "token": "border/warning/hover"
+                "reason": "component-level alias token (P-66): border/warning/hover-input holds today's warning-600 in the default theme and follows border/warning/hover in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/hover has default value `warning-500`, fixed by Button (Button warning: hover:border-warning-500); this part needs warning-600)"
             },
             {
                 "line": 17,
@@ -3168,10 +2361,9 @@
             {
                 "line": 19,
                 "old": "focus-within:hover:border-warning-500",
-                "new": null,
+                "new": "focus-within:hover:border-warning-active-control",
                 "part": "field (warning), focused + hover (active)",
-                "reason": "conflict: role token border/warning/active has default value `warning-600`, fixed by Button (Button warning: active:border-warning-600); inputContainer field (warning), focused (active); this part needs warning-500",
-                "token": "border/warning/active"
+                "reason": "component-level alias token (P-66): border/warning/active-control holds today's warning-500 in the default theme and follows border/warning/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/active has default value `warning-600`, fixed by Button (Button warning: active:border-warning-600); inputContainer field (warning), focused (active); this part needs warning-500)"
             },
             {
                 "line": 19,
@@ -3183,10 +2375,9 @@
             {
                 "line": 22,
                 "old": "border-critical-500",
-                "new": null,
+                "new": "border-critical-default-input",
                 "part": "field (critical), default",
-                "reason": "conflict: role token border/critical/default has default value `critical-300`, fixed by Button (Button critical: border-critical-300); this part needs critical-500",
-                "token": "border/critical/default"
+                "reason": "component-level alias token (P-66): border/critical/default-input holds today's critical-500 in the default theme and follows border/critical/default in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/default has default value `critical-300`, fixed by Button (Button critical: border-critical-300); this part needs critical-500)"
             },
             {
                 "line": 22,
@@ -3205,10 +2396,9 @@
             {
                 "line": 23,
                 "old": "hover:border-critical-600",
-                "new": null,
+                "new": "hover:border-critical-hover-input",
                 "part": "field (critical), hover",
-                "reason": "conflict: role token border/critical/hover has default value `critical-500`, fixed by Button (Button critical: hover:border-critical-500); this part needs critical-600",
-                "token": "border/critical/hover"
+                "reason": "component-level alias token (P-66): border/critical/hover-input holds today's critical-600 in the default theme and follows border/critical/hover in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/hover has default value `critical-500`, fixed by Button (Button critical: hover:border-critical-500); this part needs critical-600)"
             },
             {
                 "line": 23,
@@ -3234,10 +2424,9 @@
             {
                 "line": 25,
                 "old": "focus-within:hover:border-critical-500",
-                "new": null,
+                "new": "focus-within:hover:border-critical-active-control",
                 "part": "field (critical), focused + hover (active)",
-                "reason": "conflict: role token border/critical/active has default value `critical-600`, fixed by Button (Button critical: active:border-critical-600); inputContainer field (critical), focused (active); this part needs critical-500",
-                "token": "border/critical/active"
+                "reason": "component-level alias token (P-66): border/critical/active-control holds today's critical-500 in the default theme and follows border/critical/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/active has default value `critical-600`, fixed by Button (Button critical: active:border-critical-600); inputContainer field (critical), focused (active); this part needs critical-500)"
             },
             {
                 "line": 25,
@@ -3314,18 +2503,16 @@
             {
                 "line": 16,
                 "old": "text-neutral-400",
-                "new": null,
+                "new": "icon-surface-default-control",
                 "part": "add icon (default), default / hover",
-                "reason": "conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400",
-                "token": "icon/surface/default"
+                "reason": "component-level alias token (P-66): icon/surface/default-control holds today's neutral-400 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400)"
             },
             {
                 "line": 16,
                 "old": "group-hover:text-neutral-600",
-                "new": null,
+                "new": "group-hover:icon-surface-hover-control",
                 "part": "add icon (default), default / hover",
-                "reason": "conflict: role token icon/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary icon: group-hover:text-neutral-500); this part needs neutral-600",
-                "token": "icon/surface/hover"
+                "reason": "component-level alias token (P-66): icon/surface/hover-control holds today's neutral-600 in the default theme and follows icon/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary icon: group-hover:text-neutral-500); this part needs neutral-600)"
             },
             {
                 "line": 20,
@@ -3337,10 +2524,9 @@
             {
                 "line": 20,
                 "old": "hover:border-warning-400",
-                "new": null,
+                "new": "hover:border-warning-hover-file-avatar",
                 "part": "drop zone (warning), default / hover / focus ring",
-                "reason": "conflict: role token border/warning/hover has default value `warning-500`, fixed by Button (Button warning: hover:border-warning-500); this part needs warning-400",
-                "token": "border/warning/hover"
+                "reason": "component-level alias token (P-66): border/warning/hover-file-avatar holds today's warning-400 in the default theme and follows border/warning/hover in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/hover has default value `warning-500`, fixed by Button (Button warning: hover:border-warning-500); this part needs warning-400)"
             },
             {
                 "line": 20,
@@ -3366,18 +2552,16 @@
             {
                 "line": 26,
                 "old": "border-critical-500",
-                "new": null,
+                "new": "border-critical-default-input",
                 "part": "drop zone (critical), default / hover / focus ring",
-                "reason": "conflict: role token border/critical/default has default value `critical-300`, fixed by Button (Button critical: border-critical-300); this part needs critical-500",
-                "token": "border/critical/default"
+                "reason": "component-level alias token (P-66): border/critical/default-input holds today's critical-500 in the default theme and follows border/critical/default in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/default has default value `critical-300`, fixed by Button (Button critical: border-critical-300); this part needs critical-500)"
             },
             {
                 "line": 26,
                 "old": "hover:border-critical-600",
-                "new": null,
+                "new": "hover:border-critical-hover-input",
                 "part": "drop zone (critical), default / hover / focus ring",
-                "reason": "conflict: role token border/critical/hover has default value `critical-500`, fixed by Button (Button critical: hover:border-critical-500); this part needs critical-600",
-                "token": "border/critical/hover"
+                "reason": "component-level alias token (P-66): border/critical/hover-input holds today's critical-600 in the default theme and follows border/critical/hover in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/hover has default value `critical-500`, fixed by Button (Button critical: hover:border-critical-500); this part needs critical-600)"
             },
             {
                 "line": 26,
@@ -3410,10 +2594,9 @@
             {
                 "line": 32,
                 "old": "text-neutral-200",
-                "new": null,
+                "new": "icon-surface-disabled-control",
                 "part": "add icon, disabled",
-                "reason": "conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-200",
-                "token": "icon/surface/disabled"
+                "reason": "component-level alias token (P-66): icon/surface/disabled-control holds today's neutral-200 in the default theme and follows icon/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-200)"
             },
             {
                 "line": 121,
@@ -3455,26 +2638,23 @@
             {
                 "line": 63,
                 "old": "text-neutral-400",
-                "new": null,
+                "new": "icon-surface-default-control",
                 "part": "search icon, default / focused (active)",
-                "reason": "conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400 (the icon changes colour when the field is focused, so it takes state roles)",
-                "token": "icon/surface/default"
+                "reason": "component-level alias token (P-66): icon/surface/default-control holds today's neutral-400 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-400 (the icon changes colour when the field is focused, so it takes state roles))"
             },
             {
                 "line": 63,
                 "old": "text-neutral-600",
-                "new": null,
+                "new": "icon-surface-active-control",
                 "part": "search icon, default / focused (active)",
-                "reason": "conflict: role token icon/surface/active has default value `neutral-500`, fixed by Button (Button tertiary icon: group-active:text-neutral-500); this part needs neutral-600 (focused field = active state)",
-                "token": "icon/surface/active"
+                "reason": "component-level alias token (P-66): icon/surface/active-control holds today's neutral-600 in the default theme and follows icon/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/active has default value `neutral-500`, fixed by Button (Button tertiary icon: group-active:text-neutral-500); this part needs neutral-600 (focused field = active state))"
             },
             {
                 "line": 79,
                 "old": "text-neutral-600",
-                "new": null,
+                "new": "icon-surface-default-clear",
                 "part": "clear icon (no state change)",
-                "reason": "conflict: role token icon/surface/primary has default value `neutral-400`, fixed by avatarIcon icon (neutral); checkboxCard unchecked box icon (no hover change); inputText field icon (default); this part needs neutral-600",
-                "token": "icon/surface/primary"
+                "reason": "component-level alias token (P-66): icon/surface/default-clear holds today's neutral-600 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/primary has default value `neutral-400`, fixed by avatarIcon icon (neutral); checkboxCard unchecked box icon (no hover change); inputText field icon (default); this part needs neutral-600)"
             }
         ],
         "src/core/components/forms/inputText/inputText.tsx": [
@@ -3509,18 +2689,16 @@
             {
                 "line": 10,
                 "old": "border-warning-600",
-                "new": null,
+                "new": "border-warning-primary-input",
                 "part": "addon (warning)",
-                "reason": "conflict: role token border/warning/primary has default value `warning-400`, fixed by alertCard card border + shadow (warning); this part needs warning-600",
-                "token": "border/warning/primary"
+                "reason": "component-level alias token (P-66): border/warning/primary-input holds today's warning-600 in the default theme and follows border/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/primary has default value `warning-400`, fixed by alertCard card border + shadow (warning); this part needs warning-600)"
             },
             {
                 "line": 10,
                 "old": "text-warning-600",
-                "new": null,
+                "new": "text-warning-primary-input",
                 "part": "addon (warning)",
-                "reason": "conflict: role token text/warning/primary has default value `warning-800`, fixed by alertCard message text (warning); alertInline message text (warning); tag tag (warning); actionSimulation status text (warning); +1 more; this part needs warning-600",
-                "token": "text/warning/primary"
+                "reason": "component-level alias token (P-66): text/warning/primary-input holds today's warning-600 in the default theme and follows text/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/warning/primary has default value `warning-800`, fixed by alertCard message text (warning); alertInline message text (warning); tag tag (warning); actionSimulation status text (warning); +1 more; this part needs warning-600)"
             },
             {
                 "line": 11,
@@ -3532,18 +2710,16 @@
             {
                 "line": 11,
                 "old": "border-critical-600",
-                "new": null,
+                "new": "border-critical-primary-input",
                 "part": "addon (critical)",
-                "reason": "conflict: role token border/critical/primary has default value `critical-400`, fixed by alertCard card border + shadow (critical); this part needs critical-600",
-                "token": "border/critical/primary"
+                "reason": "component-level alias token (P-66): border/critical/primary-input holds today's critical-600 in the default theme and follows border/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/primary has default value `critical-400`, fixed by alertCard card border + shadow (critical); this part needs critical-600)"
             },
             {
                 "line": 11,
                 "old": "text-critical-600",
-                "new": null,
+                "new": "text-critical-primary-input",
                 "part": "addon (critical)",
-                "reason": "conflict: role token text/critical/primary has default value `critical-800`, fixed by alertCard message text (critical); alertInline message text (critical); tag tag (critical); actionSimulation error text; +2 more; this part needs critical-600",
-                "token": "text/critical/primary"
+                "reason": "component-level alias token (P-66): text/critical/primary-input holds today's critical-600 in the default theme and follows text/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token text/critical/primary has default value `critical-800`, fixed by alertCard message text (critical); alertInline message text (critical); tag tag (critical); actionSimulation error text; +2 more; this part needs critical-600)"
             },
             {
                 "line": 12,
@@ -3576,18 +2752,16 @@
             {
                 "line": 17,
                 "old": "text-warning-600",
-                "new": null,
+                "new": "icon-warning-primary-input",
                 "part": "field icon (warning)",
-                "reason": "conflict: role token icon/warning/primary has default value `warning-500`, fixed by alertCard status icon (warning); alertInline status icon (warning); smartContractFunctionDataListItemStructure warning icon; this part needs warning-600",
-                "token": "icon/warning/primary"
+                "reason": "component-level alias token (P-66): icon/warning/primary-input holds today's warning-600 in the default theme and follows icon/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/warning/primary has default value `warning-500`, fixed by alertCard status icon (warning); alertInline status icon (warning); smartContractFunctionDataListItemStructure warning icon; this part needs warning-600)"
             },
             {
                 "line": 18,
                 "old": "text-critical-600",
-                "new": null,
+                "new": "icon-critical-primary-input",
                 "part": "field icon (critical)",
-                "reason": "conflict: role token icon/critical/primary has default value `critical-500`, fixed by alertCard status icon (critical); alertInline status icon (critical); this part needs critical-600",
-                "token": "icon/critical/primary"
+                "reason": "component-level alias token (P-66): icon/critical/primary-input holds today's critical-600 in the default theme and follows icon/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token icon/critical/primary has default value `critical-500`, fixed by alertCard status icon (critical); alertInline status icon (critical); this part needs critical-600)"
             },
             {
                 "line": 19,
@@ -3615,10 +2789,9 @@
             {
                 "line": 39,
                 "old": "hover:text-neutral-800",
-                "new": null,
+                "new": "hover:text-surface-hover-label",
                 "part": "label, hover",
-                "reason": "conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800",
-                "token": "text/surface/hover"
+                "reason": "component-level alias token (P-66): text/surface/hover-label holds today's neutral-800 in the default theme and follows text/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800)"
             },
             {
                 "line": 40,
@@ -3744,10 +2917,9 @@
             {
                 "line": 60,
                 "old": "disabled:data-[state=checked]:border-neutral-300",
-                "new": null,
+                "new": "disabled:data-[state=checked]:border-surface-disabled-card",
                 "part": "card container, checked + disabled",
-                "reason": "conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-300",
-                "token": "border/surface/disabled"
+                "reason": "component-level alias token (P-66): border/surface/disabled-card holds today's neutral-300 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-300)"
             },
             {
                 "line": 65,
@@ -3808,20 +2980,18 @@
             {
                 "line": 100,
                 "old": "group-disabled:text-neutral-500",
-                "new": null,
+                "new": "group-disabled:icon-surface-default-card",
                 "part": "checked radio icon",
-                "reason": "conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-500",
-                "token": "icon/surface/disabled"
+                "reason": "component-level alias token (P-66): icon/surface/default-card holds today's neutral-500 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-500)"
             }
         ],
         "src/core/components/forms/switch/switch.tsx": [
             {
                 "line": 60,
                 "old": "border-neutral-200",
-                "new": null,
+                "new": "border-surface-default-switch",
                 "part": "track, default / focus ring",
-                "reason": "conflict: role token border/surface/default has default value `neutral-100`, fixed by Button (Button tertiary: border-neutral-100); accordionItem item container (pressable), default; dataListFilter search field container, default (text is static); dataListItem item container (primary), default; +8 more; this part needs neutral-200",
-                "token": "border/surface/default"
+                "reason": "component-level alias token (P-66): border/surface/default-switch holds today's neutral-200 in the default theme and follows border/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/default has default value `neutral-100`, fixed by Button (Button tertiary: border-neutral-100); accordionItem item container (pressable), default; dataListFilter search field container, default (text is static); dataListItem item container (primary), default; +8 more; this part needs neutral-200)"
             },
             {
                 "line": 60,
@@ -4118,18 +3288,16 @@
             {
                 "line": 71,
                 "old": "border-warning-300",
-                "new": null,
+                "new": "border-warning-primary-spinner",
                 "part": "track (warning)",
-                "reason": "conflict: role token border/warning/primary has default value `warning-400`, fixed by alertCard card border + shadow (warning); this part needs warning-300",
-                "token": "border/warning/primary"
+                "reason": "component-level alias token (P-66): border/warning/primary-spinner holds today's warning-300 in the default theme and follows border/warning/primary in \"next\" and \"dark\". Was unconverted (conflict: role token border/warning/primary has default value `warning-400`, fixed by alertCard card border + shadow (warning); this part needs warning-300)"
             },
             {
                 "line": 72,
                 "old": "border-critical-300",
-                "new": null,
+                "new": "border-critical-primary-spinner",
                 "part": "track (critical)",
-                "reason": "conflict: role token border/critical/primary has default value `critical-400`, fixed by alertCard card border + shadow (critical); this part needs critical-300",
-                "token": "border/critical/primary"
+                "reason": "component-level alias token (P-66): border/critical/primary-spinner holds today's critical-300 in the default theme and follows border/critical/primary in \"next\" and \"dark\". Was unconverted (conflict: role token border/critical/primary has default value `critical-400`, fixed by alertCard card border + shadow (critical); this part needs critical-300)"
             },
             {
                 "line": 76,
@@ -4216,10 +3384,9 @@
             {
                 "line": 17,
                 "old": "bg-primary-500",
-                "new": null,
+                "new": "bg-accent-solid-ping",
                 "part": "ping dot (primary)",
-                "reason": "conflict: role token bg/accent/solid has default value `primary-400`, fixed by progress bar (primary); this part needs primary-500",
-                "token": "bg/accent/solid"
+                "reason": "component-level alias token (P-66): bg/accent/solid-ping holds today's primary-500 in the default theme and follows bg/accent/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/accent/solid has default value `primary-400`, fixed by progress bar (primary); this part needs primary-500)"
             },
             {
                 "line": 18,
@@ -4295,10 +3462,9 @@
             {
                 "line": 30,
                 "old": "hover:shadow-neutral-800",
-                "new": null,
+                "new": "hover:shadow-border-surface-hover-tab",
                 "part": "trigger (underlined), hover underline",
-                "reason": "conflict: role token border/surface/hover has default value `neutral-200`, fixed by accordionItem item container, hover; dataListFilter search field container, hover; dataListItem interactive item (primary), hover / active; dialogHeader close button, focus / hover / active; this part needs neutral-800 (was no-utility: the shadow-colour utility now exists)",
-                "token": "border/surface/hover"
+                "reason": "component-level alias token (P-66): border/surface/hover-tab holds today's neutral-800 in the default theme and follows border/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/hover has default value `neutral-200`, fixed by accordionItem item container, hover; dataListFilter search field container, hover; dataListItem interactive item (primary), hover / active; dialogHeader close button, focus / hover / active; this part needs neutral-800 (was no-utility: the shadow-colour utility now exists))"
             },
             {
                 "line": 31,
@@ -4324,10 +3490,9 @@
             {
                 "line": 32,
                 "old": "hover:text-neutral-800",
-                "new": null,
+                "new": "hover:text-link-secondary-hover-nav",
                 "part": "trigger label, default / hover",
-                "reason": "conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800",
-                "token": "text/surface/hover"
+                "reason": "component-level alias token (P-66): text/link/secondary-hover-nav holds today's neutral-800 in the default theme and follows text/link/secondary-hover in \"next\" and \"dark\". Was unconverted (conflict: role token text/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary: no hover text colour (stays text-neutral-500)); this part needs neutral-800)"
             },
             {
                 "line": 33,
@@ -4346,26 +3511,23 @@
             {
                 "line": 39,
                 "old": "text-neutral-200",
-                "new": null,
+                "new": "icon-surface-disabled-control",
                 "part": "trigger icon, disabled",
-                "reason": "conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-200",
-                "token": "icon/surface/disabled"
+                "reason": "component-level alias token (P-66): icon/surface/disabled-control holds today's neutral-200 in the default theme and follows icon/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/disabled has default value `neutral-300`, fixed by Button (Button (all) icon: group-aria-disabled:text-neutral-300); checkbox unchecked box icon, hover / disabled; checkbox checked / indeterminate mark; checkboxCard unchecked box icon (no hover change); +3 more; this part needs neutral-200)"
             },
             {
                 "line": 40,
                 "old": "text-neutral-500",
-                "new": null,
+                "new": "icon-surface-default-tab",
                 "part": "trigger icon, default / hover",
-                "reason": "conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-500",
-                "token": "icon/surface/default"
+                "reason": "component-level alias token (P-66): icon/surface/default-tab holds today's neutral-500 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/default has default value `neutral-300`, fixed by Button (Button tertiary icon: text-neutral-300); radio unchecked circle icon, default / hover / disabled; assetTransferAddress link-out icon, default / hover / active; this part needs neutral-500)"
             },
             {
                 "line": 40,
                 "old": "group-hover:text-neutral-300",
-                "new": null,
+                "new": "group-hover:icon-surface-hover-tab",
                 "part": "trigger icon, default / hover",
-                "reason": "conflict: role token icon/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary icon: group-hover:text-neutral-500); this part needs neutral-300",
-                "token": "icon/surface/hover"
+                "reason": "component-level alias token (P-66): icon/surface/hover-tab holds today's neutral-300 in the default theme and follows icon/surface/hover in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/hover has default value `neutral-500`, fixed by Button (Button tertiary icon: group-hover:text-neutral-500); this part needs neutral-300)"
             },
             {
                 "line": 41,
@@ -4377,10 +3539,9 @@
             {
                 "line": 41,
                 "old": "group-active:text-neutral-600",
-                "new": null,
+                "new": "group-active:icon-surface-active-control",
                 "part": "trigger icon, focus / active",
-                "reason": "conflict: role token icon/surface/active has default value `neutral-500`, fixed by Button (Button tertiary icon: group-active:text-neutral-500); this part needs neutral-600",
-                "token": "icon/surface/active"
+                "reason": "component-level alias token (P-66): icon/surface/active-control holds today's neutral-600 in the default theme and follows icon/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token icon/surface/active has default value `neutral-500`, fixed by Button (Button tertiary icon: group-active:text-neutral-500); this part needs neutral-600)"
             }
         ],
         "src/core/components/tag/tag.tsx": [
@@ -4557,10 +3718,9 @@
             {
                 "line": 30,
                 "old": "disabled:border-neutral-100",
-                "new": null,
+                "new": "disabled:border-surface-disabled-toggle",
                 "part": "toggle, disabled",
-                "reason": "conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-100",
-                "token": "border/surface/disabled"
+                "reason": "component-level alias token (P-66): border/surface/disabled-toggle holds today's neutral-100 in the default theme and follows border/surface/disabled in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/disabled has default value `neutral-200`, fixed by accordionItem item container, disabled border; checkboxCard card container, unchecked + disabled; inputContainer field, disabled; inputFileAvatar drop zone, disabled; +3 more; this part needs neutral-100)"
             },
             {
                 "line": 30,
@@ -4589,10 +3749,9 @@
             {
                 "line": 56,
                 "old": "fill-info-300",
-                "new": null,
+                "new": "fill-bg-info-solid-tooltip",
                 "part": "arrow (info)",
-                "reason": "conflict: role token bg/info/solid has default value `info-500`, fixed by statePingAnimation ping dot (info); this part needs info-300 (was no-utility: the fill utility now exists)",
-                "token": "bg/info/solid"
+                "reason": "component-level alias token (P-66): bg/info/solid-tooltip holds today's info-300 in the default theme and follows bg/info/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/info/solid has default value `info-500`, fixed by statePingAnimation ping dot (info); this part needs info-300 (was no-utility: the fill utility now exists))"
             },
             {
                 "line": 57,
@@ -4604,18 +3763,16 @@
             {
                 "line": 58,
                 "old": "fill-success-300",
-                "new": null,
+                "new": "fill-bg-success-solid-tooltip",
                 "part": "arrow (success)",
-                "reason": "conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-300 (was no-utility: the fill utility now exists)",
-                "token": "bg/success/solid"
+                "reason": "component-level alias token (P-66): bg/success/solid-tooltip holds today's success-300 in the default theme and follows bg/success/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-300 (was no-utility: the fill utility now exists))"
             },
             {
                 "line": 59,
                 "old": "fill-warning-300",
-                "new": null,
+                "new": "fill-bg-warning-solid-tooltip",
                 "part": "arrow (warning)",
-                "reason": "conflict: role token bg/warning/solid has default value `warning-500`, fixed by statePingAnimation ping dot (warning); this part needs warning-300 (was no-utility: the fill utility now exists)",
-                "token": "bg/warning/solid"
+                "reason": "component-level alias token (P-66): bg/warning/solid-tooltip holds today's warning-300 in the default theme and follows bg/warning/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/warning/solid has default value `warning-500`, fixed by statePingAnimation ping dot (warning); this part needs warning-300 (was no-utility: the fill utility now exists))"
             },
             {
                 "line": 63,
@@ -4642,10 +3799,9 @@
             {
                 "line": 64,
                 "old": "bg-info-300",
-                "new": null,
+                "new": "bg-info-solid-tooltip",
                 "part": "bubble (info)",
-                "reason": "conflict: role token bg/info/solid has default value `info-500`, fixed by statePingAnimation ping dot (info); this part needs info-300",
-                "token": "bg/info/solid"
+                "reason": "component-level alias token (P-66): bg/info/solid-tooltip holds today's info-300 in the default theme and follows bg/info/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/info/solid has default value `info-500`, fixed by statePingAnimation ping dot (info); this part needs info-300)"
             },
             {
                 "line": 64,
@@ -4685,10 +3841,9 @@
             {
                 "line": 66,
                 "old": "bg-success-300",
-                "new": null,
+                "new": "bg-success-solid-tooltip",
                 "part": "bubble (success)",
-                "reason": "conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-300",
-                "token": "bg/success/solid"
+                "reason": "component-level alias token (P-66): bg/success/solid-tooltip holds today's success-300 in the default theme and follows bg/success/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-300)"
             },
             {
                 "line": 66,
@@ -4707,10 +3862,9 @@
             {
                 "line": 67,
                 "old": "bg-warning-300",
-                "new": null,
+                "new": "bg-warning-solid-tooltip",
                 "part": "bubble (warning)",
-                "reason": "conflict: role token bg/warning/solid has default value `warning-500`, fixed by statePingAnimation ping dot (warning); this part needs warning-300",
-                "token": "bg/warning/solid"
+                "reason": "component-level alias token (P-66): bg/warning/solid-tooltip holds today's warning-300 in the default theme and follows bg/warning/solid in \"next\" and \"dark\". Was unconverted (conflict: role token bg/warning/solid has default value `warning-500`, fixed by statePingAnimation ping dot (warning); this part needs warning-300)"
             },
             {
                 "line": 67,
@@ -4879,10 +4033,9 @@
             {
                 "line": 38,
                 "old": "active:border-neutral-300",
-                "new": null,
+                "new": "active:border-surface-active-card",
                 "part": "address panel, active",
-                "reason": "conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-300",
-                "token": "border/surface/active"
+                "reason": "component-level alias token (P-66): border/surface/active-card holds today's neutral-300 in the default theme and follows border/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token border/surface/active has default value `neutral-400`, fixed by Button (Button tertiary: active:border-neutral-400); accordionItem item container, focus ring / active border; this part needs neutral-300)"
             },
             {
                 "line": 70,
@@ -4915,10 +4068,9 @@
             {
                 "line": 85,
                 "old": "group-hover:text-primary-300",
-                "new": null,
+                "new": "group-hover:icon-surface-default-asset-transfer",
                 "part": "link-out icon, default / hover / active",
-                "reason": "conflict: role token icon/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-hover:text-primary-400); checkbox unchecked box icon, hover / disabled; radio unchecked circle icon, default / hover / disabled; this part needs primary-300",
-                "token": "icon/accent/hover"
+                "reason": "component-level alias token (P-66): icon/surface/default-asset-transfer holds today's primary-300 in the default theme and follows icon/surface/default in \"next\" and \"dark\". Was unconverted (conflict: role token icon/accent/hover has default value `primary-400`, fixed by Button (Button secondary, ghost icon: group-hover:text-primary-400); checkbox unchecked box icon, hover / disabled; radio unchecked circle icon, default / hover / disabled; this part needs primary-300)"
             },
             {
                 "line": 85,
@@ -5591,10 +4743,9 @@
             {
                 "line": 47,
                 "old": "active:bg-neutral-50",
-                "new": null,
+                "new": "active:bg-surface-active-control",
                 "part": "wallet button, focus / hover / active",
-                "reason": "conflict: role token bg/surface/active has default value `neutral-0`, fixed by Button (Button tertiary, ghost: active:bg-neutral-0); dataListActionItem icon well, hover / focus / active; this part needs neutral-50",
-                "token": "bg/surface/active"
+                "reason": "component-level alias token (P-66): bg/surface/active-control holds today's neutral-50 in the default theme and follows bg/surface/active in \"next\" and \"dark\". Was unconverted (conflict: role token bg/surface/active has default value `neutral-0`, fixed by Button (Button tertiary, ghost: active:bg-neutral-0); dataListActionItem icon well, hover / focus / active; this part needs neutral-50)"
             },
             {
                 "line": 47,
@@ -5868,12 +5019,12 @@
             {
                 "line": 49,
                 "old": "text-neutral-600",
-                "new": null
+                "new": "icon-surface-active-control"
             },
             {
                 "line": 53,
                 "old": "text-neutral-600",
-                "new": null
+                "new": "icon-surface-active-control"
             }
         ],
         "src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.test.tsx": [

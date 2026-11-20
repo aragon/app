@@ -77,7 +77,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
         'border-surface-selected shadow-accent-default hover:shadow-accent-md', // Checked/indeterminate & hover
         'data-[state=unchecked]:enabled:border-surface-default data-[state=unchecked]:enabled:shadow-surface-sm', // Unchecked
         'data-[state=unchecked]:enabled:hover:shadow-surface-default', // Unchecked hover
-        'disabled:cursor-default disabled:border-neutral-300 disabled:bg-surface-disabled disabled:shadow-none', // Checked/indeterminate & disabled
+        'disabled:cursor-default disabled:border-surface-disabled-card disabled:bg-surface-disabled disabled:shadow-none', // Checked/indeterminate & disabled
         'disabled:data-[state=unchecked]:border-surface-disabled', // Disabled & unchecked
         className,
     );
@@ -120,9 +120,12 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                     size="md"
                 />
                 <RadixCheckbox.Indicator
-                    className={classNames('mt-0.5 icon-accent-selected group-data-disabled:text-neutral-500 md:mt-1', {
-                        'self-start': description,
-                    })}
+                    className={classNames(
+                        'mt-0.5 icon-accent-selected group-data-disabled:icon-surface-default-card md:mt-1',
+                        {
+                            'self-start': description,
+                        },
+                    )}
                 >
                     <Icon
                         className="hidden group-data-[state=checked]:block"
