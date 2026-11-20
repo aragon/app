@@ -63,3 +63,11 @@ Applying marks the map with `applied: { base }`: its line numbers then describe 
 `pnpm lint` re-sorts the renamed classes and re-wraps lines. From then on `map:check` verifies the applied state per
 file (only the unconverted primitives are left, every converted class is present, the listed test assertions use
 their new class) instead of the line-by-line match.
+
+## Shared with the app (`lib/`)
+
+`lib/semantic-class-scan.mjs` (class extraction, the line editor that applies a map, Tailwind's name order, which
+classes can sit on one element) and `lib/primitive-colors-lint.mjs` (the lint pattern, the warn/error scope check and
+the findings report) are also used by the app's semantic colour map and colour lint (`apps/app/scripts/semanticColors`).
+A change here is checked by both `pnpm tokens:semantic:map:check` / `pnpm lint:colors:check` in the kit and
+`pnpm --filter @aragon/app colors:map:check` / `lint:colors:check` in the app.

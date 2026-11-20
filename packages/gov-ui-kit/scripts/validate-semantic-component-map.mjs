@@ -34,6 +34,16 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import {
+    anyClassRe,
+    classRe,
+    compatible,
+    countClass,
+    looseRe,
+    naturalCompare,
+    coexistence as scanCoexistence,
+    splitClass,
+} from './lib/semantic-class-scan.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (p) => readFileSync(resolve(kitRoot, p), 'utf8');
@@ -42,10 +52,6 @@ const map = JSON.parse(read('design-system/tokens/semantic-colors.component-map.
 const errors = [];
 const fail = (message) => errors.push(message);
 const applied = map.applied != null;
-const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-// Whole-class occurrences of `cls` in a text (same boundaries as CLASS_RE).
-const countClass = (text, cls) =>
-    [...text.matchAll(new RegExp(String.raw`(?<=^|[\s'"\`{(,])${escapeRe(cls)}(?=$|[\s'"\`},)])`, 'gm'))].length;
 // Applied state: every class of every converted entry's replacement is in the file, as often as the entries need it.
 const checkApplied = (file, entries) => {
     const text = read(file);
@@ -84,16 +90,8 @@ const REASONS = new Set(['conflict', 'no-utility', 'no-token', 'forbidden-token'
 // Scope and extraction
 // ---------------------------------------------------------------------------------------------------------------
 
-const RAMP = 'primary|neutral|info|success|warning|critical';
-const CLASS_RE = new RegExp(
-    String.raw`(?<=^|[\s'"\`{(,])((?:(?:[A-Za-z0-9_@*&>.%#=+/-]|\[[^\]\s'"\`]*\])+:)*)(!?)((?:bg|text|border(?:-[xytrblse])?|outline|ring|ring-offset|divide(?:-[xy])?|fill|stroke|from|via|to|placeholder|caret|accent|decoration|inset-shadow|drop-shadow|shadow)-(?:${RAMP})-\d+(?:\/\d+)?|shadow-(?:${RAMP})(?:-(?:sm|md|lg|xl|2xl))?|focus-ring-(?:${RAMP})|gradient-[a-z0-9-]*(?:${RAMP})[a-z0-9-]*|prose-(?:${RAMP}))(!?)(?=$|[\s'"\`},)])`,
-    'gm',
-);
-// Anything that looks like a ramp colour, used to prove the strict pattern misses nothing.
-const LOOSE_RE = new RegExp(
-    String.raw`(?<![\w-])[\w:/\[\]=&*.@!-]*?(?:${RAMP})-\d+|(?:shadow|focus-ring|gradient|prose)-[a-z0-9-]*(?:${RAMP})`,
-    'g',
-);
+const CLASS_RE = classRe();
+const LOOSE_RE = looseRe();
 
 const walk = (dir) =>
     readdirSync(resolve(kitRoot, dir)).flatMap((name) => {
@@ -115,8 +113,7 @@ const semanticNames = new Set(
         m[1].replace('\\/', '/'),
     ),
 );
-const SEMANTIC_RE =
-    /(?<=^|[\s'"`{(,])(?:(?:[A-Za-z0-9_@*&>.%#=+/-]|\[[^\]\s'"`]*\])+:)*!?([a-z0-9-]+(?:\/\d+)?)!?(?=$|[\s'"`},)])/g;
+const SEMANTIC_RE = anyClassRe();
 const scan = (file, checkLoose = true, skipSemantic = false) => {
     const found = [];
     read(file)
@@ -459,10 +456,6 @@ const resolveNew = (cls) => {
 // ---------------------------------------------------------------------------------------------------------------
 
 const tokensUsed = new Map(); // token -> count
-const splitClass = (cls) => {
-    const m = cls.match(/^((?:(?:[^\s:[\]]|\[[^\]]*\])+:)*)(!?)(.+?)(!?)$/);
-    return { variant: m[1], important: m[2] + m[4], util: m[3] };
-};
 for (const [file, entries] of Object.entries(mapFiles)) {
     for (const e of entries) {
         const where = `${file}:${e.line} ${e.old}`;
@@ -588,22 +581,6 @@ try {
 // 5. Ordering
 // ---------------------------------------------------------------------------------------------------------------
 
-// Tailwind sorts utilities of one variant and property by candidate name, comparing digit runs numerically.
-const naturalCompare = (a, b) => {
-    const ca = a.match(/\d+|\D+/g);
-    const cb = b.match(/\d+|\D+/g);
-    for (let i = 0; i < Math.min(ca.length, cb.length); i++) {
-        const na = /^\d/.test(ca[i]);
-        const nb = /^\d/.test(cb[i]);
-        if (na && nb && Number(ca[i]) !== Number(cb[i])) {
-            return Number(ca[i]) - Number(cb[i]);
-        }
-        if (ca[i] !== cb[i]) {
-            return ca[i] < cb[i] ? -1 : 1;
-        }
-    }
-    return ca.length - cb.length;
-};
 const sign = (n) => Math.sign(n);
 // The property slots a class writes, keyed by variant, with today's/new name and colour.
 const slots = (entry) => {
@@ -636,131 +613,7 @@ const slots = (entry) => {
 };
 const reviewed = new Set((map.orderingReviewed ?? []).map((r) => `${r.file}|${[r.a, r.b].sort().join('|')}`));
 // Coexistence: for every class occurrence, the elements it can reach and the exclusive choices on its way there.
-const coexistence = (file) => {
-    const text = read(file);
-    const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
-    const lineStarts = sf.getLineStarts();
-    const isClassNamesCall = (n) =>
-        ts.isCallExpression(n) && ts.isIdentifier(n.expression) && /^class[nN]ames$/.test(n.expression.text);
-    // Anchor of a node: the className attribute, `class:` property or const declaration that holds it, and the
-    // exclusive choices (ternary branch, lookup-map key) taken on the way up.
-    const anchorOf = (node) => {
-        const choices = [];
-        let n = node;
-        while (n.parent != null) {
-            const p = n.parent;
-            if (ts.isConditionalExpression(p) && n !== p.condition) {
-                choices.push(`cond@${p.pos}:${n === p.whenTrue ? 'T' : 'F'}`);
-            }
-            if (ts.isPropertyAssignment(p) && n === p.initializer && ts.isObjectLiteralExpression(p.parent)) {
-                const obj = p.parent;
-                const inClassNames = isClassNamesCall(obj.parent) || ts.isArrayLiteralExpression(obj.parent);
-                if (!inClassNames && !(ts.isIdentifier(p.name) && p.name.text === 'class')) {
-                    choices.push(`map@${obj.pos}:${p.name.getText(sf)}`);
-                }
-            }
-            if (ts.isJsxAttribute(p) && /^(className|class)$/.test(p.name.getText(sf))) {
-                return { anchor: `jsx@${p.pos}`, choices };
-            }
-            if (
-                ts.isPropertyAssignment(p) &&
-                ts.isIdentifier(p.name) &&
-                /^(className|class|textColor)$/.test(p.name.text)
-            ) {
-                return { anchor: `prop@${p.pos}`, choices };
-            }
-            if (ts.isVariableDeclaration(p) && ts.isIdentifier(p.name)) {
-                return { anchor: `var:${p.name.text}`, choices };
-            }
-            n = p;
-        }
-        return { anchor: `file@${node.pos}`, choices };
-    };
-    // Variables referenced by each anchor (identifiers whose name is a const declared in the file).
-    const declared = new Set();
-    const visitDecl = (n) => {
-        if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name)) {
-            declared.add(n.name.text);
-        }
-        ts.forEachChild(n, visitDecl);
-    };
-    visitDecl(sf);
-    const refs = new Map(); // anchor -> Set(var anchors)
-    const visitRefs = (n) => {
-        if (
-            ts.isIdentifier(n) &&
-            declared.has(n.text) &&
-            !(ts.isVariableDeclaration(n.parent) && n.parent.name === n)
-        ) {
-            const { anchor } = anchorOf(n);
-            const target = `var:${n.text}`;
-            if (anchor !== target) {
-                refs.set(anchor, new Set([...(refs.get(anchor) ?? []), target]));
-            }
-        }
-        ts.forEachChild(n, visitRefs);
-    };
-    visitRefs(sf);
-    // Terminal anchors (not referenced by another anchor) collect the closure of what they reference.
-    const referenced = new Set([...refs.values()].flatMap((x) => [...x]));
-    const closure = (anchor, seen = new Set()) => {
-        if (seen.has(anchor)) {
-            return seen;
-        }
-        seen.add(anchor);
-        for (const r of refs.get(anchor) ?? []) {
-            closure(r, seen);
-        }
-        return seen;
-    };
-    const anchorsWithClasses = new Set();
-    const findNode = (pos) => {
-        let found = null;
-        const visit = (n) => {
-            if (pos >= n.getStart(sf) && pos < n.getEnd()) {
-                found = n;
-                ts.forEachChild(n, visit);
-            }
-        };
-        visit(sf);
-        return found;
-    };
-    return {
-        locate: (line, old, nth) => {
-            const lineText = text.slice(lineStarts[line - 1], lineStarts[line] ?? text.length);
-            let index = -1;
-            for (let k = 0; k <= nth; k++) {
-                index = lineText.indexOf(old, index + 1);
-            }
-            const node = findNode(lineStarts[line - 1] + index);
-            const result = anchorOf(node);
-            anchorsWithClasses.add(result.anchor);
-            return result;
-        },
-        // Element groups (terminal anchors) each occurrence anchor belongs to.
-        groupsOf: (anchor) => {
-            const groups = [];
-            for (const a of new Set([...refs.keys(), ...anchorsWithClasses])) {
-                if (!referenced.has(a) && closure(a).has(anchor)) {
-                    groups.push(a);
-                }
-            }
-            return groups.length > 0 ? groups : [anchor];
-        },
-    };
-};
-const compatible = (a, b) => {
-    for (const ca of a) {
-        const [point, branch] = ca.split(/:(?=[^:]*$)/);
-        for (const cb of b) {
-            const [pointB, branchB] = cb.split(/:(?=[^:]*$)/);
-            if (point === pointB && branch !== branchB) {
-                return false;
-            }
-        }
-    }
-    return true;
-};
+const coexistence = (file) => scanCoexistence(ts, file, read(file));
 const hazards = [];
 for (const [file, entries] of Object.entries(applied ? {} : mapFiles)) {
     if (!/\.tsx?$/.test(file)) {

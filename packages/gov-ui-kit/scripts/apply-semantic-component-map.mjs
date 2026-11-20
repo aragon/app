@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Applies design-system/tokens/semantic-colors.component-map.json to the component sources, mechanically:
+// Applies design-system/tokens/semantic-colors.component-map.json to the component sources, mechanically (the line
+// edit itself is shared with the app's map, apps/app/scripts/semanticColors, in lib/semantic-class-scan.mjs):
 //
 // - For every entry with a non-null `new`, the occurrence of `old` on `line` is replaced by `new`. When a line holds
 //   the same `old` several times, the entries are in column order (null entries included), so the n-th entry with that
@@ -20,6 +21,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { applyEntries } from './lib/semantic-class-scan.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const mapPath = resolve(kitRoot, 'design-system/tokens/semantic-colors.component-map.json');
@@ -31,56 +33,16 @@ if (map.applied != null) {
     process.exit(1);
 }
 
-const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-// Whole-class occurrences of `cls` in `text`, as start indices.
-const occurrences = (text, cls) =>
-    [...text.matchAll(new RegExp(String.raw`(?<=^|[\s'"\`{(,])${escapeRe(cls)}(?=$|[\s'"\`},)])`, 'g'))].map(
-        (m) => m.index,
-    );
-
 const errors = [];
 const output = new Map();
 let replaced = 0;
 let skipped = 0;
 for (const [file, entries] of Object.entries(map.files)) {
-    const lines = readFileSync(resolve(kitRoot, file), 'utf8').split('\n');
-    // line -> old -> entries in column order
-    const byLine = new Map();
-    for (const e of entries) {
-        const perOld = byLine.get(e.line) ?? new Map();
-        perOld.set(e.old, [...(perOld.get(e.old) ?? []), e]);
-        byLine.set(e.line, perOld);
-    }
-    for (const [line, perOld] of byLine) {
-        const text = lines[line - 1];
-        if (text == null) {
-            errors.push(`${file}:${line}: line does not exist`);
-            continue;
-        }
-        const edits = [];
-        for (const [old, list] of perOld) {
-            const found = occurrences(text, old);
-            if (found.length !== list.length) {
-                errors.push(`${file}:${line}: expected ${list.length} × "${old}", found ${found.length}`);
-                continue;
-            }
-            for (const [n, e] of list.entries()) {
-                if (e.new == null) {
-                    skipped++;
-                } else {
-                    edits.push({ index: found[n], old, new: e.new });
-                }
-            }
-        }
-        // Right to left, so earlier indices stay valid.
-        let next = text;
-        for (const edit of edits.sort((a, b) => b.index - a.index)) {
-            next = next.slice(0, edit.index) + edit.new + next.slice(edit.index + edit.old.length);
-            replaced++;
-        }
-        lines[line - 1] = next;
-    }
-    output.set(file, lines.join('\n'));
+    const result = applyEntries(file, readFileSync(resolve(kitRoot, file), 'utf8'), entries);
+    errors.push(...result.errors);
+    replaced += result.replaced;
+    skipped += result.skipped;
+    output.set(file, result.text);
 }
 
 if (errors.length > 0) {
