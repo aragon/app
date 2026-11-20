@@ -5,8 +5,8 @@ const config = {
     ...baseConfig,
     testEnvironment: 'jsdom',
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
-    // design-system/ holds node:test suites (`node --test`), not Jest ones.
-    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/design-system/'],
+    // design-system/ and scripts/tokens/ hold node:test suites (`node --test`), not Jest ones.
+    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/design-system/', '/scripts/tokens/'],
     coveragePathIgnorePatterns: ['.d.ts', '.api.ts', 'index.ts', '.stories.tsx', './src/core/test/*'],
     setupFilesAfterEnv: ['<rootDir>/src/core/test/setup.ts'],
     globalSetup: '<rootDir>/src/core/test/globalSetup.ts',

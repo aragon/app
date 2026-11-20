@@ -568,13 +568,13 @@ if (Object.keys(listed).sort().join('|') !== [...tokensUsed.keys()].sort().join(
     fail('tokensUsed does not list exactly the tokens the entries use');
 }
 
-// Generated CSS must match the data files.
+// Generated token CSS must match the token source.
 try {
-    execFileSync(process.execPath, [resolve(kitRoot, 'scripts/generate-semantic-tokens.mjs'), '--check'], {
+    execFileSync(process.execPath, [resolve(kitRoot, 'scripts/tokens/generate.mjs'), '--check'], {
         stdio: 'pipe',
     });
 } catch (error) {
-    fail(`generated semantic CSS is stale: ${String(error.stderr).trim()}`);
+    fail(`generated token CSS is stale: ${String(error.stderr).trim()}`);
 }
 
 // ---------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,1125 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Semantic colour tokens, mode \"next\": the designer's Light values, aliases of the palette. Same token paths as mode \"today\". A code-only addition that follows another token is an alias of that token.",
+    "semantic": {
+        "$type": "color",
+        "bg": {
+            "surface": {
+                "primary": {
+                    "$value": "{palette.gray.0}"
+                },
+                "secondary": {
+                    "$value": "{palette.gray.100}"
+                },
+                "tertiary": {
+                    "$value": "{palette.gray.200}"
+                },
+                "primary-inverse": {
+                    "$value": "{palette.gray.400}"
+                },
+                "secondary-inverse": {
+                    "$value": "{palette.gray.600}"
+                },
+                "tertiary-inverse": {
+                    "$value": "{palette.gray.800}"
+                },
+                "default": {
+                    "$value": "{palette.gray.0}"
+                },
+                "hover": {
+                    "$value": "{palette.gray.50}"
+                },
+                "active": {
+                    "$value": "{palette.gray.0}"
+                },
+                "selected": {
+                    "$value": "{palette.gray.50}"
+                },
+                "disabled": {
+                    "$value": "{palette.gray.100}"
+                },
+                "hover-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "disabled-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "transparent": {
+                    "$value": "{palette.gray.0a0}"
+                },
+                "transparent-default": {
+                    "$value": "{palette.gray.0a1}"
+                },
+                "transparent-hover": {
+                    "$value": "{palette.gray.800a4}"
+                },
+                "transparent-active": {
+                    "$value": "{palette.gray.800a8}"
+                },
+                "transparent-selected": {
+                    "$value": "{palette.gray.0}"
+                },
+                "ghost-hover": {
+                    "$value": "{palette.gray.0}"
+                },
+                "active-control": {
+                    "$value": "{semantic.bg.surface.active}"
+                },
+                "tertiary-avatar": {
+                    "$value": "{semantic.bg.surface.tertiary}"
+                },
+                "hover-lift": {
+                    "$value": "{semantic.bg.surface.hover}"
+                },
+                "transparent-active-item": {
+                    "$value": "{semantic.bg.surface.transparent-active}"
+                },
+                "secondary-skeleton": {
+                    "$value": "{semantic.bg.surface.secondary}"
+                },
+                "hover-icon-button": {
+                    "$value": "{semantic.bg.surface.hover}"
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "primary-inverse": {
+                    "$value": "{palette.aragon.50}"
+                },
+                "default": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "hover": {
+                    "$value": "{palette.aragon.500}"
+                },
+                "active": {
+                    "$value": "{palette.aragon.600}"
+                },
+                "default-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "hover-inverse": {
+                    "$value": "{palette.gray.50}"
+                },
+                "active-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "transparent-default": {
+                    "$value": "{palette.aragon.100a1}"
+                },
+                "transparent-hover": {
+                    "$value": "{palette.aragon.400a4}"
+                },
+                "transparent-active": {
+                    "$value": "{palette.aragon.400a8}"
+                },
+                "solid-ping": {
+                    "$value": "{semantic.bg.accent.primary}"
+                }
+            },
+            "body": {
+                "$value": "{palette.gray.50}"
+            },
+            "brand": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "primary-inverse": {
+                    "$value": "{palette.aragon.50}"
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{palette.green.100}"
+                },
+                "secondary": {
+                    "$value": "{palette.green.50}"
+                },
+                "tertiary": {
+                    "$value": "{palette.green.500}"
+                },
+                "default": {
+                    "$value": "{palette.green.50}"
+                },
+                "hover": {
+                    "$value": "{palette.green.100}"
+                },
+                "active": {
+                    "$value": "{palette.gray.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{semantic.bg.success.primary}"
+                },
+                "solid-progress": {
+                    "$value": "{semantic.bg.success.tertiary}"
+                },
+                "solid-tooltip": {
+                    "$value": "{semantic.bg.success.tertiary}"
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{palette.orange.100}"
+                },
+                "secondary": {
+                    "$value": "{palette.orange.50}"
+                },
+                "tertiary": {
+                    "$value": "{palette.orange.500}"
+                },
+                "default": {
+                    "$value": "{palette.orange.50}"
+                },
+                "hover": {
+                    "$value": "{palette.orange.100}"
+                },
+                "active": {
+                    "$value": "{palette.gray.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{semantic.bg.warning.primary}"
+                },
+                "solid-tooltip": {
+                    "$value": "{semantic.bg.warning.tertiary}"
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{palette.red.100}"
+                },
+                "secondary": {
+                    "$value": "{palette.red.50}"
+                },
+                "tertiary": {
+                    "$value": "{palette.red.500}"
+                },
+                "default": {
+                    "$value": "{palette.red.50}"
+                },
+                "hover": {
+                    "$value": "{palette.red.100}"
+                },
+                "active": {
+                    "$value": "{palette.gray.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{semantic.bg.critical.primary}"
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{palette.blue.100}"
+                },
+                "secondary": {
+                    "$value": "{palette.blue.50}"
+                },
+                "tertiary": {
+                    "$value": "{palette.blue.300}"
+                },
+                "subtle-tag": {
+                    "$value": "{semantic.bg.info.primary}"
+                },
+                "solid-tooltip": {
+                    "$value": "{semantic.bg.info.tertiary}"
+                }
+            },
+            "body-sidebar": {
+                "$value": "{semantic.bg.body}"
+            }
+        },
+        "border": {
+            "surface": {
+                "primary": {
+                    "$value": "{palette.gray.50}"
+                },
+                "secondary": {
+                    "$value": "{palette.gray.200}"
+                },
+                "default": {
+                    "$value": "{palette.gray.200}"
+                },
+                "hover": {
+                    "$value": "{palette.gray.300}"
+                },
+                "active": {
+                    "$value": "{palette.gray.400}"
+                },
+                "disabled": {
+                    "$value": "{palette.gray.300}"
+                },
+                "selected": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "fill-disabled": {
+                    "$value": "{semantic.bg.surface.disabled}"
+                },
+                "open": {
+                    "$value": "{palette.gray.300}"
+                },
+                "active-accordion": {
+                    "$value": "{semantic.border.surface.active}"
+                },
+                "active-card": {
+                    "$value": "{semantic.border.surface.active}"
+                },
+                "active-control": {
+                    "$value": "{semantic.border.surface.active}"
+                },
+                "disabled-card": {
+                    "$value": "{semantic.border.surface.disabled}"
+                },
+                "disabled-toggle": {
+                    "$value": "{semantic.border.surface.disabled}"
+                },
+                "disabled-item": {
+                    "$value": "{semantic.border.surface.disabled}"
+                },
+                "default-switch": {
+                    "$value": "{semantic.border.surface.default}"
+                },
+                "hover-tab": {
+                    "$value": "{semantic.border.surface.hover}"
+                },
+                "secondary-panel": {
+                    "$value": "{semantic.border.surface.secondary}"
+                },
+                "hover-graph-node": {
+                    "$value": "{semantic.border.surface.hover}"
+                },
+                "default-graph-node": {
+                    "$value": "{semantic.border.surface.default}"
+                },
+                "default-composer": {
+                    "$value": "{semantic.border.surface.default}"
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{palette.aragon.300}"
+                },
+                "primary-inverse": {
+                    "$value": "{palette.aragon.200}"
+                },
+                "secondary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "secondary-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "default": {
+                    "$value": "{palette.aragon.100}"
+                },
+                "hover": {
+                    "$value": "{palette.aragon.200}"
+                },
+                "active": {
+                    "$value": "{palette.aragon.300}"
+                },
+                "fill": {
+                    "$value": "{semantic.bg.accent.default}"
+                },
+                "fill-hover": {
+                    "$value": "{semantic.bg.accent.hover}"
+                },
+                "fill-active": {
+                    "$value": "{semantic.bg.accent.active}"
+                },
+                "primary-terminal": {
+                    "$value": "{semantic.border.accent.primary}"
+                },
+                "primary-cta": {
+                    "$value": "{semantic.border.accent.primary}"
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{palette.green.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.green.800}"
+                },
+                "default": {
+                    "$value": "{palette.green.400}"
+                },
+                "hover": {
+                    "$value": "{palette.green.500}"
+                },
+                "active": {
+                    "$value": "{palette.green.600}"
+                },
+                "active-control": {
+                    "$value": "{semantic.border.success.active}"
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{palette.orange.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.orange.800}"
+                },
+                "default": {
+                    "$value": "{palette.orange.400}"
+                },
+                "hover": {
+                    "$value": "{palette.orange.500}"
+                },
+                "active": {
+                    "$value": "{palette.orange.500}"
+                },
+                "default-input": {
+                    "$value": "{semantic.border.warning.default}"
+                },
+                "hover-input": {
+                    "$value": "{semantic.border.warning.hover}"
+                },
+                "hover-file-avatar": {
+                    "$value": "{semantic.border.warning.hover}"
+                },
+                "active-control": {
+                    "$value": "{semantic.border.warning.active}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.border.warning.primary}"
+                },
+                "primary-spinner": {
+                    "$value": "{semantic.border.warning.primary}"
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{palette.red.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.red.800}"
+                },
+                "default": {
+                    "$value": "{palette.red.400}"
+                },
+                "hover": {
+                    "$value": "{palette.red.500}"
+                },
+                "active": {
+                    "$value": "{palette.red.600}"
+                },
+                "default-input": {
+                    "$value": "{semantic.border.critical.default}"
+                },
+                "hover-input": {
+                    "$value": "{semantic.border.critical.hover}"
+                },
+                "active-control": {
+                    "$value": "{semantic.border.critical.active}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.border.critical.primary}"
+                },
+                "primary-spinner": {
+                    "$value": "{semantic.border.critical.primary}"
+                },
+                "primary-dispatch": {
+                    "$value": "{semantic.border.critical.primary}"
+                },
+                "primary-chat-error": {
+                    "$value": "{semantic.border.critical.primary}"
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{palette.blue.400}"
+                }
+            }
+        },
+        "text": {
+            "surface": {
+                "primary": {
+                    "$value": "{palette.gray.900}"
+                },
+                "secondary": {
+                    "$value": "{palette.gray.600}"
+                },
+                "tertiary": {
+                    "$value": "{palette.gray.500}"
+                },
+                "placeholder": {
+                    "$value": "{palette.gray.300}"
+                },
+                "primary-inverse": {
+                    "$value": "{palette.gray.50}"
+                },
+                "default": {
+                    "$value": "{palette.gray.500}"
+                },
+                "hover": {
+                    "$value": "{palette.gray.600}"
+                },
+                "active": {
+                    "$value": "{palette.gray.700}"
+                },
+                "selected": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "disabled": {
+                    "$value": "{palette.gray.400}"
+                },
+                "hover-label": {
+                    "$value": "{semantic.text.surface.hover}"
+                },
+                "default-wizard": {
+                    "$value": "{semantic.text.surface.default}"
+                },
+                "tertiary-hint": {
+                    "$value": "{semantic.text.surface.tertiary}"
+                },
+                "primary-detail": {
+                    "$value": "{semantic.text.surface.primary}"
+                },
+                "primary-panel-title": {
+                    "$value": "{semantic.text.surface.primary}"
+                },
+                "selected-label": {
+                    "$value": "{semantic.text.surface.selected}"
+                },
+                "default-attachment": {
+                    "$value": "{semantic.text.surface.default}"
+                },
+                "secondary-ticket": {
+                    "$value": "{semantic.text.surface.secondary}"
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.aragon.900}"
+                },
+                "default": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "hover": {
+                    "$value": "{palette.aragon.500}"
+                },
+                "active": {
+                    "$value": "{palette.aragon.600}"
+                },
+                "default-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "hover-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "active-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "inverse-brand": {
+                    "$value": "{semantic.text.accent.default-inverse}"
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{palette.green.700}"
+                },
+                "secondary": {
+                    "$value": "{palette.green.900}"
+                },
+                "default": {
+                    "$value": "{palette.green.800}"
+                },
+                "hover": {
+                    "$value": "{palette.green.800}"
+                },
+                "active": {
+                    "$value": "{palette.green.800}"
+                },
+                "primary-title": {
+                    "$value": "{semantic.text.success.primary}"
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{palette.orange.700}"
+                },
+                "secondary": {
+                    "$value": "{palette.orange.900}"
+                },
+                "default": {
+                    "$value": "{palette.orange.700}"
+                },
+                "hover": {
+                    "$value": "{palette.orange.800}"
+                },
+                "active": {
+                    "$value": "{palette.orange.700}"
+                },
+                "primary-title": {
+                    "$value": "{semantic.text.warning.primary}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.text.warning.primary}"
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{palette.red.700}"
+                },
+                "secondary": {
+                    "$value": "{palette.red.900}"
+                },
+                "default": {
+                    "$value": "{palette.red.800}"
+                },
+                "hover": {
+                    "$value": "{palette.red.800}"
+                },
+                "active": {
+                    "$value": "{palette.red.800}"
+                },
+                "primary-title": {
+                    "$value": "{semantic.text.critical.primary}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.text.critical.primary}"
+                },
+                "primary-message": {
+                    "$value": "{semantic.text.critical.primary}"
+                },
+                "primary-tx-error": {
+                    "$value": "{semantic.text.critical.primary}"
+                },
+                "hover-attachment": {
+                    "$value": "{semantic.text.critical.hover}"
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{palette.blue.700}"
+                },
+                "secondary": {
+                    "$value": "{palette.blue.900}"
+                },
+                "primary-title": {
+                    "$value": "{semantic.text.info.primary}"
+                }
+            },
+            "link": {
+                "default": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "hover": {
+                    "$value": "{palette.aragon.600}"
+                },
+                "active": {
+                    "$value": "{palette.aragon.800}"
+                },
+                "secondary-default": {
+                    "$value": "{palette.gray.500}"
+                },
+                "secondary-hover": {
+                    "$value": "{palette.gray.600}"
+                },
+                "secondary-active": {
+                    "$value": "{palette.gray.800}"
+                },
+                "hover-action": {
+                    "$value": "{semantic.text.link.hover}"
+                },
+                "active-action": {
+                    "$value": "{semantic.text.link.active}"
+                },
+                "secondary-hover-nav": {
+                    "$value": "{semantic.text.link.secondary-hover}"
+                }
+            }
+        },
+        "icon": {
+            "surface": {
+                "primary": {
+                    "$value": "{palette.gray.500}"
+                },
+                "secondary": {
+                    "$value": "{palette.gray.300}"
+                },
+                "default": {
+                    "$value": "{palette.gray.400}"
+                },
+                "hover": {
+                    "$value": "{palette.gray.500}"
+                },
+                "active": {
+                    "$value": "{palette.gray.600}"
+                },
+                "disabled": {
+                    "$value": "{palette.gray.300}"
+                },
+                "disabled-accordion": {
+                    "$value": "{semantic.icon.surface.disabled}"
+                },
+                "primary-item": {
+                    "$value": "{semantic.icon.surface.primary}"
+                },
+                "default-control": {
+                    "$value": "{semantic.icon.surface.default}"
+                },
+                "hover-control": {
+                    "$value": "{semantic.icon.surface.hover}"
+                },
+                "active-control": {
+                    "$value": "{semantic.icon.surface.active}"
+                },
+                "disabled-control": {
+                    "$value": "{semantic.icon.surface.disabled}"
+                },
+                "default-tab": {
+                    "$value": "{semantic.icon.surface.default}"
+                },
+                "hover-tab": {
+                    "$value": "{semantic.icon.surface.hover}"
+                },
+                "default-clear": {
+                    "$value": "{semantic.icon.surface.default}"
+                },
+                "default-card": {
+                    "$value": "{semantic.icon.surface.default}"
+                },
+                "default-asset-transfer": {
+                    "$value": "{semantic.icon.surface.default}"
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.aragon.100}"
+                },
+                "tertiary": {
+                    "$value": "{palette.aragon.900}"
+                },
+                "default": {
+                    "$value": "{palette.aragon.300}"
+                },
+                "hover": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "active": {
+                    "$value": "{palette.aragon.600}"
+                },
+                "selected": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "default-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "hover-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "active-inverse": {
+                    "$value": "{palette.gray.0}"
+                },
+                "hover-action": {
+                    "$value": "{semantic.icon.accent.hover}"
+                },
+                "active-action": {
+                    "$value": "{semantic.icon.accent.active}"
+                },
+                "selected-nav": {
+                    "$value": "{semantic.icon.accent.selected}"
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{palette.green.500}"
+                },
+                "secondary": {
+                    "$value": "{palette.green.100}"
+                },
+                "default": {
+                    "$value": "{palette.green.500}"
+                },
+                "hover": {
+                    "$value": "{palette.green.600}"
+                },
+                "active": {
+                    "$value": "{palette.green.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{semantic.icon.success.primary}"
+                },
+                "primary-chat": {
+                    "$value": "{semantic.icon.success.primary}"
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{palette.orange.500}"
+                },
+                "secondary": {
+                    "$value": "{palette.orange.100}"
+                },
+                "default": {
+                    "$value": "{palette.orange.500}"
+                },
+                "hover": {
+                    "$value": "{palette.orange.600}"
+                },
+                "active": {
+                    "$value": "{palette.orange.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{semantic.icon.warning.primary}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.icon.warning.primary}"
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{palette.red.500}"
+                },
+                "secondary": {
+                    "$value": "{palette.red.100}"
+                },
+                "default": {
+                    "$value": "{palette.red.500}"
+                },
+                "hover": {
+                    "$value": "{palette.red.600}"
+                },
+                "active": {
+                    "$value": "{palette.red.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{semantic.icon.critical.primary}"
+                },
+                "primary-input": {
+                    "$value": "{semantic.icon.critical.primary}"
+                },
+                "primary-chat": {
+                    "$value": "{semantic.icon.critical.primary}"
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{palette.blue.500}"
+                },
+                "secondary": {
+                    "$value": "{palette.blue.100}"
+                },
+                "primary-avatar": {
+                    "$value": "{semantic.icon.info.primary}"
+                }
+            },
+            "brand": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "secondary": {
+                    "$value": "{palette.aragon.100}"
+                },
+                "tertiary": {
+                    "$value": "{palette.aragon.800}"
+                }
+            }
+        },
+        "shadow": {
+            "surface": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.3215686274509804,
+                            0.3215686274509804,
+                            0.3215686274509804
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.3215686274509804,
+                            0.3215686274509804,
+                            0.3215686274509804
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.3215686274509804,
+                            0.3215686274509804,
+                            0.3215686274509804
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.3215686274509804,
+                            0.3215686274509804,
+                            0.3215686274509804
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                }
+            },
+            "accent": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                }
+            },
+            "success": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.6509803921568628,
+                            0.24313725490196078
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.6509803921568628,
+                            0.24313725490196078
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.6509803921568628,
+                            0.24313725490196078
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                }
+            },
+            "warning": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9607843137254902,
+                            0.28627450980392155,
+                            0
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9607843137254902,
+                            0.28627450980392155,
+                            0
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9607843137254902,
+                            0.28627450980392155,
+                            0
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                }
+            },
+            "critical": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9058823529411765,
+                            0,
+                            0.043137254901960784
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9058823529411765,
+                            0,
+                            0.043137254901960784
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9058823529411765,
+                            0,
+                            0.043137254901960784
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                }
+            },
+            "info": {
+                "default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.5725490196078431,
+                            0.7215686274509804
+                        ],
+                        "alpha": 0.10196078431372549
+                    }
+                },
+                "sm": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.5725490196078431,
+                            0.7215686274509804
+                        ],
+                        "alpha": 0.050980392156862744
+                    }
+                },
+                "2xl": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.5725490196078431,
+                            0.7215686274509804
+                        ],
+                        "alpha": 0.23921568627450981
+                    }
+                }
+            }
+        },
+        "gradient": {
+            "surface": {
+                "primary": {
+                    "$value": "{palette.gray.100}"
+                },
+                "primary-transparent": {
+                    "$value": "{palette.gray.100a0}"
+                },
+                "secondary": {
+                    "$value": "{palette.gray.0}"
+                },
+                "secondary-transparent": {
+                    "$value": "{palette.gray.0a0}"
+                }
+            },
+            "skeleton": {
+                "start": {
+                    "$value": "{palette.gray.100a0}"
+                },
+                "middle": {
+                    "$value": "{palette.gray.100}"
+                },
+                "end": {
+                    "$value": "{palette.gray.100a0}"
+                }
+            },
+            "brand": {
+                "primary": {
+                    "$value": "{palette.aragon.400}"
+                },
+                "primary-transparent": {
+                    "$value": "{palette.aragon.400a0}"
+                },
+                "tertiary": {
+                    "$value": "{palette.aragon.800}"
+                },
+                "tertiary-transparent": {
+                    "$value": "{palette.aragon.800a0}"
+                }
+            }
+        },
+        "ring": {
+            "accent": {
+                "focus": {
+                    "$value": "{palette.aragon.400}"
+                }
+            },
+            "success": {
+                "focus": {
+                    "$value": "{palette.green.400}"
+                }
+            },
+            "warning": {
+                "focus": {
+                    "$value": "{palette.orange.400}"
+                }
+            },
+            "critical": {
+                "focus": {
+                    "$value": "{palette.red.400}"
+                }
+            }
+        }
+    }
+}
