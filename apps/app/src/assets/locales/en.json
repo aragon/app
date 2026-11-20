@@ -5036,6 +5036,7 @@
       "workspaceAccountSelector": {
         "accounts": "{{count}} accounts",
         "addAccount": "Add account",
+        "createAccount": "Create account",
         "notInWorkspace": "Not in this workspace"
       },
       "workspaceExternalAccountBanner": {
@@ -5244,6 +5245,76 @@
           "createAccount": "Create a new account"
         },
         "error": "Unable to add the accounts. Try again."
+      },
+      "workspaceCreateAccountDialog": {
+        "title": "Create account",
+        "submit": "Deploy account",
+        "steps": {
+          "NETWORK": {
+            "title": "Select chain",
+            "description": "The chain you choose is where your account will be deployed."
+          },
+          "DETAILS": {
+            "title": "Account details",
+            "description": "Describe your account so people know they’ve come to the right place. Don’t worry if these aren’t final—any of these fields can be changed later."
+          },
+          "SIGNERS": {
+            "title": "Signers and approvals",
+            "description": "Choose who can approve transactions and how many approvals are needed."
+          },
+          "TYPE": {
+            "title": "Account type",
+            "description": "Choose how the account is deployed. Both use the signers and approvals you set."
+          }
+        },
+        "network": {
+          "mainnets": "Mainnets",
+          "testnets": "Testnets",
+          "showAllTestnets": "Show all testnets",
+          "showFewer": "Show fewer",
+          "tag": {
+            "beta": "Beta",
+            "disabled": "Soon"
+          }
+        },
+        "details": {
+          "name": {
+            "label": "Name",
+            "required": "Name is required."
+          },
+          "description": {
+            "label": "Description",
+            "helpText": "This is shown on the account’s dashboard."
+          },
+          "resources": {
+            "helpText": "These are shown as links on the account dashboard. They are best suited for your website, social media, or other communication channels."
+          }
+        },
+        "signers": {
+          "label": "Signers",
+          "helpText": "Wallets that can approve the transactions of this account."
+        },
+        "approvals": {
+          "label": "Approvals",
+          "helpText": "How many signers must approve a transaction before it can be executed.",
+          "total": "{{value}} of {{total}} must approve"
+        },
+        "accountType": {
+          "SAFE": {
+            "label": "Safe",
+            "description": "A Safe multisig. Works with the Safe ecosystem."
+          },
+          "ARAGON": {
+            "label": "Aragon",
+            "description": "An Aragon OSx multisig. Governance can be extended later."
+          }
+        },
+        "deploy": {
+          "title": "Deploy Aragon Account",
+          "description": "To deploy the account, confirm the onchain transaction in your wallet.",
+          "submit": "Deploy Aragon Account",
+          "success": "Continue"
+        }
       },
       "workspaceWelcomeDialog": {
         "title": "Your workspace is ready",

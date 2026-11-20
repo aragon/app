@@ -35,6 +35,13 @@ describe('workspaceDialogsDefinitions', () => {
         ).toBe(true);
     });
 
+    it('requires a wallet to create an account', () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.CREATE_ACCOUNT]
+                .requiresWallet,
+        ).toBe(true);
+    });
+
     it('does not require a wallet for the welcome dialog', () => {
         expect(
             workspaceDialogsDefinitions[WorkspaceDialogId.WELCOME]
