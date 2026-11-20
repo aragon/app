@@ -1,3 +1,4 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -35,6 +36,30 @@ describe('<AlchemixObjectionVote /> component', () => {
         useAlchemixObjectionStatusHook,
         'useAlchemixObjectionStatus',
     );
+
+    // Button is a forwardRef object and cannot be spied on directly: replace it with a recording wrapper that
+    // still renders the real Button, so the tests can assert on the props the app passes instead of depending
+    // on the kit's internal class names.
+    const OriginalButton = GovUiKit.Button;
+    const buttonSpy = jest.fn((props: GovUiKit.IButtonProps) => (
+        <OriginalButton {...props} />
+    ));
+    const replacedButton = jest.replaceProperty(
+        GovUiKit,
+        'Button',
+        buttonSpy as unknown as typeof GovUiKit.Button,
+    );
+
+    afterAll(() => {
+        replacedButton.restore();
+    });
+
+    const getVoteButtonVariant = () =>
+        buttonSpy.mock.calls
+            .map(([props]) => props)
+            .findLast((props) =>
+                /tokenSubmitVote\.buttons\.vote/.test(String(props.children)),
+            )?.variant;
 
     const mockObjectionStatus = (values?: {
         voteOption?: VoteOption;
@@ -81,6 +106,7 @@ describe('<AlchemixObjectionVote /> component', () => {
         useDaoPluginsSpy.mockReset();
         usePermissionCheckGuardSpy.mockReset();
         useAlchemixObjectionStatusSpy.mockReset();
+        buttonSpy.mockClear();
     });
 
     const createTestComponent = (
@@ -102,10 +128,12 @@ describe('<AlchemixObjectionVote /> component', () => {
     it('renders a primary vote button when the user has voting power and no recorded option', () => {
         render(createTestComponent());
 
-        const voteButton = screen.getByRole('button', {
-            name: /tokenSubmitVote.buttons.vote/,
-        });
-        expect(voteButton).toHaveClass('bg-primary-400');
+        expect(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.vote/,
+            }),
+        ).toBeInTheDocument();
+        expect(getVoteButtonVariant()).toEqual('primary');
     });
 
     it('renders a secondary vote button that triggers the permission guard when the user cannot object', async () => {
@@ -123,7 +151,7 @@ describe('<AlchemixObjectionVote /> component', () => {
         const voteButton = screen.getByRole('button', {
             name: /tokenSubmitVote.buttons.vote/,
         });
-        expect(voteButton).not.toHaveClass('bg-primary-400');
+        expect(getVoteButtonVariant()).toEqual('secondary');
         await userEvent.click(voteButton);
         expect(check).toHaveBeenCalled();
     });

@@ -1,3 +1,4 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { VoteOption } from '../../../tokenPlugin/types';
@@ -16,9 +17,16 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         'getProposalStatus',
     );
 
+    // Spied without a mock implementation: the real Progress still renders, the spy only records the props
+    // the app passes so the tests do not depend on the kit's internal class names.
+    const progressSpy = jest.spyOn(GovUiKit, 'Progress');
+
     afterEach(() => {
         getProposalStatusSpy.mockReset();
+        progressSpy.mockClear();
     });
+
+    const getProgressVariant = () => progressSpy.mock.lastCall?.[0].variant;
 
     const tokenAddress = '0xToken';
     const translationPrefix =
@@ -114,8 +122,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         // 75% > 50% support threshold => reached (primary) variant
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(getProgressVariant()).toEqual('primary');
     });
 
     it('displays yes-vote support as not reached for veto proposals with majority no votes', () => {
@@ -132,8 +139,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         expect(progressbar.dataset.value).toEqual('10');
 
         // 10% < 50% support threshold => not-reached (neutral) variant
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(getProgressVariant()).toEqual('neutral');
     });
 
     it('displays support at exactly the threshold as not reached', () => {
@@ -148,8 +154,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         // On-chain semantics are strictly greater-than: 50% support does not reach a 50% threshold
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(getProgressVariant()).toEqual('neutral');
     });
 
     it('displays zero support without the reached variant when only abstain votes are cast', () => {
@@ -161,8 +166,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         // Progress clamps the rendered value to a minimum of 1.
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('1');
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(getProgressVariant()).toEqual('neutral');
         expect(
             screen.getByText(
                 `${translationPrefix}.votesDescription (details=0 TTT)`,
@@ -182,8 +186,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         // Veto support is yes / (yes + no) = 75% > 50% => reached (primary) variant
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('75');
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(getProgressVariant()).toEqual('primary');
         expect(
             screen.getByText(`${translationPrefix}.optimisticSupportLabel`),
         ).toBeInTheDocument();
