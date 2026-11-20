@@ -6,6 +6,8 @@
 // - design-system/tokens/semantic-colors.mapping.json  provisional renames / merges, code-only additions and the
 //                                                       extra utility families (`utilities`)
 // - design-system/tokens/semantic-colors.parity.json   default-theme ("parity") values: overrides + fallback rule
+//                                                       (an override on an alias addition sets its default value
+//                                                       only; "next" and "dark" still follow the aliased token)
 //
 // Output: private palette properties (--guk-palette-*), three value sets under one set of names (`:root` = today's
 // colours, `[data-theme="next"]` = Figma Light, `[data-theme="dark"]` = Figma Dark), one Tailwind `@utility` per
@@ -144,12 +146,14 @@ const parityCss = (value) => (/^[a-z]+-\d+$/.test(value) ? `var(--color-${value}
 
 const fallbacks = [];
 const parityOf = (name, token) => {
-    if (token.alias != null) {
-        return { css: `var(${variableOf(token.alias)})`, comment: `alias of ${token.alias}` };
-    }
+    // A parity override wins over an alias: such a token holds today's colour in the default theme and follows the
+    // aliased token in "next" and "dark" (a component-level alias, collapsing into its target at the value switch).
     const override = overrides[name];
     if (override != null) {
         return { css: parityCss(override.value), comment: 'verified from code' };
+    }
+    if (token.alias != null) {
+        return { css: `var(${variableOf(token.alias)})`, comment: `alias of ${token.alias}` };
     }
     const ref = parseRef(token.light);
     if (ref.raw != null) {
@@ -326,8 +330,13 @@ if (mode === '--check') {
     }
     console.log('\nOverrides that differ from the Figma light step (token | Figma light | parity | evidence):');
     for (const name of overridden) {
-        const ref = parseRef(tokens.get(name).light);
         const { value, evidence, conflict } = overrides[name];
+        const { alias } = tokens.get(name);
+        if (alias != null) {
+            console.log(`${name} | alias of ${alias} | ${value} | ${evidence}`);
+            continue;
+        }
+        const ref = parseRef(tokens.get(name).light);
         const figmaStep = ref.raw ?? `${fallbackRamps[ref.name.split('/')[0]]}-${ref.name.split('/')[1]}`;
         if (figmaStep !== value || conflict != null) {
             console.log(
