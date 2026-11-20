@@ -23,6 +23,9 @@
     "scripts": {
         "build": "NODE_OPTIONS=--max-old-space-size=6144 next build",
         "build:analyze": "next experimental-analyze",
+        "colors:map:apply": "node scripts/semanticColors/apply-app-map.mjs",
+        "colors:map:check": "node scripts/semanticColors/validate-app-map.mjs",
+        "colors:map:selftest": "node scripts/semanticColors/validate-app-map.selftest.mjs",
         "dev": "cross-env pnpm run setup local && next dev",
         "e2e": "playwright test --config e2e/playwright.config.ts",
         "e2e:bv": "playwright test --config e2e/playwright.bv.config.ts e2e/tests/bv/treasuryWithdrawal.spec.ts",
