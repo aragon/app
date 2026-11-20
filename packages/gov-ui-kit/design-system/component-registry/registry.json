@@ -6,12 +6,9 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "3c239abb6da81b01fc60408e24809398a851e2d7",
+            "commit": "856e157a159ded696578e4b5d4c51890293e3a16",
             "dirty": [
-                "packages/gov-ui-kit/biome.jsonc",
                 "packages/gov-ui-kit/scripts/generate-semantic-tokens.mjs",
-                "packages/gov-ui-kit/src/core/components/progress/progress.tsx",
-                "packages/gov-ui-kit/src/core/components/tag/tag.tsx",
                 "packages/gov-ui-kit/src/theme/tokens/semantic/colors.css"
             ],
             "sourceVersion": "3.0.1",
@@ -3011,7 +3008,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "d6fbb3874aae0c7e7906eeb4a0fa6b0415f9f3e74b482e76699e68da9cd94592"
+                "sha256": "7713c75276f86147d9b23a175696ef4d157917574520b33397a5954906e588b6"
             },
             "props": [],
             "stories": [],
