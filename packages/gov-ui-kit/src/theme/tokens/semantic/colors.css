@@ -7,8 +7,9 @@
  *
  * Semantic colour tokens. Every token is a variable --guk-<property>-<group>-<role> with three value sets:
  * - :root                  today's colours ("parity"), so converted components keep their pixels;
- * - [data-theme="next"]    Figma Light values on the Figma palette;
- * - [data-theme="dark"]    Figma Dark values on the Figma palette.
+ * - [data-theme="next"]    Figma Light values on the Figma palette, plus the primitive colours (--color-*) on the
+ *                          same step of the Figma palette (palette-change preview, so primitive classes follow);
+ * - [data-theme="dark"]    Figma Dark values on the Figma palette (primitive colours unchanged).
  * Parity values marked "fallback, unverified" were derived by rule, not checked against a converted component.
  * Utilities: <family>-<group>-<role> per token for its own property; border-<side>-<group>-<role> per border token;
  * <applier>-<family>-<group>-<role> for another property (from/via/to, fill, stroke, caret and the declared
@@ -986,6 +987,68 @@
     }
 }
 
+/* Palette-change preview in "next": primitive colours on the Figma palette (mapping.primitiveRemap) */
+:root[data-theme="next"],
+[data-theme="next"] {
+    --color-primary-50: var(--guk-palette-aragon-50);
+    --color-primary-100: var(--guk-palette-aragon-100);
+    --color-primary-200: var(--guk-palette-aragon-200);
+    --color-primary-300: var(--guk-palette-aragon-300);
+    --color-primary-400: var(--guk-palette-aragon-400);
+    --color-primary-500: var(--guk-palette-aragon-500);
+    --color-primary-600: var(--guk-palette-aragon-600);
+    --color-primary-700: var(--guk-palette-aragon-700);
+    --color-primary-800: var(--guk-palette-aragon-800);
+    --color-primary-900: var(--guk-palette-aragon-900);
+    --color-neutral-0: var(--guk-palette-gray-0);
+    --color-neutral-25: var(--guk-palette-gray-50);
+    --color-neutral-50: var(--guk-palette-gray-50);
+    --color-neutral-100: var(--guk-palette-gray-100);
+    --color-neutral-200: var(--guk-palette-gray-200);
+    --color-neutral-300: var(--guk-palette-gray-300);
+    --color-neutral-400: var(--guk-palette-gray-400);
+    --color-neutral-500: var(--guk-palette-gray-500);
+    --color-neutral-600: var(--guk-palette-gray-600);
+    --color-neutral-700: var(--guk-palette-gray-700);
+    --color-neutral-800: var(--guk-palette-gray-800);
+    --color-neutral-900: var(--guk-palette-gray-900);
+    --color-info-100: var(--guk-palette-blue-100);
+    --color-info-200: var(--guk-palette-blue-200);
+    --color-info-300: var(--guk-palette-blue-300);
+    --color-info-400: var(--guk-palette-blue-400);
+    --color-info-500: var(--guk-palette-blue-500);
+    --color-info-600: var(--guk-palette-blue-600);
+    --color-info-700: var(--guk-palette-blue-700);
+    --color-info-800: var(--guk-palette-blue-800);
+    --color-info-900: var(--guk-palette-blue-900);
+    --color-success-100: var(--guk-palette-green-100);
+    --color-success-200: var(--guk-palette-green-200);
+    --color-success-300: var(--guk-palette-green-300);
+    --color-success-400: var(--guk-palette-green-400);
+    --color-success-500: var(--guk-palette-green-500);
+    --color-success-600: var(--guk-palette-green-600);
+    --color-success-700: var(--guk-palette-green-700);
+    --color-success-800: var(--guk-palette-green-800);
+    --color-success-900: var(--guk-palette-green-900);
+    --color-warning-100: var(--guk-palette-orange-100);
+    --color-warning-200: var(--guk-palette-orange-200);
+    --color-warning-300: var(--guk-palette-orange-300);
+    --color-warning-400: var(--guk-palette-orange-400);
+    --color-warning-500: var(--guk-palette-orange-500);
+    --color-warning-600: var(--guk-palette-orange-600);
+    --color-warning-700: var(--guk-palette-orange-700);
+    --color-warning-800: var(--guk-palette-orange-800);
+    --color-warning-900: var(--guk-palette-orange-900);
+    --color-critical-100: var(--guk-palette-red-100);
+    --color-critical-200: var(--guk-palette-red-200);
+    --color-critical-300: var(--guk-palette-red-300);
+    --color-critical-400: var(--guk-palette-red-400);
+    --color-critical-500: var(--guk-palette-red-500);
+    --color-critical-600: var(--guk-palette-red-600);
+    --color-critical-700: var(--guk-palette-red-700);
+    --color-critical-800: var(--guk-palette-red-800);
+    --color-critical-900: var(--guk-palette-red-900);
+}
 @utility bg-surface-primary {
     background-color: var(--guk-bg-surface-primary);
 }

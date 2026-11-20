@@ -195,5 +195,11 @@
                 "note": "Tab trigger underline: Figma draws it as a border bound to border/surface/selected; the code draws it with a box-shadow, so the token is applied as the shadow colour. Same colour today (primary-400)."
             }
         ]
+    },
+    "primitiveRemap": {
+        "$description": "Palette-change preview (L-01) in the \"next\" value set only: every primitive colour variable (--color-<ramp>-<step>, the variables behind the primitive classes such as bg-neutral-50 and text-critical-600) is redeclared under [data-theme=\"next\"] as the same step of the corresponding Figma ramp, so markup that still uses primitive classes follows the new palette in \"next\". The ramp correspondence is the one of `semantic-colors.parity.json` `fallbackRamps`, read in reverse (neutral -> gray, primary -> aragon, success -> green, warning -> orange, critical -> red, info -> blue). A step the Figma ramp lacks takes the nearest one; `steps` decides the ties (the generator fails on an undecided tie). The default theme and \"dark\" are not touched; dark is not remapped on purpose (P-55). Not a semantic conversion: the classes keep their step, only the palette under them changes (P-54).",
+        "steps": {
+            "neutral-25": "gray/50"
+        }
     }
 }

@@ -10,7 +10,8 @@
 //                                                       only; "next" and "dark" still follow the aliased token)
 //
 // Output: private palette properties (--guk-palette-*), three value sets under one set of names (`:root` = today's
-// colours, `[data-theme="next"]` = Figma Light, `[data-theme="dark"]` = Figma Dark), one Tailwind `@utility` per
+// colours, `[data-theme="next"]` = Figma Light plus the primitive colours remapped onto the Figma palette
+// (`mapping.primitiveRemap`), `[data-theme="dark"]` = Figma Dark), one Tailwind `@utility` per
 // token for its own property (bg, text, icon, border, shadow, ring) and the extra utilities declared in
 // `mapping.utilities`: single-side borders, gradient stops and fades, fill / stroke / caret, and the few cross-family
 // utilities that apply a token of one family to another property. Usage:
@@ -76,7 +77,7 @@ const flatten = (group, prefix = []) =>
     });
 
 const { palette, color } = readJson('semantic-colors.tokens.json');
-const { renames, additions, utilities: extraUtilities } = readJson('semantic-colors.mapping.json');
+const { renames, additions, utilities: extraUtilities, primitiveRemap } = readJson('semantic-colors.mapping.json');
 const { fallbackRamps, rawFallback, overrides } = readJson('semantic-colors.parity.json');
 
 // Palette: name -> hex.
@@ -215,6 +216,72 @@ const setValue = (token, value) => (token.alias != null ? `var(${variableOf(toke
 const lightLines = [...tokens].map(([name, token]) => `${variableOf(name)}: ${setValue(token, token.light)};`);
 const darkLines = [...tokens].map(([name, token]) => `${variableOf(name)}: ${setValue(token, token.dark)};`);
 
+// Palette-change preview (`mapping.primitiveRemap`, L-01): in "next" only, every primitive colour variable is
+// redeclared as the same step of its Figma ramp, so primitive classes follow the new palette there. The semantic
+// tokens above never read a primitive variable in "next" (every value set declares every token from the palette), so
+// the remap cannot feed back into them; the palette properties are literal colours, so it cannot form a cycle.
+const remapLines = [];
+if (primitiveRemap != null) {
+    const figmaRampOf = new Map(Object.entries(fallbackRamps).map(([figma, today]) => [today, figma]));
+    const rampSteps = (figmaRamp) =>
+        [...paletteHex.keys()]
+            .map((name) => name.split('/'))
+            .filter(([ramp, step]) => ramp === figmaRamp && /^\d+$/.test(step))
+            .map(([, step]) => Number(step));
+    const stepOverrides = primitiveRemap.steps ?? {};
+    const used = new Set();
+    for (const [ramp, steps] of todaySteps) {
+        const figmaRamp = figmaRampOf.get(ramp);
+        if (figmaRamp == null) {
+            fail(`primitiveRemap: no Figma ramp for --color-${ramp}-* (add it to parity fallbackRamps)`);
+        }
+        const available = rampSteps(figmaRamp);
+        for (const step of steps) {
+            const key = `${ramp}-${step}`;
+            let target = stepOverrides[key];
+            if (target != null) {
+                used.add(key);
+                if (!paletteHex.has(target)) {
+                    fail(`primitiveRemap.steps: ${key} -> ${target} is not a palette entry`);
+                }
+            } else if (available.includes(step)) {
+                target = `${figmaRamp}/${step}`;
+            } else {
+                const distance = (s) => Math.abs(s - step);
+                const best = Math.min(...available.map(distance));
+                const nearest = available.filter((s) => distance(s) === best);
+                if (nearest.length !== 1) {
+                    fail(
+                        `primitiveRemap: ${key} is equally near ${nearest.map((s) => `${figmaRamp}/${s}`).join(' and ')}; decide it in steps`,
+                    );
+                }
+                target = `${figmaRamp}/${nearest[0]}`;
+            }
+            remapLines.push(`--color-${key}: var(${paletteVariable(target)});`);
+        }
+    }
+    for (const key of Object.keys(stepOverrides)) {
+        if (!used.has(key)) {
+            fail(`primitiveRemap.steps: --color-${key} is not a primitive colour`);
+        }
+    }
+}
+// The remap is a rule of its own, outside the theme layer and on `:root[data-theme]`: Tailwind emits the primitive
+// theme variables unlayered in some pipelines (the kit's own PostCSS, Rollup and Storybook builds) and layered in
+// others (the app), and an unlayered declaration beats any layered one. Unlayered, with one class more specificity than
+// Tailwind's `:root, :host`, it wins in either order; on a nested [data-theme] it is the element's own declaration.
+const remapCss =
+    remapLines.length > 0
+        ? [
+              '/* Palette-change preview in "next": primitive colours on the Figma palette (mapping.primitiveRemap) */',
+              ':root[data-theme="next"],',
+              '[data-theme="next"] {',
+              ...remapLines.map((l) => `${indent}${l}`),
+              '}',
+              '',
+          ].join('\n')
+        : '';
+
 const classOf = (name) => name.replaceAll('/', '-');
 const familyOf = (name) => name.split('/')[0];
 const familyTokens = (family) => [...tokens.keys()].filter((name) => familyOf(name) === family);
@@ -286,8 +353,9 @@ const rawCss = `/*
  *
  * Semantic colour tokens. Every token is a variable --guk-<property>-<group>-<role> with three value sets:
  * - :root                  today's colours ("parity"), so converted components keep their pixels;
- * - [data-theme="next"]    Figma Light values on the Figma palette;
- * - [data-theme="dark"]    Figma Dark values on the Figma palette.
+ * - [data-theme="next"]    Figma Light values on the Figma palette, plus the primitive colours (--color-*) on the
+ *                          same step of the Figma palette (palette-change preview, so primitive classes follow);
+ * - [data-theme="dark"]    Figma Dark values on the Figma palette (primitive colours unchanged).
  * Parity values marked "fallback, unverified" were derived by rule, not checked against a converted component.
  * Utilities: <family>-<group>-<role> per token for its own property; border-<side>-<group>-<role> per border token;
  * <applier>-<family>-<group>-<role> for another property (from/via/to, fill, stroke, caret and the declared
@@ -303,7 +371,7 @@ ${block('[data-theme="next"]', lightLines).join('\n')}
 ${block('[data-theme="dark"]', darkLines).join('\n')}
 }
 
-${utilities.join('\n\n')}
+${remapCss}${utilities.join('\n\n')}
 `;
 
 // Formatted with the repo's Biome config, so the committed file passes `lint:check` and `--check` stays byte-exact.
