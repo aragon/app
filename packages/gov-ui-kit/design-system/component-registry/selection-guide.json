@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "fb47cd97f0a7c07d3839e78ca2d0a6d36fc7f1796aebd6dffc57f90ea883a3b1",
+            "sha256": "fa82de9c7c47790b2c50dad8a81e07e9e4d6dcf8dc371c38fe6b5586a695ce70",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -541,13 +541,13 @@
             "usageNotes": [
                 "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
                 "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
-                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.",
                 "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140",
+                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:141",
                 "stories": [
                     "kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1"
                 ]

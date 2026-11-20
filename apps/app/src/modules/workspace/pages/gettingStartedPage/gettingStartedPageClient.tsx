@@ -37,7 +37,7 @@ const SkipAccountsAction: React.FC = () => {
             onClick={() => replace([])}
             size="lg"
             type="submit"
-            variant="tertiary"
+            variant="ghost"
         >
             {t('app.workspace.gettingStartedPage.addAccountsLater')}
         </Button>
@@ -91,6 +91,7 @@ export const GettingStartedPageClient: React.FC<
                     ...createWorkspaceFormDefaultValues,
                     name: defaultWorkspaceName,
                 }}
+                hideNextIcon={true}
                 onSubmit={handleSubmit}
                 secondaryActions={{
                     [WorkspaceWizardStep.ACCOUNTS]: <SkipAccountsAction />,

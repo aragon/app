@@ -35,6 +35,10 @@ export interface IWorkspaceWizardProps {
      */
     secondaryActions?: Partial<Record<WorkspaceWizardStep, ReactNode>>;
     /**
+     * Hides the right caret on the wizard's next and submit buttons.
+     */
+    hideNextIcon?: boolean;
+    /**
      * Product flow reported by the wizard analytics, e.g. `create_workspace`.
      */
     analyticsFlow: string;
@@ -61,6 +65,7 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
         initialActiveStep,
         steps: stepFilter,
         secondaryActions,
+        hideNextIcon,
         analyticsFlow,
         onSubmit,
     } = props;
@@ -109,6 +114,7 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
                     description={t(
                         `${translationNamespace}.steps.${step.id}.description`,
                     )}
+                    hideNextIcon={hideNextIcon}
                     key={step.id}
                     secondaryAction={secondaryActions?.[step.id]}
                     title={t(`${translationNamespace}.steps.${step.id}.title`)}

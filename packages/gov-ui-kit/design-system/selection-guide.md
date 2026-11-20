@@ -273,12 +273,12 @@ Avatar-shaped frame rendering an Icon with variant styling.
 
 - Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.
 - The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.
-- Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.
+- Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.
 - Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed.
 
 **References**
 
-- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140`
+- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:141`
 - `kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1`
 
 ### Breadcrumbs

@@ -204,7 +204,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
     });
 
-    it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
+    it('lists every option with its avatar, using the account avatars for the aggregated option, then the add account item', async () => {
+        stubImageLoading();
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+        });
         render(createTestComponent());
 
         await waitFor(() =>
@@ -213,15 +217,20 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(screen.getByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('All accounts');
         expect(items[1]).toHaveTextContent('Demo DAO');
-        expect(items[2]).toHaveTextContent(
+        expect(items[2]).toHaveTextContent('Treasury Safe');
+        expect(items[3]).toHaveTextContent(
             /workspaceAccountSelector\.addAccount$/,
         );
-        expect(
-            within(items[0]).getByTestId('RICHTEXT_LIST_UNORDERED'),
-        ).toBeInTheDocument();
+        await waitFor(() =>
+            expect(
+                within(items[0])
+                    .getAllByRole('img', { hidden: true })
+                    .map((avatar) => avatar.getAttribute('src')),
+            ).toEqual(['https://ipfs/dao-cid', safeWallet.src]),
+        );
     });
 
     it('opens the accounts step of the edit wizard from the add account item, returning to the current page', async () => {
@@ -402,6 +411,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     });
 
     it('offers to add an account to a workspace holding none', async () => {
+        stubImageLoading();
         getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
         mockAccountOptions({ options: [allAccountsOption] });
         render(createTestComponent());
@@ -409,10 +419,14 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(await screen.findByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items.map((item) => item.textContent)).toEqual([
-            'All accounts',
-            expect.stringMatching(/workspaceAccountSelector\.addAccount$/),
-        ]);
+        expect(items).toHaveLength(2);
+        expect(within(items[0]).getByText('All accounts')).toBeInTheDocument();
+        expect(
+            await within(items[0]).findByRole('img', { hidden: true }),
+        ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
+        expect(items[1]).toHaveTextContent(
+            /workspaceAccountSelector\.addAccount$/,
+        );
     });
 
     it('renders a Safe option with the Safe wallet avatar', async () => {

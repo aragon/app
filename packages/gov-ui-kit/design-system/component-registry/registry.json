@@ -6,8 +6,12 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "f9ca4c5900d0c963f44b1fe24867a2297c5c8ba4",
-            "dirty": [],
+            "commit": "89bfd83812d655bca941e06f551ef02986a2b1a3",
+            "dirty": [
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.test.tsx",
+                "packages/gov-ui-kit/src/core/components/avatars/avatarStack/avatarStack.tsx"
+            ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
                 "js": [
@@ -2829,15 +2833,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
-                "line": 140,
-                "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+                "line": 141,
+                "sha256": "1cead023cc68d575bf8043cf2d8b70d9693e28f4102182e374b081326b53cba7"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
                     "line": 8,
-                    "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+                    "sha256": "1cead023cc68d575bf8043cf2d8b70d9693e28f4102182e374b081326b53cba7"
                 }
             ],
             "stories": [
@@ -2845,7 +2849,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
                     "line": 1,
-                    "sha256": "efa391425a0d8650823f1ac858f2bf241198d132ff31d2778d61881a86fb21fc"
+                    "sha256": "e94cd6a56db79cea74befa51f26c5ca5d074663f8c80dff49958cc3ed2caec04"
                 }
             ],
             "tests": [
@@ -2853,14 +2857,14 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
                     "line": 1,
-                    "sha256": "f118c69d82f234a670e11db06805a9b28fc01bca496c48303148a7aa65e570db"
+                    "sha256": "6ea3ae76f84666b53a971ea308e2c8c0933ac5c4c6b089d5822e26e76f78c8d5"
                 }
             ],
             "docs": [],
             "usageNotes": [
                 "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
                 "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
-                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.",
                 "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
             ],
             "intent": {
@@ -11031,7 +11035,7 @@
                 "repository": "kit",
                 "path": "src/core/components/avatars/avatarStack/avatarStack.tsx",
                 "line": 8,
-                "sha256": "8dabaea872cdd922be94b83c7c2e18518f65f27924c6428003ec36fc480ca170"
+                "sha256": "1cead023cc68d575bf8043cf2d8b70d9693e28f4102182e374b081326b53cba7"
             },
             "props": [],
             "stories": [
@@ -11039,7 +11043,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.stories.tsx",
                     "line": 1,
-                    "sha256": "efa391425a0d8650823f1ac858f2bf241198d132ff31d2778d61881a86fb21fc"
+                    "sha256": "e94cd6a56db79cea74befa51f26c5ca5d074663f8c80dff49958cc3ed2caec04"
                 }
             ],
             "tests": [
@@ -11047,7 +11051,7 @@
                     "repository": "kit",
                     "path": "src/core/components/avatars/avatarStack/avatarStack.test.tsx",
                     "line": 1,
-                    "sha256": "f118c69d82f234a670e11db06805a9b28fc01bca496c48303148a7aa65e570db"
+                    "sha256": "6ea3ae76f84666b53a971ea308e2c8c0933ac5c4c6b089d5822e26e76f78c8d5"
                 }
             ],
             "docs": [],
