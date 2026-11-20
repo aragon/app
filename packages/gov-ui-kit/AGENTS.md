@@ -69,7 +69,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **Styling:** Tailwind CSS v4, CSS-first. There is no `tailwind.config.js`. Root `index.css`
   imports `./src/index.css` and `tailwindcss`, scanning only `src` for class names;
   `src/index.css` pulls in core + theme CSS.
-  Tokens live under `src/theme/tokens/` via `@theme` and expose the `--color-*` scale used
+  Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
+  under `src/theme/tokens/` (via `@theme`) that exposes the `--color-*` scale used
   as utilities such as `bg-primary-500` and `text-neutral-800`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
@@ -88,7 +89,9 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **No component without a co-located `*.stories.tsx`.** Storybook is the docs source of truth.
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.
-- **Do not edit design-token sources** (`src/theme/tokens/**`) without CODEOWNERS review
+- **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
+  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/**` CSS by hand
+  (`pnpm tokens:check` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
   `src/modules` must keep labeling, focus order, and keyboard interaction intact, and rely on
@@ -123,13 +126,14 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
-- `src/theme/tokens/` — design-token source; CODEOWNERS-gated (`@aragon/app-team`).
+- `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
+  `src/theme/tokens/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules
   for this package. Install policy and the dependency catalog are at the repo root.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
-- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`. Plain Node, no
+- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`; `scripts/tokens/` is the token generator. Plain Node, no
   framework; keep new checks in that shape. `scripts/README.md` covers the local screenshot comparison
   (`pnpm visual-diff`) and the primitive-colour lint (`pnpm lint:colors:report`).
 - `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.

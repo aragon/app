@@ -33,6 +33,13 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 `PLAYWRIGHT_CORE_PATH`) and a Chromium: Playwright's own, else the newest under
 `PLAYWRIGHT_BROWSERS_PATH`, or `CHROMIUM_EXECUTABLE`. It never runs `playwright install`.
 
+## Token generator (`tokens/generate.mjs`)
+
+The one generator for every token CSS output: the primitive CSS, the semantic colour layer and the app's artifact, from
+the DTCG source in `design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when an
+output is stale, `pnpm tokens:report` lists verified and fallback Today values. Tests: `scripts/tokens/generate.test.mjs`
+(run by the root `pnpm test:tokens`). Details: `design-system/tokens/README.md`.
+
 ## Primitive colour lint (`primitive-colors.mjs`)
 
 Biome plugins in `biome-plugins/` flag primitive palette classes (`bg-primary-400`,
@@ -42,7 +49,7 @@ Tests, stories, `src/theme` and test utilities are excluded.
 
 ```sh
 pnpm lint:colors:report    # findings per component folder: the migration to-do list
-pnpm lint:colors:generate  # regenerate the .grit files after the primitive theme changes
+pnpm lint:colors:generate  # regenerate the .grit files after the primitive theme changes (`pnpm tokens:generate` first)
 pnpm lint:colors:check     # .grit files up to date, warn/error scopes disjoint
 ```
 
@@ -52,7 +59,8 @@ To make a migrated folder strict, add its glob to both `primitive-colors.*.error
 ## Semantic colour component map (`validate-` / `apply-semantic-component-map.mjs`)
 
 `design-system/tokens/semantic-colors.component-map.json` lists, per component file, every primitive colour class with
-its semantic replacement (or `new: null` and a reason to keep it).
+its semantic replacement (or `new: null` and a reason to keep it). Both validators read the generated CSS
+(`src/theme/tokens/**`), so they follow a token change after `pnpm tokens:generate`.
 
 ```sh
 pnpm tokens:semantic:map:check   # the map matches the sources and keeps every default-theme colour
