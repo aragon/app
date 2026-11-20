@@ -171,9 +171,9 @@ class NavigationWorkspaceUtils {
      */
     buildWorkspaceLinks = (workspaceId: string): INavigationLink[] => [
         {
-            label: 'app.application.navigationWorkspace.link.edit',
-            link: workspaceUtils.getWorkspaceEditUrl(workspaceId),
-            icon: IconType.PEN,
+            label: 'app.application.navigationWorkspace.link.admin',
+            link: workspaceUtils.getWorkspaceAdminUrl(workspaceId),
+            icon: IconType.SETTINGS,
             order: 100,
         },
     ];

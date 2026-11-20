@@ -17,6 +17,11 @@ export interface IResourcesInputProps {
      * Optional default value to init field with.
      */
     defaultValue?: IResource[];
+    /**
+     * Stacks the fields of each resource with a remove button, for narrow containers such as dialogs.
+     * @default false
+     */
+    isStacked?: boolean;
 }
 
 export interface IResourcesInputResource {

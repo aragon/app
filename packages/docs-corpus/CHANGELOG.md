@@ -1,5 +1,11 @@
 # @aragon/docs-corpus
 
+## 0.1.1
+
+### Patch Changes
+
+- [#1555](https://github.com/aragon/app/pull/1555) [`e439562`](https://github.com/aragon/app/commit/e439562bfcbae484ff86c45fb9a5ff4ef0bafc8c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - The heading pattern of the corpus loader no longer backtracks quadratically on long runs of spaces (CodeQL `js/polynomial-redos`).
+
 ## 0.1.0
 
 ### Minor Changes

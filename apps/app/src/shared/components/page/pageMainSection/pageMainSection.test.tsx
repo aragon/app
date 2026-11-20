@@ -30,4 +30,24 @@ describe('<PageMainSection /> component', () => {
         render(createTestComponent({ description }));
         expect(screen.getByText(description)).toBeInTheDocument();
     });
+
+    it('renders the action as a primary button by default', () => {
+        render(createTestComponent({ action: { label: 'action' } }));
+
+        expect(screen.getByRole('button', { name: 'action' })).toHaveClass(
+            'bg-primary-400',
+        );
+    });
+
+    it('renders the action with the given variant', () => {
+        render(
+            createTestComponent({
+                action: { label: 'action', variant: 'secondary' },
+            }),
+        );
+
+        const button = screen.getByRole('button', { name: 'action' });
+        expect(button).toHaveClass('bg-neutral-0');
+        expect(button).not.toHaveClass('bg-primary-400');
+    });
 });

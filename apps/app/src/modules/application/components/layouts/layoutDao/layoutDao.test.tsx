@@ -156,7 +156,7 @@ describe('<LayoutDao /> component', () => {
         render(await createTestComponent());
         const errorLink = screen.getByRole('link', { name: 'Explore DAOs' });
         expect(errorLink).toBeInTheDocument();
-        expect(errorLink.getAttribute('href')).toEqual('/');
+        expect(errorLink.getAttribute('href')).toEqual('/explore');
     });
 
     it('renders the 404 page for an unknown network without fetching the DAO', async () => {

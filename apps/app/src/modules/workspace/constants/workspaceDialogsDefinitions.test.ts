@@ -20,4 +20,11 @@ describe('workspaceDialogsDefinitions', () => {
                 .requiresWallet,
         ).toBeFalsy();
     });
+
+    it('does not require a wallet to edit the workspace details', () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.EDIT_DETAILS]
+                .requiresWallet,
+        ).toBeFalsy();
+    });
 });

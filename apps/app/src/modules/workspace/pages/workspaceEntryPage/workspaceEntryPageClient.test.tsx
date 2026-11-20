@@ -19,6 +19,10 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         workspaceService,
         'getOrCreateDefaultWorkspace',
     );
+    const getWorkspaceListSpy = jest.spyOn(
+        workspaceService,
+        'getWorkspaceList',
+    );
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const replaceMock = jest.fn();
 
@@ -36,10 +40,12 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         useRouterSpy.mockReturnValue({
             replace: replaceMock,
         } as unknown as AppRouterInstance);
+        getWorkspaceListSpy.mockResolvedValue([workspace]);
     });
 
     afterEach(() => {
         getOrCreateDefaultWorkspaceSpy.mockReset();
+        getWorkspaceListSpy.mockReset();
         useRouterSpy.mockReset();
         replaceMock.mockReset();
     });
@@ -103,6 +109,16 @@ describe('<WorkspaceEntryPageClient /> component', () => {
         });
     });
 
+    it('sends a connected user without a workspace to Getting started', async () => {
+        getWorkspaceListSpy.mockResolvedValue([]);
+        render(createTestComponent());
+
+        await waitFor(() =>
+            expect(replaceMock).toHaveBeenCalledWith('/getting-started'),
+        );
+        expect(getOrCreateDefaultWorkspaceSpy).not.toHaveBeenCalled();
+    });
+
     it('renders an error when the workspace cannot be resolved', async () => {
         getOrCreateDefaultWorkspaceSpy.mockRejectedValue(new Error('failed'));
         render(createTestComponent());
@@ -111,5 +127,22 @@ describe('<WorkspaceEntryPageClient /> component', () => {
             await screen.findByText(/workspaceEntryPage\.error\.title$/),
         ).toBeInTheDocument();
         expect(replaceMock).not.toHaveBeenCalled();
+    });
+    it('reads the registry, not a stale list cached from another registry', async () => {
+        // The reported bug: browsing the demo leaves its two workspaces in the shared list cache, so the entry
+        // page decided on a non-empty registry and had a "My workspace" seeded instead of showing Getting started.
+        const queryClient = new QueryClient();
+        queryClient.setQueryData(workspaceServiceKeys.workspaceList(), [
+            workspace,
+            workspace,
+        ]);
+        getWorkspaceListSpy.mockResolvedValue([]);
+
+        render(createTestComponent(undefined, queryClient));
+
+        await waitFor(() =>
+            expect(replaceMock).toHaveBeenCalledWith('/getting-started'),
+        );
+        expect(getOrCreateDefaultWorkspaceSpy).not.toHaveBeenCalled();
     });
 });

@@ -3,7 +3,7 @@ import { BasePage } from '../../shared';
 
 export class ExplorePage extends BasePage {
     constructor(page: PlaywrightPage) {
-        super({ page, path: '/' });
+        super({ page, path: '/explore' });
     }
 
     readonly heroHeading = () =>

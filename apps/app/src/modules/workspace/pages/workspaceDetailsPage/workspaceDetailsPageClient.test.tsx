@@ -1,8 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
@@ -73,6 +75,7 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
     };
 
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         getAccountsSpy.mockResolvedValue([
             {
                 network: Network.ETHEREUM_SEPOLIA,
@@ -227,6 +230,20 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
             'href',
             `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
         );
+    });
+
+    it('opens DAO creation from a workspace with no account', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        renderWorkspace(buildWorkspace({ accounts: [] }));
+
+        await userEvent.click(
+            await screen.findByRole('button', {
+                name: /workspaceDetailsPage\.emptyAccounts\.createAction$/,
+            }),
+        );
+
+        expect(open).toHaveBeenCalledWith(CreateDaoDialogId.CREATE_DAO_DETAILS);
     });
 
     it('hides the empty accounts state when the workspace has accounts', async () => {
