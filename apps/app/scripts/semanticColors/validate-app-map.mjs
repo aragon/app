@@ -585,6 +585,17 @@ for (const e of entries) {
             : x,
     );
     liftRingColour(oldDecls, newDecls, newClasses);
+    // A reviewed property change (e.g. an <hr> drawn through currentColor moving to its border colour): the entry
+    // names both properties and its evidence; the values must still be equal, only the property name may differ.
+    if (e.propertyChange) {
+        const { from, to, evidence } = e.propertyChange;
+        if (!from || !to || !evidence) {
+            fail(`${where}: propertyChange needs "from", "to" and "evidence"`);
+        }
+        for (const x of oldDecls) {
+            x.key = x.key.replace(`| ${from}:`, `| ${to}:`);
+        }
+    }
     const a = oldDecls.map((x) => x.key).sort();
     const b = newDecls.map((x) => x.key).sort();
     if (a.join('\n') !== b.join('\n')) {

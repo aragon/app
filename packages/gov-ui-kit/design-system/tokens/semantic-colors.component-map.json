@@ -4768,112 +4768,18 @@
             {
                 "line": 22,
                 "old": "border-info-300"
-            },
-            {
-                "line": 22,
-                "old": "bg-info-100"
             }
         ],
         "src/core/components/alerts/alertCard/alertCard.stories.tsx": [
             {
                 "line": 34,
                 "old": "border-info-300"
-            },
-            {
-                "line": 34,
-                "old": "bg-info-100"
-            }
-        ],
-        "src/core/components/avatars/avatar/avatar.stories.tsx": [
-            {
-                "line": 45,
-                "old": "bg-primary-400"
-            },
-            {
-                "line": 45,
-                "old": "text-neutral-0"
-            }
-        ],
-        "src/core/components/clipboard/clipboard.stories.tsx": [
-            {
-                "line": 102,
-                "old": "border-neutral-100"
-            },
-            {
-                "line": 102,
-                "old": "bg-neutral-0"
-            },
-            {
-                "line": 102,
-                "old": "hover:bg-neutral-50"
-            },
-            {
-                "line": 106,
-                "old": "text-neutral-500"
-            },
-            {
-                "line": 123,
-                "old": "border-neutral-100"
-            },
-            {
-                "line": 123,
-                "old": "bg-neutral-0"
-            },
-            {
-                "line": 123,
-                "old": "hover:bg-neutral-50"
-            },
-            {
-                "line": 128,
-                "old": "text-neutral-500"
-            }
-        ],
-        "src/core/components/dataList/dataListRoot/dataListRoot.stories.tsx": [
-            {
-                "line": 25,
-                "old": "text-neutral-800"
-            },
-            {
-                "line": 26,
-                "old": "text-neutral-500"
-            },
-            {
-                "line": 32,
-                "old": "bg-neutral-50"
-            },
-            {
-                "line": 34,
-                "old": "bg-neutral-50"
-            },
-            {
-                "line": 35,
-                "old": "bg-neutral-50"
-            }
-        ],
-        "src/core/components/definitionList/definitionListContainer/definitionListContainer.stories.tsx": [
-            {
-                "line": 24,
-                "old": "bg-success-100"
-            },
-            {
-                "line": 47,
-                "old": "bg-warning-100"
-            }
-        ],
-        "src/core/components/definitionList/definitionListItem/definitionListItem.stories.tsx": [
-            {
-                "line": 44,
-                "old": "bg-success-100"
             }
         ],
         "src/core/components/dialogs/dialog/dialogContent/dialogContent.stories.tsx": [
             {
                 "line": 31,
                 "old": "border-info-300"
-            },
-            {
-                "line": 31,
-                "old": "bg-info-100"
             }
         ],
         "src/core/components/dialogs/dialog/dialogFooter/dialogFooter.stories.tsx": [
@@ -4886,40 +4792,18 @@
             {
                 "line": 29,
                 "old": "border-info-300"
-            },
-            {
-                "line": 29,
-                "old": "bg-info-100"
             }
         ],
         "src/core/components/dialogs/dialogAlert/dialogAlertContent/dialogAlertContent.stories.tsx": [
             {
                 "line": 31,
                 "old": "border-info-300"
-            },
-            {
-                "line": 31,
-                "old": "bg-info-100"
             }
         ],
         "src/core/components/dialogs/dialogAlert/dialogAlertStoryComponent.tsx": [
             {
                 "line": 33,
                 "old": "border-info-300"
-            },
-            {
-                "line": 33,
-                "old": "bg-info-100"
-            }
-        ],
-        "src/core/components/forms/textAreaRichText/textAreaRichText.stories.tsx": [
-            {
-                "line": 48,
-                "old": "text-neutral-800"
-            },
-            {
-                "line": 49,
-                "old": "text-neutral-500"
             }
         ],
         "src/core/components/tabs/tabsRoot/tabsRoot.stories.tsx": [
@@ -4928,32 +4812,16 @@
                 "old": "border-info-300"
             },
             {
-                "line": 30,
-                "old": "bg-info-100"
-            },
-            {
                 "line": 35,
                 "old": "border-info-300"
-            },
-            {
-                "line": 35,
-                "old": "bg-info-100"
             },
             {
                 "line": 40,
                 "old": "border-info-300"
             },
             {
-                "line": 40,
-                "old": "bg-info-100"
-            },
-            {
                 "line": 83,
                 "old": "border-info-300"
-            },
-            {
-                "line": 83,
-                "old": "bg-info-100"
             }
         ],
         "src/core/components/tooltip/tooltip.stories.tsx": [
@@ -4970,28 +4838,6 @@
             {
                 "line": 63,
                 "old": "border-info-300"
-            },
-            {
-                "line": 63,
-                "old": "bg-info-100"
-            }
-        ],
-        "src/modules/components/proposal/proposalVoting/proposalVoting.stories.tsx": [
-            {
-                "line": 227,
-                "old": "text-neutral-800"
-            },
-            {
-                "line": 229,
-                "old": "text-neutral-800"
-            },
-            {
-                "line": 236,
-                "old": "text-neutral-500"
-            },
-            {
-                "line": 237,
-                "old": "text-neutral-800"
             }
         ]
     },

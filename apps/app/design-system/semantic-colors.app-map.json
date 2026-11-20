@@ -17,15 +17,15 @@
     "summary": {
         "files": 226,
         "occurrences": 832,
-        "converted": 779,
-        "unconverted": 53,
+        "converted": 781,
+        "unconverted": 51,
         "unconvertedByReason": {
             "ordering": 5,
             "brand": 12,
             "no-token": 12,
             "no-css": 1,
             "conflict": 16,
-            "no-utility": 7
+            "no-utility": 5
         }
     },
     "tokensUsed": {
@@ -66,7 +66,7 @@
         "border-surface-disabled-toggle": 1,
         "border-surface-hover": 9,
         "border-surface-hover-graph-node": 1,
-        "border-surface-secondary": 75,
+        "border-surface-secondary": 77,
         "border-surface-secondary-panel": 7,
         "border-surface-selected": 5,
         "gradient-brand-primary": 1,
@@ -6059,9 +6059,14 @@
             {
                 "line": 22,
                 "old": "text-neutral-100",
-                "new": null,
+                "new": "border-surface-secondary",
                 "part": "autocomplete group divider (hr)",
-                "reason": "no-utility: the divider line is drawn by the <hr> border in currentColor; the role is border/surface/secondary (neutral-100), a border class, not a text token"
+                "reason": "converted after the main pass: the <hr> rule takes border-surface-secondary (neutral-100) in place of the currentColor text class; computed style and screenshots identical in the default theme",
+                "propertyChange": {
+                    "from": "color",
+                    "to": "border-color",
+                    "evidence": "The <hr> rule is drawn by its 1px top border in currentColor (Tailwind preflight). Computed style (1px, rgb(228,231,235)) and screenshots identical in the default theme; app recheck 121/121 identical."
+                }
             },
             {
                 "line": 23,
@@ -6073,9 +6078,14 @@
             {
                 "line": 26,
                 "old": "text-neutral-100",
-                "new": null,
+                "new": "border-surface-secondary",
                 "part": "autocomplete group divider (hr)",
-                "reason": "no-utility: the divider line is drawn by the <hr> border in currentColor; the role is border/surface/secondary (neutral-100), a border class, not a text token"
+                "reason": "converted after the main pass: the <hr> rule takes border-surface-secondary (neutral-100) in place of the currentColor text class; computed style and screenshots identical in the default theme",
+                "propertyChange": {
+                    "from": "color",
+                    "to": "border-color",
+                    "evidence": "The <hr> rule is drawn by its 1px top border in currentColor (Tailwind preflight). Computed style (1px, rgb(228,231,235)) and screenshots identical in the default theme; app recheck 121/121 identical."
+                }
             }
         ],
         "apps/app/src/shared/components/forms/autocompleteInput/autocompleteInputItem.tsx": [
