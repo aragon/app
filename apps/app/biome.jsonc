@@ -69,7 +69,16 @@
                 "!src/shared/lib/**",
                 "!src/shared/security/**",
                 "!src/shared/types/**",
-                "!src/shared/utils/**"
+                "!src/shared/utils/**",
+                "!src/daos/cryptex/**",
+                "!src/daos/gaugeDistributions/**",
+                "!src/daos/katana/**",
+                "!src/modules/dashboard/**",
+                "!src/modules/explore/**",
+                "!src/modules/finance/**",
+                "!src/modules/permissions/**",
+                "!src/modules/safe/**",
+                "!src/plugins/safeMultisigPlugin/**"
             ]
         },
         {
@@ -103,6 +112,15 @@
                 "src/shared/security/**",
                 "src/shared/types/**",
                 "src/shared/utils/**",
+                "src/daos/cryptex/**",
+                "src/daos/gaugeDistributions/**",
+                "src/daos/katana/**",
+                "src/modules/dashboard/**",
+                "src/modules/explore/**",
+                "src/modules/finance/**",
+                "src/modules/permissions/**",
+                "src/modules/safe/**",
+                "src/plugins/safeMultisigPlugin/**",
                 "!**/*.test.ts",
                 "!**/*.test.tsx",
                 "!**/*.stories.tsx",
@@ -143,7 +161,16 @@
                 "!src/shared/lib/**",
                 "!src/shared/security/**",
                 "!src/shared/types/**",
-                "!src/shared/utils/**"
+                "!src/shared/utils/**",
+                "!src/daos/cryptex/**",
+                "!src/daos/gaugeDistributions/**",
+                "!src/daos/katana/**",
+                "!src/modules/dashboard/**",
+                "!src/modules/explore/**",
+                "!src/modules/finance/**",
+                "!src/modules/permissions/**",
+                "!src/modules/safe/**",
+                "!src/plugins/safeMultisigPlugin/**"
             ]
         },
         {
@@ -176,7 +203,16 @@
                 "src/shared/lib/**",
                 "src/shared/security/**",
                 "src/shared/types/**",
-                "src/shared/utils/**"
+                "src/shared/utils/**",
+                "src/daos/cryptex/**",
+                "src/daos/gaugeDistributions/**",
+                "src/daos/katana/**",
+                "src/modules/dashboard/**",
+                "src/modules/explore/**",
+                "src/modules/finance/**",
+                "src/modules/permissions/**",
+                "src/modules/safe/**",
+                "src/plugins/safeMultisigPlugin/**"
             ]
         }
     ],

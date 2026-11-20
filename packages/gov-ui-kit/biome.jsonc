@@ -47,7 +47,16 @@
                 "!src/modules/components/member/**",
                 "!src/modules/components/proposal/**",
                 "!src/modules/components/smartContract/**",
-                "!src/modules/components/vote/**"
+                "!src/modules/components/vote/**",
+                "!src/core/components/accordion/**",
+                "!src/core/components/avatars/**",
+                "!src/core/components/collapsible/**",
+                "!src/core/components/dialogs/**",
+                "!src/core/components/dropdown/**",
+                "!src/core/components/states/**",
+                "!src/core/components/toggles/**",
+                "!src/modules/components/asset/**",
+                "!src/modules/components/wallet/**"
             ]
         },
         {
@@ -76,6 +85,15 @@
                 "src/modules/components/proposal/**",
                 "src/modules/components/smartContract/**",
                 "src/modules/components/vote/**",
+                "src/core/components/accordion/**",
+                "src/core/components/avatars/**",
+                "src/core/components/collapsible/**",
+                "src/core/components/dialogs/**",
+                "src/core/components/dropdown/**",
+                "src/core/components/states/**",
+                "src/core/components/toggles/**",
+                "src/modules/components/asset/**",
+                "src/modules/components/wallet/**",
                 "!**/*.test.ts",
                 "!**/*.test.tsx",
                 "!**/*.stories.tsx",
@@ -109,7 +127,16 @@
                 "!src/modules/components/member/**",
                 "!src/modules/components/proposal/**",
                 "!src/modules/components/smartContract/**",
-                "!src/modules/components/vote/**"
+                "!src/modules/components/vote/**",
+                "!src/core/components/accordion/**",
+                "!src/core/components/avatars/**",
+                "!src/core/components/collapsible/**",
+                "!src/core/components/dialogs/**",
+                "!src/core/components/dropdown/**",
+                "!src/core/components/states/**",
+                "!src/core/components/toggles/**",
+                "!src/modules/components/asset/**",
+                "!src/modules/components/wallet/**"
             ]
         },
         {
@@ -137,7 +164,16 @@
                 "src/modules/components/member/**",
                 "src/modules/components/proposal/**",
                 "src/modules/components/smartContract/**",
-                "src/modules/components/vote/**"
+                "src/modules/components/vote/**",
+                "src/core/components/accordion/**",
+                "src/core/components/avatars/**",
+                "src/core/components/collapsible/**",
+                "src/core/components/dialogs/**",
+                "src/core/components/dropdown/**",
+                "src/core/components/states/**",
+                "src/core/components/toggles/**",
+                "src/modules/components/asset/**",
+                "src/modules/components/wallet/**"
             ]
         }
     ],
