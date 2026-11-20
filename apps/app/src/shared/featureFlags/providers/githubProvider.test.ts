@@ -1,6 +1,9 @@
 import type { ICmsFeatureFlagsResponse } from '@/shared/api/cmsService';
 import { cmsService } from '@/shared/api/cmsService';
-import type { FeatureFlagOverrides } from '../featureFlags.api';
+import type {
+    FeatureFlagEnvironment,
+    FeatureFlagOverrides,
+} from '../featureFlags.api';
 import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
 import { GithubCmsFeatureFlagsProvider } from './githubProvider';
 
@@ -48,6 +51,85 @@ describe('GithubCmsFeatureFlagsProvider', () => {
         expect(mockedCmsService.getFeatureFlags).toHaveBeenCalledTimes(1);
         expect(parseOverridesMock).toHaveBeenCalledWith('cookie');
         expect(result).toEqual(expected);
+    });
+
+    describe('occ environment', () => {
+        const loadOverrides = (
+            cmsResponse: ICmsFeatureFlagsResponse,
+            environment: FeatureFlagEnvironment,
+        ) => {
+            mockedCmsService.getFeatureFlags.mockResolvedValueOnce(cmsResponse);
+            parseOverridesMock.mockReturnValueOnce({});
+
+            return new GithubCmsFeatureFlagsProvider(
+                environment,
+                () => 'cookie',
+            ).loadOverrides();
+        };
+
+        const loadBaseOverrides = (
+            cmsResponse: ICmsFeatureFlagsResponse,
+            environment: FeatureFlagEnvironment,
+        ) => {
+            mockedCmsService.getFeatureFlags.mockResolvedValueOnce(cmsResponse);
+
+            return new GithubCmsFeatureFlagsProvider(
+                environment,
+            ).loadBaseOverrides();
+        };
+
+        it('loads only the own CMS value of occ as override', async () => {
+            const result = await loadOverrides(
+                {
+                    debugPanel: { production: true },
+                    linkedAccount: { occ: true, production: false },
+                },
+                'occ',
+            );
+
+            expect(result).toEqual({ linkedAccount: true });
+        });
+
+        it('loads the production CMS values as base overrides of occ', async () => {
+            const result = await loadBaseOverrides(
+                {
+                    debugPanel: { production: true },
+                    linkedAccount: { occ: true, production: false },
+                    useMocks: { occ: true },
+                },
+                'occ',
+            );
+
+            expect(result).toEqual({
+                debugPanel: true,
+                linkedAccount: false,
+            });
+        });
+
+        it('loads no base overrides in an environment without a base', async () => {
+            const result = await loadBaseOverrides(
+                { debugPanel: { production: true } },
+                'staging',
+            );
+
+            expect(result).toEqual({});
+            expect(mockedCmsService.getFeatureFlags).not.toHaveBeenCalled();
+        });
+
+        it('applies the plain boolean format to occ', async () => {
+            const result = await loadOverrides({ debugPanel: true }, 'occ');
+
+            expect(result).toEqual({ debugPanel: true });
+        });
+
+        it('does not inherit production values in other environments', async () => {
+            const result = await loadOverrides(
+                { debugPanel: { production: true } },
+                'staging',
+            );
+
+            expect(result).toEqual({});
+        });
     });
 
     it('returns only cookie overrides when CMS call fails', async () => {

@@ -1039,9 +1039,9 @@ selector's Add account item or the empty-accounts states of the overview and the
 ## Feature flag
 
 The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
-added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` only; `false` by default, so preview,
-development, staging and production are off — the registry is a `localStorage` mock, so it must not ship on, and
-preview points at the development backend, which has no workspace endpoints yet.
+added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` and in `occ`, the soft-launch environment
+(new.app.aragon.org); `false` by default, so preview, development, staging and production are off. The registry
+lives in `localStorage`, so a workspace exists only in the browser that created it.
 
 Every route gate is the same server-side check — `await featureFlags.isEnabled('workspaces')`, else `notFound()`:
 

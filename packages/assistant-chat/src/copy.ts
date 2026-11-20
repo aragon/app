@@ -10,6 +10,10 @@ export const supportEmail = 'support@aragon.org';
 
 export const supportEmailHref = `mailto:${supportEmail}`;
 
+// Origin the knowledge base quotes for the app; answers link to it, the widget resolves it
+// against the host it runs on.
+export const canonicalAppOrigin = 'https://app.aragon.org';
+
 // The legal pages of aragon.org, linked from the AI notice under the composer.
 export const privacyPolicyUrl = 'https://aragon.org/privacy-policy';
 
