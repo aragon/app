@@ -6326,7 +6326,7 @@
             "part": "bar (success)",
             "state": "default",
             "codeClassBefore": "bg-success-400",
-            "codeClassNow": "bg-success-400",
+            "codeClassNow": "bg-success-solid-progress",
             "today": "success-400",
             "figmaToken": "bg/success/tertiary",
             "figmaTokenCode": "bg/success/solid",
@@ -6336,7 +6336,9 @@
             "figmaRef": "Progress Indicator F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-51)",
+            "codeTokenNow": "bg/success/solid-progress",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-400; \"next\" and \"dark\" follow bg/success/solid (the Figma binding). The value conflict itself stays on the review list (C-02, A-16)."
         },
         {
             "file": "src/core/components/progress/progress.tsx",
@@ -7218,7 +7220,7 @@
             "part": "tag (info)",
             "state": "default",
             "codeClassBefore": "bg-info-200",
-            "codeClassNow": "bg-info-200",
+            "codeClassNow": "bg-info-subtle-tag",
             "today": "info-200",
             "figmaToken": "bg/info/primary",
             "figmaTokenCode": "bg/info/subtle",
@@ -7228,7 +7230,9 @@
             "figmaRef": "Tag @F, Variant=Info",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-51)",
+            "codeTokenNow": "bg/info/subtle-tag",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's info-200; \"next\" and \"dark\" follow bg/info/subtle (the Figma binding). The value conflict itself stays on the review list (C-01, A-14)."
         },
         {
             "file": "src/core/components/tag/tag.tsx",
@@ -7256,7 +7260,7 @@
             "part": "tag (warning)",
             "state": "default",
             "codeClassBefore": "bg-warning-200",
-            "codeClassNow": "bg-warning-200",
+            "codeClassNow": "bg-warning-subtle-tag",
             "today": "warning-200",
             "figmaToken": "bg/warning/primary",
             "figmaTokenCode": "bg/warning/subtle",
@@ -7266,7 +7270,9 @@
             "figmaRef": "Tag @F, Variant=Warning",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-51)",
+            "codeTokenNow": "bg/warning/subtle-tag",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's warning-200; \"next\" and \"dark\" follow bg/warning/subtle (the Figma binding). The value conflict itself stays on the review list (C-01, A-14)."
         },
         {
             "file": "src/core/components/tag/tag.tsx",
@@ -7294,7 +7300,7 @@
             "part": "tag (critical)",
             "state": "default",
             "codeClassBefore": "bg-critical-200",
-            "codeClassNow": "bg-critical-200",
+            "codeClassNow": "bg-critical-subtle-tag",
             "today": "critical-200",
             "figmaToken": "bg/critical/primary",
             "figmaTokenCode": "bg/critical/subtle",
@@ -7304,7 +7310,9 @@
             "figmaRef": "Tag @F, Variant=Critical",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-51)",
+            "codeTokenNow": "bg/critical/subtle-tag",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's critical-200; \"next\" and \"dark\" follow bg/critical/subtle (the Figma binding). The value conflict itself stays on the review list (C-01, A-14)."
         },
         {
             "file": "src/core/components/tag/tag.tsx",
@@ -7332,7 +7340,7 @@
             "part": "tag (success)",
             "state": "default",
             "codeClassBefore": "bg-success-200",
-            "codeClassNow": "bg-success-200",
+            "codeClassNow": "bg-success-subtle-tag",
             "today": "success-200",
             "figmaToken": "bg/success/primary",
             "figmaTokenCode": "bg/success/subtle",
@@ -7342,7 +7350,9 @@
             "figmaRef": "Tag @F, Variant=Success",
             "confidence": "high",
             "verdict": "figma-differs-conflict",
-            "action": "review list"
+            "action": "component-level alias (P-51)",
+            "codeTokenNow": "bg/success/subtle-tag",
+            "note": "Converted to a code-only component-level alias token: default theme keeps today's success-200; \"next\" and \"dark\" follow bg/success/subtle (the Figma binding). The value conflict itself stays on the review list (C-01, A-14)."
         },
         {
             "file": "src/core/components/tag/tag.tsx",

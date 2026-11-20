@@ -1,5 +1,5 @@
 {
-    "$description": "Provisional code names for the Figma semantic colour tokens. This file is the single place to rename: keys are Figma names (property/group/role), values the name used in code (class = name with / replaced by -, CSS variable = --guk-<class>). Several Figma names may map to one code name only when their Light and Dark values are identical (the generator checks). Every Figma name not listed keeps its name. `additions` are code-only tokens that Figma does not define as semantic variables yet. An addition either has its own `light`/`dark` values or is an `alias` of another token (same value in every theme). `utilities` declares the utility families generated beside the one-per-token utilities (see its own description).",
+    "$description": "Provisional code names for the Figma semantic colour tokens. This file is the single place to rename: keys are Figma names (property/group/role), values the name used in code (class = name with / replaced by -, CSS variable = --guk-<class>). Several Figma names may map to one code name only when their Light and Dark values are identical (the generator checks). Every Figma name not listed keeps its name. `additions` are code-only tokens that Figma does not define as semantic variables yet. An addition either has its own `light`/`dark` values or is an `alias` of another token (same value in every theme, unless `semantic-colors.parity.json` gives it a default-theme override: then it holds that value in the default theme and follows the aliased token in \"next\" and \"dark\", a component-level alias, P-51). `utilities` declares the utility families generated beside the one-per-token utilities (see its own description).",
     "renames": {
         "bg/accent/primary": "bg/accent/solid",
         "bg/accent/primary-inverse": "bg/accent/subtle",
@@ -77,6 +77,26 @@
             "light": "{palette.gray.300}",
             "dark": "{palette.gray.600}",
             "note": "Code-only, pending design review: the border of an open dropdown trigger (DropdownContainer passes it to its tertiary or critical Button while the menu is open; today's border-neutral-300). The class must sort after border-surface-default so that it wins over the Button's own border (Tailwind orders same-property utilities by name), while hover/active variants still win. Light takes the Figma border/surface/hover value (gray/300), Dark the border/surface/active value (gray/600)."
+        },
+        "bg/info/subtle-tag": {
+            "alias": "bg/info/subtle",
+            "note": "Code-only, pending design review (P-51): the Tag (info) fill. Figma binds bg/info/primary (code bg/info/subtle), but today's tag fill is info-200 while bg/info/subtle is fixed at info-100 by its other users (avatarIcon): conflict C-01 (A-14). The default theme keeps info-200 through its parity override; \"next\" and \"dark\" follow bg/info/subtle. Collapses into bg/info/subtle when the default switches to the Figma values (T-04)."
+        },
+        "bg/success/subtle-tag": {
+            "alias": "bg/success/subtle",
+            "note": "Code-only, pending design review (P-51): the Tag (success) fill. Figma binds bg/success/primary (code bg/success/subtle), but today's tag fill is success-200 while bg/success/subtle is fixed at success-100 by its other users (avatarIcon): conflict C-01 (A-14). The default theme keeps success-200 through its parity override; \"next\" and \"dark\" follow bg/success/subtle. Collapses into bg/success/subtle when the default switches to the Figma values (T-04)."
+        },
+        "bg/warning/subtle-tag": {
+            "alias": "bg/warning/subtle",
+            "note": "Code-only, pending design review (P-51): the Tag (warning) fill. Figma binds bg/warning/primary (code bg/warning/subtle), but today's tag fill is warning-200 while bg/warning/subtle is fixed at warning-100 by its other users (avatarIcon, inputText addon): conflict C-01 (A-14). The default theme keeps warning-200 through its parity override; \"next\" and \"dark\" follow bg/warning/subtle. Collapses into bg/warning/subtle when the default switches to the Figma values (T-04)."
+        },
+        "bg/critical/subtle-tag": {
+            "alias": "bg/critical/subtle",
+            "note": "Code-only, pending design review (P-51): the Tag (critical) fill. Figma binds bg/critical/primary (code bg/critical/subtle), but today's tag fill is critical-200 while bg/critical/subtle is fixed at critical-100 by its other users (avatarIcon, inputText addon): conflict C-01 (A-14). The default theme keeps critical-200 through its parity override; \"next\" and \"dark\" follow bg/critical/subtle. Collapses into bg/critical/subtle when the default switches to the Figma values (T-04)."
+        },
+        "bg/success/solid-progress": {
+            "alias": "bg/success/solid",
+            "note": "Code-only, pending design review (P-51): the Progress success bar. Figma binds bg/success/tertiary (code bg/success/solid), but today's bar is success-400 while bg/success/solid is fixed at success-500 by the success ping dot: conflict C-02 (A-16). The default theme keeps success-400 through its parity override; \"next\" and \"dark\" follow bg/success/solid. Collapses into bg/success/solid when the default switches to the Figma values (T-04)."
         }
     },
     "utilities": {

@@ -547,6 +547,16 @@
         --guk-bg-surface-ghost-hover: var(--color-neutral-0);
         /* verified from code */
         --guk-border-surface-open: var(--color-neutral-300);
+        /* verified from code */
+        --guk-bg-info-subtle-tag: var(--color-info-200);
+        /* verified from code */
+        --guk-bg-success-subtle-tag: var(--color-success-200);
+        /* verified from code */
+        --guk-bg-warning-subtle-tag: var(--color-warning-200);
+        /* verified from code */
+        --guk-bg-critical-subtle-tag: var(--color-critical-200);
+        /* verified from code */
+        --guk-bg-success-solid-progress: var(--color-success-400);
     }
 
     [data-theme="next"] {
@@ -755,6 +765,11 @@
         --guk-shadow-accent-md: #3164fa1a;
         --guk-bg-surface-ghost-hover: var(--guk-palette-gray-0);
         --guk-border-surface-open: var(--guk-palette-gray-300);
+        --guk-bg-info-subtle-tag: var(--guk-bg-info-subtle);
+        --guk-bg-success-subtle-tag: var(--guk-bg-success-subtle);
+        --guk-bg-warning-subtle-tag: var(--guk-bg-warning-subtle);
+        --guk-bg-critical-subtle-tag: var(--guk-bg-critical-subtle);
+        --guk-bg-success-solid-progress: var(--guk-bg-success-solid);
     }
 
     [data-theme="dark"] {
@@ -963,6 +978,11 @@
         --guk-shadow-accent-md: #3164fa1a;
         --guk-bg-surface-ghost-hover: var(--guk-palette-gray-900);
         --guk-border-surface-open: var(--guk-palette-gray-600);
+        --guk-bg-info-subtle-tag: var(--guk-bg-info-subtle);
+        --guk-bg-success-subtle-tag: var(--guk-bg-success-subtle);
+        --guk-bg-warning-subtle-tag: var(--guk-bg-warning-subtle);
+        --guk-bg-critical-subtle-tag: var(--guk-bg-critical-subtle);
+        --guk-bg-success-solid-progress: var(--guk-bg-success-solid);
     }
 }
 
@@ -1708,6 +1728,26 @@
 
 @utility border-surface-open {
     border-color: var(--guk-border-surface-open);
+}
+
+@utility bg-info-subtle-tag {
+    background-color: var(--guk-bg-info-subtle-tag);
+}
+
+@utility bg-success-subtle-tag {
+    background-color: var(--guk-bg-success-subtle-tag);
+}
+
+@utility bg-warning-subtle-tag {
+    background-color: var(--guk-bg-warning-subtle-tag);
+}
+
+@utility bg-critical-subtle-tag {
+    background-color: var(--guk-bg-critical-subtle-tag);
+}
+
+@utility bg-success-solid-progress {
+    background-color: var(--guk-bg-success-solid-progress);
 }
 
 @utility border-t-surface-primary {
@@ -2896,6 +2936,26 @@
 
 @utility fill-bg-surface-ghost-hover {
     @apply fill-(color:--guk-bg-surface-ghost-hover);
+}
+
+@utility fill-bg-info-subtle-tag {
+    @apply fill-(color:--guk-bg-info-subtle-tag);
+}
+
+@utility fill-bg-success-subtle-tag {
+    @apply fill-(color:--guk-bg-success-subtle-tag);
+}
+
+@utility fill-bg-warning-subtle-tag {
+    @apply fill-(color:--guk-bg-warning-subtle-tag);
+}
+
+@utility fill-bg-critical-subtle-tag {
+    @apply fill-(color:--guk-bg-critical-subtle-tag);
+}
+
+@utility fill-bg-success-solid-progress {
+    @apply fill-(color:--guk-bg-success-solid-progress);
 }
 
 @utility fill-icon-surface-primary {

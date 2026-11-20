@@ -45,7 +45,7 @@ const responsiveIndicatorSizeClassNames: ResponsiveAttributeClassMap<ProgressSiz
 const variantToClassNames: Record<ProgressVariant, string> = {
     primary: 'bg-accent-solid',
     neutral: 'bg-surface-primary-inverse',
-    success: 'bg-success-400',
+    success: 'bg-success-solid-progress',
     critical: 'bg-critical-solid',
 };
 

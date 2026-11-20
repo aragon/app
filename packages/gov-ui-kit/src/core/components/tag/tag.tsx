@@ -20,10 +20,10 @@ export interface ITagProps {
 
 const variantToClassName: Record<TagVariant, string> = {
     neutral: 'bg-surface-tertiary text-surface-primary',
-    info: 'bg-info-200 text-info-primary',
-    warning: 'bg-warning-200 text-warning-primary',
-    critical: 'bg-critical-200 text-critical-primary',
-    success: 'bg-success-200 text-success-primary',
+    info: 'bg-info-subtle-tag text-info-primary',
+    warning: 'bg-warning-subtle-tag text-warning-primary',
+    critical: 'bg-critical-subtle-tag text-critical-primary',
+    success: 'bg-success-subtle-tag text-success-primary',
     primary: 'bg-accent-subtle text-accent-primary',
 };
 

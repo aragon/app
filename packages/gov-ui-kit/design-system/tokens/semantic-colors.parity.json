@@ -1,5 +1,5 @@
 {
-    "$description": "Values of the default theme (`:root`, \"parity\"): it must reproduce today's colours so that converting a component does not change its pixels. `overrides` (keyed by code name, after renames) win and are verified against the code of converted components; every other token falls back to the same step of today's corresponding ramp (nearest existing step when the step does not exist today, same alpha for alpha steps), and the generated CSS marks those values as unverified. A value like `primary-800` means `var(--color-primary-800)`; anything else is literal CSS.",
+    "$description": "Values of the default theme (`:root`, \"parity\"): it must reproduce today's colours so that converting a component does not change its pixels. `overrides` (keyed by code name, after renames) win and are verified against the code of converted components; every other token falls back to the same step of today's corresponding ramp (nearest existing step when the step does not exist today, same alpha for alpha steps), and the generated CSS marks those values as unverified. A value like `primary-800` means `var(--color-primary-800)`; anything else is literal CSS. An override on an alias addition sets its default-theme value only; \"next\" and \"dark\" keep following the aliased token (component-level alias, P-51).",
     "fallbackRamps": {
         "gray": "neutral",
         "aragon": "primary",
@@ -395,6 +395,10 @@
             "value": "critical-100",
             "evidence": "component map: avatarIcon, inputText"
         },
+        "bg/critical/subtle-tag": {
+            "value": "critical-200",
+            "evidence": "Tag (critical): bg-critical-200; component-level alias of bg/critical/subtle (P-51, C-01)"
+        },
         "bg/info/solid": {
             "value": "info-500",
             "evidence": "component map: statePingAnimation"
@@ -403,13 +407,25 @@
             "value": "info-100",
             "evidence": "component map: avatarIcon"
         },
+        "bg/info/subtle-tag": {
+            "value": "info-200",
+            "evidence": "Tag (info): bg-info-200; component-level alias of bg/info/subtle (P-51, C-01)"
+        },
         "bg/success/solid": {
             "value": "success-500",
             "evidence": "component map: statePingAnimation"
         },
+        "bg/success/solid-progress": {
+            "value": "success-400",
+            "evidence": "Progress success bar: bg-success-400; component-level alias of bg/success/solid (P-51, C-02)"
+        },
         "bg/success/subtle": {
             "value": "success-100",
             "evidence": "component map: avatarIcon"
+        },
+        "bg/success/subtle-tag": {
+            "value": "success-200",
+            "evidence": "Tag (success): bg-success-200; component-level alias of bg/success/subtle (P-51, C-01)"
         },
         "bg/surface/primary": {
             "value": "neutral-0",
@@ -442,6 +458,10 @@
         "bg/warning/subtle": {
             "value": "warning-100",
             "evidence": "component map: avatarIcon, inputText"
+        },
+        "bg/warning/subtle-tag": {
+            "value": "warning-200",
+            "evidence": "Tag (warning): bg-warning-200; component-level alias of bg/warning/subtle (P-51, C-01)"
         },
         "border/critical/primary": {
             "value": "critical-400",

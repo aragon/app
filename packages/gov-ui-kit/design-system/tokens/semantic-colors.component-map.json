@@ -17,16 +17,16 @@
     "summary": {
         "files": 83,
         "occurrences": 546,
-        "converted": 447,
-        "unconverted": 99,
+        "converted": 452,
+        "unconverted": 94,
         "unconvertedByReason": {
-            "conflict": 83,
+            "conflict": 78,
             "no-token": 9,
             "comment": 1,
             "ordering": 4,
             "no-utility": 2
         },
-        "tokensUsed": 109,
+        "tokensUsed": 114,
         "storyFiles": 17,
         "storyOccurrences": 49,
         "testFiles": 4,
@@ -39,10 +39,14 @@
         "bg/accent/transparent-hover": "color-mix(in srgb, var(--color-primary-400) 4%, transparent)",
         "bg/critical/solid": "critical-500",
         "bg/critical/subtle": "critical-100",
+        "bg/critical/subtle-tag": "critical-200",
         "bg/info/solid": "info-500",
         "bg/info/subtle": "info-100",
+        "bg/info/subtle-tag": "info-200",
         "bg/success/solid": "success-500",
+        "bg/success/solid-progress": "success-400",
         "bg/success/subtle": "success-100",
+        "bg/success/subtle-tag": "success-200",
         "bg/surface/active": "neutral-0",
         "bg/surface/default": "neutral-0",
         "bg/surface/disabled": "neutral-100",
@@ -57,6 +61,7 @@
         "bg/surface/transparent-hover": "color-mix(in srgb, var(--color-neutral-800) 4%, transparent)",
         "bg/warning/solid": "warning-500",
         "bg/warning/subtle": "warning-100",
+        "bg/warning/subtle-tag": "warning-200",
         "border/accent/active": "primary-400",
         "border/accent/default": "primary-100",
         "border/accent/primary-inverse": "primary-300",
@@ -151,6 +156,26 @@
         "shadow/accent/md": {
             "uses": 2,
             "justification": "Code-only, pending design review: the hover elevation of a selected selectable card (shadow-primary-md on CheckboxCard and RadioCard, 2 uses). Light/Dark reuse the Figma shadow/accent/default colour (same 10% alpha as today's md shadow)."
+        },
+        "bg/info/subtle-tag": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-51): component-level alias of bg/info/subtle for the Tag (info) fill. Today's tag fill (info-200) differs from the token the designer binds (bg/info/primary = bg/info/subtle, fixed at info-100 by its other users): conflict C-01. Default theme info-200; \"next\" and \"dark\" follow bg/info/subtle. Collapses into bg/info/subtle when the default switches to the Figma values."
+        },
+        "bg/success/subtle-tag": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-51): component-level alias of bg/success/subtle for the Tag (success) fill. Today's tag fill (success-200) differs from the token the designer binds (bg/success/primary = bg/success/subtle, fixed at success-100 by its other users): conflict C-01. Default theme success-200; \"next\" and \"dark\" follow bg/success/subtle. Collapses into bg/success/subtle when the default switches to the Figma values."
+        },
+        "bg/warning/subtle-tag": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-51): component-level alias of bg/warning/subtle for the Tag (warning) fill. Today's tag fill (warning-200) differs from the token the designer binds (bg/warning/primary = bg/warning/subtle, fixed at warning-100 by its other users): conflict C-01. Default theme warning-200; \"next\" and \"dark\" follow bg/warning/subtle. Collapses into bg/warning/subtle when the default switches to the Figma values."
+        },
+        "bg/critical/subtle-tag": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-51): component-level alias of bg/critical/subtle for the Tag (critical) fill. Today's tag fill (critical-200) differs from the token the designer binds (bg/critical/primary = bg/critical/subtle, fixed at critical-100 by its other users): conflict C-01. Default theme critical-200; \"next\" and \"dark\" follow bg/critical/subtle. Collapses into bg/critical/subtle when the default switches to the Figma values."
+        },
+        "bg/success/solid-progress": {
+            "uses": 1,
+            "justification": "Code-only, pending design review (P-51): component-level alias of bg/success/solid for the Progress success bar. Today's bar (success-400) differs from the token the designer binds (bg/success/tertiary = bg/success/solid, fixed at success-500 by the success ping dot): conflict C-02. Default theme success-400; \"next\" and \"dark\" follow bg/success/solid. Collapses into bg/success/solid when the default switches to the Figma values."
         }
     },
     "conflicts": [
@@ -955,18 +980,6 @@
             ]
         },
         {
-            "file": "src/core/components/progress/progress.tsx",
-            "line": 48,
-            "old": "bg-success-400",
-            "part": "progress: bar (success)",
-            "token": "bg/success/solid",
-            "needs": "success-400",
-            "fixedAt": "success-500",
-            "fixedBy": [
-                "statePingAnimation ping dot (success)"
-            ]
-        },
-        {
             "file": "src/core/components/spinner/spinner.tsx",
             "line": 71,
             "old": "border-warning-300",
@@ -1096,56 +1109,6 @@
             "fixedAt": "neutral-500",
             "fixedBy": [
                 "Button (Button tertiary icon: group-active:text-neutral-500)"
-            ]
-        },
-        {
-            "file": "src/core/components/tag/tag.tsx",
-            "line": 23,
-            "old": "bg-info-200",
-            "part": "tag: tag (info)",
-            "token": "bg/info/subtle",
-            "needs": "info-200",
-            "fixedAt": "info-100",
-            "fixedBy": [
-                "avatarIcon container fill (info)"
-            ]
-        },
-        {
-            "file": "src/core/components/tag/tag.tsx",
-            "line": 24,
-            "old": "bg-warning-200",
-            "part": "tag: tag (warning)",
-            "token": "bg/warning/subtle",
-            "needs": "warning-200",
-            "fixedAt": "warning-100",
-            "fixedBy": [
-                "avatarIcon container fill (warning)",
-                "inputText addon (warning)"
-            ]
-        },
-        {
-            "file": "src/core/components/tag/tag.tsx",
-            "line": 25,
-            "old": "bg-critical-200",
-            "part": "tag: tag (critical)",
-            "token": "bg/critical/subtle",
-            "needs": "critical-200",
-            "fixedAt": "critical-100",
-            "fixedBy": [
-                "avatarIcon container fill (critical)",
-                "inputText addon (critical)"
-            ]
-        },
-        {
-            "file": "src/core/components/tag/tag.tsx",
-            "line": 26,
-            "old": "bg-success-200",
-            "part": "tag: tag (success)",
-            "token": "bg/success/subtle",
-            "needs": "success-200",
-            "fixedAt": "success-100",
-            "fixedBy": [
-                "avatarIcon container fill (success)"
             ]
         },
         {
@@ -4090,10 +4053,9 @@
             {
                 "line": 48,
                 "old": "bg-success-400",
-                "new": null,
+                "new": "bg-success-solid-progress",
                 "part": "bar (success)",
-                "reason": "conflict: role token bg/success/solid has default value `success-500`, fixed by statePingAnimation ping dot (success); this part needs success-400",
-                "token": "bg/success/solid"
+                "reason": "component-level alias token (P-51): bg/success/solid-progress holds today's success-400 in the default theme and follows bg/success/solid (Figma Progress binding bg/success/tertiary) in \"next\" and \"dark\". Was unconverted (conflict C-02: bg/success/solid is success-500)"
             },
             {
                 "line": 49,
@@ -4439,10 +4401,9 @@
             {
                 "line": 23,
                 "old": "bg-info-200",
-                "new": null,
+                "new": "bg-info-subtle-tag",
                 "part": "tag (info)",
-                "reason": "conflict: role token bg/info/subtle has default value `info-100`, fixed by avatarIcon container fill (info); this part needs info-200",
-                "token": "bg/info/subtle"
+                "reason": "component-level alias token (P-51): bg/info/subtle-tag holds today's info-200 in the default theme and follows bg/info/subtle (Figma Tag binding bg/info/primary) in \"next\" and \"dark\". Was unconverted (conflict C-01: bg/info/subtle is info-100)"
             },
             {
                 "line": 23,
@@ -4454,10 +4415,9 @@
             {
                 "line": 24,
                 "old": "bg-warning-200",
-                "new": null,
+                "new": "bg-warning-subtle-tag",
                 "part": "tag (warning)",
-                "reason": "conflict: role token bg/warning/subtle has default value `warning-100`, fixed by avatarIcon container fill (warning); inputText addon (warning); this part needs warning-200",
-                "token": "bg/warning/subtle"
+                "reason": "component-level alias token (P-51): bg/warning/subtle-tag holds today's warning-200 in the default theme and follows bg/warning/subtle (Figma Tag binding bg/warning/primary) in \"next\" and \"dark\". Was unconverted (conflict C-01: bg/warning/subtle is warning-100)"
             },
             {
                 "line": 24,
@@ -4469,10 +4429,9 @@
             {
                 "line": 25,
                 "old": "bg-critical-200",
-                "new": null,
+                "new": "bg-critical-subtle-tag",
                 "part": "tag (critical)",
-                "reason": "conflict: role token bg/critical/subtle has default value `critical-100`, fixed by avatarIcon container fill (critical); inputText addon (critical); this part needs critical-200",
-                "token": "bg/critical/subtle"
+                "reason": "component-level alias token (P-51): bg/critical/subtle-tag holds today's critical-200 in the default theme and follows bg/critical/subtle (Figma Tag binding bg/critical/primary) in \"next\" and \"dark\". Was unconverted (conflict C-01: bg/critical/subtle is critical-100)"
             },
             {
                 "line": 25,
@@ -4484,10 +4443,9 @@
             {
                 "line": 26,
                 "old": "bg-success-200",
-                "new": null,
+                "new": "bg-success-subtle-tag",
                 "part": "tag (success)",
-                "reason": "conflict: role token bg/success/subtle has default value `success-100`, fixed by avatarIcon container fill (success); this part needs success-200",
-                "token": "bg/success/subtle"
+                "reason": "component-level alias token (P-51): bg/success/subtle-tag holds today's success-200 in the default theme and follows bg/success/subtle (Figma Tag binding bg/success/primary) in \"next\" and \"dark\". Was unconverted (conflict C-01: bg/success/subtle is success-100)"
             },
             {
                 "line": 26,
