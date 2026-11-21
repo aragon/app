@@ -26,9 +26,9 @@
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails && pnpm test:skills",
         "test:skills": "node --test scripts/sync-skills.test.mjs",
-        "test:tokens": "node --test .design-sync/tokens/validate.test.mjs .design-sync/tokens/generate.test.mjs .design-sync/consumer-parity.test.mjs",
-        "tokens:generate": "node .design-sync/tokens/generate.mjs",
-        "tokens:validate": "node .design-sync/tokens/validate.mjs",
+        "test:tokens": "node --test packages/gov-ui-kit/scripts/tokens/*.test.mjs .design-sync/consumer-parity.test.mjs",
+        "tokens:check": "pnpm --filter @aragon/gov-ui-kit tokens:check",
+        "tokens:generate": "pnpm --filter @aragon/gov-ui-kit tokens:generate",
         "type-check": "turbo run type-check",
         "validate:changesets": "node .github/workflows/scripts/validateChangesets.js"
     },
