@@ -77,7 +77,7 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
     const { t } = useTranslations();
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             <p className="text-neutral-500">
                 {t('app.settings.sppRuleConditionSlot.description')}
             </p>
@@ -86,10 +86,10 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                     {t('app.settings.sppRuleConditionSlot.noRules')}
                 </p>
             ) : (
-                <ol className="flex flex-col gap-4">
+                <ol className="flex flex-col gap-group">
                     {rules.map((rule, index) => (
                         <li
-                            className="flex flex-col gap-2"
+                            className="flex flex-col gap-related--fixed-8"
                             // biome-ignore lint/suspicious/noArrayIndexKey: a permission can carry several rules; order is fixed on-chain
                             key={`${rule.permissionId}-${index}`}
                         >

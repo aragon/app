@@ -38,14 +38,14 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
         >
             <div
                 {...headerProps}
-                className="flex cursor-grab touch-none items-start justify-between gap-3 border-b border-neutral-100 p-4 select-none active:cursor-grabbing"
+                className="flex cursor-grab touch-none items-start justify-between gap-related border-b border-neutral-100 p-inset-surface-flat--fixed-16 select-none active:cursor-grabbing"
             >
                 <div className="min-w-0">
                     <p className="truncate font-mono text-sm text-neutral-900">
                         {edge.permissionName}
                     </p>
                     {edge.conditionLabel != null && (
-                        <p className="mt-1 w-fit rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-700">
+                        <p className="mt-tight w-fit rounded bg-neutral-100 px-inset-tight--fixed-6 py-inset-tight text-xs text-neutral-700">
                             {t(
                                 'app.settings.daoPermissionsPage.graphView.edge.condition',
                                 { condition: edge.conditionLabel },
@@ -70,7 +70,7 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                 re-rendering with a different hook count. */}
             <PermissionDetailContent
                 chainId={chainId}
-                className="flex flex-col gap-4 overflow-auto p-4"
+                className="flex flex-col gap-group overflow-auto p-inset-surface-flat--fixed-16"
                 daoId={daoId}
                 key={edge.id}
                 network={network}

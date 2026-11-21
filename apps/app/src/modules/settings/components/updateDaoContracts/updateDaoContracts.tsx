@@ -75,7 +75,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (
     }
 
     return (
-        <div className="flex flex-col space-y-3">
+        <div className="space-y-related flex flex-col">
             <Button
                 iconLeft={IconType.RELOAD}
                 onClick={handleUpgradeClick}

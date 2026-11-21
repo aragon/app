@@ -38,7 +38,12 @@ export const SimulationFlowVisualization: React.FC<
 
     if (summaryGroups.length === 0) {
         return (
-            <div className={classNames('flex flex-col gap-8', className)}>
+            <div
+                className={classNames(
+                    'flex flex-col gap-section--fixed-32',
+                    className,
+                )}
+            >
                 <p className="text-sm text-neutral-500">
                     {t(
                         'app.capitalFlow.simulationFlowVisualization.summary.empty',
@@ -49,9 +54,17 @@ export const SimulationFlowVisualization: React.FC<
     }
 
     return (
-        <div className={classNames('flex flex-col gap-8', className)}>
+        <div
+            className={classNames(
+                'flex flex-col gap-section--fixed-32',
+                className,
+            )}
+        >
             {summaryGroups.map((group) => (
-                <div className="flex w-full flex-col gap-3" key={group.kind}>
+                <div
+                    className="flex w-full flex-col gap-related"
+                    key={group.kind}
+                >
                     <p className="text-xl leading-tight text-neutral-800">
                         {t(
                             simulationFlowVisualizationUtils.getGroupTitleKey(
@@ -59,7 +72,7 @@ export const SimulationFlowVisualization: React.FC<
                             ),
                         )}
                     </p>
-                    <div className="flex w-full flex-col gap-3">
+                    <div className="flex w-full flex-col gap-related">
                         {group.items.map((item) => (
                             <SimulationFlowVisualizationItem
                                 buildEntityUrl={buildEntityUrl}

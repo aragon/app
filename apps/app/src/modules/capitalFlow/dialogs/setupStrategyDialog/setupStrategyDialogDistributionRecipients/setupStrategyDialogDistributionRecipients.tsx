@@ -93,7 +93,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
     const canRemove = recipientsField.length > 1;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-group">
             <InputContainer
                 alert={
                     totalRatio !== 100 && recipientsField.length > 0
@@ -104,7 +104,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
                           }
                         : undefined
                 }
-                className="gap-3"
+                className="gap-related"
                 helpText={t(
                     'app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText',
                 )}

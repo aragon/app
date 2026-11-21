@@ -71,8 +71,8 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
 
     return (
         <>
-            <div className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:hidden">
-                <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-col gap-group rounded-xl border border-neutral-100 bg-neutral-0 p-inset-surface-flat--fixed-16 md:hidden">
+                <div className="flex items-start justify-between gap-related">
                     <p className="min-w-0 truncate font-mono text-lg leading-tight text-neutral-800">
                         {permissionName}
                     </p>
@@ -116,7 +116,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
             <Accordion.Item className="hidden md:block" value={rowKey}>
                 <Accordion.ItemHeader>
                     <InteractiveAncestorContext.Provider value={true}>
-                        <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
+                        <div className="grid w-full grid-cols-4 items-center gap-group text-left">
                             <div className="min-w-0">
                                 <PermissionEntityCell entity={who} />
                             </div>
@@ -133,8 +133,8 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                     </InteractiveAncestorContext.Provider>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent>
-                    <div className="flex flex-col gap-6 md:flex-row md:gap-8">
-                        <div className="flex flex-1 flex-col gap-3">
+                    <div className="flex flex-col gap-section--24-32 md:flex-row">
+                        <div className="flex flex-1 flex-col gap-related">
                             <p className="text-lg leading-tight text-neutral-800">
                                 {t(
                                     'app.settings.permissionsList.details.heading',
@@ -147,7 +147,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                                 who={who}
                             />
                         </div>
-                        <div className="flex flex-1 flex-col gap-3">
+                        <div className="flex flex-1 flex-col gap-related">
                             {hasConditionBreakdown && (
                                 <>
                                     <p className="text-lg leading-tight text-neutral-800">

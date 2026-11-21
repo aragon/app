@@ -102,7 +102,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-section">
             <DefinitionList.Container>
                 {/* Name */}
                 <DefinitionList.Item
@@ -160,7 +160,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                 </DefinitionList.Item>
             </DefinitionList.Container>
             {hasGovernanceProcess && (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     <Button
                         onClick={handleUninstallPolicy}
                         size="md"

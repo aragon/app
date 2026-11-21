@@ -42,7 +42,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
         pluginInfo;
 
     return (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-group">
             <DaoPluginInfoMetadata description={description} links={links} />
             <DefinitionList.Container>
                 {/* Plugin address */}

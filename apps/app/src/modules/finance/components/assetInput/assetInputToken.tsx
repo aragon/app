@@ -18,7 +18,10 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
 
     return (
         <div
-            className={classNames('flex items-center gap-x-1.5', className)}
+            className={classNames(
+                'flex items-center gap-x-tight--fixed-6',
+                className,
+            )}
             {...otherProps}
         >
             {token && <Avatar size="xs" src={token.logo || undefined} />}

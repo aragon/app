@@ -167,10 +167,10 @@ export const DispatchSimulationDialog: React.FC<
                 })}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-4 pb-6">
+                <div className="mb-section flex flex-col gap-group">
                     {/* Loading State */}
                     {isLoading && (
-                        <Card className="flex flex-col items-center justify-center gap-4 p-8">
+                        <Card className="flex flex-col items-center justify-center gap-group p-inset-surface-wide--fixed-32">
                             <Spinner size="lg" variant="primary" />
                             <p className="text-neutral-500">
                                 {t(
@@ -183,10 +183,10 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="bg-critical-50 flex flex-col gap-3 border-critical-200! p-4"
+                            className="bg-critical-50 flex flex-col gap-related border-critical-200! p-inset-surface-flat--fixed-16"
                             role="alert"
                         >
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-related">
                                 <Icon
                                     className="mt-0.5 shrink-0 text-critical-500"
                                     icon={IconType.WARNING}
@@ -200,12 +200,12 @@ export const DispatchSimulationDialog: React.FC<
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-1 text-sm leading-tight break-words text-critical-600">
+                                    <p className="mt-tight text-sm leading-tight break-words text-critical-600">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-2">
+                            <div className="flex justify-end gap-related--fixed-8">
                                 {isReverted && simulation?.tenderlyUrl && (
                                     <Button
                                         href={simulation.tenderlyUrl}

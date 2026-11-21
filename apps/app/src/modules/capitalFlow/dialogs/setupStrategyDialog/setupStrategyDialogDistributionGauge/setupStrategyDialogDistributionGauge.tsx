@@ -56,8 +56,8 @@ export const SetupStrategyDialogDistributionGauge: React.FC<
     const { id: chainId } = networkDefinitions[network];
 
     return (
-        <div className="flex w-full flex-col gap-6">
-            <div className="flex flex-col gap-0.5 md:gap-1">
+        <div className="flex w-full flex-col gap-section">
+            <div className="flex flex-col gap-tight--2-4">
                 <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionGauge.token.label',

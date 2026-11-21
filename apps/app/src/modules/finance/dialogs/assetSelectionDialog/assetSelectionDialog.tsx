@@ -50,7 +50,7 @@ export const AssetSelectionDialog: React.FC<IAssetSelectionDialogProps> = (
                 onClose={close}
                 title={t('app.finance.assetSelectionDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 py-7">
+            <Dialog.Content className="flex flex-col gap-section py-inset-surface-wide--fixed-28">
                 <AssetAddressSelect
                     hasSearch={true}
                     initialParams={initialParams}

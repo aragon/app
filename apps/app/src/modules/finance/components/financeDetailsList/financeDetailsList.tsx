@@ -63,7 +63,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                     </DefinitionList.Item>
                 )}
             </DefinitionList.Container>
-            <div className="flex flex-col items-center gap-y-3">
+            <div className="flex flex-col items-center gap-y-related">
                 <Button
                     className="w-full"
                     href={octavLink}

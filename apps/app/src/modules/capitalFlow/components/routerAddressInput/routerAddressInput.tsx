@@ -88,7 +88,10 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
     };
 
     return (
-        <Card className="flex flex-col gap-3 p-6 shadow-sm">
+        <Card
+            className="flex flex-col gap-related shadow-sm"
+            inset="surface-wide"
+        >
             {/* Header row: Label + Remove button */}
             <div className="flex items-center justify-between">
                 <label className="text-lg leading-tight font-normal text-neutral-800">
@@ -110,7 +113,7 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
             </div>
 
             {/* Input row: AddressInput + Ordering controls */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-group">
                 <div className="flex-1">
                     <AddressInput
                         chainId={chainId}
@@ -124,7 +127,7 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
                     />
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-related">
                     <Button
                         aria-label={t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.moveUp',
