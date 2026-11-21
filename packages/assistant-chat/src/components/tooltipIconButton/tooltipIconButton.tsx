@@ -36,10 +36,10 @@ const variantClasses: Record<
     NonNullable<ITooltipIconButtonProps['variant']>,
     string
 > = {
-    ghost: 'text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800',
+    ghost: 'text-surface-default hover:bg-surface-hover-icon-button hover:text-surface-hover-label',
     outline:
-        'border border-neutral-100 bg-neutral-0 text-neutral-500 shadow-sm hover:bg-neutral-50 hover:text-neutral-800',
-    primary: 'bg-primary-400 text-neutral-0 hover:bg-primary-500',
+        'border border-surface-secondary bg-surface-default text-surface-default shadow-sm hover:bg-surface-hover hover:text-surface-hover-label',
+    primary: 'bg-accent-default text-accent-inverse hover:bg-accent-hover',
     unstyled: '',
 };
 
@@ -71,7 +71,7 @@ export const TooltipIconButton: React.FC<ITooltipIconButtonProps> = (props) => {
 
     // Tailwind's reset gives buttons the default arrow cursor; every control in the app points.
     const classes = classNames(
-        'inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors outline-none focus-ring-primary active:scale-90 disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full focus-ring transition-colors outline-none ring-accent-focus active:scale-90 disabled:pointer-events-none disabled:opacity-50',
         variantClasses[variant],
         sizeClasses[size],
         className,

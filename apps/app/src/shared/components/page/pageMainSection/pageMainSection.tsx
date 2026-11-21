@@ -76,7 +76,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                         <Heading size="h2">{title}</Heading>
                         {icon && (
                             <Icon
-                                className="text-warning-500"
+                                className="icon-warning-primary"
                                 icon={icon}
                                 size="md"
                             />
@@ -93,7 +93,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                     )}
                 </div>
                 {description && (
-                    <div className="text-base leading-normal font-normal text-neutral-500">
+                    <div className="text-base leading-normal font-normal text-surface-secondary">
                         {description}
                     </div>
                 )}

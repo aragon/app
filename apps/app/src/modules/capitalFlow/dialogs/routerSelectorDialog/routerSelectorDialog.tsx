@@ -120,25 +120,25 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                             onClick={() => handleSelectPolicy(policy)}
                         >
                             <div className="flex flex-1 gap-2 text-lg">
-                                <span className="text-neutral-800">
+                                <span className="text-surface-primary">
                                     {policy.name ??
                                         t(
                                             'app.capitalFlow.routerSelectorDialog.unnamedPolicy',
                                         )}
                                 </span>
                                 {policy.policyKey && (
-                                    <span className="text-neutral-500">
+                                    <span className="text-surface-secondary">
                                         {policy.policyKey}
                                     </span>
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
                                 <span className="flex gap-0.5 text-base">
-                                    <span className="text-neutral-800">
+                                    <span className="text-surface-primary">
                                         {policy.strategy?.subRouters?.length ??
                                             0}
                                     </span>
-                                    <span className="text-neutral-500">
+                                    <span className="text-surface-secondary">
                                         {t(
                                             'app.capitalFlow.routerSelectorDialog.routers',
                                         )}

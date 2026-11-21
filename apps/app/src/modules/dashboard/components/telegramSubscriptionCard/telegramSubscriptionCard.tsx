@@ -41,7 +41,7 @@ export const TelegramSubscriptionCard: React.FC<
         <Page.AsideCard
             title={t('app.dashboard.telegramSubscriptionCard.title')}
         >
-            <p className="text-neutral-500">
+            <p className="text-surface-secondary">
                 {t('app.dashboard.telegramSubscriptionCard.description')}
             </p>
             <Button

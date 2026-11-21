@@ -115,7 +115,7 @@ export const GovernanceBasicBodyField: React.FC<
             )}
             {body == null && !readOnly && (
                 <CardEmptyState
-                    className="border border-neutral-100"
+                    className="border border-surface-secondary"
                     description={t(
                         'app.createDao.createProcessForm.governance.basicBodyField.emptyState.description',
                     )}

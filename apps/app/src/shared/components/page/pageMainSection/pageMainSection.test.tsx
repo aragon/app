@@ -35,7 +35,7 @@ describe('<PageMainSection /> component', () => {
         render(createTestComponent({ action: { label: 'action' } }));
 
         expect(screen.getByRole('button', { name: 'action' })).toHaveClass(
-            'bg-primary-400',
+            'bg-accent-default',
         );
     });
 
@@ -47,7 +47,7 @@ describe('<PageMainSection /> component', () => {
         );
 
         const button = screen.getByRole('button', { name: 'action' });
-        expect(button).toHaveClass('bg-neutral-0');
-        expect(button).not.toHaveClass('bg-primary-400');
+        expect(button).toHaveClass('bg-accent-default-inverse');
+        expect(button).not.toHaveClass('bg-accent-default');
     });
 });

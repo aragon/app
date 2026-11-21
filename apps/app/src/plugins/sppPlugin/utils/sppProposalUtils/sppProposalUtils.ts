@@ -145,10 +145,10 @@ class SppProposalUtils {
         const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
         const style =
             status === 'neutral'
-                ? 'text-neutral-500'
+                ? 'text-surface-secondary'
                 : status === 'success'
-                  ? 'text-success-800'
-                  : 'text-critical-800';
+                  ? 'text-success-primary'
+                  : 'text-critical-primary';
 
         return { status, label, style };
     };

@@ -41,7 +41,7 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
+        'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-accent-active bg-surface-primary shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
         { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },
@@ -74,14 +74,14 @@ export const AutocompleteInputMenu = forwardRef<
                             <div className="flex flex-row items-center gap-1">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
                                 <KeyboardShortcut>↓</KeyboardShortcut>
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {t(
                                         'app.shared.autocompleteInput.menu.select',
                                     )}
                                 </p>
                             </div>
                             <div className="flex flex-row items-center gap-1">
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {selectItemLabel}
                                 </p>
                                 <KeyboardShortcut>↵</KeyboardShortcut>

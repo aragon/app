@@ -47,7 +47,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
     return (
         <section className="flex flex-col gap-2">
             <Heading size="h3">Workspace registry</Heading>
-            <p className="text-sm leading-normal text-neutral-500">
+            <p className="text-sm leading-normal text-surface-secondary">
                 Save or restore the local workspace JSON for this environment.
             </p>
             <div className="flex flex-wrap gap-2">

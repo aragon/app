@@ -80,7 +80,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     // Stage cannot be advanced anymore, display expired info text.
     if (stageStatus === ProposalStatus.EXPIRED) {
         return (
-            <span className="text-right text-neutral-500">
+            <span className="text-right text-surface-secondary">
                 {t(
                     `app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`,
                 )}

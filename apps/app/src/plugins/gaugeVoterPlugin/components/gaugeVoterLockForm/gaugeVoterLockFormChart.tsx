@@ -188,7 +188,7 @@ export const GaugeVoterLockFormChart: React.FC<
                         )}
                     </span>
                 </p>
-                <span className="text-sm text-neutral-500 md:text-base">
+                <span className="text-sm text-surface-secondary md:text-base">
                     {activePoint.x}
                 </span>
             </div>
@@ -203,12 +203,12 @@ export const GaugeVoterLockFormChart: React.FC<
                         <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
                             <stop
                                 offset="5%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0.4}
                             />
                             <stop
                                 offset="95%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0}
                             />
                         </linearGradient>
@@ -239,14 +239,14 @@ export const GaugeVoterLockFormChart: React.FC<
                         dataKey="y"
                         fill="url(#colorY)"
                         fillOpacity={1}
-                        stroke="var(--color-primary-400)"
+                        stroke="var(--guk-border-accent-secondary)"
                         strokeWidth={1}
                         type="monotone"
                     />
                     <ReferenceDot
-                        fill="var(--color-primary-400)"
+                        fill="var(--guk-bg-accent-solid)"
                         r={4}
-                        stroke="var(--color-neutral-0)"
+                        stroke="var(--guk-bg-surface-primary)"
                         strokeWidth={1}
                         x={activePoint.x}
                         y={activePoint.y}

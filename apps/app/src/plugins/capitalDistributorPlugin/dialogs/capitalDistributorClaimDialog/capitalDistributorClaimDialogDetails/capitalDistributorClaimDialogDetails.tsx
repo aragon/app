@@ -125,7 +125,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                             ))}
                         </div>
                         {index !== completeDetails.length - 1 && (
-                            <div className="h-[1px] w-full bg-neutral-100" />
+                            <div className="h-[1px] w-full bg-surface-tertiary" />
                         )}
                     </React.Fragment>
                 ))}

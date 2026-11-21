@@ -49,7 +49,7 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 text-left transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50"
+            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 text-left focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-surface-active-control"
             onClick={onClick}
             type="button"
         >
@@ -59,17 +59,17 @@ export const NavigationSidebarAccount: React.FC<
                 size="md"
             />
             <span className="flex min-w-0 grow flex-col leading-tight">
-                <span className="truncate text-base text-neutral-800">
+                <span className="truncate text-base text-surface-primary">
                     {user.name ?? truncatedAddress}
                 </span>
                 {user.name != null && (
-                    <span className="truncate text-sm text-neutral-500">
+                    <span className="truncate text-sm text-surface-secondary">
                         {truncatedAddress}
                     </span>
                 )}
             </span>
             <Icon
-                className="shrink-0 text-neutral-400"
+                className="shrink-0 icon-surface-primary"
                 icon={IconType.CHEVRON_RIGHT}
                 size="md"
             />

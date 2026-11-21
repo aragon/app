@@ -45,7 +45,7 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
     return (
         <nav
             className={classNames(
-                'sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 self-start overflow-y-auto border-r border-neutral-100 bg-neutral-0 px-3 py-4 shadow-[8px_0_24px_-16px_rgba(50,63,75,0.18)] lg:flex',
+                'sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 self-start overflow-y-auto border-r border-surface-secondary bg-surface-primary px-3 py-4 shadow-[8px_0_24px_-16px_rgba(50,63,75,0.18)] lg:flex',
                 className,
             )}
             {...otherProps}
@@ -63,7 +63,7 @@ export const NavigationSidebar: React.FC<INavigationSidebarProps> = (props) => {
                 {secondaryLinks != null && (
                     <>
                         <div className="w-full px-4">
-                            <div className="border-t border-neutral-100" />
+                            <div className="border-t border-surface-secondary" />
                         </div>
                         <NavigationLinks
                             links={secondaryLinks}

@@ -50,11 +50,12 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (
     return (
         <div
             className={classNames('w-full', {
-                'relative rounded-md border border-primary-400': highlightSlots,
+                'relative rounded-md border border-accent-secondary':
+                    highlightSlots,
             })}
         >
             {highlightSlots && (
-                <p className="absolute -top-6 right-0 z-50 text-neutral-500">
+                <p className="absolute -top-6 right-0 z-50 text-surface-secondary">
                     {slotId} ({pluginId})
                 </p>
             )}

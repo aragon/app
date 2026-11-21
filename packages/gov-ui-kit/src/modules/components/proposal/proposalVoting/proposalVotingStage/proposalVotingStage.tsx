@@ -66,7 +66,7 @@ export const ProposalVotingStage: React.FC<IProposalVotingStageProps> = (props) 
                 <Accordion.ItemHeader>
                     <div className="flex grow flex-row justify-between gap-4 md:gap-6">
                         <div className="flex flex-col items-start gap-1">
-                            <p className="text-lg leading-tight font-normal text-neutral-800">{name}</p>
+                            <p className="text-lg leading-tight font-normal text-surface-primary">{name}</p>
                             <ProposalVotingStatus
                                 endDate={endDate}
                                 isMultiStage={true}
@@ -75,7 +75,7 @@ export const ProposalVotingStage: React.FC<IProposalVotingStageProps> = (props) 
                                 status={status}
                             />
                         </div>
-                        <p className="mt-1 text-sm leading-tight font-normal text-neutral-500">
+                        <p className="mt-1 text-sm leading-tight font-normal text-surface-secondary">
                             {copy.proposalVotingStage.stage(index + 1)}
                         </p>
                     </div>

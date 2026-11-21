@@ -81,7 +81,7 @@ export const CreatePolicyFormConfigure: React.FC<
         >
             {selectedStrategy == null ? (
                 <CardEmptyState
-                    className="border border-neutral-100"
+                    className="border border-surface-secondary"
                     description={t(
                         'app.capitalFlow.createPolicyForm.configure.strategy.emptyCard.description',
                     )}
