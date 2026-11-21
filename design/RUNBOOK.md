@@ -86,11 +86,20 @@ is created and keeps that copy: it does not follow later kit changes.
 If a kit component on a canvas looks or behaves differently from the app (a missing prop, an old style), the copy
 is the first suspect:
 
-1. Is the kit artifact itself behind the code? If `packages/gov-ui-kit` changed since the artifact's last sync, run
-   the design sync for the kit first.
-2. Then give the canvas the current kit: publish to it with the entries of `<folder>/kit-files.json`.
-3. Check the prototypes still load, set `kit.version` in the canvas's record (and in `canvas.json` →
+1. Is the canvas's copy behind the kit artifact? Compare file contents (sha256 of each file in
+   `<folder>/kit-files.json` on both artifacts, from a `list` with `scope: "files"`), never version numbers: an
+   artifact's version moves on its own with no change to its files.
+2. Is the kit artifact behind the code? The design sync is described in `packages/gov-ui-kit/design-system/SYNC.md`
+   (a Storybook build and previews). It publishes to the shared design system artifact, so it needs the person's
+   say-so on its own; an OK for a catch-up or a ticket does not cover it.
+3. Give the canvas the current kit: publish to it with the entries of `<folder>/kit-files.json`.
+4. Check the prototypes still load, set `kit.version` in the canvas's record (and in `canvas.json` →
    `designSystems`) to the artifact's version, commit.
+
+**A kit component the app uses that the kit artifact does not have yet** (it was added to the kit after the last
+sync): ask whether to run the sync first. If not, draw it in the prototype with kit tokens and `app.css` rules, mark
+the element `data-stands-in-for="<Component>"`, and add it to the README's known gaps, so the next session that has
+the synced kit replaces it.
 
 The reference canvas was last given the kit on 20 November 2026 (artifact version `1794992991-48d3`); all 13
 prototypes loaded without errors against it at 1440 and 390 px.
@@ -141,15 +150,19 @@ and not built.
 
 ## Publish: branch → its canvas
 
-1. Pull first if the canvas's version differs from the record.
-2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists; publish with `files` from
-   `<folder>/files.json` (or only the entries that changed).
-3. Set `canvasVersion`, commit, push.
+1. Save the canvas into the branch first (Pull), unless nobody designs on it (the reference canvas). Decide by
+   comparing files, not the canvas's version, which moves on its own.
+2. `prepare-publish.cjs <folder> <name>`; upload and record any image it lists.
+3. Read before you publish: the Artifact tool refuses a publish to a canvas this session has not read (a `list` of
+   its files counts), and the Design type asks that each file you replace is read first. Then publish with `files`
+   from `<folder>/files.json` (or only the entries that changed).
+4. Set `canvasVersion`, commit, push.
 
 ## Refresh the reference canvas
 
 When prototype files change on the reference branch (a ticket merged, or a catch-up): publish as above with no name
-(the record is `prototypes.json`). Nobody designs on the reference canvas, so there is nothing to save first.
+(the record is `prototypes.json`). Nobody designs on the reference canvas, so it is not saved first (Publish step 1). If its files differ from the
+branch's anyway, someone edited it: stop and ask before overwriting.
 
 ## Catch up with main
 
@@ -157,26 +170,35 @@ A design ticket keeps its prototypes current by itself: design and code merge to
 of change, app code changed with no design ticket, which leaves a prototype behind without anything noticing.
 `canvases/prototypes.json` → `appCommit` is the app commit the prototypes were last brought in line with.
 
-1. Bring the reference branch up to date with `main` (a merge; no history rewrite).
+1. Bring the reference branch up to date with `main`: `git merge origin/main`, never a rebase or a force-push. Give the
+   merge commit the usual attribution lines (amend it before pushing, or commit with `--no-commit` then a message).
 2. Triage, read-only. For every change in `apps/app/src` and `packages/gov-ui-kit/src` between `appCommit` and
    `main` (and changed strings in `en.json`), read the diff and sort it: no visible effect; visible, but no prototype
    covers it; affects a prototype. For the last kind, open the prototype and check whether it already has the change
    or is behind. Write the behind items as a table: what changed in a designer's words, the commit, the app file and
-   lines, the prototype file, a size. A kit change matters only if a prototype's own markup or props must change;
-   otherwise give the canvas the current kit (see "The UI kit on a canvas").
-3. Show the person the table. Error, loading and failure variants are left out of the prototypes on purpose (a
+   lines, the prototype file, a size. A kit change matters only if a prototype's own markup or props must change,
+   or a prototype now needs a kit component the kit artifact lacks; otherwise give the canvas the current kit (see
+   "The UI kit on a canvas"). A new page in an area a prototype covers is "no prototype covers it": list it; it is
+   built only when the person asks.
+3. Show the person the table and wait. If they said to carry on without them, continue, and leave undone anything
+   that needs a product decision. Error, loading and failure variants are left out of the prototypes on purpose (a
    prototype has no backend and must never leave a designer stuck): list them as not done unless told otherwise.
-4. Fix what is behind, following `BRIEF.md`, from the app's source. One agent per group of files; no two agents on
-   the same file. Each fix is proved by clicking, not only by loading.
+4. Fix what is behind, following `BRIEF.md`, from the app's source. Work alone when most fixes touch the same files (often
+   `app.css`); otherwise one agent per group of files, never two on the same file. Each fix is proved by clicking, not only by loading.
 5. Load-check every prototype touched, refresh the reference canvas, set `appCommit` to `main`'s head, add what was
-   left out to the README's known gaps, commit, push.
+   left out to the README's known gaps, update the README's file count and prototype list if they changed, commit,
+   push.
 
 It finds what changed. It does not find a prototype that was wrong from the start; only someone looking does.
 
-Run once, on 20 November 2026, from 16 November's app to `main` of 19 November: 139 app files changed; triage took
-an agent 3 minutes and found 14 changes touching a prototype, 4 already in and 10 behind; two agents fixed 8 of them
-in parallel in about 10 minutes; 2 error-state items were left out on purpose. With merging, checking and
-publishing, under an hour. When this runs (after each release, on demand, or per pull request) is undecided.
+Runs so far:
+
+| Date | Range | What it found | Time |
+| --- | --- | --- | --- |
+| 20 November 2026 | 16 to 19 November, 139 app files | 10 behind, 8 fixed by two agents, 2 error states left out | Under an hour, improvised; this section was written afterwards |
+| 21 November 2026 | 19 to 20 November, 150 files (mostly one pull request) | 11 behind, all fixed; new pages listed, not built; two new kit components drawn by hand | About 20 minutes, by an agent with no prior context following this section, which it then corrected |
+
+When this runs (after each release, on demand, or per pull request) is undecided.
 
 ## Finish a ticket
 
