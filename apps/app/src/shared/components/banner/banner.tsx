@@ -18,8 +18,8 @@ export const Banner: React.FC<IBannerProps> = (props) => {
             className={classNames('flex w-full bg-warning-100', className)}
             {...otherProps}
         >
-            <Container className="flex w-full grow flex-col justify-between gap-3 py-6 lg:flex-row">
-                <div className="flex gap-x-3 lg:items-center">
+            <Container className="flex w-full grow flex-col justify-between gap-related py-inset-surface-wide lg:flex-row">
+                <div className="flex gap-x-related lg:items-center">
                     <Icon
                         className="mt-1 text-warning-500 lg:mt-0"
                         icon={IconType.WARNING}

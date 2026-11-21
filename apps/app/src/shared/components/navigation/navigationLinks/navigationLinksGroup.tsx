@@ -29,9 +29,9 @@ export const NavigationLinksGroup: React.FC<INavigationLinksGroupProps> = (
     }
 
     return (
-        <div className="flex flex-col gap-1" {...otherProps}>
+        <div className="flex flex-col gap-nav-tight" {...otherProps}>
             {label != null && (
-                <p className="truncate px-4 py-1 text-sm leading-tight text-neutral-500">
+                <p className="truncate px-inset-nav-item py-inset-nav-item--fixed-4 text-sm leading-tight text-neutral-500">
                     {label}
                 </p>
             )}

@@ -32,7 +32,7 @@ export const TransactionStatusContainer = <
     return (
         <ul
             className={classNames(
-                'flex flex-col gap-2 rounded-xl border border-neutral-100 bg-neutral-0 p-4 text-sm shadow-neutral md:gap-3 md:p-6 md:text-base',
+                'flex flex-col gap-related--8-12 rounded-xl border border-neutral-100 bg-neutral-0 p-inset-surface text-sm shadow-neutral md:text-base',
                 className,
             )}
             {...otherProps}
@@ -40,7 +40,7 @@ export const TransactionStatusContainer = <
             {transactionInfo != null && (
                 <TransactionStatusInfo
                     {...transactionInfo}
-                    className="mb-1 md:mb-2"
+                    className="mb-tight--4-8"
                 />
             )}
             {children}

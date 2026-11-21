@@ -47,7 +47,7 @@ export const WizardPageContainer = <
         >
             <Wizard.Form
                 className={classNames(
-                    'flex h-full flex-col gap-4 md:gap-6',
+                    'flex h-full flex-col gap-group-stepped',
                     className,
                 )}
                 {...wizardFormProps}

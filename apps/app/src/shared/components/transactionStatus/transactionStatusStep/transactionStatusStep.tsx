@@ -36,12 +36,12 @@ export const TransactionStatusStep = <
     return (
         <li
             className={classNames(
-                'flex flex-row justify-between gap-2',
+                'flex flex-row justify-between gap-related--fixed-8',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-center gap-2 md:gap-3">
+            <div className="flex flex-row items-center gap-related--8-12">
                 {['pending', 'idle'].includes(state) && (
                     <div className="p-0.5">
                         <Spinner
@@ -89,7 +89,7 @@ export const TransactionStatusStep = <
                 </Link>
             )}
             {addon != null && !isLinkAddon && (
-                <div className="flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-related--fixed-8">
                     <p className="text-sm leading-tight font-normal text-neutral-500 md:text-base">
                         {addon.label}
                     </p>
