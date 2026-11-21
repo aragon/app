@@ -25,6 +25,11 @@ export interface IWizardDialogContainerProps<
      * ID of the form, needed to link the submit button to the form element.
      */
     formId: string;
+    /**
+     * Id of this dialog: the footer's Close then closes only this dialog of the stack; omitted closes all. The header
+     * close button already closes only its own dialog, through the dialog root.
+     */
+    dialogId?: string;
 }
 
 export const WizardDialogContainer = <
@@ -36,6 +41,7 @@ export const WizardDialogContainer = <
         title,
         description,
         formId,
+        dialogId,
         initialSteps,
         submitLabel,
         onSubmit,
@@ -72,7 +78,7 @@ export const WizardDialogContainer = <
                     {children}
                 </Wizard.Form>
             </Dialog.Content>
-            <WizardDialogContainerFooter formId={formId} />
+            <WizardDialogContainerFooter dialogId={dialogId} formId={formId} />
         </Wizard.Root>
     );
 };

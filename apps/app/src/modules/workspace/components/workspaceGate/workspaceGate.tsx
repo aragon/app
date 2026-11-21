@@ -41,7 +41,7 @@ export interface IWorkspaceGateProps {
 export const WorkspaceGate: React.FC<IWorkspaceGateProps> = (props) => {
     const { workspaceId, children } = props;
 
-    // Absent on the routes that are not account-scoped, e.g. the edit wizard.
+    // Absent on the routes that are not account-scoped, e.g. `all/` and `admin`.
     const { accountId } = useParams<Partial<IWorkspaceAccountPageParams>>();
 
     // Retrying is pointless as the registry is read from local storage and fails the same way every time.

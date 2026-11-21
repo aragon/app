@@ -5,6 +5,5 @@ export {
     type WorkspaceAccountSubsection,
     workspaceAccountSections,
     workspaceAllAccountsSegment,
-    workspaceEditStepParam,
     workspaceUtils,
 } from './workspaceUtils';
