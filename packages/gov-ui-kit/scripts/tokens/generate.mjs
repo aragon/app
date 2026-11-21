@@ -4,11 +4,14 @@
 //
 // - src/theme/tokens/primitives/*.css   the kit's primitive CSS (Tailwind `@theme` blocks) and its barrel
 // - src/theme/tokens/semantic/colors.css   the semantic colour layer (three value sets and its utilities)
+// - src/theme/tokens/typography.css   the semantic typography layer (roles, exceptions, modifiers and their utilities)
+//   and src/core/types/typographyStyles.ts (the style names as a TypeScript union)
 // - .design-sync/generated/govkit-primitives.css   the app's flattened artifact (primitives plus the app overrides)
 //
 // The semantic colour layer is optional: it is generated when the source has `semantic.config.json`, which then
 // requires `palette.tokens.json` and every mode file the config names. Without it the source is primitives only and
 // the semantic output is not written; a palette or mode file without the config is an error, not ignored.
+// The typography layer follows the same rule with `typography.config.json` and the mode files it names.
 //
 // Usage: `node scripts/tokens/generate.mjs [--check | --report] [--source <dir>]`
 //   (none)    validate the source, write the outputs
@@ -24,6 +27,7 @@ import { renderAppArtifact } from './lib/app.mjs';
 import { collectTokens, createSchemaValidator, mergeSets, readJson, resolveToken } from './lib/dtcg.mjs';
 import { primitiveFiles, renderPrimitives } from './lib/primitives.mjs';
 import { renderSemantic } from './lib/semantic.mjs';
+import { renderTypography } from './lib/typography.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const repoRoot = resolve(kitRoot, '../..');
@@ -31,6 +35,7 @@ const defaultSourceDir = resolve(kitRoot, 'design-system/tokens/source');
 const SEMANTIC_OUTPUT = 'src/theme/tokens/semantic/colors.css';
 const SEMANTIC_CONFIG = 'semantic.config.json';
 const PALETTE = 'palette.tokens.json';
+const TYPOGRAPHY_CONFIG = 'typography.config.json';
 
 const fail = (message) => {
     throw new Error(message);
@@ -51,6 +56,19 @@ const readSemanticConfig = (sourceDir) => {
     return null;
 };
 
+// The typography config, or null without a typography layer. Typography mode files without the config fail.
+const readTypographyConfig = (sourceDir) => {
+    const file = resolve(sourceDir, TYPOGRAPHY_CONFIG);
+    if (existsSync(file)) {
+        return readJson(file);
+    }
+    const strays = readdirSync(sourceDir).filter((name) => /^typography\..+\.tokens\.json$/.test(name));
+    if (strays.length > 0) {
+        fail(`${strays.join(', ')} without ${TYPOGRAPHY_CONFIG}: add the config or remove the typography files`);
+    }
+    return null;
+};
+
 // Validates the whole source: every document against the published DTCG schema, every alias in every mode (missing
 // target, cycle, type mismatch), every resolved value against its own type. A primitives-only source is validated as
 // one view of the primitives.
@@ -58,6 +76,8 @@ const loadSource = (sourceDir) => {
     const validator = createSchemaValidator(resolve(sourceDir, 'schema/format.2025.10.json'));
     const primitivesConfig = readJson(resolve(sourceDir, 'primitives.config.json'));
     const semanticConfig = readSemanticConfig(sourceDir);
+    const typographyConfig = readTypographyConfig(sourceDir);
+    const typographyModeNames = typographyConfig == null ? [] : Object.keys(typographyConfig.modes);
     const modeNames = semanticConfig == null ? [] : Object.keys(semanticConfig.modes);
     const documents = {
         primitives: readJson(resolve(sourceDir, 'primitives.tokens.json')),
@@ -67,6 +87,9 @@ const loadSource = (sourceDir) => {
         for (const [mode, { file }] of Object.entries(semanticConfig.modes)) {
             documents[mode] = readJson(resolve(sourceDir, file));
         }
+    }
+    for (const [mode, { file }] of Object.entries(typographyConfig?.modes ?? {})) {
+        documents[`typography.${mode}`] = readJson(resolve(sourceDir, file));
     }
     const entries = {};
     for (const [label, document] of Object.entries(documents)) {
@@ -81,6 +104,12 @@ const loadSource = (sourceDir) => {
                   mode,
                   mergeSets({ primitives: entries.primitives, palette: entries.palette, [mode]: entries[mode] }),
               ]);
+    for (const mode of typographyModeNames) {
+        views.push([
+            `typography.${mode}`,
+            mergeSets({ primitives: entries.primitives, [`typography.${mode}`]: entries[`typography.${mode}`] }),
+        ]);
+    }
     for (const [label, view] of views) {
         for (const [path, entry] of view) {
             validator.validateValue(entry.type, resolveToken(view, path).value, `${label}: ${path}`);
@@ -92,6 +121,8 @@ const loadSource = (sourceDir) => {
         modes,
         primitivesConfig,
         semanticConfig,
+        typography: Object.fromEntries(typographyModeNames.map((mode) => [mode, entries[`typography.${mode}`]])),
+        typographyConfig,
         cssDir: resolve(sourceDir, 'css'),
     };
 };
@@ -131,9 +162,25 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
     if (semantic != null) {
         outputs.set(relative(repoRoot, resolve(kitRoot, SEMANTIC_OUTPUT)), semantic.css);
     }
+    const typography =
+        source.typographyConfig == null
+            ? null
+            : renderTypography({
+                  kitRoot,
+                  outputFile: resolve(kitRoot, source.typographyConfig.output),
+                  primitives: source.primitives,
+                  modes: source.typography,
+                  config: source.typographyConfig,
+                  varOf,
+                  fail,
+              });
+    if (typography != null) {
+        outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.output)), typography.css);
+        outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.typesOutput)), typography.ts);
+    }
     const app = source.primitivesConfig.app;
     outputs.set(app.output, renderAppArtifact({ bodies: flatBodies, appConfig: app, repoRoot }));
-    return { outputs, semantic, source };
+    return { outputs, semantic, typography, source };
 };
 
 const report = ({ semantic, source }) => {

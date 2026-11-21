@@ -10,6 +10,7 @@
         "font.family.*": "--font-$1",
         "font.weight.*": "--font-weight-$1",
         "font.size.*": "--text-$1",
+        "font.leadingDefault.*": "--leading-default-$1",
         "font.leading.*": "--leading-$1",
         "shadow.*": "--shadow-$1",
         "ring.color.*": "--ring-color-$1"
@@ -251,6 +252,9 @@
                         "token": "font.family.sans"
                     },
                     {
+                        "token": "font.family.mono"
+                    },
+                    {
                         "blank": true
                     },
                     {
@@ -267,6 +271,29 @@
                     },
                     {
                         "tokens": "font.leading"
+                    }
+                ]
+            },
+            {
+                "at": ":root",
+                "lines": [
+                    {
+                        "comment": "Next typography faces (typography.next.tokens.json): not Tailwind theme fonts, so they get no font-* utility"
+                    },
+                    {
+                        "token": "font.family.sora"
+                    },
+                    {
+                        "token": "font.family.inter-display"
+                    },
+                    {
+                        "blank": true
+                    },
+                    {
+                        "comment": "Built-in Tailwind line heights a typography role or exception keeps (not theme values: no leading-* utility)"
+                    },
+                    {
+                        "tokens": "font.leadingDefault"
                     }
                 ]
             },

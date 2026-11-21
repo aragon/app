@@ -9,6 +9,8 @@
     --font-sans:
         "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
         "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     --font-weight-normal: 400;
     --font-weight-semibold: 600;
@@ -26,6 +28,22 @@
     --leading-tight: 1.25;
     --leading-normal: 1.5;
     --leading-relaxed: 1.65;
+}
+
+:root {
+    /* Next typography faces (typography.next.tokens.json): not Tailwind theme fonts, so they get no font-* utility */
+    --font-sora:
+        "Sora", "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+    --font-inter-display:
+        "Inter Display", "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
+
+    /* Built-in Tailwind line heights a typography role or exception keeps (not theme values: no leading-* utility) */
+    --leading-default-lg: 1.5555555555555556;
+    --leading-default-xl: 1.4;
 }
 
 @font-face {
