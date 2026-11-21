@@ -12,11 +12,17 @@ refactor (such as a token or class change that should keep every colour) changes
 pnpm visual-diff ref main                  # main vs the working tree
 pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
-pnpm visual-diff ref main --typography next  # the working tree in the Next typography preview
 ```
 
-`--theme today|next|dark` and `--typography today|next` pick the Storybook toolbar values both captures are taken with
-(a ref without the toolbar ignores them, so `--typography next` against a ref shows what the preview changes).
+`--theme today|next|dark` and `--typography today|next` pick the Storybook toolbar values the captures are taken with.
+To see what the Next typography preview changes, capture the base in Today and the working tree in Next and compare
+(on 21 November 2026 a `ref` run with `--typography next` stalled on the base build, which has no Typography toolbar):
+
+```sh
+pnpm visual-diff capture node_modules/.cache/visual-diff/base-storybook /tmp/vd-base --typography today
+pnpm visual-diff capture node_modules/.cache/visual-diff/head-storybook /tmp/vd-next --typography next
+pnpm visual-diff compare /tmp/vd-base /tmp/vd-next
+```
 
 `ref` builds a static Storybook of the ref in a temporary git worktree (dependencies come from
 this checkout) and of the working tree, captures both and compares them. It exits 1 when any
