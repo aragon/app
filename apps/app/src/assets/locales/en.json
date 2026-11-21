@@ -3577,7 +3577,7 @@
             "description": "To delegate to this address, confirm the onchain transaction in your wallet.",
             "title": "Delegate"
           },
-          "info": "Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.",
+          "info": "Delegating increases the voting power of the address above by your balance.",
           "selection": {
             "label": "Who would you like to delegate to?",
             "option": {
@@ -4333,6 +4333,7 @@
         },
         "section": {
           "actions": "Authorized actions",
+          "actionsAuthorizedBy": "These actions are authorized by",
           "creationEligibility": "Proposal creation eligibility",
           "details": "Details",
           "governanceProcess": "Governance process"
