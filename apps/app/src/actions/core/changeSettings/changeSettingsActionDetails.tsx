@@ -44,7 +44,7 @@ export const ChangeSettingsActionDetails: React.FC<
             : existingSettings;
 
     return (
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col gap-related--fixed-8">
             <ToggleGroup
                 isMultiSelect={false}
                 onChange={handleToggleChange}

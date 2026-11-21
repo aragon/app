@@ -34,7 +34,7 @@ export const ExecuteActionDetails: React.FC<IExecuteActionDetailsProps> = (
     const { actions, parameters = [] } = inputData;
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-section">
             <InputContainer
                 helpText={t(
                     'app.actions.core.executeActionDetails.actionsHelpText',

@@ -36,7 +36,7 @@ export const PermissionIdItem: React.FC<IPermissionIdItemProps> = (props) => {
             description={permissionName}
             term={t('app.actions.core.permissionManager.permissionTerm')}
         >
-            <div className="flex min-w-0 flex-col items-start gap-1">
+            <div className="flex min-w-0 flex-col items-start gap-tight">
                 <Tooltip content={permissionId} triggerAsChild={true}>
                     <span>{addressUtils.truncateHash(permissionId)}</span>
                 </Tooltip>
