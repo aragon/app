@@ -25,6 +25,9 @@ export const useAddressImpersonation = () => {
     const connectRef = useRef(connectAsync);
     const disconnectRef = useRef(disconnectAsync);
 
+    // The address input reports an empty value on mount; disconnecting then would drop a real wallet.
+    const isImpersonatingRef = useRef(false);
+
     connectRef.current = connectAsync;
     disconnectRef.current = disconnectAsync;
 
@@ -44,7 +47,9 @@ export const useAddressImpersonation = () => {
                             connectRef.current,
                             address,
                         );
-                    } else {
+                        isImpersonatingRef.current = true;
+                    } else if (isImpersonatingRef.current) {
+                        isImpersonatingRef.current = false;
                         await disconnectRef.current();
                     }
                 } catch {

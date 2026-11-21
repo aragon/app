@@ -106,15 +106,27 @@ describe('useAddressImpersonation', () => {
         });
     });
 
-    it('disconnects when onChange fires with undefined', async () => {
+    it('does not disconnect the connected wallet when onChange fires with undefined without impersonation', async () => {
         renderHook(() => useAddressImpersonation());
 
         const addressControl = mockRegisterControl.mock.calls[0][0];
         await act(() => addressControl.onChange(undefined));
 
-        await waitFor(() => {
-            expect(mockDisconnectAsync).toHaveBeenCalled();
-            expect(mockConnectAsync).not.toHaveBeenCalled();
-        });
+        expect(mockDisconnectAsync).not.toHaveBeenCalled();
+        expect(mockConnectAsync).not.toHaveBeenCalled();
+    });
+
+    it('disconnects the impersonated address when onChange fires with undefined', async () => {
+        renderHook(() => useAddressImpersonation());
+
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        await act(() => addressControl.onChange(validAddress));
+        mockDisconnectAsync.mockClear();
+
+        await act(() => addressControl.onChange(undefined));
+        expect(mockDisconnectAsync).toHaveBeenCalledTimes(1);
+
+        await act(() => addressControl.onChange(undefined));
+        expect(mockDisconnectAsync).toHaveBeenCalledTimes(1);
     });
 });
