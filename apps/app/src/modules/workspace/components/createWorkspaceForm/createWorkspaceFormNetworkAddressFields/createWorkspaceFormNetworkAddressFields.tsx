@@ -145,8 +145,8 @@ export const CreateWorkspaceFormNetworkAddressFields: React.FC<
     }, [getNetworkAddresses, listName, trigger]);
 
     return (
-        <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-3 md:flex-row md:gap-2">
+        <div className="flex flex-col gap-related">
+            <div className="flex flex-col gap-related--12-8 md:flex-row">
                 <div className="w-full md:w-2/5">
                     <NetworkInput
                         fieldPrefix={fieldPrefix}

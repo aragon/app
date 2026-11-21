@@ -184,10 +184,10 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
             <Dialog.Header
                 title={t(`app.workspace.publishWorkspaceDialog.${mode}.title`)}
             />
-            <Dialog.Content className="flex flex-col gap-4 px-6 pt-4 pb-6">
-                <div className="flex items-center gap-3">
+            <Dialog.Content className="flex flex-col gap-group px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
+                <div className="flex items-center gap-related">
                     <Avatar alt={name} size="lg" src={avatar?.url} />
-                    <div className="flex min-w-0 flex-col gap-1">
+                    <div className="flex min-w-0 flex-col gap-tight">
                         <Heading as="h3" size="h4">
                             {name}
                         </Heading>

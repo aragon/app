@@ -85,7 +85,7 @@ export const CreateProcessFormMetadata: React.FC<
     );
 
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-section-wide">
             <InputText maxLength={nameMaxLength} {...nameField} />
             {displayProcessKey && (
                 <InputText

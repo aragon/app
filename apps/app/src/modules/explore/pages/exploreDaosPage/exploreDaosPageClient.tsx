@@ -55,8 +55,8 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                         src={NetBackground as string}
                     />
 
-                    <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
-                        <div className="flex max-w-[720px] flex-col items-start gap-2 self-stretch md:gap-3">
+                    <div className="relative flex flex-col items-start justify-center gap-related--fixed-8 self-stretch">
+                        <div className="flex max-w-[720px] flex-col items-start gap-related--8-12 self-stretch">
                             <h1 className="text-3xl leading-tight font-normal text-neutral-0 md:text-5xl">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
@@ -71,7 +71,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
             {featuredDaos && (
                 <section
                     className={classNames(
-                        'flex flex-col gap-4 pt-10 md:gap-6 md:pt-16',
+                        'flex flex-col gap-group-stepped pt-10 md:pt-16',
                     )}
                 >
                     <Container className="w-full">
@@ -96,7 +96,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
             )}
 
             <Container className="py-10 pb-16 md:px-6 md:py-20">
-                <main className="flex flex-col gap-10 md:gap-20">
+                <main className="flex flex-col gap-layout">
                     <ExploreSection
                         title={t('app.explore.exploreDaosPage.section.cta')}
                     >

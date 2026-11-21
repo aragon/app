@@ -270,8 +270,8 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <div className="flex flex-col gap-3">
+            <Dialog.Content className="flex flex-col gap-section px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
+                <div className="flex flex-col gap-related">
                     <InputText
                         disabled
                         helpText={t(
@@ -320,7 +320,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                     )}
                     useCustomWrapper
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {visibleSocials.map((key) => (
                             <AragonProfileSocialFieldRow
                                 fieldName={key}
@@ -329,7 +329,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                             />
                         ))}
                         {hiddenSocials.length > 0 && (
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-related">
                                 {hiddenSocials.map((key) => (
                                     <Button
                                         iconLeft={IconType.PLUS}
@@ -355,7 +355,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                     )}
                     variant="info"
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         <p className="text-base leading-normal text-neutral-500">
                             {t(
                                 'app.application.aragonProfileDialog.alert.description',

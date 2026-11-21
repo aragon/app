@@ -69,7 +69,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                 </Collapsible>
             )}
             {stats.length > 0 && (
-                <div className="grid w-full grid-cols-2 gap-3">
+                <div className="grid w-full grid-cols-2 gap-group--fixed-12">
                     {stats.map((stat) => (
                         <StatCard
                             key={stat.label}
@@ -98,7 +98,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                     {address}
                 </DefinitionList.Item>
             </DefinitionList.Container>
-            <div className="flex flex-col items-center gap-y-3 pt-4">
+            <div className="flex flex-col items-center gap-y-related pt-inset-flush--fixed-16">
                 <Button
                     className="w-full"
                     href={octavLink}

@@ -98,7 +98,7 @@ export const SetupBodyDialogExternalAddress: React.FC<
     };
 
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-related">
             <AddressInput
                 chainId={chainId}
                 helpText={t(

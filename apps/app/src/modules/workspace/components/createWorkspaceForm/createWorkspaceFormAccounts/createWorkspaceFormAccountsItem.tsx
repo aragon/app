@@ -45,8 +45,11 @@ export const CreateWorkspaceFormAccountsItem: React.FC<
     };
 
     return (
-        <Card className="flex flex-col gap-4 p-6 shadow-neutral-sm">
-            <div className="flex items-start gap-3">
+        <Card
+            className="flex flex-col gap-group shadow-neutral-sm"
+            inset="surface-wide"
+        >
+            <div className="flex items-start gap-related">
                 <div className="min-w-0 grow">
                     <CreateWorkspaceFormNetworkAddressFields
                         index={index}

@@ -490,7 +490,7 @@ export const WorkspaceTransactionListItem: React.FC<
                     />
                 )}
                 {row.kind === 'safe' && (
-                    <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+                    <div className="flex w-full flex-col gap-y-related--8-12">
                         {workspaceTransactionUtils.isPendingExecution(
                             row.transaction,
                         ) && (
@@ -532,7 +532,7 @@ export const WorkspaceTransactionListItem: React.FC<
                     </div>
                 )}
                 {row.kind === 'daoExecution' && (
-                    <div className="flex w-full flex-col gap-y-2 md:gap-y-3">
+                    <div className="flex w-full flex-col gap-y-related--8-12">
                         <TransactionExecutionDetails
                             dao={row.dao}
                             transaction={row.transaction}

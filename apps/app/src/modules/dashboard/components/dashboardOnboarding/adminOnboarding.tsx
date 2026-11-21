@@ -28,8 +28,8 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
     });
 
     return (
-        <div className="flex flex-col gap-8">
-            <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-section--fixed-32">
+            <div className="flex flex-col gap-group">
                 <Heading className="text-3xl! md:text-4xl!" size="h1">
                     {t('app.dashboard.dashboardOnboarding.admin.welcome')}{' '}
                     {displayName != null && (
@@ -42,7 +42,7 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     {t('app.dashboard.dashboardOnboarding.admin.description')}
                 </p>
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-section">
                 <CtaCard
                     description={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.description',
@@ -62,7 +62,7 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                         'app.dashboard.dashboardOnboarding.admin.enterprise.title',
                     )}
                 />
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-group">
                     <div className="h-px flex-1 bg-neutral-100" />
                     <span className="text-sm text-neutral-300">
                         {t('app.dashboard.dashboardOnboarding.admin.divider')}

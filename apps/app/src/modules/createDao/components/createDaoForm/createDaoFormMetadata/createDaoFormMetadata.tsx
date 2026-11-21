@@ -99,7 +99,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (
     );
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <InputText maxLength={nameMaxLength} {...nameField} />
             {isEthMainnet && (
                 <InputText

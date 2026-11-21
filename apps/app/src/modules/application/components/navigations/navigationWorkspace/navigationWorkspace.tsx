@@ -155,16 +155,16 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
             <Navigation.Container
                 className={classNames('lg:hidden', className)}
                 containerClasses={classNames(
-                    'flex flex-col gap-2 py-3 md:py-5',
+                    'flex flex-col gap-nav-related py-inset-nav-bar',
                     containerClasses,
                 )}
                 {...otherProps}
             >
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-nav-related--fixed-12">
                     <button
                         aria-expanded={isDialogOpen}
                         aria-haspopup="dialog"
-                        className="flex min-w-0 cursor-pointer items-center gap-2 rounded-lg border border-neutral-100 bg-neutral-0 p-1.5 pr-2 text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800 md:gap-3 md:rounded-xl md:p-2 md:pr-3"
+                        className="flex min-w-0 cursor-pointer items-center gap-nav-related--8-12 rounded-lg border border-neutral-100 bg-neutral-0 py-1.5 pr-control-sm--8-12 pl-1.5 text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800 md:rounded-xl md:py-2 md:pl-2"
                         onClick={() => handleDialogOpenChange(true)}
                         type="button"
                     >
@@ -206,7 +206,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     onOpenChange={handleDialogOpenChange}
                     open={isDialogOpen}
                 >
-                    <div className="px-4">
+                    <div className="px-inset-nav-bar--fixed-16">
                         <Dropdown.Group>
                             <WorkspaceSelector workspaceId={workspaceId} />
                             <WorkspaceAccountSelector

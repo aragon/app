@@ -75,7 +75,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
 
     return (
         <DataList.Item
-            className={classNames('px-4 py-3 md:p-6', {
+            className={classNames('px-inset-item py-inset-item--12-24', {
                 'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
                     isActive,
                 'border-neutral-100 bg-neutral-50': isDisabled,
@@ -83,9 +83,9 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
             {...otherProps}
             {...(isDisabled ? { onClick: undefined } : {})}
         >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related">
                 <div
-                    className={classNames('flex items-center gap-3', {
+                    className={classNames('flex items-center gap-related', {
                         'opacity-60': isDisabled,
                     })}
                 >

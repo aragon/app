@@ -62,7 +62,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
 
     return (
         <Banner message={t(`app.application.bannerDao.${bannerType}.message`)}>
-            <div className="flex gap-3">
+            <div className="flex gap-group--fixed-12">
                 {bannerType === 'adminMember' && (
                     <Button
                         iconLeft={IconType.PLUS}
