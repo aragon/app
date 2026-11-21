@@ -127,7 +127,7 @@ export const SafePendingTransactionList: React.FC<
         <>
             {pendingTransactions?.meta.stale === true && (
                 <AlertInline
-                    className="mb-4"
+                    className="mb-group"
                     message={staleMessage}
                     variant="warning"
                 />

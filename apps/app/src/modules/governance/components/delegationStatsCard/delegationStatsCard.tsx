@@ -62,10 +62,10 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
     }
 
     return (
-        <Card className="p-4 md:p-6">
-            <div className="flex flex-col gap-3 md:gap-2">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
-                    <div className="flex min-w-px flex-1 items-center justify-around gap-3 md:justify-start md:gap-4">
+        <Card inset="surface">
+            <div className="flex flex-col gap-related--12-8">
+                <div className="flex flex-col gap-group-stepped md:flex-row md:items-start">
+                    <div className="flex min-w-px flex-1 items-center justify-around gap-group--12-16 md:justify-start">
                         {pluginStats.map((stat, index) => (
                             <Fragment key={stat.label}>
                                 {index > 0 && (
@@ -87,7 +87,7 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                 </div>
                 {displayDisclaimer && (
                     <>
-                        <div className="hidden py-2 md:block">
+                        <div className="hidden py-inset-flush--fixed-8 md:block">
                             <div className="h-px w-full bg-neutral-100" />
                         </div>
                         <p className="text-center text-xs leading-normal text-neutral-400 md:text-left md:text-sm">

@@ -89,7 +89,7 @@ export const AragonDemoPoliciesPageHeader: React.FC<
                 src={AragonDemoHeader}
             />
             <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
-                <div className="flex flex-col gap-y-2 md:gap-y-3">
+                <div className="flex flex-col gap-y-related--8-12">
                     <h1 className="text-3xl leading-tight font-normal text-neutral-0 md:text-5xl">
                         {title}
                     </h1>
@@ -97,7 +97,7 @@ export const AragonDemoPoliciesPageHeader: React.FC<
                         {description}
                     </p>
                 </div>
-                <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="flex w-full flex-col-reverse gap-section md:flex-row md:items-center md:justify-between">
                     <Button
                         className="w-full md:max-w-fit"
                         iconLeft={IconType.PLUS}
@@ -105,7 +105,7 @@ export const AragonDemoPoliciesPageHeader: React.FC<
                     >
                         {t('app.daos.aragonDemo.aragonDemoPageHeader.cta')}
                     </Button>
-                    <div className="flex flex-row gap-10 md:gap-12">
+                    <div className="flex flex-row gap-section-wide--40-48">
                         {stats.map((stat) => (
                             <AragonDemoPoliciesPageHeaderStat
                                 key={stat.label}

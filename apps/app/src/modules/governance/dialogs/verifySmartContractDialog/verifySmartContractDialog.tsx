@@ -206,7 +206,7 @@ export const VerifySmartContractDialog: React.FC<
             />
             <Dialog.Content>
                 <form
-                    className="flex flex-col gap-3 py-2"
+                    className="mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-related"
                     id={formId}
                     onSubmit={handleSubmit(handleFormSubmit)}
                 >

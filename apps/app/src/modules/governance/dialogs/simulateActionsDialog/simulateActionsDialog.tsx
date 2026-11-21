@@ -144,7 +144,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
                 onClose={() => close(GovernanceDialogId.SIMULATE_ACTIONS)}
                 title={t('app.governance.simulateActionsDialog.title')}
             />
-            <Dialog.Content className="pt-2 pb-3">
+            <Dialog.Content className="pt-inset-surface-flat--fixed-8 pb-inset-surface-flat">
                 <ActionSimulation
                     error={error}
                     isEnabled={false}

@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 22 roles, 6 component sizes and 37 Today exceptions, 393 utilities. A utility is
+ * Semantic spacing: 22 roles, 6 component sizes and 43 Today exceptions, 407 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -160,6 +160,9 @@
         /* exception gap-group-stepped--16-20 (its own Today value) */
         --space-gap-group-stepped--16-20: 16px;
         --space-gap-group-stepped--16-20-md: 20px;
+        /* exception gap-related--12-8 (its own Today value) */
+        --space-gap-related--12-8: 12px;
+        --space-gap-related--12-8-md: 8px;
         /* exception gap-related--8-12 (its own Today value) */
         --space-gap-related--8-12: 8px;
         --space-gap-related--8-12-md: 12px;
@@ -181,6 +184,12 @@
         /* exception gap-section--fixed-32 (its own Today value) */
         --space-gap-section--fixed-32: 32px;
         --space-gap-section--fixed-32-md: 32px;
+        /* exception gap-section-wide--40-48 (its own Today value) */
+        --space-gap-section-wide--40-48: 40px;
+        --space-gap-section-wide--40-48-md: 48px;
+        /* exception gap-section-wide--fixed-48 (its own Today value) */
+        --space-gap-section-wide--fixed-48: 48px;
+        --space-gap-section-wide--fixed-48-md: 48px;
         /* exception gap-tight--2-4 (its own Today value) */
         --space-gap-tight--2-4: 2px;
         --space-gap-tight--2-4-md: 4px;
@@ -202,12 +211,21 @@
         /* exception inset-flush--12-16 (its own Today value) */
         --space-inset-flush--12-16-y: 12px;
         --space-inset-flush--12-16-y-md: 16px;
+        /* exception inset-flush--12-24 (its own Today value) */
+        --space-inset-flush--12-24-y: 12px;
+        --space-inset-flush--12-24-y-md: 24px;
+        /* exception inset-flush--24-32 (its own Today value) */
+        --space-inset-flush--24-32-y: 24px;
+        --space-inset-flush--24-32-y-md: 32px;
         /* exception inset-flush--6-8 (its own Today value) */
         --space-inset-flush--6-8-y: 6px;
         --space-inset-flush--6-8-y-md: 8px;
         /* exception inset-flush--fixed-10 (its own Today value) */
         --space-inset-flush--fixed-10-y: 10px;
         --space-inset-flush--fixed-10-y-md: 10px;
+        /* exception inset-flush--fixed-8 (its own Today value) */
+        --space-inset-flush--fixed-8-y: 8px;
+        --space-inset-flush--fixed-8-y-md: 8px;
         /* exception inset-item--12-16 (its own Today value) */
         --space-inset-item--12-16-y: 12px;
         --space-inset-item--12-16-y-md: 16px;
@@ -404,6 +422,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-related--12-8 (follows gap-related) */
+        --space-gap-related--12-8: var(--space-gap-related);
+        --space-gap-related--12-8-md: var(--space-gap-related-md);
         /* exception gap-related--8-12 (follows gap-related) */
         --space-gap-related--8-12: var(--space-gap-related);
         --space-gap-related--8-12-md: var(--space-gap-related-md);
@@ -425,6 +446,12 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-wide--40-48 (follows gap-section-wide) */
+        --space-gap-section-wide--40-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--40-48-md: var(--space-gap-section-wide-md);
+        /* exception gap-section-wide--fixed-48 (follows gap-section-wide) */
+        --space-gap-section-wide--fixed-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--fixed-48-md: var(--space-gap-section-wide-md);
         /* exception gap-tight--2-4 (follows gap-tight) */
         --space-gap-tight--2-4: var(--space-gap-tight);
         --space-gap-tight--2-4-md: var(--space-gap-tight-md);
@@ -446,12 +473,21 @@
         /* exception inset-flush--12-16 (follows inset-flush) */
         --space-inset-flush--12-16-y: var(--space-inset-flush-y);
         --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--12-24 (follows inset-flush) */
+        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
+        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--24-32 (follows inset-flush) */
+        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
+        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--6-8 (follows inset-flush) */
         --space-inset-flush--6-8-y: var(--space-inset-flush-y);
         --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--fixed-10 (follows inset-flush) */
         --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
         --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--fixed-8 (follows inset-flush) */
+        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
+        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -676,6 +712,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-related--12-8 (follows gap-related) */
+        --space-gap-related--12-8: var(--space-gap-related);
+        --space-gap-related--12-8-md: var(--space-gap-related-md);
         /* exception gap-related--8-12 (follows gap-related) */
         --space-gap-related--8-12: var(--space-gap-related);
         --space-gap-related--8-12-md: var(--space-gap-related-md);
@@ -697,6 +736,12 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-wide--40-48 (follows gap-section-wide) */
+        --space-gap-section-wide--40-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--40-48-md: var(--space-gap-section-wide-md);
+        /* exception gap-section-wide--fixed-48 (follows gap-section-wide) */
+        --space-gap-section-wide--fixed-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--fixed-48-md: var(--space-gap-section-wide-md);
         /* exception gap-tight--2-4 (follows gap-tight) */
         --space-gap-tight--2-4: var(--space-gap-tight);
         --space-gap-tight--2-4-md: var(--space-gap-tight-md);
@@ -718,12 +763,21 @@
         /* exception inset-flush--12-16 (follows inset-flush) */
         --space-inset-flush--12-16-y: var(--space-inset-flush-y);
         --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--12-24 (follows inset-flush) */
+        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
+        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--24-32 (follows inset-flush) */
+        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
+        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--6-8 (follows inset-flush) */
         --space-inset-flush--6-8-y: var(--space-inset-flush-y);
         --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--fixed-10 (follows inset-flush) */
         --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
         --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--fixed-8 (follows inset-flush) */
+        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
+        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -948,6 +1002,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-related--12-8 (follows gap-related) */
+        --space-gap-related--12-8: var(--space-gap-related);
+        --space-gap-related--12-8-md: var(--space-gap-related-md);
         /* exception gap-related--8-12 (follows gap-related) */
         --space-gap-related--8-12: var(--space-gap-related);
         --space-gap-related--8-12-md: var(--space-gap-related-md);
@@ -969,6 +1026,12 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-wide--40-48 (follows gap-section-wide) */
+        --space-gap-section-wide--40-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--40-48-md: var(--space-gap-section-wide-md);
+        /* exception gap-section-wide--fixed-48 (follows gap-section-wide) */
+        --space-gap-section-wide--fixed-48: var(--space-gap-section-wide);
+        --space-gap-section-wide--fixed-48-md: var(--space-gap-section-wide-md);
         /* exception gap-tight--2-4 (follows gap-tight) */
         --space-gap-tight--2-4: var(--space-gap-tight);
         --space-gap-tight--2-4-md: var(--space-gap-tight-md);
@@ -990,12 +1053,21 @@
         /* exception inset-flush--12-16 (follows inset-flush) */
         --space-inset-flush--12-16-y: var(--space-inset-flush-y);
         --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--12-24 (follows inset-flush) */
+        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
+        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--24-32 (follows inset-flush) */
+        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
+        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--6-8 (follows inset-flush) */
         --space-inset-flush--6-8-y: var(--space-inset-flush-y);
         --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-flush--fixed-10 (follows inset-flush) */
         --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
         --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
+        /* exception inset-flush--fixed-8 (follows inset-flush) */
+        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
+        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -4260,6 +4332,14 @@
     }
 }
 
+@utility mb-group--12-16 {
+    margin-bottom: var(--space-gap-group--12-16);
+
+    @variant md {
+        margin-bottom: var(--space-gap-group--12-16-md);
+    }
+}
+
 @utility gap-group--16-12 {
     gap: var(--space-gap-group--16-12);
 
@@ -4273,6 +4353,14 @@
 
     @variant md {
         gap: var(--space-gap-group-stepped--16-20-md);
+    }
+}
+
+@utility gap-related--12-8 {
+    gap: var(--space-gap-related--12-8);
+
+    @variant md {
+        gap: var(--space-gap-related--12-8-md);
     }
 }
 
@@ -4332,6 +4420,14 @@
     }
 }
 
+@utility gap-x-related--fixed-8 {
+    column-gap: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        column-gap: var(--space-gap-related--fixed-8-md);
+    }
+}
+
 @utility gap-y-related--fixed-8 {
     row-gap: var(--space-gap-related--fixed-8);
 
@@ -4369,6 +4465,22 @@
 
     @variant md {
         gap: var(--space-gap-section--fixed-32-md);
+    }
+}
+
+@utility gap-section-wide--40-48 {
+    gap: var(--space-gap-section-wide--40-48);
+
+    @variant md {
+        gap: var(--space-gap-section-wide--40-48-md);
+    }
+}
+
+@utility gap-y-section-wide--fixed-48 {
+    row-gap: var(--space-gap-section-wide--fixed-48);
+
+    @variant md {
+        row-gap: var(--space-gap-section-wide--fixed-48-md);
     }
 }
 
@@ -4520,6 +4632,14 @@
     }
 }
 
+@utility mb-tight--fixed-8 {
+    margin-bottom: var(--space-gap-tight--fixed-8);
+
+    @variant md {
+        margin-bottom: var(--space-gap-tight--fixed-8-md);
+    }
+}
+
 @utility ml-tight--fixed-8 {
     margin-left: var(--space-gap-tight--fixed-8);
 
@@ -4528,11 +4648,35 @@
     }
 }
 
+@utility mr-tight--fixed-8 {
+    margin-right: var(--space-gap-tight--fixed-8);
+
+    @variant md {
+        margin-right: var(--space-gap-tight--fixed-8-md);
+    }
+}
+
 @utility pb-inset-flush--12-16 {
     padding-bottom: var(--space-inset-flush--12-16-y);
 
     @variant md {
         padding-bottom: var(--space-inset-flush--12-16-y-md);
+    }
+}
+
+@utility pt-inset-flush--12-24 {
+    padding-top: var(--space-inset-flush--12-24-y);
+
+    @variant md {
+        padding-top: var(--space-inset-flush--12-24-y-md);
+    }
+}
+
+@utility pt-inset-flush--24-32 {
+    padding-top: var(--space-inset-flush--24-32-y);
+
+    @variant md {
+        padding-top: var(--space-inset-flush--24-32-y-md);
     }
 }
 
@@ -4549,6 +4693,14 @@
 
     @variant md {
         padding-block: var(--space-inset-flush--fixed-10-y-md);
+    }
+}
+
+@utility py-inset-flush--fixed-8 {
+    padding-block: var(--space-inset-flush--fixed-8-y);
+
+    @variant md {
+        padding-block: var(--space-inset-flush--fixed-8-y-md);
     }
 }
 
@@ -4631,6 +4783,38 @@
 
     @variant md {
         padding-block: var(--space-inset-surface-flat--fixed-16-y-md);
+    }
+}
+
+@utility pt-inset-surface-flat--fixed-16 {
+    padding-top: var(--space-inset-surface-flat--fixed-16-y);
+
+    @variant md {
+        padding-top: var(--space-inset-surface-flat--fixed-16-y-md);
+    }
+}
+
+@utility pb-inset-surface-flat--fixed-16 {
+    padding-bottom: var(--space-inset-surface-flat--fixed-16-y);
+
+    @variant md {
+        padding-bottom: var(--space-inset-surface-flat--fixed-16-y-md);
+    }
+}
+
+@utility py-inset-surface-flat--fixed-8 {
+    padding-block: var(--space-inset-surface-flat--fixed-8-y);
+
+    @variant md {
+        padding-block: var(--space-inset-surface-flat--fixed-8-y-md);
+    }
+}
+
+@utility pt-inset-surface-flat--fixed-8 {
+    padding-top: var(--space-inset-surface-flat--fixed-8-y);
+
+    @variant md {
+        padding-top: var(--space-inset-surface-flat--fixed-8-y-md);
     }
 }
 

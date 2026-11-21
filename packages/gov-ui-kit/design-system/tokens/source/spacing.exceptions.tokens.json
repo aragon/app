@@ -108,9 +108,10 @@
                         "families": [
                             "gap",
                             "gap-x",
-                            "space-y"
+                            "space-y",
+                            "mb"
                         ],
-                        "places": 7,
+                        "places": 11,
                         "resolution": ""
                     }
                 },
@@ -134,7 +135,7 @@
                         "families": [
                             "gap"
                         ],
-                        "places": 2,
+                        "places": 3,
                         "resolution": ""
                     }
                 },
@@ -175,6 +176,30 @@
                     }
                 }
             },
+            "gap-related--12-8": {
+                "$description": "steps down 12 → 8 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
             "gap-related--8-12": {
                 "$description": "steps 8 → 12 at md",
                 "$extensions": {
@@ -184,7 +209,7 @@
                             "gap-x",
                             "gap-y"
                         ],
-                        "places": 12,
+                        "places": 16,
                         "resolution": ""
                     }
                 },
@@ -233,7 +258,7 @@
                         "families": [
                             "gap"
                         ],
-                        "places": 2,
+                        "places": 3,
                         "resolution": ""
                     }
                 },
@@ -256,9 +281,10 @@
                     "org.aragon.gov-ui-kit": {
                         "families": [
                             "gap",
+                            "gap-x",
                             "gap-y"
                         ],
-                        "places": 17,
+                        "places": 27,
                         "resolution": ""
                     }
                 },
@@ -307,7 +333,7 @@
                         "families": [
                             "gap"
                         ],
-                        "places": 1,
+                        "places": 2,
                         "resolution": ""
                     }
                 },
@@ -331,7 +357,7 @@
                         "families": [
                             "gap"
                         ],
-                        "places": 2,
+                        "places": 3,
                         "resolution": ""
                     }
                 },
@@ -344,6 +370,54 @@
                 "md": {
                     "$value": {
                         "value": 32,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--40-48": {
+                "$description": "steps 40 → 48 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap"
+                        ],
+                        "places": 2,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--fixed-48": {
+                "$description": "unstepped (one value at every width)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap-y"
+                        ],
+                        "places": 2,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
                         "unit": "px"
                     }
                 }
@@ -432,7 +506,7 @@
                             "gap",
                             "gap-x"
                         ],
-                        "places": 7,
+                        "places": 9,
                         "resolution": ""
                     }
                 },
@@ -482,9 +556,11 @@
                             "gap",
                             "gap-x",
                             "mt",
-                            "ml"
+                            "mb",
+                            "ml",
+                            "mr"
                         ],
-                        "places": 7,
+                        "places": 16,
                         "resolution": ""
                     }
                 },
@@ -521,6 +597,54 @@
                 "md": {
                     "$value": {
                         "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--12-24": {
+                "$description": "steps 12 → 24 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "pt"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--24-32": {
+                "$description": "steps 24 → 32 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "pt"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 32,
                         "unit": "px"
                     }
                 }
@@ -569,6 +693,30 @@
                 "md": {
                     "$value": {
                         "value": 10,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--fixed-8": {
+                "$description": "unstepped (one value at every width)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "py"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
                         "unit": "px"
                     }
                 }
@@ -748,9 +896,11 @@
                     "org.aragon.gov-ui-kit": {
                         "families": [
                             "p",
-                            "py"
+                            "py",
+                            "pt",
+                            "pb"
                         ],
-                        "places": 10,
+                        "places": 14,
                         "resolution": ""
                     }
                 },
@@ -772,9 +922,11 @@
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "families": [
+                            "py",
+                            "pt",
                             "pb"
                         ],
-                        "places": 1,
+                        "places": 6,
                         "resolution": ""
                     }
                 },

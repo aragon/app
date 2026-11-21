@@ -58,7 +58,7 @@ export const WalletConnectActionDialogConnect: React.FC<
             />
             <Dialog.Content>
                 <form
-                    className="py-2"
+                    className="mt-tight--fixed-8 mb-tight--fixed-8"
                     id={formId}
                     onSubmit={handleSubmit(onFormSubmit)}
                 >

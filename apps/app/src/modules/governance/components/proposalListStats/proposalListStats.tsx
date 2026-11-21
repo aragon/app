@@ -94,8 +94,8 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     ];
 
     return (
-        <div className="flex w-full flex-col gap-y-4 md:gap-y-6">
-            <div className="grid w-full grid-cols-2 gap-3">
+        <div className="flex w-full flex-col gap-y-group-stepped">
+            <div className="grid w-full grid-cols-2 gap-related">
                 {stats.map((stat) => (
                     <StatCard
                         key={stat.label}
