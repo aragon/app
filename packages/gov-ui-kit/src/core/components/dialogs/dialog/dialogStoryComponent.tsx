@@ -26,7 +26,7 @@ export const DialogStoryComponent = (component: 'header' | 'content' | 'footer' 
                         {'children' in props && props.children != null && component === 'content' ? (
                             (props.children as ReactNode)
                         ) : (
-                            <div className="flex h-60 w-full items-center justify-center border border-dashed border-info-300 bg-info-100">
+                            <div className="flex h-60 w-full items-center justify-center border border-dashed border-info-300 bg-info-subtle">
                                 Dialog content
                             </div>
                         )}

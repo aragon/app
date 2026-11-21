@@ -138,7 +138,7 @@ export const WorkspaceGateAccountPrompt: React.FC<
                     <Heading as="h1" size="h3">
                         {t('app.workspace.workspaceGateAccountPrompt.heading')}
                     </Heading>
-                    <p className="text-sm leading-tight text-neutral-500 md:text-base">
+                    <p className="text-sm leading-tight text-surface-secondary md:text-base">
                         {t(
                             'app.workspace.workspaceGateAccountPrompt.description',
                             { account: accountLabel },

@@ -28,8 +28,8 @@ export interface IAragonLogoProps extends ComponentProps<'div'> {
 }
 
 const logoVariantClassNames: Record<LogoVariant, string> = {
-    primary: 'text-primary-400',
-    white: 'text-neutral-0',
+    primary: 'icon-brand-primary',
+    white: 'icon-accent-inverse',
 };
 
 const logoSizeClassNames: Record<LogoSize, string> = {

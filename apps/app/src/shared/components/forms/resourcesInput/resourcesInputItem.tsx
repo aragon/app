@@ -81,7 +81,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
 
     return (
         <Card
-            className={classNames('flex flex-col gap-3 p-6 shadow-neutral-sm', {
+            className={classNames('flex flex-col gap-3 p-6 shadow-surface-sm', {
                 'md:flex-row md:gap-2': !isStacked,
             })}
         >

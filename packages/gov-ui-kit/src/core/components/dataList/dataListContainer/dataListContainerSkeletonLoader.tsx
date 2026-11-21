@@ -9,14 +9,14 @@ export const DataListContainerSkeletonLoader: React.FC<IDataListContainerSkeleto
         className="flex animate-pulse flex-col gap-3 py-4 md:py-6"
         tabIndex={0}
     >
-        <div className="h-5 w-1/3 rounded-full bg-neutral-50" />
+        <div className="h-5 w-1/3 rounded-full bg-surface-secondary" />
         <div className="flex flex-col gap-1.5">
-            <div className="h-4 grow rounded-full bg-neutral-50" />
-            <div className="h-4 w-1/4 rounded-full bg-neutral-50" />
+            <div className="h-4 grow rounded-full bg-surface-secondary" />
+            <div className="h-4 w-1/4 rounded-full bg-surface-secondary" />
         </div>
         <div className="flex flex-row gap-1">
-            <div className="h-4 w-1/5 rounded bg-neutral-50" />
-            <div className="h-4 w-1/4 rounded bg-neutral-50" />
+            <div className="h-4 w-1/5 rounded bg-surface-secondary" />
+            <div className="h-4 w-1/4 rounded bg-surface-secondary" />
         </div>
     </DataListItem>
 );

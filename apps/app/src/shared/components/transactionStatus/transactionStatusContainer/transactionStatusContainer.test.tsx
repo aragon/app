@@ -29,6 +29,7 @@ describe('<TransactionStatusContainer /> component', () => {
         render(createTestComponent({ steps }));
         const list = screen.getByRole('list');
         expect(list).toBeInTheDocument();
-        expect(list.className).toMatch(/neutral/);
+        // Default (neutral, non-status) styling: the surface group of the semantic colour classes.
+        expect(list.className).toMatch(/surface/);
     });
 });

@@ -25,21 +25,21 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 return {
                     icon: IconType.CHECKMARK,
                     label: simulationCopy.likelyToSucceed,
-                    textColor: 'text-success-800',
+                    textColor: 'text-success-primary',
                     variant: 'success' as const,
                 };
             case 'failed':
                 return {
                     icon: IconType.CRITICAL,
                     label: simulationCopy.likelyToFail,
-                    textColor: 'text-warning-800',
+                    textColor: 'text-warning-primary',
                     variant: 'warning' as const,
                 };
             default:
                 return {
                     icon: IconType.INFO,
                     label: simulationCopy.unknown,
-                    textColor: 'text-neutral-500',
+                    textColor: 'text-surface-secondary',
                     variant: 'neutral' as const,
                 };
         }
@@ -59,7 +59,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
 
                 <DefinitionList.Item term={copy.actionSimulation.lastSimulationTerm}>
                     {isLoading ? (
-                        <span className="flex items-center gap-2 text-primary-400 md:gap-3">
+                        <span className="flex items-center gap-2 text-accent-primary md:gap-3">
                             <Spinner size="md" variant="primary" />
                             {simulationCopy.simulating}
                         </span>
@@ -72,7 +72,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                     <div className="flex w-full items-center justify-between">
                         <div className="flex items-center gap-2">
                             {isLoading ? (
-                                <span className="flex items-center gap-2 text-primary-400 md:gap-3">
+                                <span className="flex items-center gap-2 text-accent-primary md:gap-3">
                                     <Spinner size="md" variant="primary" />
                                     {simulationCopy.simulating}
                                 </span>
@@ -124,7 +124,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 )}
             </div>
             {error && (
-                <div className="flex items-center gap-2 text-sm text-critical-800">
+                <div className="flex items-center gap-2 text-sm text-critical-primary">
                     <AvatarIcon icon={IconType.INFO} size="sm" variant="critical" />
                     {error}
                 </div>

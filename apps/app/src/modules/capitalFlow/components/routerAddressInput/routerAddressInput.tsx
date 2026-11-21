@@ -88,10 +88,10 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
     };
 
     return (
-        <Card className="flex flex-col gap-3 p-6 shadow-sm">
+        <Card className="flex flex-col gap-3 p-6 shadow-sm!">
             {/* Header row: Label + Remove button */}
             <div className="flex items-center justify-between">
-                <label className="text-lg leading-tight font-normal text-neutral-800">
+                <label className="text-lg leading-tight font-normal text-surface-primary">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.addressLabel',
                     )}
@@ -135,7 +135,7 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
                         size="sm"
                         variant="tertiary"
                     />
-                    <span className="text-sm leading-tight font-normal text-neutral-500">
+                    <span className="text-sm leading-tight font-normal text-surface-secondary">
                         {t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.positionCounter',
                             {

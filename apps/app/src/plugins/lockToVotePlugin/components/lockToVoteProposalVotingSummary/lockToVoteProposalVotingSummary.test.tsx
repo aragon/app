@@ -114,8 +114,10 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         // 75% > 50% support threshold => reached (primary) variant
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).not.toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).toBeNull();
     });
 
     it('displays yes-vote support as not reached for veto proposals with majority no votes', () => {
@@ -132,8 +134,10 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         expect(progressbar.dataset.value).toEqual('10');
 
         // 10% < 50% support threshold => not-reached (neutral) variant
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
     });
 
     it('displays support at exactly the threshold as not reached', () => {
@@ -148,8 +152,10 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         // On-chain semantics are strictly greater-than: 50% support does not reach a 50% threshold
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
     });
 
     it('displays zero support without the reached variant when only abstain votes are cast', () => {
@@ -161,8 +167,10 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         // Progress clamps the rendered value to a minimum of 1.
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('1');
-        expect(progressbar.querySelector('.bg-neutral-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-primary-400')).toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).not.toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).toBeNull();
         expect(
             screen.getByText(
                 `${translationPrefix}.votesDescription (details=0 TTT)`,
@@ -182,8 +190,10 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         // Veto support is yes / (yes + no) = 75% > 50% => reached (primary) variant
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('75');
-        expect(progressbar.querySelector('.bg-primary-400')).not.toBeNull();
-        expect(progressbar.querySelector('.bg-neutral-400')).toBeNull();
+        expect(progressbar.querySelector('.bg-accent-solid')).not.toBeNull();
+        expect(
+            progressbar.querySelector('.bg-surface-primary-inverse'),
+        ).toBeNull();
         expect(
             screen.getByText(`${translationPrefix}.optimisticSupportLabel`),
         ).toBeInTheDocument();
@@ -200,7 +210,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal, isExecuted: true }));
 
         const statusText = screen.getByText(`${translationPrefix}.approved`);
-        expect(statusText).toHaveClass('text-success-800');
+        expect(statusText).toHaveClass('text-success-primary');
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
@@ -215,7 +225,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal, isVeto: true }));
 
         const statusText = screen.getByText(`${translationPrefix}.vetoed`);
-        expect(statusText).toHaveClass('text-critical-800');
+        expect(statusText).toHaveClass('text-critical-primary');
     });
 
     it('displays the not-approved status when proposal has failed and support is not reached', () => {
@@ -229,7 +239,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         render(createTestComponent({ proposal }));
 
         const statusText = screen.getByText(`${translationPrefix}.notApproved`);
-        expect(statusText).toHaveClass('text-neutral-500');
+        expect(statusText).toHaveClass('text-surface-secondary');
     });
 
     it('displays the not-vetoed status when veto proposal is executed and support is not reached', () => {
@@ -244,7 +254,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         );
 
         const statusText = screen.getByText(`${translationPrefix}.notVetoed`);
-        expect(statusText).toHaveClass('text-neutral-500');
+        expect(statusText).toHaveClass('text-surface-secondary');
     });
 
     it('displays the support progress when the proposal supply is unknown', () => {

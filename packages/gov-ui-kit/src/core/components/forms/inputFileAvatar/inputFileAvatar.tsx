@@ -11,25 +11,25 @@ import { type IInputFileAvatarProps, InputFileAvatarError } from './inputFileAva
 const stateToClassNames: Record<InputVariant | 'disabled', { containerClasses: string[]; addIconClasses: string[] }> = {
     default: {
         containerClasses: [
-            'border-[1px] border-neutral-100 hover:border-neutral-200 border-dashed cursor-pointer focus-ring-primary',
+            'border-[1px] border-surface-default hover:border-surface-hover border-dashed cursor-pointer focus-ring ring-accent-focus',
         ],
-        addIconClasses: ['text-neutral-400 group-hover:text-neutral-600'],
+        addIconClasses: ['icon-surface-default-control group-hover:icon-surface-hover-control'],
     },
     warning: {
         containerClasses: [
-            'border-[1px] border-warning-300 hover:border-warning-400 border-dashed cursor-pointer focus-ring-warning',
+            'border-[1px] border-warning-default hover:border-warning-hover-file-avatar border-dashed cursor-pointer focus-ring ring-warning-focus',
         ],
-        addIconClasses: ['text-warning-500 group-hover:text-warning-600'],
+        addIconClasses: ['icon-warning-default group-hover:icon-warning-hover'],
     },
     critical: {
         containerClasses: [
-            'border-[1px] border-critical-500 hover:border-critical-600 border-dashed cursor-pointer focus-ring-critical',
+            'border-[1px] border-critical-default-input hover:border-critical-hover-input border-dashed cursor-pointer focus-ring ring-critical-focus',
         ],
-        addIconClasses: ['text-critical-500 group-hover:text-critical-600'],
+        addIconClasses: ['icon-critical-default group-hover:icon-critical-hover'],
     },
     disabled: {
-        containerClasses: ['border-[1px] border-neutral-200'],
-        addIconClasses: ['text-neutral-200'],
+        containerClasses: ['border-[1px] border-surface-disabled'],
+        addIconClasses: ['icon-surface-disabled-control'],
     },
 };
 
@@ -118,7 +118,7 @@ export const InputFileAvatar: React.FC<IInputFileAvatarProps> = (props) => {
     const { containerClasses, addIconClasses } = stateToClassNames[processedVariant];
 
     const inputAvatarClassNames = classNames(
-        'group flex size-16 items-center justify-center rounded-full bg-neutral-0 hover:shadow-neutral',
+        'group flex size-16 items-center justify-center rounded-full bg-surface-default hover:shadow-surface-default',
         containerClasses,
     );
 
@@ -133,7 +133,7 @@ export const InputFileAvatar: React.FC<IInputFileAvatarProps> = (props) => {
                         <button
                             aria-label="Cancel Selection"
                             className={classNames(
-                                'absolute -top-1 -right-1 cursor-pointer rounded-full bg-neutral-0 p-1 shadow-neutral focus-ring-primary',
+                                'absolute -top-1 -right-1 cursor-pointer rounded-full bg-surface-default p-1 focus-ring ring-accent-focus shadow-surface-default',
                             )}
                             onClick={handleCancel}
                             type="button"

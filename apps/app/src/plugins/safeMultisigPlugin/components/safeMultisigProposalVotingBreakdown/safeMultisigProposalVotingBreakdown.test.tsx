@@ -109,7 +109,9 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         render(createTestComponent());
 
         const progress = screen.getByRole('progressbar');
-        expect(progress.firstElementChild).toHaveClass('bg-neutral-400');
+        expect(progress.firstElementChild).toHaveClass(
+            'bg-surface-primary-inverse',
+        );
         expect(
             screen.queryByTestId(IconType.CHECKMARK),
         ).not.toBeInTheDocument();

@@ -1,0 +1,5 @@
+---
+"@aragon/gov-ui-kit": patch
+---
+
+Add the semantic colour utilities the token layer was missing, generated from the same token data: single-side borders (`border-t-accent-secondary`, `border-b-surface-secondary`, every side and every `border/*` token), gradient stops (`from-/via-/to-gradient-*`) and fades (`gradient-surface-primary-to-b` and the other directions), `fill-*`, `stroke-*` and `caret-*` (named after the full token, e.g. `fill-bg-surface-tertiary-inverse`), and a few cross-family utilities where the design binds a token of another family (`bg-icon-surface-secondary`, `border-bg-surface-primary`, `caret-bg-surface-secondary-inverse`, `shadow-border-surface-selected`). Dialog and alert-dialog headers, footers and overlays, accordion and rich-text-editor fades, the collapsible fade, spinner heads, proposal-voting dividers, the tab underline, the neutral tooltip arrow, input carets, the switch thumb and the progress marker outline move to them. No visual change in the default theme; the dark theme no longer shows light gradients behind dialogs and open accordions, nor bright dividers in proposal voting.

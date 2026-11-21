@@ -63,8 +63,8 @@ export const useInputProps = <TElement extends InputComponentElement>(
     };
 
     const inputClasses = classNames(
-        'size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 outline-hidden', // Default
-        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300', // Placeholder
+        'size-full rounded-xl bg-transparent px-4 py-3 outline-hidden caret-bg-surface-secondary-inverse', // Default
+        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-surface-placeholder', // Placeholder
         inputClassName, // Prop
     );
 

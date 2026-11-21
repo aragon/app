@@ -17,7 +17,7 @@ const restLinks = [
 ];
 
 const linkClassName =
-    'truncate border-neutral-100 border-b py-4 text-base text-neutral-500 leading-tight transition-colors last:border-none hover:text-neutral-800 md:border-none md:py-0';
+    'truncate border-surface-secondary border-b py-4 text-base text-link-secondary-default leading-tight transition-colors last:border-none hover:text-link-secondary-hover-nav md:border-none md:py-0';
 
 /**
  * The footer of the app (apps/app/src/modules/application/components/footer), below the whole
@@ -29,14 +29,14 @@ export const SiteFooter = ({ year }: { year: number }) => {
     const links = [{ text: 'Aragon App', url: `${appOrigin}/` }, ...restLinks];
 
     return (
-        <footer className="border-t border-neutral-100 bg-neutral-0 py-5">
+        <footer className="border-t border-surface-secondary bg-surface-primary py-5">
             <div className="mx-auto grid max-w-[1550px] items-center px-4 [grid-template-areas:'metadata''links''copyright'] md:justify-items-center md:gap-6 md:[grid-template-areas:'links''metadata''copyright'] lg:grid-cols-[1fr_min-content_1fr] lg:[grid-template-areas:'metadata_links_copyright']">
                 <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-sm leading-tight text-nowrap text-neutral-800 md:text-base">
+                        <p className="text-sm leading-tight text-nowrap text-surface-primary md:text-base">
                             Governed on
                         </p>
-                        <AragonLogo className="h-[22px] w-auto text-primary-400" />
+                        <AragonLogo className="h-[22px] w-auto icon-brand-primary" />
                     </div>
                     <Tag
                         className="shrink-0"
@@ -55,7 +55,7 @@ export const SiteFooter = ({ year }: { year: number }) => {
                         </a>
                     ))}
                 </div>
-                <p className="truncate pt-6 pb-3 text-base leading-tight text-neutral-500 [grid-area:copyright] md:py-0 lg:justify-self-end">
+                <p className="truncate pt-6 pb-3 text-base leading-tight text-surface-secondary [grid-area:copyright] md:py-0 lg:justify-self-end">
                     © {year} Aragon
                 </p>
             </div>

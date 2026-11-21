@@ -13,7 +13,7 @@ export const AdminGovernanceInfo: React.FC<IAdminGovernanceInfoProps> = () => {
             {settings.map((governanceSetting, index) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: static settings list, never reordered
                 <DefinitionList.Item key={index} term={governanceSetting.term}>
-                    <p className="text-neutral-500">
+                    <p className="text-surface-secondary">
                         {governanceSetting.definition}
                     </p>
                 </DefinitionList.Item>

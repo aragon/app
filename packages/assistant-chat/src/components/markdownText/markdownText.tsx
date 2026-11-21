@@ -54,8 +54,8 @@ const CodeHeader: React.FC<CodeHeaderProps> = ({ language, code }) => {
     };
 
     return (
-        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-b-0 border-neutral-100 bg-neutral-50 px-3.5 py-1.5 text-xs">
-            <span className="font-medium text-neutral-500 lowercase">
+        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-b-0 border-surface-secondary bg-surface-secondary px-3.5 py-1.5 text-xs">
+            <span className="font-medium text-surface-secondary lowercase">
                 {language}
             </span>
             <TooltipIconButton
@@ -80,7 +80,7 @@ const Code: React.FC<React.ComponentProps<'code'>> = ({
         <code
             className={classNames(
                 !isCodeBlock &&
-                    'rounded-md bg-neutral-100 px-1.5 py-0.5 font-mono text-[0.85em]',
+                    'rounded-md bg-surface-tertiary px-1.5 py-0.5 font-mono text-[0.85em]',
                 className,
             )}
             {...props}
@@ -155,7 +155,7 @@ const defaultComponents = memoizeMarkdownComponents({
     a: ({ className, href, ...props }) => (
         <a
             className={classNames(
-                'text-primary-400 underline underline-offset-2 hover:text-primary-500',
+                'text-link-default underline underline-offset-2 hover:text-link-hover',
                 className,
             )}
             href={resolveAppLink(href, globalThis.location?.origin)}
@@ -167,7 +167,7 @@ const defaultComponents = memoizeMarkdownComponents({
     blockquote: ({ className, ...props }) => (
         <blockquote
             className={classNames(
-                'my-3 border-s-2 border-neutral-200 ps-4 text-neutral-500',
+                'my-3 border-s-2 border-surface-secondary-panel ps-4 text-surface-secondary',
                 className,
             )}
             {...props}
@@ -176,7 +176,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ul: ({ className, ...props }) => (
         <ul
             className={classNames(
-                'my-3 ms-5 list-disc marker:text-neutral-300 [&>li]:mt-1',
+                'my-3 ms-5 list-disc marker:text-surface-tertiary-hint [&>li]:mt-1',
                 className,
             )}
             {...props}
@@ -185,7 +185,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ol: ({ className, ...props }) => (
         <ol
             className={classNames(
-                'my-3 ms-5 list-decimal marker:text-neutral-300 [&>li]:mt-1',
+                'my-3 ms-5 list-decimal marker:text-surface-tertiary-hint [&>li]:mt-1',
                 className,
             )}
             {...props}
@@ -193,7 +193,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ),
     hr: ({ className, ...props }) => (
         <hr
-            className={classNames('my-3 border-neutral-100', className)}
+            className={classNames('my-3 border-surface-secondary', className)}
             {...props}
         />
     ),
@@ -215,7 +215,7 @@ const defaultComponents = memoizeMarkdownComponents({
     pre: ({ className, ...props }) => (
         <pre
             className={classNames(
-                'overflow-x-auto rounded-t-none rounded-b-xl border border-t-0 border-neutral-100 bg-neutral-50 p-3.5 text-[13px] leading-relaxed',
+                'overflow-x-auto rounded-t-none rounded-b-xl border border-t-0 border-surface-secondary bg-surface-secondary p-3.5 text-[13px] leading-relaxed',
                 className,
             )}
             {...props}
@@ -235,7 +235,7 @@ const defaultComponents = memoizeMarkdownComponents({
     th: ({ className, ...props }) => (
         <th
             className={classNames(
-                'border border-neutral-100 bg-neutral-50 px-2 py-1 text-left font-semibold',
+                'border border-surface-secondary bg-surface-secondary px-2 py-1 text-left font-semibold',
                 className,
             )}
             {...props}
@@ -244,7 +244,7 @@ const defaultComponents = memoizeMarkdownComponents({
     td: ({ className, ...props }) => (
         <td
             className={classNames(
-                'border border-neutral-100 px-2 py-1 align-top',
+                'border border-surface-secondary px-2 py-1 align-top',
                 className,
             )}
             {...props}

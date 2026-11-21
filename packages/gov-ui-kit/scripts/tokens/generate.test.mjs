@@ -33,7 +33,7 @@ test('every output on disk is what the source generates, and generation is deter
     const first = generateAll().outputs;
     const second = generateAll().outputs;
     assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 9);
+    assert.equal(first.size, 10);
     for (const [file, text] of first) {
         assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
         assert.match(text, /GENERATED/);
@@ -163,6 +163,57 @@ test('a source without semantic.config.json generates the primitives only', (con
         () => generateAll({ sourceDir: dir }),
         /semantic\.today\.tokens\.json without semantic\.config\.json/,
     );
+});
+
+test('the semantic layer rejects a Today value that is neither verified nor the fallback rule', (context) => {
+    const dir = scratch(context);
+    edit(dir, 'semantic.today.tokens.json', (json) => {
+        const leaves = [];
+        const walk = (group) => {
+            for (const [key, child] of Object.entries(group)) {
+                if (key.startsWith('$')) {
+                    continue;
+                }
+                if (Object.hasOwn(child, '$value')) {
+                    leaves.push(child);
+                } else {
+                    walk(child);
+                }
+            }
+        };
+        walk(json.semantic);
+        const fallback = leaves.find(
+            (token) =>
+                token.$extensions === undefined &&
+                typeof token.$value === 'string' &&
+                token.$value.startsWith('{color.'),
+        );
+        assert.ok(fallback, 'fixture needs an unverified fallback token');
+        fallback.$value = '{color.neutral.900}';
+    });
+    assert.throws(() => generateAll({ sourceDir: dir }), /the fallback rule gives/);
+});
+
+test('the semantic layer rejects tokens that differ between modes, and unequal merged tokens', (context) => {
+    const missing = scratch(context);
+    edit(missing, 'semantic.dark.tokens.json', (json) => {
+        json.semantic.border.surface.extraneous = { $value: '{palette.gray.50}' };
+    });
+    assert.throws(() => generateAll({ sourceDir: missing }), /mode dark differs from mode today/);
+
+    const merged = scratch(context);
+    edit(merged, 'semantic.dark.tokens.json', (json) => {
+        json.semantic.text.accent['hover-inverse'].$value = '{palette.gray.900}';
+    });
+    assert.throws(() => generateAll({ sourceDir: merged }), /cannot merge text\/accent\/hover-inverse/);
+});
+
+test('a mix extension must equal its primitive at that percentage', (context) => {
+    const dir = scratch(context);
+    edit(dir, 'semantic.today.tokens.json', (json) => {
+        json.semantic.bg.accent['transparent-hover'].$extensions['org.aragon.gov-ui-kit'].mix.percent = 5;
+    });
+    assert.throws(() => generateAll({ sourceDir: dir }), /does not equal .* at 5%/);
 });
 
 const overrides = (context, css) => {
