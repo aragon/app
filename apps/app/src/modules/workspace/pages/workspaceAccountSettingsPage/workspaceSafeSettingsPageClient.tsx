@@ -129,12 +129,12 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.accountTitle`)}
                 >
-                    <Card className="p-6">
+                    <Card inset="surface-wide">
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t(`${translationKey}.account.blockchain`)}
                             >
-                                <div className="flex flex-col gap-1">
+                                <div className="flex flex-col gap-tight">
                                     <p className="text-neutral-500">
                                         {networkDefinitions[network].name}
                                     </p>
@@ -186,7 +186,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.governanceTitle`)}
                 >
-                    <Card className="p-6">
+                    <Card inset="surface-wide">
                         {isGovernanceUnavailable ? (
                             <p className="text-neutral-500">
                                 {t(`${translationKey}.governance.unavailable`)}

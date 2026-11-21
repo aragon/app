@@ -68,7 +68,7 @@ export const WorkspaceAssetList: React.FC<IWorkspaceAssetListProps> = (
     };
 
     return (
-        <div className="flex flex-col gap-4 md:gap-6">
+        <div className="flex flex-col gap-group-stepped">
             {unavailableAccounts.length > 0 && (
                 <AlertCard
                     message={t(

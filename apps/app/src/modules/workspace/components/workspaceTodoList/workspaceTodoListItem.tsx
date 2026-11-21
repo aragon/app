@@ -151,7 +151,7 @@ export const WorkspaceTodoListItem: React.FC<IWorkspaceTodoListItemProps> = (
             : buildTransactionDisplay(todo, workspaceId, t);
 
     return (
-        <DataList.Item className="flex items-center py-3 md:py-5" href={href}>
+        <DataList.Item className="flex items-center py-inset-item" href={href}>
             <WorkspaceListItemSummary {...summary} />
         </DataList.Item>
     );

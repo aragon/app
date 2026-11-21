@@ -45,18 +45,18 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
             <Dialog.Header
                 title={t('app.workspace.workspaceWelcomeDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
+            <Dialog.Content className="flex flex-col gap-section px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <p className="text-base leading-normal text-neutral-500">
                     {t('app.workspace.workspaceWelcomeDialog.description')}
                 </p>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-group">
                     {features.map(({ icon, titleKey, descriptionKey }) => (
                         <div
-                            className="flex flex-row items-start gap-3"
+                            className="flex flex-row items-start gap-related"
                             key={titleKey}
                         >
                             <AvatarIcon icon={icon} variant="primary" />
-                            <div className="flex flex-col gap-0.5">
+                            <div className="flex flex-col gap-tight--fixed-2">
                                 <p className="text-base leading-tight font-normal text-neutral-800">
                                     {t(titleKey)}
                                 </p>

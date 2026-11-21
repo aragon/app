@@ -143,7 +143,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                 <Link className={linkClassName} href={exitHref}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
-                <div className="flex min-w-0 flex-col gap-y-0.5">
+                <div className="flex min-w-0 flex-col gap-y-nav-tight--fixed-2">
                     <p className="text-base leading-tight text-nowrap text-neutral-800">
                         {wizardName}
                     </p>

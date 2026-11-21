@@ -54,9 +54,9 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
-            <div className="flex flex-col gap-6 rounded-xl border border-neutral-100 bg-neutral-0 p-4 shadow-neutral-sm md:p-12">
-                <div className="flex items-start justify-between gap-6">
-                    <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-section rounded-xl border border-neutral-100 bg-neutral-0 p-4 shadow-neutral-sm md:p-12">
+                <div className="flex items-start justify-between gap-section">
+                    <div className="flex flex-col gap-related--fixed-8">
                         <p className="text-lg leading-tight text-neutral-800 md:text-2xl">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.heading',
@@ -76,9 +76,12 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                         />
                     </div>
                 </div>
-                <ol className="flex flex-col gap-3 text-sm leading-normal text-neutral-500 md:text-base">
+                <ol className="flex flex-col gap-related text-sm leading-normal text-neutral-500 md:text-base">
                     {gatedFeatureKeys.map((key) => (
-                        <li className="flex items-baseline gap-3" key={key}>
+                        <li
+                            className="flex items-baseline gap-related"
+                            key={key}
+                        >
                             <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-50 text-sm text-neutral-500">
                                 {key}
                             </span>
@@ -130,8 +133,8 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
     }
 
     return (
-        <div className="flex flex-col gap-2 md:gap-3">
-            <div className="flex flex-col gap-3 md:gap-2">
+        <div className="flex flex-col gap-related--8-12">
+            <div className="flex flex-col gap-related--12-8">
                 {stages.map((stage, index) => (
                     <GovernanceStagesFieldItem
                         daoId={daoId}

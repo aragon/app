@@ -99,7 +99,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                 constrainContentWidth={false}
                 customTrigger={
                     <button
-                        className="group flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
+                        className="group flex min-h-row w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-control-md text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
                         type="button"
                     >
                         <span className="flex w-11 shrink-0 items-center">
@@ -127,7 +127,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                         onSelect={() => handleSelectWorkspace(id)}
                         selected={id === workspaceId}
                     >
-                        <span className="flex min-w-0 items-center gap-3">
+                        <span className="flex min-w-0 items-center gap-nav-related--fixed-12">
                             <DaoAvatar
                                 className="shrink-0"
                                 name={name}

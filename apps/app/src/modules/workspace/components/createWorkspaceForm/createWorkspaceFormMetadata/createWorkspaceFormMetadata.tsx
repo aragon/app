@@ -49,7 +49,7 @@ export const CreateWorkspaceFormMetadata: React.FC<
     });
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <InputText maxLength={nameMaxLength} {...nameField} />
             <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <TextArea
