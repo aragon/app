@@ -59,7 +59,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (
             />
             {!isSubPlugin && (
                 <InputContainer
-                    className="flex flex-col gap-6"
+                    className="flex flex-col gap-6 md:gap-3"
                     helpText={t(
                         'app.plugins.token.tokenSetupGovernance.minDuration.helpText',
                     )}

@@ -52,8 +52,8 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 focus-ring-primary', // default
-        'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl md:px-6 md:py-4', // default
+        'group flex w-full flex-col gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-inset-item--12-16 focus-ring-primary', // default
+        'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl', // default
         'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // checked
         'hover:border-neutral-200 hover:shadow-neutral hover:data-[state=checked]:shadow-primary-md', // hover
         'disabled:cursor-default disabled:border-neutral-200 disabled:bg-neutral-100 disabled:shadow-none', // disabled
@@ -76,12 +76,12 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
             value={value}
             {...rest}
         >
-            <div className="flex size-full items-center gap-x-3 md:gap-x-4">
+            <div className="flex size-full items-center gap-x-group--12-16">
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
                 <div
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 text-sm leading-tight font-normal md:gap-y-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4 text-sm leading-tight font-normal">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>

@@ -157,7 +157,7 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
 
     const triggerClassName = classNames(
         { 'mt-0': showOverlay && !isOpen },
-        { 'mt-4': (showOverlay && isOpen) || (!showOverlay && isOverflowing) },
+        { 'mt-group': (showOverlay && isOpen) || (!showOverlay && isOverflowing) },
     );
 
     return (
@@ -212,7 +212,7 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                         >
                             {isOpen ? buttonLabelOpened : buttonLabelClosed}
                             <Icon
-                                className="ml-2 text-primary-300 group-hover:text-primary-500 group-active:text-primary-700"
+                                className="ml-tight--fixed-8 text-primary-300 group-hover:text-primary-500 group-active:text-primary-700"
                                 icon={isOpen ? IconType.CHEVRON_UP : IconType.CHEVRON_DOWN}
                                 size="sm"
                             />

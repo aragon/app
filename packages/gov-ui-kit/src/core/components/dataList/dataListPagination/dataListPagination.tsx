@@ -33,7 +33,7 @@ export const DataListPagination: React.FC<IDataListPaginationProps> = (props) =>
     }
 
     return (
-        <div className={classNames('flex flex-row items-center gap-4 md:gap-6', className)} {...otherProps}>
+        <div className={classNames('flex flex-row items-center gap-group-stepped', className)} {...otherProps}>
             <Button
                 className="shrink-0"
                 disabled={!hasMore}

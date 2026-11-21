@@ -102,7 +102,7 @@ export const AssetAddressSelectAddAddressView: React.FC<
 
     return (
         <DataListRoot
-            className="flex w-full flex-col gap-3"
+            className="flex w-full flex-col"
             entityLabel={t('app.finance.assetAddressSelect.entity')}
             state={showSkeleton ? 'loading' : 'idle'}
         >

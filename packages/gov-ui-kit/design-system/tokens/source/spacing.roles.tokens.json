@@ -5,7 +5,7 @@
         "$type": "dimension",
         "role": {
             "inset-tight": {
-                "$description": "Padding of a small inline surface: code, kbd, a chip that is not a Tag, an icon wrapper.",
+                "$description": "Padding of a small inline box: a chip that is not a Tag, code, a tooltip, a compact popover menu, an icon wrapper. New 4 on both axes (decision 0: the x places tie between 2 and 4 and 4 keeps the menu popover's 8 within the budget; y follows x so the box stays even).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -21,11 +21,11 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 2,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 4,
+                                        "value": 6,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -45,11 +45,11 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 2,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 4,
+                                        "value": 6,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -71,11 +71,11 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 2,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 4,
+                                        "value": 6,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -95,11 +95,11 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 2,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 4,
+                                        "value": 6,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -545,7 +545,7 @@
                 }
             },
             "inset-surface-wide": {
-                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24→24 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
+                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24\u219224 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -760,6 +760,114 @@
                     }
                 }
             },
+            "inset-flush": {
+                "$description": "Padding that only spaces siblings: a text line or wrapper with no background, border or click target that carries padding in Today (owner rule: padding never takes a gap role, and no stacked spacing). New is zero: the parent's gap carries the space. Its exceptions keep the exact Today padding and are exempt from the New change budget (config budgetExemptRoles).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "inset"
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 0,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "gap-tight": {
                 "$description": "Between the parts of one element: icon and label, title and subtitle lines, value and unit, items of one inline cluster.",
                 "$extensions": {
@@ -929,7 +1037,7 @@
                 }
             },
             "gap-group-stepped": {
-                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page (split from gap-group by decision 0: 28 places step 16→24).",
+                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page (split from gap-group by decision 0: 28 places step 16\u219224).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "gap"
@@ -1262,7 +1370,7 @@
                 }
             },
             "inset-nav-item": {
-                "$description": "Navigation chrome: padding of a navigation link, a nav group label, the account and workspace pickers of the sidebar. New = Today snapped; one scale step in looser and compact.",
+                "$description": "Navigation chrome: padding of a navigation link, a nav group label, the account and workspace pickers of the sidebar. New = Today snapped; x moves one scale step in looser and compact, y stays (a step on every link would add 8 px per link and push the sidebar footer out of view at 1440).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset",
@@ -1333,11 +1441,11 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 16,
+                                        "value": 12,
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 8,
+                                        "value": 12,
                                         "unit": "px"
                                     }
                                 }
@@ -1357,11 +1465,120 @@
                                         "unit": "px"
                                     },
                                     "looser": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar": {
+                "$description": "Navigation chrome: padding of the top and mobile header bars and the mobile nav menu. Their height is set by their controls; their padding is Today snapped and does not change with density (a bar may change height by at most 4 px between Today and any mode).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "inset",
+                        "chrome": true
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
                                         "value": 16,
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 8,
+                                        "value": 16,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 20,
                                         "unit": "px"
                                     }
                                 }

@@ -82,6 +82,9 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
     const down = (value) => [...scale].reverse().find((step) => step < value);
     const snap = (value) =>
         scale.reduce((best, step) => (Math.abs(step - value) <= Math.abs(best - value) ? step : best), scale[0]);
+    // Navigation chrome (owner decision 6): Today snapped in New, at most one scale step in looser and compact.
+    const chromeOk = (v) =>
+        v.new === snap(v.today) && [v.new, up(v.new)].includes(v.looser) && [v.new, down(v.new)].includes(v.compact);
 
     // ------------------------------------------------------------------------------------------------------------
     // Roles and sizes
@@ -157,9 +160,9 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
                 if (!(v.compact <= v.new && v.new <= v.looser)) {
                     fail(`spacing: ${label(token, dim, side)} must hold compact <= new <= looser`);
                 }
-                if (token.chrome && (v.new !== snap(v.today) || v.looser !== up(v.new) || v.compact !== down(v.new))) {
+                if (token.chrome && !chromeOk(v)) {
                     fail(
-                        `spacing: chrome role ${label(token, dim, side)} must be new = Today snapped (${snap(v.today)}), looser one step up (${up(v.new)}), compact one step down (${down(v.new)})`,
+                        `spacing: chrome role ${label(token, dim, side)} must be new = Today snapped (${snap(v.today)}), looser ${snap(v.today)} or one step up (${up(snap(v.today))}), compact ${snap(v.today)} or one step down (${down(snap(v.today))})`,
                     );
                 }
             }
@@ -247,9 +250,9 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             validateDimension({ value: values[side].today, unit: 'px' }, `exception ${name}.${side}`);
             if (role.chrome) {
                 const v = values[side];
-                if (v.new !== snap(v.today) || v.looser !== up(v.new) || v.compact !== down(v.new)) {
+                if (!chromeOk(v)) {
                     fail(
-                        `spacing: chrome exception ${name}.${side} must be new = Today snapped (${snap(v.today)}), looser ${up(snap(v.today))}, compact ${down(snap(v.today))}`,
+                        `spacing: chrome exception ${name}.${side} must be new = Today snapped (${snap(v.today)}), looser ${snap(v.today)} or ${up(snap(v.today))}, compact ${snap(v.today)} or ${down(snap(v.today))}`,
                     );
                 }
             } else if (group[side].$extensions?.[EXT]?.modes != null) {
@@ -282,6 +285,11 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
     // ------------------------------------------------------------------------------------------------------------
     const allowed = (today) => (today <= config.newBudget.upTo ? config.newBudget.small : config.newBudget.large);
     const changes = [];
+    for (const name of Object.keys(config.budgetExemptRoles ?? {})) {
+        if (!tokens.has(name)) {
+            fail(`spacing.config.json: budget-exempt role ${name} does not exist`);
+        }
+    }
     for (const token of tokens.values()) {
         for (const [dim, sides] of Object.entries(token.dims)) {
             for (const side of SIDES) {
@@ -304,11 +312,12 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
                     change: Math.abs(next - today),
                     allowed: allowed(today),
                     weight: exception.places ?? 1,
+                    exempt: Object.hasOwn(config.budgetExemptRoles ?? {}, exception.role.name),
                 });
             }
         }
     }
-    const overBudget = changes.filter((c) => c.change > c.allowed);
+    const overBudget = changes.filter((c) => c.change > c.allowed && !c.exempt);
     if (overBudget.length > 0) {
         fail(
             `spacing: over the New change budget (decision 0: reclassify the place or split the role): ${overBudget
@@ -487,7 +496,7 @@ export type SpacingException = (typeof spacingExceptions)[number];
 `;
     const ts = formatWithBiome(kitRoot, resolve(kitRoot, config.typesOutput), rawTs);
 
-    return { css, ts, tokens, exceptions, utilities, roleNames, sizeNames, exceptionNames, stem, changes };
+    return { css, ts, tokens, exceptions, utilities, roleNames, sizeNames, exceptionNames, stem, changes, config };
 };
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -612,13 +621,14 @@ export const spacingReport = ({ spacing, repoRoot }) => {
             `| ${exception.name} | ${exception.role.name} | ${exception.specs.map((s) => s.family).join(', ')} | ${exception.description ?? ''} | ${pair(exception.values, 'today')} | ${roleValue('today')} | ${exception.role.chrome ? `${pair(exception.values, 'new')} (chrome)` : roleValue('new')} | ${u.uses} | ${[...u.files].map((f) => `\`${f.replace(/^(packages\/gov-ui-kit|apps\/app)\/src\//, '')}\``).join(', ')} | ${exception.resolution} |`,
         );
     }
-    const exceptionChanges = spacing.changes.filter((c) => c.weight != null);
+    const exceptionChanges = spacing.changes.filter((c) => c.weight != null && !c.exempt);
     const weight = exceptionChanges.reduce((sum, c) => sum + c.weight, 0);
     const mean = weight === 0 ? 0 : exceptionChanges.reduce((sum, c) => sum + c.change * c.weight, 0) / weight;
-    const max = Math.max(0, ...spacing.changes.map((c) => c.change));
+    const max = Math.max(0, ...spacing.changes.filter((c) => !c.exempt).map((c) => c.change));
+    const exempt = spacing.changes.filter((c) => c.exempt).length;
     lines.push(
         '',
-        `Change in New (decision 0 budget): max ${max}px over roles and exceptions; exceptions mean ${mean.toFixed(2)}px per side (weighted by places).`,
+        `Change in New (decision 0 budget): max ${max}px over roles and exceptions; exceptions mean ${mean.toFixed(2)}px per side (weighted by places); ${exempt} exempt sides (${Object.keys(spacing.config.budgetExemptRoles ?? {}).join(', ')}).`,
     );
     if (unused.length > 0) {
         lines.push('', `Unused exceptions (remove them from the source): ${unused.join(', ')}`);

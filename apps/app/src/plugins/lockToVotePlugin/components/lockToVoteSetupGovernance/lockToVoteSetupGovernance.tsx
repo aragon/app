@@ -52,7 +52,7 @@ export const LockToVoteSetupGovernance: React.FC<
             />
             {!isSubPlugin && (
                 <InputContainer
-                    className="flex flex-col gap-6"
+                    className="flex flex-col gap-6 md:gap-3"
                     helpText={t(
                         'app.plugins.lockToVote.lockToVoteSetupGovernance.proposalDuration.helpText',
                     )}

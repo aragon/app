@@ -24,9 +24,9 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
     const containerClassNames = classNames(
         'grid w-full', // Defaults
         { 'grid-cols-1 justify-items-center p-6 text-center md:p-12': isStacked }, // Stacked
-        { 'gap-4 md:gap-6': isStacked && humanIllustration != null }, // Staked & Human illustration
-        { 'grid-cols-[auto_64px] items-center gap-4 p-4': !isStacked }, // Horizontal
-        { 'md:grid-cols-[auto_80px] md:px-6 md:py-5': !isStacked }, // Responsive horizontal
+        { 'gap-group-stepped': isStacked && humanIllustration != null }, // Staked & Human illustration
+        { 'grid-cols-[auto_64px] items-center gap-group px-inset-surface py-inset-surface--16-20': !isStacked }, // Horizontal
+        { 'md:grid-cols-[auto_80px]': !isStacked }, // Responsive horizontal
         className,
     );
 
@@ -34,7 +34,10 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
         <div className={containerClassNames}>
             {humanIllustration &&
                 (isStacked ? (
-                    <IllustrationHuman className="mb-4 h-auto w-full max-w-[400px] md:mb-6" {...humanIllustration} />
+                    <IllustrationHuman
+                        className="mb-group-stepped h-auto w-full max-w-[400px]"
+                        {...humanIllustration}
+                    />
                 ) : (
                     <div className="order-last flex aspect-square w-full max-w-20 items-center justify-center justify-self-end overflow-hidden rounded-full bg-neutral-50">
                         <IllustrationHuman className="w-full scale-[1.25]" {...humanIllustration} />
@@ -53,14 +56,14 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
             <div
                 className={classNames('flex flex-col', {
                     'w-full items-center': isStacked,
-                    'space-y-6': (!!primaryButton || !!secondaryButton) && isStacked,
-                    'space-y-3 md:space-y-4': (!!primaryButton || !!secondaryButton) && !isStacked,
+                    'space-y-section': (!!primaryButton || !!secondaryButton) && isStacked,
+                    'space-y-group--12-16': (!!primaryButton || !!secondaryButton) && !isStacked,
                 })}
             >
                 <div
                     className={classNames({
-                        'flex flex-col items-center space-y-1 md:space-y-2': isStacked,
-                        'items-start space-y-0.5 md:space-y-1': !isStacked,
+                        'space-y-tight--4-8 flex flex-col items-center': isStacked,
+                        'space-y-tight--2-4 items-start': !isStacked,
                     })}
                 >
                     <p
@@ -82,9 +85,9 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                 </div>
                 <div
                     className={classNames({
-                        'border-w-full flex w-full flex-col items-stretch space-y-3 space-x-0 sm:w-fit md:flex-row md:justify-center md:space-y-0 md:space-x-4':
+                        'border-w-full space-y-related flex w-full flex-col items-stretch space-x-0 sm:w-fit md:space-x-group md:flex-row md:justify-center md:space-y-0':
                             isStacked,
-                        'flex flex-row flex-wrap gap-3': !isStacked,
+                        'flex flex-row flex-wrap gap-related': !isStacked,
                     })}
                 >
                     {primaryButton && (

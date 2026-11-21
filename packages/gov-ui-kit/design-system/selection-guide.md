@@ -343,7 +343,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **Usage notes**
 
-- `Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`).
+- `Card` styles its surface (rounding, neutral background, hairline border, shadow) and, through `inset`, its padding as a spacing role; the default `none` adds no padding (the content pads itself). Prefer `inset` to padding classes in `className`. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`).
 
 **Use when**
 
@@ -351,7 +351,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **References**
 
-- `kit:src/core/components/cards/card/card.tsx:13`
+- `kit:src/core/components/cards/card/card.tsx:31`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
 
 ### CardCollapsible
@@ -366,7 +366,7 @@ Card whose body collapses/expands, with an optional exact collapsed pixel height
 
 **References**
 
-- `kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19`
+- `kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:18`
 - `kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1`
 
 ### CardEmptyState

@@ -44,7 +44,7 @@ export const DefinitionListItem: React.FC<IDefinitionListItemProps> = (props) =>
     return (
         <div
             className={classNames(
-                'flex flex-col gap-y-2 border-b border-neutral-100 py-3 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-6 md:py-4',
+                'flex flex-col gap-y-related--fixed-8 border-b border-neutral-100 py-inset-item--12-16 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-group-stepped',
                 className,
             )}
             {...otherProps}
@@ -52,7 +52,7 @@ export const DefinitionListItem: React.FC<IDefinitionListItemProps> = (props) =>
             <dt className="line-clamp-1 leading-normal text-neutral-800 md:line-clamp-none">{term}</dt>
             <dd
                 className={classNames('min-w-0 leading-normal text-neutral-500', {
-                    'flex flex-col gap-y-0.5 md:gap-y-1': description != null,
+                    'flex flex-col gap-y-tight--2-4': description != null,
                 })}
             >
                 {copyValue == null || onchainValue != null ? (

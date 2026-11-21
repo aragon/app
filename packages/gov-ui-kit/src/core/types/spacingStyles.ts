@@ -15,6 +15,7 @@ export const spacingRoles = [
     'inset-surface-flat',
     'inset-surface-wide',
     'inset-page',
+    'inset-flush',
     'gap-tight',
     'gap-related',
     'gap-group',
@@ -24,6 +25,7 @@ export const spacingRoles = [
     'gap-layout',
     'inset-nav',
     'inset-nav-item',
+    'inset-nav-bar',
     'gap-nav-tight',
     'gap-nav-related',
     'gap-nav-group',
@@ -40,7 +42,36 @@ export const spacingSizes = ['control-sm', 'control-md', 'control-lg', 'tag', 'c
  * Spacing exceptions: a place that keeps today's value under its role (`<role>--<pattern>`); every preview mode renders
  * the role. Each is meant to be resolved (dropped, moved to another role or promoted).
  */
-export const spacingExceptions = [] as const;
+export const spacingExceptions = [
+    'control-lg--fixed-16',
+    'control-md--8-12',
+    'control-sm--8-12',
+    'gap-group--12-16',
+    'gap-group-stepped--16-20',
+    'gap-related--8-12',
+    'gap-related--8-16',
+    'gap-related--fixed-8',
+    'gap-section--24-28',
+    'gap-tight--2-4',
+    'gap-tight--4-6',
+    'gap-tight--4-8',
+    'gap-tight--fixed-2',
+    'gap-tight--fixed-6',
+    'gap-tight--fixed-8',
+    'inset-flush--12-16',
+    'inset-flush--6-8',
+    'inset-flush--fixed-10',
+    'inset-item--12-16',
+    'inset-item--12-24',
+    'inset-item--16-24',
+    'inset-item-flat--fixed-12',
+    'inset-surface--12-20',
+    'inset-surface--16-20',
+    'inset-surface-flat--fixed-8',
+    'inset-tight--fixed-4',
+    'inset-tight--fixed-6',
+    'inset-tight--fixed-8',
+] as const;
 
 export type SpacingRole = (typeof spacingRoles)[number];
 

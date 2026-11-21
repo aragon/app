@@ -35,7 +35,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
 
     return (
         <Dialog.Content
-            className="flex flex-col gap-y-6 px-12 py-10"
+            className="flex flex-col gap-y-6 px-12 py-10 md:px-6"
             noInset={true}
         >
             <div className="flex flex-col gap-y-3">

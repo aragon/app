@@ -27,7 +27,7 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
     const isInteractiveElement = isLinkElement || props.onClick != null;
 
     const actionItemClasses = classNames(
-        'w-full rounded-xl px-4 text-left transition-all', // Default all
+        'w-full rounded-xl px-inset-item text-left transition-all', // Default all
         { 'border border-neutral-100 bg-neutral-0 shadow-neutral-sm': variant === 'primary' }, // Default primary
         { 'bg-transparent': variant === 'select' }, // Default select
         { 'cursor-pointer focus-ring-primary': isInteractiveElement }, // Interactive default state
@@ -40,7 +40,6 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
                 isInteractiveElement && variant === 'select',
         }, // Interactive hover state (select)
         { 'cursor-default focus:outline-hidden': !isInteractiveElement }, // Non-interactive default state
-        'md:px-6', // Responsive
         className,
     );
 

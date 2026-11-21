@@ -37,12 +37,12 @@ export const DialogFooter: React.FC<IDialogFooterProps> = (props) => {
     const { label: secondaryLabel, ...secondaryButtonProps } = secondaryAction ?? {};
 
     const footerClassNames = classNames(
-        'flex flex-col rounded-b-xl px-4 pt-3 pb-4 backdrop-blur-md gradient-neutral-50-transparent-to-t md:px-6 md:pb-6',
+        'flex flex-col rounded-b-xl px-inset-surface pt-inset-surface-flat pb-inset-surface backdrop-blur-md gradient-neutral-50-transparent-to-t',
     );
 
     const actionsClassNames = classNames(
-        'flex gap-3 md:gap-4',
-        { 'pt-4 md:pt-6': children != null },
+        'flex gap-group--12-16',
+        { 'mt-group-stepped': children != null },
         { 'flex-col md:flex-row': variant === 'default' },
         { 'flex-row-reverse justify-between': variant === 'wizard' },
         className,

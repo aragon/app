@@ -20,9 +20,9 @@ export const DialogContent: React.FC<IDialogContentProps> = (props) => {
     const { description, noInset = false, className, children, ...otherProps } = props;
 
     return (
-        <div className={classNames('overflow-auto', { 'px-4 md:px-6': !noInset }, className)} {...otherProps}>
+        <div className={classNames('overflow-auto', { 'px-inset-surface': !noInset }, className)} {...otherProps}>
             {description && (
-                <Description className="pb-3 text-sm leading-normal text-neutral-500 md:pb-4">
+                <Description className="pb-inset-flush--12-16 text-sm leading-normal text-neutral-500">
                     {description}
                 </Description>
             )}

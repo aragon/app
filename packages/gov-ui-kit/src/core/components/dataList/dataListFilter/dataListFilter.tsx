@@ -89,10 +89,10 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
     const displayClearIcon = searchValue.length > 0;
 
     return (
-        <div className={classNames('flex flex-col gap-2 md:gap-3', className)} {...otherProps}>
+        <div className={classNames('flex flex-col gap-related--8-12', className)} {...otherProps}>
             <div
                 className={classNames(
-                    'flex flex-row items-center rounded-xl border p-3 pr-2 transition-all md:pr-3 md:pl-6',
+                    'flex flex-row items-center rounded-xl border py-control-lg pr-control-md--8-12 pl-inset-item--12-24 transition-all',
                     'border-neutral-100 bg-neutral-0 text-neutral-500 shadow-neutral-sm',
                     'text-base leading-tight font-normal',
                     'hover:border-neutral-200 hover:shadow-neutral',
@@ -113,7 +113,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 )}
                 <input
                     className={classNames(
-                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-neutral-500 outline-hidden',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-control-md caret-neutral-500 outline-hidden',
                         'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300',
                     )}
                     onBlur={handleInputBlur}
@@ -124,11 +124,11 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                     value={searchValue}
                 />
                 {displayClearIcon && (
-                    <button className="mr-2 cursor-pointer p-2.5 md:mr-4" onClick={handleClear} type="button">
+                    <button className="mr-related--8-16 cursor-pointer p-2.5" onClick={handleClear} type="button">
                         <Icon className="text-neutral-300" icon={IconType.CLOSE} size="sm" />
                     </button>
                 )}
-                <div className="flex flex-row gap-2 md:gap-3">
+                <div className="flex flex-row gap-related--8-12">
                     {onFilterClick && (
                         <>
                             <Button

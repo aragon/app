@@ -1,5 +1,5 @@
 {
-    "$description": "Non-token configuration of the semantic spacing layer (the tokens are spacing.roles.tokens.json, spacing.sizes.tokens.json and spacing.exceptions.tokens.json). output / typesOutput: the generated CSS and the TypeScript lists of the names. prefix: the custom property prefix (`--space-*`, deliberately outside Tailwind's `--spacing-*` theme namespace, so no width, size or inset utility ever reads a role). modes: Today first (the default rendering, on `:root`), then one attribute selector per preview mode. desktopVariant: the Tailwind variant every utility switches to its `md` values with (a media query in the kit, a container query on the app column in the app). scale: the only values a preview mode may use. floors: minimum values per token side in the listed modes. coarsePointer: on touch screens the listed size dimensions of one mode fall back to another mode. families: the utility families of each kind (family -> CSS property and the axis or size dimension it reads; `space` = Tailwind's space-x/space-y child margins, `negate` = a negative margin). gapLevels / chromeGapLevels: gap roles whose values must not decrease along the list in any mode and width. chrome: the navigation chrome roles (owner decision 6) keep Today snapped to the scale in New and move exactly one scale step (looser up, compact down); their exceptions carry their own mode values under the same rule. newBudget: the per-place change budget of New (owner decision 0), checked for every role and exception (an exception's change is its Today value against its role's New value).",
+    "$description": "Non-token configuration of the semantic spacing layer (the tokens are spacing.roles.tokens.json, spacing.sizes.tokens.json and spacing.exceptions.tokens.json). output / typesOutput: the generated CSS and the TypeScript lists of the names. prefix: the custom property prefix (`--space-*`, deliberately outside Tailwind's `--spacing-*` theme namespace, so no width, size or inset utility ever reads a role). modes: Today first (the default rendering, on `:root`), then one attribute selector per preview mode. desktopVariant: the Tailwind variant every utility switches to its `md` values with (a media query in the kit, a container query on the app column in the app). scale: the only values a preview mode may use. floors: minimum values per token side in the listed modes. coarsePointer: on touch screens the listed size dimensions of one mode fall back to another mode. families: the utility families of each kind (family -> CSS property and the axis or size dimension it reads; `space` = Tailwind's space-x/space-y child margins, `negate` = a negative margin). gapLevels / chromeGapLevels: gap roles whose values must not decrease along the list in any mode and width. chrome: the navigation chrome roles (owner decision 6) keep Today snapped to the scale in New and move at most one scale step (looser up, compact down, or stay); their exceptions carry their own mode values under the same rule. newBudget: the per-place change budget of New (owner decision 0), checked for every role and exception (an exception's change is its Today value against its role's New value).",
     "prefix": "space",
     "output": "src/theme/tokens/spacing.css",
     "typesOutput": "src/core/types/spacingStyles.ts",
@@ -68,7 +68,7 @@
                 "looser",
                 "compact"
             ],
-            "why": "A tight inset never collapses to zero (it is the padding of a chip or code box)."
+            "why": "A tight inset never collapses to zero in compact (it is the padding of a chip or code box)."
         },
         {
             "token": "size.control-*.height",
@@ -259,6 +259,14 @@
             "gap-x": {
                 "property": "column-gap",
                 "dimension": "gap"
+            },
+            "ml": {
+                "property": "margin-left",
+                "dimension": "pad-x"
+            },
+            "mr": {
+                "property": "margin-right",
+                "dimension": "pad-x"
             }
         }
     },
@@ -269,7 +277,11 @@
             "w",
             "size",
             "px",
+            "pl",
+            "pr",
             "py",
+            "ml",
+            "mr",
             "gap"
         ]
     },
@@ -280,12 +292,15 @@
         "gap-nav-section"
     ],
     "chrome": {
-        "rule": "new = today snapped to the scale; looser = the next scale step up; compact = the next scale step down"
+        "rule": "new = Today snapped to the scale; looser = new or the next scale step up; compact = new or the next scale step down (at most the smallest step: owner decision 6)"
     },
     "newBudget": {
         "upTo": 24,
         "small": 4,
         "large": 8,
         "why": "Owner decision 0: in New a place moves at most 4 px where its Today value is up to 24 px and at most 8 px above, at either width; a place that would move more is doing another job (reclassify it or split the role)."
+    },
+    "budgetExemptRoles": {
+        "inset-flush": "Padding that only spaces siblings goes to zero in New by rule; the parent's gap carries the space (checked by the dead-space audit instead)."
     }
 }

@@ -5,8 +5,8 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "fb47cd97f0a7c07d3839e78ca2d0a6d36fc7f1796aebd6dffc57f90ea883a3b1",
-            "totalRecords": 398,
+            "sha256": "8ac8f6ba23da6fb3ca5723f32bc59aaba3ba799a9ad1e9850ac713f54a965c20",
+            "totalRecords": 404,
             "entryCount": 147,
             "uiEntryCount": 140,
             "utilityEntryCount": 7,
@@ -650,12 +650,12 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
+                "`Card` styles its surface (rounding, neutral background, hairline border, shadow) and, through `inset`, its padding as a spacing role; the default `none` adds no padding (the content pads itself). Prefer `inset` to padding classes in `className`. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/card/card.tsx:13",
+                "source": "kit:src/core/components/cards/card/card.tsx:31",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
                 ]
@@ -679,7 +679,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19",
+                "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:18",
                 "stories": [
                     "kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1"
                 ]

@@ -22,7 +22,7 @@ export const Toggle: React.FC<IToggleProps> = (props) => {
     const { className, label, value, disabled, ...otherProps } = props;
 
     const toggleClasses = classNames(
-        'flex h-8 cursor-pointer items-center rounded-lg border px-3 outline-hidden transition-all focus-ring-primary md:h-10 md:rounded-xl md:px-4', // Default
+        'flex h-control-sm cursor-pointer items-center rounded-lg border px-control-md outline-hidden transition-all focus-ring-primary md:h-control-md md:rounded-xl md:px-control-lg', // Default
         'data-state-off:enabled:shadow-neutral-sm data-[state=off]:enabled:border-neutral-100 data-[state=off]:enabled:bg-neutral-0 data-[state=off]:enabled:text-neutral-500', // Default state
         'data-[state=off]:hover:enabled:border-neutral-200 data-[state=off]:hover:enabled:shadow-neutral', // Default hover state
         'data-state-on:enabled:shadow-primary-sm data-[state=on]:enabled:border-primary-400 data-[state=on]:enabled:bg-neutral-0 data-[state=on]:enabled:text-primary-400', // Active state

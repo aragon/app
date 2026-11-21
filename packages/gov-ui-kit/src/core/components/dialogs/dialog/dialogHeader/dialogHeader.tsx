@@ -25,7 +25,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
 
     const headerClassNames = classNames(
         'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-neutral-50-transparent-to-b', // Layout
-        'pt-4 pr-14 pb-1.5 pl-4 md:pt-6 md:pr-16 md:pb-2 md:pl-6', // Spacings
+        'pt-inset-surface pr-14 pb-inset-flush--6-8 pl-inset-surface md:pr-16', // Spacings (pr: room for the close button)
         className,
     );
 
@@ -36,7 +36,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     );
 
     return (
-        <div className="flex flex-col items-start gap-y-2">
+        <div className="flex flex-col items-start gap-y-related--fixed-8">
             <div className={headerClassNames} {...otherProps}>
                 <Title className="flex-1 truncate text-lg leading-tight font-normal text-neutral-800 md:text-xl">
                     {title}
@@ -55,7 +55,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
                 </Close>
             </div>
             {description && (
-                <Description className="px-4 pb-3 text-sm leading-normal text-neutral-500 md:px-6 md:pb-4">
+                <Description className="px-inset-surface pb-inset-flush--12-16 text-sm leading-normal text-neutral-500">
                     {description}
                 </Description>
             )}

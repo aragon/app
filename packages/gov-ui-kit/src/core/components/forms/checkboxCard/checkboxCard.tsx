@@ -72,8 +72,8 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex min-w-0 cursor-pointer flex-col gap-3 outline-hidden transition-all', // Layout
-        'rounded-xl border bg-neutral-0 px-4 py-3 focus-ring-primary md:gap-4 md:px-6 md:py-4', // Style
+        'group flex min-w-0 cursor-pointer flex-col gap-group--12-16 outline-hidden transition-all', // Layout
+        'rounded-xl border bg-neutral-0 px-inset-item py-inset-item--12-16 focus-ring-primary', // Style
         'border-primary-400 shadow-primary hover:shadow-primary-md', // Checked/indeterminate & hover
         'data-[state=unchecked]:enabled:border-neutral-100 data-[state=unchecked]:enabled:shadow-neutral-sm', // Unchecked
         'data-[state=unchecked]:enabled:hover:shadow-neutral', // Unchecked hover
@@ -98,9 +98,9 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
             ref={ref}
             {...otherProps}
         >
-            <div className={classNames('flex w-full min-w-0 flex-row gap-3', { 'items-center': !description })}>
+            <div className={classNames('flex w-full min-w-0 flex-row gap-related', { 'items-center': !description })}>
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-sm leading-tight font-normal md:gap-1">
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-tight--2-4 text-sm leading-tight font-normal">
                     <p className={labelClasses} id={randomId}>
                         {label}
                     </p>

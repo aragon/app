@@ -39,8 +39,8 @@ export const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref)
 
     const processedVariant = disabled ? 'disabled' : variant;
     const linkClassName = classNames(
-        'inline-flex max-w-fit flex-col gap-y-0.5 truncate rounded-md text-sm leading-tight focus-ring-primary',
-        'md:gap-y-1 md:text-base',
+        'inline-flex max-w-fit flex-col gap-y-tight--2-4 truncate rounded-md text-sm leading-tight focus-ring-primary',
+        'md:text-base',
         variantToLabelClassNames[processedVariant],
         className,
     );
@@ -61,7 +61,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref)
             target={target}
             {...otherProps}
         >
-            <div className="flex items-center gap-x-1 md:gap-x-1.5">
+            <div className="flex items-center gap-x-tight--4-6">
                 <span className={innerTextClassName}>{children}</span>
                 {isExternal && <Icon icon={IconType.LINK_EXTERNAL} size="sm" />}
             </div>

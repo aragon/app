@@ -69,7 +69,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     );
 
     const labelClassNames = classNames(
-        'pl-2 text-sm leading-tight font-normal text-neutral-500 md:pl-3 md:text-base', // Default
+        'pl-control-sm--8-12 text-sm leading-tight font-normal text-neutral-500 md:text-base', // Default
         'peer-data-[state=checked]:text-neutral-800', // Checked
         'peer-disabled:text-neutral-300 peer-data-[state=checked]:peer-disabled:text-neutral-800', // Disabled
     );

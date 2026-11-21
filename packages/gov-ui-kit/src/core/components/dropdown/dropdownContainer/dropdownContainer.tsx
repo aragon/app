@@ -130,7 +130,7 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
                 <RadixDropdown.Content
                     align={align}
                     className={classNames(
-                        'flex min-w-48 flex-col gap-1.5 overflow-auto rounded-xl border border-neutral-100 bg-neutral-0 p-2 shadow-neutral-sm',
+                        'flex min-w-48 flex-col gap-tight--fixed-6 overflow-auto rounded-xl border border-neutral-100 bg-neutral-0 p-inset-tight--fixed-8 shadow-neutral-sm',
                         'z-[var(--guk-dropdown-container-content-z-index)]',
                         { 'max-h-[var(--radix-dropdown-menu-content-available-height)]': constrainContentHeight },
                         { 'max-w-[var(--radix-dropdown-menu-content-available-width)]': constrainContentWidth },

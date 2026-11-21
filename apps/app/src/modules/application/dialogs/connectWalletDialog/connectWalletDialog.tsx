@@ -106,7 +106,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
 
     return (
         <>
-            <Dialog.Content className="flex flex-col gap-6 p-6 md:p-8">
+            <Dialog.Content className="flex flex-col gap-6 py-6 md:py-8">
                 <div className="flex flex-col gap-3 md:gap-4">
                     <AragonLogo size="lg" />
                     <p className="text-lg leading-tight font-normal text-neutral-500 md:text-xl">

@@ -46,14 +46,14 @@ export const AlertCard: React.FC<IAlertCardProps> = (props) => {
     return (
         <div
             className={classNames(
-                'w-full rounded-xl border bg-neutral-0 px-4 py-3 md:px-6 md:py-5',
+                'w-full rounded-xl border bg-neutral-0 px-inset-surface py-inset-surface--12-20',
                 alertVariantToContainerClassNames[variant],
                 className,
             )}
             role="alert"
             {...otherProps}
         >
-            <div className="flex items-center gap-x-2 md:gap-x-3">
+            <div className="flex items-center gap-x-related--8-12">
                 <Icon className={alertVariantToIconClassNames[variant]} icon={alertVariantToIconType[variant]} />
                 <p
                     className={classNames(
@@ -65,7 +65,7 @@ export const AlertCard: React.FC<IAlertCardProps> = (props) => {
                 </p>
             </div>
             {children && (
-                <div className="ml-6 text-sm leading-normal font-normal text-neutral-500 md:ml-7 md:text-base">
+                <div className="ml-section--24-28 text-sm leading-normal font-normal text-neutral-500 md:text-base">
                     {children}
                 </div>
             )}

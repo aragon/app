@@ -104,7 +104,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
                           }
                         : undefined
                 }
-                className="gap-3 md:gap-2"
+                className="gap-3"
                 helpText={t(
                     'app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText',
                 )}

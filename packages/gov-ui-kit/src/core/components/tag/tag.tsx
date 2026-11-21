@@ -33,7 +33,7 @@ export const Tag: React.FC<ITagProps> = (props) => {
     return (
         <div
             className={classNames(
-                'flex h-5 items-center rounded-full px-1.5 md:h-6 md:px-2',
+                'flex h-tag items-center rounded-full px-tag',
                 variantToClassName[variant],
                 className,
             )}

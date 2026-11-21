@@ -100,7 +100,7 @@ export const GovernanceStageBodiesField: React.FC<
     return (
         <InputContainer
             alert={fieldAlert}
-            className="flex flex-col gap-2"
+            className="flex flex-col"
             helpText={t(
                 'app.createDao.createProcessForm.governance.stageBodiesField.helpText',
             )}

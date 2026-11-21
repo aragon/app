@@ -34,10 +34,10 @@ export const Breadcrumbs: React.FC<IBreadcrumbsProps> = (props) => {
     const pathLinks = links.slice(0, -1);
 
     return (
-        <nav aria-label="breadcrumbs" className="flex min-w-0 items-center gap-x-2" {...otherProps}>
-            <ol className="flex min-w-0 items-center gap-x-0.5">
+        <nav aria-label="breadcrumbs" className="flex min-w-0 items-center gap-x-tight--fixed-8" {...otherProps}>
+            <ol className="flex min-w-0 items-center gap-x-tight--fixed-2">
                 {pathLinks.map((link) => (
-                    <li className="flex items-center gap-x-1 whitespace-nowrap" key={link.href}>
+                    <li className="flex items-center gap-x-tight whitespace-nowrap" key={link.href}>
                         <Link href={link.href}>{link.label}</Link>
                         <Icon className="text-neutral-200" icon={IconType.SLASH} responsiveSize={{ md: 'lg' }} />
                     </li>

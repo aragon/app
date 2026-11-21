@@ -79,7 +79,11 @@ export const DataListContainer: React.FC<IDataListContainerProps> = (props) => {
     return (
         <div
             aria-busy={displayLoadingElements}
-            className={classNames('flex flex-col gap-2', applyLayoutClassName && layoutClassName, className)}
+            className={classNames(
+                'flex flex-col gap-related--fixed-8',
+                applyLayoutClassName && layoutClassName,
+                className,
+            )}
             {...otherProps}
         >
             {/* biome-ignore lint/suspicious/noArrayIndexKey: skeleton loaders have no stable identity */}

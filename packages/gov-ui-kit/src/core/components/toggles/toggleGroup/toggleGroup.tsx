@@ -59,8 +59,8 @@ export const ToggleGroup = (props: IToggleGroupProps) => {
     const toggleGroupClasses = classNames(
         'flex flex-wrap',
         orientation === 'vertical' ? 'flex-col' : 'flex-row',
-        { 'gap-2 md:gap-3': variant === 'fixed' },
-        { 'justify-between gap-y-2': variant === 'space-between' },
+        { 'gap-related--8-12': variant === 'fixed' },
+        { 'justify-between gap-y-related--fixed-8': variant === 'space-between' },
         className,
     );
 

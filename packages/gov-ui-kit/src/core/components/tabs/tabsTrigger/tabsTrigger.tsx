@@ -24,7 +24,7 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
     const { isUnderlined } = useContext(TabsContext);
 
     const triggerClassNames = classNames(
-        'group line-clamp-1 flex items-center gap-x-4 rounded-t border-primary-400 py-3 text-base leading-tight font-normal', // Base
+        'group line-clamp-1 flex items-center gap-x-group rounded-t border-primary-400 py-control-lg text-base leading-tight font-normal', // Base
         'active:data-[state=active]:text-neutral-800 active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-primary-400', // Active state
         'focus:outline-hidden', // Focus state
         { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-neutral-800': isUnderlined && !disabled }, //  Underlined & enabled variant
