@@ -193,7 +193,7 @@ on a canvas", says what to do when a canvas's copy falls behind.
   stacked avatars of "All accounts" (`AvatarStack`) are markup with `app.css` rules in `WsNav.dc.html`, like the rest
   of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
   design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
-  its fallback text sizes) are not on the canvas either, until the kit's design sync is run.
+  its fallback text sizes) are not on the canvas either, until the kit's design sync is run. Both are marked `data-stands-in-for`, so a session with the synced kit can find and replace them.
 - **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
   workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
   frames is not confirmed (see "Create proposal from the workspace").

@@ -21,7 +21,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <nav class="app-sidebar" aria-label="Workspace navigation">
   <div class="ws-sidebar__header">
-    <div class="ws-selector-group">
+    <div class="ws-selector-group" data-stands-in-for="Dropdown.Group">
     <div class="ws-menu-wrap">
       <button class="ws-selector" type="button" onClick="{{toggleWs}}">
         <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
@@ -52,7 +52,7 @@ body{margin:0}
       <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
         <span class="ws-selector__avatar">
           <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
-            <span class="ws-avatar-stack" aria-hidden="true">
+            <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
               <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
               <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
               <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
@@ -182,7 +182,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
 <div class="ws-nav-dialog">
   <div class="ws-nav-dialog__selectors">
-  <div class="ws-selector-group">
+  <div class="ws-selector-group" data-stands-in-for="Dropdown.Group">
     <div class="ws-menu-wrap">
       <button class="ws-selector" type="button" onClick="{{toggleWs}}">
         <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
@@ -213,7 +213,7 @@ body{margin:0}
       <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
         <span class="ws-selector__avatar">
           <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
-            <span class="ws-avatar-stack" aria-hidden="true">
+            <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
               <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
               <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
               <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
