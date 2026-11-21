@@ -149,6 +149,11 @@ export const dimensionToCss = (value) => {
 // CSS generic and system family names stay unquoted; any other family is a quoted name.
 const UNQUOTED_FONT_FAMILIES = new Set([
     'ui-sans-serif',
+    'ui-monospace',
+    'SFMono-Regular',
+    'Menlo',
+    'Monaco',
+    'Consolas',
     'system-ui',
     '-apple-system',
     'BlinkMacSystemFont',
