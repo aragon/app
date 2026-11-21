@@ -3,9 +3,9 @@ import {
     type IWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { workspaceEditPageUtils } from './workspaceEditPageUtils';
+import { workspaceFormUtils } from './workspaceFormUtils';
 
-describe('workspaceEditPage utils', () => {
+describe('workspaceFormUtils', () => {
     const address = '0xE8fd9Fe445A037ee07fb98FDD4b146d939140De5';
 
     const buildWorkspace = (workspace?: Partial<IWorkspace>): IWorkspace => ({
@@ -29,7 +29,7 @@ describe('workspaceEditPage utils', () => {
     describe('buildFormValues', () => {
         it('maps the stored workspace to the form values', () => {
             expect(
-                workspaceEditPageUtils.buildFormValues(buildWorkspace()),
+                workspaceFormUtils.buildFormValues(buildWorkspace()),
             ).toEqual({
                 name: 'Demo',
                 description: 'A demo workspace',
@@ -47,7 +47,7 @@ describe('workspaceEditPage utils', () => {
         });
 
         it('maps a stored avatar to a preview URL carrying no file', () => {
-            const values = workspaceEditPageUtils.buildFormValues(
+            const values = workspaceFormUtils.buildFormValues(
                 buildWorkspace({ avatar: 'ipfs://workspace-cid' }),
             );
 
@@ -63,7 +63,7 @@ describe('workspaceEditPage utils', () => {
                 avatar: 'ipfs://account-cid',
             };
 
-            const values = workspaceEditPageUtils.buildFormValues(workspace);
+            const values = workspaceFormUtils.buildFormValues(workspace);
 
             expect(values.accounts[0].metadata).toEqual({
                 name: 'Main DAO',

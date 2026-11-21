@@ -101,6 +101,6 @@ describe('<LayoutWizard /> component', () => {
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', { name: 'Explore DAOs' });
         expect(errorLink).toBeInTheDocument();
-        expect(errorLink.getAttribute('href')).toEqual('/');
+        expect(errorLink.getAttribute('href')).toEqual('/explore');
     });
 });

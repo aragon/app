@@ -4,9 +4,18 @@ export const FEATURE_FLAG_ENVIRONMENTS = [
     'development',
     'staging',
     'production',
+    'occ',
 ] as const;
 
 export type FeatureFlagEnvironment = (typeof FEATURE_FLAG_ENVIRONMENTS)[number];
+
+/**
+ * Environments that extend another one: a flag with no value for the environment takes the
+ * value of its base. OCC (new.app.aragon.org) is production plus the flags of the soft launch.
+ */
+export const FEATURE_FLAG_BASE_ENVIRONMENTS: Partial<
+    Record<FeatureFlagEnvironment, FeatureFlagEnvironment>
+> = { occ: 'production' };
 
 export type FeatureFlagKey =
     | 'debugPanel'
@@ -49,7 +58,9 @@ export type FeatureFlagKey =
  * - Feature flags are defined in `featureFlags.constants.ts`
  * - CMS can override these values via `feature-flags.json`
  * - Local overrides can be set via cookies (for debugging)
- * - The final value is resolved in this order: local override > CMS override > environment-specific > default
+ * - The final value is resolved in this order: local override > CMS override > environment-specific > default. For
+ *   an environment with a base ({@link FEATURE_FLAG_BASE_ENVIRONMENTS}) the base follows each of those
+ *   in turn: CMS (environment) > code (environment) > CMS (base) > code (base) > default
  */
 export interface FeatureFlagDefinition {
     /**
@@ -71,7 +82,8 @@ export interface FeatureFlagDefinition {
     defaultValue: boolean;
     /**
      * Environment-specific overrides.
-     * Supported environments: {@link FEATURE_FLAG_ENVIRONMENTS}
+     * Supported environments: {@link FEATURE_FLAG_ENVIRONMENTS}. `occ` falls back to the
+     * `production` value when it has none of its own ({@link FEATURE_FLAG_BASE_ENVIRONMENTS}).
      */
     environments?: Partial<Record<FeatureFlagEnvironment, boolean>>;
 }
@@ -101,4 +113,9 @@ export interface IFeatureFlagsProvider {
      * resolved inside this method.
      */
     loadOverrides: () => Promise<FeatureFlagOverrides>;
+    /**
+     * Load the overrides of the base environment ({@link FEATURE_FLAG_BASE_ENVIRONMENTS}), which
+     * rank below the code value of the environment itself. Empty without a base environment.
+     */
+    loadBaseOverrides?: () => Promise<FeatureFlagOverrides>;
 }

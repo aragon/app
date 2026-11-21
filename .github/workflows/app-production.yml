@@ -2,7 +2,8 @@
 # @aragon/app@* tag is published (app-release.yml finalize), and by hand for a hotfix tag or a
 # re-deploy. The `production` environment requires an approval from @aragon/app-team: the deploy
 # pauses there, and the release thread gets the "waiting for approval" ping, the result, the smoke
-# tests and finally the head message flipped to Completed with the Linear release closed.
+# tests and finally the head message flipped to Completed with the Linear release closed. The same
+# tag then goes to OCC (new.app.aragon.org), the soft-launch environment, with its own smoke run.
 
 name: App Production
 
@@ -70,6 +71,75 @@ jobs:
     with:
       deployment-url: https://app.aragon.org
       environment: production
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # OCC (new.app.aragon.org) is the production build with its own feature flags and analytics. It
+  # ships the same tag right after production, under the approval production already got, with the
+  # production secrets, as a production deployment on Vercel (`prod`). A tag older than the OCC
+  # environment has no env file to build from, so OCC is skipped for it.
+  occ-ready:
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - name: Check the tag has the OCC env file
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ github.event.release.tag_name || inputs.tag }}
+        run: |
+          if output=$(gh api -X GET "repos/${{ github.repository }}/contents/apps/app/config/.env.occ" -f ref="$REF" 2>&1); then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          elif grep -q "HTTP 404" <<< "$output"; then
+            echo "::notice::$REF predates the OCC environment; OCC is left as it is"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$output" >&2
+            exit 1
+          fi
+
+  deploy-occ:
+    needs: [deploy, occ-ready]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' && needs.occ-ready.outputs.ready == 'true' }}
+    concurrency:
+      group: occ-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
+    with:
+      env: occ
+      prod: true
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
+      domain: new.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_production
+      setup-command: pnpm run setup occ
+      patch-root-directory: true
+      version: ${{ github.event.release.tag_name || inputs.tag }}
+      slack-thread-release-tag: ${{ github.event.release.tag_name || inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  e2e-occ:
+    needs: deploy-occ
+    if: ${{ !cancelled() && needs.deploy-occ.result == 'success' }}
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
+    with:
+      deployment-url: https://new.app.aragon.org
+      environment: occ
       working-directory: apps/app
       env-secret-refs: |
         E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential

@@ -18,11 +18,23 @@ describe('<DaoAvatar/> component', () => {
         expect(screen.getByText(name.toUpperCase())).toBeInTheDocument();
     });
 
+    it('inherits fallback text sizing from Avatar', () => {
+        render(createTestComponent({ name: 'ab', size: 'xs' }));
+
+        expect(screen.getByText('AB').parentElement?.parentElement).toHaveClass('text-[8px]');
+    });
+
     it('renders the first letter of the first and second words of the daoName when it contains multiple words separated by a space', () => {
         const name = 'patito dao';
         const expected = 'PD';
 
         render(createTestComponent({ name }));
         expect(screen.getByText(expected)).toBeInTheDocument();
+    });
+
+    it('renders the badge next to the initials fallback', () => {
+        render(createTestComponent({ name: 'Aragon DAO', badge: <span data-testid="badge" /> }));
+        expect(screen.getByTestId('badge')).toBeInTheDocument();
+        expect(screen.getByText('AD')).toBeInTheDocument();
     });
 });

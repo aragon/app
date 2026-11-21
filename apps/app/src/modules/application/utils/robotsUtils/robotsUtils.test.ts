@@ -3,9 +3,15 @@ import { robotsUtils } from './robotsUtils';
 
 describe('robots utils', () => {
     const isEnabledSpy = jest.spyOn(featureFlags, 'isEnabled');
+    const originalEnv = process.env.NEXT_PUBLIC_ENV;
+
+    beforeEach(() => {
+        process.env.NEXT_PUBLIC_ENV = 'production';
+    });
 
     afterEach(() => {
         isEnabledSpy.mockReset();
+        process.env.NEXT_PUBLIC_ENV = originalEnv;
     });
 
     it('allows every path and lists the app sitemap', async () => {
@@ -28,4 +34,18 @@ describe('robots utils', () => {
             'https://app.aragon.org/help/sitemap.xml',
         ]);
     });
+
+    it.each(['occ', 'staging', 'development', 'preview', 'local'])(
+        'disallows every path and lists no sitemap in the %s environment',
+        async (env) => {
+            process.env.NEXT_PUBLIC_ENV = env;
+            isEnabledSpy.mockResolvedValue(true);
+
+            const robots = await robotsUtils.generateRobots();
+
+            expect(robots).toEqual({
+                rules: { userAgent: '*', disallow: '/' },
+            });
+        },
+    );
 });

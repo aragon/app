@@ -226,7 +226,7 @@ local storage for real requests is a single-method change:
 - `getOrCreateDefaultWorkspace()` → the first stored workspace, or the default one, seeded and persisted when the
   registry is empty. Called by the `/workspace` entry route through the `useGetOrCreateDefaultWorkspace` mutation.
 - `createWorkspace({ body })` where `body` is `Omit<IWorkspace, 'id'>` → assigns
-  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to `localStorage`, resolves with the full
+  `workspaceUtils.buildWorkspaceId(name, existingIds)`, writes to the active browser registry, resolves with the full
   `IWorkspace`.
 - `updateWorkspace({ urlParams: { id }, body })` where `body` is `Omit<IWorkspace, 'id'>` → replaces the
   stored workspace, keeping its ID (so its URLs keep working); rejects with
@@ -235,17 +235,39 @@ local storage for real requests is a single-method change:
   reading it in the same step instead of taking the whole workspace from the caller, so a change stored since the
   caller read it (another tab, a cached copy) is kept; an account already held is not added twice. Rejects like
   `updateWorkspace`. Called by `WorkspaceExternalAccountBanner` through `useAddWorkspaceAccount`.
+- `updateWorkspaceDetails({ urlParams: { id }, body })` where `body` is `name`, `description`, `avatar` and
+  `links` → replaces those fields of the stored workspace, reading it in the same step like `addWorkspaceAccount`.
+  Called by `WorkspaceEditDetailsDialog`.
+- `removeWorkspaceAccount({ urlParams: { id }, body: { accountId } })` → drops one account; a workspace not holding
+  it is returned unchanged. Rejects like `updateWorkspace`. Called by the admin page.
+- `exportWorkspace({ urlParams: { id } })` → one workspace as `{ version: 1, workspace }`, without its ID. Links
+  saved without a protocol get `https://`: the resources input accepts them, the import validation does not.
+- `importWorkspace(json)` → validates an `exportWorkspace` file and stores it as a **new** workspace (ID from its
+  name, suffixed when taken by a stored or demo workspace), never overwriting one. It always writes the persistent
+  registry, never the demo session one, so a workspace imported while a demo workspace is open does not vanish.
+- `exportWorkspaceRegistry()` → the complete active registry as formatted JSON.
+- `importWorkspaceRegistry(json, merge?)` → validates the full registry before writing it.
 
-Storage key `aragon-workspaces`, value a `Record<string, IWorkspace>`. Every method rejects when called
-server-side (`typeof window === 'undefined'`) rather than silently returning nothing.
+The persistent registry uses local-storage key `aragon-workspaces`. Known fixture workspace IDs activate the
+tab-scoped `workspaceDemo.fixture.json` registry before the first workspace read, so copied demo account URLs also work
+in a fresh tab. Opening the landing-page demo link resets that session registry to the fixture. Navigating to
+`/workspace` or a persistent workspace discards it and resumes the local registry; persistent and demo workspaces
+therefore never appear together or overwrite one another.
 
-The reads never write. `getWorkspace` and `getWorkspaceList` return what is stored, so the list can be empty; only
-`getOrCreateDefaultWorkspace` seeds an empty "My workspace" (`createWorkspace` does not either). Seeding is an
-explicit call because a read that writes makes the default appear depending on which page a user opened first, and
-lets two tabs reading an empty registry seed two different workspaces. It is also the shape a backend registry would
-take: a get-or-create (bootstrap) call, not a GET with a side effect. The seed's ID gets a random suffix
-(`my-workspace-1a2b3c4d`) so that default workspaces of different users never share one. Unreadable storage reads as
-empty and is overwritten on the next write — acceptable, as only outside tampering can produce it.
+The debug panel downloads and restores the active registry format. Imports require an explicit browser confirmation
+because replacement discards the active browser-only workspaces. The fixture contains Aragon and XMAQUINA workspaces,
+each with a standalone Polygon Safe, and uses the regular workspace layout, navigation, queries, and account
+interactions instead of parallel demo UI.
+
+Workspace payload reads never seed or modify the selected registry. `getWorkspace` and `getWorkspaceList` return what
+is stored, so the list can be empty; the route-aware resolver only discards the disposable session fixture after
+navigation leaves its workspace IDs. Only `getOrCreateDefaultWorkspace` seeds an empty "My workspace"
+(`createWorkspace` does not either). Seeding is an explicit call because a read that writes makes the default appear
+depending on which page a user opened first, and lets two tabs reading an empty registry seed two different
+workspaces. It is also the shape a backend registry would take: a get-or-create (bootstrap) call, not a GET with a
+side effect. The seed's ID gets a random suffix (`my-workspace-1a2b3c4d`) so that default workspaces of different
+users never share one. Unreadable storage reads as empty and are overwritten on the next write — acceptable, as only
+outside tampering can produce it.
 
 The seed goes through a mutation, not a query, for the same reason: a query may run on any render, and running it
 must not write. The `/workspace` entry route (`WorkspaceEntryPage`) runs it on mount, invalidates the workspace list
@@ -306,16 +328,12 @@ src/app/workspace/[workspaceId]/
 │     ├─ proposals/[proposalSlug]/page.tsx   WorkspaceProposalDetailsPage, the DAO details page reused
 │     ├─ members/page.tsx     WorkspaceAccountMembersPage
 │     └─ [...section]/page.tsx   WorkspaceSectionNotFoundPage
-├─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
-│  ├─ layout.tsx              LayoutWizardEditWorkspace
-│  └─ page.tsx                WorkspaceEditPage
-└─ [accountId]/create/        the create wizards of an account, outside the group too (see "Create wizards")
-   ├─ execute/                LayoutWizardCreateWorkspaceExecute, WorkspaceCreateExecutePage
-   └─ [pluginAddress]/proposal/   LayoutWizardCreateWorkspaceProposal, WorkspaceCreateProposalPage
+└─ edit/                      the edit wizard, outside the group (static, wins over [accountId])
+   ├─ layout.tsx              LayoutWizardEditWorkspace
+   └─ page.tsx                WorkspaceEditPage
 ```
 
-The route group, as with `(daoPage)`, only decides the layout: `edit/` and `[accountId]/create/` sit outside it to get
-the wizard layout.
+The route group, as with `(daoPage)`, only decides the layout: `edit/` sits outside it to get the wizard layout.
 
 Each scope needs its own `[...section]` catch-all — `all/` is a static segment holding real pages, so a miss below
 it never falls through to the account-scoped one — and both re-export the same page, so the two 404 identically.
@@ -347,12 +365,10 @@ again and this layout should adopt it.
 `navigationWorkspaceUtils.buildLinks` builds the section links through `workspaceUtils.getAccountScopeUrl`, scoped to
 the account on the route, at orders 100-500: Overview, Proposals, Members, Assets, Transactions. It lists them all
 (Proposals aside, see below), including the ones that have no account-scoped route yet — so under an account scope those links lead to the
-section-not-found page until the route lands. Permissions and Settings follow at orders 600-700. Four sections are
+section-not-found page until the route lands. Permissions and Settings follow at orders 600-700. Three sections are
 served for some scopes alone (`workspaceSectionScopes`, read through `workspaceUtils.isSectionServed`): proposals for
-the aggregated scope and a DAO account, permissions for a DAO account, settings and create for a DAO or a Safe
-account. `create` has no navigation link, and its wizards each declare their own types (`subsections`, see
-"Adding a route to an account"). Their links are hidden elsewhere, and under an account scope appear once the
-workspace read tells the account type. The
+the aggregated scope and a DAO account, permissions for a DAO account, settings for a DAO or a Safe account. Their
+links are hidden elsewhere, and under an account scope appear once the workspace read tells the account type. The
 map is keyed by `WorkspaceAccountSection`, the union of `workspaceAccountSections` (one entry per route under
 `[accountId]`), so a mistyped section fails type-check; it lists only the restricted sections. It is the single declaration of
 which account types have which section: the navigation and the account selector read it, and so does
@@ -363,8 +379,8 @@ to the `/dao/…` routes. For a Safe, `WorkspaceAccountSettingsPage` renders `Wo
 "Safe support by route"). Switching account from any of the three sections lands an option that does not have it
 on its overview instead.
 
-`navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Edit workspace, to the
-edit wizard — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
+`navigationWorkspaceUtils.buildWorkspaceLinks` builds the links of the workspace itself — Workspace admin, to the
+admin page — rendered below a divider. Both lists fill the sidebar (from `lg`) and the navigation dialog (below it).
 The account selector closes with an Add account item opening the edit wizard on its Accounts step.
 
 ### Assets page
@@ -415,39 +431,11 @@ different thing from them being populated: see [the Safe aggregation gap](#known
 `workspaceTransactionsPage` is the assets page's twin: one page for both scopes, no section guard, one endpoint
 (`query/transactions`), the account from `useWorkspaceAccountOptions`. Its aside card follows the same rule as the
 assets one: a selected DAO gets the DAO card, and anything else — the aggregated scope or a Safe — gets
-`WorkspaceAllTransactionsAsideCard`, titled by the option's label when one is selected. The create action sends a
-DAO to the workspace's own direct-execute wizard (`{accountId}/create/execute`, see "Create wizards"),
-which checks the account itself, so the page reads no DAO to build it. The Safe write path is closed by construction
-rather than by a check at the edge: a Safe has no create wizard in the workspace yet, so its row in the
-select-account dialog is dimmed and picking it navigates nowhere. `DispatchPanel` takes the account address as
+`WorkspaceAllTransactionsAsideCard`, titled by the option's label when one is selected. The Safe write path is
+closed by construction rather than by a check at the edge: a Safe has no create destination (`getDaoUrl` cannot name
+one), so its row in the select-account dialog is dimmed and picking it navigates nowhere. `DispatchPanel` takes the account address as
 a *DAO* address, so it renders only beside a DAO card; tests pin all of this, as the next person to touch a
 Safe branch will be tempted to open it.
-
-#### Create wizards
-
-The DAO's create wizards inside the workspace, at the DAO's own path after the account. Each workspace layout and page
-renders the DAO's with the route parameters adapted, passing an `exitPath` to the account's workspace section.
-DAO accounts only: a Safe has no execute wizard and no proposals.
-
-| Route | DAO wizard | Exits to |
-| --- | --- | --- |
-| `{accountId}/create/execute` | `/dao/…/create/execute` | `{accountId}/transactions` |
-| `{accountId}/create/{pluginAddress}/proposal` | `/dao/…/create/{pluginAddress}/proposal` | `{accountId}/proposals` |
-
-The execute page drills its `exitPath` through `CreateExecuteActionsPage` and `CreateExecuteActionsPageClient` to
-`useExecutePermissionCheckGuard`, which redirects there instead of the DAO transactions when the wallet cannot execute.
-
-| Outcome | Where |
-| --- | --- |
-| `workspaces` flag off, malformed account ID | layout: `notFound()` |
-| unknown account | `WorkspaceSectionGuard` (in the layout): `notFound()` |
-| Safe | the guard: redirect to the overview |
-| lookup cannot tell | the guard throws; `LayoutRoot`'s error boundary renders it |
-| workspace not on this device | page: `WorkspaceGate` |
-| DAO | the wizard |
-
-Some of their links still leave the workspace; see "Links out of the workspace". Review the `exitPath` prop drilling
-when the workspace links are fixed: a route-aware link mechanism should replace it.
 
 ### Account scope
 
@@ -721,8 +709,7 @@ The "New proposal" action asks for the account first (`WorkspaceSelectAccountDia
 (`SelectPluginDialog`), skipping the account step when the route has already named one — the plugin dialog is then
 not stacked and offers no back action, there being nothing underneath to go back to. Creating a proposal stays a
 single-DAO act: the per-DAO permission check runs through one `usePermissionCheckGuard` instance whose `check` is
-called with the DAO and plugin of the selection, and the flow then opens the workspace's create-proposal wizard
-(`{accountId}/create/{pluginAddress}/proposal`, see "Create wizards").
+called with the DAO and plugin of the selection, and the flow then hands over to that DAO's own create page.
 
 #### Details page
 
@@ -754,8 +741,9 @@ has no slug, so it gets no href and the row renders unlinked.
 
 A Safe has no proposals and no permissions, and will not get them. Which account types have which section is
 declared once, in `workspaceSectionScopes` (`workspaceUtils.ts`), and read through `workspaceUtils.isSectionServed`
-by the navigation, the account selector and `WorkspaceSectionGuard`; "Adding a route to an account" below is the
-checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whether it gets the route at all.
+by the navigation, the account selector and `WorkspaceSectionGuard`. A test fails when a route folder under
+`[accountId]` is missing from `workspaceAccountSections`. The table says what a Safe gets; `workspaceSectionScopes`
+decides whether it gets the route at all.
 
 | Route | What a Safe gets | Decided by |
 | --- | --- | --- |
@@ -766,14 +754,12 @@ checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whe
 | `all/todos` | its queued transactions the wallet still has to sign, beside the proposals to vote on | backend (`query/todo`) |
 | `{accountId}/todos` | the same rows, narrowed to the Safe | backend (`query/todo`) |
 | `{accountId}/assets` | list and aside describe the Safe | client; no guard |
-| `{accountId}/transactions` | the same; its create action opens `create/transaction` (a DAO's opens `create/execute`), dispatch panel is DAO-only | client; no guard |
-| `{accountId}/create/transaction` | the full-page Safe wizard (`SafeCreateTransactionWizard`): composed actions become one Safe transaction — batched through MultiSendCallOnly when there is more than one — signed and proposed by the owner. A DAO creates through `create/execute` and its URL here redirects to its overview. The route sits outside `(workspacePage)`, like the edit wizard, so it renders in the wizard layout | `WorkspaceSectionGuard` (subsection) |
+| `{accountId}/transactions` | the same, read-only: no create action, dispatch panel is DAO-only | client; no guard |
 | `{accountId}/overview` | the Safe dashboard (threshold, owners, nonce, pending transactions, previews) | page `switch` |
 | `{accountId}/members` | its owners, settings in the aside | page `switch` |
 | `{accountId}/members/{address}` | redirect to its members page | page `switch` |
 | `{accountId}/settings` | read-only account and governance details | page `switch` |
 | `{accountId}/proposals`, `…/proposals/{slug}`, `…/permissions` | no link; the URL redirects to its overview | `WorkspaceSectionGuard` |
-| `{accountId}/create/execute`, `…/create/{pluginAddress}/proposal` | no create action; the URL redirects to its overview | `WorkspaceSectionGuard` (subsection) |
 
 - **A Safe is an account option on every section.** Where it lacks the section, the option links to its overview,
   as does the aggregated option on permissions and settings; a URL that gets there anyway is redirected by the guard.
@@ -782,56 +768,15 @@ checklist. The table says what a Safe gets; `workspaceSectionScopes` decides whe
   with an `accountId` other than `all` (the aggregated route is a static segment and passes none; the sentinel check
   keeps a deleted `all/proposals/page.tsx` from guarding an account named `all`).
 
-#### Adding a route to an account
-
-Two tests in `workspaceUtils.test.ts` read the route folders, so a missing declaration fails CI instead of serving the
-route to the wrong account type.
-
-**An account page** — `(workspacePage)/[accountId]/{section}/page.tsx`:
-
-1. Add the section to `workspaceAccountSections`.
-2. If some account types or the aggregated scope lack it, declare it in `workspaceSectionScopes` and wrap the page in
-   `WorkspaceSectionGuard`. `LayoutWorkspaceAccount` already checks the account exists.
-3. Add a navigation link in `navigationWorkspaceUtils.buildLinks`, hidden through `isSectionServed`.
-
-**A create wizard** — `[accountId]/create/…/{subsection}/{layout,page}.tsx`, at the DAO's path:
-
-1. Declare its static segment under `create.subsections` with its account types (`proposal` for
-   `[pluginAddress]/proposal`). A route left out would be served to every type of `create`, a DAO and a Safe;
-   `WorkspaceAccountSubsection` makes a mistyped one a type error.
-2. Layout: check the `workspaces` flag and `isValidAccountId`, then render `WorkspaceSectionGuard` (`section="create"`,
-   the subsection) **around** the wizard layout. Nothing above it checks the account, and a DAO layout that reads the
-   DAO replaces its children with an error state when the read fails, so a guard in the page would never run.
-3. Page: wrap it in `WorkspaceGate`, which `LayoutWorkspace` provides only to `(workspacePage)`.
-4. Exit to the account's workspace section (`getAccountScopeUrl`), and point the entry action at the new route.
-5. Record every link the wizard still has to `/dao/…` in "Links out of the workspace".
-
-A running `pnpm dev` does not pick up a new dynamic route folder (e.g. `[pluginAddress]/`): restart it, or the route
-404s.
-
-#### Links out of the workspace
-
-Links on a workspace route that lead to `/dao/…`, kept here for a review pass. Add a row when a change introduces one;
-remove it when the link stays in the workspace. The same review covers the `exitPath` props that keep the DAO
-wizards' redirects in the workspace today (see "Create wizards").
-
-| Route | Link | Leads to | Source |
-| --- | --- | --- | --- |
-| `{accountId}/create/execute` | success action of the execute dialog ("View transactions") | `/dao/{network}/{addressOrEns}/transactions` | `ExecuteActionsDialog` (`daoUtils.getDaoUrl(dao, 'transactions')`) |
-| `{accountId}/create/{pluginAddress}/proposal` | "plugin not found" error action | `/dao/…/proposals` | `CreateProposalPageClient` |
-| `{accountId}/create/{pluginAddress}/proposal` | redirect when the permission check fails | `/dao/…/proposals` | `useProposalPermissionCheckGuard` (`redirectTab: 'proposals'`) |
-| `{accountId}/create/{pluginAddress}/proposal` | success action of the publish dialog | `/dao/…/proposals/{slug}`, or the linked account's DAO path | `PublishProposalDialog` (`getProposalsLink`) |
-| `{accountId}/create/{pluginAddress}/proposal` | indexing fallback of the publish dialog | `/dao/…/proposals` | `PublishProposalDialog` (`indexingFallbackUrl`) |
-
 #### Account existence and the account lookup
 
 An account route goes through these steps on the server, then the client:
 
 | # | Where | What happens |
 | --- | --- | --- |
-| 1 | `LayoutWorkspaceAccount` (a create wizard: its own layout) | `notFound()` for a malformed ID (`isValidAccountId`: invalid network or address), before any request |
+| 1 | `LayoutWorkspaceAccount` | `notFound()` for a malformed ID (`isValidAccountId`: invalid network or address), before any request |
 | 2 | `LayoutWorkspaceAccount` → `resolveAccountType` | one `POST query/accounts` lookup, read as below, in parallel with the DAO read; a DAO whose DAO read fails throws |
-| 3 | `WorkspaceSectionGuard` | proposals, proposal details, permissions, create wizards: redirect to the overview when the type lacks the section or subsection. A create wizard has no `LayoutWorkspaceAccount`, so the guard runs step 2's lookup itself |
+| 3 | `WorkspaceSectionGuard` | proposals, proposal details, permissions: redirect to the overview when the type lacks the section |
 | 4 | page `switch` | overview, members, member details, settings: Safe branch or DAO branch, exhaustive (`satisfies never`) |
 | 5 | client | assets, transactions, proposals, members re-resolve an external account (`useWorkspaceAccountOptions`), stay loading on `isPending` |
 
@@ -1061,13 +1006,32 @@ generic `Page.Error`, and branches on the account segment read with `useParams()
 - The redirect lands on an account the chosen workspace may not hold, which renders as an external option (see
   "External accounts" under Account scope).
 
+## Workspace admin
+
+`/workspace/{workspaceId}/admin` (`WorkspaceAdminPage`, inside `(workspacePage)`) is where a workspace is seen and
+changed without the wizard. The `admin` segment is static, so it wins over `[accountId]`; the navigation reads it as
+the aggregated scope (`resolveAccountScope`).
+
+- **Details** (in `WorkspaceAdminPageClient`) — name with avatar, description, links. "Edit details" opens
+  `WorkspaceEditDetailsDialog` (`WorkspaceDialogId.EDIT_DETAILS`, params `{ workspaceId }`), which reuses
+  `CreateWorkspaceForm.Metadata` and saves through `updateWorkspaceDetails`. A new avatar is pinned by
+  `useResolveWorkspaceAvatar`, shared with the publish dialog. Opened by ID so other entry points can reuse it.
+- **Accounts** (`WorkspaceAdminAccounts`) — one `WorkspaceAccountItem` per account with `onRemove`, which turns the
+  overview's link row into a row with a "Remove from workspace" menu (removes at once, no confirmation). Names and
+  avatars come from `useWorkspaceDaos`. "Add account" opens the edit wizard on its Accounts step.
+- **Storage** (aside of `WorkspaceAdminPageClient`) — Published "None" and Sync "Local only". "Export workspace"
+  downloads `{workspaceId}.json` from `exportWorkspace`.
+- **Import** — the workspace selector's "Import workspace" item opens the file picker at once; a valid export becomes
+  a new workspace and opens on its overview. The selector reads its list again on a workspace change, as the list
+  key does not name the registry (demo or local) it was read from.
+
 ## Edit workspace
 
-`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the workspace
-selector or the empty-accounts state of the overview.
+`/workspace/{workspaceId}/edit` renders `WorkspaceWizard` under `LayoutWizardEditWorkspace`, from the account
+selector's Add account item or the empty-accounts states of the overview and the admin page.
 
 - Outside `(workspacePage)`, so it renders its own `WorkspaceGate`; the wizard reads its default values
-  (`workspaceEditPageUtils.buildFormValues`) on mount.
+  (`workspaceFormUtils.buildFormValues`) on mount.
 - Submitting opens `PublishWorkspaceDialog` with a `workspaceId`. A stored avatar comes back as a URL with no file
   and keeps its URI instead of being pinned again.
 - `?step=ACCOUNTS` opens a given step (`workspaceUtils.getWorkspaceEditUrl` / `parseWorkspaceEditStep`).
@@ -1075,9 +1039,9 @@ selector or the empty-accounts state of the overview.
 ## Feature flag
 
 The whole feature sits behind the `workspaces` flag (`src/shared/featureFlags/featureFlags.constants.ts`, key
-added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` only; `false` by default, so preview,
-development, staging and production are off — the registry is a `localStorage` mock, so it must not ship on, and
-preview points at the development backend, which has no workspace endpoints yet.
+added to `FeatureFlagKey` in `featureFlags.api.ts`). Enabled in `local` and in `occ`, the soft-launch environment
+(new.app.aragon.org); `false` by default, so preview, development, staging and production are off. The registry
+lives in `localStorage`, so a workspace exists only in the browser that created it.
 
 Every route gate is the same server-side check — `await featureFlags.isEnabled('workspaces')`, else `notFound()`:
 
@@ -1216,8 +1180,6 @@ src/modules/workspace/
 ├── components/workspaceSectionGuard/{workspaceSectionGuard.tsx,index.ts}
 ├── components/layoutWizardCreateWorkspace/{layoutWizardCreateWorkspace.tsx,index.ts}
 ├── components/layoutWizardEditWorkspace/{layoutWizardEditWorkspace.tsx,index.ts}
-├── components/layoutWizardCreateWorkspaceExecute/{layoutWizardCreateWorkspaceExecute.tsx,index.ts}
-├── components/layoutWizardCreateWorkspaceProposal/{layoutWizardCreateWorkspaceProposal.tsx,index.ts}
 ├── components/workspaceWizard/{workspaceWizard.tsx,workspaceWizardDefinitions.ts,index.ts}
 ├── constants/{workspaceDialogId.ts,workspaceDialogsDefinitions.ts}
 ├── dialogs/publishWorkspaceDialog/{publishWorkspaceDialog.tsx,publishWorkspaceDialogUtils.ts,index.ts}
@@ -1236,9 +1198,8 @@ src/modules/workspace/
 ├── pages/workspaceAssetsPage/{workspaceAssetsPage.tsx,workspaceAssetsPageClient.tsx,index.ts}
 ├── pages/workspaceDetailsPage/{workspaceDetailsPage.tsx,workspaceDetailsPageClient.tsx,index.ts}
 ├── pages/workspaceProposalsPage/{workspaceProposalsPage.tsx,workspaceProposalsPageClient.tsx,index.ts}
-├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,workspaceEditPageUtils.ts,index.ts}
-├── pages/workspaceCreateExecutePage/{workspaceCreateExecutePage.tsx,index.ts}
-├── pages/workspaceCreateProposalPage/{workspaceCreateProposalPage.tsx,index.ts}
+├── pages/workspaceEditPage/{workspaceEditPage.tsx,workspaceEditPageClient.tsx,index.ts}
+├── utils/workspaceFormUtils/{workspaceFormUtils.ts,index.ts}
 ├── utils/workspaceUtils/{workspaceUtils.ts,workspaceUtils.test.ts,index.ts}
 ├── utils/workspaceAccountInfoUtils/{workspaceAccountInfoUtils.ts,index.ts}
 └── index.ts
@@ -1249,8 +1210,6 @@ src/app/create/dao/layout.tsx
 src/app/create/workspace/{page.tsx,layout.tsx}
 src/app/workspace/page.tsx
 src/app/workspace/[workspaceId]/{layout.tsx,page.tsx,assets/page.tsx}
-src/app/workspace/[workspaceId]/[accountId]/create/execute/{layout.tsx,page.tsx}
-src/app/workspace/[workspaceId]/[accountId]/create/[pluginAddress]/proposal/{layout.tsx,page.tsx}
 ```
 
 Modified: `providersDialogs.ts`, `exploreDaosPageClient.tsx`, `src/shared/types/index.ts`, `en.json`,
@@ -1288,6 +1247,14 @@ Keep it that way when extending this.
 
 ## Known gaps
 
+- **Admin page account rows show no network badge.** `WorkspaceAccountAvatar` takes no network; extending it is a
+  follow-up ticket.
+- **Admin page "Add account" opens the edit wizard.** It switches to the Add accounts dialog once that lands.
+- **Admin page Storage values are fixed** ("None", "Local only") until workspaces can be published.
+- **Import is a stopgap.** It opens the file picker straight from the selector and reports an invalid file with a
+  browser alert, as the app has no toast.
+- **The workspace list query key does not name its registry.** A demo and a local list share one cache entry, so
+  the selector refetches on every workspace change; keying the list by registry would remove that.
 - The 100-account request limit is not enforced in the UI; a longer list fails at submit with a 400.
 - **The to-do list is a v1 built on memberships, not voting power.** A token holder is listed for a proposal even
   when their balance at its snapshot was zero, since the backend judges eligibility on its current membership rows.

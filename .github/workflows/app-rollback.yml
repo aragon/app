@@ -1,5 +1,5 @@
 # The "App Rollback" workflow rebuilds and deploys an earlier app tag to production, behind the
-# same production approval as a release deploy.
+# same production approval as a release deploy, then does the same for OCC (new.app.aragon.org).
 
 name: App Rollback
 
@@ -58,5 +58,53 @@ jobs:
       op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
       op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
       op-slack-codeowners-group-path: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  # A rollback takes OCC back to the same tag; a tag older than the OCC environment has no env
+  # file to build from, so OCC is left as it is.
+  occ-ready:
+    needs: deploy
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - name: Check the tag has the OCC env file
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.tag }}
+        run: |
+          if output=$(gh api -X GET "repos/${{ github.repository }}/contents/apps/app/config/.env.occ" -f ref="$REF" 2>&1); then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          elif grep -q "HTTP 404" <<< "$output"; then
+            echo "::notice::$REF predates the OCC environment; OCC is left as it is"
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$output" >&2
+            exit 1
+          fi
+
+  deploy-occ:
+    needs: [deploy, occ-ready]
+    if: ${{ needs.occ-ready.outputs.ready == 'true' }}
+    concurrency:
+      group: occ-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
+    with:
+      env: occ
+      prod: true
+      ref: ${{ inputs.tag }}
+      domain: new.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_production
+      setup-command: pnpm run setup occ
+      patch-root-directory: true
+      version: ${{ inputs.tag }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
     secrets:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

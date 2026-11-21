@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { Route } from 'next';
 import * as NextNavigation from 'next/navigation';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
@@ -28,13 +29,27 @@ describe('<Navigation.Dialog /> component', () => {
         getDaoEnsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<INavigationDialogProps>) => {
+    const createTestComponent = (
+        props?: Partial<INavigationDialogProps>,
+        workspacesEnabled = false,
+    ) => {
         const completeProps: INavigationDialogProps = { links: [], ...props };
 
         return (
-            <GukModulesProvider>
-                <NavigationDialog {...completeProps} />
-            </GukModulesProvider>
+            <FeatureFlagsProvider
+                initialSnapshot={[
+                    {
+                        key: 'workspaces',
+                        name: 'Workspaces',
+                        description: '',
+                        enabled: workspacesEnabled,
+                    },
+                ]}
+            >
+                <GukModulesProvider>
+                    <NavigationDialog {...completeProps} />
+                </GukModulesProvider>
+            </FeatureFlagsProvider>
         );
     };
 
@@ -113,6 +128,16 @@ describe('<Navigation.Dialog /> component', () => {
         expect(
             withinDialog.getByTestId(IconType.APP_EXPLORE),
         ).toBeInTheDocument();
+    });
+
+    it('routes Explore to its dedicated page when workspaces are enabled', () => {
+        render(createTestComponent({ open: true }, true));
+
+        expect(
+            within(screen.getByRole('dialog')).getByRole('link', {
+                name: /navigationDao.dialog.explore/,
+            }),
+        ).toHaveAttribute('href', '/explore');
     });
 
     it('does not crash when onOpenChange property is not defined', async () => {
