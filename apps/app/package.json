@@ -34,6 +34,8 @@
         "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:typography:check": "node ../../packages/gov-ui-kit/scripts/primitive-typography.mjs check",
+        "lint:typography:report": "node ../../packages/gov-ui-kit/scripts/primitive-typography.mjs report ../../apps/app",
         "setup": "./scripts/setupEnv.sh",
         "start": "next start",
         "test": "jest",
