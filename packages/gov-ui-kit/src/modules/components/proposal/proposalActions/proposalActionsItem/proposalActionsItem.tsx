@@ -289,7 +289,7 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                                             variant="tertiary"
                                         />
                                     </Tooltip>
-                                    <p className="text-sm text-neutral-500">
+                                    <p className="type-caption--compact-label text-neutral-500">
                                         {index + 1} {copy.proposalActionsItem.of} {actionCount}
                                     </p>
                                     <Tooltip content={arrayControls.moveUp.label} triggerAsChild={true}>

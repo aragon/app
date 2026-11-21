@@ -83,7 +83,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
     );
 
     const labelClasses = classNames(
-        'max-w-full cursor-pointer truncate text-neutral-800 group-data-[state=unchecked]:text-neutral-800 md:text-base',
+        'max-w-full cursor-pointer truncate type-label-option--card text-neutral-800 group-data-[state=unchecked]:text-neutral-800',
         'group-data-disabled:cursor-default group-data-[state=unchecked]:group-data-disabled:text-neutral-300',
     );
 
@@ -100,12 +100,12 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
         >
             <div className={classNames('flex w-full min-w-0 flex-row gap-3', { 'items-center': !description })}>
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-sm leading-tight font-normal md:gap-1">
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:gap-1">
                     <p className={labelClasses} id={randomId}>
                         {label}
                     </p>
                     {description && (
-                        <p className="max-w-full truncate text-neutral-500 group-data-disabled:text-neutral-300">
+                        <p className="max-w-full truncate type-supporting--compact-meta text-neutral-500 group-data-disabled:text-neutral-300">
                             {description}
                         </p>
                     )}

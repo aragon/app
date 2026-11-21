@@ -868,7 +868,7 @@ Semantic heading with size and rendered element (as h1..h5).
 
 **References**
 
-- `kit:src/core/components/heading/heading.tsx:28`
+- `kit:src/core/components/heading/heading.tsx:34`
 - `kit:src/core/components/heading/heading.stories.tsx:1`
 
 ### Icon

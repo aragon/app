@@ -33,7 +33,7 @@ export const Toggle: React.FC<IToggleProps> = (props) => {
 
     return (
         <RadixToggle className={toggleClasses} disabled={disabled} value={value} {...otherProps}>
-            <p className="text-sm leading-normal font-normal md:text-base">{label}</p>
+            <p className="type-label-option--toggle">{label}</p>
         </RadixToggle>
     );
 };

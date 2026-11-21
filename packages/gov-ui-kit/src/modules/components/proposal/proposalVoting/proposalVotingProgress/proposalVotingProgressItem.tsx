@@ -84,16 +84,20 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
     return (
         <div className={classNames('flex w-full grow flex-col gap-3', className)}>
             <div className="flex flex-row items-center justify-between">
-                <div className={classNames('flex flex-row gap-1 text-base leading-tight font-normal md:text-lg')}>
-                    <p className={classNames(variantToNameClassNames[processedVariant])}>
+                <div className={classNames('flex flex-row gap-1')}>
+                    <p className={classNames('type-title-item', variantToNameClassNames[processedVariant])}>
                         {name}
                         {nameDescription && <span className="text-neutral-500">{nameDescription}</span>}
                     </p>
                     {showStatus && isThresholdReached && (
-                        <p className="text-primary-400">{copy.proposalVotingProgressItem.reached}</p>
+                        <p className="type-supporting--row-value text-primary-400">
+                            {copy.proposalVotingProgressItem.reached}
+                        </p>
                     )}
                     {showStatus && !isThresholdReached && (
-                        <p className="text-neutral-500">{copy.proposalVotingProgressItem.unreached}</p>
+                        <p className="type-supporting--row-value text-neutral-500">
+                            {copy.proposalVotingProgressItem.unreached}
+                        </p>
                     )}
                 </div>
                 {showStatus && <AvatarIcon icon={statusIcon} variant={statusVariant} />}
@@ -105,7 +109,7 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
                 variant={processedVariant}
                 {...otherProps}
             />
-            <div className="flex flex-row justify-between text-sm leading-tight font-normal md:text-base">
+            <div className="flex flex-row justify-between type-supporting">
                 <div className="flex flex-row gap-0.5">
                     <p className="text-neutral-800">{description.value}</p>
                     <p className="text-neutral-500">{description.text}</p>

@@ -35,7 +35,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
     );
 
     const labelClasses = classNames(
-        'cursor-pointer text-base leading-tight text-neutral-500', // default
+        'cursor-pointer type-label-option--radio text-neutral-500', // default
         'hover:text-neutral-800', // hover
         'peer-disabled:cursor-default peer-data-[state=unchecked]:peer-disabled:text-neutral-300', // unchecked and disabled
         { 'pr-2 md:pr-3': labelPosition === 'left' },

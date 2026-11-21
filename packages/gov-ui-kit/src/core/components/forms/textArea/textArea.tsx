@@ -25,7 +25,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, ITextAreaProps>((props, 
             {...otherContainerProps}
         >
             <textarea
-                className={classNames('min-h-40 leading-normal', inputClassName)}
+                className={classNames('min-h-40 type-control--tall-line', inputClassName)}
                 ref={ref}
                 type="text"
                 {...otherInputProps}

@@ -72,13 +72,11 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                     responsiveSize={{ md: 'md' }}
                 />
                 <div className="flex min-w-0 flex-col">
-                    <span className="text-xs leading-tight font-normal text-neutral-500 md:text-sm">
-                        {txRole === 'sender' ? 'From' : 'To'}
-                    </span>
+                    <span className="type-caption text-neutral-500">{txRole === 'sender' ? 'From' : 'To'}</span>
                     <div className="flex items-center space-x-1">
                         <AddressOutput
                             address={participant.address}
-                            className="truncate text-sm leading-tight font-normal text-neutral-800 md:text-base"
+                            className="truncate type-title-item--compact-list text-neutral-800"
                             label={resolvedUserHandle}
                         />
                         <Icon

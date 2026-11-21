@@ -79,7 +79,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
 
     const isTokenVoting = votingPower != null && tokenSymbol != null;
     const centerInfoClassNames = classNames(
-        'flex min-h-[46.5px] w-full min-w-0 shrink flex-col justify-center gap-y-1 leading-tight md:text-lg',
+        'flex min-h-[46.5px] w-full min-w-0 shrink flex-col justify-center gap-y-1',
     );
 
     return (
@@ -95,7 +95,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                 size="sm"
             />
             <div className={centerInfoClassNames}>
-                <span className="flex items-center gap-x-1 text-base text-neutral-800 md:gap-x-1.5 md:text-lg">
+                <span className="flex items-center gap-x-1 type-title-item--framework-leading text-neutral-800 md:gap-x-1.5">
                     <AddressOutput address={voter.address} className="truncate" label={resolvedUserHandle} />
                     {isDelegate && !isCurrentUser && (
                         <Tag label={copy.voteDataListItemStructure.yourDelegate} variant="primary" />
@@ -103,11 +103,13 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                     {isCurrentUser && <Tag label={copy.voteDataListItemStructure.you} variant="neutral" />}
                 </span>
                 {isTokenVoting && (
-                    <span className="truncate text-sm text-neutral-500 md:text-base">{formattedTokenVote}</span>
+                    <span className="truncate type-supporting--framework-leading text-neutral-500">
+                        {formattedTokenVote}
+                    </span>
                 )}
             </div>
 
-            <div className="flex items-center gap-x-1 text-sm leading-tight font-normal text-neutral-500 md:gap-x-2 md:text-base">
+            <div className="flex items-center gap-x-1 type-supporting text-neutral-500 md:gap-x-2">
                 <Tag
                     className="capitalize"
                     data-testid="tag"
