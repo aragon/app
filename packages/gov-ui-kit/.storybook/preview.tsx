@@ -1,8 +1,35 @@
-import type { Preview } from '@storybook/react-vite';
+import type { Decorator, Preview } from '@storybook/react-vite';
+import { useEffect } from 'react';
 import '../index.css';
 import { GukModulesProvider } from '../src/modules';
 import { DocsPage } from './components';
 import './style.css';
+
+// Spacing preview of the semantic spacing roles (src/theme/tokens/spacing.css), an axis of its own: "today" is the
+// default value set (no attribute), the New modes set `data-spacing` on the preview root.
+const spacings = {
+    today: { title: 'Today', attribute: undefined },
+    new: { title: 'New', attribute: 'new' },
+    looser: { title: 'New, looser', attribute: 'looser' },
+    compact: { title: 'New, compact', attribute: 'compact' },
+} as const;
+
+type Spacing = keyof typeof spacings;
+
+const withSpacing: Decorator = (Story, context) => {
+    const attribute = spacings[context.globals.spacing as Spacing]?.attribute;
+
+    useEffect(() => {
+        const root = document.documentElement;
+        if (attribute == null) {
+            delete root.dataset.spacing;
+        } else {
+            root.dataset.spacing = attribute;
+        }
+    }, [attribute]);
+
+    return <Story />;
+};
 
 const preview: Preview = {
     parameters: {
@@ -42,6 +69,7 @@ const preview: Preview = {
     },
 
     decorators: [
+        withSpacing,
         (Story) => (
             <GukModulesProvider>
                 <div className="flex">
@@ -59,12 +87,22 @@ const preview: Preview = {
         backgrounds: {},
         outline: {},
         viewport: {},
+        spacing: {
+            description: 'Spacing of the semantic spacing roles',
+            toolbar: {
+                title: 'Spacing',
+                icon: 'grow',
+                items: Object.entries(spacings).map(([value, { title }]) => ({ value, title })),
+                dynamicTitle: true,
+            },
+        },
     },
 
     initialGlobals: {
         backgrounds: {
             value: 'neutral-50',
         },
+        spacing: 'today',
     },
 };
 
