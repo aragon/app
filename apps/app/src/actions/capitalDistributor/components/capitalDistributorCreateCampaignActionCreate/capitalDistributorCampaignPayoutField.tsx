@@ -91,7 +91,7 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
             useCustomWrapper={true}
         >
             <RadioGroup
-                className="flex w-full gap-4 md:flex-row!"
+                className="flex w-full gap-group md:flex-row!"
                 onValueChange={onChange}
                 {...payoutTypeField}
             >
