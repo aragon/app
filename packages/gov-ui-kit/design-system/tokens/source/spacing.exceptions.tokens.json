@@ -1,0 +1,8 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Today exceptions of the spacing roles (DTCG 2025.10): a place whose Today value differs from its role. Named `<role>--<pattern>`, the pattern spelling the Today value (`fixed-24` one value at every width, `12-16` phone then desktop). Today renders the value here; every preview mode renders the role (per axis for insets, per dimension for sizes). `families` lists the utility families generated for it; `resolution` is empty until the exception is resolved (dropped, moved or promoted). See design-system/tokens/spacing.decisions.md.",
+    "space": {
+        "$type": "dimension",
+        "exception": {}
+    }
+}

@@ -33,7 +33,7 @@ test('every output on disk is what the source generates, and generation is deter
     const first = generateAll().outputs;
     const second = generateAll().outputs;
     assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 9);
+    assert.equal(first.size, 11);
     for (const [file, text] of first) {
         assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
         assert.match(text, /GENERATED/);
@@ -140,16 +140,22 @@ test('an unrewritable relative font URL is rejected', (context) => {
 test('a source without semantic.config.json generates the primitives only', (context) => {
     const dir = scratch(context);
     for (const name of readdirSync(dir).filter(
-        (file) => file === 'semantic.config.json' || file.endsWith('.tokens.json'),
+        (file) => file === 'semantic.config.json' || file === 'spacing.config.json' || file.endsWith('.tokens.json'),
     )) {
         if (name !== 'primitives.tokens.json') {
             rmSync(join(dir, name));
         }
     }
-    const { outputs, semantic } = generateAll({ sourceDir: dir });
+    const { outputs, semantic, spacing } = generateAll({ sourceDir: dir });
     assert.equal(semantic, null);
+    assert.equal(spacing, null);
     assert.equal(outputs.size, 9);
-    assert.ok(![...outputs.keys()].some((file) => file.includes('/semantic/')));
+    assert.ok(
+        ![...outputs.keys()].some(
+            (file) =>
+                file.includes('/semantic/') || file.endsWith('tokens/spacing.css') || file.includes('spacingStyles'),
+        ),
+    );
     // The primitive outputs do not depend on the semantic layer.
     for (const [file, text] of outputs) {
         assert.equal(text, generateAll().outputs.get(file), file);
@@ -197,4 +203,206 @@ test('the app overrides must be direct custom properties of one top-level :root'
     ]) {
         assert.throws(overrides(context, css), expected, css);
     }
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Spacing layer
+// ---------------------------------------------------------------------------------------------------------------
+
+const spacingCss = (dir) =>
+    generateAll({ sourceDir: dir }).outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css');
+const px = (value) => ({ value, unit: 'px' });
+const addException = (dir, name, families, base, md, modes) =>
+    edit(dir, 'spacing.exceptions.tokens.json', (json) => {
+        const side = (value, mode) => ({
+            $value: px(value),
+            ...(modes ? { $extensions: { 'org.aragon.gov-ui-kit': { modes: mode } } } : {}),
+        });
+        json.space.exception[name] = {
+            $description: 'test pattern',
+            $extensions: { 'org.aragon.gov-ui-kit': { families, resolution: '' } },
+            base: side(base, modes?.base),
+            md: side(md, modes?.md),
+        };
+    });
+
+test('the spacing layer writes one value set per mode, the coarse fallback and uniform utilities', () => {
+    const { outputs, spacing } = generateAll();
+    const css = outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css');
+    assert.match(css, /@layer theme \{\n {4}:root \{/);
+    for (const mode of ['new', 'looser', 'compact']) {
+        assert.match(css, new RegExp(`\\[data-spacing="${mode}"\\] \\{`));
+    }
+    assert.match(
+        css,
+        /@media \(pointer: coarse\) \{\n {8}\[data-spacing="compact"\] \{\n {12}--space-control-sm-height: 32px;/,
+    );
+    // Roles keep their md step inside the utility; gap roles drop their prefix; sizes use the size name.
+    assert.match(
+        css,
+        /@utility px-inset-item \{\n {4}padding-inline: var\(--space-inset-item-x\);\n\n {4}@variant md \{\n {8}padding-inline: var\(--space-inset-item-x-md\);/,
+    );
+    assert.match(
+        css,
+        /@utility p-inset-surface \{\n {4}padding: var\(--space-inset-surface-y\) var\(--space-inset-surface-x\);/,
+    );
+    assert.match(css, /@utility gap-group \{\n {4}gap: var\(--space-gap-group\);/);
+    assert.match(css, /@utility space-y-related \{\n {4}:where\(& > :not\(:last-child\)\) \{/);
+    assert.match(css, /@utility -mx-inset-page \{\n {4}margin-inline: calc\(var\(--space-inset-page-x\) \* -1\);/);
+    assert.match(css, /@utility h-control-md \{/);
+    assert.match(css, /@utility min-h-row \{/);
+    assert.doesNotMatch(css, /@utility py-control-md /, 'no utility for a dimension a size does not have');
+    // Nothing enters Tailwind's spacing namespace, so no width or inset utility can read a role.
+    assert.doesNotMatch(css, /--spacing/);
+    assert.doesNotMatch(css, /@utility (w|inset|top|translate)-(inset|gap)/);
+    // Every utility has the same shape: one base declaration group and one md group.
+    const blocks = css.split('@utility ').slice(1);
+    assert.equal(blocks.length, spacing.utilities.length);
+    for (const block of blocks) {
+        assert.equal(block.match(/@variant md/g)?.length, 1, block.split('\n')[0]);
+    }
+    assert.match(outputs.get('packages/gov-ui-kit/src/core/types/spacingStyles.ts'), /export const spacingRoles = \[/);
+});
+
+test('an exception renders its Today value and follows its role per axis in every preview mode', (context) => {
+    const dir = scratch(context);
+    addException(dir, 'inset-item--test-10', ['px', 'p'], 10, 10);
+    addException(dir, 'gap-group--test-12-16', ['gap', 'mt'], 12, 16);
+    const css = spacingCss(dir);
+    assert.match(css, /--space-inset-item--test-10-x: 10px;/);
+    assert.match(css, /--space-inset-item--test-10-y-md: 10px;/);
+    assert.match(css, /--space-inset-item--test-10-x: var\(--space-inset-item-x\);/);
+    assert.match(css, /--space-inset-item--test-10-y-md: var\(--space-inset-item-y-md\);/);
+    assert.match(css, /--space-gap-group--test-12-16-md: 16px;/);
+    assert.match(css, /--space-gap-group--test-12-16: var\(--space-gap-group\);/);
+    // Only the families it lists.
+    assert.match(css, /@utility px-inset-item--test-10 \{/);
+    assert.match(css, /@utility p-inset-item--test-10 \{/);
+    assert.doesNotMatch(css, /@utility py-inset-item--test-10 /);
+    assert.match(css, /@utility gap-group--test-12-16 \{/);
+    assert.match(css, /@utility mt-group--test-12-16 \{/);
+});
+
+test('a chrome exception carries its own snapped values, one scale step apart', (context) => {
+    const dir = scratch(context);
+    addException(dir, 'gap-nav-related--test-12', ['gap'], 12, 12, {
+        base: { new: px(12), looser: px(16), compact: px(8) },
+        md: { new: px(12), looser: px(16), compact: px(8) },
+    });
+    const css = spacingCss(dir);
+    assert.match(css, /\[data-spacing="looser"\] \{[^}]*--space-gap-nav-related--test-12: 16px;/s);
+    const bad = scratch(context);
+    addException(bad, 'gap-nav-related--test-12', ['gap'], 12, 12, {
+        base: { new: px(12), looser: px(24), compact: px(8) },
+        md: { new: px(12), looser: px(16), compact: px(8) },
+    });
+    assert.throws(() => generateAll({ sourceDir: bad }), /chrome exception gap-nav-related--test-12\.base/);
+});
+
+const roleSide = (json, role, axis, side) => (axis ? json.space.role[role][axis][side] : json.space.role[role][side]);
+const modeOf = (token) => token.$extensions['org.aragon.gov-ui-kit'].modes;
+for (const [name, file, change, expected] of [
+    [
+        'a preview value off the scale',
+        'spacing.roles.tokens.json',
+        (json) => {
+            modeOf(roleSide(json, 'gap-group', null, 'md')).new = px(28);
+        },
+        /gap-group\.md new 28px is not on the scale/,
+    ],
+    [
+        'a compact value above New',
+        'spacing.roles.tokens.json',
+        (json) => {
+            modeOf(roleSide(json, 'inset-item', 'x', 'base')).compact = px(20);
+        },
+        /inset-item\.x\.base must hold compact <= new <= looser/,
+    ],
+    [
+        'a role that steps down at md',
+        'spacing.roles.tokens.json',
+        (json) => {
+            modeOf(roleSide(json, 'gap-tight', null, 'md')).looser = px(4);
+            modeOf(roleSide(json, 'gap-tight', null, 'md')).new = px(4);
+            modeOf(roleSide(json, 'gap-tight', null, 'base')).new = px(4);
+            modeOf(roleSide(json, 'gap-tight', null, 'base')).looser = px(6);
+            modeOf(roleSide(json, 'gap-tight', null, 'md')).compact = px(2);
+        },
+        /gap-tight looser steps down at md/,
+    ],
+    [
+        'gap levels out of order',
+        'spacing.roles.tokens.json',
+        (json) => {
+            for (const side of ['base', 'md']) {
+                modeOf(roleSide(json, 'gap-related', null, side)).looser = px(24);
+            }
+        },
+        /gap levels .* out of order in looser/,
+    ],
+    [
+        'a phone page gutter below the floor',
+        'spacing.roles.tokens.json',
+        (json) => {
+            modeOf(roleSide(json, 'inset-page', 'x', 'base')).compact = px(12);
+        },
+        /inset-page\.x\.base compact 12px is below the floor 16px/,
+    ],
+    [
+        'a chrome role off its step rule',
+        'spacing.roles.tokens.json',
+        (json) => {
+            modeOf(roleSide(json, 'gap-nav-group', null, 'base')).looser = px(24);
+        },
+        /chrome role gap-nav-group\.base/,
+    ],
+    [
+        'a compact control under 28 px',
+        'spacing.sizes.tokens.json',
+        (json) => {
+            modeOf(json.size['control-sm'].height.base).compact = px(24);
+        },
+        /control-sm\.height\.base compact 24px is below the floor 28px/,
+    ],
+]) {
+    test(`the spacing source rejects ${name}`, (context) => {
+        const dir = scratch(context);
+        edit(dir, file, change);
+        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+    });
+}
+
+for (const [name, args, expected] of [
+    [
+        'an exception of no role',
+        ['gap-huge--fixed-8', ['gap'], 8, 8],
+        /exception gap-huge--fixed-8 must be named <role>--<pattern> after an existing role/,
+    ],
+    ['an exception without a pattern', ['gap-group', ['gap'], 8, 8], /must be named <role>--<pattern>/],
+    ['a family of another kind', ['gap-group--fixed-8', ['px'], 8, 8], /family px is not a gap-group family/],
+    ['a size family the size lacks', ['control-md--fixed-10', ['py'], 10, 10], /family py is not a control-md family/],
+    ['an exception equal to its role', ['gap-group--fixed-16', ['gap'], 16, 16], /renders its role's Today value/],
+    [
+        'an exception with preview modes',
+        [
+            'gap-group--fixed-8',
+            ['gap'],
+            8,
+            8,
+            { base: { new: px(8), looser: px(8), compact: px(8) }, md: { new: px(8), looser: px(8), compact: px(8) } },
+        ],
+        /must not carry modes/,
+    ],
+]) {
+    test(`the spacing source rejects ${name}`, (context) => {
+        const dir = scratch(context);
+        addException(dir, ...args);
+        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+    });
+}
+
+test('spacing token files without spacing.config.json are rejected', (context) => {
+    const dir = scratch(context);
+    rmSync(join(dir, 'spacing.config.json'));
+    assert.throws(() => generateAll({ sourceDir: dir }), /spacing\..*tokens\.json without spacing\.config\.json/);
 });

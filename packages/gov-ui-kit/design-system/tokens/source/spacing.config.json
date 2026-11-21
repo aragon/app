@@ -1,0 +1,272 @@
+{
+    "$description": "Non-token configuration of the semantic spacing layer (the tokens are spacing.roles.tokens.json, spacing.sizes.tokens.json and spacing.exceptions.tokens.json). output / typesOutput: the generated CSS and the TypeScript lists of the names. prefix: the custom property prefix (`--space-*`, deliberately outside Tailwind's `--spacing-*` theme namespace, so no width, size or inset utility ever reads a role). modes: Today first (the default rendering, on `:root`), then one attribute selector per preview mode. desktopVariant: the Tailwind variant every utility switches to its `md` values with (a media query in the kit, a container query on the app column in the app). scale: the only values a preview mode may use. floors: minimum values per token side in the listed modes. coarsePointer: on touch screens the listed size dimensions of one mode fall back to another mode. families: the utility families of each kind (family -> CSS property and the axis or size dimension it reads; `space` = Tailwind's space-x/space-y child margins, `negate` = a negative margin). gapLevels / chromeGapLevels: gap roles whose values must not decrease along the list in any mode and width. chrome: the navigation chrome roles (owner decision 6) keep Today snapped to the scale in New and move exactly one scale step (looser up, compact down); their exceptions carry their own mode values under the same rule.",
+    "prefix": "space",
+    "output": "src/theme/tokens/spacing.css",
+    "typesOutput": "src/core/types/spacingStyles.ts",
+    "modes": {
+        "today": {
+            "selector": ":root",
+            "description": "Today: pixel-identical to the product before the roles; every exception keeps its own value."
+        },
+        "new": {
+            "selector": "[data-spacing=\"new\"]",
+            "description": "New: every role at its one standard value; exceptions follow their role."
+        },
+        "looser": {
+            "selector": "[data-spacing=\"looser\"]",
+            "description": "New, looser: the same roles one step more generous (phone page gutters and item insets stay at New)."
+        },
+        "compact": {
+            "selector": "[data-spacing=\"compact\"]",
+            "description": "New, compact: the same roles one step denser; control heights fall back to New on coarse pointers."
+        }
+    },
+    "desktopVariant": "md",
+    "scale": [
+        0,
+        2,
+        4,
+        6,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        80
+    ],
+    "gapLevels": [
+        "gap-tight",
+        "gap-related",
+        "gap-group",
+        "gap-section",
+        "gap-layout"
+    ],
+    "floors": [
+        {
+            "token": "role.inset-page.x",
+            "side": "base",
+            "min": 16,
+            "modes": [
+                "new",
+                "looser",
+                "compact"
+            ],
+            "why": "Phone page gutter floor (D-04)."
+        },
+        {
+            "token": "size.control-*.height",
+            "side": "both",
+            "min": 24,
+            "modes": [
+                "today",
+                "new",
+                "looser",
+                "compact"
+            ],
+            "why": "Every control target at least 24 px (WCAG 2.2 target size minimum, D-06); the tag is not a target."
+        },
+        {
+            "token": "size.row.height",
+            "side": "both",
+            "min": 24,
+            "modes": [
+                "today",
+                "new",
+                "looser",
+                "compact"
+            ],
+            "why": "A clickable row is a target (D-06)."
+        },
+        {
+            "token": "size.control-*.height",
+            "side": "both",
+            "min": 28,
+            "modes": [
+                "compact"
+            ],
+            "why": "Compact controls stay at least 28 px (D-06)."
+        }
+    ],
+    "coarsePointer": {
+        "media": "(pointer: coarse)",
+        "mode": "compact",
+        "fallback": "new",
+        "tokens": [
+            "size.control-sm.height",
+            "size.control-md.height",
+            "size.control-lg.height"
+        ]
+    },
+    "families": {
+        "inset": {
+            "p": {
+                "property": "padding",
+                "axis": [
+                    "y",
+                    "x"
+                ]
+            },
+            "px": {
+                "property": "padding-inline",
+                "axis": "x"
+            },
+            "py": {
+                "property": "padding-block",
+                "axis": "y"
+            },
+            "pt": {
+                "property": "padding-top",
+                "axis": "y"
+            },
+            "pb": {
+                "property": "padding-bottom",
+                "axis": "y"
+            },
+            "pl": {
+                "property": "padding-left",
+                "axis": "x"
+            },
+            "pr": {
+                "property": "padding-right",
+                "axis": "x"
+            },
+            "ps": {
+                "property": "padding-inline-start",
+                "axis": "x"
+            },
+            "pe": {
+                "property": "padding-inline-end",
+                "axis": "x"
+            },
+            "-mx": {
+                "property": "margin-inline",
+                "axis": "x",
+                "negate": true
+            },
+            "-my": {
+                "property": "margin-block",
+                "axis": "y",
+                "negate": true
+            }
+        },
+        "gap": {
+            "gap": {
+                "property": "gap"
+            },
+            "gap-x": {
+                "property": "column-gap"
+            },
+            "gap-y": {
+                "property": "row-gap"
+            },
+            "space-x": {
+                "space": "x"
+            },
+            "space-y": {
+                "space": "y"
+            },
+            "mt": {
+                "property": "margin-top"
+            },
+            "mb": {
+                "property": "margin-bottom"
+            },
+            "ml": {
+                "property": "margin-left"
+            },
+            "mr": {
+                "property": "margin-right"
+            },
+            "ms": {
+                "property": "margin-inline-start"
+            },
+            "me": {
+                "property": "margin-inline-end"
+            },
+            "pt": {
+                "property": "padding-top"
+            },
+            "pb": {
+                "property": "padding-bottom"
+            },
+            "pl": {
+                "property": "padding-left"
+            },
+            "pr": {
+                "property": "padding-right"
+            }
+        },
+        "size": {
+            "h": {
+                "property": "height",
+                "dimension": "height"
+            },
+            "min-h": {
+                "property": "min-height",
+                "dimension": "height"
+            },
+            "w": {
+                "property": "width",
+                "dimension": "height"
+            },
+            "size": {
+                "property": [
+                    "width",
+                    "height"
+                ],
+                "dimension": [
+                    "height",
+                    "height"
+                ]
+            },
+            "px": {
+                "property": "padding-inline",
+                "dimension": "pad-x"
+            },
+            "pl": {
+                "property": "padding-left",
+                "dimension": "pad-x"
+            },
+            "pr": {
+                "property": "padding-right",
+                "dimension": "pad-x"
+            },
+            "py": {
+                "property": "padding-block",
+                "dimension": "pad-y"
+            },
+            "gap": {
+                "property": "gap",
+                "dimension": "gap"
+            },
+            "gap-x": {
+                "property": "column-gap",
+                "dimension": "gap"
+            }
+        }
+    },
+    "roleFamilies": {
+        "size": [
+            "h",
+            "min-h",
+            "w",
+            "size",
+            "px",
+            "py",
+            "gap"
+        ]
+    },
+    "chromeGapLevels": [
+        "gap-nav-tight",
+        "gap-nav-related",
+        "gap-nav-group",
+        "gap-nav-section"
+    ],
+    "chrome": {
+        "rule": "new = today snapped to the scale; looser = the next scale step up; compact = the next scale step down"
+    }
+}
