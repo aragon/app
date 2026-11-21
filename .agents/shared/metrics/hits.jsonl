@@ -406,3 +406,5 @@
 {"ts":"2026-11-18T13:48:17.048Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-11-18T13:48:20.958Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-11-18T13:48:31.026Z","tool":"Edit","file":"apps/app/src/shared/api/ipfsService/ipfsService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-11-21T14:59:53.930Z","tool":"Edit","file":"apps/app/src/modules/workspace/api/workspaceQueryService/workspaceAccountSuggestionsStandIn.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":4,"adapter":"claude"}
+{"ts":"2026-11-21T14:59:53.930Z","tool":"Edit","file":"apps/app/src/modules/workspace/api/workspaceQueryService/workspaceAccountSuggestionsStandIn.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":4,"adapter":"claude"}

@@ -143,6 +143,65 @@ describe('getWorkspaceAccountSuggestions stand-in', () => {
         expect(isIncomplete).toBe(true);
     });
 
+    it('leaves out a DAO page that fails and flags the list as incomplete', async () => {
+        getDaoListByMemberSpy
+            .mockResolvedValueOnce(
+                generatePaginatedResponse({
+                    data: [memberDao],
+                    metadata: {
+                        page: 1,
+                        pageSize: 50,
+                        totalPages: 3,
+                        totalRecords: 3,
+                    },
+                }),
+            )
+            .mockRejectedValueOnce(new Error('timeout'))
+            .mockResolvedValueOnce(
+                generatePaginatedResponse({ data: [createdDao] }),
+            );
+
+        const { data, isIncomplete } =
+            await getWorkspaceAccountSuggestions(params);
+
+        expect(data.map(({ account }) => account.address)).toEqual(
+            expect.arrayContaining([
+                memberDao.address,
+                createdDao.address,
+                safeAddress,
+            ]),
+        );
+        expect(isIncomplete).toBe(true);
+    });
+
+    it('keeps the Safes when the first DAO page fails and flags the list as incomplete', async () => {
+        getDaoListByMemberSpy.mockRejectedValue(new Error('timeout'));
+
+        const { data, isIncomplete } =
+            await getWorkspaceAccountSuggestions(params);
+
+        expect(data.map(({ account }) => account.type)).toEqual([
+            WorkspaceAccountType.SAFE,
+        ]);
+        expect(isIncomplete).toBe(true);
+    });
+
+    it('rejects with the DAO error when nothing can be read', async () => {
+        const error = new Error('offline');
+        getDaoListByMemberSpy.mockRejectedValue(error);
+        getSafesByOwnerSpy.mockRejectedValue(new Error('quota'));
+
+        await expect(getWorkspaceAccountSuggestions(params)).rejects.toBe(
+            error,
+        );
+    });
+
+    it('does not flag a list read in full as incomplete', async () => {
+        const { isIncomplete } = await getWorkspaceAccountSuggestions(params);
+
+        expect(isIncomplete).toBe(false);
+    });
+
     it('reads at most three Safe networks at a time', async () => {
         let inFlight = 0;
         let maxInFlight = 0;
