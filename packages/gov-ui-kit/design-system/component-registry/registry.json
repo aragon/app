@@ -6,7 +6,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "bf0654d29dee5f1128a23bad0f5861c40af7a0e1",
+            "commit": "729753d9608a7f462d55df92c1178f2c98f024c9",
             "dirty": [],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -3077,7 +3077,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "364ab59fab5e5d33709b76f0732c4568b0191f32bdd7bcbd636b54f6161585e6"
+                "sha256": "3e294e8eb89a39ddaf1987f29183a3a35f96c1c42cbae0770303dc234053eb56"
             },
             "props": [],
             "stories": [],
@@ -27376,8 +27376,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
-                "line": 91,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "line": 98,
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
@@ -27422,7 +27422,7 @@
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
                 "line": 45,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
@@ -27466,8 +27466,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
-                "line": 87,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "line": 94,
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
@@ -27512,7 +27512,7 @@
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
                 "line": 10,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
@@ -27556,8 +27556,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
-                "line": 89,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "line": 96,
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
@@ -27602,7 +27602,7 @@
                 "repository": "kit",
                 "path": "src/core/types/spacingStyles.ts",
                 "line": 39,
-                "sha256": "ef94c80cacd7c971d4e81f29119d377d6960958782b72c22af0acc11b6f57ca2"
+                "sha256": "b88d684fc7da8c6c923521d945d407c48b3c4c76d6488128850635e8d6ebbb46"
             },
             "props": [],
             "stories": [],
