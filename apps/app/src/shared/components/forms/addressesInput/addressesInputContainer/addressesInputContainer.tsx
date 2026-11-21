@@ -216,7 +216,7 @@ export const AddressesInputContainer: React.FC<
 
     return (
         <AddressesInputContextProvider value={contextValue}>
-            <div className="flex w-full shrink-0 grow flex-col gap-3">
+            <div className="flex w-full shrink-0 grow flex-col gap-related">
                 <InputContainer
                     className="gap-3"
                     helpText={helpText}
@@ -236,7 +236,7 @@ export const AddressesInputContainer: React.FC<
                         aria-labelledby={
                             label == null ? undefined : addressesLabelId
                         }
-                        className="m-0 flex min-w-0 flex-col gap-3 border-0 p-0"
+                        className="m-0 flex min-w-0 flex-col gap-related border-0 p-0"
                     >
                         {childrenWithKeys}
                     </fieldset>
