@@ -110,7 +110,7 @@ export const UninstallPluginAlertDialog: React.FC<
                 })}
             />
             <DialogAlert.Content>
-                <div className="flex flex-col gap-y-4 pb-4 text-base leading-normal font-normal text-neutral-500">
+                <div className="flex flex-col gap-y-4 pb-4 type-body--unstepped text-neutral-500">
                     <p>{t(`${translationNamespace}.description.1`)}</p>
                     <p>{t(`${translationNamespace}.description.2`)}</p>
                 </div>

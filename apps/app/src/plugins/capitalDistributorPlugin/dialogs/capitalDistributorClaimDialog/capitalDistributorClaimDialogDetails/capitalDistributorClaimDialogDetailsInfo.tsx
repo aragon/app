@@ -35,14 +35,14 @@ export const CapitalDistributorClaimDialogDetailsInfo: React.FC<
 
     return (
         <div className="flex grow basis-0 flex-col gap-1">
-            <p className="text-sm leading-tight font-normal text-neutral-500">
+            <p className="type-supporting--compact-meta text-neutral-500">
                 {t(
                     `app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.${label}`,
                 )}
             </p>
             <div className="flex flex-row gap-1.5">
                 {token && <Avatar size="sm" src={token.logo} />}
-                <p className="text-base leading-normal font-normal text-neutral-800 first-letter:uppercase">
+                <p className="type-body--unstepped text-neutral-800 first-letter:uppercase">
                     {value}
                 </p>
             </div>

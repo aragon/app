@@ -25,16 +25,18 @@ export const AragonDemoPageHeaderStat: React.FC<
     return (
         <div
             className={classNames(
-                'flex flex-col gap-1 leading-tight font-normal text-neutral-0',
+                'flex flex-col gap-1 text-neutral-0',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-baseline gap-1 leading-tight">
-                <p className="text-2xl md:text-4xl">{value}</p>
-                {suffix && <p className="text-base md:text-lg">{suffix}</p>}
+            <div className="flex flex-row items-baseline gap-1">
+                <p className="type-stat--dao-header">{value}</p>
+                {suffix && (
+                    <p className="type-caption--dao-header-stat">{suffix}</p>
+                )}
             </div>
-            <p className="text-base md:text-lg">{label}</p>
+            <p className="type-caption--dao-header-stat">{label}</p>
         </div>
     );
 };

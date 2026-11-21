@@ -97,7 +97,7 @@ export const GaugeVoterVotingTerminal: React.FC<
     return (
         <div className={wrapperClassName}>
             <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
-                <p className="text-xs font-semibold text-neutral-800 uppercase md:text-sm">
+                <p className="type-caption--framework-leading type-strong text-neutral-800 uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes',
                     )}
@@ -106,19 +106,19 @@ export const GaugeVoterVotingTerminal: React.FC<
                     <div className="flex items-center gap-2">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-sm text-neutral-800 md:text-lg">
+                            <span className="type-stat--voting-terminal text-neutral-800">
                                 {displayVotingPower}
                             </span>
-                            <span className="text-xs text-neutral-500 md:text-base">
+                            <span className="type-caption--voting-terminal text-neutral-500">
                                 {tokenSymbol}
                             </span>
                         </div>
                     </div>
                     <div className="flex items-baseline gap-0.5">
-                        <span className="text-sm text-neutral-800 md:text-lg">
+                        <span className="type-stat--voting-terminal text-neutral-800">
                             {formattedUsagePercentage}
                         </span>
-                        <span className="text-xs text-neutral-500 md:text-base">
+                        <span className="type-caption--voting-terminal text-neutral-500">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.used',
                             )}
@@ -170,7 +170,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                 )}
                 {!showVoteButton && isVotingPeriod && (
                     <>
-                        <span className="text-sm text-neutral-500">
+                        <span className="type-supporting--compact-detail text-neutral-500">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft',
                                 { count: daysLeftToVote },

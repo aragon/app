@@ -44,7 +44,7 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
         >
             <div className="flex flex-col gap-3 md:gap-4">
                 <div className="flex flex-col gap-y-1">
-                    <div className="flex gap-2 text-base leading-tight font-normal md:text-lg">
+                    <div className="flex gap-2 type-title-item">
                         <p className="truncate text-neutral-800">
                             {processedName}
                         </p>
@@ -54,7 +54,7 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
                             </p>
                         )}
                     </div>
-                    <p className="line-clamp-2 text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                    <p className="line-clamp-2 type-body-compact text-neutral-500">
                         {processedDescription}
                     </p>
                 </div>

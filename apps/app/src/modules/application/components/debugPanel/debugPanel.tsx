@@ -98,7 +98,7 @@ export const DebugPanel: React.FC = () => {
                 ref={panelRef}
             >
                 <div className="flex flex-row justify-between">
-                    <Heading size="h2">
+                    <Heading as="h2" typeRole="title-section">
                         {t('app.application.debugPanel.title')}
                     </Heading>
                     <Button
@@ -115,7 +115,9 @@ export const DebugPanel: React.FC = () => {
                                 <WorkspaceRegistryControls />
                             )}
                             <div className="flex flex-col gap-2">
-                                <Heading size="h3">{group}</Heading>
+                                <Heading as="h3" typeRole="title-group">
+                                    {group}
+                                </Heading>
                                 <div className="flex flex-col gap-2">
                                     {groupedControls[group]?.map((control) => (
                                         <DebugPanelControl

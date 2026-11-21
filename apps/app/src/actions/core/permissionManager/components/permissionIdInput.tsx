@@ -180,7 +180,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
                     <p className="truncate text-neutral-800">{displayName}</p>
                 )}
                 <p
-                    className={`truncate font-mono text-sm ${displayName != null ? 'text-neutral-500' : 'text-neutral-800'}`}
+                    className={`truncate type-control--compact-value type-mono ${displayName != null ? 'text-neutral-500' : 'text-neutral-800'}`}
                     title={value}
                 >
                     {value}

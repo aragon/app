@@ -309,7 +309,7 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                         </defs>
                         <XAxis
                             axisLine={false}
-                            className="text-xs"
+                            className="type-caption--unstepped"
                             dataKey="elapsedSeconds"
                             domain={[0, domainDuration]}
                             tickFormatter={(value) => {
@@ -328,7 +328,7 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                         />
                         <YAxis
                             axisLine={false}
-                            className="text-xs"
+                            className="type-caption--unstepped"
                             dataKey="feePercent"
                             domain={[0, yDomainMax]}
                             orientation="left"
@@ -362,10 +362,10 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                     </AreaChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute top-3 right-3 text-right">
-                    <span className="block text-lg font-semibold text-neutral-800">
+                    <span className="block type-stat--chart type-strong text-neutral-800">
                         {activeFeeDisplay}
                     </span>
-                    <span className="block text-sm text-neutral-500">
+                    <span className="block type-supporting--compact-detail text-neutral-500">
                         {activeLabel}
                     </span>
                 </div>

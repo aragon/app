@@ -73,7 +73,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
         <>
             <div className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:hidden">
                 <div className="flex items-start justify-between gap-3">
-                    <p className="min-w-0 truncate font-mono text-lg leading-tight text-neutral-800">
+                    <p className="min-w-0 truncate type-title-item--unstepped type-mono text-neutral-800">
                         {permissionName}
                     </p>
                     {hasConditionBreakdown && (
@@ -123,7 +123,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                             <div className="min-w-0">
                                 <PermissionEntityCell entity={where} />
                             </div>
-                            <span className="block min-w-0 truncate font-mono text-neutral-800">
+                            <span className="block min-w-0 truncate type-mono text-neutral-800">
                                 {permissionName}
                             </span>
                             <span className="block min-w-0 truncate text-neutral-800">
@@ -135,7 +135,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                 <Accordion.ItemContent>
                     <div className="flex flex-col gap-6 md:flex-row md:gap-8">
                         <div className="flex flex-1 flex-col gap-3">
-                            <p className="text-lg leading-tight text-neutral-800">
+                            <p className="type-title-item--unstepped text-neutral-800">
                                 {t(
                                     'app.settings.permissionsList.details.heading',
                                 )}
@@ -150,7 +150,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                         <div className="flex flex-1 flex-col gap-3">
                             {hasConditionBreakdown && (
                                 <>
-                                    <p className="text-lg leading-tight text-neutral-800">
+                                    <p className="type-title-item--unstepped text-neutral-800">
                                         {t(
                                             'app.settings.permissionsList.condition.heading',
                                         )}

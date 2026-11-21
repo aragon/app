@@ -76,7 +76,7 @@ export const TransactionStatusStep = <
                 )}
                 <p
                     className={classNames(
-                        'text-base leading-tight font-normal',
+                        'type-supporting--detail-value',
                         stateToLabelClassName[state],
                     )}
                 >
@@ -90,7 +90,7 @@ export const TransactionStatusStep = <
             )}
             {addon != null && !isLinkAddon && (
                 <div className="flex flex-row items-center gap-2">
-                    <p className="text-sm leading-tight font-normal text-neutral-500 md:text-base">
+                    <p className="type-supporting text-neutral-500">
                         {addon.label}
                     </p>
                     {addon.icon && (

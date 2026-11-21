@@ -188,10 +188,10 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 <div className="flex items-center gap-3">
                     <Avatar alt={name} size="lg" src={avatar?.url} />
                     <div className="flex min-w-0 flex-col gap-1">
-                        <Heading as="h3" size="h4">
+                        <Heading as="h3" typeRole="title-item">
                             {name}
                         </Heading>
-                        <p className="text-sm leading-normal text-neutral-500">
+                        <p className="type-body-compact--unstepped text-neutral-500">
                             {t('app.workspace.publishWorkspaceDialog.summary', {
                                 accounts: accounts.length,
                                 targets: targets.length,
@@ -200,7 +200,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                     </div>
                 </div>
                 {description !== '' && (
-                    <p className="text-base leading-normal text-neutral-500">
+                    <p className="type-body--unstepped text-neutral-500">
                         {description}
                     </p>
                 )}

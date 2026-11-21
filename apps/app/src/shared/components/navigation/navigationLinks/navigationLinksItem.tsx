@@ -49,7 +49,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
     const linkClassNames = classNames(
-        'truncate text-base leading-tight font-normal text-neutral-500 hover:text-neutral-800 active:text-neutral-800',
+        'truncate type-control text-neutral-500 hover:text-neutral-800 active:text-neutral-800',
         'group flex items-center py-3 focus-ring-primary',
         { 'rounded-xl px-4 hover:bg-neutral-50': variant === 'column' },
         { 'bg-neutral-50': isActive && variant === 'column' },

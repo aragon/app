@@ -28,7 +28,9 @@ export const PageAsideCard: React.FC<IPageAsideCardProps> = (props) => {
             {...otherProps}
         >
             <div className="flex items-center justify-between gap-2">
-                <Heading size="h3">{title}</Heading>
+                <Heading as="h3" typeRole="title-group">
+                    {title}
+                </Heading>
                 {icon && (
                     <Image
                         alt={title}

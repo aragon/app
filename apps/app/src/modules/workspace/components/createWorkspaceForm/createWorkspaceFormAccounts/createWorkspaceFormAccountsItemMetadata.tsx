@@ -53,7 +53,7 @@ export const CreateWorkspaceFormAccountsItemMetadata: React.FC<
 
     return (
         <div className="flex flex-col gap-6 border-t border-neutral-100 pt-4">
-            <Heading as="h4" size="h5">
+            <Heading as="h4" typeRole="supporting">
                 {t('app.workspace.createWorkspaceForm.accounts.metadata.title')}
             </Heading>
             <AvatarInput fieldPrefix={name} name="avatar" />

@@ -93,7 +93,7 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                             // biome-ignore lint/suspicious/noArrayIndexKey: a permission can carry several rules; order is fixed on-chain
                             key={`${rule.permissionId}-${index}`}
                         >
-                            <p className="font-medium text-neutral-800">
+                            <p className="text-neutral-800">
                                 {t('app.settings.sppRuleConditionSlot.rule')}{' '}
                                 {index + 1}
                             </p>

@@ -47,7 +47,7 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
                 >
                     {t('app.governance.efpCard.cta')}
                 </Button>
-                <p className="text-center text-sm text-neutral-500">
+                <p className="text-center type-supporting--compact-detail text-neutral-500">
                     {t('app.governance.efpCard.info')}
                 </p>
             </div>

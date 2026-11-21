@@ -159,14 +159,14 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     src={avatarSrc}
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate text-base text-neutral-800 md:text-lg">
+                    <p className="truncate type-title-item--framework-leading text-neutral-800">
                         <AddressOutput
                             address={gauge.address}
                             copy={false}
                             label={gauge.name ?? undefined}
                         />
                     </p>
-                    <p className="truncate text-sm text-neutral-500">
+                    <p className="truncate type-supporting--compact-detail text-neutral-500">
                         <AddressOutput address={gauge.address} />
                     </p>
                 </div>
@@ -175,18 +175,18 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             {/* Middle section on mobile - Total votes and Your votes side by side */}
             <div className="flex items-start justify-between gap-4 md:contents">
                 <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
-                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                    <p className="type-caption--column-heading type-strong text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
                         )}
                     </p>
-                    <p className="text-base text-neutral-800 md:text-lg">
+                    <p className="type-supporting--framework-leading-large text-neutral-800">
                         {formattedTotalVotes}{' '}
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes',
                         )}
                     </p>
-                    <p className="text-sm text-neutral-500">
+                    <p className="type-supporting--compact-detail text-neutral-500">
                         {formattedPercentage
                             ? `${formattedPercentage} of total`
                             : '-- of total'}
@@ -194,7 +194,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                 </div>
 
                 <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
-                    <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
+                    <p className="type-caption--column-heading type-strong text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
                         )}
@@ -206,15 +206,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                                 t(
                                     'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes',
                                 ) ? (
-                                <p className="text-right text-base text-neutral-500 md:text-lg">
+                                <p className="text-right type-supporting--framework-leading-large text-neutral-500">
                                     {displayUserVotes}
                                 </p>
                             ) : (
                                 <>
-                                    <span className="text-base text-neutral-800 md:text-lg">
+                                    <span className="type-supporting--framework-leading-large text-neutral-800">
                                         {displayUserVotes}
                                     </span>
-                                    <span className="text-sm text-neutral-500 md:text-base">
+                                    <span className="type-supporting--framework-leading text-neutral-500">
                                         {tokenSymbol}
                                     </span>
                                 </>

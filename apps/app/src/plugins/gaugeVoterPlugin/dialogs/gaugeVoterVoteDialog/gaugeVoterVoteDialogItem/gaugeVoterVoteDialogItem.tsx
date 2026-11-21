@@ -100,14 +100,14 @@ export const GaugeVoterVoteDialogItem: React.FC<
                     />
                 )}
                 <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-base text-neutral-800">
+                    <span className="truncate type-title-item--document-default text-neutral-800">
                         <AddressOutput
                             address={gaugeAddress}
                             copy={false}
                             label={gaugeName ?? undefined}
                         />
                     </span>
-                    <span className="truncate text-sm text-neutral-500">
+                    <span className="truncate type-supporting--compact-detail text-neutral-500">
                         <AddressOutput address={gaugeAddress} copy={false} />
                     </span>
                 </div>
@@ -115,12 +115,12 @@ export const GaugeVoterVoteDialogItem: React.FC<
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
                 <div className="flex flex-col items-end md:w-32">
                     {displayShare != null && (
-                        <span className="text-base font-semibold text-neutral-800">
+                        <span className="type-supporting--body-size type-strong text-neutral-800">
                             {displayShare.toFixed(2)}%
                         </span>
                     )}
                     {showTokenAmount && (
-                        <span className="text-sm text-neutral-500">
+                        <span className="type-supporting--compact-detail text-neutral-500">
                             {displayVotes} {tokenSymbol}
                         </span>
                     )}

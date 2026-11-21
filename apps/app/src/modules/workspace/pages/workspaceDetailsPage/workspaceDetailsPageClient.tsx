@@ -193,7 +193,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         className="flex flex-col gap-1 p-4 shadow-neutral-sm md:p-6"
                                         key={`${target.network}-${target.address}`}
                                     >
-                                        <span className="text-sm leading-normal text-neutral-500">
+                                        <span className="type-body-compact--unstepped text-neutral-500">
                                             {
                                                 networkDefinitions[
                                                     target.network
