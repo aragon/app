@@ -12,7 +12,7 @@ export const ProposalDataListItemSkeleton: React.FC<IProposalDataListItemSkeleto
             aria-busy="true"
             aria-label="loading"
             className={classNames(
-                'flex min-h-[184.5px] flex-col justify-center gap-y-3 bg-neutral-0 py-4 md:min-h-[221px] md:gap-y-4 md:py-6',
+                'flex min-h-[184.5px] flex-col justify-center gap-y-related--12-16 bg-neutral-0 py-inset-item--16-24 md:min-h-[221px]',
                 className,
             )}
             tabIndex={0}
@@ -22,9 +22,9 @@ export const ProposalDataListItemSkeleton: React.FC<IProposalDataListItemSkeleto
                 <StateSkeletonBar responsiveSize={{ md: 'xl' }} size="lg" width="12%" />
                 <StateSkeletonBar responsiveSize={{ md: 'xl' }} size="lg" width="24%" />
             </div>
-            <div className="flex w-full flex-col gap-y-3">
+            <div className="flex w-full flex-col gap-y-related">
                 <StateSkeletonBar size="xl" width="72%" />
-                <div className="flex flex-col gap-y-2 md:gap-y-2">
+                <div className="flex flex-col gap-y-related--fixed-8">
                     <StateSkeletonBar size="lg" width="100%" />
                     <StateSkeletonBar size="lg" width="64%" />
                 </div>

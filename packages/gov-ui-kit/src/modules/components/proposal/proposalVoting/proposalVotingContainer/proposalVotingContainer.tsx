@@ -24,7 +24,8 @@ export const ProposalVotingContainer: React.FC<IProposalVotingContainerProps> = 
     return (
         <ProposalVotingContextProvider bodyList={bodyList}>
             <Card
-                className={classNames('flex w-full flex-col gap-3 overflow-hidden p-4 md:gap-4 md:p-6', className)}
+                className={classNames('flex w-full flex-col gap-group--12-16 overflow-hidden', className)}
+                inset="surface"
                 {...otherProps}
             >
                 <ProposalVotingStatus endDate={endDate} isMultiStage={false} status={status} />

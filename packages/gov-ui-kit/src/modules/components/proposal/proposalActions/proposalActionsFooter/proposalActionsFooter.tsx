@@ -79,7 +79,7 @@ export const ProposalActionsFooter: React.FC<IProposalActionsFooterProps> = (pro
     return (
         <div
             className={classNames(
-                'flex w-full flex-col-reverse justify-between gap-3 md:flex-row md:items-center',
+                'flex w-full flex-col-reverse justify-between gap-related md:flex-row md:items-center',
                 className,
             )}
             {...otherProps}

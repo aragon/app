@@ -227,7 +227,7 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                 className={classNames({ 'cursor-default': editMode })}
                 forceMount={editMode ? true : undefined}
             >
-                <div className="flex flex-col items-start gap-y-6 self-start md:gap-y-8">
+                <div className="flex flex-col items-start gap-y-section--24-32 self-start">
                     {displayDecodeWarning && (
                         <AlertCard
                             className="w-full"
@@ -278,7 +278,7 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                                 </Dropdown.Container>
                             )}
                             {showMovementControls && (
-                                <div className="flex items-center gap-3 text-neutral-500">
+                                <div className="flex items-center gap-related text-neutral-500">
                                     <Tooltip content={arrayControls.moveDown.label} triggerAsChild={true}>
                                         <Button
                                             aria-label={arrayControls.moveDown.label}
