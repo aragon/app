@@ -33,7 +33,7 @@ export const FeaturedDelegatesList: React.FC<IFeaturedDelegatesListProps> = (
     });
 
     return (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-related--fixed-8 md:grid-cols-2 xl:grid-cols-3">
             {delegates.map((member) => (
                 <TokenMemberListItem
                     daoId={daoId}
