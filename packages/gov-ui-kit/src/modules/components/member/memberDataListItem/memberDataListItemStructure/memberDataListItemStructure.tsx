@@ -117,18 +117,21 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                         })}
                         size="h5"
                     >
-                        <span className="text-neutral-800">{formattedDelegationCount}</span>{' '}
-                        <span className="text-neutral-500">
+                        <span className="text-surface-primary">{formattedDelegationCount}</span>{' '}
+                        <span className="text-surface-secondary">
                             {copy.memberDataListItemStructure[delegationCount === 1 ? 'delegation' : 'delegations']}
                         </span>
                     </Heading>
                     <Heading as="h3" size="h5">
-                        <span className="text-neutral-800">
+                        <span className="text-surface-primary">
                             {formattedTokenAmount ?? ''}
                             {tokenSymbol ? ` ${tokenSymbol}` : ''}
                         </span>
                         {!hideLabelTokenVoting && (
-                            <span className="text-neutral-500"> {copy.memberDataListItemStructure.votingPower}</span>
+                            <span className="text-surface-secondary">
+                                {' '}
+                                {copy.memberDataListItemStructure.votingPower}
+                            </span>
                         )}
                     </Heading>
                 </div>

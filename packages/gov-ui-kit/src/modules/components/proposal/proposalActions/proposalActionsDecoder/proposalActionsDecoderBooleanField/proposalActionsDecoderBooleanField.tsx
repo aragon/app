@@ -52,7 +52,7 @@ export const ProposalActionsDecoderBooleanField: React.FC<IProposalActionsDecode
 
     const label = hideLabels ? undefined : (
         <>
-            {name} <span className="text-neutral-500">({type})</span>
+            {name} <span className="text-surface-secondary">({type})</span>
         </>
     );
 

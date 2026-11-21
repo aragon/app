@@ -251,7 +251,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             screen.getByRole('button', {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
             }),
-        ).toHaveClass('bg-neutral-0');
+        ).toHaveClass('bg-accent-default-inverse');
     });
 
     it('suppresses the advanceable helper at threshold and keeps the execution note', () => {

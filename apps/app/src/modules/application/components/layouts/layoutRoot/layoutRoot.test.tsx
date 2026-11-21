@@ -3,14 +3,20 @@ import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapte
 import * as headers from 'next/headers';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
+import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { translations } from '@/shared/constants/translations';
+import { featureFlags } from '@/shared/featureFlags';
 import { testLogger } from '@/test/utils';
 import { type ILayoutRootProps, LayoutRoot } from './layoutRoot';
 
 jest.mock('@vercel/analytics/next', () => ({ Analytics: () => null }));
 jest.mock('@vercel/speed-insights/next', () => ({
     SpeedInsights: () => null,
+}));
+
+jest.mock('../../debugPanel/lazyDebugPanel', () => ({
+    DebugPanelLazy: () => null,
 }));
 
 jest.mock('../../providers', () => ({
@@ -32,6 +38,11 @@ jest.mock('../../providers', () => ({
 describe('<LayoutRoot /> component', () => {
     const cookieToInitialStateSpy = jest.spyOn(wagmi, 'cookieToInitialState');
     const headersSpy = jest.spyOn(headers, 'headers');
+    const getSnapshotSpy = jest.spyOn(featureFlags, 'getSnapshot');
+    const getServerThemeAttributeSpy = jest.spyOn(
+        themePreviewUtils,
+        'getServerThemeAttribute',
+    );
 
     // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
     const useFeatureFlagsSpy = jest.spyOn(
@@ -46,6 +57,7 @@ describe('<LayoutRoot /> component', () => {
         headersSpy.mockReturnValue({
             get: jest.fn(),
         } as unknown as Promise<ReadonlyHeaders>);
+        getSnapshotSpy.mockResolvedValue([]);
         useFeatureFlagsSpy.mockReturnValue({
             isEnabled: () => false,
         } as unknown as ReturnType<
@@ -57,6 +69,8 @@ describe('<LayoutRoot /> component', () => {
         cookieToInitialStateSpy.mockReset();
         headersSpy.mockReset();
         useFeatureFlagsSpy.mockReset();
+        getSnapshotSpy.mockReset();
+        getServerThemeAttributeSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
@@ -99,4 +113,29 @@ describe('<LayoutRoot /> component', () => {
         const providers = screen.getByTestId('providers-mock');
         expect(providers.dataset.wagmistate).toEqual(initialState);
     });
+
+    it.each([true, false])(
+        'resolves the previewed colour theme from the request cookies with the debug panel enabled: %s',
+        async (enabled) => {
+            const cookie = `${themePreviewUtils.cookieName}=next`;
+            headersSpy.mockReturnValue({
+                get: (name: string) => (name === 'cookie' ? cookie : null),
+            } as unknown as Promise<ReadonlyHeaders>);
+            getSnapshotSpy.mockResolvedValue([
+                {
+                    key: 'debugPanel',
+                    name: 'Debug panel',
+                    description: '',
+                    enabled,
+                },
+            ]);
+
+            render(await createTestComponent());
+
+            expect(getServerThemeAttributeSpy).toHaveBeenCalledWith(
+                enabled,
+                cookie,
+            );
+        },
+    );
 });

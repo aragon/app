@@ -28,15 +28,15 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
 
     const actionItemClasses = classNames(
         'w-full rounded-xl px-4 text-left transition-all', // Default all
-        { 'border border-neutral-100 bg-neutral-0 shadow-neutral-sm': variant === 'primary' }, // Default primary
+        { 'border border-surface-default bg-surface-default shadow-neutral-sm': variant === 'primary' }, // Default primary
         { 'bg-transparent': variant === 'select' }, // Default select
-        { 'cursor-pointer focus-ring-primary': isInteractiveElement }, // Interactive default state
+        { 'cursor-pointer focus-ring ring-accent-focus': isInteractiveElement }, // Interactive default state
         {
-            'hover:border-neutral-200 hover:shadow-neutral active:border-neutral-300':
+            'hover:border-surface-hover hover:shadow-surface-default active:border-surface-active-card':
                 isInteractiveElement && variant === 'primary',
         }, // Interactive hover state (primary)
         {
-            'hover:bg-neutral-800/4 focus-visible:bg-neutral-800/4 active:bg-neutral-400/8':
+            'hover:bg-surface-transparent-hover focus-visible:bg-surface-transparent-hover active:bg-surface-transparent-active-item':
                 isInteractiveElement && variant === 'select',
         }, // Interactive hover state (select)
         { 'cursor-default focus:outline-hidden': !isInteractiveElement }, // Non-interactive default state
@@ -81,7 +81,7 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
             <div className={classNames(actionItemClasses, 'relative isolate')} {...divProps}>
                 <button
                     aria-labelledby={contentId}
-                    className="absolute inset-0 z-0 cursor-pointer border-0 bg-transparent p-0 focus-ring-primary"
+                    className="absolute inset-0 z-0 cursor-pointer border-0 bg-transparent p-0 focus-ring ring-accent-focus"
                     onClick={handleClick}
                     onKeyDown={onKeyDown as unknown as React.KeyboardEventHandler<HTMLButtonElement>}
                     type="button"

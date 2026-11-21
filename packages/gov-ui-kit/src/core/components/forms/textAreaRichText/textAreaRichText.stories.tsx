@@ -45,8 +45,8 @@ export const Controlled: Story = {
             <div className="flex grow flex-col gap-2">
                 <TextAreaRichText onChange={setValue} value={value} {...props} />
                 <div className="flex flex-col gap-1">
-                    <p className="text-md text-neutral-800">Output</p>
-                    <p className="text-neutral-500">{value}</p>
+                    <p className="text-md text-surface-primary">Output</p>
+                    <p className="text-surface-secondary">{value}</p>
                 </div>
             </div>
         );

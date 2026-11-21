@@ -22,12 +22,12 @@ export const Toggle: React.FC<IToggleProps> = (props) => {
     const { className, label, value, disabled, ...otherProps } = props;
 
     const toggleClasses = classNames(
-        'flex h-8 cursor-pointer items-center rounded-lg border px-3 outline-hidden transition-all focus-ring-primary md:h-10 md:rounded-xl md:px-4', // Default
-        'data-state-off:enabled:shadow-neutral-sm data-[state=off]:enabled:border-neutral-100 data-[state=off]:enabled:bg-neutral-0 data-[state=off]:enabled:text-neutral-500', // Default state
-        'data-[state=off]:hover:enabled:border-neutral-200 data-[state=off]:hover:enabled:shadow-neutral', // Default hover state
-        'data-state-on:enabled:shadow-primary-sm data-[state=on]:enabled:border-primary-400 data-[state=on]:enabled:bg-neutral-0 data-[state=on]:enabled:text-primary-400', // Active state
-        'data-[state=on]:hover:enabled:shadow-primary', // Active hover state
-        'disabled:cursor-default disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300', // Disabled state
+        'flex h-8 cursor-pointer items-center rounded-lg border px-3 outline-hidden focus-ring transition-all ring-accent-focus md:h-10 md:rounded-xl md:px-4', // Default
+        'data-state-off:enabled:shadow-surface-sm data-[state=off]:enabled:border-surface-default data-[state=off]:enabled:bg-surface-default data-[state=off]:enabled:text-surface-default', // Default state
+        'data-[state=off]:hover:enabled:border-surface-hover data-[state=off]:hover:enabled:shadow-surface-default', // Default hover state
+        'data-state-on:enabled:shadow-accent-sm data-[state=on]:enabled:border-surface-selected data-[state=on]:enabled:bg-surface-default data-[state=on]:enabled:text-surface-selected', // Active state
+        'data-[state=on]:hover:enabled:shadow-accent-default', // Active hover state
+        'disabled:cursor-default disabled:border-surface-disabled-toggle disabled:bg-surface-disabled disabled:text-surface-disabled', // Disabled state
         className,
     );
 

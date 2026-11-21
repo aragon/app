@@ -74,10 +74,10 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
         <div className="flex flex-col gap-2">
             {requirements.map(({ action, labelKey, threshold }) => (
                 <p
-                    className="text-center text-neutral-500 md:text-right"
+                    className="text-center text-surface-secondary md:text-right"
                     key={action}
                 >
-                    <span className="text-neutral-800">
+                    <span className="text-surface-primary">
                         {t(
                             'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel',
                             {

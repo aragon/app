@@ -46,11 +46,11 @@ describe('<InputSearch /> component', () => {
         const searchIcon = screen.getByTestId(IconType.SEARCH);
 
         await user.click(searchbox);
-        expect(searchIcon.getAttribute('class')).toContain('text-neutral-600');
+        expect(searchIcon.getAttribute('class')).toContain('icon-surface-active-control');
         expect(onFocus).toHaveBeenCalled();
 
         await user.tab();
-        expect(searchIcon.getAttribute('class')).not.toContain('text-neutral-600');
+        expect(searchIcon.getAttribute('class')).not.toContain('icon-surface-active-control');
         expect(onBlur).toHaveBeenCalled();
     });
 

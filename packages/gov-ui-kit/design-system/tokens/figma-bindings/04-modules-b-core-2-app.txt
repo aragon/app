@@ -1,0 +1,476 @@
+LEGEND: @=variant root; path=last 2 layer names; F fill, S stroke, T text fill, E effect colour (in:=inner); X=>Name nested instance (main comp/set name); *F/*S/*T/*E colour override on an instance (>sublayer); P: primitive var; RAW:#hex unbound; @NN paint opacity; "all:" lines shared by every variant; " - " lines = variant groups with identical remaining lines; "ROWS" then " + " lines = where a component is denser that way, each line lists the extra bindings present in exactly that variant subset (additive, not exclusive).
+
+=== PAGE Transaction (10141:24066) components=8 RESUMED at #2
+## [2] _TransactionDataList / ItemStructure (445:5113) 8v {Breakpoint:None/MD; Variant:Execution/Received/Sent; isLoading:True/False}
+ ROWS
+ + Variant=Execution; isLoading=True (2): ContentContainer/StateSkeletonBar=>StateSkeletonBar ; StateSkeletonCircular=>StateSkeletonCircular ; ValueContainer/StateSkeletonBar=>StateSkeletonBar
+ + isLoading=False (6): AvatarIcon =>AvatarIcon  ; ContentContainer/Timestamp T P:gray/500
+ + Variant=Received; isLoading=False (2): AvatarIcon >icon *F P:green/500
+ + Variant=Received/Sent; isLoading=False (4): ContentContainer/TransferType T P:gray/800 ; ValueContainer/TokenAmount T P:gray/500
+ + Variant=Sent; isLoading=False (2): AvatarIcon >icon *F P:red/500
+ + Variant=Execution; isLoading=False (2): AvatarIcon >icon *F P:blue/500 ; ValueContainer/ActionAmount T P:gray/500 ; Wrapper/PluginName T P:gray/500 ; Wrapper/TransferType T P:gray/800
+## [3] _TransactionDataList / ItemGroup (14375:7643) 2v {Breakpoint:None/MD}
+ all: DataListItem=>DataList / Item
+## [4] _TransactionStatus / Title (26530:3449) 2v {Breakpoint:None/MD}
+ all: TransactionStepper/1 T P:gray/800 ; TransactionStepper/2 T P:gray/500 ; TransactionStepper/Step T P:gray/800 ; TransactionStepper/of T P:gray/500 ; ↳ Name=>Heading
+## [5] _TransactionDetail / DialogContent (30473:27210) 2v {Breakpoint:None/MD}
+ all: ActionExecution=>ActionExecution ; _TransactionDetail / ~=>_TransactionDetail / Summary
+## [6] _TransactionDetail / Summary (32537:7702) 4v {Breakpoint:MD/None; IsActiveProcess:True/False}
+ all: @ E shadow/surface/sm ; @ F P:gray/0 ; @ S P:gray/100 ; DefinitionList/DefintionList / Item=>DefintionList / Item
+## [7] TransactionDetail (30473:117450) 2v {Breakpoint:None/LG}
+ all: Dialog=>Dialog
+
+=== PAGE Votes (17239:29368) components=4
+## [0] VotesDataList (17239:29369) 4v {Breakpoint:None/MD; IsInitialLoading:False/True}
+ all: DataList=>DataList
+## [1] VotesProposalDataList (18278:8168) 4v {Breakpoint:None/MD; IsInitialLoading:False/True}
+ all: DataList=>DataList
+## [2] _VotesDataList / ItemGroup (17239:29378) 4v {Breakpoint:None/MD; Variant:Proposal/Member}
+ all: Item=>DataList / Item
+ ROWS
+ + Variant=Proposal (2): Item>image *F IMAGE
+## [3] _VotesDataList / ItemStructure (17239:29393) 8v {Breakpoint:None/MD; Variant:Proposal/Member; IsLoading:False/True}
+ ROWS
+ + Variant=Proposal; IsLoading=False (2): AddressAvatar=>AddressAvatar ; ContentWrapper/Amount T text/surface/secondary ; NameWrapper/Name T text/surface/primary ; VotingOption=>_VotesDataList / VotingOption / ItemStructure
+ + Variant=Member; IsLoading=False (2): ProposalContentWrapper/ProposalID T text/surface/secondary ; ProposalContentWrapper/ProposalTitle T text/surface/primary ; VotingWrapper/Time T text/surface/secondary ; VotingWrapper/VotingOption=>_VotesDataList / VotingOption / ItemStructure
+ + Variant=Proposal; IsLoading=True (2): StateSkeletonCircular=>StateSkeletonCircular ; ValueContainer/StateSkeletonBar=>StateSkeletonBar
+ + IsLoading=True (4): ContentContainer/StateSkeletonBar=>StateSkeletonBar
+ + Variant=Member; IsLoading=True (2): Container/StateSkeletonBar=>StateSkeletonBar ; StateSkeletonBarGroup/StateSkeletonBar=>StateSkeletonBar
+
+=== PAGE Wallet (10282:7619) components=1
+## [0] Wallet (10451:13526) 24v {Breakpoint:XL/None; State:Default/Loading/Focus/Hover/Active; IsConnected:True/False; HasENS:False/True}
+ ROWS
+ + Breakpoint=XL; State=Hover; IsConnected=True; HasENS=False (1): 0xd5fb…24f5 T text/surface/hover
+ + Breakpoint=XL; State=Active; IsConnected=True; HasENS=False (1): 0xd5fb…24f5 T text/surface/active
+ + Breakpoint=XL; State=Hover; IsConnected=True; HasENS=True (1): sio.eth T text/surface/hover
+ + Breakpoint=XL; State=Active; IsConnected=True; HasENS=True (1): sio.eth T text/surface/active
+ + Breakpoint=None; State=Hover; IsConnected=False; HasENS=True (1): Connect T text/surface/hover
+ + Breakpoint=None; State=Active; IsConnected=False; HasENS=True (1): Connect T text/surface/active
+ + [Breakpoint,State,IsConnected,HasENS] XL,Default,True,False | XL,Loading,True,False | XL,Loading,True,True | XL,Focus,True,False | XL,Default,True,True | None,Default,True,True | None,Default,True,False | None,Loading,True,True | None,Loading,True,False | XL,Focus,True,True | +4 more (14): @ F bg/surface/default ; @ S border/surface/default
+ + Breakpoint=XL; State=Default/Focus; IsConnected=True; HasENS=False (2): 0xd5fb…24f5 T text/surface/default
+ + State=Default/Focus/Hover/Active; IsConnected=True (16): Avatar=>Avatar
+ + Breakpoint=XL; State=Loading; IsConnected=True (2): StateSkeletonBar=>StateSkeletonBar
+ + State=Loading; IsConnected=True (4): StateSkeletonCircular=>StateSkeletonCircular
+ + State=Focus :: [Breakpoint,IsConnected,HasENS] XL,True,False | XL,True,True | None,True,True | None,True,False | None,False,True (5): @ E P:aragon/400 ; @ E bg/body
+ + State=Hover :: [Breakpoint,IsConnected,HasENS] XL,True,False | XL,True,True | None,True,True | None,True,False | None,False,True (5): @ F bg/surface/hover ; @ S border/surface/hover
+ + State=Active :: [Breakpoint,IsConnected,HasENS] XL,True,False | XL,True,True | None,True,True | None,True,False | None,False,True (5): @ F bg/surface/active ; @ S border/surface/active
+ + Breakpoint=XL; State=Default/Focus; IsConnected=True; HasENS=True (2): sio.eth T text/surface/default
+ + Breakpoint=None; State=Default/Focus; IsConnected=False; HasENS=True (2): Connect T text/surface/default
+
+=== PAGE Links (405:1042) components=1
+## [0] Link (7958:15661) 20v {Variant:Primary/Neutral; Size:SM/MD; State:Default/Focus/Hover/Active/Disabled}
+ ROWS
+ + Variant=Primary; State=Default/Focus (4): LabelGroup/Label T text/link/default
+ + State=Focus (4): @ E P:aragon/400 ; @ E bg/body ; @ F bg/body
+ + Variant=Primary; State=Hover (2): LabelGroup/Label T text/link/hover
+ + Variant=Primary; State=Active (2): LabelGroup/Label T text/link/active
+ + Variant=Primary; State=Disabled (2): LabelGroup/Label T text/surface/disabled
+ + Variant=Neutral; State=Default (2): LabelGroup/title T text/link/secondary-default
+ + Variant=Neutral; State=Focus (2): LabelGroup/Label T text/link/secondary-default
+ + Variant=Neutral; State=Hover (2): LabelGroup/Label T text/link/secondary-hover
+ + Variant=Neutral; State=Active (2): LabelGroup/title T text/link/secondary-active
+ + Variant=Neutral; State=Disabled (2): LabelGroup/title T text/surface/disabled
+
+=== PAGE Spinner (7806:26769) components=1
+## [0] Spinner (7806:26803) 28v {Variant:Neutral/Primary/PrimaryInverted/Success/Warning/Critical; Size:SM/MD/LG/XL; IsLoading:True/False}
+ ROWS
+ + Variant=Neutral; IsLoading=True (4): stroke S border/surface/active
+ + Variant=Neutral (8): background S border/surface/default
+ + Variant=Primary; IsLoading=True (4): background S border/accent/default ; stroke S border/accent/secondary
+ + Variant=PrimaryInverted; IsLoading=True (4): background S border/accent/primary-inverse ; stroke S border/accent/secondary-inverse
+ + Variant=Success; IsLoading=True (4): background S border/success/default ; stroke S border/success/secondary
+ + Variant=Warning; IsLoading=True (4): background S border/warning/primary ; stroke S border/warning/secondary
+ + Variant=Critical; IsLoading=True (4): background S border/critical/primary ; stroke S border/critical/secondary
+
+=== PAGE Number (31991:1074) components=1
+## [0] NumberFormatter (31991:2564) 12v {Breakpoint:None/MD; State:Default/Active; Comparator:LT/GT/None}
+ all: Prefix T text/surface/secondary ; Spacer/Suffix T text/surface/secondary ; Value T text/surface/secondary
+ ROWS
+ + Comparator=LT/GT (8): Comparator T text/surface/secondary
+ + State=Active (6): ↳ Tooltip=>Tooltip
+
+=== PAGE Progress (445:2671) components=1
+## [0] Progress (11084:11462) 8v {Size:MD/SM; Variant:Primary/Neutral/Success/Critical}
+ all: @ F bg/surface/tertiary ; ThresholdIndicator F bg/surface/primary-inverse ; ThresholdIndicator S bg/surface/primary
+ - Variant=Primary (2): IndicatorWrapper/Indicator F bg/accent/primary
+ - Variant=Neutral (2): IndicatorWrapper/Indicator F bg/surface/primary-inverse
+ - Variant=Success (2): IndicatorWrapper/Indicator F bg/success/tertiary
+ - Variant=Critical (2): IndicatorWrapper/Indicator F bg/critical/tertiary
+
+=== PAGE Select (31951:19701) components=2
+## [0] _Content / SelectAddress (31952:30276) 10v {Breakpoint:None/MD; IsEmpty:False/True; IsAddAddress:False/True; IsResolving:False/True; IsFiltered:False/True}
+ all: _DataList / Filter=>_DataList / Filter
+ ROWS
+ + IsEmpty=False :: [Breakpoint,IsAddAddress,IsResolving,IsFiltered] None,False,False,False | MD,False,False,False | None,False,True,False | MD,False,True,False | None,True,False,False | MD,True,False,False | None,False,False,True | MD,False,False,True (8): AssetDataList/Item=>DataList / Item ; AssetDataList/_DataList / ActionItem=>_DataList / ActionItem
+ + IsEmpty=False; IsAddAddress=False; IsResolving=False; IsFiltered=False (2): AssetDataList/Item>image *F IMAGE ; AssetDataList/Pagination=>_DataList / Pagination
+ + IsEmpty=True; IsAddAddress=False; IsResolving=False; IsFiltered=False (2): StateEmpty=>StateEmpty
+ + IsEmpty=False; IsAddAddress=True; IsResolving=False; IsFiltered=False (2): AssetDataList/Item>↳ Avatar *F IMAGE
+## [1] SelectAddress (31952:91720) 3v {Breakpoint:None/MD/LG}
+ all: Dialog=>Dialog
+ ROWS
+ + Breakpoint=MD (1): Dialog>image *F IMAGE
+
+=== PAGE States (3735:11812) components=6
+## [0] StateEmpty (10095:21633) 6v {Breakpoint:None/MD; IsStacked:True/False; Illustration:Object/Human}
+ all: ButtonGroup/↳ Button Primary=>Button  ; ButtonGroup/↳ Button Secondary=>Button 
+ ROWS
+ + Breakpoint=None; IsStacked=False; Illustration=Object (1): IllustrationWrapper/IlluObject=>IlluObject
+ + Breakpoint=MD; IsStacked=False; Illustration=Object (1): Body/Copy T text/surface/secondary ; Body/Title T text/surface/primary ; IllustrationWrapper/Illustration=>IlluObject
+ + IsStacked=True; Illustration=Object (2): Illustration=>IlluObject
+ + [Breakpoint,IsStacked,Illustration] None,True,Object | None,False,Object | None,True,Human | MD,True,Object | MD,True,Human (5): Main/Copy T text/surface/secondary ; Main/Title T text/surface/primary
+ + IsStacked=False; Illustration=Object (2): IllustrationWrapper F bg/surface/secondary
+ + IsStacked=True; Illustration=Human (2): IlluHuman=>IlluHuman
+## [1] StatePingAnimation (15073:29243) 10v {Animation:Start/End; Variant:Info/Success/Warning/Critical/Primary}
+ - Variant=Info (2): Dot F icon/info/primary ; Ping F icon/info/secondary
+ - Variant=Success (2): Dot F icon/success/primary ; Ping F icon/success/secondary
+ - Variant=Warning (2): Dot F icon/warning/primary ; Ping F icon/warning/secondary
+ - Variant=Critical (2): Dot F icon/critical/primary ; Ping F icon/critical/secondary
+ - Variant=Primary (2): Dot F icon/accent/primary ; Ping F icon/accent/secondary
+## [2] StateStep (16752:21585) 10v {Breakpoint:None/MD; Status:Active/Pending/Success/Warning/Critical}
+ all: Addon=>_StateStep / Addon
+ ROWS
+ + Status=Active/Pending (4): SpinnerWrapper/Spinner=>Spinner
+ + Status=Active (2): StatusWrapper/Label T text/accent/primary
+ + Status=Pending (2): StatusWrapper/Label T text/surface/secondary
+ + Status=Success/Warning/Critical (6): StatusWrapper/AvatarIcon =>AvatarIcon 
+ + Status=Success (2): StatusWrapper/AvatarIcon >icon *F icon/success/primary ; StatusWrapper/Label T text/success/primary
+ + Status=Warning (2): StatusWrapper/Label T text/warning/primary
+ + Status=Critical (2): StatusWrapper/Label T text/critical/primary
+## [3] StateSkeletonBar (14335:29808) 10v {Size:MD/SM/LG/XL/2XL; Animation:Start/End}
+ all: @ F bg/surface/tertiary ; Loader F GRAD[gradient/skeleton/start>gradient/skeleton/middle>gradient/skeleton/end]
+## [4] StateSkeletonCircular (16106:38321) 12v {Size:SM/XS/MD/LG/XL/2XL; Animation:Start/End}
+ all: @ F bg/surface/tertiary ; Loader F GRAD[gradient/skeleton/start>gradient/skeleton/middle>gradient/skeleton/end]
+## [5] _StateStep / Addon (16752:21697) 4v {Breakpoint:None/MD; Variant:Label/Link}
+ - Variant=Label (2): Label T text/surface/secondary ; ↳ Label Icon=>Icon
+ - Variant=Link (2): Link=>Link
+
+=== PAGE Tabs (14931:36787) components=2
+## [0] _Tabs / Trigger (14931:33960) 12v {HasUnderline:True/False; State:Default/Disabled/Focus/Hover/Active; IsSelected:False/True}
+ all: ↳ Icon=>Icon
+ ROWS
+ + HasUnderline=True; State=Disabled; IsSelected=False (1): @ S border/surface/disabled
+ + HasUnderline=True; State=Hover; IsSelected=False (1): @ S border/surface/hover
+ + HasUnderline=True; State=Default/Focus; IsSelected=False (2): @ S border/surface/default
+ + State=Default/Focus; IsSelected=False (4): Label T text/link/secondary-default ; ↳ Icon>icon *F icon/surface/default
+ + State=Disabled; IsSelected=False (2): Label T text/surface/disabled ; ↳ Icon>icon *F icon/surface/disabled
+ + State=Default; IsSelected=True (2): @ S border/surface/selected ; Label T text/surface/primary
+ + [HasUnderline,State,IsSelected] True,Default,True | False,Default,True | True,Active,False | False,Active,False (4): ↳ Icon>icon *F icon/surface/active
+ + State=Focus; IsSelected=False (2): @ E P:aragon/400 ; @ E bg/body ; @ F bg/body
+ + State=Hover; IsSelected=False (2): Label T text/link/secondary-hover ; ↳ Icon>icon *F icon/surface/hover
+ + State=Active; IsSelected=False (2): @ S border/accent/active ; Label T text/link/secondary-active
+## [1] Tabs (15855:27684) 2v {HasUnderline:True/False}
+ all: ↳ Tab 1=>_Tabs / Trigger ; ↳ Tab 2=>_Tabs / Trigger ; ↳ Tab 3=>_Tabs / Trigger
+ ROWS
+ + HasUnderline=True (1): @ S border/surface/secondary
+
+=== PAGE Tags (405:1054) components=1
+## [0] Tag (21:200) 24v {Breakpoint:MD/None; Variant:Neutral/Primary/Info/Success/Warning/Critical; Outline:False/True}
+ ROWS
+ + Variant=Neutral; Outline=False (2): @ F bg/surface/tertiary
+ + Variant=Neutral (4): Label T text/surface/primary
+ + Outline=True (12): @ F bg/surface/transparent@0
+ + Variant=Neutral; Outline=True (2): @ S border/surface/secondary
+ + Variant=Primary; Outline=False (2): @ F bg/accent/primary-inverse
+ + Variant=Primary (4): Label T text/accent/primary
+ + Variant=Primary; Outline=True (2): @ S border/accent/primary
+ + Variant=Info; Outline=False (2): @ F bg/info/primary
+ + Variant=Info (4): Label T text/info/primary
+ + Variant=Info; Outline=True (2): @ S border/info/primary
+ + Variant=Success; Outline=False (2): @ F bg/success/primary
+ + Variant=Success (4): Label T text/success/primary
+ + Variant=Success; Outline=True (2): @ S border/success/primary
+ + Variant=Warning; Outline=False (2): @ F bg/warning/primary
+ + Variant=Warning (4): Label T text/warning/primary
+ + Variant=Warning; Outline=True (2): @ S border/warning/primary
+ + Variant=Critical; Outline=False (2): @ F bg/critical/primary
+ + Variant=Critical (4): Label T text/critical/primary
+ + Variant=Critical; Outline=True (2): @ S border/critical/primary
+
+=== PAGE Tooltip (12428:11290) components=1
+## [0] Tooltip (12848:9526) 5v {Variant:Neutral/Info/Warning/Critical/Success}
+ - Variant=Neutral (1): @ E shadow/surface/default ; @ F bg/surface/tertiary-inverse ; Arrow F bg/surface/tertiary-inverse ; Message T text/surface/primary-inverse
+ - Variant=Info (1): @ E RAW:#1588b91a ; @ F bg/info/tertiary ; Arrow F bg/info/tertiary ; Message T text/info/secondary
+ - Variant=Warning (1): @ E RAW:#db7d241a ; @ F bg/warning/tertiary ; Arrow F bg/warning/tertiary ; Message T text/warning/secondary
+ - Variant=Critical (1): @ E RAW:#d627361a ; @ F bg/critical/tertiary ; Arrow F bg/critical/tertiary ; Message T text/critical/secondary
+ - Variant=Success (1): @ E RAW:#74af071a ; @ F bg/success/tertiary ; Arrow F bg/success/tertiary ; Message T text/success/secondary
+
+=== PAGE Toggles (8072:21657) components=2
+## [0] ToggleGroup (11857:23553) 4v {Size:SM/MD; Variant:Wrap/Space-Between}
+ all: ↳ Toggle 1=>Toggle ; ↳ Toggle 2=>Toggle ; ↳ Toggle 3=>Toggle ; ↳ Toggle 4=>Toggle ; ↳ Toggle 5=>Toggle
+## [1] Toggle (9778:14) 12v {Size:SM/MD; State:Default/Focus/Hover/Active/Disabled; IsSelected:False/True}
+ ROWS
+ + [Size,State,IsSelected] SM,Default,False | SM,Default,True | MD,Default,False | MD,Default,True | SM,Focus,False | MD,Focus,False (6): @ F bg/surface/default
+ + State=Default/Focus; IsSelected=False (4): @ S border/surface/default ; Label T text/surface/default
+ + State=Default; IsSelected=False (2): @ E shadow/surface/sm
+ + State=Default; IsSelected=True (2): @ S border/surface/selected ; Label T text/surface/selected
+ + [Size,State,IsSelected] SM,Default,True | MD,Default,True | MD,Active,False (3): @ E shadow/accent/sm
+ + State=Focus; IsSelected=False (2): @ E P:aragon/400 ; @ E bg/body
+ + State=Hover; IsSelected=False (2): @ E shadow/surface/default ; @ F bg/surface/hover ; @ S border/surface/hover ; Label T text/surface/hover
+ + State=Active; IsSelected=False (2): @ F bg/surface/active ; @ S border/accent/active ; Label T text/accent/active
+ + State=Disabled; IsSelected=False (2): @ F bg/surface/disabled ; @ S border/surface/disabled ; Label T text/surface/disabled
+
+=== PAGE Branding (22883:38326) components=1
+## [0] BrandingSubline (22883:38327) 3v {Breakpoint:None/MD/LG}
+ all: Governed on T text/surface/primary ; logo-aragon/Logotype F gradient/brand/primary
+
+=== PAGE Composers (22883:38341) components=8
+## [0] ComposerAction (22883:38400) 12v {Breakpoint:None/MD; HasExecute:False/True; OnlyAuthorizedActions:False/True; IsOpen:False/True}
+ all: ButtonGroup/Button =>Button  ; ButtonGroup/Button >icon *F icon/accent/default
+ - HasExecute=False; IsOpen=False (4): ActionGroup/Dropdown =>Dropdown  ; ActionGroup/Switch=>Switch
+ - Breakpoint=None; HasExecute=True; OnlyAuthorizedActions=False; IsOpen=False (1): ActionGroup/Dropdown =>Dropdown 
+ - HasExecute=False; IsOpen=True :: [Breakpoint,OnlyAuthorizedActions] None,False | MD,False | MD,True (3): ActionGroup/Dropdown =>Dropdown  ; ActionGroup/Switch=>Switch ; ActionSearch=>_ComposerAction / Search
+ - Breakpoint=None; HasExecute=True; OnlyAuthorizedActions=False; IsOpen=True (1): ActionGroup/Dropdown =>Dropdown  ; ActionSearch=>_ComposerAction / Search
+ - IsOpen=True :: [Breakpoint,HasExecute,OnlyAuthorizedActions] None,False,True | MD,True,False (2): ActionSearch=>_ComposerAction / Search ; Dropdown =>Dropdown 
+ - Breakpoint=MD; HasExecute=True; OnlyAuthorizedActions=False; IsOpen=False (1): Dropdown =>Dropdown 
+## [1] _ComposerAction / SearchInput (22883:38441) 2v {HasValue:False/True}
+ all: @ F bg/surface/default ; Wrapper/Pointer F bg/surface/secondary-inverse
+ - HasValue=False (1): Wrapper/Placeholder T text/surface/placeholder
+ - HasValue=True (1): Wrapper/Value T text/surface/secondary
+## [2] _ComposerAction / Item (22883:38450) 4v {IsSelected:True/False; IsFiltered:False/True}
+ all: Content/Selector T text/surface/secondary ; KeyboardShortcut=>_ComposerAction / KeyboardShortcut
+ ROWS
+ + IsSelected=True; IsFiltered=False (1): ↳ Icon>icon *F icon/surface/hover
+ + IsSelected=True; IsFiltered=True (1): Icon=>Icon ; Icon>icon *F icon/surface/hover
+ + IsSelected=True (2): @ F bg/surface/hover ; Wrapper/Action T text/surface/primary
+ + [IsSelected,IsFiltered] True,False | False,False | False,True (3): ↳ Icon=>Icon
+ + IsFiltered=True (2): Wrapper/FilterHighlight F bg/info/primary
+ + IsSelected=False (2): @ F bg/surface/default ; Wrapper/Action T text/surface/secondary ; ↳ Icon>icon *F icon/surface/default
+## [3] _ComposerAction / Search (22883:38475) 16v {Breakpoint:None/MD; Variant:Actions/Connect; OnlyAuthorizedActions:False/True; IsFiltered:False/True; HasCustomAbi:False/True}
+ all: @ E shadow/surface/default ; @ F bg/surface/default ; @ S border/surface/active ; ActionItemGroup/ActionItem=>_ComposerAction / Item ; Dropdown/DropdownFooter=>_ComposerAction / DropdownFooter ; SearchInput=>_ComposerAction / SearchInput
+ ROWS
+ + Variant=Actions; OnlyAuthorizedActions=False :: [Breakpoint,IsFiltered,HasCustomAbi] None,False,False | MD,False,False | None,True,False | MD,True,False | None,True,True | MD,True,True (6): ActionItemGroup/ActionItem>icon *F icon/surface/hover
+ + Variant=Actions :: [Breakpoint,OnlyAuthorizedActions,IsFiltered,HasCustomAbi] None,False,False,False | None,True,False,False | MD,False,False,False | MD,True,False,False | None,False,True,False | MD,False,True,False | None,False,False,True | MD,False,False,True | None,False,True,True | MD,False,True,True (10): ActionItemGroup/ActionItem>icon *F icon/surface/default
+ + Variant=Actions :: [Breakpoint,OnlyAuthorizedActions,IsFiltered,HasCustomAbi] None,False,False,False | None,True,False,False | MD,False,False,False | MD,True,False,False | None,True,True,False | MD,True,True,False | None,False,False,True | MD,False,False,True | None,False,True,True | MD,False,True,True (10): ActionItemGroup/ActionHeader=>_ComposerAction / Header
+ + Variant=Actions; OnlyAuthorizedActions=False; HasCustomAbi=False (4): ActionItemGroup/_ComposerAction / Hea~=>_ComposerAction / Header
+ + OnlyAuthorizedActions=False; IsFiltered=False :: [Breakpoint,Variant,HasCustomAbi] None,Actions,True | MD,Actions,True | None,Connect,False | MD,Connect,False (4): Dropdown/ActionItem=>_ComposerAction / Item ; Dropdown/ActionItem>icon *F icon/surface/hover
+## [4] _ComposerAction / DropdownFooter (22883:38694) COMP
+ all: @ F GRAD[gradient/surface/primary-transparent>gradient/surface/primary] ; Wrapper/Add action T text/surface/secondary ; Wrapper/KeyboardShortcut=>_ComposerAction / KeyboardShortcut ; Wrapper/Select T text/surface/secondary
+## [5] _ComposerAction / KeyboardShortcut (22883:38702) COMP
+ all: @ F bg/surface/primary ; @ S border/surface/secondary ; ↑ T text/surface/primary
+## [6] _ComposerAction / Header (22883:38704) 4v {Breakpoint:None/MD; HasCustomAbi:False/True}
+ all: ContractAddress T text/surface/secondary ; CopyGroup/ContractName T text/surface/primary ; Divider F bg/surface/tertiary
+ ROWS
+ + HasCustomAbi=True (2): CopyGroup/Tag=>Tag
+## [7] _ComposerAction / Dropdown /MenuItemGroup (30111:5803) COMP
+ all: Dropdown / MenuItem=>Dropdown / MenuItem
+
+=== PAGE Footers (22883:35779) components=1
+## [0] Footer (22883:35786) 3v {Breakpoint:None/LG/MD}
+ all: @ F bg/surface/primary ; @ S border/surface/secondary ; CopyrightWrapper/Copyright T text/surface/secondary ; LinkItem/Label T text/surface/secondary ; MetaDataWrapper/BrandingSubline=>BrandingSubline ; MetaDataWrapper/Tag=>Tag
+ ROWS
+ + Breakpoint=None (1): LinkItemGroup/LinkItem S border/surface/secondary
+
+=== PAGE Headers (22879:37796) components=8
+## [0] Header / DAO (22884:41751) 2v {🖥️ Breakpoint:MD/None}
+ all: @ F GRAD[gradient/surface/secondary>gradient/surface/secondary-transparent] ; Content/Stats=>_Header / StatsGroup ; CopyGroup/Collapsible=>Collapsible ; CopyGroup/Heading=>Heading
+ ROWS
+ + 🖥️ Breakpoint=MD (1): Container/DaoAvatar=>DaoAvatar
+## [1] Header / Proposal (25547:815) 2v {Breakpoint:MD/None}
+ all: @ F GRAD[gradient/surface/secondary>gradient/surface/secondary-transparent] ; Container/Breadcrumb=>Breadcrumb ; CopyGroup/Heading=>Heading ; CopyGroup/The funding proposal ~ T text/surface/secondary
+## [2] Header / Member (25547:870) 2v {Breakpoint:MD/None}
+ all: @ F GRAD[RAW:#ffffff>RAW:#ffffff00] ; Content/Breadcrumb=>Breadcrumb ; CopyGroup/Heading=>Heading ; CopyGroup/Lead Designer at Arag~ T P:gray/500
+ ROWS
+ + Breakpoint=MD (1): Container/AddressAvatar=>AddressAvatar
+## [3] Header / Wizard (22884:41711) 2v {🖥️ Breakpoint:None/MD}
+ all: @ F GRAD[gradient/surface/secondary>gradient/surface/secondary-transparent] ; Container/Stepper=>_Header / WizardStepper
+ - 🖥️ Breakpoint=None (1): CopyWrapper/Description T text/surface/secondary ; CopyWrapper/Heading=>Heading
+ - 🖥️ Breakpoint=MD (1): CopyGroup/Description T text/surface/secondary ; CopyGroup/Heading=>Heading
+## [4] Header / List (25552:1438) 2v {Breakpoint:MD/None}
+ all: Group/Button =>Button  ; Group/Heading=>Heading
+## [5] _Header / WizardStepper (22884:41686) 2v {🖥️ Breakpoint:None/MD}
+ all: Next Step/Next: T text/surface/secondary ; Next Step/Step name T text/surface/primary ; Progress=>Progress ; Steps/StepTotal T text/surface/secondary ; Steps/of T text/surface/secondary ; Wrapper/StepCurrent T text/accent/primary ; Wrapper/StepLabel T text/accent/primary
+## [6] _Header / StatsItem (25547:751) 2v {Breakpoint:MD/None}
+ all: Label T text/surface/secondary ; ValueWrapper/Suffix T text/surface/secondary ; ValueWrapper/Value T text/surface/primary
+## [7] _Header / StatsGroup (25547:757) 2v {Breakpoint:MD/None}
+ all: Item 01=>_Header / StatsItem ; Item 02=>_Header / StatsItem ; Item 03=>_Header / StatsItem ; Item 04=>_Header / StatsItem
+
+=== PAGE Layouts (22883:35923) components=2
+## [0] LayoutDAO (22883:36464) 3v {Breakpoint:None/MD/XL}
+ all: @ F bg/body ; Navigation / DAO=>Navigation / DAO ; Page F bg/body ; Page/Footer=>Footer
+ ROWS
+ + Breakpoint=None/MD (2): iOS16SafariTabBar=>_iOS16 / SafariTabBar ; iOS16StatusBar=>_iOS16 / StatusBar
+## [1] LayoutWizard (22883:36484) 3v {Breakpoint:None/MD/XL}
+ all: @ F bg/body ; Navigation / Wizard=>Navigation / Wizard ; Page F bg/body ; Page/Footer=>Footer ; Page/Header / Wizard=>Header / Wizard
+ ROWS
+ + Breakpoint=None/MD (2): iOS16SafariTabBar=>_iOS16 / SafariTabBar ; iOS16StatusBar=>_iOS16 / StatusBar
+
+=== PAGE Navigations (22879:36735) components=10
+## [0] Navigation / DAO (22879:38322) 5v {Breakpoint:None/SM/MD/LG/XL}
+ all: @ F bg/surface/primary ; @ S border/surface/secondary ; Container/DaoDialogTrigger=>DaoDialogTrigger ; TriggerGroup/Wallet=>Wallet
+ - Breakpoint=None/SM/MD (3): TriggerGroup/NavigationTrigger=>_Navigation / Trigger
+ - Breakpoint=LG/XL (2): Container/Menu=>_Navigation / Menu
+## [1] Navigation / Wizard (22879:38359) 4v {Breakpoint:LG/XL/None/MD}
+ all: @ F bg/surface/primary ; @ S border/surface/secondary ; DAODetail/Avatar *F IMAGE ; DAODetail/Avatar=>Avatar ; DAODetail/DAO Name T text/surface/secondary ; Process/ProcessName T text/surface/primary ; ProcessWrapper/_Navigation / Trigger=>_Navigation / Trigger ; ProcessWrapper/_Navigation / Trigger>icon *F icon/surface/default ; Wrapper/Wallet=>Wallet
+## [2] Navigation / Dialog / DAO (22883:33611) 3v {Breakpoint:None/SM/LG}
+ all: Dialog=>Dialog
+## [3] Navigation / Dialog / Wallet (22883:35140) 6v {Breakpoint:None/MD/LG; IsConnected:True/False}
+ all: Dialog=>Dialog
+ ROWS
+ + IsConnected=False (3): Dialog>icon *F icon/accent/default-inverse
+## [4] _Navigation / Trigger (22879:38390) 4v {State:Default/Focus/Hover/Active}
+ all: AvatarIcon =>AvatarIcon 
+ ROWS
+ + State=Focus (1): @ E P:aragon/400 ; @ E bg/body
+ + State=Hover (1): @ S border/surface/hover ; AvatarIcon >icon *F icon/surface/hover
+ + State=Active (1): @ F bg/surface/active ; @ S border/surface/active ; AvatarIcon >icon *F icon/surface/active
+ + State=Default/Focus/Hover (3): @ F bg/surface/default
+ + State=Default/Focus (2): @ S border/surface/default ; AvatarIcon  *F bg/surface/default ; AvatarIcon >icon *F icon/surface/default
+ + State=Hover/Active (2): AvatarIcon  *F bg/surface/hover
+## [5] _Navigation / Menu (26088:14611) 2v {Breakpoint:LG/XL}
+ all: _Navigation / Menu / ~=>_Navigation / Menu / Item ; _Navigation / Menu / ~>icon *F icon/surface/default
+## [6] _Navigation / Menu / Item (26088:2239) 5v {Status:Default/Hover/Active/Focus; IsSelected:False/True}
+ all: ↳ Icon=>Icon
+ ROWS
+ + Status=Default; IsSelected=True (1): ↳ Icon>icon *F icon/accent/active
+ + Status=Hover; IsSelected=False (1): Nav item T text/surface/hover ; ↳ Icon>icon *F icon/surface/hover
+ + Status=Active; IsSelected=False (1): ↳ Icon>icon *F icon/surface/active
+ + Status=Focus; IsSelected=False (1): @ E P:aragon/400 ; @ E bg/body
+ + Status=Default/Focus; IsSelected=False (2): @ F bg/surface/default ; Nav item T text/surface/default ; ↳ Icon>icon *F icon/surface/default
+ + [Status,IsSelected] Default,True | Active,False (2): Nav item T text/surface/active
+## [7] _Navigation / DAO / DialogContent (22883:33616) 3v {Breakpoint:None/MD/LG}
+ all: DividerWrapper/Divider F bg/surface/secondary ; Group/Clipboard / Link=>Clipboard / Link ; Group/Identifier T text/surface/primary ; Header/DaoAvatar=>DaoAvatar ; MenuItemGroup/MenuItem=>Dropdown / MenuItem ; MenuItemGroup/MenuItem>icon *F icon/surface/active
+## [8] _Navigation / DialogContent / Wallet / Default (22883:35153) 4v {Breakpoint:None/MD; HasAragonProfile:True/False}
+ all: ButtonGroup/Button =>Button  ; Group/Identifier T P:gray/800
+ ROWS
+ + Breakpoint=None; HasAragonProfile=True (1): ButtonWrapper/Button =>Button  ; ButtonWrapper/Tooltip=>Tooltip
+ + Breakpoint=None; HasAragonProfile=False (1): Footer/Create a free profile~ T P:gray/500
+ + Breakpoint=MD; HasAragonProfile=False (1): Header/Create a free profile~ T P:gray/500
+ + HasAragonProfile=True (2): Group/Avatar=>Avatar ; Group/Clipboard / Link=>Clipboard / Link
+ + HasAragonProfile=False (2): Group/Clipboard / Button=>Clipboard / Button ; Header/Avatar=>Avatar
+## [9] _Navigation / DialogContent / Wallet / Empty (22883:35182) 2v {Breakpoint:None/LG}
+ all: CopyWrapper/wants to connect to y~ T text/surface/primary ; DefinitionListItem/AvatarIcon =>AvatarIcon  ; DefinitionListItem/AvatarIcon >icon *F icon/accent/primary ; DefinitionListItem/Link=>Link ; DefinitionListItem/Trusted by +7,500 DAO~ T text/surface/secondary ; DefinitionListItem/View only permissions T text/surface/secondary ; logo-aragon/Vector F icon/accent/primary
+
+=== PAGE Plugins (25492:34055) components=13
+## [0] TokenVoting / Voting / Content (16738:17769) 18v {Breakpoint:None/MD; Variant:SingleBody/PluginAsProcess/MultiBody; View:Breakdown/Settings/Votes}
+ all: Header/↳ BodyName=>Heading ; Header/↳ BodyName>Heading *T text/surface/primary
+ ROWS
+ + Breakpoint=None; Variant=PluginAsProcess; View=Votes (1): Group/image 2 F IMAGE
+ + Breakpoint=None; Variant=MultiBody; View=Votes (1): Header/image 1 F IMAGE
+ + [Breakpoint,Variant,View] None,SingleBody,Breakdown | None,PluginAsProcess,Breakdown | None,MultiBody,Breakdown | None,SingleBody,Settings | None,PluginAsProcess,Settings | None,MultiBody,Settings | None,SingleBody,Votes | MD,SingleBody,Breakdown | MD,PluginAsProcess,Breakdown | MD,MultiBody,Breakdown | +6 more (16): Group/Tabs=>Tabs
+ + Breakpoint=None; View=Breakdown (3): Main/Breakdown=>_TokenVoting / Voting / Breakdown
+ + View=Breakdown (6): ↳ Footer=>TokenVoting / Voting / Footer
+ + Variant=PluginAsProcess (6): Group/Status=>ProposalVoting / Status
+ + Variant=MultiBody (6): Main/Button =>Button 
+ + View=Settings (6): Main/TokenVoting / Settings=>TokenVoting / Settings
+ + View=Votes (6): Main/VotesDataList=>VotesDataList
+ + Breakpoint=MD; View=Breakdown (3): Main/_TokenVoting / Voting~=>_TokenVoting / Voting / Breakdown
+## [1] TokenVoting / Voting / Footer (20843:86404) 26v {Breakpoint:None/MD; IsVeto:False/True; IsCancelable:False/True; IsActive:True/False; Status:Success/Pending/Ended}
+ all: @ F GRAD[gradient/surface/primary-transparent>gradient/surface/primary]
+ - IsCancelable=False; IsActive=True; Status=Success/Pending (8): ButtonGroup/Button =>Button  ; Options=>_TokenVoting / Voting / Footer / Option / ToggleGroup
+ - IsCancelable=False; IsActive=False; Status=Success (4): ButtonGroup/Button =>Button  ; ButtonGroup/Button >icon *F icon/accent/default
+ - IsCancelable=True; IsActive=False; Status=Success (4): Button =>Button  ; ButtonGroup/Button =>Button  ; ButtonGroup/Button >icon *F icon/accent/default
+ - IsCancelable=False; IsActive=False; Status=Pending (4): ButtonGroup/Button =>Button 
+ - IsCancelable=True; IsActive=False; Status=Pending (4): Button =>Button 
+ - IsVeto=False; IsCancelable=False; IsActive=False; Status=Ended (2): (nothing extra)
+## [2] TokenVoting / Settings (25492:44309) 8v {Breakpoint:MD/None; IsLaunched:True/False; IsVeto:False/True}
+ all: DefintionList / Item=>DefintionList / Item
+ ROWS
+ + IsLaunched=True (4): Plugin / ContractInfo=>Plugin / ContractInfo
+## [3] _TokenVoting / Voting / Footer / Option / Toggle (27478:57411) 15v {Variant:Neutral/Success/Critical; State:Default/Focus/Hover/Active; IsSelected:False/True}
+ all: @ F bg/surface/primary ; AvatarIcon =>AvatarIcon 
+ ROWS
+ + Variant=Neutral; State=Default; IsSelected=True (1): @ E shadow/accent/sm ; AvatarIcon >icon *F icon/accent/primary ; CopyGroup/Option T text/surface/primary
+ + Variant=Success; State=Default; IsSelected=True (1): AvatarIcon >icon *F icon/success/primary ; CopyGroup/Option T text/success/primary
+ + Variant=Critical; State=Default; IsSelected=True (1): AvatarIcon >icon *F icon/critical/primary ; CopyGroup/Option T text/critical/primary
+ + State=Default/Focus; IsSelected=False (6): @ S border/surface/default
+ + State=Default; IsSelected=False (3): @ E shadow/surface/sm
+ + IsSelected=False (12): AvatarIcon >icon *F icon/surface/primary ; CopyGroup/Option T text/surface/secondary
+ + [Variant,State,IsSelected] Success,Default,False | Critical,Default,False | Success,Default,True | Critical,Default,True | Success,Focus,False | Critical,Focus,False | Success,Hover,False | Critical,Hover,False | Success,Active,False | Critical,Active,False (10): CopyGroup/Description T text/surface/secondary
+ + Variant=Neutral :: [State,IsSelected] Default,True | Active,False (2): @ S border/accent/active
+ + Variant=Success :: [State,IsSelected] Default,True | Active,False (2): @ S border/success/active
+ + Variant=Success/Critical; State=Default; IsSelected=True (2): @ E RAW:#74af070d
+ + Variant=Critical :: [State,IsSelected] Default,True | Active,False (2): @ S border/critical/active
+ + State=Focus; IsSelected=False (3): @ E P:aragon/400 ; @ E bg/body
+ + State=Hover; IsSelected=False (3): @ E shadow/surface/default ; @ S border/surface/hover
+## [4] _TokenVoting / Voting / Footer / Option / ToggleGroup (27478:58754) 4v {Breakpoint:None/MD; IsVeto:False/True}
+ all: Label T text/surface/primary ; Label T text/surface/secondary ; OptionGroup/↳ Critical=>_TokenVoting / Voting / Footer / Option / Toggle ; OptionGroup/↳ Neutral=>_TokenVoting / Voting / Footer / Option / Toggle ; OptionGroup/↳ Success=>_TokenVoting / Voting / Footer / Option / Toggle
+## [5] _TokenVoting / Voting / Breakdown (27550:22515) 4v {Breakpoint:None/MD; IsVeto:False/True}
+ all: Breakdown E shadow/surface/sm ; Breakdown F bg/surface/primary ; Breakdown S border/surface/secondary ; Breakdown/Divider F bg/surface/tertiary ; BreakdownItem/Progress=>Progress ; CopyGroup/Abstain T text/surface/primary ; Votes/Current T text/surface/primary ; Votes/TokenSymbol T text/surface/secondary ; VotingParameter E shadow/surface/sm ; VotingParameter F bg/surface/primary ; VotingParameter S border/surface/secondary ; VotingParameter/Divider F bg/surface/tertiary ; VotingParameter/↳ Participation=>_TokenVoting / Voting / Participation ; VotingParameter/↳ Support=>_TokenVoting / Voting / Support
+ - IsVeto=False (2): CopyGroup/No T text/critical/primary ; CopyGroup/Yes T text/success/primary ; CopyGroup/to approve T text/surface/secondary
+ - IsVeto=True (2): CopyGroup/No T text/success/primary ; CopyGroup/Yes T text/critical/primary ; CopyGroup/to veto T text/surface/secondary
+## [6] _TokenVoting / Voting / Support (27693:12953) 8v {Breakpoint:None/MD; IsVeto:True/False; IsReached:True/False}
+ all: CopyGroup/Current T text/surface/primary ; CopyGroup/TokenSymbol T text/surface/secondary ; CopyGroup/TotalLabel T text/surface/secondary ; Progress=>Progress ; Status/AvatarIcon =>AvatarIcon  ; Votes/CurrentRelative T text/surface/primary
+ ROWS
+ + IsVeto=True; IsReached=True (2): CopyGroup/Veto support T text/accent/primary
+ + IsReached=True (4): CopyGroup/reached T text/accent/primary ; Status/AvatarIcon >icon *F icon/accent/primary
+ + IsVeto=False; IsReached=True (2): CopyGroup/Support T text/accent/primary
+ + IsVeto=False; IsReached=False (2): CopyGroup/Support T text/surface/primary
+ + IsReached=False (4): CopyGroup/not reached T text/surface/secondary ; Status/AvatarIcon >icon *F icon/surface/primary
+ + IsVeto=True; IsReached=False (2): CopyGroup/Veto support T text/surface/primary
+## [7] _TokenVoting / Voting / Participation (27693:24673) 4v {Breakpoint:None/MD; IsReached:True/False}
+ all: Progress=>Progress ; Status/AvatarIcon =>AvatarIcon  ; Votes/Current T text/surface/primary ; Votes/TokenSymbol T text/surface/secondary ; Votes/TotalLabel T text/surface/secondary
+ - IsReached=True (2): CopyGroup/Participation T text/accent/primary ; CopyGroup/reached T text/accent/primary ; Status/AvatarIcon >icon *F icon/accent/primary
+ - IsReached=False (2): CopyGroup/Participation T text/surface/primary ; CopyGroup/not reached T text/surface/secondary ; Status/AvatarIcon >icon *F icon/surface/primary
+## [8] Multisig / Voting / Content (16738:17155) 18v {Breakpoint:None/MD; Variant:SingleBody/PluginAsProcess/MultiBody; View:Breakdown/Details/Votes}
+ all: Group/Tabs=>Tabs ; Header/↳ BodyName=>Heading ; Header/↳ BodyName>Heading *T text/surface/primary
+ ROWS
+ + View=Breakdown (6): Main/Breakdown=>_Multisig / Voting / Breakdown ; ↳ Footer=>Multisig / Voting / Footer
+ + Variant=PluginAsProcess (6): Group/Status=>ProposalVoting / Status
+ + Variant=MultiBody (6): Main/Button =>Button 
+ + View=Details (6): Main/Multisig / Settings=>Multisig / Settings
+ + View=Votes (6): Main/VotesDataList=>VotesDataList ; Main/VotesDataList>Name *T text/surface/primary
+ + Breakpoint=MD; Variant=SingleBody/MultiBody; View=Votes (2): Main/VotesDataList>image *F IMAGE
+## [9] Multisig / Voting / Footer (21666:71875) 18v {Breakpoint:None/MD; IsVeto:False/True; IsCancelable:False/True; Status:Pending/Ended/Success}
+ all: @ F GRAD[gradient/surface/primary-transparent>gradient/surface/primary]
+ ROWS
+ + Status=Pending/Success (16): Button =>Button 
+ + Status=Success (8): Button >icon *F icon/accent/default
+## [10] Multisig / Settings (25492:46263) 8v {Breakpoint:MD/None; IsLaunched:True/False; IsVeto:False/True}
+ all: DefintionList / Item=>DefintionList / Item
+ ROWS
+ + IsLaunched=True (4): Plugin / ContractInfo=>Plugin / ContractInfo
+## [11] Plugin / ContractInfo (25531:49022) 4v {Breakpoint:None/MD; Plugin:TokenVoting/Multisig}
+ all: DefintionList / Item=>DefintionList / Item
+## [12] _Multisig / Voting / Breakdown (27550:37488) 8v {Breakpoint:None/MD; IsVeto:False/True; IsReached:False/True}
+ all: @ E shadow/surface/sm ; @ F bg/surface/primary ; @ S border/surface/secondary ; BreakdownItem/Progress=>Progress ; Status/AvatarIcon =>AvatarIcon  ; Votes/Current T text/surface/primary ; Votes/TotalLabel T text/surface/secondary
+ ROWS
+ + Breakpoint=None; IsVeto=False; IsReached=True (1): CopyGroup/not reached T text/accent/primary
+ + IsVeto=False; IsReached=False (2): CopyGroup/Approval T text/surface/primary
+ + IsReached=False (4): CopyGroup/not reached T text/surface/secondary ; Status/AvatarIcon >icon *F icon/surface/primary
+ + IsVeto=False; IsReached=True (2): CopyGroup/Approval T text/accent/primary
+ + IsReached=True (4): Status/AvatarIcon >icon *F icon/accent/primary
+ + IsVeto=True; IsReached=False (2): CopyGroup/Veto T text/surface/primary
+ + IsVeto=True; IsReached=True (2): CopyGroup/Veto T text/accent/primary
+ + IsReached=True :: [Breakpoint,IsVeto] None,True | MD,False | MD,True (3): CopyGroup/reached T text/accent/primary
+
+=== PAGE Icon (7806:18629) components=1
+## [0] Icon (7806:23486) 3v {Size:SM/MD/LG}
+ all: ↳ Icon=>proposals
+
+=== PAGE Illustrations (8842:13345) components=8
+## [0] IlluObject (8874:14443) 25v {Object:lightbulb/wallet/magnifying-glass/archive/action/error/settings/chain/labels/users/smart-contract/database/gas/security/app/wagmi/book/build/explore/not-found/goal/warning/success/timelock/none}
+ - Object=lightbulb/wallet/archive/chain/smart-contract/database/gas/wagmi/book/explore/not-found/goal (12): base F icon/brand/tertiary ; base2 F icon/brand/primary
+ - Object=magnifying-glass/labels (2): base S icon/brand/tertiary ; base2 F icon/brand/primary
+ - Object=action/error/settings/security/timelock (5): base F icon/brand/primary ; base2 F icon/brand/tertiary
+ - Object=users (1): base S icon/brand/tertiary ; base1 F icon/brand/primary
+ - Object=app (1): illustration/base S icon/brand/tertiary ; illustration/base2 F icon/brand/primary
+ - Object=build (1): build/base F icon/brand/tertiary ; build/base2 F icon/brand/primary
+ - Object=warning (1): Vector F icon/brand/primary ; Vector F icon/brand/tertiary
+ - Object=success (1): Ellipse 46 S icon/brand/tertiary ; Vector F icon/brand/primary
+ - Object=none (1): (nothing extra)
+## [1] IlluHuman (8874:14281) 3v {Object:None/Right/Left}
+ all: _HumanAccessories=>_HumanAccessories ; _HumanBodies=>_HumanBodies ; _HumanExpressions=>_HumanExpressions ; _HumanHairs=>_HumanHairs ; _HumanSunglasses=>_HumanSunglasses
+ ROWS
+ + Object=Right/Left (2): IlluObject=>IlluObject
+## [2] _HumanExpressions (8874:14302) 12v {Expression:smile/smile-wink/suspecting/casual/sad-right/sad-left/angry/surprised/decided/crying/excited/none}
+ ROWS
+ + Expression=crying (1): tears F icon/brand/primary
+ + Expression=smile/smile-wink/suspecting/casual/sad-right/sad-left/angry/surprised/decided/crying/excited (11): base F icon/brand/tertiary
+ + Expression=smile-wink/suspecting (2): base S icon/brand/tertiary
+## [3] _HumanSunglasses (8874:14327) 12v {Sunglass:big-rounded/large-stylized/thuglife/thuglife-rounded/large-stylized-xl/big-semirounded/small-intellectual/small-sympathetic/small-weird-one/small-weird-two/pirate/none}
+ ROWS
+ + Sunglass=pirate (1): skull F icon/accent/default-inverse
+ + Sunglass=big-rounded/large-stylized/thuglife/thuglife-rounded/large-stylized-xl/big-semirounded/small-intellectual/small-sympathetic/small-weird-one/small-weird-two/pirate (11): base F icon/brand/primary
+ + Sunglass=thuglife/thuglife-rounded (2): bright F icon/accent/default-inverse
+## [4] _HumanBodies (8874:14354) 12v {Body:chart/computer/blocks/relaxed/voting/elevating/correct/sending-love/double-correct/aragon/computer-correct/none}
+ ROWS
+ + Body=chart/computer/blocks/relaxed/voting/elevating/correct/sending-love/double-correct/aragon/computer-correct (11): base F icon/brand/primary ; base2 F icon/brand/tertiary
+ + Body=chart/blocks (2): base3 F icon/brand/primary
+## [5] _HumanAccessories (8874:14391) 12v {Accessories:earrings-rhombus/earrings-circle/earrings-thunder/earrings-skull/piercings/piercings-tattoo/earrings-hoops/expression/head-flower/flushed/buddha/none}
+ ROWS
+ + Accessories=earrings-rhombus/earrings-circle/earrings-thunder/earrings-skull/piercings/piercings-tattoo/earrings-hoops/expression/head-flower/flushed/buddha (11): base F icon/brand/primary
+## [6] _HumanHairs (8874:14415) 13v {Hair:middle/short/oldschool/bun/afro/cool/bald/curly-bangs/long/curly/informal/punk/none}
+ ROWS
+ + Hair=middle/short/oldschool/bun/afro/cool/bald/curly-bangs/long/curly/informal/punk (12): base F icon/brand/tertiary
+
+TRUNCATED AT page Illustrations (8842:13345) component 7 Illu404 of 8 (resume: START=7, pages from 8842:13345); pages not started: none bytes~43686

@@ -41,7 +41,7 @@ export const GovernanceBodyDecisionItem: React.FC<
             {t(
                 `app.createDao.setupBodyDialog.proposalTypeField.${decision}.label`,
             )}
-            <p className="text-sm text-neutral-400">
+            <p className="text-sm text-surface-tertiary">
                 {t(
                     `app.createDao.setupBodyDialog.proposalTypeField.${decision}.description`,
                 )}

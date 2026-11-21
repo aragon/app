@@ -46,7 +46,7 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                 title={t('app.workspace.workspaceWelcomeDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <p className="text-base leading-normal text-neutral-500">
+                <p className="text-base leading-normal text-surface-secondary">
                     {t('app.workspace.workspaceWelcomeDialog.description')}
                 </p>
                 <div className="flex flex-col gap-4">
@@ -57,17 +57,17 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                         >
                             <AvatarIcon icon={icon} variant="primary" />
                             <div className="flex flex-col gap-0.5">
-                                <p className="text-base leading-tight font-normal text-neutral-800">
+                                <p className="text-base leading-tight font-normal text-surface-primary">
                                     {t(titleKey)}
                                 </p>
-                                <p className="text-base leading-normal text-neutral-500">
+                                <p className="text-base leading-normal text-surface-secondary">
                                     {t(descriptionKey)}
                                 </p>
                             </div>
                         </div>
                     ))}
                 </div>
-                <p className="text-sm leading-normal text-neutral-500">
+                <p className="text-sm leading-normal text-surface-secondary">
                     {t('app.workspace.workspaceWelcomeDialog.note')}
                 </p>
             </Dialog.Content>

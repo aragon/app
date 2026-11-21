@@ -131,7 +131,7 @@ export const CapitalDistributorPauseCampaignActionCreate: React.FC<
     return (
         <>
             <CardEmptyState
-                className="border border-neutral-100"
+                className="border border-surface-secondary"
                 description={t(
                     'app.actions.capitalDistributor.capitalDistributorPauseCampaignActionCreate.emptyCard.description',
                 )}

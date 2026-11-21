@@ -36,7 +36,7 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
             >
                 {displayItemsCount && (
                     <>
-                        <span className="text-neutral-800">{itemsCount} </span>
+                        <span className="text-surface-primary">{itemsCount} </span>
                         <span>{entityLabel}</span>
                     </>
                 )}
@@ -45,7 +45,7 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
                 {isFiltered && (
                     <>
                         <span>{copy.dataListFilterStatus.found} </span>
-                        <span className="text-primary-400">{itemsCount} </span>
+                        <span className="text-accent-primary">{itemsCount} </span>
                         <span>{entityLabel}</span>
                     </>
                 )}

@@ -124,7 +124,7 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByRole('progressbar').firstElementChild).toHaveClass(
-            'bg-neutral-400',
+            'bg-surface-primary-inverse',
         );
     });
 
