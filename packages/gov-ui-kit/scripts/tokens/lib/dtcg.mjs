@@ -212,8 +212,20 @@ export const declaration = (name, entry, varOf, flat = false) => {
         case 'fontFamily':
             return fontFamilyToCss(value, name, flat);
         case 'fontWeight':
-        case 'number':
             return `${name}: ${formatNumber(value)};`;
+        case 'number': {
+            // A number DTCG can only hold rounded (a ratio such as Tailwind's 1.75 / 1.125) is written as the ratio,
+            // so CSS computes it exactly as Tailwind's own calc() does; the stored value must equal the ratio.
+            const ratio = entry.extensions?.ratio;
+            if (ratio != null) {
+                assert(
+                    Array.isArray(ratio) && ratio.length === 2 && ratio[0] / ratio[1] === value,
+                    `Token ratio ${JSON.stringify(ratio)} does not equal its value ${value}`,
+                );
+                return `${name}: calc(${formatNumber(ratio[0])} / ${formatNumber(ratio[1])});`;
+            }
+            return `${name}: ${formatNumber(value)};`;
+        }
         case 'shadow': {
             assert(Array.isArray(value), `Invalid DTCG shadow: ${JSON.stringify(value)}`);
             const transparentNothing =
