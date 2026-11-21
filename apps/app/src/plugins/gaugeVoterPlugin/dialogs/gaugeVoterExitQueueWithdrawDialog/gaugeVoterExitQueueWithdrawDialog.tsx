@@ -95,7 +95,7 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
                     },
                 )}
             />
-            <Dialog.Content className="flex flex-col gap-6 pt-4">
+            <Dialog.Content className="flex flex-col gap-section pt-inset-surface-flat--fixed-16">
                 {shouldShowChart && (
                     <GaugeVoterExitQueueFeeChart
                         currentTime={currentTime}

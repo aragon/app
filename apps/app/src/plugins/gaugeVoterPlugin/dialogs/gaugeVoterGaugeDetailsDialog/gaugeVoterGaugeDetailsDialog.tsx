@@ -89,7 +89,7 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<
                 onClose={close}
                 title={gauge.name ?? 'Gauge'}
             />
-            <Dialog.Content className="pb-3">
+            <Dialog.Content className="pb-inset-surface-flat">
                 <GaugeVoterGaugeDetailsDialogContent
                     gauge={gauge}
                     network={network}

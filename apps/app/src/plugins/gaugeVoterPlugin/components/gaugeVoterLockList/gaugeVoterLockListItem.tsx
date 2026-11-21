@@ -277,9 +277,9 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
         }) ?? '';
 
     return (
-        <DataList.Item className="flex flex-col gap-4 py-4 md:py-6">
+        <DataList.Item className="flex flex-col gap-group py-inset-item--16-24">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 md:gap-4">
+                <div className="flex items-center gap-related--12-16">
                     <Avatar className="shrink-0" size="md" src={token.logo} />
                     <Heading size="h4">ID: {lock.tokenId}</Heading>
                 </div>
@@ -292,7 +292,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                 />
             </div>
             <hr className="border-neutral-100" />
-            <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
+            <div className="grid grid-cols-3 gap-group text-base leading-tight text-neutral-800 md:text-lg">
                 <div className="flex flex-col">
                     <div className="text-sm text-neutral-500 md:text-base">
                         {t(
@@ -339,7 +339,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     {status !== 'active' && '0'}
                 </div>
             </div>
-            <div className="flex flex-col items-center gap-3 md:flex-row md:gap-4">
+            <div className="flex flex-col items-center gap-related--12-16 md:flex-row">
                 {status === 'active' && (
                     <>
                         <Button

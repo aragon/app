@@ -35,7 +35,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<
     const hasVoted = userVotes > 0;
 
     return (
-        <div className="flex flex-col gap-y-4">
+        <div className="flex flex-col gap-y-group">
             <DefinitionList.Container>
                 <DefinitionList.Item
                     link={{

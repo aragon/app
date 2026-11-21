@@ -253,10 +253,10 @@ const GaugeVoterLockFormContent: React.FC<IGaugeVoterLockFormContentProps> = (
     return (
         <FormProvider {...formValues}>
             <form
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-group"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     <GaugeVoterLockFormChart
                         amount={lockAmount}
                         settings={plugin.settings}
@@ -273,9 +273,9 @@ const GaugeVoterLockFormContent: React.FC<IGaugeVoterLockFormContentProps> = (
                     />
                 </div>
                 {mode === 'dialog' ? (
-                    <div className="flex flex-col gap-9">
+                    <div className="flex flex-col gap-section-wide--fixed-36">
                         {footerInfo}
-                        <div className="flex justify-between gap-3">
+                        <div className="flex justify-between gap-related">
                             {onCancel != null && (
                                 <Button
                                     onClick={onCancel}
@@ -291,7 +291,7 @@ const GaugeVoterLockFormContent: React.FC<IGaugeVoterLockFormContentProps> = (
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {renderSubmitButton({ size: 'lg' })}
                         {locksCount > 0 && (
                             <Button
