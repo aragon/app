@@ -89,7 +89,7 @@
                     <sc-if value="{{a.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
                     <div class="ws-account-item__text">
                       <span class="ws-account-item__name">{{a.name}}</span>
-                      <span class="ws-account-item__meta">{{a.meta}}</span>
+                      <span class="ws-account-item__meta"><span class="ws-account-item__network">{{a.network}}</span><span>{{a.address}}</span></span>
                     </div>
                     <x-import component-from-global-scope="GovUiKit.Tag" label="{{a.tag}}" variant="{{a.tagVariant}}" class-name="shrink-0"></x-import>
                   </x-import>
@@ -149,10 +149,10 @@ class Component extends DCLogic {
       disconnected: !connected, empty: connected && all.length === 0, hasTodos: all.length > 0,
       preview: all.slice(0, 3), hasMore: all.length > 3,
       accounts: [
-        { name: 'Meridian DAO', meta: 'Ethereum · 0xC8C3…BCde', href: '#nav:account:meridian:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/meridian.svg', tag: 'DAO', tagVariant: 'primary' },
-        { name: 'Atlas Grants Council', meta: 'Ethereum · 0x3115…d368', href: '#nav:account:atlas:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/atlas.svg', tag: 'DAO', tagVariant: 'primary' },
-        { name: 'Northstar Protocol', meta: 'Ethereum · 0xA767…A063', href: '#nav:account:northstar:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/northstar.svg', tag: 'DAO', tagVariant: 'primary' },
-        { name: 'Northstar Council Safe', meta: 'Ethereum · 0x515f…02e2', href: '#nav:account:safe:overview', isDao: false, isSafe: true, avatar: '', tag: 'Safe', tagVariant: 'neutral' }
+        { name: 'Meridian DAO', network: 'Ethereum', address: '0xC8C3…BCde', href: '#nav:account:meridian:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/meridian.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Atlas Grants Council', network: 'Ethereum', address: '0x3115…d368', href: '#nav:account:atlas:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/atlas.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Northstar Protocol', network: 'Ethereum', address: '0xA767…A063', href: '#nav:account:northstar:overview', isDao: true, isSafe: false, avatar: 'assets/mock/avatar/northstar.svg', tag: 'DAO', tagVariant: 'primary' },
+        { name: 'Northstar Council Safe', network: 'Ethereum', address: '0x515f…02e2', href: '#nav:account:safe:overview', isDao: false, isSafe: true, avatar: '', tag: 'Safe', tagVariant: 'neutral' }
       ]
     };
   }

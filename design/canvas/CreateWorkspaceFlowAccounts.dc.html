@@ -46,7 +46,7 @@ body{margin:0}
             <sc-if value="{{row.showMeta}}" hint-placeholder-val="{{no}}">
               <div class="workspace-account-meta">
                 <x-import component-from-global-scope="GovUiKit.Heading" as="h4" size="h5">Metadata</x-import>
-                <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{row.meta.avatar}}" alert="{{row.meta.avatarAlert}}" on-change="{{row.changeAvatar}}"></x-import>
+                <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px." accepted-file-types="{{acceptedFileTypes}}" is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{row.meta.avatar}}" alert="{{row.meta.avatarAlert}}" on-change="{{row.changeAvatar}}"></x-import>
                 <x-import component-from-global-scope="GovUiKit.InputText" label="Account name" max-length="{{d128}}" value="{{row.meta.name}}" alert="{{row.meta.nameAlert}}" on-change="{{row.changeName}}" on-blur="{{row.blurName}}"></x-import>
                 <x-import component-from-global-scope="GovUiKit.TextArea" label="Account description" is-optional="{{yes}}" max-length="{{d480}}" value="{{row.meta.description}}" on-change="{{row.changeDescription}}"></x-import>
               </div>
@@ -73,6 +73,7 @@ class Component extends DCLogic {
     return {
       yes: true, no: false, rows, onAdd: p.onAdd || (() => undefined),
       oneMb: 1048576, d1024: 1024, d128: 128, d480: 480,
+      acceptedFileTypes: { "image/png": [], "image/gif": [], "image/jpeg": [".jpg", ".jpeg"], "image/webp": [] },
       menuTrigger: React.createElement(GovUiKit.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' })
     };
   }

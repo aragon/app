@@ -598,6 +598,14 @@
       "title": "WsTransactionsAccountDialog",
       "page": "parts"
     },
+    "WsWelcomeDialog.dc.html": {
+      "x": 5740,
+      "y": 15827,
+      "w": 1024,
+      "h": 760,
+      "title": "WsWelcomeDialog",
+      "page": "parts"
+    },
     "SafeFlowPage.dc.html": {
       "x": 0,
       "y": 18347,
@@ -997,6 +1005,7 @@
     "WsTransactions.dc.html",
     "SafeFlowTxDialog.dc.html",
     "WsTransactionsAccountDialog.dc.html",
+    "WsWelcomeDialog.dc.html",
     "SafeFlowPage.dc.html",
     "SafeFlowReviewContent.dc.html",
     "SafeTransactionFlowActions.dc.html",

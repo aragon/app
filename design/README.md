@@ -20,7 +20,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (110 files) |
+| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (111 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit. Written by `publish/layout-canvas.cjs`, not by hand |
@@ -35,7 +35,8 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 
 The prototypes:
 
-- `Explore.dc.html`: the explore / landing page. The entry point; it links to the DAO and the two creation wizards.
+- `Explore.dc.html`: the explore page. The entry point; it links to the DAO and the two creation wizards. With
+  `workspaces` on (as here) the app now serves it at `/explore`, and `/` is a sign-in landing page that has no prototype.
 - `Dao.dc.html`: one mock DAO (Meridian, token voting). Pages: dashboard, proposals, proposal detail, members, member
   detail, assets, transactions, settings, permissions, governance process detail. Connect wallet and the user menu;
   voting, simulating and executing a proposal; delegation; transaction type tabs and the transaction detail dialog.
@@ -68,8 +69,8 @@ Every prototype, and every canvas made from these files, shows **the app as it r
 `main`**, not what users see in production.
 
 - **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026); later ones from `main`
-  as it stood up to 18 November. On 20 November they were caught up with `main` of 19 November (`51c4622`), which is
-  what `canvases/prototypes.json` → `appCommit` records. `RUNBOOK.md`, "Catch up with main", has the procedure.
+  as it stood up to 18 November. On 20 November they were caught up with `main` of 19 November (`51c4622`), and on
+  21 November with `main` of 20 November (`412581b`), which is what `canvases/prototypes.json` → `appCommit` records. `RUNBOOK.md`, "Catch up with main", has the procedure.
 - **Feature flags:** each flag's `local` value, the one a developer's machine uses. Checked against a snapshot of
   the 16 flags taken in mid-November (`design/baseline-check/cms/feature-flags.json` on `docs/design-canvas`):
 
@@ -80,7 +81,8 @@ Every prototype, and every canvas made from these files, shows **the app as it r
   | Same in both | the other nine |
 
   `workspaces` and `safeAccountPage` are also off in the deployed development environment in that snapshot, so the
-  Workspace and Safe prototypes show something only a local build has.
+  Workspace and Safe prototypes show something only a local build has. Since 20 November the code also turns
+  `workspaces` on for the OCC soft-launch environment (new.app.aragon.org).
 - **Data:** mock data written for this, not any real DAO.
 
 So the prototypes are a picture of what is coming, which suits design work. No prototype can be switched to
@@ -177,12 +179,25 @@ on a canvas", says what to do when a canvas's copy falls behind.
 - **Governance designer:** the import-token, lock-to-vote and external-address body variants, the inner states of
   steps 3 and 4, and "Remove stage" were carried over from an older prototype and only checked to render.
 - **Create proposal draws part of its form by script** (`CreateProposalFlowActions.dc.html`), as the vote list does.
-- **Workspace:** "Add account" and "Edit workspace" do nothing. "New proposal" skips the app's pick-a-process step and always opens
+- **Workspace:** "Add account", "Workspace admin" and "Import workspace" do nothing. "New proposal" skips the app's pick-a-process step and always opens
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
-- **Not built, because open pull requests are changing them:** editing a workspace, suggested accounts in the create
-  workspace wizard, creating a Safe, and the governance designer inside a workspace.
+- **Not built, because open pull requests are changing them:** suggested accounts in the create workspace wizard,
+  creating a Safe, and the governance designer inside a workspace.
+- **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the sign-in landing page at
+  `/` and disconnecting back to it; the Getting started wizard for a user with no workspace; the workspace admin page
+  (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
+  the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
+  (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
+- **Workspace navigation draws two kit components by hand.** The joined selector block (`Dropdown.Group`) and the
+  stacked avatars of "All accounts" (`AvatarStack`) are markup with `app.css` rules in `WsNav.dc.html`, like the rest
+  of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
+  design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
+  its fallback text sizes) are not on the canvas either, until the kit's design sync is run.
+- **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
+  workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
+  frames is not confirmed (see "Create proposal from the workspace").
 - **Governance designer at phone width:** in the stage settings dialog the value label of the approval threshold bar
   hangs about 15 px past the window's edge.
 - **Deliberately inert controls** (they exist in the app and do nothing here): Copy buttons, "Download as JSON",

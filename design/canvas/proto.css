@@ -184,7 +184,7 @@
 .ws-menu__meta { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
 .ws-menu__sep { height: 1px; margin: 4px 0; background: var(--color-neutral-100); }
 .ws-nav-dialog { display: flex; flex-direction: column; gap: 16px; padding: 32px 0 16px; }
-.ws-nav-dialog__selectors { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+.ws-nav-dialog__selectors { padding: 0 16px; }
 .ws-nav-dialog__groups { display: flex; flex-direction: column; gap: 16px; padding: 0 16px; }
 /* Workspace shell: the account pages keep their own shell classes */
 .ws-shell-slot, .ws-shell-slot > *:not(.page-container) { display: contents; }

@@ -26,7 +26,7 @@ body{margin:0}
   </div>
   <div class="wizard-fields">
     <x-import component-from-global-scope="GovUiKit.InputText" label="Workspace name" max-length="{{d128}}" value="{{name}}" alert="{{nameAlert}}" on-change="{{changeName}}" on-blur="{{blurName}}"></x-import>
-    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px." accepted-file-types="{{acceptedFileTypes}}" is-optional="{{yes}}" max-file-size="{{oneMb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
     <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the workspace pages so visitors know what this workspace covers." is-optional="{{yes}}" max-length="{{d480}}" value="{{description}}" on-change="{{changeDescription}}"></x-import>
     <dc-import name="ResourcesInput" vm="{{resourcesVm}}" hint-size="100%,110px"></dc-import>
   </div>
@@ -55,6 +55,7 @@ class Component extends DCLogic {
     };
     return {
       yes: true, d128: 128, d480: 480, oneMb: 1048576, d1024: 1024,
+      acceptedFileTypes: { "image/png": [], "image/gif": [], "image/jpeg": [".jpg", ".jpeg"], "image/webp": [] },
       name: p.name ?? '', nameAlert: p.nameAlert, avatar: p.avatar, avatarAlert: p.avatarAlert, description: p.description ?? '',
       resourcesVm,
       changeName: (e) => call(p.onName, e.target.value),

@@ -44,7 +44,7 @@ body{margin:0}
     </form>
   </main>
   <dc-import name="Footer" hint-size="100%,65px"></dc-import>
-  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" targets="{{targetCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html" hint-size="100%,1px"></dc-import>
+  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" targets="{{targetCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html?welcome=1" hint-size="100%,1px"></dc-import>
 </div>
 </x-import>
 </x-dc>
@@ -54,7 +54,7 @@ body{margin:0}
 // "Describe your workspace" (CreateWorkspaceFlowMetadata), "Add targets" (CreateWorkspaceFlowTargets), "Add accounts"
 // (CreateWorkspaceFlowAccounts, rows via CreateWorkspaceFlowAddressFields), then the PUBLISH_WORKSPACE dialog
 // (CreateWorkspaceFlowPublishDialog). Frame: WizardNav / WizardProgress / WizardActions.
-// Exits: the close button goes to Explore.dc.html; "View workspace" (after the simulated save) opens the workspace prototype, Workspace.dc.html.
+// Exits: the close button goes to Explore.dc.html; "View workspace" (after the simulated save) opens the workspace prototype, Workspace.dc.html?welcome=1, which greets with the welcome dialog.
 // Validation (shown on a failed Next, then live; and on blur): name required, URL required / valid, address required / valid /
 // not a duplicate on the same network, account must be a DAO or Safe (try the Meridian DAO 0xC8C3…BCde, Atlas Grants Council
 // 0x3115…d368 or the Northstar Council Safe 0x515f…02e2), account name required once "Add metadata" is open.
@@ -70,7 +70,7 @@ class Component extends DCLogic {
       step: 0, attempted: false, dialogOpen: false,
       name: '', nameTouched: false, avatar: undefined, description: '',
       resources: [], targets: [],
-      accounts: [this.emptyRow(1)]
+      accounts: []
     };
   }
   componentWillUnmount() { Object.values(this.timers).forEach(clearTimeout); }

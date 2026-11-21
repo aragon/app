@@ -109,7 +109,7 @@
                     <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import>
                     <div class="ws-account-item__text">
                       <span class="ws-account-item__name">{{a.name}}</span>
-                      <span class="ws-account-item__meta">{{a.meta}}</span>
+                      <span class="ws-account-item__meta"><span class="ws-account-item__network">{{a.network}}</span><span>{{a.address}}</span></span>
                     </div>
                     <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
                   </div>
@@ -145,9 +145,9 @@ class Component extends DCLogic {
     const f = this.state.filter, chosen = this.state.chosen;
     const ov = window.__nspState || {}, at = window.__atlasDao || {};
     const ACC = [
-      ['meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'Ethereum · 0xC8C3…BCde'],
-      ['atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'Ethereum · 0x3115…d368'],
-      ['northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'Ethereum · 0xA767…A063']
+      ['meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'Ethereum', '0xC8C3…BCde'],
+      ['atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'Ethereum', '0x3115…d368'],
+      ['northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'Ethereum', '0xA767…A063']
     ];
     const OWNER = ['northstar', 'atlas', 'meridian', 'northstar', 'meridian', 'atlas', 'northstar', 'atlas', 'meridian', 'northstar', 'meridian', 'northstar', 'meridian', 'atlas', 'meridian', 'northstar', 'northstar', 'atlas', 'meridian', 'atlas', 'northstar', 'meridian'];
     const show = {}; let count = 0;
@@ -193,7 +193,7 @@ class Component extends DCLogic {
       openDialog: () => this.setState({ dialog: true, chosen: '' }),
       closeDialog: () => this.setState({ dialog: false }),
       dialogChange: (o) => { if (!o) this.setState({ dialog: false }); },
-      accounts: ACC.map((a) => ({ name: a[1], avatar: a[2], meta: a[3], cls: 'wsy-pick' + (chosen === a[0] ? ' wsy-pick--active' : ''), choose: () => this.setState({ chosen: a[0] }) })),
+      accounts: ACC.map((a) => ({ name: a[1], avatar: a[2], network: a[3], address: a[4], cls: 'wsy-pick' + (chosen === a[0] ? ' wsy-pick--active' : ''), choose: () => this.setState({ chosen: a[0] }) })),
       primary: { label: 'Next', href: 'CreateProposalFlow.dc.html?from=workspace&account=' + chosen, disabled: !chosen },
       secondary: { label: 'Cancel', onClick: () => this.setState({ dialog: false }) }
     };

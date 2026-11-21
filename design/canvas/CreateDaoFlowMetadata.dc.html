@@ -29,7 +29,7 @@ body{margin:0}
     <sc-if value="{{showEns}}" hint-placeholder-val="{{no}}">
       <x-import component-from-global-scope="GovUiKit.InputText" label="ENS subname" help-text="This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets." is-optional="{{yes}}" addon=".dao.eth" addon-position="right" max-length="{{d18}}" wrapper-class-name="cdf-ens" value="{{ens}}" alert="{{ensAlert}}" on-change="{{changeEns}}"></x-import>
     </sc-if>
-    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px." is-optional="{{yes}}" max-file-size="{{d1mb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px." accepted-file-types="{{acceptedFileTypes}}" is-optional="{{yes}}" max-file-size="{{d1mb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
     <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the DAO's dashboard and the Explore page so visitors can easily find you." is-optional="{{yes}}" max-length="{{d480}}" value="{{description}}" on-change="{{changeDescription}}"></x-import>
     <div class="resources-input">
       <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the DAO dashboard. They are best suited for your website, social media, or other communication channels." use-custom-wrapper="{{yes}}"></x-import>
@@ -77,6 +77,7 @@ class Component extends DCLogic {
     }));
     return {
       yes: true, no: false, d128: 128, d480: 480, d40: 40, d18: 18, d1mb: 1048576, d1024: 1024,
+      acceptedFileTypes: { "image/png": [], "image/gif": [], "image/jpeg": [".jpg", ".jpeg"], "image/webp": [] },
       name: vm.name ?? '', nameAlert: vm.nameAlert, ens: vm.ens ?? '', ensAlert: vm.ensAlert, showEns: !!vm.showEns,
       avatar: vm.avatar, avatarAlert: vm.avatarAlert, description: vm.description ?? '',
       resources, hasResources: resources.length > 0,
