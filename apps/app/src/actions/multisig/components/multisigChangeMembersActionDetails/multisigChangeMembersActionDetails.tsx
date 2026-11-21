@@ -39,8 +39,8 @@ export const MultisigChangeMembersActionDetails: React.FC<
         type === MultisigProposalActionType.MULTISIG_ADD_MEMBERS;
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
-            <div className="flex flex-wrap gap-2">
+        <div className="flex w-full flex-col gap-y-section">
+            <div className="flex flex-wrap gap-related--fixed-8">
                 {members.map((member) => (
                     <MultisigChangeMembersActionMember
                         href={buildEntityUrl({
