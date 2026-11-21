@@ -11,7 +11,7 @@ refactor (such as moving a component to the semantic colour classes) changes no 
 ```sh
 pnpm visual-diff ref main                  # main vs the working tree, theme "today"
 pnpm visual-diff ref main --theme dark     # same in another theme (today | next | dark)
-pnpm visual-diff ref main --filter button  # only story ids matching a regex
+pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
 ```
 
