@@ -66,7 +66,7 @@ export const MultisigRemoveMembersActionDialog: React.FC<
                     'app.plugins.multisig.multisigRemoveMembersAction.dialog.heading',
                 )}
             />
-            <Dialog.Content className="pb-4">
+            <Dialog.Content className="pb-inset-surface-flat--fixed-16">
                 <DaoMemberList.Default
                     initialParams={membersParams}
                     layoutClassNames="grid grid-cols-2"
