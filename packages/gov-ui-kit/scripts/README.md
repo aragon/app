@@ -14,6 +14,15 @@ pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
 ```
 
+`--spacing today|new|looser|compact` picks the Storybook Spacing toolbar value the captures are taken with (Today is
+not passed, so a build without the toolbar captures as before). To see what a preview mode changes, capture the base in
+Today and the working tree in the mode and compare:
+
+```sh
+pnpm visual-diff capture node_modules/.cache/visual-diff/head-storybook /tmp/vd-new --spacing new
+pnpm visual-diff compare node_modules/.cache/visual-diff/head /tmp/vd-new
+```
+
 `ref` builds a static Storybook of the ref in a temporary git worktree (dependencies come from
 this checkout) and of the working tree, captures both and compares them. It exits 1 when any
 story differs, prints the differing pixel count per story and writes diff images (base dimmed,
@@ -37,7 +46,8 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 The one generator for every token CSS output: the primitive CSS and the app's artifact, plus the semantic colour layer
 when the source has one (`semantic.config.json`), from the DTCG source in `design-system/tokens/source/`.
 `pnpm tokens:generate` writes, `pnpm tokens:check` fails when an output is stale, `pnpm tokens:report` lists verified
-and fallback Today values of the semantic layer. Tests: `scripts/tokens/generate.test.mjs` (run by the root
+and fallback Today values of the semantic layer, and the spacing layer (`spacing.config.json`: roles, component sizes,
+exceptions; the report prints their tables and the change in New). Tests: `scripts/tokens/generate.test.mjs` (run by the root
 `pnpm test:tokens`). Details: `design-system/tokens/README.md`.
 
 ## App screenshot baseline (`app-baseline/`)

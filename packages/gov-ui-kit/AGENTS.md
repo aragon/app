@@ -71,7 +71,12 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
   under `src/theme/tokens/` (via `@theme`) that exposes the `--color-*` scale used
-  as utilities such as `bg-primary-500` and `text-neutral-800`.
+  as utilities such as `bg-primary-500` and `text-neutral-800`. Spacing takes a spacing role instead of a number:
+  insets `p*-inset-<scope>` (`px-inset-item`, `p-inset-surface`), gaps `gap-<level>` (`gap-group`, `mt-related`,
+  `space-y-section`), control sizes (`h-control-md`, `px-control-md`, `h-tag`), or a documented
+  `<family>-<role>--<pattern>` exception; each utility holds its md step, so one class replaces `x md:y`. Generated into
+  `src/theme/tokens/spacing.css`; see `design-system/tokens/spacing.decisions.md`. A raw class passed in `className`
+  always beats a role (the roles sort first), so check callers when converting a component.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).

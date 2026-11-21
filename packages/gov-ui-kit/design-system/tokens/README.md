@@ -7,6 +7,10 @@ and as the app's DTCG snapshot with its parity baseline, now live once in `sourc
 design-system/tokens/source/
   primitives.tokens.json        today's primitives: colours, shadows, radius, breakpoints, spacing, type, focus ring
   primitives.config.json        not tokens: CSS names, the layout of each primitive CSS file, the app artifact
+  spacing.roles.tokens.json     semantic spacing roles: insets, gaps, the navigation chrome (Today + preview modes)
+  spacing.sizes.tokens.json     component sizes: control heights and their padding and gap, the tag, the row
+  spacing.exceptions.tokens.json  Today exceptions of the spacing roles (`<role>--<pattern>`)
+  spacing.config.json           not tokens: modes and selectors, families, scale, floors, budget, chrome rule, outputs
   css/                          CSS that holds no token value and is copied verbatim: utilities, @font-face
   schema/format.2025.10.json    the published DTCG schema, unmodified
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
@@ -16,6 +20,12 @@ The source holds primitives only. The generator also renders a semantic colour l
 source has one: `semantic.config.json`, which then requires `palette.tokens.json` and the mode files it names, and adds
 the output `src/theme/tokens/semantic/colors.css`. Without the config nothing semantic is read or written, and a palette
 or mode file without it fails the generator instead of being ignored.
+
+The semantic spacing layer (`lib/spacing.mjs`) follows the same rule with `spacing.config.json`: it renders
+`src/theme/tokens/spacing.css` (one value set per mode on `:root` and `[data-spacing="new|looser|compact"]`, the
+coarse-pointer fallback, one `@utility` per role or size × family and per exception × the families it lists) and
+`src/core/types/spacingStyles.ts` (the names as TypeScript lists). Decisions, the role, size and exception tables:
+`spacing.decisions.md`.
 
 The kit owns the source: it owns the tokens and is the published package, and the app artifact is a projection of it.
 (`design-system/` itself is not in the npm package: `files` in the kit's `package.json` ships the generated CSS.)
@@ -39,6 +49,8 @@ Outputs, all with a do-not-edit header:
 | --- | --- |
 | `src/theme/tokens/primitives/*.css` and `index.css` | the kit build, Storybook, npm consumers |
 | `.design-sync/generated/govkit-primitives.css` | the app (`layoutRoot.css` imports it instead of the primitives barrel) |
+| `src/theme/tokens/spacing.css` | the kit (via `tokens/index.css`), the app (`layoutRoot.css`), the help center |
+| `src/core/types/spacingStyles.ts` | the role, size and exception names as TypeScript lists |
 
 The app artifact flattens the primitive files, rebases the font URLs to its own location and appends the app's runtime
 overrides (`layoutRoot.overrides.css`, generator input only). Those overrides must be direct custom properties of one
@@ -62,6 +74,33 @@ A primitive, in `primitives.tokens.json` (colours are DTCG colour objects):
 - The app overrides rule above; font URLs in the artifact all rebased.
 - No palette or semantic mode file without `semantic.config.json`.
 - `pnpm tokens:check` fails when any output is stale.
+
+## Spacing tokens
+
+A role, in `spacing.roles.tokens.json` (DTCG dimensions; `base` below 48rem, `md` from it; inset roles have `x` and
+`y`; `$value` is Today and the preview modes are in the `modes` extension):
+
+```json
+"gap-related": {
+    "$extensions": { "org.aragon.gov-ui-kit": { "kind": "gap" } },
+    "base": { "$value": { "value": 12, "unit": "px" }, "$extensions": { "org.aragon.gov-ui-kit": { "modes": { "new": { "value": 8, "unit": "px" }, "looser": { "value": 12, "unit": "px" }, "compact": { "value": 6, "unit": "px" } } } } },
+    "md": { "…": "…" }
+}
+```
+
+The utility is `<family>-<role>` (`px-inset-item`, `gap-group`, `mt-related`: gap roles drop their prefix), a size's is
+`<family>-<size>` (`h-control-md`), an exception's `<family>-<role>--<pattern>` (`gap-group--12-16`). An exception
+(`space.exception.<role>--<pattern>`) holds its Today pair and the utility families it uses; every preview mode renders
+its role (per axis for insets, per dimension for sizes), except under a navigation chrome role, whose exceptions carry
+their own snapped values. Every utility declares the base value and the md value through Tailwind's `md` variant, so it
+steps on the app column in the app. Nothing is written into Tailwind's `--spacing-*` namespace (it would turn every role
+into width, size and inset utilities).
+
+The generator validates: preview values on the scale, compact ≤ new ≤ looser, no step down at md, gap levels in order,
+floors (phone page gutter 16, control heights ≥ 24 and ≥ 28 in compact), the chrome rule (New = Today snapped, one step
+at most), the New change budget for every role and exception (4 px up to 24 px, 8 px above; owner decision 0), and every
+exception's role, families and redundancy. `pnpm tokens:report` prints the role, size and exception tables with the
+places using them and the change in New, and fails when an exception has no place.
 
 ## Representation boundaries
 
