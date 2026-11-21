@@ -3,5 +3,6 @@ export type {
     DebugContextValues,
     IDebugContext,
     IDebugContextControl,
+    IDebugContextControlOption,
     IDebugContextProviderProps,
 } from './debugProvider.api';
