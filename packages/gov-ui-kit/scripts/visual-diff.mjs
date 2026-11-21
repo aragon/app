@@ -13,7 +13,7 @@
 //   node scripts/visual-diff.mjs compare <base-dir> <head-dir> [--diff <dir>]
 //       Pixel comparison of two capture sets; writes a diff image per differing story. Exits 1 on any difference.
 //
-// Options: --filter <regex on story id> · --workers <n> (default 4)
+// Options: --filter <text contained in the story id> · --workers <n> (default 4)
 //          --work-dir <dir> (default node_modules/.cache/visual-diff) · --threshold <pixels> (default 0)
 //
 // Playwright: uses `playwright-core` from the kit if present, else from another workspace (apps/app, apps/docs), or
@@ -424,10 +424,11 @@ const captureStory = async (browser, origin, story, outDir) => {
 const capture = async (storybookDir, outDir, options) => {
     const root = resolve(storybookDir);
     const index = JSON.parse(readFileSync(join(root, 'index.json'), 'utf8'));
-    const filter = options.filter ? new RegExp(options.filter) : null;
+    // Plain substring match on the story id: the filter is never compiled as a regular expression.
+    const filter = options.filter ? options.filter.toLowerCase() : null;
     const all = Object.values(index.entries).filter((entry) => entry.type === 'story');
     const stories = all.filter(
-        (story) => excludedStories[story.id] == null && (filter == null || filter.test(story.id)),
+        (story) => excludedStories[story.id] == null && (filter == null || story.id.includes(filter)),
     );
     rmSync(outDir, { recursive: true, force: true });
     mkdirSync(outDir, { recursive: true });

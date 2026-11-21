@@ -10,7 +10,7 @@ refactor (such as a token or class change that should keep every colour) changes
 
 ```sh
 pnpm visual-diff ref main                  # main vs the working tree
-pnpm visual-diff ref main --filter button  # only story ids matching a regex
+pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
 ```
 
