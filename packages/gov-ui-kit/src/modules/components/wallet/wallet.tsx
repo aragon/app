@@ -43,10 +43,10 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
     const contentId = useId();
 
     const buttonClassName = classNames(
-        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
+        'flex max-w-48 cursor-pointer items-center gap-related rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
         'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 disabled:cursor-default',
         { 'px-4 py-2.5': user == null },
-        { 'p-1 md:pl-4': user != null },
+        { 'p-1 md:pl-control-lg': user != null },
         className,
     );
 
@@ -59,7 +59,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
             />
             <InteractiveAncestorContext.Provider value={true}>
                 <div
-                    className="pointer-events-none relative z-10 flex w-full items-center gap-3 [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+                    className="pointer-events-none relative z-10 flex w-full items-center gap-related [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
                     id={contentId}
                 >
                     {!user && copy.wallet.connect}
