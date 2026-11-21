@@ -1189,6 +1189,9 @@ importers:
       '@types/sanitize-html':
         specifier: ^2.16.2
         version: 2.16.2
+      ajv:
+        specifier: 'catalog:'
+        version: 8.20.0
       cross-env:
         specifier: 'catalog:'
         version: 10.1.0
