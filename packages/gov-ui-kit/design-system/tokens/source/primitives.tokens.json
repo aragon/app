@@ -1,17 +1,6 @@
 {
     "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-    "$description": "DTCG 2025.10 parity snapshot of the current GovKit primitive CSS token layer. This is a source baseline, not a semantic theme taxonomy.",
-    "$extensions": {
-        "org.aragon.tokenParity": {
-            "sourceRepository": "https://github.com/aragon/gov-ui-kit",
-            "sourcePackage": "@aragon/gov-ui-kit",
-            "sourceVersion": "2.11.4",
-            "sourceRevision": "64b517f5b90052797ecaced5f15ab616b5733f30",
-            "sourcePath": "src/theme/tokens/primitives",
-            "appRevision": "3c9bb798f3679fb2eb8052a192847ab2274ed1d5",
-            "capturedFrom": "GovKit CSS source plus App layout CSS entry"
-        }
-    },
+    "$description": "GovKit primitive tokens (DTCG 2025.10): the values behind src/theme/tokens/primitives/*.css and the app artifact. Generated CSS only; edit here.",
     "color": {
         "$type": "color",
         "primary": {
