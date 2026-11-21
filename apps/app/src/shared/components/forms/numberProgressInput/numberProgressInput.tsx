@@ -75,8 +75,11 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
             label={label}
             useCustomWrapper={true}
         >
-            <Card className="flex w-full flex-col gap-4 rounded-xl p-4 md:gap-6 md:p-6">
-                <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
+            <Card
+                className="flex w-full flex-col gap-group-stepped rounded-xl"
+                inset="surface"
+            >
+                <div className="flex flex-col-reverse gap-section md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         className="w-full md:max-w-40"
                         max={total}
@@ -89,13 +92,13 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                     />
                     <div
                         className={classNames(
-                            'mt-4 flex w-full grow flex-col gap-2 md:mt-0',
+                            'mt-4 flex w-full grow flex-col gap-related--fixed-8 md:mt-0',
                             {
                                 'self-end': totalLabel,
                             },
                         )}
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-related">
                             {tags && <Tag {...tags[0]} />}
                             <div className="relative flex grow">
                                 {valueLabel && (

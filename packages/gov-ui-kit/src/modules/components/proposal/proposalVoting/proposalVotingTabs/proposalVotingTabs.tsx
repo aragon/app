@@ -35,7 +35,7 @@ export const ProposalVotingTabs: React.FC<IProposalVotingTabsProps> = (props) =>
     const filteredTabs = tabs.filter(({ id }) => !hideTabs?.includes(id));
 
     return (
-        <Tabs.Root className="flex flex-col gap-4 md:gap-6" defaultValue={defaultValue} {...otherProps}>
+        <Tabs.Root className="flex flex-col gap-group-stepped" defaultValue={defaultValue} {...otherProps}>
             <Tabs.List>
                 {filteredTabs.map(({ id, disabled }) => (
                     <Tabs.Trigger disabled={disabled} key={id} label={copy.proposalVotingTabs[id]} value={id} />

@@ -52,7 +52,7 @@ export const TransactionDialogShell = <TStepId extends string>(
         <>
             <Dialog.Header description={description} title={title} />
             <Dialog.Content>
-                <div className="flex flex-col gap-6 pb-3 md:pb-4">
+                <div className="flex flex-col gap-section pb-inset-flush--12-16">
                     <NetworkSwitchAlert
                         isCrossNetworkTransaction={isCrossNetworkTransaction}
                         networkName={networkName}

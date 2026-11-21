@@ -49,9 +49,9 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
     const addressLine = ens ?? truncatedAddress;
 
     return (
-        <DataList.Item className="grid gap-y-3 py-4 md:gap-y-4 md:py-6" {...otherProps}>
-            <div className="flex w-full justify-between gap-2">
-                <div className="grid shrink items-center gap-y-1.5 text-neutral-800">
+        <DataList.Item className="grid gap-y-related--12-16 py-inset-item--16-24" {...otherProps}>
+            <div className="flex w-full justify-between gap-related--fixed-8">
+                <div className="grid shrink items-center gap-y-tight--fixed-6 text-neutral-800">
                     <Heading as="h2" className="truncate" size="h3">
                         {name}
                     </Heading>
@@ -69,7 +69,7 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
             </div>
             <p className="line-clamp-2 text-base leading-normal text-neutral-500 md:text-lg">{description}</p>
             <div className="flex flex-row justify-between">
-                <div className="mt-1 flex items-center gap-x-1 text-neutral-400 md:mt-0 md:gap-x-2">
+                <div className="mt-1 flex items-center gap-x-tight--4-8 text-neutral-400 md:mt-0">
                     <span className="text-sm leading-tight capitalize md:text-base">{network}</span>
                     <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} responsiveSize={{ md: 'md' }} size="sm" />
                 </div>

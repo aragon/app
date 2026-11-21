@@ -81,9 +81,13 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
 
     return (
         <Card
-            className={classNames('flex flex-col gap-3 p-6 shadow-neutral-sm', {
-                'md:flex-row md:gap-2': !isStacked,
-            })}
+            className={classNames(
+                'flex flex-col gap-related shadow-neutral-sm',
+                {
+                    'md:flex-row md:gap-related--fixed-8': !isStacked,
+                },
+            )}
+            inset="surface-wide"
         >
             <InputText
                 placeholder={t(

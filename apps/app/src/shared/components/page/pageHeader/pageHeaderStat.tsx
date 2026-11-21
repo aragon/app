@@ -28,12 +28,12 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
     return (
         <div
             className={classNames(
-                'flex flex-col gap-1 leading-tight font-normal',
+                'flex flex-col gap-tight leading-tight font-normal',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-baseline gap-1">
+            <div className="flex flex-row items-baseline gap-tight">
                 <p className="text-lg text-neutral-800 md:text-xl">
                     {parsedValue}
                 </p>

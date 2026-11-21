@@ -6,7 +6,7 @@ export const ProposalActionsItemSkeleton = () => (
         <Accordion.ItemHeader>
             <SmartContractFunctionDataListItem.Skeleton
                 asChild={true}
-                className="flex size-full h-[48px] flex-col justify-center gap-3 md:h-[52.5px]"
+                className="flex size-full h-[48px] flex-col justify-center gap-related md:h-[52.5px]"
             />
         </Accordion.ItemHeader>
     </Accordion.Item>

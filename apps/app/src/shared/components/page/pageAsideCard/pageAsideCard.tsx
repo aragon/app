@@ -22,12 +22,13 @@ export const PageAsideCard: React.FC<IPageAsideCardProps> = (props) => {
     return (
         <Card
             className={classNames(
-                'flex shrink-0 flex-col gap-4 p-6',
+                'flex shrink-0 flex-col gap-group',
                 className,
             )}
+            inset="surface-wide"
             {...otherProps}
         >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-related--fixed-8">
                 <Heading size="h3">{title}</Heading>
                 {icon && (
                     <Image

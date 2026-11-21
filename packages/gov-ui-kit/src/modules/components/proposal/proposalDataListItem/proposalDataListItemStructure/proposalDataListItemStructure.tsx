@@ -60,23 +60,23 @@ export const ProposalDataListItemStructure: React.FC<IProposalDataListItemStruct
 
     return (
         <DataList.Item
-            className={classNames('flex flex-col gap-y-4 py-4 md:gap-y-4 md:py-6', className)}
+            className={classNames('flex flex-col gap-y-group py-inset-item--16-24', className)}
             {...otherProps}
         >
             <ProposalDataListItemStatus date={date} status={status} statusContext={statusContext} voted={voted} />
-            <div className="flex flex-col gap-y-1">
-                <Heading as="h2" className="flex gap-x-2 md:gap-x-3" size="h3">
+            <div className="flex flex-col gap-y-tight">
+                <Heading as="h2" className="flex gap-x-related--8-12" size="h3">
                     {id && <span className="shrink-0 text-neutral-500">{id}</span>}
                     <span className="line-clamp-1 text-neutral-800">{title}</span>
                 </Heading>
                 <p className="line-clamp-2 leading-normal text-neutral-500 md:text-lg">{summary}</p>
             </div>
             {children}
-            <div className="flex items-center justify-between gap-x-4 md:gap-x-6">
+            <div className="flex items-center justify-between gap-x-group-stepped">
                 <div
                     className={classNames(
                         'inline-grid auto-cols-auto grid-flow-col content-center',
-                        'min-h-5 gap-x-0.5 text-sm leading-tight text-neutral-500 md:min-h-6 md:gap-x-1 md:text-base',
+                        'min-h-5 gap-x-tight--2-4 text-sm leading-tight text-neutral-500 md:min-h-6 md:text-base',
                     )}
                 >
                     {copy.proposalDataListItemStructure.by}

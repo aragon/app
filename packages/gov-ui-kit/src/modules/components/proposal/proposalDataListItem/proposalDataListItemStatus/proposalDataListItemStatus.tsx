@@ -36,8 +36,8 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
     const { copy } = useGukModulesContext();
 
     return (
-        <div className="flex min-h-6 w-full items-center justify-between gap-x-4 md:gap-x-6">
-            <div className="flex min-w-0 items-center gap-x-1">
+        <div className="flex min-h-6 w-full items-center justify-between gap-x-group-stepped">
+            <div className="flex min-w-0 items-center gap-x-tight">
                 <Tag
                     className="shrink-0"
                     label={copy.proposalDataListItemStatus.statusLabel[status]}
@@ -51,7 +51,7 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
                 )}
             </div>
             {showStatusMetadata && (
-                <div className="flex items-center gap-x-2 md:gap-x-3">
+                <div className="flex items-center gap-x-related--8-12">
                     <span
                         className={classNames('text-sm leading-tight md:text-base', {
                             'text-info-800': isActive,

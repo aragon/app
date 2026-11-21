@@ -80,13 +80,13 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
     return (
         <Wizard.Step
             className={classNames(
-                'flex h-full flex-col justify-between gap-10 md:gap-20',
+                'flex h-full flex-col justify-between gap-layout',
                 className,
             )}
             {...otherProps}
         >
             <div className="flex flex-col gap-6 md:gap-12">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-related--fixed-8">
                     <Heading size="h1">{title}</Heading>
                     <p className="text-base leading-normal font-normal text-neutral-500 md:text-lg">
                         {description}
@@ -94,7 +94,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                 </div>
                 {children}
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-section">
                 {displayValidationError && (
                     <AlertCard
                         message={t(
@@ -107,7 +107,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         )}
                     </AlertCard>
                 )}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     <div className="flex flex-row justify-between">
                         <Button
                             className={hasPrevious ? undefined : 'invisible'}
@@ -139,7 +139,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                                 )}
                             </Dropdown.Container>
                         ) : (
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-related">
                                 {secondaryAction}
                                 <Button
                                     disabled={disableNext}

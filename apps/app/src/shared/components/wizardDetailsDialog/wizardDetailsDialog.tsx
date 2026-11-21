@@ -35,10 +35,10 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
 
     return (
         <Dialog.Content
-            className="flex flex-col gap-y-6 px-12 py-10 md:px-6"
+            className="flex flex-col gap-y-section px-12 py-10 md:px-6"
             noInset={true}
         >
-            <div className="flex flex-col gap-y-3">
+            <div className="flex flex-col gap-y-related">
                 <Title asChild={true}>
                     <Heading size="h3">{title}</Heading>
                 </Title>
@@ -53,8 +53,11 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
             </div>
             <div className="flex flex-col">
                 {steps.map((step, index) => (
-                    // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
-                    <div className="flex items-center gap-x-6 py-4" key={index}>
+                    <div
+                        className="flex items-center gap-x-section py-4"
+                        // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
+                        key={index}
+                    >
                         <IllustrationObject
                             className="size-16 rounded-full border border-neutral-100"
                             object={step.icon}
@@ -70,7 +73,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                     </div>
                 ))}
             </div>
-            <div className="flex gap-x-4 pt-6">
+            <div className="flex gap-x-group pt-6">
                 <Button href={wizardLink} onClick={handleActionClick}>
                     {actionLabel}
                 </Button>

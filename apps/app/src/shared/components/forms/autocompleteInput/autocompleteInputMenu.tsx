@@ -41,15 +41,21 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
+        'pointer-events-auto flex flex-col gap-related overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
-        { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
-        { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },
+        {
+            'rounded-b-xl border-b pt-inset-tight--fixed-4 md:pb-12':
+                isBottomPlacement,
+        },
+        {
+            'rounded-t-xl border-t pb-inset-tight--fixed-4 md:pt-12':
+                !isBottomPlacement,
+        },
         className,
     );
 
     const footerClassName = classNames(
-        'absolute left-0 hidden w-full flex-row justify-between px-6 py-4 text-base leading-tight font-normal backdrop-blur-md md:flex',
+        'absolute left-0 hidden w-full flex-row justify-between px-inset-surface-wide py-inset-surface-flat--fixed-16 text-base leading-tight font-normal backdrop-blur-md md:flex',
         { 'bottom-0': isBottomPlacement },
         { 'top-0': !isBottomPlacement },
     );
@@ -65,13 +71,13 @@ export const AutocompleteInputMenu = forwardRef<
                 >
                     <div className={menuClassName} ref={ref} {...otherProps}>
                         <div
-                            className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3"
+                            className="flex max-h-[268px] flex-col gap-related overflow-auto px-inset-flush--fixed-12"
                             onWheel={(event) => event.stopPropagation()}
                         >
                             {children}
                         </div>
                         <div className={footerClassName}>
-                            <div className="flex flex-row items-center gap-1">
+                            <div className="flex flex-row items-center gap-tight">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
                                 <KeyboardShortcut>↓</KeyboardShortcut>
                                 <p className="text-neutral-500">
@@ -80,7 +86,7 @@ export const AutocompleteInputMenu = forwardRef<
                                     )}
                                 </p>
                             </div>
-                            <div className="flex flex-row items-center gap-1">
+                            <div className="flex flex-row items-center gap-tight">
                                 <p className="text-neutral-500">
                                     {selectItemLabel}
                                 </p>

@@ -104,7 +104,7 @@ export const ProposalVotingBreakdownToken: React.FC<IProposalVotingBreakdownToke
 
     return (
         <Tabs.Content
-            className={classNames('flex flex-col gap-4', className)}
+            className={classNames('flex flex-col gap-group', className)}
             value={ProposalVotingTab.BREAKDOWN}
             {...otherProps}
         >

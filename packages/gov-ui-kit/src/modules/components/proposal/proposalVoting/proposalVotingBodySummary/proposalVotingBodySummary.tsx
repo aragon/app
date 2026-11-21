@@ -14,7 +14,7 @@ export const ProposalVotingBodySummary: React.FC<PropsWithChildren<IProposalVoti
     }
 
     return (
-        <div className={classNames('flex w-full flex-col gap-3', className)} {...otherProps}>
+        <div className={classNames('flex w-full flex-col gap-related', className)} {...otherProps}>
             {children}
         </div>
     );

@@ -54,7 +54,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
 
     if (!isNestedType) {
         return (
-            <div className="flex flex-row items-start gap-2">
+            <div className="flex flex-row items-start gap-related--fixed-8">
                 {isBooleanEdit ? (
                     <ProposalActionsDecoderBooleanField
                         fieldName={fieldName}
@@ -107,8 +107,8 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
             useCustomWrapper={true}
         >
             <div
-                className={classNames('flex flex-col gap-4', {
-                    'rounded-xl border border-neutral-100 p-4': isNestedType,
+                className={classNames('flex flex-col gap-group', {
+                    'rounded-xl border border-neutral-100 p-inset-surface-flat--fixed-16': isNestedType,
                 })}
             >
                 {/* Render text-field as hidden to register array field */}
@@ -118,8 +118,8 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
                     mode={mode}
                     parameter={parameter}
                 />
-                <div className="flex grow flex-row items-start gap-2">
-                    <div className="flex grow flex-col gap-5 md:gap-6">
+                <div className="flex grow flex-row items-start gap-related--fixed-8">
+                    <div className="flex grow flex-col gap-group-stepped--20-24">
                         {nestedParameters.map((parameter, index) => {
                             const nestedFieldName = index.toString();
                             const nestedFormPrefix = proposalActionsDecoderUtils.getFieldName(fieldName, formPrefix);
@@ -136,7 +136,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
                             const alignToInput = !isNestedParameter && !isBooleanEditParameter;
 
                             return (
-                                <div className="flex flex-row items-start gap-2" key={nestedFieldPath}>
+                                <div className="flex flex-row items-start gap-related--fixed-8" key={nestedFieldPath}>
                                     {isArray && (
                                         <p
                                             className={classNames(nestedParameterHeaderClassName, 'shrink-0', {

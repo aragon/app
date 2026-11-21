@@ -90,10 +90,11 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
     return (
         <Card
             className={classNames(
-                'relative flex flex-col gap-4 p-4 md:gap-6 md:p-6',
+                'relative flex flex-col gap-group-stepped',
                 { 'border-primary-200 shadow-primary': isPrimary },
                 className,
             )}
+            inset="surface"
         >
             {tag != null && (
                 <Tag
@@ -106,7 +107,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 className="size-16 rounded-full bg-neutral-50 md:size-24"
                 object={objectType}
             />
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related">
                 <Heading as="h2" size={isSmaller ? 'h2' : 'h1'}>
                     {title}
                 </Heading>
@@ -120,7 +121,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     {description}
                 </p>
             </div>
-            <div className="mt-auto flex flex-col gap-3 md:flex-row">
+            <div className="mt-auto flex flex-col gap-related md:flex-row">
                 <Button
                     className="w-full md:w-auto"
                     {...(isExternal

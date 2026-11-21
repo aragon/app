@@ -295,14 +295,14 @@ export const AddressInput = forwardRef<HTMLTextAreaElement, IAddressInputProps>(
 
     return (
         <InputContainer {...containerProps} alert={alert}>
-            <div className="ml-3 shrink-0">
+            <div className="ml-control-md shrink-0">
                 {isLoading && <Spinner size="lg" variant="neutral" />}
                 {!isLoading && <MemberAvatar address={addressValue} chainId={ensChainId} wagmiConfig={wagmiConfig} />}
             </div>
             <textarea
                 className={classNames(
                     // min-h-11 is required to prevent placeholder displacement
-                    'min-h-11 resize-none px-3!',
+                    'min-h-11 resize-none px-control-md!',
                     { 'whitespace-normal': isFocused },
                     inputClassName,
                 )}
@@ -316,7 +316,7 @@ export const AddressInput = forwardRef<HTMLTextAreaElement, IAddressInputProps>(
                 value={processedValue}
             />
             {!hideControls && (
-                <div className="mr-2 flex flex-row gap-2">
+                <div className="mr-control-sm flex flex-row gap-related--fixed-8">
                     {canToggleToAddress && (
                         <Button className="min-w-max" onClick={toggleDisplayMode} size="sm" variant="tertiary">
                             0x…

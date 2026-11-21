@@ -9,16 +9,16 @@ export const VoteProposalDataListItemSkeleton: React.FC<IVoteProposalDataListIte
         <DataList.Item
             aria-busy="true"
             aria-label="loading"
-            className="flex min-h-[68px] items-center gap-x-3 py-1 md:min-h-[93px] md:gap-x-4 md:py-0.5"
+            className="flex min-h-[68px] items-center gap-x-related--12-16 py-inset-tight--4-2 md:min-h-[93px]"
             tabIndex={0}
             {...otherProps}
         >
-            <div className="flex w-full flex-col gap-y-1 md:gap-y-1.5">
+            <div className="flex w-full flex-col gap-y-tight--4-6">
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="60%" />
-                <div className="flex w-full gap-x-1">
+                <div className="flex w-full gap-x-tight">
                     <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="8%" />
                     <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="8%" />
-                    <StateSkeletonBar className="ml-5" responsiveSize={{ md: 'lg' }} width="10%" />
+                    <StateSkeletonBar className="ml-group--fixed-20" responsiveSize={{ md: 'lg' }} width="10%" />
                 </div>
             </div>
         </DataList.Item>

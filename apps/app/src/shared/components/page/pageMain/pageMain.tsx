@@ -46,17 +46,17 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                 'flex min-w-0 flex-col',
                 { 'w-full': !fullWidth },
                 {
-                    'm-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28':
+                    'm-auto h-full max-w-[1024px] px-inset-page pt-6 pb-10 md:pb-20 lg:px-28':
                         fullWidth,
                 },
-                { 'gap-12': title == null },
-                { 'gap-6': title != null },
+                { 'gap-section-wide--fixed-48': title == null },
+                { 'gap-section': title != null },
                 className,
             )}
             {...otherProps}
         >
             {title && (
-                <header className="flex flex-row justify-between gap-6">
+                <header className="flex flex-row justify-between gap-section">
                     <Heading size="h1">{title}</Heading>
                     {action && !action.hidden && (
                         <Button

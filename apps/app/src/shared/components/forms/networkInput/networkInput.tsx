@@ -19,7 +19,7 @@ export type NetworkInputBaseForm = Record<string, Network>;
  * inside paragraphs (see `Dropdown.Item`), where only phrasing content is valid.
  */
 const networkTagClassName =
-    'flex h-5 shrink-0 items-center rounded-full bg-neutral-100 px-1.5 text-neutral-500 text-sm leading-tight md:h-6 md:px-2 md:text-base';
+    'flex h-tag shrink-0 items-center rounded-full bg-neutral-100 px-tag text-neutral-500 text-sm leading-tight md:text-base';
 
 /**
  * Networks selectable in the input, i.e. every supported network that is not disabled, ordered as defined on the
@@ -84,7 +84,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                 customTrigger={
                     <button
                         aria-label={label ?? t('app.shared.networkInput.label')}
-                        className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 text-left focus-ring-primary hover:border-neutral-200 focus:outline-hidden"
+                        className="flex w-full cursor-pointer items-center gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-control-lg py-control-lg text-left focus-ring-primary hover:border-neutral-200 focus:outline-hidden"
                         type="button"
                     >
                         <Avatar
@@ -122,7 +122,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                         >
                             {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing
                              * content is allowed here (no Tag component, which renders a div). */}
-                            <span className="flex items-center gap-3">
+                            <span className="flex items-center gap-related">
                                 <Avatar
                                     alt={networkName}
                                     size="sm"
