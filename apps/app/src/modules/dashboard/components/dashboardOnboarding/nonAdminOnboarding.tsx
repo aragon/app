@@ -26,7 +26,7 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
     const { t } = useTranslations();
 
     return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-section--fixed-32">
             <Heading className="text-3xl! md:text-4xl!" size="h1">
                 {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
                 {displayName != null && (

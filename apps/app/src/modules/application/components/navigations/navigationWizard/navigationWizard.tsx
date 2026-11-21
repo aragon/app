@@ -128,7 +128,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
-        'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
+        'items-center gap-nav-related--fixed-12 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
         'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
     );
 
@@ -136,10 +136,10 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     return (
         <Navigation.Container
-            containerClasses="flex flex-row items-center gap-x-6 justify-between py-5"
+            containerClasses="flex flex-row items-center gap-x-nav-section justify-between py-inset-nav-bar--fixed-20"
             trailing={<SupportChatTrigger />}
         >
-            <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
+            <div className="flex min-w-0 grow items-center gap-x-nav-group--12-16">
                 <Link className={linkClassName} href={exitHref}>
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
@@ -148,7 +148,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                         {wizardName}
                     </p>
                     {displayDao != null && (
-                        <div className="flex items-center gap-x-2">
+                        <div className="flex items-center gap-x-nav-related">
                             <AddressOutput
                                 address={displayDao.address}
                                 className="text-sm leading-tight text-nowrap text-neutral-500"

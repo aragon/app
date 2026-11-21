@@ -36,19 +36,19 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     return (
         <footer
             className={classNames(
-                'border-t border-neutral-100 bg-neutral-0 py-5',
+                'border-t border-neutral-100 bg-neutral-0 py-inset-nav-bar--fixed-20',
                 className,
             )}
             {...otherProps}
         >
             <Container
                 className={classNames(
-                    'grid items-center md:gap-6',
+                    'grid items-center md:gap-nav-section',
                     layoutClassNames,
                 )}
             >
-                <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
-                    <div className="flex items-center gap-2.5">
+                <div className="flex flex-row items-center justify-between gap-nav-group pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
+                    <div className="flex items-center gap-nav-related--fixed-10">
                         <p className="text-sm leading-tight text-nowrap text-neutral-800 md:text-base">
                             {t('app.application.footer.governed')}
                         </p>
@@ -60,7 +60,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         variant="primary"
                     />
                 </div>
-                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
+                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-nav-section">
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
                             className={linkClassNames}

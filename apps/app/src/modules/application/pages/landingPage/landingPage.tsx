@@ -58,7 +58,7 @@ export const LandingPage: React.FC = () => {
                 data-ftue-landing=""
             >
                 <div
-                    className="flex flex-col items-center gap-3 text-neutral-500"
+                    className="flex flex-col items-center gap-related text-neutral-500"
                     role="status"
                 >
                     <Spinner size="lg" variant="neutral" />
@@ -73,7 +73,7 @@ export const LandingPage: React.FC = () => {
     const legalLinks = (
         <nav
             aria-label={t('app.application.landingPage.legal')}
-            className="flex items-center gap-3 text-sm leading-tight"
+            className="flex items-center gap-related text-sm leading-tight"
         >
             <span>{t('app.application.landingPage.copyright', { year })}</span>
             <Link href={privacyUrl} target="_blank">
@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
 
     const demoLink = (
         <Link
-            className="relative inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-neutral-0/55 px-5 text-base whitespace-nowrap text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
+            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 text-base whitespace-nowrap text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
         >
@@ -121,11 +121,11 @@ export const LandingPage: React.FC = () => {
             className="grid min-h-dvh grid-rows-[auto_auto] overflow-x-hidden bg-neutral-0 text-neutral-800 md:h-dvh md:grid-cols-2 md:grid-rows-1 md:overflow-hidden"
             data-ftue-landing=""
         >
-            <section className="flex flex-col items-center gap-6 px-6 pt-6 pb-5 text-center md:items-stretch md:justify-between md:px-12 md:py-12 md:text-left xl:px-[72px]">
+            <section className="flex flex-col items-center gap-section px-6 pt-6 pb-5 text-center md:items-stretch md:justify-between md:px-12 md:py-12 md:text-left xl:px-[72px]">
                 <AragonLogo size="md" />
 
-                <div className="flex w-full max-w-[560px] flex-col items-center gap-6 md:items-start md:gap-8">
-                    <div className="flex flex-col items-center gap-3 md:items-start">
+                <div className="flex w-full max-w-[560px] flex-col items-center gap-section--24-32 md:items-start">
+                    <div className="flex flex-col items-center gap-related md:items-start">
                         <h1 className="text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] font-normal tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
                             {t('app.application.landingPage.hero.title')}
                         </h1>
@@ -134,7 +134,7 @@ export const LandingPage: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex w-full max-w-[400px] flex-col gap-3">
+                    <div className="flex w-full max-w-[400px] flex-col gap-related">
                         <Button
                             className="w-full"
                             iconLeft={IconType.BLOCKCHAIN_WALLET}
@@ -148,14 +148,14 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="flex items-center gap-3 pt-2 text-sm leading-tight text-neutral-500">
+                        <div className="flex items-center gap-related pt-inset-flush--fixed-8 text-sm leading-tight text-neutral-500">
                             <span className="h-px grow bg-neutral-100" />
                             {t('app.application.landingPage.signIn.comingSoon')}
                             <span className="h-px grow bg-neutral-100" />
                         </div>
-                        <div className="flex justify-center gap-8 text-neutral-500 md:gap-10">
+                        <div className="flex justify-center gap-section-wide--32-40 text-neutral-500">
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
                                 disabled={true}
                                 type="button"
                             >
@@ -168,7 +168,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.email')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
                                 disabled={true}
                                 type="button"
                             >
@@ -184,7 +184,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.google')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
                                 disabled={true}
                                 type="button"
                             >
@@ -204,7 +204,7 @@ export const LandingPage: React.FC = () => {
                 </footer>
             </section>
 
-            <section className="relative flex flex-col items-center justify-start gap-6 overflow-hidden bg-primary-400 px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
+            <section className="relative flex flex-col items-center justify-start gap-section overflow-hidden bg-primary-400 px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
                 <Image
                     alt=""
                     aria-hidden="true"

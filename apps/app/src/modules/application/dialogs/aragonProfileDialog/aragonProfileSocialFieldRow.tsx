@@ -45,7 +45,7 @@ export const AragonProfileSocialFieldRow: React.FC<
     );
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-related--fixed-8">
             <InputText
                 className="flex-1"
                 iconLeft={socialKeyToIconType[fieldName]}

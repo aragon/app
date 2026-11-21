@@ -49,7 +49,7 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 text-left transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50"
+            className="flex w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-neutral-100 bg-neutral-0 p-2 text-left transition-all focus-ring-primary hover:border-neutral-200 active:bg-neutral-50"
             onClick={onClick}
             type="button"
         >

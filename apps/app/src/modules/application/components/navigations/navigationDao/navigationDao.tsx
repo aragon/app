@@ -129,7 +129,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 size="lg"
                 src={daoAvatar}
             />
-            <div className="flex min-w-0 flex-col gap-1.5 leading-tight font-normal">
+            <div className="flex min-w-0 flex-col gap-nav-tight--fixed-6 leading-tight font-normal">
                 <Tooltip content={daoDisplayName} triggerAsChild={true}>
                     <p className="truncate text-lg text-neutral-800 sm:text-xl">
                         {daoDisplayName}
@@ -160,7 +160,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         </>
                     }
                     header={
-                        <div className="flex flex-col gap-3 px-4 pt-2">
+                        <div className="flex flex-col gap-nav-related--fixed-12 px-inset-nav-item pt-inset-nav-item--fixed-8">
                             {daoSummary}
                         </div>
                     }
@@ -170,14 +170,14 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             <Navigation.Container
                 className={classNames({ 'lg:hidden': withSidebar }, className)}
                 containerClasses={classNames(
-                    'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
+                    'flex flex-col gap-2 py-inset-nav-bar lg:gap-3',
                     containerClasses,
                 )}
                 // On the sidebar layout the floating launcher (LayoutSidebar) is the chat entry point.
                 trailing={withSidebar ? undefined : <SupportChatTrigger />}
                 {...otherProps}
             >
-                <div className="flex items-center justify-between gap-1">
+                <div className="flex items-center justify-between gap-nav-tight">
                     <NavigationDaoHome dao={dao} onClick={openDialog} />
                     {!withSidebar && (
                         <Navigation.Links
@@ -203,7 +203,9 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     onOpenChange={setIsDialogOpen}
                     open={isDialogOpen}
                 >
-                    <div className="flex flex-col gap-3 px-8">{daoSummary}</div>
+                    <div className="flex flex-col gap-nav-related--fixed-12 px-8">
+                        {daoSummary}
+                    </div>
                 </Navigation.Dialog>
             </Navigation.Container>
         </>
