@@ -176,7 +176,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
     }, [canSubmitVote]);
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-group">
             {!showOptions && latestVote == null && (
                 <Button className="w-fit" onClick={handleVoteClick} size="md">
                     {t(
@@ -185,7 +185,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
                 </Button>
             )}
             {!showOptions && latestVote != null && (
-                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                <div className="flex w-full flex-col items-center gap-group md:flex-row">
                     {latestVoteTxHref != null ? (
                         <Button
                             className="w-full md:w-fit"
@@ -227,7 +227,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="p-6 shadow-neutral-sm">
+                <Card className="shadow-neutral-sm" inset="surface-wide">
                     <TokenVotingOptions
                         disableOptions={
                             latestVote != null && !isVoteReplacement
@@ -240,7 +240,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
                 </Card>
             )}
             {showOptions && (
-                <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
+                <div className="flex w-full flex-col items-center gap-y-related md:flex-row md:gap-x-group">
                     <Button
                         className="w-full md:w-fit"
                         disabled={!selectedOption}

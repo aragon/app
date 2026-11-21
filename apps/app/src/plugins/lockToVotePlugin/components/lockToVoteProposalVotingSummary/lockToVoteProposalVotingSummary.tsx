@@ -102,7 +102,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
     }
 
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-related">
             <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">

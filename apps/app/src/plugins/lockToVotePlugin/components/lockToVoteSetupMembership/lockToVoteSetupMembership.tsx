@@ -112,8 +112,8 @@ export const LockToVoteSetupMembership: React.FC<
     };
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-2 md:gap-3">
+        <div className="flex flex-col gap-section">
+            <div className="flex flex-col gap-related--8-12">
                 <AddressInput
                     alert={alert}
                     // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
