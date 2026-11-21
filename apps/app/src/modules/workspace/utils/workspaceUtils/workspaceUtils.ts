@@ -13,6 +13,7 @@ import {
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
+    WorkspaceRegistryScope,
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
@@ -426,6 +427,17 @@ class WorkspaceUtils {
 
         return `${slug}-${suffix.toString()}`;
     };
+
+    /**
+     * Returns the registry a workspace lives in. Demo IDs are never handed out to other workspaces, so the ID alone
+     * decides it.
+     * @param workspaceId - ID of the workspace, undefined outside a workspace route.
+     * @returns The demo registry for a demo workspace, the persistent one otherwise.
+     */
+    getRegistryScope = (workspaceId?: string): WorkspaceRegistryScope =>
+        workspaceId != null && Object.hasOwn(workspaceDemoFixture, workspaceId)
+            ? WorkspaceRegistryScope.DEMO
+            : WorkspaceRegistryScope.PERSISTENT;
 
     /**
      * Checks if two entries point to the same address on the same network.

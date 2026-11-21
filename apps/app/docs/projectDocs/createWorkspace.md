@@ -248,9 +248,16 @@ local storage for real requests is a single-method change:
 
 The persistent registry uses local-storage key `aragon-workspaces`. Known fixture workspace IDs activate the
 tab-scoped `workspaceDemo.fixture.json` registry before the first workspace read, so copied demo account URLs also work
-in a fresh tab. Opening the landing-page demo link resets that session registry to the fixture. Navigating to
-`/workspace` or a persistent workspace discards it and resumes the local registry; persistent and demo workspaces
-therefore never appear together or overwrite one another.
+in a fresh tab. Opening the landing-page demo link resets that session registry to the fixture. The first read or
+write of the persistent registry (e.g. on `/workspace` or a persistent workspace) discards it; persistent and demo
+workspaces therefore never appear together or overwrite one another.
+
+The registry is never taken from the URL inside the service. A workspace's registry follows from its ID
+(`workspaceUtils.getRegistryScope`, demo IDs are reserved), new workspaces always land on the persistent one, and
+`getWorkspaceList(scope)` takes it from `useWorkspaceList`, which derives it from the route's `workspaceId`. The same
+`WorkspaceRegistryScope` is part of the list query key, so a cached demo list never answers for the persistent one
+(e.g. `/workspace` deciding where to go right after the demo). `workspaceServiceKeys.workspaceList()` without a scope
+matches both lists, which is what writes invalidate.
 
 The debug panel downloads and restores the active registry, and deletes the persistent one (`aragon-workspaces`).
 Import and deletion ask for a browser confirmation, as both discard the browser-only workspaces; deletion then opens
@@ -259,8 +266,8 @@ workspaces, each with a standalone Polygon Safe, and uses the regular workspace 
 account interactions instead of parallel demo UI.
 
 Workspace payload reads never seed or modify the selected registry. `getWorkspace` and `getWorkspaceList` return what
-is stored, so the list can be empty; the route-aware resolver only discards the disposable session fixture after
-navigation leaves its workspace IDs. Only `createDefaultWorkspace` seeds "My workspace" (`createWorkspace` does
+is stored, so the list can be empty; reaching the persistent registry only discards the disposable session
+fixture. Only `createDefaultWorkspace` seeds "My workspace" (`createWorkspace` does
 not). Seeding is an explicit call because a read that writes makes the
 default appear depending on which page a user opened first, and lets two tabs reading an empty registry seed two
 different workspaces. It is also the shape a backend registry would take: a get-or-create (bootstrap) call, not a
@@ -1064,8 +1071,7 @@ the aggregated scope (`resolveAccountScope`).
 - **Storage** (aside of `WorkspaceAdminPageClient`) — Published "None" and Sync "Local only". "Export workspace"
   downloads `{workspaceId}.json` from `exportWorkspace`.
 - **Import** — the workspace selector's "Import workspace" item opens the file picker at once; a valid export becomes
-  a new workspace and opens on its overview. The selector reads its list again on a workspace change, as the list
-  key does not name the registry (demo or local) it was read from.
+  a new workspace and opens on its overview, the lists invalidated so the selector holds it.
 
 ## Add accounts
 

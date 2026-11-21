@@ -3,7 +3,7 @@
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ChangeEvent, useEffect, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -45,19 +45,6 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { mutateAsync: importWorkspace } = useImportWorkspace();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // The list key does not name its registry (demo or local), so another workspace reads it again.
-    const listWorkspaceIdRef = useRef(workspaceId);
-    useEffect(() => {
-        if (listWorkspaceIdRef.current === workspaceId) {
-            return;
-        }
-
-        listWorkspaceIdRef.current = workspaceId;
-        void queryClient.invalidateQueries({
-            queryKey: workspaceServiceKeys.workspaceList(),
-        });
-    }, [queryClient, workspaceId]);
-
     // The account scope belongs to the previous workspace, so the new one opens on its aggregated overview.
     const handleSelectWorkspace = (id: string) =>
         router.push(
@@ -86,6 +73,9 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
 
         try {
             const workspace = await importWorkspace(await file.text());
+            await queryClient.invalidateQueries({
+                queryKey: workspaceServiceKeys.workspaceList(),
+            });
             handleSelectWorkspace(workspace.id);
         } catch {
             window.alert(t('app.workspace.workspaceSelector.importError'));
