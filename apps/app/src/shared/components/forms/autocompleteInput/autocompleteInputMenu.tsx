@@ -49,7 +49,7 @@ export const AutocompleteInputMenu = forwardRef<
     );
 
     const footerClassName = classNames(
-        'absolute left-0 hidden w-full flex-row justify-between px-6 py-4 text-base leading-tight font-normal backdrop-blur-md md:flex',
+        'absolute left-0 hidden w-full flex-row justify-between px-6 py-4 type-control backdrop-blur-md md:flex',
         { 'bottom-0': isBottomPlacement },
         { 'top-0': !isBottomPlacement },
     );

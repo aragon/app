@@ -20,15 +20,21 @@ export const StatCard: React.FC<IStatCardProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-y-1 rounded-xl bg-neutral-50 p-4">
-            <Heading size="h3">
+            <Heading
+                as="h3"
+                className="type-numeric"
+                typeRole="stat--stat-card"
+            >
                 {value}
                 {suffix && (
-                    <span className="text-xs text-neutral-500 md:text-sm">
+                    <span className="type-caption--framework-leading text-neutral-500">
                         {suffix}
                     </span>
                 )}
             </Heading>
-            <p className="text-sm text-neutral-500">{label}</p>
+            <p className="type-caption--compact-label text-neutral-500">
+                {label}
+            </p>
         </div>
     );
 };

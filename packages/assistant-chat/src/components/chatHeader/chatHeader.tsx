@@ -106,10 +106,12 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
                 <AragonMark />
             )}
             <div className="flex min-w-0 flex-col">
-                <Heading as="h2" size="h4">
+                <Heading as="h2" typeRole="title-group--small-panel">
                     {chatCopy.header.title}
                 </Heading>
-                <p className="truncate text-xs text-neutral-400">{context}</p>
+                <p className="truncate type-caption--unstepped text-neutral-400">
+                    {context}
+                </p>
             </div>
             <div className="ml-auto flex items-center gap-2">
                 {/* One conversation can file several tickets, so a fresh start is always offered —

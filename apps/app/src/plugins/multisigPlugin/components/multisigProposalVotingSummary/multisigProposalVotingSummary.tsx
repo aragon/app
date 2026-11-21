@@ -38,11 +38,7 @@ export const MultisigProposalVotingSummary: React.FC<
     const { t } = useTranslations();
 
     if (!proposal) {
-        return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
-                {name}
-            </p>
-        );
+        return <p className="type-title-item text-neutral-800">{name}</p>;
     }
 
     const { settings, metrics } = proposal;
@@ -85,7 +81,7 @@ export const MultisigProposalVotingSummary: React.FC<
                   : 'text-neutral-500';
 
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="type-title-item text-neutral-800">
                 {name}{' '}
                 <span className={statusClass}>
                     {t(
@@ -98,7 +94,7 @@ export const MultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="type-title-item text-neutral-800">
                 {name}{' '}
                 <span className="text-neutral-500">
                     {isVeto
@@ -115,7 +111,7 @@ export const MultisigProposalVotingSummary: React.FC<
                 value={currentApprovalsPercentage}
                 variant={isApprovalReached ? 'primary' : 'neutral'}
             />
-            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
+            <p className="type-supporting text-neutral-800">
                 {formattedApprovalsAmount}{' '}
                 <span className="text-neutral-500">
                     {t(

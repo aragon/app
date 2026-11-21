@@ -193,14 +193,14 @@ export const DispatchSimulationDialog: React.FC<
                                     size="md"
                                 />
                                 <div className="min-w-0 flex-1">
-                                    <p className="leading-tight font-semibold text-critical-700">
+                                    <p className="type-title-group--compact type-strong text-critical-700">
                                         {t(
                                             isReverted
                                                 ? 'app.capitalFlow.dispatchSimulationDialog.reverted'
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-1 text-sm leading-tight break-words text-critical-600">
+                                    <p className="mt-1 type-body-compact--dialog-note break-words text-critical-600">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>

@@ -109,7 +109,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                 >
                     {t('app.finance.financeDetailsList.octavLabel')}
                 </Button>
-                <p className="text-sm text-neutral-500">
+                <p className="type-supporting--compact-detail text-neutral-500">
                     {t('app.finance.financeDetailsList.octavDescription')}
                 </p>
             </div>

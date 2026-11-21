@@ -84,7 +84,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (
             >
                 {t('app.settings.updateDaoContracts.button')}
             </Button>
-            <p className="text-sm text-neutral-500">
+            <p className="type-supporting--compact-detail text-neutral-500">
                 {t('app.settings.updateDaoContracts.description')}
             </p>
         </div>

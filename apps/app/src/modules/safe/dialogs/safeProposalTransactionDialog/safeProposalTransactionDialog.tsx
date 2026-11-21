@@ -1777,7 +1777,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     transaction={prepared.transaction}
                 />
                 {isComplete && (!executionSucceeded || indexingComplete) && (
-                    <div className="text-sm text-neutral-700">
+                    <div className="type-supporting--compact-detail text-neutral-700">
                         {t(
                             `${dialogTranslationKey}.${
                                 executionSucceeded

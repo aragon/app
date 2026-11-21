@@ -54,7 +54,7 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                     <p className="text-neutral-500">
                         {networkDefinitions[dao.network].name}
                     </p>
-                    <p className="text-sm leading-tight font-normal text-neutral-400">
+                    <p className="type-supporting--compact-meta text-neutral-400">
                         {t('app.settings.daoSettingsInfo.notChangeable')}
                     </p>
                 </div>
@@ -168,7 +168,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                     size="md"
                                     src={getDaoAvatar(dao)}
                                 />
-                                <p className="truncate text-lg leading-tight text-neutral-800">
+                                <p className="truncate type-title-item--unstepped text-neutral-800">
                                     {dao.name}
                                 </p>
                             </div>
@@ -192,7 +192,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                         size="md"
                                         src={getDaoAvatar(linkedAccount)}
                                     />
-                                    <p className="truncate text-lg leading-tight text-neutral-800">
+                                    <p className="truncate type-title-item--unstepped text-neutral-800">
                                         {linkedAccount.name}
                                     </p>
                                 </div>

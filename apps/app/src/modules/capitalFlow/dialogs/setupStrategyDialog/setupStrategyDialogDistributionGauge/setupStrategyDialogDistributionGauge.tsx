@@ -58,12 +58,12 @@ export const SetupStrategyDialogDistributionGauge: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+                <p className="type-title-item text-neutral-800">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionGauge.token.label',
                     )}
                 </p>
-                <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                <p className="type-body-compact text-neutral-500">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionGauge.token.helpText',
                     )}

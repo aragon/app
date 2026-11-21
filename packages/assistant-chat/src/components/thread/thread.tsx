@@ -166,7 +166,9 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
     return (
         <div className="flex items-center gap-3">
             <span className="h-px flex-1 bg-neutral-100" />
-            <p className="flex-none text-xs text-neutral-400">{label}</p>
+            <p className="flex-none type-caption--unstepped text-neutral-400">
+                {label}
+            </p>
             <span className="h-px flex-1 bg-neutral-100" />
         </div>
     );
@@ -213,7 +215,11 @@ const CaptionLink: React.FC<ICaptionLinkProps> = (props) => {
 // Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
     <div className="flex flex-1 flex-col items-center justify-center px-8 py-6 text-center">
-        <Heading as="h2" className="text-balance" size="h3">
+        <Heading
+            as="h2"
+            className="text-balance"
+            typeRole="title-section--chat-empty-state"
+        >
             {chatCopy.welcome.greeting}
         </Heading>
     </div>
@@ -256,7 +262,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="px-2 text-center text-xs leading-normal text-balance text-neutral-400"
+            className="px-2 text-center type-caption--chat-note text-balance text-neutral-400"
             id={id}
         >
             {text}
@@ -286,7 +292,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="mx-auto cursor-pointer rounded-sm text-xs text-neutral-500 underline underline-offset-2 focus-ring-primary"
+            className="mx-auto cursor-pointer rounded-sm type-control-sm--chat text-neutral-500 underline underline-offset-2 focus-ring-primary"
             onClick={onViewRequests}
             type="button"
         >
@@ -296,7 +302,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="flex items-center justify-center gap-1 text-center text-xs text-neutral-400">
+    <p className="flex items-center justify-center gap-1 text-center type-caption--unstepped text-neutral-400">
         {chatCopy.composer.escalationPrompt}
         <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
@@ -324,7 +330,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-neutral-100 px-3.5 py-1.5 text-sm whitespace-nowrap text-neutral-800 transition-colors focus-ring-primary hover:bg-neutral-50"
+                        className="cursor-pointer rounded-full border border-neutral-100 px-3.5 py-1.5 type-control-sm--framework-leading whitespace-nowrap text-neutral-800 transition-colors focus-ring-primary hover:bg-neutral-50"
                         type="button"
                     >
                         {suggestion.label}
@@ -377,7 +383,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="px-2.5 text-xs leading-normal text-neutral-300">
+                        <p className="px-2.5 type-caption--chat-note text-neutral-300">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -388,7 +394,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-neutral-800 caret-primary-400 outline-none placeholder:text-neutral-300"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 type-control-sm--framework-leading text-neutral-800 caret-primary-400 outline-none placeholder:text-neutral-300"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -437,7 +443,7 @@ const ComposerCharacterCount: React.FC = () => {
     return (
         <p
             className={classNames(
-                'text-xs tabular-nums',
+                'type-caption--unstepped tabular-nums',
                 length >= limit ? 'text-critical-600' : 'text-neutral-400',
             )}
         >
@@ -513,7 +519,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 text-sm leading-normal text-critical-800">
+        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-300 bg-critical-100/40 p-3 type-body-compact--unstepped text-critical-800">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -602,7 +608,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="px-2 text-sm leading-relaxed wrap-break-word text-neutral-800">
+        <div className="px-2 type-body-compact--chat-message wrap-break-word text-neutral-800">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -637,7 +643,7 @@ const UserMessage: React.FC = () => (
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="rounded-xl rounded-br-sm bg-neutral-100 px-4 py-2 text-sm wrap-break-word whitespace-pre-wrap text-neutral-800 empty:hidden">
+            <div className="rounded-xl rounded-br-sm bg-neutral-100 px-4 py-2 type-body-compact--component-note wrap-break-word whitespace-pre-wrap text-neutral-800 empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

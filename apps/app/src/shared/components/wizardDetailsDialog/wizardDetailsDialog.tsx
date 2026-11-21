@@ -40,9 +40,11 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
         >
             <div className="flex flex-col gap-y-3">
                 <Title asChild={true}>
-                    <Heading size="h3">{title}</Heading>
+                    <Heading as="h3" typeRole="title-group">
+                        {title}
+                    </Heading>
                 </Title>
-                <Description className="text-base leading-normal font-normal text-neutral-500">
+                <Description className="type-body--unstepped text-neutral-500">
                     {description}
                 </Description>
                 {infoLink && (
@@ -59,10 +61,10 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                             className="size-16 rounded-full border border-neutral-100"
                             object={step.icon}
                         />
-                        <p className="grow py-4 leading-normal font-normal text-neutral-800">
+                        <p className="grow py-4 type-body--unstepped text-neutral-800">
                             {step.label}
                         </p>
-                        <p className="text-base leading-normal font-normal text-neutral-500">
+                        <p className="type-body--unstepped text-neutral-500">
                             {t('app.shared.wizardDetailsDialog.step', {
                                 number: index + 1,
                             })}

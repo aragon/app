@@ -144,14 +144,14 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
-                    <p className="text-base leading-tight text-nowrap text-neutral-800">
+                    <p className="type-title-page--wizard-nav text-nowrap text-neutral-800">
                         {wizardName}
                     </p>
                     {displayDao != null && (
                         <div className="flex items-center gap-x-2">
                             <AddressOutput
                                 address={displayDao.address}
-                                className="text-sm leading-tight text-nowrap text-neutral-500"
+                                className="type-supporting--compact-meta text-nowrap text-neutral-500"
                                 copy={false}
                                 label={displayDao.name?.trim() || undefined}
                             />

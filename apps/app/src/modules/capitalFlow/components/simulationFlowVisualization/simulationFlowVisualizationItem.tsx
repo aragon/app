@@ -94,7 +94,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
     showFallbackAddress,
 }) => (
     <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="min-w-full overflow-hidden text-base leading-tight text-ellipsis whitespace-nowrap text-neutral-800">
+        <p className="min-w-full overflow-hidden type-title-item--compact-card text-ellipsis whitespace-nowrap text-neutral-800">
             {item.label}
         </p>
 
@@ -109,7 +109,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
         )}
 
         {showFallbackAddress && (
-            <p className="text-sm leading-tight text-neutral-500">
+            <p className="type-supporting--compact-meta text-neutral-500">
                 <AddressOutput address={item.address} />
             </p>
         )}
@@ -131,7 +131,7 @@ const ItemTokenDeltas: React.FC<IItemTokenDeltasProps> = ({ item }) => {
     return (
         <div
             className={classNames(
-                'flex h-full flex-col items-end text-right text-base leading-tight text-neutral-800',
+                'flex h-full flex-col items-end text-right type-supporting--detail-value text-neutral-800',
                 sortedTokens.length > 1 ? 'gap-1' : 'gap-0',
             )}
         >

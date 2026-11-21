@@ -24,7 +24,7 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center type-mono text-[10px] shadow-neutral-sm transition-colors',
                             permission.conditionLabel != null && 'pb-1',
                             isSelected
                                 ? 'border-primary-500 bg-primary-500 text-neutral-0'

@@ -17,7 +17,7 @@ export const ExploreSection: React.FC<IExploreSectionProps> = (props) => {
             className={classNames('flex flex-col gap-4 md:gap-6', className)}
             {...otherProps}
         >
-            <Heading as="h2" size="h1">
+            <Heading as="h2" typeRole="title-section--explore">
                 {title}
             </Heading>
             {children}

@@ -181,13 +181,13 @@ export const WorkspaceAccountSelector: React.FC<
                             />
                         )}
                     </span>
-                    <span className="flex min-w-0 grow flex-col text-left leading-tight">
-                        <span className="truncate text-base text-neutral-800">
+                    <span className="flex min-w-0 grow flex-col text-left">
+                        <span className="truncate type-control--tall-line text-neutral-800">
                             {activeOption?.label}
                         </span>
                         {activeOptionAddress != null &&
                             activeOptionAddress !== activeOption?.label && (
-                                <span className="truncate text-sm">
+                                <span className="truncate type-supporting--compact-detail">
                                     {activeOptionAddress}
                                 </span>
                             )}
@@ -225,14 +225,14 @@ export const WorkspaceAccountSelector: React.FC<
                                 src={getOptionAvatar(option)}
                             />
                         )}
-                        <span className="flex min-w-0 flex-col leading-tight">
+                        <span className="flex min-w-0 flex-col">
                             <span className="truncate">{option.label}</span>
                             {option.account != null &&
                                 option.label !==
                                     addressUtils.truncateAddress(
                                         option.account.address,
                                     ) && (
-                                    <span className="truncate text-sm text-neutral-500">
+                                    <span className="truncate type-supporting--compact-detail text-neutral-500">
                                         {addressUtils.truncateAddress(
                                             option.account.address,
                                         )}
@@ -240,7 +240,7 @@ export const WorkspaceAccountSelector: React.FC<
                                 )}
                         </span>
                         {option.isExternal && (
-                            <span className="shrink-0 text-sm text-neutral-500">
+                            <span className="shrink-0 type-supporting--compact-detail text-neutral-500">
                                 {t(
                                     'app.workspace.workspaceAccountSelector.notInWorkspace',
                                 )}

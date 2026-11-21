@@ -90,7 +90,9 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             <div className="flex w-full min-w-0 items-center gap-4">
                 <Avatar size="lg" src={token.logo} />
                 <div className="flex min-w-0 flex-col gap-1">
-                    <h3 className="text-lg text-neutral-800">{title}</h3>
+                    <h3 className="type-title-item--picker-row text-neutral-800">
+                        {title}
+                    </h3>
                     <p className="line-clamp-1 text-neutral-500">
                         {description}
                     </p>
@@ -100,22 +102,22 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
                 <div className="flex grow items-center gap-4">
                     <div className="flex min-w-20 flex-col gap-1">
-                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                        <h3 className="type-supporting--sm-step-label text-neutral-500 sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount',
                             )}
                         </h3>
-                        <p className="text-base text-neutral-800 sm:text-lg">
+                        <p className="type-supporting--sm-step-value text-neutral-800 sm:type-supporting--sm-step-value-wide">
                             {formattedAmount}
                         </p>
                     </div>
                     <div className="flex min-w-20 flex-col gap-1">
-                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                        <h3 className="type-supporting--sm-step-label text-neutral-500 sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value',
                             )}
                         </h3>
-                        <p className="text-base text-neutral-800 sm:text-lg">
+                        <p className="type-supporting--sm-step-value text-neutral-800 sm:type-supporting--sm-step-value-wide">
                             {formattedValue}
                         </p>
                     </div>

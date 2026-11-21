@@ -52,9 +52,11 @@ export const GaugeRegistrarGaugeListItem: React.FC<
                         size="lg"
                         src={avatarSrc}
                     />
-                    <div className="flex flex-col gap-1 leading-tight font-normal">
-                        <p className="text-lg text-neutral-800">{gauge.name}</p>
-                        <p className="text-sm text-neutral-500">
+                    <div className="flex flex-col gap-1">
+                        <p className="type-title-item--picker-row text-neutral-800">
+                            {gauge.name}
+                        </p>
+                        <p className="type-supporting--compact-detail text-neutral-500">
                             <AddressOutput
                                 address={gauge.gaugeAddress}
                                 copy={false}
