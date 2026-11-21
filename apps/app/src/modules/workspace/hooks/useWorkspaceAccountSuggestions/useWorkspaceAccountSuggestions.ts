@@ -56,10 +56,11 @@ export const useWorkspaceAccountSuggestions = (
         fetchNextPage,
     } = useWorkspaceAccountSuggestionList(params, { enabled: isEnabled });
 
-    // Stops at a failed page, which would otherwise be fetched again in a loop.
+    // Stops at a failed page, which would otherwise be fetched again in a loop. Every mounted instance runs this in the
+    // same commit, so later calls join the running read instead of cancelling it.
     useEffect(() => {
         if (hasNextPage && !isFetchingNextPage && !isError) {
-            void fetchNextPage();
+            void fetchNextPage({ cancelRefetch: false });
         }
     }, [hasNextPage, isFetchingNextPage, isError, fetchNextPage]);
 
