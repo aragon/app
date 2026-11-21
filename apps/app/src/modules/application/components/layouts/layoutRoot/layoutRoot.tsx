@@ -9,6 +9,7 @@ import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
+import { typographyPreviewUtils } from '@/modules/application/utils/typographyPreviewUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -21,6 +22,7 @@ import {
     SupportChatPanel,
 } from '../../supportChat';
 import './layoutRoot.css';
+import './nextTypographyFonts.css';
 
 export interface ILayoutRootProps {
     /**
@@ -53,6 +55,14 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
         false;
 
+    // Typography preview of the debug panel (an axis of its own, independent of the colour theme): a stored
+    // typography is only rendered while the panel is enabled, so a user without the panel always gets the default.
+    const typographyAttribute =
+        typographyPreviewUtils.getServerTypographyAttribute(
+            isDebugPanelEnabled,
+            requestHeaders.get('cookie'),
+        );
+
     const queryClient = new QueryClient();
     await Promise.all([
         queryClient.prefetchQuery(sanctionedAddressesOptions()),
@@ -60,7 +70,11 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html className="h-full" lang="en">
+        <html
+            className="h-full"
+            data-typography={typographyAttribute}
+            lang="en"
+        >
             <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
                 <NextTopLoader
                     color="var(--color-primary-400)"
