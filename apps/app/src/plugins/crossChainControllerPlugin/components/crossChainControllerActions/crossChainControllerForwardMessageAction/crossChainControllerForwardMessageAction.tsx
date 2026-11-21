@@ -280,7 +280,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     ]);
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             {destinationChains.length > 0 ? (
                 <RadioGroup
                     helpText={t(
@@ -324,7 +324,10 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 useCustomWrapper={true}
             >
                 {hasNestedActions ? (
-                    <Card className="flex flex-col gap-4 rounded-xl bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between md:p-6">
+                    <Card
+                        className="flex flex-col gap-group rounded-xl bg-neutral-0 md:flex-row md:items-center md:justify-between"
+                        inset="surface"
+                    >
                         <p className="text-neutral-800">
                             {t(
                                 nestedActions.length === 1
@@ -375,8 +378,8 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     label={gasLimitLabel}
                     useCustomWrapper={true}
                 >
-                    <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                    <div className="flex flex-col gap-related">
+                        <div className="flex flex-col gap-related md:flex-row md:items-center">
                             <div className="w-full md:max-w-60">
                                 <InputNumber
                                     id={`${actionFieldName}.gasLimit`}
@@ -410,7 +413,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                         {gasLimitAlert == null &&
                             (estimationAlert != null ||
                                 simulationUrl != null) && (
-                                <div className="flex flex-wrap items-center gap-3">
+                                <div className="flex flex-wrap items-center gap-related">
                                     {estimationAlert != null && (
                                         <AlertInline
                                             message={estimationAlert.message}
