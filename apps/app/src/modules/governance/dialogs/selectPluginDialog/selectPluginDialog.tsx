@@ -137,14 +137,17 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
             />
             <Dialog.Content>
                 {!allResultsReady && (
-                    <div className="py-4">
+                    <div className="mt-group mb-group">
                         <Spinner size="lg" />
                     </div>
                 )}
                 <div
-                    className={classNames('flex flex-col gap-2 py-2', {
-                        hidden: !allResultsReady,
-                    })}
+                    className={classNames(
+                        'mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-related--fixed-8',
+                        {
+                            hidden: !allResultsReady,
+                        },
+                    )}
                 >
                     {sortedDaoPlugins.map((plugin) => (
                         <SelectPluginDialogProcessListItem

@@ -80,13 +80,13 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             )}
         >
             {selectionRole != null && (
-                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-primary-400 bg-neutral-0 px-4 py-0.5 text-xs font-medium text-neutral-500 uppercase">
+                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-primary-400 bg-neutral-0 px-inset-item-flat py-inset-tight text-xs font-medium text-neutral-500 uppercase">
                     {t(SELECTION_LABEL_KEY[selectionRole])}
                 </span>
             )}
             <div
                 className={classNames(
-                    'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-neutral-0 px-4 py-3 transition-colors hover:border-primary-300',
+                    'flex min-w-64 cursor-pointer items-center justify-between gap-group border bg-neutral-0 px-inset-item-flat py-inset-item-flat transition-colors hover:border-primary-300',
                     isSelected && 'border-primary-400 shadow-primary-lg',
                     selectionRole != null
                         ? 'rounded-xl rounded-tl-none'
@@ -96,7 +96,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             >
                 <InteractiveAncestorContext.Provider value={true}>
                     <PermissionGraphHandles />
-                    <div className="flex min-w-0 flex-col gap-0.5">
+                    <div className="flex min-w-0 flex-col gap-tight--fixed-2">
                         <AddressOutput
                             address={address}
                             className="text-neutral-800"

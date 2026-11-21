@@ -58,12 +58,12 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
 
     return (
         <Page.AsideCard title={t('app.capitalFlow.dispatchPanel.title')}>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-section">
                 <p className="text-base text-neutral-500">
                     {t('app.capitalFlow.dispatchPanel.description')}
                 </p>
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-tight">
+                    <div className="flex items-center gap-related">
                         <AvatarIcon
                             icon={IconType.APP_TRANSACTIONS}
                             size="sm"

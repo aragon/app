@@ -290,7 +290,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                         >
                             {metadataStatus ===
                                 ProposalMetadataStatus.NON_STANDARD && (
-                                <code className="mt-2 block rounded-lg bg-neutral-50 px-4 py-3 font-mono text-sm break-all text-neutral-800">
+                                <code className="mt-tight--fixed-8 block rounded-lg bg-neutral-50 px-inset-item-flat py-inset-item-flat font-mono text-sm break-all text-neutral-800">
                                     {proposal.metadataUri}
                                 </code>
                             )}
@@ -455,7 +455,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 'app.governance.daoProposalDetailsPage.aside.links.title',
                             )}
                         >
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-group">
                                 {resources.map((resource) => (
                                     <ResourceLink
                                         isExternal={true}

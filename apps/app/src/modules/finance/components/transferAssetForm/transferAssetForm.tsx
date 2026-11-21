@@ -71,7 +71,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
     return (
         <div
             className={classNames('flex w-full flex-col', {
-                'gap-6': !assetValue,
+                'gap-section': !assetValue,
             })}
         >
             <AssetInput

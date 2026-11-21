@@ -54,7 +54,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                     </Collapsible>
                 )}
                 {stats.length > 0 && (
-                    <div className="grid w-full grid-cols-2 gap-3">
+                    <div className="grid w-full grid-cols-2 gap-related">
                         {stats.map((stat) => (
                             <StatCard
                                 key={stat.label}
@@ -85,7 +85,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                     </DefinitionList.Item>
                 </DefinitionList.Container>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     {links.map((link) => (
                         <ResourceLink
                             isExternal={true}
@@ -96,7 +96,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                     ))}
                 </div>
                 {resolvedOctavLink && (
-                    <div className="flex flex-col items-center gap-y-3 pt-4">
+                    <div className="mt-group flex flex-col items-center gap-y-related">
                         <Button
                             className="w-full"
                             href={resolvedOctavLink}

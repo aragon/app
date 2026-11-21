@@ -13,7 +13,7 @@ export const PermissionStackNode: React.FC<
     return (
         <div
             className={classNames(
-                'nodrag nopan relative flex w-fit flex-col items-center gap-0.5',
+                'nodrag nopan relative flex w-fit flex-col items-center gap-tight--fixed-2',
                 dimmed === true && 'opacity-50',
             )}
         >
@@ -24,8 +24,9 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
-                            permission.conditionLabel != null && 'pb-1',
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
+                            permission.conditionLabel != null &&
+                                'pb-inset-tight--fixed-4',
                             isSelected
                                 ? 'border-primary-500 bg-primary-500 text-neutral-0'
                                 : dimmed
@@ -46,7 +47,7 @@ export const PermissionStackNode: React.FC<
                         {permission.conditionLabel != null && (
                             <span
                                 className={classNames(
-                                    'rounded bg-neutral-0 px-1',
+                                    'rounded bg-neutral-0 px-inset-tight--fixed-4',
                                     isSelected
                                         ? 'text-primary-700'
                                         : dimmed

@@ -25,7 +25,7 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
     return (
         <>
             {/* Static for small screens */}
-            <div className="relative z-10 flex flex-col items-start gap-1 self-start pr-4 md:hidden md:pr-0">
+            <div className="relative z-10 flex flex-col items-start gap-tight self-start pr-4 md:hidden md:pr-0">
                 <p className="text-xl leading-tight font-medium text-white md:text-2xl">
                     {t(title)}
                 </p>
@@ -37,7 +37,7 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
             {/* Animated for md+ screens */}
             <motion.div
                 animate={isHovered ? { y: -30 } : { y: 0 }}
-                className="relative z-10 hidden w-full flex-col items-start gap-1 md:flex"
+                className="relative z-10 hidden w-full flex-col items-start gap-tight md:flex"
                 initial={{ y: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >

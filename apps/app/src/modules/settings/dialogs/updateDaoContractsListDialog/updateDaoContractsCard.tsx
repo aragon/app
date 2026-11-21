@@ -47,8 +47,8 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (
     const toVersion = `${smartContractName} v${newRelease.toString()}.${newBuild.toString()}`;
 
     return (
-        <DataList.Item className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <div className="flex flex-col gap-1 md:gap-1.5">
+        <DataList.Item className="flex flex-col gap-group-stepped py-inset-item--16-24">
+            <div className="flex flex-col gap-tight--4-6">
                 <div className="flex items-center justify-between">
                     <p className="text-base text-neutral-800 md:text-lg">
                         {name}

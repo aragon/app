@@ -177,9 +177,9 @@ export const DaoPermissionsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
-                    <div className="flex flex-col gap-6">
-                        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-col gap-section">
+                        <div className="flex flex-col gap-group md:flex-row md:items-center md:justify-between">
+                            <div className="flex flex-wrap items-center gap-related">
                                 {showAccountSelector && (
                                     <ToggleGroup
                                         isMultiSelect={false}
@@ -214,8 +214,8 @@ export const DaoPermissionsPageClient: React.FC<
                                     />
                                 </ToggleGroup>
                             </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-700 md:justify-end">
-                                <div className="flex items-center gap-1">
+                            <div className="flex flex-wrap items-center gap-x-group gap-y-related--fixed-8 text-sm text-neutral-700 md:justify-end">
+                                <div className="flex items-center gap-tight">
                                     <Switch
                                         checked={hideDaoPermissions}
                                         disabled={
@@ -234,7 +234,7 @@ export const DaoPermissionsPageClient: React.FC<
                                         tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel"
                                     />
                                 </div>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-tight">
                                     <Switch
                                         checked={hideGoverningBodyPermissions}
                                         disabled={

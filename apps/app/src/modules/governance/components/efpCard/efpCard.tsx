@@ -23,7 +23,7 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
     const efpProfileUrl = `https://efp.app/${address}`;
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-section">
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t('app.governance.efpCard.following')}
@@ -36,7 +36,7 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
                     <p className="text-neutral-500">{followers}</p>
                 </DefinitionList.Item>
             </DefinitionList.Container>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related">
                 <Button
                     className="w-full"
                     href={efpProfileUrl}

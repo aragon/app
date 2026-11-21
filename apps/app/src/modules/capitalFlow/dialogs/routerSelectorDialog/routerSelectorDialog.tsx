@@ -91,7 +91,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
             />
             <Dialog.Content>
                 {shouldShowTabs && (
-                    <div className="flex flex-col gap-3 pt-2 pb-3">
+                    <div className="mt-tight--fixed-8 mb-related flex flex-col gap-related">
                         <ToggleGroup
                             isMultiSelect={false}
                             onChange={handleTabChange}
@@ -112,14 +112,14 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                         </ToggleGroup>
                     </div>
                 )}
-                <div className="flex flex-col gap-3 pb-6">
+                <div className="mb-section flex flex-col gap-related">
                     {displayedPolicies.map((policy) => (
                         <DataList.Item
-                            className="flex cursor-pointer items-center gap-6 px-6 py-6"
+                            className="flex cursor-pointer items-center gap-section p-inset-surface-wide"
                             key={policy.address}
                             onClick={() => handleSelectPolicy(policy)}
                         >
-                            <div className="flex flex-1 gap-2 text-lg">
+                            <div className="flex flex-1 gap-related--fixed-8 text-lg">
                                 <span className="text-neutral-800">
                                     {policy.name ??
                                         t(
@@ -133,7 +133,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
-                                <span className="flex gap-0.5 text-base">
+                                <span className="flex gap-tight--fixed-2 text-base">
                                     <span className="text-neutral-800">
                                         {policy.strategy?.subRouters?.length ??
                                             0}

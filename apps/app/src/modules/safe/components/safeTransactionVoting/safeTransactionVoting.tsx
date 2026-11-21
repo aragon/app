@@ -134,7 +134,10 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
         (transaction == null && isTransactionError)
     ) {
         return (
-            <Card className="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+            <Card
+                className="flex w-full flex-col border border-neutral-100 shadow-neutral-sm"
+                inset="surface"
+            >
                 <AlertInline
                     message={t(`${translationKey}.loadError`)}
                     variant="critical"
@@ -343,9 +346,12 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     const actions = renderActions();
 
     return (
-        <Card className="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+        <Card
+            className="flex w-full flex-col border border-neutral-100 shadow-neutral-sm"
+            inset="surface"
+        >
             <Tabs.Root
-                className="flex w-full flex-col gap-4 md:gap-6"
+                className="flex w-full flex-col gap-group-stepped"
                 defaultValue={ProposalVotingTab.BREAKDOWN}
             >
                 <Tabs.List>
@@ -365,7 +371,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
                     {readiness === SafeApprovalReadiness.WAITING_FOR_NONCE &&
                         safeInfo != null &&
                         transaction != null && (
-                            <div className="pt-6">
+                            <div className="mt-section">
                                 <AlertCard
                                     message={t(
                                         `${translationKey}.waitingForNonce.title`,
@@ -383,7 +389,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
                             </div>
                         )}
                     {rejection != null && safeInfo != null && (
-                        <div className="pt-6">
+                        <div className="mt-section">
                             <AlertCard
                                 message={t(
                                     `${translationKey}.rejectionQueued.title`,
@@ -404,7 +410,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
                         </div>
                     )}
                     {actions != null && (
-                        <div className="flex flex-col items-start gap-3 pt-6 md:flex-row md:items-center">
+                        <div className="mt-section flex flex-col items-start gap-related md:flex-row md:items-center">
                             {actions}
                             {renderRejectAction()}
                         </div>

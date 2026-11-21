@@ -67,7 +67,7 @@ export const CreatePolicyFormMetadata: React.FC<
         onPolicyKeyChange(sanitizePlainText(event.target.value).toUpperCase());
 
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-section-wide">
             <InputText maxLength={nameMaxLength} {...nameField} />
             <InputText
                 helpText={t(

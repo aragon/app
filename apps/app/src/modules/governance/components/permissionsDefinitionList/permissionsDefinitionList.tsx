@@ -27,7 +27,12 @@ export const PermissionsDefinitionList: React.FC<
 
     if (isLoading) {
         return (
-            <div className={classNames('flex flex-col gap-y-2', className)}>
+            <div
+                className={classNames(
+                    'flex flex-col gap-y-related--fixed-8',
+                    className,
+                )}
+            >
                 <StateSkeletonBar size="lg" width="40%" />
                 <StateSkeletonBar size="lg" width="65%" />
                 <StateSkeletonBar size="lg" width="55%" />
@@ -61,7 +66,7 @@ export const PermissionsDefinitionList: React.FC<
         <div className={classNames('', className)}>
             {settings.map((settingsGroup, groupIndex) => (
                 // biome-ignore lint/suspicious/noArrayIndexKey: static settings list, never reordered
-                <div className="flex flex-col gap-y-1" key={groupIndex}>
+                <div className="flex flex-col gap-y-tight" key={groupIndex}>
                     <DefinitionList.Container>
                         {settingsGroup.map(
                             ({ term, definition, link }, settingIndex) => (
@@ -77,9 +82,9 @@ export const PermissionsDefinitionList: React.FC<
                         )}
                     </DefinitionList.Container>
                     {hasSettingsGroups && groupIndex < settings.length - 1 && (
-                        <div className="my-2 flex items-center">
+                        <div className="mt-tight--fixed-8 mb-tight--fixed-8 flex items-center">
                             <div className="grow border-t border-neutral-100" />
-                            <span className="mx-2 text-neutral-500">
+                            <span className="mr-tight--fixed-8 ml-tight--fixed-8 text-neutral-500">
                                 {t(
                                     'app.governance.permissionsDefinitionList.or',
                                 )}

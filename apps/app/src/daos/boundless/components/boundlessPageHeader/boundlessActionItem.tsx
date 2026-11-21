@@ -17,7 +17,7 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
 
     return (
         <Link
-            className="group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6"
+            className="group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-inset-surface transition-all md:w-[400px]"
             href={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

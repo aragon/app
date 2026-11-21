@@ -750,7 +750,7 @@ export const SafeTransactionDialog: React.FC<ISafeTransactionDialogProps> = (
                 title={t(`${translationKey}.title`)}
             />
             <Dialog.Content
-                className="flex flex-col gap-3 pb-4 md:pb-6"
+                className="flex flex-col gap-related pb-inset-surface"
                 description={t(`${translationKey}.description`)}
             >
                 {statusMessage != null && (

@@ -97,7 +97,7 @@ export const DelegateStatementDialog: React.FC<
                 onClose={handleClose}
                 title={t('app.governance.delegateStatementDialog.title')}
             />
-            <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
+            <Dialog.Content className="flex w-full flex-col gap-group pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <TextAreaRichText
                     helpText={t(
                         'app.governance.delegateStatementDialog.content.helpText',

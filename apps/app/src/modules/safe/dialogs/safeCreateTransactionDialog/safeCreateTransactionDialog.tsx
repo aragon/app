@@ -498,7 +498,7 @@ export const SafeCreateTransactionDialog: React.FC<
                 title={t(`${copyKey}.title`)}
             />
             <Dialog.Content
-                className="flex flex-col gap-3 pb-4 md:pb-6"
+                className="flex flex-col gap-related pb-inset-surface"
                 description={t(`${copyKey}.description`)}
             >
                 {statusMessage != null && (

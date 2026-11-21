@@ -54,7 +54,7 @@ export const SafeTransactionReviewDialog: React.FC<
                 onClose={() => close(location.id)}
                 title={t('app.safe.safeTransactionReviewDialog.title')}
             />
-            <Dialog.Content className="pb-4 md:pb-6">
+            <Dialog.Content className="pb-inset-surface">
                 <SafeTransactionReviewContent
                     network={network}
                     safeAddress={safeAddress}

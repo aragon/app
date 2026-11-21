@@ -93,7 +93,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
     addressHref,
     showFallbackAddress,
 }) => (
-    <div className="flex min-w-0 flex-1 flex-col gap-1">
+    <div className="flex min-w-0 flex-1 flex-col gap-tight">
         <p className="min-w-full overflow-hidden text-base leading-tight text-ellipsis whitespace-nowrap text-neutral-800">
             {item.label}
         </p>
@@ -132,7 +132,7 @@ const ItemTokenDeltas: React.FC<IItemTokenDeltasProps> = ({ item }) => {
         <div
             className={classNames(
                 'flex h-full flex-col items-end text-right text-base leading-tight text-neutral-800',
-                sortedTokens.length > 1 ? 'gap-1' : 'gap-0',
+                sortedTokens.length > 1 ? 'gap-tight' : 'gap-0',
             )}
         >
             {sortedTokens.map((tokenDelta) => (
@@ -170,9 +170,9 @@ export const SimulationFlowVisualizationItem: React.FC<
     const showFallbackAddress = addressHref == null && !compact;
 
     return (
-        <div className="w-full rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral-sm">
-            <div className="flex items-center gap-4">
-                <div className="flex min-w-0 flex-1 items-start gap-3">
+        <div className="w-full rounded-xl border border-neutral-100 bg-neutral-0 p-inset-surface-wide shadow-neutral-sm">
+            <div className="flex items-center gap-group">
+                <div className="flex min-w-0 flex-1 items-start gap-related">
                     <ItemIcon groupKind={groupKind} item={item} />
                     <ItemAddress
                         addressHref={addressHref}

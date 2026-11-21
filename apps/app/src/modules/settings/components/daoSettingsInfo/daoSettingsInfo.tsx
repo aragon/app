@@ -31,12 +31,12 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     const { buildEntityUrl } = useDaoChain({ network: dao.network });
 
     return (
-        <Card className="p-6">
+        <Card inset="surface-wide">
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t('app.settings.daoSettingsInfo.name')}
                 >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-related--fixed-8">
                         <p className="text-neutral-500">{dao.name}</p>
                         <DaoAvatar name={dao.name} size="md" src={daoAvatar} />
                     </div>
@@ -44,7 +44,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                 <DefinitionList.Item
                     term={t('app.settings.daoSettingsInfo.chain')}
                 >
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-related--fixed-8">
                         <p className="text-neutral-500">
                             {networkDefinitions[dao.network].name}
                         </p>
@@ -60,7 +60,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     <DefinitionList.Item
                         term={t('app.settings.daoSettingsInfo.ens')}
                     >
-                        <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center justify-between gap-related--fixed-8">
                             <Link
                                 href={buildEntityUrl({
                                     type: ChainEntityType.ADDRESS,
@@ -98,7 +98,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     <DefinitionList.Item
                         term={t('app.settings.daoSettingsInfo.links')}
                     >
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-related">
                             {dao.links.map((link) => (
                                 <ResourceLink
                                     isExternal={true}

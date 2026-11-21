@@ -59,11 +59,11 @@ export const PermissionNodeDetailPanel: React.FC<
             style={style}
         >
             <div
-                className="flex cursor-grab touch-none items-start justify-between gap-3 border-b border-neutral-100 p-4 select-none active:cursor-grabbing"
+                className="flex cursor-grab touch-none items-start justify-between gap-related border-b border-neutral-100 p-inset-surface-flat--fixed-16 select-none active:cursor-grabbing"
                 {...headerProps}
             >
-                <div className="flex min-w-0 flex-col gap-1">
-                    <div className="flex min-w-0 items-center gap-2">
+                <div className="flex min-w-0 flex-col gap-tight">
+                    <div className="flex min-w-0 items-center gap-related--fixed-8">
                         {isAddressLabel ? (
                             <AddressOutput
                                 address={node.address}
@@ -95,7 +95,7 @@ export const PermissionNodeDetailPanel: React.FC<
                     />
                 </div>
             </div>
-            <div className="p-4">
+            <div className="p-inset-surface-flat--fixed-16">
                 {isAnyoneSentinel ? (
                     <AlertCard
                         message={t(

@@ -284,14 +284,14 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
           });
 
     const delegateeInfo = (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-related">
             <MemberAvatar
                 address={delegatee}
                 avatarSrc={delegateeEnsAvatar ?? undefined}
                 size="md"
             />
-            <div className="flex min-w-0 grow flex-col gap-0.5">
-                <div className="flex items-center gap-2">
+            <div className="flex min-w-0 grow flex-col gap-tight--fixed-2">
+                <div className="flex items-center gap-related--fixed-8">
                     <p className="truncate text-base leading-tight font-semibold text-neutral-800">
                         {delegatee != null && (
                             <AddressOutput
@@ -328,17 +328,20 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     );
 
     return (
-        <Card className="flex flex-col gap-4 p-4 shadow-neutral-sm md:p-6">
+        <Card
+            className="flex flex-col gap-group shadow-neutral-sm"
+            inset="surface"
+        >
             {delegateeInfo}
             {hasPosition && !showOptions && (
-                <div className="flex items-center gap-3 border-t border-neutral-100 pt-4">
+                <div className="flex items-center gap-related border-t border-neutral-100 pt-inset-surface-flat--fixed-16">
                     <MemberAvatar
                         address={address}
                         avatarSrc={userEnsAvatar ?? undefined}
                         size="md"
                     />
-                    <div className="flex min-w-0 grow flex-col gap-0.5">
-                        <div className="flex items-center gap-2">
+                    <div className="flex min-w-0 grow flex-col gap-tight--fixed-2">
+                        <div className="flex items-center gap-related--fixed-8">
                             <p className="truncate text-base leading-tight font-semibold text-neutral-800">
                                 {address != null && (
                                     <AddressOutput
@@ -385,7 +388,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                 </Button>
             )}
             {!showOptions && hasPosition && (
-                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                <div className="flex w-full flex-col items-center gap-group md:flex-row">
                     {latestVoteTxHref != null ? (
                         <Button
                             className="w-full md:w-fit"
@@ -445,7 +448,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                             onCheckedChanged={setAlsoVote}
                         />
                     )}
-                    <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
+                    <div className="flex w-full flex-col items-center gap-y-related md:flex-row md:gap-x-group">
                         <Button
                             className="w-full md:w-fit"
                             disabled={!isSelectionValid || !canSubmit}
