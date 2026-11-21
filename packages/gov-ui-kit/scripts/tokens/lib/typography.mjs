@@ -12,9 +12,9 @@
 // through Tailwind's own `md` variant, so it follows whatever `md` means in the stylesheet that compiles it (a media
 // query in the kit, a container query on the app column in the app). Themes swap variables, never utilities.
 //
-// Today leaves the properties in `config.todayInherits` unset (the variable is not declared, which makes the
-// declaration fall back to inheritance): a role never overrides the family or the letter spacing an element inherits
-// today, and those Today values must be the defaults stated in the config.
+// Today leaves the properties in `config.todayInherits` unset where they hold the default stated in the config (the
+// variable is not declared, which makes the declaration fall back to inheritance): a role never overrides the family or
+// the letter spacing an element inherits today. A Today value other than the default is declared like any other.
 
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
@@ -30,7 +30,7 @@ const PROPERTIES = [
 const BREAKPOINTS = ['base', 'md'];
 const ROOT = 'type';
 
-export const renderTypography = ({ kitRoot, outputFile, primitives, modes, config, varOf, fail }) => {
+export const renderTypography = ({ kitRoot, outputFile, primitives, modes, todayDocument, config, varOf, fail }) => {
     const { prefix, todayInherits, todayDefaults, modifiers: modifierConfig } = config;
     const modeNames = Object.keys(config.modes);
     if (modeNames[0] !== 'today') {
@@ -140,12 +140,13 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, confi
                     continue;
                 }
                 for (const [key, property] of PROPERTIES) {
-                    if (mode === 'today' && todayInherits.includes(key)) {
-                        if (JSON.stringify(value[key]) !== JSON.stringify(todayDefaults[key])) {
-                            fail(
-                                `typography today: ${path}.${key} must be ${JSON.stringify(todayDefaults[key])} (inherited today)`,
-                            );
-                        }
+                    // Today leaves an inherited property unset where its value is the default, so it keeps inheriting;
+                    // a style that renders another value today (letter spacing of uppercase column labels) sets it.
+                    if (
+                        mode === 'today' &&
+                        todayInherits.includes(key) &&
+                        JSON.stringify(value[key]) === JSON.stringify(todayDefaults[key])
+                    ) {
                         continue;
                     }
                     lines.push(
@@ -231,11 +232,11 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, confi
      .join(', ')}. Every utility reads
  * variables --${prefix}-<style>-<property> and, through the \`${config.desktopVariant}\` variant, --${prefix}-<style>-md-<property>.
  * Value sets:
- * - ${config.modes.today.selector.padEnd(24)}today's rendering: an exception keeps its place's bundle; ${todayInherits.join(' and ')}
+ * - ${config.modes.today.selector.padEnd(26)}today's rendering: an exception keeps its place's bundle; ${todayInherits.join(' and ')}
  *                            are not declared, so they stay inherited exactly as today;
 ${modeNames
     .slice(1)
-    .map((mode) => ` * - ${config.modes[mode].selector.padEnd(24)}${config.modes[mode].description}`)
+    .map((mode) => ` * - ${config.modes[mode].selector.padEnd(26)}${config.modes[mode].description}`)
     .join('\n')}
  */
 
@@ -273,6 +274,14 @@ export const typographyRoles = [${roleNames.map((n) => `'${n}'`).join(', ')}] as
  */
 export const typographyExceptions = [${exceptionNames.map((n) => `'${n}'`).join(', ')}] as const;
 
+/**
+ * The utility class of every role and exception, spelled out so that Tailwind finds each class in the source (a class
+ * name built at runtime is never generated).
+ */
+export const typographyClassNames = {
+${[...roleNames, ...exceptionNames].map((n) => `    '${n}': '${prefix}-${n}',`).join('\n')}
+} as const;
+
 export type TypographyRole = (typeof typographyRoles)[number];
 
 export type TypographyException = (typeof typographyExceptions)[number];
@@ -294,5 +303,12 @@ export type TypographyStyle = TypographyRole | TypographyException;
         const { value } = modes[mode].get(`${ROOT}.${style.kind}.${name}.${breakpoint}`);
         return value;
     };
-    return { css, ts, styles, roleNames, exceptionNames, describe, today };
+    // Exception groups: their pattern ($description) and resolution ($extensions), for the report.
+    const groups = new Map(
+        Object.entries(todayDocument?.type?.exception ?? {}).map(([name, group]) => [
+            name,
+            { description: group.$description, extensions: group.$extensions?.['org.aragon.gov-ui-kit'] },
+        ]),
+    );
+    return { css, ts, styles, roleNames, exceptionNames, describe, today, groups };
 };

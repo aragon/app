@@ -410,6 +410,1592 @@
                 }
             }
         },
+        "exception": {
+            "supporting--inline-alert": {
+                "$description": "Inline alert message: the one-line message of an inline alert (validation and status under a field)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "title-group--alert": {
+                "$description": "Alert card headline: the message line of an alert card (semibold through type-strong)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "label-option--radio": {
+                "$description": "Radio label, fixed at the desktop size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "label-option",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.label-option.base}"
+                },
+                "md": {
+                    "$value": "{type.role.label-option.md}"
+                }
+            },
+            "title-item--compact-list": {
+                "$description": "Item titles in the asset transfer card (the asset and the two participants), one step down from the item title",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "supporting--row-value": {
+                "$description": "A row's value or status set as large as the row's title (asset amounts, transaction values, voting progress status, workspace and lock list values, governance body info)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "stat--summary-card": {
+                "$description": "Summary card figure: CardSummary's value at page-title size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "stat",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.stat.base}"
+                },
+                "md": {
+                    "$value": "{type.role.stat.md}"
+                }
+            },
+            "supporting--detail-value": {
+                "$description": "Secondary lines and values at 16/20 that keep one size: summary card description, wizard progress, fee rows, action detail values, transaction step labels, status messages",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "caption--footnote": {
+                "$description": "Footnotes set at the body size: data list counters and footer copyright lines",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "control--list-action": {
+                "$description": "Data list action row (\"add\" rows) that steps up on desktop like a list item",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "control--stepped-nav": {
+                "$description": "Breadcrumb text, which steps up on desktop where controls keep one size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "control--tall-line": {
+                "$description": "Controls whose line box is the body line height (16 px / 1.5): multi-line fields, account and workspace picker rows, the landing link, the help center brand",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "supporting--body-size": {
+                "$description": "Secondary lines and values at the document default (16 px, line height 1.5) at every width (allowed-action contracts, profile address, dispatch panel values, vote dialog totals)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "body--unstepped": {
+                "$description": "Body text that keeps the phone size (16 px, line height 1.5) on desktop: dialog and panel bodies, page and section descriptions, definition list values, the rich text editor, the landing page",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "caption--definition-description": {
+                "$description": "Secondary line under a definition list value",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "body-compact--unstepped": {
+                "$description": "Explanations in dialogs, panels and cards that keep the phone size on desktop",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "label-option--card": {
+                "$description": "Option card label (checkbox and radio cards), desktop line height left to the size default",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "label-option",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.label-option.base}"
+                },
+                "md": {
+                    "$value": "{type.role.label-option.md}"
+                }
+            },
+            "supporting--compact-meta": {
+                "$description": "Secondary lines at 14/17.5 that keep one size: option card descriptions, voting stage labels, navigation group labels, picker and dialog details",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "label-option--toggle": {
+                "$description": "Toggle label at the body line height",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "label-option",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.label-option.base}"
+                },
+                "md": {
+                    "$value": "{type.role.label-option.md}"
+                }
+            },
+            "caption--framework-leading": {
+                "$description": "Captions left at the sizes' default line heights (link URLs and descriptions, page header stat labels, the workspace switcher, voting terminal headings)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-item--entity-list": {
+                "$description": "Main entity lists: the proposal, DAO and member list items name their entity at the group-title size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "title-item--framework-leading": {
+                "$description": "Item titles left at the sizes' default line heights (voter rows, gauge rows, contract cards, policy details)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "supporting--framework-leading": {
+                "$description": "Secondary and status lines left at the sizes' default line heights (vote amounts, simulation status, voting body brand, Safe review terms, lock list labels)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "caption--compact-label": {
+                "$description": "Labels, counters and badges at 14 px that keep one size (stat card labels, step badges, the action position counter, chat markdown h6)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-item--unstepped": {
+                "$description": "Item titles that keep the desktop size at every width (voting stages, DAO hierarchy, permission rows, strategy items)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "title-group--voting-body": {
+                "$description": "Voting body name heading the body's panel, with default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-item--picker-row": {
+                "$description": "Item names in picker and function rows at a fixed size with the default line height (gauge and campaign pickers, dispatch routers, smart contract functions)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "body-compact--component-note": {
+                "$description": "Short notes, errors and messages inside components at 14 px with the default line height (simulation and download errors, file notes, chat messages and tables, code blocks)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "caption--list-date": {
+                "$description": "Dates in list rows, set at the supporting size (transaction rows)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-section--inline-empty-state": {
+                "$description": "Empty-state title in the inline (not stacked) layout, one title step down",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "supporting--inline-empty-state": {
+                "$description": "Empty-state description in the inline layout, at caption size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "title-page--markdown": {
+                "$description": "Markdown h1 inside the prose container: plugin weight 800, the sizes' default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-page",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-page.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-page.md}"
+                }
+            },
+            "title-section--markdown": {
+                "$description": "Markdown h2 inside the prose container: plugin weight 700, default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "title-group--markdown": {
+                "$description": "Markdown h3 inside the prose container: plugin weight 600, default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-item--markdown": {
+                "$description": "Markdown h4 inside the prose container: plugin weight 600, default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "supporting--markdown": {
+                "$description": "Markdown h5 inside the prose container, default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "caption--markdown": {
+                "$description": "Markdown h6 inside the prose container, default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "body-compact--markdown": {
+                "$description": "Markdown paragraphs, bold and italic runs inside the prose container (prose.css), default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "supporting--compact-detail": {
+                "$description": "Secondary lines at 14 px with the default line height that keep one size (picker rows, file notes, permission details, sidebar account address)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "control--compact-value": {
+                "$description": "Value shown inside a compact input (permission id input), fixed at 14 px",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "title-item--compact-card": {
+                "$description": "Item titles at 16/20 that keep one size (vote option cards, account and workspace items, welcome dialog items, simulation nodes)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "body--demo-header": {
+                "$description": "Lead paragraph of the Aragon demo DAO page headers",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "stat--dao-header": {
+                "$description": "Stat figures of the Aragon demo DAO page headers",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "stat",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.stat.base}"
+                },
+                "md": {
+                    "$value": "{type.role.stat.md}"
+                }
+            },
+            "caption--dao-header-stat": {
+                "$description": "Stat labels and units of the Aragon demo DAO page headers",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-group--dao-header-action-compact": {
+                "$description": "Compact action titles of the partner DAO headers (Boundless, xMaquina)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-group--dao-header-action": {
+                "$description": "Action titles of the partner DAO headers (Cryptex, xMaquina)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "body--partner-header": {
+                "$description": "Partner DAO header lead paragraph (Boundless, Cryptex), at the sizes' default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "supporting--dao-header-action": {
+                "$description": "Action descriptions of the xMaquina DAO header",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "supporting--dao-header-action-compact": {
+                "$description": "Compact action descriptions of the partner DAO headers (Boundless, xMaquina)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "body--xmaquina-header": {
+                "$description": "Lead paragraph of the xMaquina DAO page header",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "title-group--profile-card": {
+                "$description": "Name on profile cards and dialogs (Aragon profile, user dialog, simulation summary), fixed at the desktop size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "control-sm--framework-leading": {
+                "$description": "Small controls at 14 px with the default line height (sidebar footer links, chat input and suggestions)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control-sm",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control-sm.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control-sm.md}"
+                }
+            },
+            "caption--unstepped": {
+                "$description": "Small print that keeps the phone size on desktop, with the default line height (chart axes, badges, graph and column labels, raw data, chat metadata, the sidebar footer)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-page--wizard-nav": {
+                "$description": "Wizard name in the wizard navigation bar (names the flow the person is in)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-page",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-page.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-page.md}"
+                }
+            },
+            "control--workspace-switcher": {
+                "$description": "Workspace name in the workspace switcher, at the sizes' default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "body-compact--dialog-lead": {
+                "$description": "Lead sentence of the connect-wallet dialog, at the group-title size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "body-compact--dialog-note": {
+                "$description": "Notes inside dialogs at one size with the tight line height (connect wallet, dispatch simulation errors)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "title-group--profile-card-address": {
+                "$description": "Address standing in for the name on the user dialog, with the default line height",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "label--router": {
+                "$description": "Router address field label in Capital Flow, fixed at the desktop size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "label",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.label.base}"
+                },
+                "md": {
+                    "$value": "{type.role.label.md}"
+                }
+            },
+            "supporting--cryptex-header": {
+                "$description": "Cryptex DAO header action description (snug line height)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "control--dao-name": {
+                "$description": "DAO name in the DAO switcher, stepping at the sm breakpoint (with control--dao-name-wide)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "control--dao-name-wide": {
+                "$description": "DAO name in the DAO switcher from the sm breakpoint",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control.md}"
+                }
+            },
+            "supporting--sm-step-label": {
+                "$description": "Labels that step up at the sm breakpoint, not md (DAO address in the DAO switcher, campaign stat labels); with supporting--sm-step-label-wide",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "supporting--sm-step-label-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-label",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "title-group--compact": {
+                "$description": "Group titles at 16/20 that keep one size (autocomplete menu groups, alert cards in dialogs)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-group--wizard-intro": {
+                "$description": "Intro heading of the governance stages step in Create DAO",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-item--stage-card": {
+                "$description": "Stage names on the governance stage cards of Create DAO",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "body--framework-leading": {
+                "$description": "Body text left at the sizes' default line heights (page header descriptions, onboarding text)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "body--explore-hero": {
+                "$description": "Lead line of the Explore hero, under the display statement",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body.md}"
+                }
+            },
+            "body-compact--transaction-review": {
+                "$description": "Text of the Safe transaction review and the transaction status container, left at the sizes' default line heights",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "supporting--framework-leading-large": {
+                "$description": "Secondary values at the item-title size left at the default line heights (gauge rows, contract cards, policy details)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "title-item--document-default": {
+                "$description": "Item titles at 16 px with line height 1.5 that keep one size (allowed actions, vote dialog items)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "supporting--column-heading": {
+                "$description": "Column headings of the gauge list, semibold through type-strong, with letter spacing",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "caption--column-heading": {
+                "$description": "Uppercase inline column labels of gauge list rows on phones, semibold through type-strong, with tracking",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "stat--chart": {
+                "$description": "Figure in a chart tooltip (exit queue fee chart), semibold through type-strong",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "stat",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.stat.base}"
+                },
+                "md": {
+                    "$value": "{type.role.stat.md}"
+                }
+            },
+            "stat--voting-terminal": {
+                "$description": "Figures of the gauge voting terminal",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "stat",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.stat.base}"
+                },
+                "md": {
+                    "$value": "{type.role.stat.md}"
+                }
+            },
+            "caption--voting-terminal": {
+                "$description": "Labels of the gauge voting terminal figures",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "supporting--sm-step-value": {
+                "$description": "Values that step up at the sm breakpoint, not md (campaign stat values); with supporting--sm-step-value-wide",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "supporting--sm-step-value-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-value",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "supporting--indicator-xs": {
+                "$description": "The extra-small size of the DAO target indicator",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "caption--input-hint": {
+                "$description": "Hints attached to inputs at 12 px with the tight line height (keyboard shortcut chip, number input limit)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-item--chat": {
+                "$description": "Request titles in the assistant chat history",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "caption--chat-note": {
+                "$description": "Notes and disclaimers in the assistant chat at 12 px with the body line height",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "caption",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.caption.base}"
+                },
+                "md": {
+                    "$value": "{type.role.caption.md}"
+                }
+            },
+            "title-page--chat-markdown": {
+                "$description": "Markdown h1 in the assistant chat (semibold through type-strong)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-page",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-page.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-page.md}"
+                }
+            },
+            "title-section--chat-markdown": {
+                "$description": "Markdown h2 in the assistant chat (semibold through type-strong)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "title-group--chat-markdown": {
+                "$description": "Markdown h3 in the assistant chat (semibold through type-strong)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-item--chat-markdown": {
+                "$description": "Markdown h4 in the assistant chat",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-item",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-item.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-item.md}"
+                }
+            },
+            "supporting--chat-markdown": {
+                "$description": "Markdown h5 in the assistant chat (semibold through type-strong)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "supporting",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.supporting.base}"
+                },
+                "md": {
+                    "$value": "{type.role.supporting.md}"
+                }
+            },
+            "control-sm--chat": {
+                "$description": "Small text buttons in the assistant chat at 12 px",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "control-sm",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.control-sm.base}"
+                },
+                "md": {
+                    "$value": "{type.role.control-sm.md}"
+                }
+            },
+            "body-compact--chat-message": {
+                "$description": "Assistant chat message text and its markdown paragraphs and list items (relaxed line height)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            },
+            "title-section--network-groups": {
+                "$description": "Network group headings in the Create-DAO network step, at the item-title (h4) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "title-page--gate-prompt": {
+                "$description": "Workspace gate prompt heading (the page's h1) at the group-title (h3) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-page",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-page.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-page.md}"
+                }
+            },
+            "title-section--explore": {
+                "$description": "Section titles on the Explore page at the page-title (h1) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "title-page--onboarding": {
+                "$description": "Dashboard onboarding greeting, two sizes above the page title",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-page",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-page.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-page.md}"
+                }
+            },
+            "stat--stat-card": {
+                "$description": "Stat card figure at the group-title (h3) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "stat",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.stat.base}"
+                },
+                "md": {
+                    "$value": "{type.role.stat.md}"
+                }
+            },
+            "title-group--cta-card": {
+                "$description": "Call-to-action card title at the page-title (h1) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-group--cta-card-compact": {
+                "$description": "Compact call-to-action card title at the section-title (h2) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-group--small-panel": {
+                "$description": "Panel and card titles at the item-title size (assistant chat header, cards inside dialogs)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-group",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-group.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-group.md}"
+                }
+            },
+            "title-section--chat-empty-state": {
+                "$description": "Assistant chat welcome title (the chat's empty state) at the group-title (h3) size",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "title-section",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.title-section.base}"
+                },
+                "md": {
+                    "$value": "{type.role.title-section.md}"
+                }
+            },
+            "body-compact--markdown-quote": {
+                "$description": "Paragraphs inside a markdown blockquote, which keep the typography plugin's quote weight (500)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "role": "body-compact",
+                        "places": [],
+                        "resolution": null
+                    }
+                },
+                "base": {
+                    "$value": "{type.role.body-compact.base}"
+                },
+                "md": {
+                    "$value": "{type.role.body-compact.md}"
+                }
+            }
+        },
         "modifier": {
             "strong": {
                 "$type": "fontWeight",

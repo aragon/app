@@ -20,6 +20,7 @@
 //   --source  read the source from another directory (a scratch copy), outputs stay in the repo
 // See design-system/tokens/README.md.
 
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,6 +29,7 @@ import { collectTokens, createSchemaValidator, mergeSets, readJson, resolveToken
 import { primitiveFiles, renderPrimitives } from './lib/primitives.mjs';
 import { renderSemantic } from './lib/semantic.mjs';
 import { renderTypography } from './lib/typography.mjs';
+import { typographyReport } from './lib/typographyReport.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const repoRoot = resolve(kitRoot, '../..');
@@ -122,6 +124,7 @@ const loadSource = (sourceDir) => {
         primitivesConfig,
         semanticConfig,
         typography: Object.fromEntries(typographyModeNames.map((mode) => [mode, entries[`typography.${mode}`]])),
+        typographyToday: documents['typography.today'],
         typographyConfig,
         cssDir: resolve(sourceDir, 'css'),
     };
@@ -143,8 +146,20 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
         flat: true,
     });
     const outputs = new Map();
+    // Formatted with the repo's Biome config (as the semantic outputs are), so a value Biome wraps differently from the
+    // generator's own wrapping (a short font stack) still passes `lint:check` and `--check` stays byte-exact.
     for (const [file, text] of primitiveFiles(bodies)) {
-        outputs.set(relative(repoRoot, resolve(kitRoot, file)), text);
+        const path = resolve(kitRoot, file);
+        const formatted = execFileSync(
+            resolve(kitRoot, 'node_modules/.bin/biome'),
+            ['format', `--stdin-file-path=${path}`],
+            {
+                cwd: kitRoot,
+                input: text,
+                encoding: 'utf8',
+            },
+        );
+        outputs.set(relative(repoRoot, path), formatted);
     }
     const semantic =
         source.semanticConfig == null
@@ -170,11 +185,23 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
                   outputFile: resolve(kitRoot, source.typographyConfig.output),
                   primitives: source.primitives,
                   modes: source.typography,
+                  todayDocument: source.typographyToday,
                   config: source.typographyConfig,
                   varOf,
                   fail,
               });
     if (typography != null) {
+        // Every exception is a documented entry: the decisions file must list it (its table comes from --report).
+        const decisions = resolve(kitRoot, 'design-system/tokens/typography.decisions.md');
+        if (existsSync(decisions)) {
+            const text = readFileSync(decisions, 'utf8');
+            const missing = typography.exceptionNames.filter((name) => !text.includes(`| ${name} |`));
+            if (missing.length > 0) {
+                fail(
+                    `typography.decisions.md does not list the exceptions ${missing.join(', ')} (paste \`pnpm tokens:report\`)`,
+                );
+            }
+        }
         outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.output)), typography.css);
         outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.typesOutput)), typography.ts);
     }
@@ -183,7 +210,14 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
     return { outputs, semantic, typography, source };
 };
 
-const report = ({ semantic, source }) => {
+const report = ({ semantic, typography, source }) => {
+    if (typography != null) {
+        const { text, unused } = typographyReport({ typography, primitives: source.primitives, repoRoot });
+        console.log(`${text}\n`);
+        if (unused.length > 0) {
+            process.exitCode = 1;
+        }
+    }
     if (semantic == null) {
         console.log(`no semantic layer (no ${SEMANTIC_CONFIG} in the source): nothing to report`);
         return source;
