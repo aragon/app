@@ -185,17 +185,6 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             }
         }
     }
-    // Content insets: a denser desktop never drops below New's phone value (the chrome follows its own step rule).
-    for (const token of tokens.values()) {
-        if (token.kind === 'inset' && !token.chrome) {
-            for (const dim of ['x', 'y']) {
-                const { base, md } = token.dims[dim];
-                if (md.compact < base.new) {
-                    fail(`spacing: ${token.name}.${dim} compact desktop is below New phone`);
-                }
-            }
-        }
-    }
     const tokenGlob = (pattern) => new RegExp(`^${pattern.replace(/\./g, '\\.').replace(/\*/g, '[a-z0-9-]+')}$`);
     for (const floor of config.floors) {
         const matcher = tokenGlob(floor.token);
@@ -286,6 +275,46 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             places: meta.places ?? null,
             resolution: meta.resolution ?? '',
         });
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    // Change budget of New (owner decision 0): every role's own places and every exception move by at most the budget.
+    // ------------------------------------------------------------------------------------------------------------
+    const allowed = (today) => (today <= config.newBudget.upTo ? config.newBudget.small : config.newBudget.large);
+    const changes = [];
+    for (const token of tokens.values()) {
+        for (const [dim, sides] of Object.entries(token.dims)) {
+            for (const side of SIDES) {
+                const { today, new: next } = sides[side];
+                changes.push({
+                    name: label(token, dim, side),
+                    change: Math.abs(next - today),
+                    allowed: allowed(today),
+                });
+            }
+        }
+    }
+    for (const exception of exceptions.values()) {
+        for (const dim of exception.dims) {
+            for (const side of SIDES) {
+                const today = exception.values[side].today;
+                const next = exception.role.chrome ? exception.values[side].new : exception.role.dims[dim][side].new;
+                changes.push({
+                    name: `${exception.name}${dim ? `.${dim}` : ''}.${side}`,
+                    change: Math.abs(next - today),
+                    allowed: allowed(today),
+                    weight: exception.places ?? 1,
+                });
+            }
+        }
+    }
+    const overBudget = changes.filter((c) => c.change > c.allowed);
+    if (overBudget.length > 0) {
+        fail(
+            `spacing: over the New change budget (decision 0: reclassify the place or split the role): ${overBudget
+                .map((c) => `${c.name} moves ${c.change}px (max ${c.allowed})`)
+                .join('; ')}`,
+        );
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -458,7 +487,7 @@ export type SpacingException = (typeof spacingExceptions)[number];
 `;
     const ts = formatWithBiome(kitRoot, resolve(kitRoot, config.typesOutput), rawTs);
 
-    return { css, ts, tokens, exceptions, utilities, roleNames, sizeNames, exceptionNames, stem };
+    return { css, ts, tokens, exceptions, utilities, roleNames, sizeNames, exceptionNames, stem, changes };
 };
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -491,12 +520,16 @@ const walk = (dir, files = []) => {
 };
 
 export const spacingUses = ({ spacing, repoRoot }) => {
-    const generated = resolve(repoRoot, 'packages/gov-ui-kit/src/theme/tokens/spacing.css');
+    const generated = new Set(
+        ['src/theme/tokens/spacing.css', 'src/core/types/spacingStyles.ts'].map((file) =>
+            resolve(repoRoot, 'packages/gov-ui-kit', file),
+        ),
+    );
     const byClass = new Map(spacing.utilities.map((u) => [u.className, { uses: 0, files: new Set() }]));
     const classPattern = /(?<![\w-])(-?[a-z][a-z0-9-]*(?:--[a-z0-9-]+)?)(?![\w-])/g;
     for (const root of SCAN_ROOTS) {
         for (const file of walk(resolve(repoRoot, root))) {
-            if (file === generated) {
+            if (generated.has(file)) {
                 continue;
             }
             const text = readFileSync(file, 'utf8');
@@ -579,6 +612,14 @@ export const spacingReport = ({ spacing, repoRoot }) => {
             `| ${exception.name} | ${exception.role.name} | ${exception.specs.map((s) => s.family).join(', ')} | ${exception.description ?? ''} | ${pair(exception.values, 'today')} | ${roleValue('today')} | ${exception.role.chrome ? `${pair(exception.values, 'new')} (chrome)` : roleValue('new')} | ${u.uses} | ${[...u.files].map((f) => `\`${f.replace(/^(packages\/gov-ui-kit|apps\/app)\/src\//, '')}\``).join(', ')} | ${exception.resolution} |`,
         );
     }
+    const exceptionChanges = spacing.changes.filter((c) => c.weight != null);
+    const weight = exceptionChanges.reduce((sum, c) => sum + c.weight, 0);
+    const mean = weight === 0 ? 0 : exceptionChanges.reduce((sum, c) => sum + c.change * c.weight, 0) / weight;
+    const max = Math.max(0, ...spacing.changes.map((c) => c.change));
+    lines.push(
+        '',
+        `Change in New (decision 0 budget): max ${max}px over roles and exceptions; exceptions mean ${mean.toFixed(2)}px per side (weighted by places).`,
+    );
     if (unused.length > 0) {
         lines.push('', `Unused exceptions (remove them from the source): ${unused.join(', ')}`);
     }

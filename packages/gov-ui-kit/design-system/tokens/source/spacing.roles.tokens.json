@@ -21,15 +21,15 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 4,
+                                        "value": 2,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 6,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 4,
+                                        "value": 2,
                                         "unit": "px"
                                     }
                                 }
@@ -45,15 +45,15 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 4,
+                                        "value": 2,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 6,
+                                        "value": 4,
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 4,
+                                        "value": 2,
                                         "unit": "px"
                                     }
                                 }
@@ -113,7 +113,7 @@
                 }
             },
             "inset-item": {
-                "$description": "Padding of one item among peers: data list rows, menu items, accordion headers and bodies, definition list rows, nav links, selectable cards.",
+                "$description": "Padding of one item among peers that steps up on desktop: data list rows, accordion headers and bodies, selectable cards, definition list rows.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -161,7 +161,7 @@
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 16,
+                                        "value": 20,
                                         "unit": "px"
                                     }
                                 }
@@ -203,6 +203,64 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "inset-item-flat": {
+                "$description": "Padding of one item among peers that keeps one size at every width: menu items, list rows inside menus and pickers, compact rows (split from inset-item by decision 0: 15 x and 23 y places keep one value).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "inset"
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
                                         "value": 16,
                                         "unit": "px"
                                     },
@@ -218,10 +276,60 @@
                             }
                         }
                     }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 8,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 8,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             },
             "inset-surface": {
-                "$description": "Padding of a standalone surface: card, panel, aside card, dialog header/body/footer, alert, empty state, popover.",
+                "$description": "Padding of a standalone surface that steps up on desktop: card, panel, dialog header/body/footer, alert, empty state.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -269,7 +377,7 @@
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 16,
+                                        "value": 20,
                                         "unit": "px"
                                     }
                                 }
@@ -319,7 +427,223 @@
                                         "unit": "px"
                                     },
                                     "compact": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat": {
+                "$description": "Padding of a small standalone surface that keeps one size: popovers, menus, compact cards and boxes (split from inset-surface by decision 0: 21 x and 19 y places keep one value).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "inset"
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
                                         "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 8,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 12,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 16,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 8,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide": {
+                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24→24 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "inset"
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 32,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 32,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 32,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 20,
+                                        "unit": "px"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        },
+                        "$extensions": {
+                            "org.aragon.gov-ui-kit": {
+                                "modes": {
+                                    "new": {
+                                        "value": 24,
+                                        "unit": "px"
+                                    },
+                                    "looser": {
+                                        "value": 32,
+                                        "unit": "px"
+                                    },
+                                    "compact": {
+                                        "value": 20,
                                         "unit": "px"
                                     }
                                 }
@@ -369,15 +693,15 @@
                             "org.aragon.gov-ui-kit": {
                                 "modes": {
                                     "new": {
-                                        "value": 32,
+                                        "value": 24,
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 40,
+                                        "value": 32,
                                         "unit": "px"
                                     },
                                     "compact": {
-                                        "value": 24,
+                                        "value": 20,
                                         "unit": "px"
                                     }
                                 }
@@ -460,7 +784,7 @@
                                     "unit": "px"
                                 },
                                 "compact": {
-                                    "value": 4,
+                                    "value": 2,
                                     "unit": "px"
                                 }
                             }
@@ -484,7 +808,7 @@
                                     "unit": "px"
                                 },
                                 "compact": {
-                                    "value": 4,
+                                    "value": 2,
                                     "unit": "px"
                                 }
                             }
@@ -516,7 +840,7 @@
                                     "unit": "px"
                                 },
                                 "compact": {
-                                    "value": 8,
+                                    "value": 6,
                                     "unit": "px"
                                 }
                             }
@@ -549,7 +873,7 @@
                 }
             },
             "gap-group": {
-                "$description": "Between peers: items of a list, cards of a grid, fields of a form, buttons of a group, a card title row and its content.",
+                "$description": "Between peers that keep one gap at every width: items of a list, fields of a form, buttons of a group, a card title row and its content.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "gap"
@@ -588,15 +912,15 @@
                         "org.aragon.gov-ui-kit": {
                             "modes": {
                                 "new": {
-                                    "value": 24,
+                                    "value": 16,
                                     "unit": "px"
                                 },
                                 "looser": {
-                                    "value": 32,
+                                    "value": 20,
                                     "unit": "px"
                                 },
                                 "compact": {
-                                    "value": 16,
+                                    "value": 12,
                                     "unit": "px"
                                 }
                             }
@@ -604,8 +928,8 @@
                     }
                 }
             },
-            "gap-section": {
-                "$description": "Between the sections of a page, dialog or aside; between a wizard step body and its footer.",
+            "gap-group-stepped": {
+                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page (split from gap-group by decision 0: 28 places step 16→24).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "gap"
@@ -613,7 +937,31 @@
                 },
                 "base": {
                     "$value": {
-                        "value": 40,
+                        "value": 16,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 16,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 20,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 12,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
                         "unit": "px"
                     },
                     "$extensions": {
@@ -629,6 +977,94 @@
                                 },
                                 "compact": {
                                     "value": 20,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "gap-section": {
+                "$description": "Between the sections of a dialog, an aside or a wizard step (24 at every width).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "gap"
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 24,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 32,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 20,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 24,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 32,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 20,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "gap-section-wide": {
+                "$description": "Between the main sections of a page and its large blocks (40 at every width; split from gap-section by decision 0: 11 places).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "gap"
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 40,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 48,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 32,
                                     "unit": "px"
                                 }
                             }

@@ -266,19 +266,19 @@ test('the spacing layer writes one value set per mode, the coarse fallback and u
 
 test('an exception renders its Today value and follows its role per axis in every preview mode', (context) => {
     const dir = scratch(context);
-    addException(dir, 'inset-item--test-10', ['px', 'p'], 10, 10);
+    addException(dir, 'inset-item-flat--test-14', ['px', 'p'], 14, 14);
     addException(dir, 'gap-group--test-12-16', ['gap', 'mt'], 12, 16);
     const css = spacingCss(dir);
-    assert.match(css, /--space-inset-item--test-10-x: 10px;/);
-    assert.match(css, /--space-inset-item--test-10-y-md: 10px;/);
-    assert.match(css, /--space-inset-item--test-10-x: var\(--space-inset-item-x\);/);
-    assert.match(css, /--space-inset-item--test-10-y-md: var\(--space-inset-item-y-md\);/);
+    assert.match(css, /--space-inset-item-flat--test-14-x: 14px;/);
+    assert.match(css, /--space-inset-item-flat--test-14-y-md: 14px;/);
+    assert.match(css, /--space-inset-item-flat--test-14-x: var\(\s*--space-inset-item-flat-x\s*\);/);
+    assert.match(css, /--space-inset-item-flat--test-14-y-md: var\(\s*--space-inset-item-flat-y-md\s*\);/);
     assert.match(css, /--space-gap-group--test-12-16-md: 16px;/);
     assert.match(css, /--space-gap-group--test-12-16: var\(--space-gap-group\);/);
     // Only the families it lists.
-    assert.match(css, /@utility px-inset-item--test-10 \{/);
-    assert.match(css, /@utility p-inset-item--test-10 \{/);
-    assert.doesNotMatch(css, /@utility py-inset-item--test-10 /);
+    assert.match(css, /@utility px-inset-item-flat--test-14 \{/);
+    assert.match(css, /@utility p-inset-item-flat--test-14 \{/);
+    assert.doesNotMatch(css, /@utility py-inset-item-flat--test-14 /);
     assert.match(css, /@utility gap-group--test-12-16 \{/);
     assert.match(css, /@utility mt-group--test-12-16 \{/);
 });
