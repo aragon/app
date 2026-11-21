@@ -24,4 +24,14 @@ describe('<Heading /> component', () => {
         expect(screen.getByRole('heading', { level: 4 })).toBeInTheDocument();
         expect(screen.queryByRole('heading', { level: 2 })).not.toBeInTheDocument();
     });
+
+    it('keeps choosing the element from `as` and `size` when a typography role is set', () => {
+        render(createTestComponent({ as: 'h3', typeRole: 'title-item', children: 'Item title' }));
+        expect(screen.getByRole('heading', { level: 3, name: 'Item title' })).toBeInTheDocument();
+    });
+
+    it('renders an h1 by default when only a typography role is set', () => {
+        render(createTestComponent({ typeRole: 'supporting', children: 'Supporting heading' }));
+        expect(screen.getByRole('heading', { level: 1, name: 'Supporting heading' })).toBeInTheDocument();
+    });
 });

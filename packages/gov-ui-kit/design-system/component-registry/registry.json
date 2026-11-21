@@ -6,8 +6,77 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "f9ca4c5900d0c963f44b1fe24867a2297c5c8ba4",
-            "dirty": [],
+            "commit": "c7d59081361dd20686a1ce1a80c2a4fcb6d95fd7",
+            "dirty": [
+                "packages/gov-ui-kit/AGENTS.md",
+                "packages/gov-ui-kit/biome-plugins/primitive-typography.css.error.grit",
+                "packages/gov-ui-kit/biome-plugins/primitive-typography.css.warn.grit",
+                "packages/gov-ui-kit/biome-plugins/primitive-typography.js.error.grit",
+                "packages/gov-ui-kit/biome-plugins/primitive-typography.js.warn.grit",
+                "packages/gov-ui-kit/biome.jsonc",
+                "packages/gov-ui-kit/package.json",
+                "packages/gov-ui-kit/scripts/README.md",
+                "packages/gov-ui-kit/scripts/primitive-typography.mjs",
+                "packages/gov-ui-kit/scripts/tokens/generate.mjs",
+                "packages/gov-ui-kit/scripts/tokens/generate.test.mjs",
+                "packages/gov-ui-kit/scripts/tokens/lib/dtcg.mjs",
+                "packages/gov-ui-kit/scripts/tokens/lib/typography.mjs",
+                "packages/gov-ui-kit/scripts/tokens/lib/typographyReport.mjs",
+                "packages/gov-ui-kit/src/core/components/alerts/alertCard/alertCard.tsx",
+                "packages/gov-ui-kit/src/core/components/alerts/alertInline/alertInline.tsx",
+                "packages/gov-ui-kit/src/core/components/breadcrumbs/breadcrumbs.tsx",
+                "packages/gov-ui-kit/src/core/components/button/button.tsx",
+                "packages/gov-ui-kit/src/core/components/cards/cardSummary/cardSummary.tsx",
+                "packages/gov-ui-kit/src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
+                "packages/gov-ui-kit/src/core/components/dataList/dataListFilter/dataListFilter.tsx",
+                "packages/gov-ui-kit/src/core/components/dataList/dataListFilter/dataListFilterStatus.tsx",
+                "packages/gov-ui-kit/src/core/components/dataList/dataListPagination/dataListPagination.tsx",
+                "packages/gov-ui-kit/src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
+                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
+                "packages/gov-ui-kit/src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
+                "packages/gov-ui-kit/src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
+                "packages/gov-ui-kit/src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/checkbox/checkbox.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/checkboxCard/checkboxCard.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/hooks/useInputProps.ts",
+                "packages/gov-ui-kit/src/core/components/forms/inputContainer/inputContainer.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/inputText/inputText.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/radio/radio.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/radioCard/radioCard.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/switch/switch.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/textArea/textArea.tsx",
+                "packages/gov-ui-kit/src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
+                "packages/gov-ui-kit/src/core/components/heading/heading.stories.tsx",
+                "packages/gov-ui-kit/src/core/components/heading/heading.test.tsx",
+                "packages/gov-ui-kit/src/core/components/heading/heading.tsx",
+                "packages/gov-ui-kit/src/core/components/link/link/link.tsx",
+                "packages/gov-ui-kit/src/core/components/states/emptyState/emptyState.tsx",
+                "packages/gov-ui-kit/src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
+                "packages/gov-ui-kit/src/core/components/tag/tag.tsx",
+                "packages/gov-ui-kit/src/core/components/toggles/toggle/toggle.tsx",
+                "packages/gov-ui-kit/src/core/components/tooltip/tooltip.tsx",
+                "packages/gov-ui-kit/src/core/types/typographyStyles.ts",
+                "packages/gov-ui-kit/src/modules/components/action/actionSimulation/actionSimulation.tsx",
+                "packages/gov-ui-kit/src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/asset/assetTransfer/assetTransfer.tsx",
+                "packages/gov-ui-kit/src/modules/components/asset/assetTransfer/assetTransferAddress/assetTransferAddress.tsx",
+                "packages/gov-ui-kit/src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalDataListItem/proposalDataListItemStatus/proposalDataListItemStatus.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
+                "packages/gov-ui-kit/src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
+                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
+                "packages/gov-ui-kit/src/theme/tokens/primitives/typography.css",
+                "packages/gov-ui-kit/src/theme/tokens/typography.css",
+                "packages/gov-ui-kit/src/theme/utils/prose.css"
+            ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
                 "js": [
@@ -681,7 +750,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/action/actionSimulation/actionSimulation.tsx",
                 "line": 16,
-                "sha256": "22257c806600c597bf81a394f976029c14106c5b3d78a64b183d9f96a90edd61"
+                "sha256": "30c51a7ef13fcb696c35e1bddc8cc7ca1f6d10d5bb339ad3c29f3eaad4dff1a8"
             },
             "props": [
                 {
@@ -755,7 +824,7 @@
                         "path": "src/modules/components/action/actionSimulation/actionSimulation.tsx",
                         "status": "changed",
                         "expectedSha256": "f9c8b8ed9a99dc1592ef44dd824ac4db3c91f30a6535104496c920b2b8a05a95",
-                        "actualSha256": "22257c806600c597bf81a394f976029c14106c5b3d78a64b183d9f96a90edd61"
+                        "actualSha256": "30c51a7ef13fcb696c35e1bddc8cc7ca1f6d10d5bb339ad3c29f3eaad4dff1a8"
                     },
                     {
                         "repository": "kit",
@@ -1451,14 +1520,14 @@
                 "repository": "kit",
                 "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                 "line": 43,
-                "sha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                "sha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                     "line": 7,
-                    "sha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                    "sha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
                 }
             ],
             "stories": [
@@ -1527,21 +1596,21 @@
                         "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                         "status": "changed",
                         "expectedSha256": "fd61e6319e11ffdbdaa4336c1bdf72633a58af5127ed6f1ad2933029a4dcd5db",
-                        "actualSha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                        "actualSha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                         "status": "changed",
                         "expectedSha256": "fd61e6319e11ffdbdaa4336c1bdf72633a58af5127ed6f1ad2933029a4dcd5db",
-                        "actualSha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                        "actualSha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                         "status": "changed",
                         "expectedSha256": "fd61e6319e11ffdbdaa4336c1bdf72633a58af5127ed6f1ad2933029a4dcd5db",
-                        "actualSha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                        "actualSha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
                     },
                     {
                         "repository": "kit",
@@ -1578,14 +1647,14 @@
                 "repository": "kit",
                 "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                 "line": 33,
-                "sha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                "sha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                     "line": 7,
-                    "sha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                    "sha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
                 }
             ],
             "stories": [
@@ -1654,21 +1723,21 @@
                         "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                         "status": "changed",
                         "expectedSha256": "937581dec0bdd45af4857a1b5f6cbf356a723227c9fcce2448651228bbfc093a",
-                        "actualSha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                        "actualSha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                         "status": "changed",
                         "expectedSha256": "937581dec0bdd45af4857a1b5f6cbf356a723227c9fcce2448651228bbfc093a",
-                        "actualSha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                        "actualSha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                         "status": "changed",
                         "expectedSha256": "937581dec0bdd45af4857a1b5f6cbf356a723227c9fcce2448651228bbfc093a",
-                        "actualSha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                        "actualSha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
                     },
                     {
                         "repository": "kit",
@@ -1802,14 +1871,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                         "line": 33,
-                        "sha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                        "sha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                             "line": 6,
-                            "sha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                            "sha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                         }
                     ],
                     "stories": [
@@ -1890,21 +1959,21 @@
                         "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "f0bf2329243ec8738dab00d2fdbb7359f75080462bbdf18d7263308c1dc1c42a",
-                        "actualSha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                        "actualSha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "f0bf2329243ec8738dab00d2fdbb7359f75080462bbdf18d7263308c1dc1c42a",
-                        "actualSha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                        "actualSha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "f0bf2329243ec8738dab00d2fdbb7359f75080462bbdf18d7263308c1dc1c42a",
-                        "actualSha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                        "actualSha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                     },
                     {
                         "repository": "kit",
@@ -2030,14 +2099,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                 "line": 33,
-                "sha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                "sha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                     "line": 6,
-                    "sha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                    "sha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                 }
             ],
             "stories": [
@@ -2086,7 +2155,7 @@
                         "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "f0bf2329243ec8738dab00d2fdbb7359f75080462bbdf18d7263308c1dc1c42a",
-                        "actualSha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                        "actualSha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
                     }
                 ],
                 "review": {
@@ -2116,14 +2185,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                 "line": 54,
-                "sha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                "sha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                     "line": 9,
-                    "sha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                    "sha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
                 }
             ],
             "stories": [
@@ -2197,21 +2266,21 @@
                         "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                         "status": "changed",
                         "expectedSha256": "58b695844d70fcae5625152a0d78436d2735b4e8616ad045e4ea62ddcd8323e4",
-                        "actualSha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                        "actualSha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                         "status": "changed",
                         "expectedSha256": "58b695844d70fcae5625152a0d78436d2735b4e8616ad045e4ea62ddcd8323e4",
-                        "actualSha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                        "actualSha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                         "status": "changed",
                         "expectedSha256": "58b695844d70fcae5625152a0d78436d2735b4e8616ad045e4ea62ddcd8323e4",
-                        "actualSha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                        "actualSha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
                     },
                     {
                         "repository": "kit",
@@ -2902,14 +2971,14 @@
                 "repository": "kit",
                 "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                 "line": 30,
-                "sha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                "sha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                     "line": 16,
-                    "sha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                    "sha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
                 }
             ],
             "stories": [
@@ -2973,21 +3042,21 @@
                         "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                         "status": "changed",
                         "expectedSha256": "511a0a191614b90d4cdb6a8e17df0d615602d61a1bf9a8b3430103b2eafbb217",
-                        "actualSha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                        "actualSha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                         "status": "changed",
                         "expectedSha256": "511a0a191614b90d4cdb6a8e17df0d615602d61a1bf9a8b3430103b2eafbb217",
-                        "actualSha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                        "actualSha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                         "status": "changed",
                         "expectedSha256": "511a0a191614b90d4cdb6a8e17df0d615602d61a1bf9a8b3430103b2eafbb217",
-                        "actualSha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                        "actualSha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
                     },
                     {
                         "repository": "kit",
@@ -3077,7 +3146,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "59904829c3bc62a837f2a46c1c60cda539b039e2628db41881505b1d77bdb617"
+                "sha256": "80abe4a8627769e8ad6d63337d23af7aa0cdaa00734d5a49cf86bd876cafdd2a"
             },
             "props": [],
             "stories": [],
@@ -3122,7 +3191,7 @@
                 "repository": "kit",
                 "path": "src/core/components/button/button.tsx",
                 "line": 188,
-                "sha256": "90bb3a651c1ca8d8f58abc99687736fbd4ecaa76f2d97c372dd99aad9b78e11e"
+                "sha256": "f3be3ecb35bbf69a3c1e25c34d91f65abc7f61de0541c5e72f34f42e8efe5277"
             },
             "props": [
                 {
@@ -3186,7 +3255,7 @@
                         "repository": "kit",
                         "path": "src/core/components/button/button.tsx",
                         "line": 188,
-                        "sha256": "90bb3a651c1ca8d8f58abc99687736fbd4ecaa76f2d97c372dd99aad9b78e11e"
+                        "sha256": "f3be3ecb35bbf69a3c1e25c34d91f65abc7f61de0541c5e72f34f42e8efe5277"
                     },
                     {
                         "repository": "kit",
@@ -3224,8 +3293,8 @@
                         "repository": "kit",
                         "path": "src/core/components/button/button.tsx",
                         "status": "current",
-                        "expectedSha256": "90bb3a651c1ca8d8f58abc99687736fbd4ecaa76f2d97c372dd99aad9b78e11e",
-                        "actualSha256": "90bb3a651c1ca8d8f58abc99687736fbd4ecaa76f2d97c372dd99aad9b78e11e"
+                        "expectedSha256": "f3be3ecb35bbf69a3c1e25c34d91f65abc7f61de0541c5e72f34f42e8efe5277",
+                        "actualSha256": "f3be3ecb35bbf69a3c1e25c34d91f65abc7f61de0541c5e72f34f42e8efe5277"
                     },
                     {
                         "repository": "kit",
@@ -3832,7 +3901,7 @@
                 "repository": "kit",
                 "path": "src/core/components/cards/cardSummary/cardSummary.tsx",
                 "line": 8,
-                "sha256": "9643822c644d5a29325753e7df04afda1a6ed8c3293dcf9526349794520b18ef"
+                "sha256": "fee4c800cb5909742e0685ce7731971bc2bb924b864dbf4587bbd822bfaee590"
             },
             "props": [
                 {
@@ -3914,7 +3983,7 @@
                         "path": "src/core/components/cards/cardSummary/cardSummary.tsx",
                         "status": "changed",
                         "expectedSha256": "f1f7d515e7128dc1a1914ad437fae39748268e6f7b5b8b609ea8244f3db35615",
-                        "actualSha256": "9643822c644d5a29325753e7df04afda1a6ed8c3293dcf9526349794520b18ef"
+                        "actualSha256": "fee4c800cb5909742e0685ce7731971bc2bb924b864dbf4587bbd822bfaee590"
                     },
                     {
                         "repository": "kit",
@@ -4017,14 +4086,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/checkbox/checkbox.tsx",
                 "line": 45,
-                "sha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                "sha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/checkbox/checkbox.tsx",
                     "line": 9,
-                    "sha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                    "sha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
                 }
             ],
             "stories": [
@@ -4105,21 +4174,21 @@
                         "path": "src/core/components/forms/checkbox/checkbox.tsx",
                         "status": "changed",
                         "expectedSha256": "9d60ce1e1d1145313332335042cf29200467020acb3a1db8caea36fd43153388",
-                        "actualSha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                        "actualSha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/checkbox/checkbox.tsx",
                         "status": "changed",
                         "expectedSha256": "9d60ce1e1d1145313332335042cf29200467020acb3a1db8caea36fd43153388",
-                        "actualSha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                        "actualSha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/checkbox/checkbox.tsx",
                         "status": "changed",
                         "expectedSha256": "9d60ce1e1d1145313332335042cf29200467020acb3a1db8caea36fd43153388",
-                        "actualSha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                        "actualSha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
                     },
                     {
                         "repository": "kit",
@@ -4156,14 +4225,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                 "line": 56,
-                "sha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                "sha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                     "line": 10,
-                    "sha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                    "sha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
                 }
             ],
             "stories": [
@@ -4240,21 +4309,21 @@
                         "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                         "status": "changed",
                         "expectedSha256": "a5a871faee821f0a59cb200fd392f386e4126cbaca76d92550304441b638280f",
-                        "actualSha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                        "actualSha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                         "status": "changed",
                         "expectedSha256": "a5a871faee821f0a59cb200fd392f386e4126cbaca76d92550304441b638280f",
-                        "actualSha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                        "actualSha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                         "status": "changed",
                         "expectedSha256": "a5a871faee821f0a59cb200fd392f386e4126cbaca76d92550304441b638280f",
-                        "actualSha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                        "actualSha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
                     },
                     {
                         "repository": "kit",
@@ -4409,7 +4478,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/checkbox/checkbox.tsx",
                 "line": 7,
-                "sha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                "sha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
             },
             "props": [],
             "stories": [
@@ -5201,14 +5270,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "line": 45,
-                        "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "sha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                             "line": 14,
-                            "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                            "sha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                         }
                     ],
                     "stories": [
@@ -5289,21 +5358,21 @@
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                     },
                     {
                         "repository": "kit",
@@ -5429,14 +5498,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                 "line": 45,
-                "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                "sha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                     "line": 14,
-                    "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                    "sha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                 }
             ],
             "stories": [
@@ -5485,7 +5554,7 @@
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
                     }
                 ],
                 "review": {
@@ -5522,14 +5591,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                         "line": 38,
-                        "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                        "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                             "line": 7,
-                            "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                            "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
                         }
                     ],
                     "stories": [
@@ -5606,14 +5675,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                         "line": 62,
-                        "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                        "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                             "line": 27,
-                            "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                            "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
                         }
                     ],
                     "stories": [
@@ -5696,14 +5765,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                         "line": 11,
-                        "sha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                        "sha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                             "line": 9,
-                            "sha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                            "sha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
                         }
                     ],
                     "stories": [
@@ -5884,14 +5953,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                 "line": 38,
-                "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                     "line": 7,
-                    "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                    "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
                 }
             ],
             "stories": [
@@ -5931,7 +6000,7 @@
                         "repository": "kit",
                         "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                         "line": 38,
-                        "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                        "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
                     }
                 ],
                 "evidenceStatus": [
@@ -5939,8 +6008,8 @@
                         "repository": "kit",
                         "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                         "status": "current",
-                        "expectedSha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8",
-                        "actualSha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                        "expectedSha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57",
+                        "actualSha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
                     }
                 ],
                 "review": {
@@ -5970,7 +6039,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                 "line": 5,
-                "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
             },
             "props": [],
             "stories": [
@@ -6125,14 +6194,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                 "line": 62,
-                "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                     "line": 27,
-                    "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                    "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
                 }
             ],
             "stories": [
@@ -6193,7 +6262,7 @@
                         "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                         "status": "changed",
                         "expectedSha256": "2888d99d1913faa6c81bfe6cb22837fb519f911a12c634abc27044ea05225653",
-                        "actualSha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                        "actualSha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
                     }
                 ],
                 "review": {
@@ -6309,14 +6378,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                 "line": 11,
-                "sha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                "sha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                     "line": 9,
-                    "sha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                    "sha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
                 }
             ],
             "stories": [
@@ -6365,7 +6434,7 @@
                         "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                         "status": "changed",
                         "expectedSha256": "cb3f6455331711215a59f0d8e871cfb0b06eeb45a33ca220955843eeec4e1d58",
-                        "actualSha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                        "actualSha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
                     }
                 ],
                 "review": {
@@ -6691,14 +6760,14 @@
                         "repository": "kit",
                         "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                         "line": 25,
-                        "sha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                        "sha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                             "line": 7,
-                            "sha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                            "sha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
                         }
                     ],
                     "stories": [
@@ -6914,14 +6983,14 @@
                 "repository": "kit",
                 "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                 "line": 25,
-                "sha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                "sha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                     "line": 7,
-                    "sha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                    "sha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
                 }
             ],
             "stories": [
@@ -6976,7 +7045,7 @@
                         "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                         "status": "changed",
                         "expectedSha256": "601ebb9772695c3d70d3c6ce84cae59628e61a1d125991d2ef839756bf93f7ff",
-                        "actualSha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                        "actualSha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
                     }
                 ],
                 "review": {
@@ -7013,14 +7082,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                         "line": 19,
-                        "sha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                        "sha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                             "line": 6,
-                            "sha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                            "sha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
                         }
                     ],
                     "stories": [
@@ -7091,14 +7160,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                         "line": 23,
-                        "sha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                        "sha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                             "line": 7,
-                            "sha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                            "sha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
                         }
                     ],
                     "stories": [
@@ -7428,14 +7497,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                         "line": 30,
-                        "sha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                        "sha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                             "line": 9,
-                            "sha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                            "sha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
                         }
                     ],
                     "stories": [
@@ -7812,14 +7881,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                 "line": 30,
-                "sha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                "sha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                     "line": 9,
-                    "sha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                    "sha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
                 }
             ],
             "stories": [
@@ -7868,7 +7937,7 @@
                         "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                         "status": "changed",
                         "expectedSha256": "cf81510ee6bf6a3485e701fcd7329e7564cc0d602df3a6adddf6c01682875b70",
-                        "actualSha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                        "actualSha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
                     }
                 ],
                 "review": {
@@ -8047,14 +8116,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                 "line": 19,
-                "sha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                "sha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                     "line": 6,
-                    "sha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                    "sha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
                 }
             ],
             "stories": [
@@ -8103,7 +8172,7 @@
                         "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                         "status": "changed",
                         "expectedSha256": "2a3be19f480aa5c0882256420c73e1503ec30a465ac1a63e939ba76d495f233a",
-                        "actualSha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                        "actualSha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
                     }
                 ],
                 "review": {
@@ -8219,14 +8288,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                 "line": 23,
-                "sha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                "sha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                     "line": 7,
-                    "sha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                    "sha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
                 }
             ],
             "stories": [
@@ -8275,7 +8344,7 @@
                         "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                         "status": "changed",
                         "expectedSha256": "3b2a0e22e19fea3817d015fee0ff91651eef1946ad8b111db916ba97837e1956",
-                        "actualSha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                        "actualSha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
                     }
                 ],
                 "review": {
@@ -8697,14 +8766,14 @@
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                         "line": 48,
-                        "sha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                        "sha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                             "line": 7,
-                            "sha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                            "sha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
                         }
                     ],
                     "stories": [
@@ -8995,14 +9064,14 @@
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                 "line": 48,
-                "sha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                "sha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                     "line": 7,
-                    "sha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                    "sha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
                 }
             ],
             "stories": [
@@ -9049,9 +9118,9 @@
                     {
                         "repository": "kit",
                         "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543",
-                        "actualSha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                        "actualSha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
                     }
                 ],
                 "review": {
@@ -9081,7 +9150,7 @@
                 "repository": "kit",
                 "path": "src/core/components/states/emptyState/emptyState.tsx",
                 "line": 14,
-                "sha256": "d9e03d75a2fc9ffb6931cc181df920826d83833dec33df58363c8fd9a68fe4bd"
+                "sha256": "f95b5892c87df90c6f35a254c11a62e805dfad5df5eeb430e27019c54e462fab"
             },
             "props": [
                 {
@@ -9169,7 +9238,7 @@
                         "path": "src/core/components/states/emptyState/emptyState.tsx",
                         "status": "changed",
                         "expectedSha256": "5fccf4bbcb004cb448f31bc22e32b47a0f5418d29794fa8f9e5a9297a02c2cf3",
-                        "actualSha256": "d9e03d75a2fc9ffb6931cc181df920826d83833dec33df58363c8fd9a68fe4bd"
+                        "actualSha256": "f95b5892c87df90c6f35a254c11a62e805dfad5df5eeb430e27019c54e462fab"
                     },
                     {
                         "repository": "kit",
@@ -9791,15 +9860,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/heading/heading.tsx",
-                "line": 28,
-                "sha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                "line": 34,
+                "sha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.tsx",
-                    "line": 6,
-                    "sha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                    "line": 7,
+                    "sha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
                 }
             ],
             "stories": [
@@ -9807,7 +9876,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.stories.tsx",
                     "line": 1,
-                    "sha256": "e3d3436d5b51934264ad78c0fad813b36bfff4ac1e596f672c3b84ed88dc8f25"
+                    "sha256": "e22315934979c101870b3e4bd14df9f6916e9df4422cf6b7a0f9ecbed2d858ef"
                 }
             ],
             "tests": [
@@ -9815,7 +9884,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.test.tsx",
                     "line": 1,
-                    "sha256": "1f685b2b2c22d705810b661b88d0e97380233b5127a3e1f824339a40e12e9ae0"
+                    "sha256": "5ea8f9e04bd1d86cb8e9d898247058fa10738aa1c05fd82ce2a907a20da7d130"
                 }
             ],
             "docs": [],
@@ -9863,28 +9932,28 @@
                         "path": "src/core/components/heading/heading.tsx",
                         "status": "changed",
                         "expectedSha256": "97f3c492521e150db835b73fe836efae30c77bbbf59d32257c54b4a9d299a5ff",
-                        "actualSha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                        "actualSha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/heading/heading.tsx",
                         "status": "changed",
                         "expectedSha256": "97f3c492521e150db835b73fe836efae30c77bbbf59d32257c54b4a9d299a5ff",
-                        "actualSha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                        "actualSha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/heading/heading.tsx",
                         "status": "changed",
                         "expectedSha256": "97f3c492521e150db835b73fe836efae30c77bbbf59d32257c54b4a9d299a5ff",
-                        "actualSha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                        "actualSha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/heading/heading.stories.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "e3d3436d5b51934264ad78c0fad813b36bfff4ac1e596f672c3b84ed88dc8f25",
-                        "actualSha256": "e3d3436d5b51934264ad78c0fad813b36bfff4ac1e596f672c3b84ed88dc8f25"
+                        "actualSha256": "e22315934979c101870b3e4bd14df9f6916e9df4422cf6b7a0f9ecbed2d858ef"
                     }
                 ],
                 "review": {
@@ -9913,8 +9982,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/heading/heading.tsx",
-                "line": 4,
-                "sha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                "line": 5,
+                "sha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
             },
             "props": [],
             "stories": [
@@ -9922,7 +9991,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.stories.tsx",
                     "line": 1,
-                    "sha256": "e3d3436d5b51934264ad78c0fad813b36bfff4ac1e596f672c3b84ed88dc8f25"
+                    "sha256": "e22315934979c101870b3e4bd14df9f6916e9df4422cf6b7a0f9ecbed2d858ef"
                 }
             ],
             "tests": [
@@ -9930,7 +9999,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.test.tsx",
                     "line": 1,
-                    "sha256": "1f685b2b2c22d705810b661b88d0e97380233b5127a3e1f824339a40e12e9ae0"
+                    "sha256": "5ea8f9e04bd1d86cb8e9d898247058fa10738aa1c05fd82ce2a907a20da7d130"
                 }
             ],
             "docs": [],
@@ -10559,7 +10628,7 @@
                 "repository": "kit",
                 "path": "src/core/components/alerts/alertCard/alertCard.tsx",
                 "line": 7,
-                "sha256": "ac1d1e55fa5ae8242ad1c11068570634aa5380b381e624de04ce51fe2cade7ec"
+                "sha256": "42ce028fd0357aa880979596dc6c2d8bc980db338b0648f515480ba1c6398242"
             },
             "props": [],
             "stories": [
@@ -10618,7 +10687,7 @@
                 "repository": "kit",
                 "path": "src/core/components/alerts/alertInline/alertInline.tsx",
                 "line": 7,
-                "sha256": "7bc1d13e73646b756968287922f821512762d23e41c3cb388249abc4b84a5fa4"
+                "sha256": "946980c338e28b79965e919f987e22885d422261a820929a22c7aa7a3c36d970"
             },
             "props": [],
             "stories": [
@@ -10736,7 +10805,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/asset/assetDataListItem/assetDataListItemStructure/assetDataListItemStructure.tsx",
                 "line": 6,
-                "sha256": "97904db79cccb34196da6d6699d34d3471d159fef38dbfffc40f05d595c240dc"
+                "sha256": "2386ecb4cd56d04d6c254e1e223319b6fb01c1425fc87faa758d39d8d7b9209a"
             },
             "props": [],
             "stories": [
@@ -10795,7 +10864,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/asset/assetTransfer/assetTransfer.tsx",
                 "line": 9,
-                "sha256": "61f4364fd55bd868e380e747b324ebd94643a03d792f72a656eee832f4bffb46"
+                "sha256": "3789f8c7031f83bd94787cbd4dd7a7fbac0ce4ff4e1b6fb41430713c30c21ab9"
             },
             "props": [],
             "stories": [
@@ -11135,7 +11204,7 @@
                 "repository": "kit",
                 "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                 "line": 5,
-                "sha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                "sha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
             },
             "props": [],
             "stories": [
@@ -11194,7 +11263,7 @@
                 "repository": "kit",
                 "path": "src/core/components/breadcrumbs/breadcrumbs.tsx",
                 "line": 16,
-                "sha256": "3a29e1e1928617701cc4dbf2d9a117342aab8f73c599b8fdba1820f84a608a9e"
+                "sha256": "1683b4928363396a06c221f40cd40c5b44181f54cc3bad191e5daac9f9efc0d8"
             },
             "props": [],
             "stories": [
@@ -11731,7 +11800,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/checkboxCard/checkboxCard.tsx",
                 "line": 10,
-                "sha256": "5789e90b0bb79886258ca6db58b02b7faf7d75f41fda3c1d468eefb7d83f9a5c"
+                "sha256": "bcab39a68a935811daf5578d0a2f40ad13b0e8c13ef722ac2127050b9a039e96"
             },
             "props": [],
             "stories": [
@@ -11849,7 +11918,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/checkbox/checkbox.tsx",
                 "line": 9,
-                "sha256": "e7de10935f7439553101fd3523e1b21d3ffe832143eef32d399ec2b7dbeee219"
+                "sha256": "cd0b720a23903c8814e84309ab057f37a2df649d548fc0ba9eaf4c519715a65d"
             },
             "props": [],
             "stories": [
@@ -12539,7 +12608,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                 "line": 14,
-                "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                "sha256": "580144a32a56bdbe77872ca8324efcc4e16a59896edb54d9a186b8efaee2d211"
             },
             "props": [],
             "stories": [
@@ -12598,7 +12667,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListActionItem/dataListActionItem.tsx",
                 "line": 7,
-                "sha256": "b4f6e1b22ec7f364bb9401cd22911e254851ed4869ee13d0511e4566ae8cacc8"
+                "sha256": "2916d6a545a7b73e0385577c58608a09d4407b8b57154c7508de282f71239f57"
             },
             "props": [],
             "stories": [
@@ -12787,7 +12856,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                 "line": 27,
-                "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
             },
             "props": [],
             "stories": [
@@ -12858,7 +12927,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListFilter/dataListFilter.tsx",
                 "line": 12,
-                "sha256": "0161769996f89f5f90eb47e7359aa30bb2fd29accba6b87667772e707ec9ce52"
+                "sha256": "71c01e798c787489d1d7a8ea4fee748eeca90cd56c81197e09ac313744c3c3df"
             },
             "props": [],
             "stories": [
@@ -12988,7 +13057,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dataList/dataListPagination/dataListPagination.tsx",
                 "line": 9,
-                "sha256": "f10b2342478d52f98ae4af7ebb9678f149585d91b0d280226d9b0f28eab7befc"
+                "sha256": "eaebae49c8a472c78eb7c68bceb8c0f2afbdbe5167070f40704500c5c644d2c4"
             },
             "props": [],
             "stories": [
@@ -13210,7 +13279,7 @@
                 "repository": "kit",
                 "path": "src/core/components/definitionList/definitionListItem/definitionListItem.tsx",
                 "line": 7,
-                "sha256": "9414e417c7109fa40c4726fdb7c6bda12d62ad48951acb5f81c5f1ea9c487686"
+                "sha256": "7d7e6017a25df0a36fcccc19a9a9f162c0c6d45aeec9331081f496fb2ae5770d"
             },
             "props": [],
             "stories": [
@@ -13497,7 +13566,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialogAlert/dialogAlertHeader/dialogAlertHeader.tsx",
                 "line": 9,
-                "sha256": "efcba6b471fc63dcceb210729a391e04da648c6fbf324d81a04cc9d502d537a0"
+                "sha256": "12e86576458a62e9171edef8b93ba40840cb111aae66685103227fd53b9af862"
             },
             "props": [],
             "stories": [
@@ -13601,7 +13670,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialog/dialogContent/dialogContent.tsx",
                 "line": 6,
-                "sha256": "b61afed3e78020b5a412670c51e5a6462aeac354c70b7cd1230bd8fff38ba5c4"
+                "sha256": "d258d00d8feee86f19aa52d66c81fa37e4edd92e3a54eab67fd951ddad4191e6"
             },
             "props": [],
             "stories": [
@@ -13778,7 +13847,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
                 "line": 7,
-                "sha256": "65496e82dc3baa8dbd07b3d18568a0b7945c131e493451190f9ca4cea05a8449"
+                "sha256": "ec7f805e9d4476fab284bfa17dca71bdfa38469199c25d325b4539c2da09de76"
             },
             "props": [],
             "stories": [
@@ -14059,7 +14128,7 @@
                 "repository": "kit",
                 "path": "src/core/components/dropdown/dropdownItem/dropdownItem.tsx",
                 "line": 7,
-                "sha256": "3bf1d1a1196829d87790b41c4ff27854bec2460651446c247a5a959454f58543"
+                "sha256": "43947bc6dc84b5231b274187ccc286d852bb831e9527ebcbffbacacfabd4ad20"
             },
             "props": [],
             "stories": [
@@ -14696,8 +14765,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/heading/heading.tsx",
-                "line": 6,
-                "sha256": "ea5c4637f1a8d581db2f660ebd60616acbab8bbab4e63c53650f47ff3c6f04ce"
+                "line": 7,
+                "sha256": "fb0d3710b38e32e3f361951b33ccbf46779b5e3289c95cbfce78e3d927f5c9a1"
             },
             "props": [],
             "stories": [
@@ -14705,7 +14774,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.stories.tsx",
                     "line": 1,
-                    "sha256": "e3d3436d5b51934264ad78c0fad813b36bfff4ac1e596f672c3b84ed88dc8f25"
+                    "sha256": "e22315934979c101870b3e4bd14df9f6916e9df4422cf6b7a0f9ecbed2d858ef"
                 }
             ],
             "tests": [
@@ -14713,7 +14782,7 @@
                     "repository": "kit",
                     "path": "src/core/components/heading/heading.test.tsx",
                     "line": 1,
-                    "sha256": "1f685b2b2c22d705810b661b88d0e97380233b5127a3e1f824339a40e12e9ae0"
+                    "sha256": "5ea8f9e04bd1d86cb8e9d898247058fa10738aa1c05fd82ce2a907a20da7d130"
                 }
             ],
             "docs": [],
@@ -16386,7 +16455,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                 "line": 17,
-                "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
             },
             "props": [],
             "stories": [
@@ -16594,7 +16663,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/inputContainer/inputContainer.tsx",
                 "line": 35,
-                "sha256": "3771ddcee7515547ae3fa65b25fbdbd2560ccf3c2f29d9d031122b06b5486b01"
+                "sha256": "aa07aea1d4dc82fe631418f41d66361eecb2c7b9b2a6dc88c8b19c81db9f1ab4"
             },
             "props": [
                 {
@@ -16676,7 +16745,7 @@
                         "path": "src/core/components/forms/inputContainer/inputContainer.tsx",
                         "status": "changed",
                         "expectedSha256": "308ff112db341cb4a73a8edfc24381e16e730d16aaddbe3a634f28ed38417d5f",
-                        "actualSha256": "3771ddcee7515547ae3fa65b25fbdbd2560ccf3c2f29d9d031122b06b5486b01"
+                        "actualSha256": "aa07aea1d4dc82fe631418f41d66361eecb2c7b9b2a6dc88c8b19c81db9f1ab4"
                     },
                     {
                         "repository": "kit",
@@ -17418,7 +17487,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/inputText/inputText.tsx",
                 "line": 30,
-                "sha256": "e0734d98a30fa80962e0fb1a60468d8a9aace41c45e03d67119803b365e39d6c"
+                "sha256": "a22544e9033906cb4effea95b722bcccccc535835414dac83bf21251cfb2fa2a"
             },
             "props": [
                 {
@@ -17508,7 +17577,7 @@
                         "path": "src/core/components/forms/inputText/inputText.tsx",
                         "status": "changed",
                         "expectedSha256": "40ffaea2900443672c71494660f60cab041aa3e5a72e19ebbddcb2de58147abf",
-                        "actualSha256": "e0734d98a30fa80962e0fb1a60468d8a9aace41c45e03d67119803b365e39d6c"
+                        "actualSha256": "a22544e9033906cb4effea95b722bcccccc535835414dac83bf21251cfb2fa2a"
                     },
                     {
                         "repository": "kit",
@@ -18662,7 +18731,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                 "line": 10,
-                "sha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                "sha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
             },
             "props": [],
             "stories": [],
@@ -19151,7 +19220,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 13,
-                "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
             },
             "props": [],
             "stories": [],
@@ -19203,7 +19272,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 24,
-                "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
             },
             "props": [],
             "stories": [],
@@ -19307,7 +19376,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                 "line": 8,
-                "sha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                "sha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
             },
             "props": [],
             "stories": [
@@ -19470,7 +19539,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/radioCard/radioCard.tsx",
                 "line": 9,
-                "sha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                "sha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
             },
             "props": [],
             "stories": [
@@ -19588,7 +19657,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/radio/radio.tsx",
                 "line": 7,
-                "sha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                "sha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
             },
             "props": [],
             "stories": [
@@ -19706,7 +19775,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                 "line": 16,
-                "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
             },
             "props": [],
             "stories": [
@@ -20060,7 +20129,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/switch/switch.tsx",
                 "line": 6,
-                "sha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                "sha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
             },
             "props": [],
             "stories": [
@@ -20341,7 +20410,7 @@
                 "repository": "kit",
                 "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                 "line": 7,
-                "sha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                "sha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
             },
             "props": [],
             "stories": [
@@ -20400,7 +20469,7 @@
                 "repository": "kit",
                 "path": "src/core/components/tag/tag.tsx",
                 "line": 5,
-                "sha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                "sha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
             },
             "props": [],
             "stories": [
@@ -20459,7 +20528,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/textArea/textArea.tsx",
                 "line": 6,
-                "sha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                "sha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
             },
             "props": [],
             "stories": [
@@ -20518,7 +20587,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                 "line": 14,
-                "sha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                "sha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
             },
             "props": [],
             "stories": [
@@ -20642,7 +20711,7 @@
                 "repository": "kit",
                 "path": "src/core/components/toggles/toggle/toggle.tsx",
                 "line": 5,
-                "sha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                "sha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
             },
             "props": [],
             "stories": [
@@ -20701,7 +20770,7 @@
                 "repository": "kit",
                 "path": "src/core/components/tooltip/tooltip.tsx",
                 "line": 9,
-                "sha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                "sha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
             },
             "props": [],
             "stories": [
@@ -21245,7 +21314,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/hooks/useInputProps.ts",
                 "line": 6,
-                "sha256": "9793534d3d637fea20d649b4ea732e7aeacb61ff4a63c6258de0c16fa5cfa56a"
+                "sha256": "ef35b9140d4f0e10f0e7d5170e0533946621cebbdc722538153b2e70e37d48d8"
             },
             "props": [],
             "stories": [],
@@ -21460,7 +21529,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                 "line": 18,
-                "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                "sha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
             },
             "props": [],
             "stories": [
@@ -21578,7 +21647,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                 "line": 5,
-                "sha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                "sha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
             },
             "props": [],
             "stories": [
@@ -21741,7 +21810,7 @@
                 "repository": "kit",
                 "path": "src/core/components/link/link/link.tsx",
                 "line": 22,
-                "sha256": "ec4b9b4d556e37ff72d36917784cdbba2301145b4564024ca8a02674d5884dca"
+                "sha256": "9aca5268519de0a7c6cf9d3e413dcafa0de26cce9f754deea1505a6df4d29b2d"
             },
             "props": [
                 {
@@ -21827,7 +21896,7 @@
                         "path": "src/core/components/link/link/link.tsx",
                         "status": "changed",
                         "expectedSha256": "563174cb797ab4010e83df85f7803a8211f04640e79f880de3ef64ead97e42b5",
-                        "actualSha256": "ec4b9b4d556e37ff72d36917784cdbba2301145b4564024ca8a02674d5884dca"
+                        "actualSha256": "9aca5268519de0a7c6cf9d3e413dcafa0de26cce9f754deea1505a6df4d29b2d"
                     },
                     {
                         "repository": "kit",
@@ -22256,14 +22325,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "line": 52,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                             "line": 17,
-                            "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                            "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                         }
                     ],
                     "stories": [
@@ -22317,19 +22386,19 @@
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "line": 52,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "line": 17,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "line": 21,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
@@ -22343,22 +22412,22 @@
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "expectedSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc",
+                        "actualSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "expectedSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc",
+                        "actualSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "expectedSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc",
+                        "actualSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     },
                     {
                         "repository": "kit",
@@ -22484,14 +22553,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                 "line": 52,
-                "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                     "line": 17,
-                    "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                    "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                 }
             ],
             "stories": [
@@ -22531,7 +22600,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "line": 52,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "sha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     }
                 ],
                 "evidenceStatus": [
@@ -22539,8 +22608,8 @@
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "expectedSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc",
+                        "actualSha256": "b4f12f39d14db9b0e9d950196a25255692d1e18bbf9ac2659a098e5039e0e8fc"
                     }
                 ],
                 "review": {
@@ -23180,7 +23249,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx",
                         "line": 44,
-                        "sha256": "96c5f6c7cd1b3a0d34e1cc6fb81e0d2ffa115f57f12084183c77659c6c62e8f1"
+                        "sha256": "d052cc55666f054887045d954d902b6aaf8955eefc604ed69cec1c395480165c"
                     },
                     "props": [
                         {
@@ -23604,7 +23673,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx",
                 "line": 44,
-                "sha256": "96c5f6c7cd1b3a0d34e1cc6fb81e0d2ffa115f57f12084183c77659c6c62e8f1"
+                "sha256": "d052cc55666f054887045d954d902b6aaf8955eefc604ed69cec1c395480165c"
             },
             "props": [
                 {
@@ -23666,7 +23735,7 @@
                         "path": "src/modules/components/proposal/proposalActions/proposalActionsItem/proposalActionsItem.tsx",
                         "status": "changed",
                         "expectedSha256": "b07ebf0de5b00244a9ba9c86821c8d9257b84955e59ff52cb92cc055f270a50d",
-                        "actualSha256": "96c5f6c7cd1b3a0d34e1cc6fb81e0d2ffa115f57f12084183c77659c6c62e8f1"
+                        "actualSha256": "d052cc55666f054887045d954d902b6aaf8955eefc604ed69cec1c395480165c"
                     }
                 ],
                 "review": {
@@ -24000,7 +24069,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                         "line": 26,
-                        "sha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "sha256": "f877d3cf811f8cbcf8a70cac878bd4008c349b238ca3a934ae17f0de4b404113"
                     },
                     "props": [
                         {
@@ -24104,7 +24173,7 @@
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "5931ccfc2bc45f5f0c437d823fa5986cea9fd1f6d33dcfb6101112479017eee3",
-                        "actualSha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "actualSha256": "f877d3cf811f8cbcf8a70cac878bd4008c349b238ca3a934ae17f0de4b404113"
                     },
                     {
                         "repository": "kit",
@@ -24244,7 +24313,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                 "line": 26,
-                "sha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                "sha256": "f877d3cf811f8cbcf8a70cac878bd4008c349b238ca3a934ae17f0de4b404113"
             },
             "props": [
                 {
@@ -24306,7 +24375,7 @@
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "5931ccfc2bc45f5f0c437d823fa5986cea9fd1f6d33dcfb6101112479017eee3",
-                        "actualSha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "actualSha256": "f877d3cf811f8cbcf8a70cac878bd4008c349b238ca3a934ae17f0de4b404113"
                     }
                 ],
                 "review": {
@@ -24451,14 +24520,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                         "line": 31,
-                        "sha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                        "sha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                             "line": 10,
-                            "sha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                            "sha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
                         }
                     ],
                     "stories": [],
@@ -24766,14 +24835,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                         "line": 41,
-                        "sha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                        "sha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                             "line": 8,
-                            "sha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                            "sha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
                         }
                     ],
                     "stories": [
@@ -24997,14 +25066,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                 "line": 31,
-                "sha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                "sha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                     "line": 10,
-                    "sha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                    "sha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
                 }
             ],
             "stories": [],
@@ -25046,7 +25115,7 @@
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingBodyContent/proposalVotingBodyContent.tsx",
                         "status": "changed",
                         "expectedSha256": "3e44ded38aeebbdebe9293e0a6dc9f810f746a8006dff66c97081c4cd18b67e1",
-                        "actualSha256": "737f10e218e9426df5e5b02761686cce48a1182c4bfc4b0b461da44bcf4efbc5"
+                        "actualSha256": "42f1d0858d533a55854af0bcdd13465c3be2309681c580b71e4929d5a9e2c321"
                     }
                 ],
                 "review": {
@@ -25693,14 +25762,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                         "line": 60,
-                        "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                        "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                             "line": 24,
-                            "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                            "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
                         }
                     ],
                     "stories": [],
@@ -25886,14 +25955,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                 "line": 60,
-                "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                     "line": 24,
-                    "sha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                    "sha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
                 }
             ],
             "stories": [],
@@ -25935,7 +26004,7 @@
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingProgress/proposalVotingProgressItem.tsx",
                         "status": "changed",
                         "expectedSha256": "42b24f00b9a95636e6b82e72df576960508fe00330d19c2adaa42b057f527b8e",
-                        "actualSha256": "56662b1d39281309dc6d754f63d2b9433bdb7d6bf7559164606e734a810b1a27"
+                        "actualSha256": "e5b8f503f01660c7fe54fc68e560cf817704ea0b397be7a6e768f7448591a568"
                     }
                 ],
                 "review": {
@@ -25965,14 +26034,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                 "line": 41,
-                "sha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                "sha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                     "line": 8,
-                    "sha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                    "sha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
                 }
             ],
             "stories": [
@@ -26023,7 +26092,7 @@
                         "path": "src/modules/components/proposal/proposalVoting/proposalVotingStage/proposalVotingStage.tsx",
                         "status": "changed",
                         "expectedSha256": "ace207d4a54b218dc6f322b1dc1821fd08f8f9c2c446e9432f82feb122e17646",
-                        "actualSha256": "b29b129fe9c0bc5246752245b0b18dd5fb765ae3bc4d81a6b5e8299cc712a26d"
+                        "actualSha256": "4aa1aa641525894eef9675b538751d60da76f14445d7e2c953d7c7c5b9bd99ee"
                     }
                 ],
                 "review": {
@@ -26268,14 +26337,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/radio/radio.tsx",
                 "line": 27,
-                "sha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                "sha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/radio/radio.tsx",
                     "line": 7,
-                    "sha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                    "sha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
                 }
             ],
             "stories": [
@@ -26350,21 +26419,21 @@
                         "path": "src/core/components/forms/radio/radio.tsx",
                         "status": "changed",
                         "expectedSha256": "c0c197f6e02b407740a9e291b8ba2f2b5a5a65a2d9fae45c25954e5c647aac56",
-                        "actualSha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                        "actualSha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/radio/radio.tsx",
                         "status": "changed",
                         "expectedSha256": "c0c197f6e02b407740a9e291b8ba2f2b5a5a65a2d9fae45c25954e5c647aac56",
-                        "actualSha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                        "actualSha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/radio/radio.tsx",
                         "status": "changed",
                         "expectedSha256": "c0c197f6e02b407740a9e291b8ba2f2b5a5a65a2d9fae45c25954e5c647aac56",
-                        "actualSha256": "9d21f6e107a387960b52143e6b9d0f4df4a0d0969effd3ba64b841c85ab746e4"
+                        "actualSha256": "956ede62a163ac2ce510be0716fd73b95a9ee2aa2046a505bb9a97f37e1ef258"
                     },
                     {
                         "repository": "kit",
@@ -26401,14 +26470,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/radioCard/radioCard.tsx",
                 "line": 48,
-                "sha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                "sha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/radioCard/radioCard.tsx",
                     "line": 9,
-                    "sha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                    "sha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
                 }
             ],
             "stories": [
@@ -26485,21 +26554,21 @@
                         "path": "src/core/components/forms/radioCard/radioCard.tsx",
                         "status": "changed",
                         "expectedSha256": "52797ea0470f42b426fe83103e89d30112d345bd8f0f768481e355e2221bd661",
-                        "actualSha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                        "actualSha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/radioCard/radioCard.tsx",
                         "status": "changed",
                         "expectedSha256": "52797ea0470f42b426fe83103e89d30112d345bd8f0f768481e355e2221bd661",
-                        "actualSha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                        "actualSha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/radioCard/radioCard.tsx",
                         "status": "changed",
                         "expectedSha256": "52797ea0470f42b426fe83103e89d30112d345bd8f0f768481e355e2221bd661",
-                        "actualSha256": "cccf9ce37af990b074877d294638bb2122ca19144a233bcbc6427e26269bf1bf"
+                        "actualSha256": "351232d1d3fabeac93756beeba3cdd1fde7fe443a8441a71b390355aa26834dc"
                     },
                     {
                         "repository": "kit",
@@ -27063,14 +27132,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "line": 53,
-                        "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                             "line": 16,
-                            "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                            "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                         }
                     ],
                     "stories": [
@@ -27124,19 +27193,19 @@
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "line": 53,
-                        "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "line": 16,
-                        "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "line": 50,
-                        "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
@@ -27150,22 +27219,22 @@
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad",
-                        "actualSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "expectedSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2",
+                        "actualSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad",
-                        "actualSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "expectedSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2",
+                        "actualSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad",
-                        "actualSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "expectedSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2",
+                        "actualSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     },
                     {
                         "repository": "kit",
@@ -27291,14 +27360,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                 "line": 53,
-                "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                     "line": 16,
-                    "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                    "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                 }
             ],
             "stories": [
@@ -27338,7 +27407,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "line": 53,
-                        "sha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "sha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     }
                 ],
                 "evidenceStatus": [
@@ -27346,8 +27415,8 @@
                         "repository": "kit",
                         "path": "src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
                         "status": "current",
-                        "expectedSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad",
-                        "actualSha256": "43b358dde035610c4014d5571216db2cd96bb25ed0aaffa1fc346c58fac290ad"
+                        "expectedSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2",
+                        "actualSha256": "0bb52789b9dea7f475346de6b862734765282a55ecd45cc98a5d93c9e9396dc2"
                     }
                 ],
                 "review": {
@@ -28323,14 +28392,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/switch/switch.tsx",
                 "line": 44,
-                "sha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                "sha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/switch/switch.tsx",
                     "line": 6,
-                    "sha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                    "sha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
                 }
             ],
             "stories": [
@@ -28403,21 +28472,21 @@
                         "path": "src/core/components/forms/switch/switch.tsx",
                         "status": "changed",
                         "expectedSha256": "16c738e4f7a11d802e753dd9aed9d0ff68ad1c8bcb38a1dd94d4d69e2d84fec8",
-                        "actualSha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                        "actualSha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/switch/switch.tsx",
                         "status": "changed",
                         "expectedSha256": "16c738e4f7a11d802e753dd9aed9d0ff68ad1c8bcb38a1dd94d4d69e2d84fec8",
-                        "actualSha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                        "actualSha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/switch/switch.tsx",
                         "status": "changed",
                         "expectedSha256": "16c738e4f7a11d802e753dd9aed9d0ff68ad1c8bcb38a1dd94d4d69e2d84fec8",
-                        "actualSha256": "97503e72abef365e8237c2f449a2a4915acb4874f882a5d1c1d19b5a82cc1177"
+                        "actualSha256": "5c2ec7e2a83d52d0dd47a7d98c72b1b933c3c6ef10724308eaf013d06340bed6"
                     },
                     {
                         "repository": "kit",
@@ -28564,14 +28633,14 @@
                         "repository": "kit",
                         "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                         "line": 22,
-                        "sha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                        "sha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                             "line": 7,
-                            "sha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                            "sha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
                         }
                     ],
                     "stories": [
@@ -29008,14 +29077,14 @@
                 "repository": "kit",
                 "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                 "line": 22,
-                "sha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                "sha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                     "line": 7,
-                    "sha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                    "sha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
                 }
             ],
             "stories": [
@@ -29064,7 +29133,7 @@
                         "path": "src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
                         "status": "changed",
                         "expectedSha256": "5de21c17febc1d082b6c4a0b8898214b8d34acc8f96cbc8e4c4ee61195ec3321",
-                        "actualSha256": "3cfe91cb29c1f8d1c297194cd129abbc9aa9bec920c07a84bd00dac5c1a73d68"
+                        "actualSha256": "2c7216c5cc9fbd8e545c3e6d4019b4191cb4a35c4edd9d9e3b6545e641d8281e"
                     }
                 ],
                 "review": {
@@ -29094,14 +29163,14 @@
                 "repository": "kit",
                 "path": "src/core/components/tag/tag.tsx",
                 "line": 30,
-                "sha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                "sha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/tag/tag.tsx",
                     "line": 5,
-                    "sha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                    "sha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
                 }
             ],
             "stories": [
@@ -29170,21 +29239,21 @@
                         "path": "src/core/components/tag/tag.tsx",
                         "status": "changed",
                         "expectedSha256": "22ef05d3272503f02194fd900206b4a1943477d168fe5e0e1ba904143b5e97c3",
-                        "actualSha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                        "actualSha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/tag/tag.tsx",
                         "status": "changed",
                         "expectedSha256": "22ef05d3272503f02194fd900206b4a1943477d168fe5e0e1ba904143b5e97c3",
-                        "actualSha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                        "actualSha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/tag/tag.tsx",
                         "status": "changed",
                         "expectedSha256": "22ef05d3272503f02194fd900206b4a1943477d168fe5e0e1ba904143b5e97c3",
-                        "actualSha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                        "actualSha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
                     },
                     {
                         "repository": "kit",
@@ -29221,7 +29290,7 @@
                 "repository": "kit",
                 "path": "src/core/components/tag/tag.tsx",
                 "line": 3,
-                "sha256": "4c8ccc3301e2a46291b7a9a83bb134dad129656aa3c2e4a8a2c8f2fb8c50cc44"
+                "sha256": "a149c6b9c44e3aa4846a0cd86ed5a06ecefabf731bc8f17be967ac7fe5fe4b82"
             },
             "props": [],
             "stories": [
@@ -29288,14 +29357,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/textArea/textArea.tsx",
                 "line": 16,
-                "sha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                "sha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/textArea/textArea.tsx",
                     "line": 6,
-                    "sha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                    "sha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
                 }
             ],
             "stories": [
@@ -29345,13 +29414,13 @@
                         "repository": "kit",
                         "path": "src/core/components/forms/textArea/textArea.tsx",
                         "line": 16,
-                        "sha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                        "sha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/textArea/textArea.tsx",
                         "line": 6,
-                        "sha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                        "sha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
                     },
                     {
                         "repository": "kit",
@@ -29365,15 +29434,15 @@
                         "repository": "kit",
                         "path": "src/core/components/forms/textArea/textArea.tsx",
                         "status": "current",
-                        "expectedSha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c",
-                        "actualSha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                        "expectedSha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf",
+                        "actualSha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/textArea/textArea.tsx",
                         "status": "current",
-                        "expectedSha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c",
-                        "actualSha256": "31d13d68d950cc1c47fa038eab649a0afd9535ba7b45c12312a0ac24c1ca686c"
+                        "expectedSha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf",
+                        "actualSha256": "42090c6837fe1bf6a2327879b9e33d6d37d07b1761103f0e27b1a66ba49102cf"
                     },
                     {
                         "repository": "kit",
@@ -29410,14 +29479,14 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                 "line": 53,
-                "sha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                "sha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                     "line": 14,
-                    "sha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                    "sha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
                 }
             ],
             "stories": [
@@ -29496,21 +29565,21 @@
                         "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                         "status": "changed",
                         "expectedSha256": "36530b9b5c7478e63071fee5feafbb047aa604db9844f97881cc0f0921456f28",
-                        "actualSha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                        "actualSha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                         "status": "changed",
                         "expectedSha256": "36530b9b5c7478e63071fee5feafbb047aa604db9844f97881cc0f0921456f28",
-                        "actualSha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                        "actualSha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/forms/textAreaRichText/textAreaRichText.tsx",
                         "status": "changed",
                         "expectedSha256": "36530b9b5c7478e63071fee5feafbb047aa604db9844f97881cc0f0921456f28",
-                        "actualSha256": "b27883f9c2ce6ecc0d4b9cff2ceb5ae0b85cabadd0cd8a8a1a7b4ae5e04db590"
+                        "actualSha256": "8790a79085e7e67644e8da69dc46dd76c06fe8135d044db9f666d77f9cc39222"
                     },
                     {
                         "repository": "kit",
@@ -29547,14 +29616,14 @@
                 "repository": "kit",
                 "path": "src/core/components/toggles/toggle/toggle.tsx",
                 "line": 21,
-                "sha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                "sha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/toggles/toggle/toggle.tsx",
                     "line": 5,
-                    "sha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                    "sha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
                 }
             ],
             "stories": [
@@ -29629,21 +29698,21 @@
                         "path": "src/core/components/toggles/toggle/toggle.tsx",
                         "status": "changed",
                         "expectedSha256": "95f7468d1a4855d1d55cd77d82acc16f2ff50bffc88e804009d22773913277eb",
-                        "actualSha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                        "actualSha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/toggles/toggle/toggle.tsx",
                         "status": "changed",
                         "expectedSha256": "95f7468d1a4855d1d55cd77d82acc16f2ff50bffc88e804009d22773913277eb",
-                        "actualSha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                        "actualSha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/toggles/toggle/toggle.tsx",
                         "status": "changed",
                         "expectedSha256": "95f7468d1a4855d1d55cd77d82acc16f2ff50bffc88e804009d22773913277eb",
-                        "actualSha256": "abf0a096e8f452d2a0594f8127eb716e35c404a16308094d85898e74cc3b8aef"
+                        "actualSha256": "55ad49248db8077405cd017c1582b0f6c471f577a2b306f5004b30cef705e072"
                     },
                     {
                         "repository": "kit",
@@ -29872,14 +29941,14 @@
                 "repository": "kit",
                 "path": "src/core/components/tooltip/tooltip.tsx",
                 "line": 70,
-                "sha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                "sha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/tooltip/tooltip.tsx",
                     "line": 9,
-                    "sha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                    "sha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
                 }
             ],
             "stories": [
@@ -29948,21 +30017,21 @@
                         "path": "src/core/components/tooltip/tooltip.tsx",
                         "status": "changed",
                         "expectedSha256": "420ac32d2e017ce7cd1107fca377b4ff1b00b159cec631d1dc96521ebc6d3186",
-                        "actualSha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                        "actualSha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/tooltip/tooltip.tsx",
                         "status": "changed",
                         "expectedSha256": "420ac32d2e017ce7cd1107fca377b4ff1b00b159cec631d1dc96521ebc6d3186",
-                        "actualSha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                        "actualSha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/tooltip/tooltip.tsx",
                         "status": "changed",
                         "expectedSha256": "420ac32d2e017ce7cd1107fca377b4ff1b00b159cec631d1dc96521ebc6d3186",
-                        "actualSha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                        "actualSha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
                     },
                     {
                         "repository": "kit",
@@ -29999,7 +30068,7 @@
                 "repository": "kit",
                 "path": "src/core/components/tooltip/tooltip.tsx",
                 "line": 7,
-                "sha256": "d5a9c2910113352a3bce38310aafb658befa22eb91c95d2a585d5b612c886980"
+                "sha256": "4f518cab013e9423c55dae38c57eeec896e23dc541d18d9d280872cf52aee02c"
             },
             "props": [],
             "stories": [
@@ -30111,7 +30180,7 @@
                         "repository": "kit",
                         "path": "src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx",
                         "line": 36,
-                        "sha256": "73659ed1b128e996536bbde963c3a43455a8d636ecc03cbc334440f8864fa571"
+                        "sha256": "82405b4d8fde9527533b41ca958da07dfe5ac176a00b050c3b0531e96a3cd8fd"
                     },
                     "props": [
                         {
@@ -30209,7 +30278,7 @@
                         "path": "src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "0e946d2df677be14e7eba63eac47e54e331b86ce85e4f6bc80adc48d0314218f",
-                        "actualSha256": "73659ed1b128e996536bbde963c3a43455a8d636ecc03cbc334440f8864fa571"
+                        "actualSha256": "82405b4d8fde9527533b41ca958da07dfe5ac176a00b050c3b0531e96a3cd8fd"
                     },
                     {
                         "repository": "kit",
@@ -30349,7 +30418,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx",
                 "line": 36,
-                "sha256": "73659ed1b128e996536bbde963c3a43455a8d636ecc03cbc334440f8864fa571"
+                "sha256": "82405b4d8fde9527533b41ca958da07dfe5ac176a00b050c3b0531e96a3cd8fd"
             },
             "props": [
                 {
@@ -30411,7 +30480,7 @@
                         "path": "src/modules/components/transaction/transactionDataListItem/transactionDataListItemStructure/transactionDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "0e946d2df677be14e7eba63eac47e54e331b86ce85e4f6bc80adc48d0314218f",
-                        "actualSha256": "73659ed1b128e996536bbde963c3a43455a8d636ecc03cbc334440f8864fa571"
+                        "actualSha256": "82405b4d8fde9527533b41ca958da07dfe5ac176a00b050c3b0531e96a3cd8fd"
                     }
                 ],
                 "review": {
@@ -30897,6 +30966,276 @@
                 "ACTION",
                 "EXECUTION"
             ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:typographyClassNames",
+            "name": "typographyClassNames",
+            "kind": "non-component",
+            "exportNames": [
+                "typographyClassNames"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "typographyClassNames",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 137,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:TypographyException",
+            "name": "TypographyException",
+            "kind": "non-component",
+            "exportNames": [
+                "TypographyException"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "TypographyException",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 256,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:typographyExceptions",
+            "name": "typographyExceptions",
+            "kind": "non-component",
+            "exportNames": [
+                "typographyExceptions"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "typographyExceptions",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 31,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:TypographyRole",
+            "name": "TypographyRole",
+            "kind": "non-component",
+            "exportNames": [
+                "TypographyRole"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "TypographyRole",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 254,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:typographyRoles",
+            "name": "typographyRoles",
+            "kind": "non-component",
+            "exportNames": [
+                "typographyRoles"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "typographyRoles",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 9,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:TypographyStyle",
+            "name": "TypographyStyle",
+            "kind": "non-component",
+            "exportNames": [
+                "TypographyStyle"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "TypographyStyle",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/types/typographyStyles.ts",
+                "line": 261,
+                "sha256": "e4ea1f83fbec665842c7dd71c56a993dab5fd8c7d66d5e28046efec22a478291"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
             "intent": {
                 "description": null,
                 "useWhen": [],
@@ -31414,7 +31753,7 @@
                 "repository": "kit",
                 "path": "src/core/components/forms/hooks/useInputProps.ts",
                 "line": 22,
-                "sha256": "9793534d3d637fea20d649b4ea732e7aeacb61ff4a63c6258de0c16fa5cfa56a"
+                "sha256": "ef35b9140d4f0e10f0e7d5170e0533946621cebbdc722538153b2e70e37d48d8"
             },
             "props": [],
             "stories": [],
@@ -31616,14 +31955,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "line": 50,
-                        "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "sha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                             "line": 18,
-                            "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                            "sha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                         }
                     ],
                     "stories": [
@@ -31708,21 +32047,21 @@
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                     },
                     {
                         "repository": "kit",
@@ -31848,14 +32187,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                 "line": 50,
-                "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                "sha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                     "line": 18,
-                    "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                    "sha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                 }
             ],
             "stories": [
@@ -31904,7 +32243,7 @@
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "8fb41bfa980a94d6e6a6d00dd7302c683561fc7c69a2e2800c1805b58c63b9f2"
                     }
                 ],
                 "review": {
@@ -32032,14 +32371,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                         "line": 33,
-                        "sha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                        "sha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                             "line": 5,
-                            "sha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                            "sha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                         }
                     ],
                     "stories": [
@@ -32124,21 +32463,21 @@
                         "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "45f3e035a57dd319efacd90585deaaf09de9cac5cce7051946bcd5a3dee547df",
-                        "actualSha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                        "actualSha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "45f3e035a57dd319efacd90585deaaf09de9cac5cce7051946bcd5a3dee547df",
-                        "actualSha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                        "actualSha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "45f3e035a57dd319efacd90585deaaf09de9cac5cce7051946bcd5a3dee547df",
-                        "actualSha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                        "actualSha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                     },
                     {
                         "repository": "kit",
@@ -32264,14 +32603,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                 "line": 33,
-                "sha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                "sha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                     "line": 5,
-                    "sha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                    "sha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                 }
             ],
             "stories": [
@@ -32320,7 +32659,7 @@
                         "path": "src/modules/components/vote/voteProposalDataListItem/voteProposalDataListItemStructure/voteProposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "45f3e035a57dd319efacd90585deaaf09de9cac5cce7051946bcd5a3dee547df",
-                        "actualSha256": "94e203de4fa226c5a6877b7bff94df46ffa6edb68ff0f82d50754f3b8697be6f"
+                        "actualSha256": "e5be5fc4988358ce88ad0bb7c4eb751ac872615955a67ef5cc31e66cf94a03a6"
                     }
                 ],
                 "review": {

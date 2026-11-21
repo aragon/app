@@ -9,7 +9,7 @@ import { ProposalActionsDecoderBooleanField } from '../proposalActionsDecoderBoo
 import { ProposalActionsDecoderTextField } from '../proposalActionsDecoderTextField';
 import { proposalActionsDecoderUtils } from '../proposalActionsDecoderUtils';
 
-const nestedParameterHeaderClassName = 'font-normal text-base text-neutral-500 leading-tight md:text-lg';
+const nestedParameterHeaderClassName = 'type-label text-neutral-500';
 
 export interface IProposalActionsDecoderFieldProps extends Pick<IProposalActionsDecoderProps, 'mode' | 'formPrefix'> {
     /**

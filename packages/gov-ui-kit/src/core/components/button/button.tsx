@@ -76,28 +76,28 @@ const variantToSpinnerVariant: Record<ButtonVariant, SpinnerVariant> = {
 
 const responsiveSizeClassNames: ResponsiveAttributeClassMap<ButtonSize> = {
     sm: {
-        default: 'h-8 text-sm rounded-lg gap-0.5',
-        sm: 'sm:h-8 sm:text-sm sm:rounded-lg sm:gap-0.5',
-        md: 'md:h-8 md:text-sm md:rounded-lg md:gap-0.5',
-        lg: 'lg:h-8 lg:text-sm lg:rounded-lg lg:gap-0.5',
-        xl: 'xl:h-8 xl:text-sm xl:rounded-lg xl:gap-0.5',
-        '2xl': '2xl:h-8 2xl:text-sm 2xl:rounded-lg 2xl:gap-0.5',
+        default: 'h-8 type-control-sm rounded-lg gap-0.5',
+        sm: 'sm:h-8 sm:type-control-sm sm:rounded-lg sm:gap-0.5',
+        md: 'md:h-8 md:type-control-sm md:rounded-lg md:gap-0.5',
+        lg: 'lg:h-8 lg:type-control-sm lg:rounded-lg lg:gap-0.5',
+        xl: 'xl:h-8 xl:type-control-sm xl:rounded-lg xl:gap-0.5',
+        '2xl': '2xl:h-8 2xl:type-control-sm 2xl:rounded-lg 2xl:gap-0.5',
     },
     md: {
-        default: 'h-10 text-base rounded-xl gap-1',
-        sm: 'sm:h-10 sm:text-base sm:rounded-xl sm:gap-1',
-        md: 'md:h-10 md:text-base md:rounded-xl md:gap-1',
-        lg: 'lg:h-10 lg:text-base lg:rounded-xl lg:gap-1',
-        xl: 'xl:h-10 xl:text-base xl:rounded-xl xl:gap-1',
-        '2xl': '2xl:h-10 2xl:text-base 2xl:rounded-xl 2xl:gap-1',
+        default: 'h-10 type-control rounded-xl gap-1',
+        sm: 'sm:h-10 sm:type-control sm:rounded-xl sm:gap-1',
+        md: 'md:h-10 md:type-control md:rounded-xl md:gap-1',
+        lg: 'lg:h-10 lg:type-control lg:rounded-xl lg:gap-1',
+        xl: 'xl:h-10 xl:type-control xl:rounded-xl xl:gap-1',
+        '2xl': '2xl:h-10 2xl:type-control 2xl:rounded-xl 2xl:gap-1',
     },
     lg: {
-        default: 'h-12 text-base rounded-xl gap-1',
-        sm: 'sm:h-12 sm:text-base sm:rounded-xl sm:gap-1',
-        md: 'md:h-12 md:text-base md:rounded-xl md:gap-1',
-        lg: 'lg:h-12 lg:text-base lg:rounded-xl lg:gap-1',
-        xl: 'xl:h-12 xl:text-base xl:rounded-xl xl:gap-1',
-        '2xl': '2xl:h-12 2xl:text-base 2xl:rounded-xl 2xl:gap-1',
+        default: 'h-12 type-control rounded-xl gap-1',
+        sm: 'sm:h-12 sm:type-control sm:rounded-xl sm:gap-1',
+        md: 'md:h-12 md:type-control md:rounded-xl md:gap-1',
+        lg: 'lg:h-12 lg:type-control lg:rounded-xl lg:gap-1',
+        xl: 'xl:h-12 xl:type-control xl:rounded-xl xl:gap-1',
+        '2xl': '2xl:h-12 2xl:type-control 2xl:rounded-xl 2xl:gap-1',
     },
 };
 
@@ -204,7 +204,6 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonP
 
     const commonClasses = [
         'flex flex-row items-center justify-center group', // Layout
-        'leading-tight font-normal', // Typography
         'border transition-all cursor-pointer', // Commons
         'active:shadow-none aria-disabled:shadow-none aria-disabled:cursor-default', // Active/Disabled states
     ];

@@ -44,7 +44,7 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
                     variant={proposalStatusToTagVariant[status]}
                 />
                 {showStatusContext && (
-                    <div className="truncate text-sm leading-tight text-neutral-800 md:text-base">
+                    <div className="truncate type-supporting text-neutral-800">
                         <span className="text-neutral-500">{copy.proposalDataListItemStatus.in} </span>
                         {statusContext}
                     </div>
@@ -53,7 +53,7 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
             {showStatusMetadata && (
                 <div className="flex items-center gap-x-2 md:gap-x-3">
                     <span
-                        className={classNames('text-sm leading-tight md:text-base', {
+                        className={classNames('type-supporting', {
                             'text-info-800': isActive,
                             'text-neutral-800': !isActive,
                         })}
