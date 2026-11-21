@@ -151,6 +151,13 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
     const filteredRows = activeSearch
         ? rows.filter(({ item }) => filterItem(item, activeSearch))
         : rows;
+    // A search only reaches the loaded items: its matches are paged once every item is loaded, otherwise the
+    // pagination is hidden so as not to claim a complete result.
+    const isFullyLoaded = itemsCount == null || items.length >= itemsCount;
+    const showPagination = !(
+        hidePagination ||
+        (activeSearch && !isFullyLoaded)
+    );
 
     useEffect(() => {
         const shouldLookUp =
@@ -229,7 +236,7 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
                     <Fragment key={key}>{element}</Fragment>
                 ))}
             </DataListContainer>
-            {!hidePagination && <DataListPagination />}
+            {showPagination && <DataListPagination />}
             {children}
         </DataListRoot>
     );

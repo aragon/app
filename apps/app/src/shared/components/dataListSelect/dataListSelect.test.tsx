@@ -176,6 +176,18 @@ describe('<DataListSelect /> component', () => {
         expect(screen.getByRole('button', { name: 'More' })).toBeDisabled();
     });
 
+    it('hides the pagination while searching a list not fully loaded', async () => {
+        render(createTestComponent({ itemsCount: 30, pageSize: 2 }));
+        expect(screen.getByRole('button', { name: 'More' })).toBeEnabled();
+
+        await userEvent.type(screen.getByRole('searchbox'), 'alp');
+
+        expect(screen.getByText('Alpha')).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: 'More' }),
+        ).not.toBeInTheDocument();
+    });
+
     it('hides the pagination when hidePagination is true', () => {
         render(createTestComponent({ itemsCount: 2, hidePagination: true }));
 
