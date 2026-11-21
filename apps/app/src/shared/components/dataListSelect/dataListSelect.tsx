@@ -147,10 +147,10 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
         element: renderItem(item),
     }));
 
-    const filteredRows =
-        hasSearch && searchValue
-            ? rows.filter(({ item }) => filterItem(item, searchValue))
-            : rows;
+    const activeSearch = hasSearch ? searchValue : undefined;
+    const filteredRows = activeSearch
+        ? rows.filter(({ item }) => filterItem(item, activeSearch))
+        : rows;
 
     useEffect(() => {
         const shouldLookUp =
@@ -199,7 +199,8 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
     return (
         <DataListRoot
             entityLabel={labels.entity}
-            itemsCount={itemsCount}
+            // The container pages the matches too, so the pagination counts them while searching.
+            itemsCount={activeSearch ? filteredRows.length : itemsCount}
             onLoadMore={onLoadMore}
             pageSize={pageSize}
             state={state}
@@ -228,7 +229,7 @@ export const DataListSelect = <TItem,>(props: IDataListSelectProps<TItem>) => {
                     <Fragment key={key}>{element}</Fragment>
                 ))}
             </DataListContainer>
-            {!(hidePagination || searchValue) && <DataListPagination />}
+            {!hidePagination && <DataListPagination />}
             {children}
         </DataListRoot>
     );
