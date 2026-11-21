@@ -28,7 +28,7 @@ kept small so it can be read. Nothing here is built, deployed, released or run i
 | `canvas/assets/mock/` | Mock DAO avatars and token logos |
 | `app-assets.json` | Images the prototypes show that belong to the app (chain logos), by path in the repo |
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
-| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, and lay the canvas out |
+| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, lay the canvas out, and load-check the prototypes (`check-canvas.cjs`; see `RUNBOOK.md`, "Load check") |
 | `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, pulling a designer's changes into a branch, publishing |
 | `../skills/shared/aragon-app-canvas/` | The `/aragon-app-canvas` command: type it followed by what you want in plain words ("start a new one for the filters ticket", "save what I did"). It points a session at the runbook. The repo's convention is that a new skill starts private in `skills/local/`; this one is committed as part of the proposal so it can be reviewed |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
@@ -128,7 +128,6 @@ on a canvas", says what to do when a canvas's copy falls behind.
 
 ## What is not here
 
-- **A check.** The load check used in the test is `design/baseline-check/render-canvas.cjs` on `docs/design-canvas`.
 - **Reference screenshots, the mock backend and the static screens.** They are on `docs/design-canvas`. They are what
   an agent looks at to build a prototype for an area that has none.
 - **A visual check of an implementation.** The design → code loop in `RUNBOOK.md` has been run once end to end: a

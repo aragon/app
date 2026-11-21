@@ -18,6 +18,22 @@ Rules: create a branch, a canvas or a pull request only when the owner asked for
 `design/canvas/` (Biome and editors are configured to leave it alone). Images are written as literal paths in the
 files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploads and back.
 
+## Load check
+
+`node design/publish/check-canvas.cjs` renders every prototype through the canvas's own runtime at 1440 and 390 px and
+fails (exit code 1) on page errors, a part's error box, a frame that never mounts, a missing file, or sideways
+overflow. Give names to check only some (`Workspace Dao`, or with a query: `"Workspace?welcome=1"`), `--width` for
+one width, `--now <ISO time>` to freeze the clock, `--shots` for screenshots in `design/.runtime/shots/`, and
+`--eval <file.js>` to run a click-through (one async JS expression; use real pointer events for tabs, menus and
+accordions). Click-throughs belong to the session that wrote them and are not kept. A full run takes about a minute.
+
+It needs two files the repo does not hold (the runtime is claude.ai's code; the kit is a build). Read them once per
+session from the canvas being checked, with the Artifact tool, `action: "read"`, `out_dir` = `design/.runtime`
+(gitignored), `paths`: `artifact-type/dc-runtime.js` and `project/ds/aragon-gov-ui-kit/<file>` for each file in
+`<folder>/kit-files.json`. Without them the script stops and says so.
+
+A passing check means the prototypes open and work. It does not mean they match the app.
+
 ## Start a ticket: a new canvas from the repo
 
 0. `design/` exists only on the reference branch. Fetch it and check it out first
@@ -69,8 +85,7 @@ Run when the designer says so ("sync", "pull it back"), and before every publish
 4. New or removed frames: add a new prototype to `canvas-layout.json`, then `node design/publish/layout-canvas.cjs`
    (it fails if a file is mounted by no prototype). A variant the designer duplicated is a new file; ask whether it
    replaces the original or is dropped before the branch is handed over.
-5. There is no load check on this branch (README, "What is not here"). Ask the owner to open the canvas, or say
-   plainly that nothing was checked. Set `canvasVersion` to the listing's version (a record of when, not a test),
+5. Run the load check (above) on the prototypes whose files changed. Set `canvasVersion` to the listing's version (a record of when, not a test),
    commit `design/canvas/` and the record together, push.
 
 6. Tell the person, in plain words and frame by frame, what changed on the canvas, as a designer would describe it,
@@ -141,7 +156,7 @@ same pull request: do not create another branch.
    files you will change; anything the design implies that is more than UI (new data, sorting, an API field) and
    anything it leaves undecided. Then wait for their go-ahead. If they named a part ("only the to-dos"), keep to it.
 4. Implement in `apps/app` following the repo's `AGENTS.md` (changeset included), run type-check, lint and the tests
-   for what you touched, and report the results as they are. Say plainly what you could not verify by running the
+   for what you touched (and the load check if you changed a prototype), and report the results as they are. Say plainly what you could not verify by running the
    app. No pull request unless asked.
 
 Run once: five design changes were built in the app from this section, with type-check, lint and tests passing.
@@ -185,7 +200,7 @@ of change, app code changed with no design ticket, which leaves a prototype behi
    prototype has no backend and must never leave a designer stuck): list them as not done unless told otherwise.
 4. Fix what is behind, following `BRIEF.md`, from the app's source. Work alone when most fixes touch the same files (often
    `app.css`); otherwise one agent per group of files, never two on the same file. Each fix is proved by clicking, not only by loading.
-5. Load-check every prototype touched, refresh the reference canvas, set `appCommit` to `main`'s head, add what was
+5. Run the load check on every prototype touched, refresh the reference canvas, set `appCommit` to `main`'s head, add what was
    left out to the README's known gaps, update the README's file count and prototype list if they changed, commit,
    push.
 

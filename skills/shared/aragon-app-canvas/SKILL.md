@@ -50,4 +50,4 @@ name one and the branch does not settle it, ask.
 ## Done when
 
 You have told the person, in a sentence or two: what you did, the canvas link if one was created, which files
-changed if you pulled, and anything you did not check (there is no automated load check on this branch).
+changed if you pulled, whether the load check (`RUNBOOK.md`, "Load check") passed, and anything you did not check.
