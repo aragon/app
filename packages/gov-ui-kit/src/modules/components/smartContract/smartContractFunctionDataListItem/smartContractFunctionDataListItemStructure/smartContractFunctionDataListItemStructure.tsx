@@ -79,19 +79,19 @@ export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContract
 
     const containerClassName = asChild
         ? '!p-0 border-none shadow-none'
-        : 'flex items-center justify-between gap-x-3 py-3 md:gap-x-4 md:py-5';
+        : 'flex items-center justify-between gap-x-related--12-16 py-inset-item';
 
     const functionLabelStyle = displayWarningFeedback ? 'text-warning-800' : 'text-neutral-800';
 
     return (
         <DataList.Item className={classNames(containerClassName, className)} {...otherProps}>
-            <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-tight--fixed-6">
+                <div className="flex items-center gap-related">
                     <p className={classNames('text-lg text-neutral-800', functionLabelStyle)}>{functionLabel}</p>
                     {functionSelector && <p className="text-lg text-neutral-500">{functionSelector}</p>}
                     {displayWarningFeedback && <Icon className="text-warning-500" icon={IconType.WARNING} size="md" />}
                 </div>
-                <LinkBase className="flex w-fit items-center gap-3" href={blockExplorerHref} target="_blank">
+                <LinkBase className="flex w-fit items-center gap-related" href={blockExplorerHref} target="_blank">
                     <p className="text-neutral-500">{contractLabel}</p>
                     {/* Using solution from https://kizu.dev/nested-links/ to nest anchor tags */}
                     <object type="unknown">
