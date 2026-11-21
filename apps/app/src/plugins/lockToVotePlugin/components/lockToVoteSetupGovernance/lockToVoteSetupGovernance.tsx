@@ -44,7 +44,7 @@ export const LockToVoteSetupGovernance: React.FC<
         );
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-section">
             <SupportThresholdField formPrefix={formPrefix} />
             <MinParticipationField
                 formPrefix={formPrefix}

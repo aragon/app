@@ -113,7 +113,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     return (
         <FormProvider {...formValues}>
             <form
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-group"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
                 <p className="text-base leading-normal font-normal text-neutral-500">
@@ -131,9 +131,9 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
                     }}
                 />
                 {mode === 'dialog' ? (
-                    <div className="flex flex-col gap-9">
+                    <div className="flex flex-col gap-section-wide--fixed-36">
                         {footerInfo}
-                        <div className="flex justify-between gap-3">
+                        <div className="flex justify-between gap-related">
                             {onCancel != null && (
                                 <Button
                                     onClick={onCancel}
@@ -149,7 +149,7 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {renderSubmitButton({ size: 'lg' })}
                         {lockedAmount > 0 && (
                             <Button

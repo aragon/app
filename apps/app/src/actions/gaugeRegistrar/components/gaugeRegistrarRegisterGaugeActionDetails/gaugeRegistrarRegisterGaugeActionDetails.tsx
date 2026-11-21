@@ -100,7 +100,7 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                         'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.resourcesTerm',
                     )}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {links.map((link) => (
                             <ResourceLink
                                 isExternal={true}

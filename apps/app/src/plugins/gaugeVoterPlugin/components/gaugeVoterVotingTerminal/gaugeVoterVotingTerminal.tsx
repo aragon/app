@@ -87,7 +87,7 @@ export const GaugeVoterVotingTerminal: React.FC<
     const wrapperClassName = classNames(
         'flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6',
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
-        'rounded-xl border border-b-0 bg-neutral-0 p-3 md:h-[64px] md:px-4 md:py-0',
+        'rounded-xl border border-b-0 bg-neutral-0 px-inset-surface-flat--12-16 py-inset-flush--12-0 md:h-[64px]',
         {
             'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
@@ -103,9 +103,9 @@ export const GaugeVoterVotingTerminal: React.FC<
                     )}
                 </p>
                 <div className="flex items-center gap-8 md:gap-3">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-tight--fixed-8">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
-                        <div className="flex items-baseline gap-0.5">
+                        <div className="flex items-baseline gap-tight--fixed-2">
                             <span className="text-sm text-neutral-800 md:text-lg">
                                 {displayVotingPower}
                             </span>
@@ -114,7 +114,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                             </span>
                         </div>
                     </div>
-                    <div className="flex items-baseline gap-0.5">
+                    <div className="flex items-baseline gap-tight--fixed-2">
                         <span className="text-sm text-neutral-800 md:text-lg">
                             {formattedUsagePercentage}
                         </span>
@@ -126,7 +126,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                     </div>
                 </div>
             </div>
-            <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
+            <div className="flex w-full items-center justify-between gap-related--12-16 md:w-auto">
                 {!isVotingPeriod && (
                     <Button
                         className="w-full md:w-auto"

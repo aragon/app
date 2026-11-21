@@ -176,8 +176,8 @@ export const GaugeVoterLockFormChart: React.FC<
     );
 
     return (
-        <div className="w-full py-2">
-            <div className="mb-3">
+        <div className="w-full py-inset-flush--fixed-8">
+            <div className="mb-related">
                 <p className="font-semibold!">
                     {formatterUtils.formatNumber(activePoint.y, {
                         format: NumberFormat.TOKEN_AMOUNT_SHORT,

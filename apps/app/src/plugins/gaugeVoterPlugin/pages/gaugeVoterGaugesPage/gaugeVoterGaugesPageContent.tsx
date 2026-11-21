@@ -304,7 +304,7 @@ export const GaugeVoterGaugesPageContent: React.FC<
                     'app.plugins.gaugeVoter.gaugeVoterGaugesPage.main.title',
                 )}
             >
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-section">
                     <GaugeVoterGaugeList
                         gaugeVotes={gaugeVotes.map((v) => ({
                             gaugeAddress: v.gaugeAddress,
@@ -368,7 +368,7 @@ export const GaugeVoterGaugesPageContent: React.FC<
                         onValueChange={setSelectedLocksPanelTab}
                         value={selectedLocksPanelTab}
                     >
-                        <Tabs.List className="pb-4">
+                        <Tabs.List className="pb-inset-flush--fixed-16">
                             {visibleLocksPanelTabs.map(({ value }) => (
                                 <Tabs.Trigger
                                     key={value}

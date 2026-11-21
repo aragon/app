@@ -13,22 +13,22 @@ export const CapitalDistributorCampaignListItemSkeleton: React.FC<
     <DataList.Item
         aria-busy="true"
         aria-label="loading"
-        className="flex items-center gap-12 p-6"
+        className="flex items-center gap-section-wide--fixed-48 p-inset-surface-wide"
         tabIndex={0}
     >
-        <div className="flex grow items-center gap-4">
+        <div className="flex grow items-center gap-group">
             <StateSkeletonBar width="10%" />
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-tight">
                 <StateSkeletonBar />
                 <StateSkeletonBar />
             </div>
         </div>
-        <div className="flex items-center gap-4">
-            <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-group">
+            <div className="flex flex-col gap-tight">
                 <StateSkeletonBar />
                 <StateSkeletonBar />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-tight">
                 <StateSkeletonBar />
                 <StateSkeletonBar />
             </div>

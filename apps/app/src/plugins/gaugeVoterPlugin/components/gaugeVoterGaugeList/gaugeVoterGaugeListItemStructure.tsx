@@ -132,7 +132,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
           : 'select';
 
     const itemClassName = classNames(
-        'flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6',
+        'flex flex-col gap-related--12-16 px-inset-item py-inset-item-flat md:min-h-20 md:flex-row md:items-center',
         {
             'border-primary-300 hover:border-primary-300': isSelected,
         },
@@ -150,7 +150,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             onClick={() => onViewDetails?.(gauge)}
         >
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+            <div className="flex min-w-0 grow items-center gap-related--12-16 border-b border-neutral-100 pb-inset-item-flat md:basis-0 md:border-b-0 md:pb-0">
                 <Avatar
                     alt="Gauge icon"
                     fallback={avatarFallback}
@@ -158,7 +158,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     size="md"
                     src={avatarSrc}
                 />
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <div className="flex min-w-0 flex-1 flex-col gap-tight">
                     <p className="truncate text-base text-neutral-800 md:text-lg">
                         <AddressOutput
                             address={gauge.address}
@@ -173,8 +173,8 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             </div>
 
             {/* Middle section on mobile - Total votes and Your votes side by side */}
-            <div className="flex items-start justify-between gap-4 md:contents">
-                <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
+            <div className="flex items-start justify-between gap-group md:contents">
+                <div className="flex flex-col gap-tight md:grow md:basis-0 md:text-right">
                     <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
@@ -193,14 +193,14 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
+                <div className="flex flex-col gap-tight text-right md:grow md:basis-0">
                     <p className="text-xs font-semibold tracking-wider text-neutral-500 uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
                         )}
                     </p>
                     <div className="flex min-h-11 flex-col items-end md:justify-center">
-                        <div className="flex items-baseline justify-end gap-1">
+                        <div className="flex items-baseline justify-end gap-tight">
                             {displayUserVotes === '-' ||
                             displayUserVotes ===
                                 t(

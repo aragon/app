@@ -82,7 +82,7 @@ export const GaugeVoterCreateGaugeActionDetails: React.FC<
                         'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.resourcesTerm',
                     )}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {links.map((link) => (
                             <ResourceLink
                                 isExternal={true}

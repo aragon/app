@@ -40,7 +40,7 @@ export const TokenMintActionDetails: React.FC<ITokenMintActionDetailsProps> = (
     );
 
     return (
-        <div className="flex w-full flex-col gap-8">
+        <div className="flex w-full flex-col gap-section--fixed-32">
             <MemberDataListItemStructure
                 address={address}
                 className="w-full"

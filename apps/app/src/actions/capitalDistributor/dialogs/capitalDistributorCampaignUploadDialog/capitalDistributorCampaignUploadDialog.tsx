@@ -201,7 +201,7 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-3 py-2">
+                <div className="flex flex-col gap-related py-inset-flush--fixed-8">
                     <TransactionStatus.Container steps={steps}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />

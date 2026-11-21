@@ -82,14 +82,14 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     return (
         <DataList.Item
-            className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:gap-12"
+            className="flex flex-col items-center gap-4 p-inset-surface-wide sm:flex-row sm:gap-12"
             href={isClaimed ? addressLink : undefined}
             onClick={isClaimed ? undefined : handleOpenDialog}
             target="_blank"
         >
-            <div className="flex w-full min-w-0 items-center gap-4">
+            <div className="flex w-full min-w-0 items-center gap-group">
                 <Avatar size="lg" src={token.logo} />
-                <div className="flex min-w-0 flex-col gap-1">
+                <div className="flex min-w-0 flex-col gap-tight">
                     <h3 className="text-lg text-neutral-800">{title}</h3>
                     <p className="line-clamp-1 text-neutral-500">
                         {description}
@@ -98,8 +98,8 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             </div>
             <div className="w-full border-t border-neutral-100 sm:hidden" />
             <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
-                <div className="flex grow items-center gap-4">
-                    <div className="flex min-w-20 flex-col gap-1">
+                <div className="flex grow items-center gap-group">
+                    <div className="flex min-w-20 flex-col gap-tight">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount',
@@ -109,7 +109,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                             {formattedAmount}
                         </p>
                     </div>
-                    <div className="flex min-w-20 flex-col gap-1">
+                    <div className="flex min-w-20 flex-col gap-tight">
                         <h3 className="text-sm text-neutral-500 sm:text-base">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value',

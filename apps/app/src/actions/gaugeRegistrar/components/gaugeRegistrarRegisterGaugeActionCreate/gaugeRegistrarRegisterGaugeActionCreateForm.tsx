@@ -163,7 +163,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
         useState<string | undefined>(rewardControllerAddress?.address);
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <InputText
                 helpText={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.name.helpText',
@@ -202,7 +202,7 @@ export const GaugeRegistrarRegisterGaugeActionCreateForm: React.FC<
                 {...qiTokenAddressField}
             />
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="flex gap-group md:!flex-row"
                 helpText={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionCreateForm.incentive.helpText',
                 )}

@@ -47,7 +47,7 @@ export const GaugeVoterLocksDialog: React.FC<IGaugeVoterLocksDialogProps> = (
                 title={t('app.plugins.gaugeVoter.gaugeVoterLocksDialog.title')}
             />
             <Dialog.Content
-                className="pb-4 md:pb-6"
+                className="pb-inset-surface"
                 description={t(
                     'app.plugins.gaugeVoter.gaugeVoterLocksDialog.description',
                     { symbol: token.symbol },

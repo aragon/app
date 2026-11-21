@@ -85,7 +85,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
                     'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.description',
                 )}
             >
-                <div className="flex w-full flex-col gap-3 py-2 md:gap-2">
+                <div className="flex w-full flex-col gap-related--12-8 py-inset-flush--fixed-8">
                     {isLoading && (
                         <DataList.Root
                             entityLabel={t(
@@ -117,7 +117,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
                         </DataList.Root>
                     )}
                     {!isLoading && (gauges == null || gauges.length === 0) && (
-                        <div className="flex items-center justify-center py-8 text-neutral-500">
+                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-neutral-500">
                             {t(
                                 'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.emptyState',
                             )}

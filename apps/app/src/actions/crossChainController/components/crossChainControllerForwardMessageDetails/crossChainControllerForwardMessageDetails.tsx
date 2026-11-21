@@ -109,7 +109,7 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
     };
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-section">
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t(
@@ -117,7 +117,7 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
                     )}
                 >
                     {destinationDefinition ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-tight--fixed-8">
                             <Avatar
                                 size="sm"
                                 src={destinationDefinition.logo}
@@ -159,7 +159,7 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
                         variant="warning"
                     />
                 ) : (
-                    <div className="flex flex-col gap-y-4">
+                    <div className="flex flex-col gap-y-group">
                         <CrossChainControllerNestedActionsList
                             chainId={chainId}
                             rawActions={actions}

@@ -150,7 +150,7 @@ export const AdminManageMembersDialog: React.FC<
             />
             <Dialog.Content>
                 <form
-                    className="flex w-full flex-col gap-3 pb-6 md:gap-2"
+                    className="flex w-full flex-col gap-related--12-8 pb-inset-surface-wide"
                     id={formId}
                     onSubmit={handleSubmit(handleSubmitAddresses)}
                 >

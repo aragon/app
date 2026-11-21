@@ -124,7 +124,7 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (
     }, [parsedAmount, fieldName, setValue]);
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             <AddressInput
                 chainId={chainId}
                 onAccept={onReceiverChange}

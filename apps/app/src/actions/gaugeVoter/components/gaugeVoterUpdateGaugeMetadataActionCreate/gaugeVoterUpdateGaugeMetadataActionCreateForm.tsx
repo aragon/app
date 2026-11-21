@@ -74,7 +74,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
     });
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <GaugeVoterGaugeListItem gauge={gauge} onRemove={onRemoveGauge} />
             <InputText
                 helpText={t(

@@ -42,7 +42,7 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
     const isKnownOperation = isKnownPermissionOperation(operation);
 
     return (
-        <li className="flex flex-col gap-3 rounded-xl border border-neutral-100 px-4 pt-4 pb-1 md:px-6 md:pt-6 md:pb-2">
+        <li className="flex flex-col gap-related rounded-xl border border-neutral-100 px-inset-surface pt-inset-surface pb-inset-tight--4-8">
             <Heading size="h4">
                 {isKnownOperation
                     ? t(

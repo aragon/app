@@ -59,7 +59,7 @@ export const PermissionChangesDetails: React.FC<
     });
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             <AlertInline
                 message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
@@ -72,7 +72,7 @@ export const PermissionChangesDetails: React.FC<
                     )}
                 </DefinitionList.Container>
             )}
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-related">
                 {changes.map((change, index) => (
                     <PermissionChangeCard
                         change={change}

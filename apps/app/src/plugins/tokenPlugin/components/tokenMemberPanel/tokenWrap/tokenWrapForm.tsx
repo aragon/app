@@ -218,7 +218,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     return (
         <FormProvider {...formValues}>
             <form
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-group"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
                 <p className="text-base leading-normal font-normal text-neutral-500">
@@ -226,7 +226,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         underlyingSymbol: underlyingToken.symbol,
                     })}
                 </p>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     <AssetInput
                         disableAssetField={true}
                         hideAmountLabel={true}
@@ -238,9 +238,9 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                     />
                 </div>
                 {mode === 'dialog' ? (
-                    <div className="flex flex-col gap-9">
+                    <div className="flex flex-col gap-section-wide--fixed-36">
                         {footerInfo}
-                        <div className="flex justify-between gap-3">
+                        <div className="flex justify-between gap-related">
                             {onCancel != null && (
                                 <Button
                                     onClick={onCancel}
@@ -256,7 +256,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {renderSubmitButton({ size: 'lg' })}
                         {wrappedBalance > 0 && (
                             <Button
