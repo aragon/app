@@ -13,9 +13,9 @@ export interface IProposalVotingProgressContainerProps extends ComponentProps<'d
 export const ProposalVotingProgressContainer: React.FC<IProposalVotingProgressContainerProps> = (props) => {
     const { direction = 'row', className, ...otherProps } = props;
 
-    const colClassNames = 'flex-col *:pb-6 *:border-b *:border-b-neutral-100';
+    const colClassNames = 'flex-col *:pb-inset-surface-wide *:border-b *:border-b-neutral-100';
     const rowClassNames =
-        'md:flex-row md:*:pr-6 md:*:border-r md:*:border-r-neutral-100 md:*:pb-0 md:*:border-b-neutral-0';
+        'md:flex-row md:*:pr-inset-surface-wide md:*:border-r md:*:border-r-neutral-100 md:*:pb-0 md:*:border-b-neutral-0';
 
     const containerClassNames = classNames(
         'flex gap-section rounded-xl border border-neutral-100 bg-neutral-0 px-inset-surface py-inset-surface--12-24 shadow-neutral-sm',

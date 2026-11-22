@@ -70,6 +70,12 @@ export interface IInputContainerBaseProps {
      * properties (label, helpText, ..) for components without a input wrapper (e.g. file inputs).
      */
     useCustomWrapper?: boolean;
+    /**
+     * Spacing between the label, the input and the alert: `default` is the stepped related gap (8 px on phones,
+     * 12 px from md), `related` the plain related gap (12 px at every width).
+     * @default default
+     */
+    spacing?: 'default' | 'related';
 }
 
 export interface IInputContainerProps extends IInputContainerBaseProps, Omit<ComponentPropsWithRef<'div'>, 'id'> {}

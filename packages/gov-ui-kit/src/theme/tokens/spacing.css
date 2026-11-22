@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 22 roles, 6 component sizes and 75 Today exceptions, 469 utilities. A utility is
+ * Semantic spacing: 23 roles, 6 component sizes and 88 Today exceptions, 546 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -72,6 +72,9 @@
         /* role gap-section */
         --space-gap-section: 24px;
         --space-gap-section-md: 24px;
+        /* role gap-section-stepped */
+        --space-gap-section-stepped: 24px;
+        --space-gap-section-stepped-md: 40px;
         /* role gap-section-wide */
         --space-gap-section-wide: 40px;
         --space-gap-section-wide-md: 40px;
@@ -139,6 +142,9 @@
         /* size row */
         --space-row-height: 56px;
         --space-row-height-md: 56px;
+        /* exception control-lg--fixed-10 (its own Today value) */
+        --space-control-lg--fixed-10-pad-y: 10px;
+        --space-control-lg--fixed-10-pad-y-md: 10px;
         /* exception control-lg--fixed-16 (its own Today value) */
         --space-control-lg--fixed-16-pad-y: 16px;
         --space-control-lg--fixed-16-pad-y-md: 16px;
@@ -153,9 +159,15 @@
         /* exception control-md--8-12 (its own Today value) */
         --space-control-md--8-12-pad-x: 8px;
         --space-control-md--8-12-pad-x-md: 12px;
+        /* exception control-md--fixed-14 (its own Today value) */
+        --space-control-md--fixed-14-pad-x: 14px;
+        --space-control-md--fixed-14-pad-x-md: 14px;
         /* exception control-sm--8-12 (its own Today value) */
         --space-control-sm--8-12-pad-x: 8px;
         --space-control-sm--8-12-pad-x-md: 12px;
+        /* exception control-sm--fixed-10 (its own Today value) */
+        --space-control-sm--fixed-10-pad-x: 10px;
+        --space-control-sm--fixed-10-pad-x-md: 10px;
         /* exception control-sm--fixed-6 (its own Today value) */
         --space-control-sm--fixed-6-pad-x: 6px;
         --space-control-sm--fixed-6-pad-x-md: 6px;
@@ -168,9 +180,15 @@
         /* exception gap-group--fixed-12 (its own Today value) */
         --space-gap-group--fixed-12: 12px;
         --space-gap-group--fixed-12-md: 12px;
+        /* exception gap-group--fixed-14 (its own Today value) */
+        --space-gap-group--fixed-14: 14px;
+        --space-gap-group--fixed-14-md: 14px;
         /* exception gap-group--fixed-20 (its own Today value) */
         --space-gap-group--fixed-20: 20px;
         --space-gap-group--fixed-20-md: 20px;
+        /* exception gap-group-stepped--12-24 (its own Today value) */
+        --space-gap-group-stepped--12-24: 12px;
+        --space-gap-group-stepped--12-24-md: 24px;
         /* exception gap-group-stepped--16-20 (its own Today value) */
         --space-gap-group-stepped--16-20: 16px;
         --space-gap-group-stepped--16-20-md: 20px;
@@ -180,6 +198,9 @@
         /* exception gap-nav-group--12-16 (its own Today value) */
         --space-gap-nav-group--12-16: 12px;
         --space-gap-nav-group--12-16-md: 16px;
+        /* exception gap-nav-group--fixed-14 (its own Today value) */
+        --space-gap-nav-group--fixed-14: 14px;
+        --space-gap-nav-group--fixed-14-md: 14px;
         /* exception gap-nav-related--8-12 (its own Today value) */
         --space-gap-nav-related--8-12: 8px;
         --space-gap-nav-related--8-12-md: 12px;
@@ -189,6 +210,15 @@
         /* exception gap-nav-related--fixed-12 (its own Today value) */
         --space-gap-nav-related--fixed-12: 12px;
         --space-gap-nav-related--fixed-12-md: 12px;
+        /* exception gap-nav-section--fixed-32 (its own Today value) */
+        --space-gap-nav-section--fixed-32: 32px;
+        --space-gap-nav-section--fixed-32-md: 32px;
+        /* exception gap-nav-section--fixed-40 (its own Today value) */
+        --space-gap-nav-section--fixed-40: 40px;
+        --space-gap-nav-section--fixed-40-md: 40px;
+        /* exception gap-nav-section--fixed-48 (its own Today value) */
+        --space-gap-nav-section--fixed-48: 48px;
+        --space-gap-nav-section--fixed-48-md: 48px;
         /* exception gap-nav-tight--fixed-2 (its own Today value) */
         --space-gap-nav-tight--fixed-2: 2px;
         --space-gap-nav-tight--fixed-2-md: 2px;
@@ -228,6 +258,9 @@
         /* exception gap-section--fixed-32 (its own Today value) */
         --space-gap-section--fixed-32: 32px;
         --space-gap-section--fixed-32-md: 32px;
+        /* exception gap-section-stepped--24-48 (its own Today value) */
+        --space-gap-section-stepped--24-48: 24px;
+        --space-gap-section-stepped--24-48-md: 48px;
         /* exception gap-section-wide--32-40 (its own Today value) */
         --space-gap-section-wide--32-40: 32px;
         --space-gap-section-wide--32-40-md: 40px;
@@ -261,38 +294,6 @@
         /* exception inset-flush--0-24 (its own Today value) */
         --space-inset-flush--0-24-y: 0px;
         --space-inset-flush--0-24-y-md: 24px;
-        /* exception inset-flush--12-0 (its own Today value) */
-        --space-inset-flush--12-0-y: 12px;
-        --space-inset-flush--12-0-y-md: 0px;
-        /* exception inset-flush--12-16 (its own Today value) */
-        --space-inset-flush--12-16-y: 12px;
-        --space-inset-flush--12-16-y-md: 16px;
-        /* exception inset-flush--12-24 (its own Today value) */
-        --space-inset-flush--12-24-y: 12px;
-        --space-inset-flush--12-24-y-md: 24px;
-        /* exception inset-flush--24-32 (its own Today value) */
-        --space-inset-flush--24-32-y: 24px;
-        --space-inset-flush--24-32-y-md: 32px;
-        /* exception inset-flush--6-8 (its own Today value) */
-        --space-inset-flush--6-8-y: 6px;
-        --space-inset-flush--6-8-y-md: 8px;
-        /* exception inset-flush--fixed-10 (its own Today value) */
-        --space-inset-flush--fixed-10-y: 10px;
-        --space-inset-flush--fixed-10-y-md: 10px;
-        /* exception inset-flush--fixed-12 (its own Today value) */
-        --space-inset-flush--fixed-12-x: 12px;
-        --space-inset-flush--fixed-12-x-md: 12px;
-        --space-inset-flush--fixed-12-y: 12px;
-        --space-inset-flush--fixed-12-y-md: 12px;
-        /* exception inset-flush--fixed-16 (its own Today value) */
-        --space-inset-flush--fixed-16-y: 16px;
-        --space-inset-flush--fixed-16-y-md: 16px;
-        /* exception inset-flush--fixed-4 (its own Today value) */
-        --space-inset-flush--fixed-4-y: 4px;
-        --space-inset-flush--fixed-4-y-md: 4px;
-        /* exception inset-flush--fixed-8 (its own Today value) */
-        --space-inset-flush--fixed-8-y: 8px;
-        --space-inset-flush--fixed-8-y-md: 8px;
         /* exception inset-item--12-16 (its own Today value) */
         --space-inset-item--12-16-y: 12px;
         --space-inset-item--12-16-y-md: 16px;
@@ -315,15 +316,45 @@
         /* exception inset-item-flat--fixed-8 (its own Today value) */
         --space-inset-item-flat--fixed-8-y: 8px;
         --space-inset-item-flat--fixed-8-y-md: 8px;
+        /* exception inset-nav--fixed-16 (its own Today value) */
+        --space-inset-nav--fixed-16-x: 16px;
+        --space-inset-nav--fixed-16-x-md: 16px;
         /* exception inset-nav--fixed-4 (its own Today value) */
         --space-inset-nav--fixed-4-x: 4px;
         --space-inset-nav--fixed-4-x-md: 4px;
+        /* exception inset-nav--fixed-8 (its own Today value) */
+        --space-inset-nav--fixed-8-x: 8px;
+        --space-inset-nav--fixed-8-x-md: 8px;
+        /* exception inset-nav-bar--fixed-12 (its own Today value) */
+        --space-inset-nav-bar--fixed-12-y: 12px;
+        --space-inset-nav-bar--fixed-12-y-md: 12px;
+        /* exception inset-nav-bar--fixed-14 (its own Today value) */
+        --space-inset-nav-bar--fixed-14-x: 14px;
+        --space-inset-nav-bar--fixed-14-x-md: 14px;
         /* exception inset-nav-bar--fixed-16 (its own Today value) */
         --space-inset-nav-bar--fixed-16-x: 16px;
         --space-inset-nav-bar--fixed-16-x-md: 16px;
+        --space-inset-nav-bar--fixed-16-y: 16px;
+        --space-inset-nav-bar--fixed-16-y-md: 16px;
         /* exception inset-nav-bar--fixed-20 (its own Today value) */
         --space-inset-nav-bar--fixed-20-y: 20px;
         --space-inset-nav-bar--fixed-20-y-md: 20px;
+        --space-inset-nav-bar--fixed-20-x: 20px;
+        --space-inset-nav-bar--fixed-20-x-md: 20px;
+        /* exception inset-nav-bar--fixed-24 (its own Today value) */
+        --space-inset-nav-bar--fixed-24-x: 24px;
+        --space-inset-nav-bar--fixed-24-x-md: 24px;
+        /* exception inset-nav-bar--fixed-32 (its own Today value) */
+        --space-inset-nav-bar--fixed-32-x: 32px;
+        --space-inset-nav-bar--fixed-32-x-md: 32px;
+        --space-inset-nav-bar--fixed-32-y: 32px;
+        --space-inset-nav-bar--fixed-32-y-md: 32px;
+        /* exception inset-nav-item--fixed-16 (its own Today value) */
+        --space-inset-nav-item--fixed-16-y: 16px;
+        --space-inset-nav-item--fixed-16-y-md: 16px;
+        /* exception inset-nav-item--fixed-24 (its own Today value) */
+        --space-inset-nav-item--fixed-24-y: 24px;
+        --space-inset-nav-item--fixed-24-y-md: 24px;
         /* exception inset-nav-item--fixed-4 (its own Today value) */
         --space-inset-nav-item--fixed-4-y: 4px;
         --space-inset-nav-item--fixed-4-y-md: 4px;
@@ -342,6 +373,19 @@
         /* exception inset-surface-flat--12-16 (its own Today value) */
         --space-inset-surface-flat--12-16-x: 12px;
         --space-inset-surface-flat--12-16-x-md: 16px;
+        /* exception inset-surface-flat--8-12 (its own Today value) */
+        --space-inset-surface-flat--8-12-y: 8px;
+        --space-inset-surface-flat--8-12-y-md: 12px;
+        /* exception inset-surface-flat--fixed-12 (its own Today value) */
+        --space-inset-surface-flat--fixed-12-y: 12px;
+        --space-inset-surface-flat--fixed-12-y-md: 12px;
+        --space-inset-surface-flat--fixed-12-x: 12px;
+        --space-inset-surface-flat--fixed-12-x-md: 12px;
+        /* exception inset-surface-flat--fixed-14 (its own Today value) */
+        --space-inset-surface-flat--fixed-14-y: 14px;
+        --space-inset-surface-flat--fixed-14-y-md: 14px;
+        --space-inset-surface-flat--fixed-14-x: 14px;
+        --space-inset-surface-flat--fixed-14-x-md: 14px;
         /* exception inset-surface-flat--fixed-16 (its own Today value) */
         --space-inset-surface-flat--fixed-16-y: 16px;
         --space-inset-surface-flat--fixed-16-y-md: 16px;
@@ -355,6 +399,11 @@
         --space-inset-surface-wide--24-32-y-md: 32px;
         --space-inset-surface-wide--24-32-x: 24px;
         --space-inset-surface-wide--24-32-x-md: 32px;
+        /* exception inset-surface-wide--fixed-20 (its own Today value) */
+        --space-inset-surface-wide--fixed-20-y: 20px;
+        --space-inset-surface-wide--fixed-20-y-md: 20px;
+        --space-inset-surface-wide--fixed-20-x: 20px;
+        --space-inset-surface-wide--fixed-20-x-md: 20px;
         /* exception inset-surface-wide--fixed-28 (its own Today value) */
         --space-inset-surface-wide--fixed-28-y: 28px;
         --space-inset-surface-wide--fixed-28-y-md: 28px;
@@ -369,11 +418,14 @@
         /* exception inset-tight--4-8 (its own Today value) */
         --space-inset-tight--4-8-y: 4px;
         --space-inset-tight--4-8-y-md: 8px;
+        /* exception inset-tight--6-8 (its own Today value) */
+        --space-inset-tight--6-8-y: 6px;
+        --space-inset-tight--6-8-y-md: 8px;
         /* exception inset-tight--fixed-4 (its own Today value) */
-        --space-inset-tight--fixed-4-x: 4px;
-        --space-inset-tight--fixed-4-x-md: 4px;
         --space-inset-tight--fixed-4-y: 4px;
         --space-inset-tight--fixed-4-y-md: 4px;
+        --space-inset-tight--fixed-4-x: 4px;
+        --space-inset-tight--fixed-4-x-md: 4px;
         /* exception inset-tight--fixed-6 (its own Today value) */
         --space-inset-tight--fixed-6-x: 6px;
         --space-inset-tight--fixed-6-x-md: 6px;
@@ -442,6 +494,9 @@
         /* role gap-section */
         --space-gap-section: 24px;
         --space-gap-section-md: 24px;
+        /* role gap-section-stepped */
+        --space-gap-section-stepped: 24px;
+        --space-gap-section-stepped-md: 40px;
         /* role gap-section-wide */
         --space-gap-section-wide: 40px;
         --space-gap-section-wide-md: 40px;
@@ -509,6 +564,9 @@
         /* size row */
         --space-row-height: 56px;
         --space-row-height-md: 56px;
+        /* exception control-lg--fixed-10 (follows control-lg) */
+        --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
+        --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
         /* exception control-lg--fixed-16 (follows control-lg) */
         --space-control-lg--fixed-16-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-16-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -523,9 +581,15 @@
         /* exception control-md--8-12 (follows control-md) */
         --space-control-md--8-12-pad-x: var(--space-control-md-pad-x);
         --space-control-md--8-12-pad-x-md: var(--space-control-md-pad-x-md);
+        /* exception control-md--fixed-14 (follows control-md) */
+        --space-control-md--fixed-14-pad-x: var(--space-control-md-pad-x);
+        --space-control-md--fixed-14-pad-x-md: var(--space-control-md-pad-x-md);
         /* exception control-sm--8-12 (follows control-sm) */
         --space-control-sm--8-12-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--8-12-pad-x-md: var(--space-control-sm-pad-x-md);
+        /* exception control-sm--fixed-10 (follows control-sm) */
+        --space-control-sm--fixed-10-pad-x: var(--space-control-sm-pad-x);
+        --space-control-sm--fixed-10-pad-x-md: var(--space-control-sm-pad-x-md);
         /* exception control-sm--fixed-6 (follows control-sm) */
         --space-control-sm--fixed-6-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--fixed-6-pad-x-md: var(--space-control-sm-pad-x-md);
@@ -538,9 +602,15 @@
         /* exception gap-group--fixed-12 (follows gap-group) */
         --space-gap-group--fixed-12: var(--space-gap-group);
         --space-gap-group--fixed-12-md: var(--space-gap-group-md);
+        /* exception gap-group--fixed-14 (follows gap-group) */
+        --space-gap-group--fixed-14: var(--space-gap-group);
+        --space-gap-group--fixed-14-md: var(--space-gap-group-md);
         /* exception gap-group--fixed-20 (follows gap-group) */
         --space-gap-group--fixed-20: var(--space-gap-group);
         --space-gap-group--fixed-20-md: var(--space-gap-group-md);
+        /* exception gap-group-stepped--12-24 (follows gap-group-stepped) */
+        --space-gap-group-stepped--12-24: var(--space-gap-group-stepped);
+        --space-gap-group-stepped--12-24-md: var(--space-gap-group-stepped-md);
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
@@ -550,6 +620,9 @@
         /* exception gap-nav-group--12-16 (chrome: its own snapped value) */
         --space-gap-nav-group--12-16: 12px;
         --space-gap-nav-group--12-16-md: 16px;
+        /* exception gap-nav-group--fixed-14 (chrome: its own snapped value) */
+        --space-gap-nav-group--fixed-14: 16px;
+        --space-gap-nav-group--fixed-14-md: 16px;
         /* exception gap-nav-related--8-12 (chrome: its own snapped value) */
         --space-gap-nav-related--8-12: 8px;
         --space-gap-nav-related--8-12-md: 12px;
@@ -559,6 +632,15 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 12px;
         --space-gap-nav-related--fixed-12-md: 12px;
+        /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-32: 32px;
+        --space-gap-nav-section--fixed-32-md: 32px;
+        /* exception gap-nav-section--fixed-40 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-40: 40px;
+        --space-gap-nav-section--fixed-40-md: 40px;
+        /* exception gap-nav-section--fixed-48 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-48: 48px;
+        --space-gap-nav-section--fixed-48-md: 48px;
         /* exception gap-nav-tight--fixed-2 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-2: 2px;
         --space-gap-nav-tight--fixed-2-md: 2px;
@@ -598,6 +680,11 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-stepped--24-48 (follows gap-section-stepped) */
+        --space-gap-section-stepped--24-48: var(--space-gap-section-stepped);
+        --space-gap-section-stepped--24-48-md: var(
+            --space-gap-section-stepped-md
+        );
         /* exception gap-section-wide--32-40 (follows gap-section-wide) */
         --space-gap-section-wide--32-40: var(--space-gap-section-wide);
         --space-gap-section-wide--32-40-md: var(--space-gap-section-wide-md);
@@ -631,38 +718,6 @@
         /* exception inset-flush--0-24 (follows inset-flush) */
         --space-inset-flush--0-24-y: var(--space-inset-flush-y);
         --space-inset-flush--0-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-0 (follows inset-flush) */
-        --space-inset-flush--12-0-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-0-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-16 (follows inset-flush) */
-        --space-inset-flush--12-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-24 (follows inset-flush) */
-        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--24-32 (follows inset-flush) */
-        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
-        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--6-8 (follows inset-flush) */
-        --space-inset-flush--6-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-10 (follows inset-flush) */
-        --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-12 (follows inset-flush) */
-        --space-inset-flush--fixed-12-x: var(--space-inset-flush-x);
-        --space-inset-flush--fixed-12-x-md: var(--space-inset-flush-x-md);
-        --space-inset-flush--fixed-12-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-12-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-16 (follows inset-flush) */
-        --space-inset-flush--fixed-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-4 (follows inset-flush) */
-        --space-inset-flush--fixed-4-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-4-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-8 (follows inset-flush) */
-        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -693,15 +748,45 @@
         --space-inset-item-flat--fixed-8-y-md: var(
             --space-inset-item-flat-y-md
         );
+        /* exception inset-nav--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-16-x: 16px;
+        --space-inset-nav--fixed-16-x-md: 16px;
         /* exception inset-nav--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav--fixed-4-x: 4px;
         --space-inset-nav--fixed-4-x-md: 4px;
+        /* exception inset-nav--fixed-8 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-8-x: 8px;
+        --space-inset-nav--fixed-8-x-md: 8px;
+        /* exception inset-nav-bar--fixed-12 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-12-y: 12px;
+        --space-inset-nav-bar--fixed-12-y-md: 12px;
+        /* exception inset-nav-bar--fixed-14 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-14-x: 16px;
+        --space-inset-nav-bar--fixed-14-x-md: 16px;
         /* exception inset-nav-bar--fixed-16 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-16-x: 16px;
         --space-inset-nav-bar--fixed-16-x-md: 16px;
+        --space-inset-nav-bar--fixed-16-y: 16px;
+        --space-inset-nav-bar--fixed-16-y-md: 16px;
         /* exception inset-nav-bar--fixed-20 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-20-y: 20px;
         --space-inset-nav-bar--fixed-20-y-md: 20px;
+        --space-inset-nav-bar--fixed-20-x: 20px;
+        --space-inset-nav-bar--fixed-20-x-md: 20px;
+        /* exception inset-nav-bar--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-24-x: 24px;
+        --space-inset-nav-bar--fixed-24-x-md: 24px;
+        /* exception inset-nav-bar--fixed-32 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-32-x: 32px;
+        --space-inset-nav-bar--fixed-32-x-md: 32px;
+        --space-inset-nav-bar--fixed-32-y: 32px;
+        --space-inset-nav-bar--fixed-32-y-md: 32px;
+        /* exception inset-nav-item--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-16-y: 16px;
+        --space-inset-nav-item--fixed-16-y-md: 16px;
+        /* exception inset-nav-item--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-24-y: 24px;
+        --space-inset-nav-item--fixed-24-y-md: 24px;
         /* exception inset-nav-item--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav-item--fixed-4-y: 4px;
         --space-inset-nav-item--fixed-4-y-md: 4px;
@@ -720,6 +805,37 @@
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--8-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--8-12-y: var(--space-inset-surface-flat-y);
+        --space-inset-surface-flat--8-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        /* exception inset-surface-flat--fixed-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-12-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-12-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-12-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--fixed-14 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-14-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-14-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-14-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-14-x-md: var(
             --space-inset-surface-flat-x-md
         );
         /* exception inset-surface-flat--fixed-16 (follows inset-surface-flat) */
@@ -751,6 +867,19 @@
         --space-inset-surface-wide--24-32-x-md: var(
             --space-inset-surface-wide-x-md
         );
+        /* exception inset-surface-wide--fixed-20 (follows inset-surface-wide) */
+        --space-inset-surface-wide--fixed-20-y: var(
+            --space-inset-surface-wide-y
+        );
+        --space-inset-surface-wide--fixed-20-y-md: var(
+            --space-inset-surface-wide-y-md
+        );
+        --space-inset-surface-wide--fixed-20-x: var(
+            --space-inset-surface-wide-x
+        );
+        --space-inset-surface-wide--fixed-20-x-md: var(
+            --space-inset-surface-wide-x-md
+        );
         /* exception inset-surface-wide--fixed-28 (follows inset-surface-wide) */
         --space-inset-surface-wide--fixed-28-y: var(
             --space-inset-surface-wide-y
@@ -777,11 +906,14 @@
         /* exception inset-tight--4-8 (follows inset-tight) */
         --space-inset-tight--4-8-y: var(--space-inset-tight-y);
         --space-inset-tight--4-8-y-md: var(--space-inset-tight-y-md);
+        /* exception inset-tight--6-8 (follows inset-tight) */
+        --space-inset-tight--6-8-y: var(--space-inset-tight-y);
+        --space-inset-tight--6-8-y-md: var(--space-inset-tight-y-md);
         /* exception inset-tight--fixed-4 (follows inset-tight) */
-        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
-        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         --space-inset-tight--fixed-4-y: var(--space-inset-tight-y);
         --space-inset-tight--fixed-4-y-md: var(--space-inset-tight-y-md);
+        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
+        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         /* exception inset-tight--fixed-6 (follows inset-tight) */
         --space-inset-tight--fixed-6-x: var(--space-inset-tight-x);
         --space-inset-tight--fixed-6-x-md: var(--space-inset-tight-x-md);
@@ -850,6 +982,9 @@
         /* role gap-section */
         --space-gap-section: 32px;
         --space-gap-section-md: 32px;
+        /* role gap-section-stepped */
+        --space-gap-section-stepped: 32px;
+        --space-gap-section-stepped-md: 48px;
         /* role gap-section-wide */
         --space-gap-section-wide: 48px;
         --space-gap-section-wide-md: 48px;
@@ -917,6 +1052,9 @@
         /* size row */
         --space-row-height: 64px;
         --space-row-height-md: 64px;
+        /* exception control-lg--fixed-10 (follows control-lg) */
+        --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
+        --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
         /* exception control-lg--fixed-16 (follows control-lg) */
         --space-control-lg--fixed-16-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-16-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -931,9 +1069,15 @@
         /* exception control-md--8-12 (follows control-md) */
         --space-control-md--8-12-pad-x: var(--space-control-md-pad-x);
         --space-control-md--8-12-pad-x-md: var(--space-control-md-pad-x-md);
+        /* exception control-md--fixed-14 (follows control-md) */
+        --space-control-md--fixed-14-pad-x: var(--space-control-md-pad-x);
+        --space-control-md--fixed-14-pad-x-md: var(--space-control-md-pad-x-md);
         /* exception control-sm--8-12 (follows control-sm) */
         --space-control-sm--8-12-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--8-12-pad-x-md: var(--space-control-sm-pad-x-md);
+        /* exception control-sm--fixed-10 (follows control-sm) */
+        --space-control-sm--fixed-10-pad-x: var(--space-control-sm-pad-x);
+        --space-control-sm--fixed-10-pad-x-md: var(--space-control-sm-pad-x-md);
         /* exception control-sm--fixed-6 (follows control-sm) */
         --space-control-sm--fixed-6-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--fixed-6-pad-x-md: var(--space-control-sm-pad-x-md);
@@ -946,9 +1090,15 @@
         /* exception gap-group--fixed-12 (follows gap-group) */
         --space-gap-group--fixed-12: var(--space-gap-group);
         --space-gap-group--fixed-12-md: var(--space-gap-group-md);
+        /* exception gap-group--fixed-14 (follows gap-group) */
+        --space-gap-group--fixed-14: var(--space-gap-group);
+        --space-gap-group--fixed-14-md: var(--space-gap-group-md);
         /* exception gap-group--fixed-20 (follows gap-group) */
         --space-gap-group--fixed-20: var(--space-gap-group);
         --space-gap-group--fixed-20-md: var(--space-gap-group-md);
+        /* exception gap-group-stepped--12-24 (follows gap-group-stepped) */
+        --space-gap-group-stepped--12-24: var(--space-gap-group-stepped);
+        --space-gap-group-stepped--12-24-md: var(--space-gap-group-stepped-md);
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
@@ -958,6 +1108,9 @@
         /* exception gap-nav-group--12-16 (chrome: its own snapped value) */
         --space-gap-nav-group--12-16: 16px;
         --space-gap-nav-group--12-16-md: 20px;
+        /* exception gap-nav-group--fixed-14 (chrome: its own snapped value) */
+        --space-gap-nav-group--fixed-14: 20px;
+        --space-gap-nav-group--fixed-14-md: 20px;
         /* exception gap-nav-related--8-12 (chrome: its own snapped value) */
         --space-gap-nav-related--8-12: 12px;
         --space-gap-nav-related--8-12-md: 16px;
@@ -967,6 +1120,15 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 16px;
         --space-gap-nav-related--fixed-12-md: 16px;
+        /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-32: 40px;
+        --space-gap-nav-section--fixed-32-md: 40px;
+        /* exception gap-nav-section--fixed-40 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-40: 48px;
+        --space-gap-nav-section--fixed-40-md: 48px;
+        /* exception gap-nav-section--fixed-48 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-48: 64px;
+        --space-gap-nav-section--fixed-48-md: 64px;
         /* exception gap-nav-tight--fixed-2 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-2: 4px;
         --space-gap-nav-tight--fixed-2-md: 4px;
@@ -1006,6 +1168,11 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-stepped--24-48 (follows gap-section-stepped) */
+        --space-gap-section-stepped--24-48: var(--space-gap-section-stepped);
+        --space-gap-section-stepped--24-48-md: var(
+            --space-gap-section-stepped-md
+        );
         /* exception gap-section-wide--32-40 (follows gap-section-wide) */
         --space-gap-section-wide--32-40: var(--space-gap-section-wide);
         --space-gap-section-wide--32-40-md: var(--space-gap-section-wide-md);
@@ -1039,38 +1206,6 @@
         /* exception inset-flush--0-24 (follows inset-flush) */
         --space-inset-flush--0-24-y: var(--space-inset-flush-y);
         --space-inset-flush--0-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-0 (follows inset-flush) */
-        --space-inset-flush--12-0-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-0-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-16 (follows inset-flush) */
-        --space-inset-flush--12-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-24 (follows inset-flush) */
-        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--24-32 (follows inset-flush) */
-        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
-        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--6-8 (follows inset-flush) */
-        --space-inset-flush--6-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-10 (follows inset-flush) */
-        --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-12 (follows inset-flush) */
-        --space-inset-flush--fixed-12-x: var(--space-inset-flush-x);
-        --space-inset-flush--fixed-12-x-md: var(--space-inset-flush-x-md);
-        --space-inset-flush--fixed-12-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-12-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-16 (follows inset-flush) */
-        --space-inset-flush--fixed-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-4 (follows inset-flush) */
-        --space-inset-flush--fixed-4-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-4-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-8 (follows inset-flush) */
-        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -1101,15 +1236,45 @@
         --space-inset-item-flat--fixed-8-y-md: var(
             --space-inset-item-flat-y-md
         );
+        /* exception inset-nav--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-16-x: 20px;
+        --space-inset-nav--fixed-16-x-md: 20px;
         /* exception inset-nav--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav--fixed-4-x: 6px;
         --space-inset-nav--fixed-4-x-md: 6px;
+        /* exception inset-nav--fixed-8 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-8-x: 12px;
+        --space-inset-nav--fixed-8-x-md: 12px;
+        /* exception inset-nav-bar--fixed-12 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-12-y: 12px;
+        --space-inset-nav-bar--fixed-12-y-md: 12px;
+        /* exception inset-nav-bar--fixed-14 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-14-x: 16px;
+        --space-inset-nav-bar--fixed-14-x-md: 16px;
         /* exception inset-nav-bar--fixed-16 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-16-x: 16px;
         --space-inset-nav-bar--fixed-16-x-md: 16px;
+        --space-inset-nav-bar--fixed-16-y: 16px;
+        --space-inset-nav-bar--fixed-16-y-md: 16px;
         /* exception inset-nav-bar--fixed-20 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-20-y: 20px;
         --space-inset-nav-bar--fixed-20-y-md: 20px;
+        --space-inset-nav-bar--fixed-20-x: 20px;
+        --space-inset-nav-bar--fixed-20-x-md: 20px;
+        /* exception inset-nav-bar--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-24-x: 24px;
+        --space-inset-nav-bar--fixed-24-x-md: 24px;
+        /* exception inset-nav-bar--fixed-32 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-32-x: 32px;
+        --space-inset-nav-bar--fixed-32-x-md: 32px;
+        --space-inset-nav-bar--fixed-32-y: 32px;
+        --space-inset-nav-bar--fixed-32-y-md: 32px;
+        /* exception inset-nav-item--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-16-y: 16px;
+        --space-inset-nav-item--fixed-16-y-md: 16px;
+        /* exception inset-nav-item--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-24-y: 24px;
+        --space-inset-nav-item--fixed-24-y-md: 24px;
         /* exception inset-nav-item--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav-item--fixed-4-y: 4px;
         --space-inset-nav-item--fixed-4-y-md: 4px;
@@ -1128,6 +1293,37 @@
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--8-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--8-12-y: var(--space-inset-surface-flat-y);
+        --space-inset-surface-flat--8-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        /* exception inset-surface-flat--fixed-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-12-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-12-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-12-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--fixed-14 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-14-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-14-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-14-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-14-x-md: var(
             --space-inset-surface-flat-x-md
         );
         /* exception inset-surface-flat--fixed-16 (follows inset-surface-flat) */
@@ -1159,6 +1355,19 @@
         --space-inset-surface-wide--24-32-x-md: var(
             --space-inset-surface-wide-x-md
         );
+        /* exception inset-surface-wide--fixed-20 (follows inset-surface-wide) */
+        --space-inset-surface-wide--fixed-20-y: var(
+            --space-inset-surface-wide-y
+        );
+        --space-inset-surface-wide--fixed-20-y-md: var(
+            --space-inset-surface-wide-y-md
+        );
+        --space-inset-surface-wide--fixed-20-x: var(
+            --space-inset-surface-wide-x
+        );
+        --space-inset-surface-wide--fixed-20-x-md: var(
+            --space-inset-surface-wide-x-md
+        );
         /* exception inset-surface-wide--fixed-28 (follows inset-surface-wide) */
         --space-inset-surface-wide--fixed-28-y: var(
             --space-inset-surface-wide-y
@@ -1185,11 +1394,14 @@
         /* exception inset-tight--4-8 (follows inset-tight) */
         --space-inset-tight--4-8-y: var(--space-inset-tight-y);
         --space-inset-tight--4-8-y-md: var(--space-inset-tight-y-md);
+        /* exception inset-tight--6-8 (follows inset-tight) */
+        --space-inset-tight--6-8-y: var(--space-inset-tight-y);
+        --space-inset-tight--6-8-y-md: var(--space-inset-tight-y-md);
         /* exception inset-tight--fixed-4 (follows inset-tight) */
-        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
-        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         --space-inset-tight--fixed-4-y: var(--space-inset-tight-y);
         --space-inset-tight--fixed-4-y-md: var(--space-inset-tight-y-md);
+        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
+        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         /* exception inset-tight--fixed-6 (follows inset-tight) */
         --space-inset-tight--fixed-6-x: var(--space-inset-tight-x);
         --space-inset-tight--fixed-6-x-md: var(--space-inset-tight-x-md);
@@ -1258,6 +1470,9 @@
         /* role gap-section */
         --space-gap-section: 20px;
         --space-gap-section-md: 20px;
+        /* role gap-section-stepped */
+        --space-gap-section-stepped: 20px;
+        --space-gap-section-stepped-md: 32px;
         /* role gap-section-wide */
         --space-gap-section-wide: 32px;
         --space-gap-section-wide-md: 32px;
@@ -1325,6 +1540,9 @@
         /* size row */
         --space-row-height: 48px;
         --space-row-height-md: 48px;
+        /* exception control-lg--fixed-10 (follows control-lg) */
+        --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
+        --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
         /* exception control-lg--fixed-16 (follows control-lg) */
         --space-control-lg--fixed-16-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-16-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -1339,9 +1557,15 @@
         /* exception control-md--8-12 (follows control-md) */
         --space-control-md--8-12-pad-x: var(--space-control-md-pad-x);
         --space-control-md--8-12-pad-x-md: var(--space-control-md-pad-x-md);
+        /* exception control-md--fixed-14 (follows control-md) */
+        --space-control-md--fixed-14-pad-x: var(--space-control-md-pad-x);
+        --space-control-md--fixed-14-pad-x-md: var(--space-control-md-pad-x-md);
         /* exception control-sm--8-12 (follows control-sm) */
         --space-control-sm--8-12-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--8-12-pad-x-md: var(--space-control-sm-pad-x-md);
+        /* exception control-sm--fixed-10 (follows control-sm) */
+        --space-control-sm--fixed-10-pad-x: var(--space-control-sm-pad-x);
+        --space-control-sm--fixed-10-pad-x-md: var(--space-control-sm-pad-x-md);
         /* exception control-sm--fixed-6 (follows control-sm) */
         --space-control-sm--fixed-6-pad-x: var(--space-control-sm-pad-x);
         --space-control-sm--fixed-6-pad-x-md: var(--space-control-sm-pad-x-md);
@@ -1354,9 +1578,15 @@
         /* exception gap-group--fixed-12 (follows gap-group) */
         --space-gap-group--fixed-12: var(--space-gap-group);
         --space-gap-group--fixed-12-md: var(--space-gap-group-md);
+        /* exception gap-group--fixed-14 (follows gap-group) */
+        --space-gap-group--fixed-14: var(--space-gap-group);
+        --space-gap-group--fixed-14-md: var(--space-gap-group-md);
         /* exception gap-group--fixed-20 (follows gap-group) */
         --space-gap-group--fixed-20: var(--space-gap-group);
         --space-gap-group--fixed-20-md: var(--space-gap-group-md);
+        /* exception gap-group-stepped--12-24 (follows gap-group-stepped) */
+        --space-gap-group-stepped--12-24: var(--space-gap-group-stepped);
+        --space-gap-group-stepped--12-24-md: var(--space-gap-group-stepped-md);
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
@@ -1366,6 +1596,9 @@
         /* exception gap-nav-group--12-16 (chrome: its own snapped value) */
         --space-gap-nav-group--12-16: 8px;
         --space-gap-nav-group--12-16-md: 12px;
+        /* exception gap-nav-group--fixed-14 (chrome: its own snapped value) */
+        --space-gap-nav-group--fixed-14: 12px;
+        --space-gap-nav-group--fixed-14-md: 12px;
         /* exception gap-nav-related--8-12 (chrome: its own snapped value) */
         --space-gap-nav-related--8-12: 6px;
         --space-gap-nav-related--8-12-md: 8px;
@@ -1375,6 +1608,15 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 8px;
         --space-gap-nav-related--fixed-12-md: 8px;
+        /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-32: 24px;
+        --space-gap-nav-section--fixed-32-md: 24px;
+        /* exception gap-nav-section--fixed-40 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-40: 32px;
+        --space-gap-nav-section--fixed-40-md: 32px;
+        /* exception gap-nav-section--fixed-48 (chrome: its own snapped value) */
+        --space-gap-nav-section--fixed-48: 40px;
+        --space-gap-nav-section--fixed-48-md: 40px;
         /* exception gap-nav-tight--fixed-2 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-2: 0px;
         --space-gap-nav-tight--fixed-2-md: 0px;
@@ -1414,6 +1656,11 @@
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
+        /* exception gap-section-stepped--24-48 (follows gap-section-stepped) */
+        --space-gap-section-stepped--24-48: var(--space-gap-section-stepped);
+        --space-gap-section-stepped--24-48-md: var(
+            --space-gap-section-stepped-md
+        );
         /* exception gap-section-wide--32-40 (follows gap-section-wide) */
         --space-gap-section-wide--32-40: var(--space-gap-section-wide);
         --space-gap-section-wide--32-40-md: var(--space-gap-section-wide-md);
@@ -1447,38 +1694,6 @@
         /* exception inset-flush--0-24 (follows inset-flush) */
         --space-inset-flush--0-24-y: var(--space-inset-flush-y);
         --space-inset-flush--0-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-0 (follows inset-flush) */
-        --space-inset-flush--12-0-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-0-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-16 (follows inset-flush) */
-        --space-inset-flush--12-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--12-24 (follows inset-flush) */
-        --space-inset-flush--12-24-y: var(--space-inset-flush-y);
-        --space-inset-flush--12-24-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--24-32 (follows inset-flush) */
-        --space-inset-flush--24-32-y: var(--space-inset-flush-y);
-        --space-inset-flush--24-32-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--6-8 (follows inset-flush) */
-        --space-inset-flush--6-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--6-8-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-10 (follows inset-flush) */
-        --space-inset-flush--fixed-10-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-10-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-12 (follows inset-flush) */
-        --space-inset-flush--fixed-12-x: var(--space-inset-flush-x);
-        --space-inset-flush--fixed-12-x-md: var(--space-inset-flush-x-md);
-        --space-inset-flush--fixed-12-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-12-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-16 (follows inset-flush) */
-        --space-inset-flush--fixed-16-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-16-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-4 (follows inset-flush) */
-        --space-inset-flush--fixed-4-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-4-y-md: var(--space-inset-flush-y-md);
-        /* exception inset-flush--fixed-8 (follows inset-flush) */
-        --space-inset-flush--fixed-8-y: var(--space-inset-flush-y);
-        --space-inset-flush--fixed-8-y-md: var(--space-inset-flush-y-md);
         /* exception inset-item--12-16 (follows inset-item) */
         --space-inset-item--12-16-y: var(--space-inset-item-y);
         --space-inset-item--12-16-y-md: var(--space-inset-item-y-md);
@@ -1509,15 +1724,45 @@
         --space-inset-item-flat--fixed-8-y-md: var(
             --space-inset-item-flat-y-md
         );
+        /* exception inset-nav--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-16-x: 12px;
+        --space-inset-nav--fixed-16-x-md: 12px;
         /* exception inset-nav--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav--fixed-4-x: 2px;
         --space-inset-nav--fixed-4-x-md: 2px;
+        /* exception inset-nav--fixed-8 (chrome: its own snapped value) */
+        --space-inset-nav--fixed-8-x: 6px;
+        --space-inset-nav--fixed-8-x-md: 6px;
+        /* exception inset-nav-bar--fixed-12 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-12-y: 12px;
+        --space-inset-nav-bar--fixed-12-y-md: 12px;
+        /* exception inset-nav-bar--fixed-14 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-14-x: 16px;
+        --space-inset-nav-bar--fixed-14-x-md: 16px;
         /* exception inset-nav-bar--fixed-16 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-16-x: 16px;
         --space-inset-nav-bar--fixed-16-x-md: 16px;
+        --space-inset-nav-bar--fixed-16-y: 16px;
+        --space-inset-nav-bar--fixed-16-y-md: 16px;
         /* exception inset-nav-bar--fixed-20 (chrome: its own snapped value) */
         --space-inset-nav-bar--fixed-20-y: 20px;
         --space-inset-nav-bar--fixed-20-y-md: 20px;
+        --space-inset-nav-bar--fixed-20-x: 20px;
+        --space-inset-nav-bar--fixed-20-x-md: 20px;
+        /* exception inset-nav-bar--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-24-x: 24px;
+        --space-inset-nav-bar--fixed-24-x-md: 24px;
+        /* exception inset-nav-bar--fixed-32 (chrome: its own snapped value) */
+        --space-inset-nav-bar--fixed-32-x: 32px;
+        --space-inset-nav-bar--fixed-32-x-md: 32px;
+        --space-inset-nav-bar--fixed-32-y: 32px;
+        --space-inset-nav-bar--fixed-32-y-md: 32px;
+        /* exception inset-nav-item--fixed-16 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-16-y: 16px;
+        --space-inset-nav-item--fixed-16-y-md: 16px;
+        /* exception inset-nav-item--fixed-24 (chrome: its own snapped value) */
+        --space-inset-nav-item--fixed-24-y: 24px;
+        --space-inset-nav-item--fixed-24-y-md: 24px;
         /* exception inset-nav-item--fixed-4 (chrome: its own snapped value) */
         --space-inset-nav-item--fixed-4-y: 4px;
         --space-inset-nav-item--fixed-4-y-md: 4px;
@@ -1536,6 +1781,37 @@
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--8-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--8-12-y: var(--space-inset-surface-flat-y);
+        --space-inset-surface-flat--8-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        /* exception inset-surface-flat--fixed-12 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-12-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-12-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-12-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-12-x-md: var(
+            --space-inset-surface-flat-x-md
+        );
+        /* exception inset-surface-flat--fixed-14 (follows inset-surface-flat) */
+        --space-inset-surface-flat--fixed-14-y: var(
+            --space-inset-surface-flat-y
+        );
+        --space-inset-surface-flat--fixed-14-y-md: var(
+            --space-inset-surface-flat-y-md
+        );
+        --space-inset-surface-flat--fixed-14-x: var(
+            --space-inset-surface-flat-x
+        );
+        --space-inset-surface-flat--fixed-14-x-md: var(
             --space-inset-surface-flat-x-md
         );
         /* exception inset-surface-flat--fixed-16 (follows inset-surface-flat) */
@@ -1567,6 +1843,19 @@
         --space-inset-surface-wide--24-32-x-md: var(
             --space-inset-surface-wide-x-md
         );
+        /* exception inset-surface-wide--fixed-20 (follows inset-surface-wide) */
+        --space-inset-surface-wide--fixed-20-y: var(
+            --space-inset-surface-wide-y
+        );
+        --space-inset-surface-wide--fixed-20-y-md: var(
+            --space-inset-surface-wide-y-md
+        );
+        --space-inset-surface-wide--fixed-20-x: var(
+            --space-inset-surface-wide-x
+        );
+        --space-inset-surface-wide--fixed-20-x-md: var(
+            --space-inset-surface-wide-x-md
+        );
         /* exception inset-surface-wide--fixed-28 (follows inset-surface-wide) */
         --space-inset-surface-wide--fixed-28-y: var(
             --space-inset-surface-wide-y
@@ -1593,11 +1882,14 @@
         /* exception inset-tight--4-8 (follows inset-tight) */
         --space-inset-tight--4-8-y: var(--space-inset-tight-y);
         --space-inset-tight--4-8-y-md: var(--space-inset-tight-y-md);
+        /* exception inset-tight--6-8 (follows inset-tight) */
+        --space-inset-tight--6-8-y: var(--space-inset-tight-y);
+        --space-inset-tight--6-8-y-md: var(--space-inset-tight-y-md);
         /* exception inset-tight--fixed-4 (follows inset-tight) */
-        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
-        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         --space-inset-tight--fixed-4-y: var(--space-inset-tight-y);
         --space-inset-tight--fixed-4-y-md: var(--space-inset-tight-y-md);
+        --space-inset-tight--fixed-4-x: var(--space-inset-tight-x);
+        --space-inset-tight--fixed-4-x-md: var(--space-inset-tight-x-md);
         /* exception inset-tight--fixed-6 (follows inset-tight) */
         --space-inset-tight--fixed-6-x: var(--space-inset-tight-x);
         --space-inset-tight--fixed-6-x-md: var(--space-inset-tight-x-md);
@@ -2405,6 +2697,22 @@
     }
 }
 
+@utility mx-tight {
+    margin-inline: var(--space-gap-tight);
+
+    @variant md {
+        margin-inline: var(--space-gap-tight-md);
+    }
+}
+
+@utility my-tight {
+    margin-block: var(--space-gap-tight);
+
+    @variant md {
+        margin-block: var(--space-gap-tight-md);
+    }
+}
+
 @utility mt-tight {
     margin-top: var(--space-gap-tight);
 
@@ -2558,6 +2866,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-related {
+    margin-inline: var(--space-gap-related);
+
+    @variant md {
+        margin-inline: var(--space-gap-related-md);
+    }
+}
+
+@utility my-related {
+    margin-block: var(--space-gap-related);
+
+    @variant md {
+        margin-block: var(--space-gap-related-md);
     }
 }
 
@@ -2717,6 +3041,22 @@
     }
 }
 
+@utility mx-group {
+    margin-inline: var(--space-gap-group);
+
+    @variant md {
+        margin-inline: var(--space-gap-group-md);
+    }
+}
+
+@utility my-group {
+    margin-block: var(--space-gap-group);
+
+    @variant md {
+        margin-block: var(--space-gap-group-md);
+    }
+}
+
 @utility mt-group {
     margin-top: var(--space-gap-group);
 
@@ -2870,6 +3210,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-group-stepped {
+    margin-inline: var(--space-gap-group-stepped);
+
+    @variant md {
+        margin-inline: var(--space-gap-group-stepped-md);
+    }
+}
+
+@utility my-group-stepped {
+    margin-block: var(--space-gap-group-stepped);
+
+    @variant md {
+        margin-block: var(--space-gap-group-stepped-md);
     }
 }
 
@@ -3029,6 +3385,22 @@
     }
 }
 
+@utility mx-section {
+    margin-inline: var(--space-gap-section);
+
+    @variant md {
+        margin-inline: var(--space-gap-section-md);
+    }
+}
+
+@utility my-section {
+    margin-block: var(--space-gap-section);
+
+    @variant md {
+        margin-block: var(--space-gap-section-md);
+    }
+}
+
 @utility mt-section {
     margin-top: var(--space-gap-section);
 
@@ -3109,6 +3481,178 @@
     }
 }
 
+@utility gap-section-stepped {
+    gap: var(--space-gap-section-stepped);
+
+    @variant md {
+        gap: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility gap-x-section-stepped {
+    column-gap: var(--space-gap-section-stepped);
+
+    @variant md {
+        column-gap: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility gap-y-section-stepped {
+    row-gap: var(--space-gap-section-stepped);
+
+    @variant md {
+        row-gap: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility space-x-section-stepped {
+    :where(& > :not(:last-child)) {
+        --tw-space-x-reverse: 0;
+        margin-inline-start: calc(
+            var(--space-gap-section-stepped) *
+            var(--tw-space-x-reverse)
+        );
+        margin-inline-end: calc(
+            var(--space-gap-section-stepped) *
+            calc(1 - var(--tw-space-x-reverse))
+        );
+
+        @variant md {
+            --tw-space-x-reverse: 0;
+            margin-inline-start: calc(
+                var(--space-gap-section-stepped-md) *
+                var(--tw-space-x-reverse)
+            );
+            margin-inline-end: calc(
+                var(--space-gap-section-stepped-md) *
+                calc(1 - var(--tw-space-x-reverse))
+            );
+        }
+    }
+}
+
+@utility space-y-section-stepped {
+    :where(& > :not(:last-child)) {
+        --tw-space-y-reverse: 0;
+        margin-block-start: calc(
+            var(--space-gap-section-stepped) *
+            var(--tw-space-y-reverse)
+        );
+        margin-block-end: calc(
+            var(--space-gap-section-stepped) *
+            calc(1 - var(--tw-space-y-reverse))
+        );
+
+        @variant md {
+            --tw-space-y-reverse: 0;
+            margin-block-start: calc(
+                var(--space-gap-section-stepped-md) *
+                var(--tw-space-y-reverse)
+            );
+            margin-block-end: calc(
+                var(--space-gap-section-stepped-md) *
+                calc(1 - var(--tw-space-y-reverse))
+            );
+        }
+    }
+}
+
+@utility mx-section-stepped {
+    margin-inline: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-inline: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility my-section-stepped {
+    margin-block: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-block: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility mt-section-stepped {
+    margin-top: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-top: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility mb-section-stepped {
+    margin-bottom: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-bottom: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility ml-section-stepped {
+    margin-left: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-left: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility mr-section-stepped {
+    margin-right: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-right: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility ms-section-stepped {
+    margin-inline-start: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-inline-start: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility me-section-stepped {
+    margin-inline-end: var(--space-gap-section-stepped);
+
+    @variant md {
+        margin-inline-end: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility pt-section-stepped {
+    padding-top: var(--space-gap-section-stepped);
+
+    @variant md {
+        padding-top: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility pb-section-stepped {
+    padding-bottom: var(--space-gap-section-stepped);
+
+    @variant md {
+        padding-bottom: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility pl-section-stepped {
+    padding-left: var(--space-gap-section-stepped);
+
+    @variant md {
+        padding-left: var(--space-gap-section-stepped-md);
+    }
+}
+
+@utility pr-section-stepped {
+    padding-right: var(--space-gap-section-stepped);
+
+    @variant md {
+        padding-right: var(--space-gap-section-stepped-md);
+    }
+}
+
 @utility gap-section-wide {
     gap: var(--space-gap-section-wide);
 
@@ -3182,6 +3726,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-section-wide {
+    margin-inline: var(--space-gap-section-wide);
+
+    @variant md {
+        margin-inline: var(--space-gap-section-wide-md);
+    }
+}
+
+@utility my-section-wide {
+    margin-block: var(--space-gap-section-wide);
+
+    @variant md {
+        margin-block: var(--space-gap-section-wide-md);
     }
 }
 
@@ -3338,6 +3898,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-layout {
+    margin-inline: var(--space-gap-layout);
+
+    @variant md {
+        margin-inline: var(--space-gap-layout-md);
+    }
+}
+
+@utility my-layout {
+    margin-block: var(--space-gap-layout);
+
+    @variant md {
+        margin-block: var(--space-gap-layout-md);
     }
 }
 
@@ -3762,6 +4338,22 @@
     }
 }
 
+@utility mx-nav-tight {
+    margin-inline: var(--space-gap-nav-tight);
+
+    @variant md {
+        margin-inline: var(--space-gap-nav-tight-md);
+    }
+}
+
+@utility my-nav-tight {
+    margin-block: var(--space-gap-nav-tight);
+
+    @variant md {
+        margin-block: var(--space-gap-nav-tight-md);
+    }
+}
+
 @utility mt-nav-tight {
     margin-top: var(--space-gap-nav-tight);
 
@@ -3915,6 +4507,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-nav-related {
+    margin-inline: var(--space-gap-nav-related);
+
+    @variant md {
+        margin-inline: var(--space-gap-nav-related-md);
+    }
+}
+
+@utility my-nav-related {
+    margin-block: var(--space-gap-nav-related);
+
+    @variant md {
+        margin-block: var(--space-gap-nav-related-md);
     }
 }
 
@@ -4074,6 +4682,22 @@
     }
 }
 
+@utility mx-nav-group {
+    margin-inline: var(--space-gap-nav-group);
+
+    @variant md {
+        margin-inline: var(--space-gap-nav-group-md);
+    }
+}
+
+@utility my-nav-group {
+    margin-block: var(--space-gap-nav-group);
+
+    @variant md {
+        margin-block: var(--space-gap-nav-group-md);
+    }
+}
+
 @utility mt-nav-group {
     margin-top: var(--space-gap-nav-group);
 
@@ -4227,6 +4851,22 @@
                 calc(1 - var(--tw-space-y-reverse))
             );
         }
+    }
+}
+
+@utility mx-nav-section {
+    margin-inline: var(--space-gap-nav-section);
+
+    @variant md {
+        margin-inline: var(--space-gap-nav-section-md);
+    }
+}
+
+@utility my-nav-section {
+    margin-block: var(--space-gap-nav-section);
+
+    @variant md {
+        margin-block: var(--space-gap-nav-section-md);
     }
 }
 
@@ -4712,6 +5352,14 @@
     }
 }
 
+@utility py-control-lg--fixed-10 {
+    padding-block: var(--space-control-lg--fixed-10-pad-y);
+
+    @variant md {
+        padding-block: var(--space-control-lg--fixed-10-pad-y-md);
+    }
+}
+
 @utility py-control-lg--fixed-16 {
     padding-block: var(--space-control-lg--fixed-16-pad-y);
 
@@ -4752,6 +5400,14 @@
     }
 }
 
+@utility px-control-md--fixed-14 {
+    padding-inline: var(--space-control-md--fixed-14-pad-x);
+
+    @variant md {
+        padding-inline: var(--space-control-md--fixed-14-pad-x-md);
+    }
+}
+
 @utility pl-control-sm--8-12 {
     padding-left: var(--space-control-sm--8-12-pad-x);
 
@@ -4765,6 +5421,14 @@
 
     @variant md {
         padding-right: var(--space-control-sm--8-12-pad-x-md);
+    }
+}
+
+@utility px-control-sm--fixed-10 {
+    padding-inline: var(--space-control-sm--fixed-10-pad-x);
+
+    @variant md {
+        padding-inline: var(--space-control-sm--fixed-10-pad-x-md);
     }
 }
 
@@ -4842,6 +5506,22 @@
     }
 }
 
+@utility gap-group--fixed-14 {
+    gap: var(--space-gap-group--fixed-14);
+
+    @variant md {
+        gap: var(--space-gap-group--fixed-14-md);
+    }
+}
+
+@utility mt-group--fixed-14 {
+    margin-top: var(--space-gap-group--fixed-14);
+
+    @variant md {
+        margin-top: var(--space-gap-group--fixed-14-md);
+    }
+}
+
 @utility gap-group--fixed-20 {
     gap: var(--space-gap-group--fixed-20);
 
@@ -4850,11 +5530,35 @@
     }
 }
 
+@utility mt-group--fixed-20 {
+    margin-top: var(--space-gap-group--fixed-20);
+
+    @variant md {
+        margin-top: var(--space-gap-group--fixed-20-md);
+    }
+}
+
 @utility ml-group--fixed-20 {
     margin-left: var(--space-gap-group--fixed-20);
 
     @variant md {
         margin-left: var(--space-gap-group--fixed-20-md);
+    }
+}
+
+@utility gap-group-stepped--12-24 {
+    gap: var(--space-gap-group-stepped--12-24);
+
+    @variant md {
+        gap: var(--space-gap-group-stepped--12-24-md);
+    }
+}
+
+@utility mt-group-stepped--12-24 {
+    margin-top: var(--space-gap-group-stepped--12-24);
+
+    @variant md {
+        margin-top: var(--space-gap-group-stepped--12-24-md);
     }
 }
 
@@ -4890,6 +5594,14 @@
     }
 }
 
+@utility gap-nav-group--fixed-14 {
+    gap: var(--space-gap-nav-group--fixed-14);
+
+    @variant md {
+        gap: var(--space-gap-nav-group--fixed-14-md);
+    }
+}
+
 @utility gap-nav-related--8-12 {
     gap: var(--space-gap-nav-related--8-12);
 
@@ -4911,6 +5623,46 @@
 
     @variant md {
         gap: var(--space-gap-nav-related--fixed-12-md);
+    }
+}
+
+@utility gap-x-nav-related--fixed-12 {
+    column-gap: var(--space-gap-nav-related--fixed-12);
+
+    @variant md {
+        column-gap: var(--space-gap-nav-related--fixed-12-md);
+    }
+}
+
+@utility gap-nav-section--fixed-32 {
+    gap: var(--space-gap-nav-section--fixed-32);
+
+    @variant md {
+        gap: var(--space-gap-nav-section--fixed-32-md);
+    }
+}
+
+@utility gap-nav-section--fixed-40 {
+    gap: var(--space-gap-nav-section--fixed-40);
+
+    @variant md {
+        gap: var(--space-gap-nav-section--fixed-40-md);
+    }
+}
+
+@utility gap-x-nav-section--fixed-40 {
+    column-gap: var(--space-gap-nav-section--fixed-40);
+
+    @variant md {
+        column-gap: var(--space-gap-nav-section--fixed-40-md);
+    }
+}
+
+@utility gap-nav-section--fixed-48 {
+    gap: var(--space-gap-nav-section--fixed-48);
+
+    @variant md {
+        gap: var(--space-gap-nav-section--fixed-48-md);
     }
 }
 
@@ -5076,6 +5828,22 @@
     }
 }
 
+@utility mx-related--fixed-10 {
+    margin-inline: var(--space-gap-related--fixed-10);
+
+    @variant md {
+        margin-inline: var(--space-gap-related--fixed-10-md);
+    }
+}
+
+@utility my-related--fixed-10 {
+    margin-block: var(--space-gap-related--fixed-10);
+
+    @variant md {
+        margin-block: var(--space-gap-related--fixed-10-md);
+    }
+}
+
 @utility gap-related--fixed-8 {
     gap: var(--space-gap-related--fixed-8);
 
@@ -5097,6 +5865,46 @@
 
     @variant md {
         row-gap: var(--space-gap-related--fixed-8-md);
+    }
+}
+
+@utility mx-related--fixed-8 {
+    margin-inline: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        margin-inline: var(--space-gap-related--fixed-8-md);
+    }
+}
+
+@utility my-related--fixed-8 {
+    margin-block: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        margin-block: var(--space-gap-related--fixed-8-md);
+    }
+}
+
+@utility mt-related--fixed-8 {
+    margin-top: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        margin-top: var(--space-gap-related--fixed-8-md);
+    }
+}
+
+@utility mb-related--fixed-8 {
+    margin-bottom: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        margin-bottom: var(--space-gap-related--fixed-8-md);
+    }
+}
+
+@utility ms-related--fixed-8 {
+    margin-inline-start: var(--space-gap-related--fixed-8);
+
+    @variant md {
+        margin-inline-start: var(--space-gap-related--fixed-8-md);
     }
 }
 
@@ -5132,11 +5940,35 @@
     }
 }
 
+@utility mt-section--24-32 {
+    margin-top: var(--space-gap-section--24-32);
+
+    @variant md {
+        margin-top: var(--space-gap-section--24-32-md);
+    }
+}
+
 @utility gap-section--fixed-32 {
     gap: var(--space-gap-section--fixed-32);
 
     @variant md {
         gap: var(--space-gap-section--fixed-32-md);
+    }
+}
+
+@utility mb-section--fixed-32 {
+    margin-bottom: var(--space-gap-section--fixed-32);
+
+    @variant md {
+        margin-bottom: var(--space-gap-section--fixed-32-md);
+    }
+}
+
+@utility gap-section-stepped--24-48 {
+    gap: var(--space-gap-section-stepped--24-48);
+
+    @variant md {
+        gap: var(--space-gap-section-stepped--24-48-md);
     }
 }
 
@@ -5344,6 +6176,22 @@
     }
 }
 
+@utility mt-tight--fixed-6 {
+    margin-top: var(--space-gap-tight--fixed-6);
+
+    @variant md {
+        margin-top: var(--space-gap-tight--fixed-6-md);
+    }
+}
+
+@utility mb-tight--fixed-6 {
+    margin-bottom: var(--space-gap-tight--fixed-6);
+
+    @variant md {
+        margin-bottom: var(--space-gap-tight--fixed-6-md);
+    }
+}
+
 @utility gap-tight--fixed-8 {
     gap: var(--space-gap-tight--fixed-8);
 
@@ -5397,118 +6245,6 @@
 
     @variant md {
         padding-block: var(--space-inset-flush--0-24-y-md);
-    }
-}
-
-@utility py-inset-flush--12-0 {
-    padding-block: var(--space-inset-flush--12-0-y);
-
-    @variant md {
-        padding-block: var(--space-inset-flush--12-0-y-md);
-    }
-}
-
-@utility pb-inset-flush--12-16 {
-    padding-bottom: var(--space-inset-flush--12-16-y);
-
-    @variant md {
-        padding-bottom: var(--space-inset-flush--12-16-y-md);
-    }
-}
-
-@utility pt-inset-flush--12-24 {
-    padding-top: var(--space-inset-flush--12-24-y);
-
-    @variant md {
-        padding-top: var(--space-inset-flush--12-24-y-md);
-    }
-}
-
-@utility pt-inset-flush--24-32 {
-    padding-top: var(--space-inset-flush--24-32-y);
-
-    @variant md {
-        padding-top: var(--space-inset-flush--24-32-y-md);
-    }
-}
-
-@utility pb-inset-flush--6-8 {
-    padding-bottom: var(--space-inset-flush--6-8-y);
-
-    @variant md {
-        padding-bottom: var(--space-inset-flush--6-8-y-md);
-    }
-}
-
-@utility py-inset-flush--fixed-10 {
-    padding-block: var(--space-inset-flush--fixed-10-y);
-
-    @variant md {
-        padding-block: var(--space-inset-flush--fixed-10-y-md);
-    }
-}
-
-@utility px-inset-flush--fixed-12 {
-    padding-inline: var(--space-inset-flush--fixed-12-x);
-
-    @variant md {
-        padding-inline: var(--space-inset-flush--fixed-12-x-md);
-    }
-}
-
-@utility py-inset-flush--fixed-12 {
-    padding-block: var(--space-inset-flush--fixed-12-y);
-
-    @variant md {
-        padding-block: var(--space-inset-flush--fixed-12-y-md);
-    }
-}
-
-@utility py-inset-flush--fixed-16 {
-    padding-block: var(--space-inset-flush--fixed-16-y);
-
-    @variant md {
-        padding-block: var(--space-inset-flush--fixed-16-y-md);
-    }
-}
-
-@utility pt-inset-flush--fixed-16 {
-    padding-top: var(--space-inset-flush--fixed-16-y);
-
-    @variant md {
-        padding-top: var(--space-inset-flush--fixed-16-y-md);
-    }
-}
-
-@utility pb-inset-flush--fixed-16 {
-    padding-bottom: var(--space-inset-flush--fixed-16-y);
-
-    @variant md {
-        padding-bottom: var(--space-inset-flush--fixed-16-y-md);
-    }
-}
-
-@utility pt-inset-flush--fixed-4 {
-    padding-top: var(--space-inset-flush--fixed-4-y);
-
-    @variant md {
-        padding-top: var(--space-inset-flush--fixed-4-y-md);
-    }
-}
-
-@utility py-inset-flush--fixed-8 {
-    padding-block: var(--space-inset-flush--fixed-8-y);
-
-    @variant md {
-        padding-block: var(--space-inset-flush--fixed-8-y-md);
-    }
-}
-
-@utility pt-inset-flush--fixed-8 {
-    padding-top: var(--space-inset-flush--fixed-8-y);
-
-    @variant md {
-        padding-top: var(--space-inset-flush--fixed-8-y-md);
     }
 }
 
@@ -5594,11 +6330,43 @@
     }
 }
 
+@utility pr-inset-nav--fixed-16 {
+    padding-right: var(--space-inset-nav--fixed-16-x);
+
+    @variant md {
+        padding-right: var(--space-inset-nav--fixed-16-x-md);
+    }
+}
+
 @utility px-inset-nav--fixed-4 {
     padding-inline: var(--space-inset-nav--fixed-4-x);
 
     @variant md {
         padding-inline: var(--space-inset-nav--fixed-4-x-md);
+    }
+}
+
+@utility pl-inset-nav--fixed-8 {
+    padding-left: var(--space-inset-nav--fixed-8-x);
+
+    @variant md {
+        padding-left: var(--space-inset-nav--fixed-8-x-md);
+    }
+}
+
+@utility py-inset-nav-bar--fixed-12 {
+    padding-block: var(--space-inset-nav-bar--fixed-12-y);
+
+    @variant md {
+        padding-block: var(--space-inset-nav-bar--fixed-12-y-md);
+    }
+}
+
+@utility pr-inset-nav-bar--fixed-14 {
+    padding-right: var(--space-inset-nav-bar--fixed-14-x);
+
+    @variant md {
+        padding-right: var(--space-inset-nav-bar--fixed-14-x-md);
     }
 }
 
@@ -5610,11 +6378,75 @@
     }
 }
 
+@utility pb-inset-nav-bar--fixed-16 {
+    padding-bottom: var(--space-inset-nav-bar--fixed-16-y);
+
+    @variant md {
+        padding-bottom: var(--space-inset-nav-bar--fixed-16-y-md);
+    }
+}
+
 @utility py-inset-nav-bar--fixed-20 {
     padding-block: var(--space-inset-nav-bar--fixed-20-y);
 
     @variant md {
         padding-block: var(--space-inset-nav-bar--fixed-20-y-md);
+    }
+}
+
+@utility pl-inset-nav-bar--fixed-20 {
+    padding-left: var(--space-inset-nav-bar--fixed-20-x);
+
+    @variant md {
+        padding-left: var(--space-inset-nav-bar--fixed-20-x-md);
+    }
+}
+
+@utility px-inset-nav-bar--fixed-24 {
+    padding-inline: var(--space-inset-nav-bar--fixed-24-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-nav-bar--fixed-24-x-md);
+    }
+}
+
+@utility px-inset-nav-bar--fixed-32 {
+    padding-inline: var(--space-inset-nav-bar--fixed-32-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-nav-bar--fixed-32-x-md);
+    }
+}
+
+@utility pt-inset-nav-bar--fixed-32 {
+    padding-top: var(--space-inset-nav-bar--fixed-32-y);
+
+    @variant md {
+        padding-top: var(--space-inset-nav-bar--fixed-32-y-md);
+    }
+}
+
+@utility py-inset-nav-item--fixed-16 {
+    padding-block: var(--space-inset-nav-item--fixed-16-y);
+
+    @variant md {
+        padding-block: var(--space-inset-nav-item--fixed-16-y-md);
+    }
+}
+
+@utility pb-inset-nav-item--fixed-16 {
+    padding-bottom: var(--space-inset-nav-item--fixed-16-y);
+
+    @variant md {
+        padding-bottom: var(--space-inset-nav-item--fixed-16-y-md);
+    }
+}
+
+@utility pt-inset-nav-item--fixed-24 {
+    padding-top: var(--space-inset-nav-item--fixed-24-y);
+
+    @variant md {
+        padding-top: var(--space-inset-nav-item--fixed-24-y-md);
     }
 }
 
@@ -5663,6 +6495,58 @@
 
     @variant md {
         padding-inline: var(--space-inset-surface-flat--12-16-x-md);
+    }
+}
+
+@utility pt-inset-surface-flat--8-12 {
+    padding-top: var(--space-inset-surface-flat--8-12-y);
+
+    @variant md {
+        padding-top: var(--space-inset-surface-flat--8-12-y-md);
+    }
+}
+
+@utility p-inset-surface-flat--fixed-12 {
+    padding: var(--space-inset-surface-flat--fixed-12-y)
+        var(--space-inset-surface-flat--fixed-12-x);
+
+    @variant md {
+        padding: var(--space-inset-surface-flat--fixed-12-y-md)
+            var(--space-inset-surface-flat--fixed-12-x-md);
+    }
+}
+
+@utility px-inset-surface-flat--fixed-12 {
+    padding-inline: var(--space-inset-surface-flat--fixed-12-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-surface-flat--fixed-12-x-md);
+    }
+}
+
+@utility p-inset-surface-flat--fixed-14 {
+    padding: var(--space-inset-surface-flat--fixed-14-y)
+        var(--space-inset-surface-flat--fixed-14-x);
+
+    @variant md {
+        padding: var(--space-inset-surface-flat--fixed-14-y-md)
+            var(--space-inset-surface-flat--fixed-14-x-md);
+    }
+}
+
+@utility px-inset-surface-flat--fixed-14 {
+    padding-inline: var(--space-inset-surface-flat--fixed-14-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-surface-flat--fixed-14-x-md);
+    }
+}
+
+@utility pt-inset-surface-flat--fixed-14 {
+    padding-top: var(--space-inset-surface-flat--fixed-14-y);
+
+    @variant md {
+        padding-top: var(--space-inset-surface-flat--fixed-14-y-md);
     }
 }
 
@@ -5742,6 +6626,16 @@
     }
 }
 
+@utility p-inset-surface-wide--fixed-20 {
+    padding: var(--space-inset-surface-wide--fixed-20-y)
+        var(--space-inset-surface-wide--fixed-20-x);
+
+    @variant md {
+        padding: var(--space-inset-surface-wide--fixed-20-y-md)
+            var(--space-inset-surface-wide--fixed-20-x-md);
+    }
+}
+
 @utility py-inset-surface-wide--fixed-28 {
     padding-block: var(--space-inset-surface-wide--fixed-28-y);
 
@@ -5800,11 +6694,37 @@
     }
 }
 
+@utility pb-inset-tight--6-8 {
+    padding-bottom: var(--space-inset-tight--6-8-y);
+
+    @variant md {
+        padding-bottom: var(--space-inset-tight--6-8-y-md);
+    }
+}
+
+@utility p-inset-tight--fixed-4 {
+    padding: var(--space-inset-tight--fixed-4-y)
+        var(--space-inset-tight--fixed-4-x);
+
+    @variant md {
+        padding: var(--space-inset-tight--fixed-4-y-md)
+            var(--space-inset-tight--fixed-4-x-md);
+    }
+}
+
 @utility px-inset-tight--fixed-4 {
     padding-inline: var(--space-inset-tight--fixed-4-x);
 
     @variant md {
         padding-inline: var(--space-inset-tight--fixed-4-x-md);
+    }
+}
+
+@utility py-inset-tight--fixed-4 {
+    padding-block: var(--space-inset-tight--fixed-4-y);
+
+    @variant md {
+        padding-block: var(--space-inset-tight--fixed-4-y-md);
     }
 }
 
@@ -5824,11 +6744,35 @@
     }
 }
 
+@utility pl-inset-tight--fixed-4 {
+    padding-left: var(--space-inset-tight--fixed-4-x);
+
+    @variant md {
+        padding-left: var(--space-inset-tight--fixed-4-x-md);
+    }
+}
+
+@utility pr-inset-tight--fixed-4 {
+    padding-right: var(--space-inset-tight--fixed-4-x);
+
+    @variant md {
+        padding-right: var(--space-inset-tight--fixed-4-x-md);
+    }
+}
+
 @utility px-inset-tight--fixed-6 {
     padding-inline: var(--space-inset-tight--fixed-6-x);
 
     @variant md {
         padding-inline: var(--space-inset-tight--fixed-6-x-md);
+    }
+}
+
+@utility py-inset-tight--fixed-6 {
+    padding-block: var(--space-inset-tight--fixed-6-y);
+
+    @variant md {
+        padding-block: var(--space-inset-tight--fixed-6-y-md);
     }
 }
 
@@ -5847,6 +6791,14 @@
     @variant md {
         padding: var(--space-inset-tight--fixed-8-y-md)
             var(--space-inset-tight--fixed-8-x-md);
+    }
+}
+
+@utility px-inset-tight--fixed-8 {
+    padding-inline: var(--space-inset-tight--fixed-8-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-tight--fixed-8-x-md);
     }
 }
 

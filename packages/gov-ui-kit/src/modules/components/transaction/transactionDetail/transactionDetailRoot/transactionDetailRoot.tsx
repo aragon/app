@@ -27,7 +27,10 @@ export const TransactionDetailRoot: React.FC<ITransactionDetailRootProps> = (pro
     return (
         <>
             <Dialog.Header onClose={onClose} title={title ?? copy.transactionDetail.title} />
-            <Dialog.Content className={classNames('pt-2 pb-4 md:pt-3 md:pb-6', className)} {...otherProps}>
+            <Dialog.Content
+                className={classNames('pt-inset-surface-flat--8-12 pb-inset-surface', className)}
+                {...otherProps}
+            >
                 <div className="flex w-full flex-col gap-y-related--8-12">{children}</div>
             </Dialog.Content>
         </>

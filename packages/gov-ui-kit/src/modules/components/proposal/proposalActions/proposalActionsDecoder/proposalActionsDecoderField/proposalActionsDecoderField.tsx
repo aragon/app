@@ -164,7 +164,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
                 </div>
                 {isArray && mode === ProposalActionsDecoderMode.EDIT && (
                     <Button
-                        className="mt-1 self-start"
+                        className="mt-tight self-start"
                         iconLeft={IconType.PLUS}
                         onClick={handleAddArrayItem}
                         size="md"

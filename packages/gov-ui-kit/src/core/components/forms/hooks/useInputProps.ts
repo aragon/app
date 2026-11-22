@@ -36,6 +36,7 @@ export const useInputProps = <TElement extends InputComponentElement>(
         onChange,
         value,
         wrapperClassName,
+        spacing,
         ...inputElementProps
     } = props;
 
@@ -60,6 +61,7 @@ export const useInputProps = <TElement extends InputComponentElement>(
         className,
         inputLength,
         wrapperClassName,
+        spacing,
     };
 
     const inputClasses = classNames(

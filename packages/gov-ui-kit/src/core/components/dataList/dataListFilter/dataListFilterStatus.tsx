@@ -29,7 +29,7 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
         <div className="flex items-center justify-between">
             <p
                 className={classNames(
-                    'px-inset-item-flat--fixed-12 py-inset-flush--fixed-10 text-sm leading-tight font-normal text-neutral-500 md:text-base',
+                    'my-related--fixed-10 px-inset-item-flat--fixed-12 text-sm leading-tight font-normal text-neutral-500 md:text-base',
                     { 'text-primary-400': isLoading || isInitialLoading },
                     { 'text-neutral-500': displayItemsCount },
                 )}

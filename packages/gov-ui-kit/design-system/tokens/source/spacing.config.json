@@ -44,6 +44,7 @@
         "gap-group",
         "gap-group-stepped",
         "gap-section",
+        "gap-section-stepped",
         "gap-section-wide",
         "gap-layout"
     ],
@@ -181,6 +182,12 @@
             },
             "space-y": {
                 "space": "y"
+            },
+            "mx": {
+                "property": "margin-inline"
+            },
+            "my": {
+                "property": "margin-block"
             },
             "mt": {
                 "property": "margin-top"

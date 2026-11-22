@@ -45,7 +45,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
     const buttonClassName = classNames(
         'flex max-w-48 cursor-pointer items-center gap-related rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
         'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 disabled:cursor-default',
-        { 'px-4 py-2.5': user == null },
+        { 'px-control-lg py-control-lg--fixed-10': user == null },
         { 'p-1 md:pl-control-lg': user != null },
         className,
     );

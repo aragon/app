@@ -64,7 +64,7 @@ export const VoteProposalDataListItemStructure: React.FC<IVoteProposalDataListIt
                     />
                     {voteIndicatorDescription && <span className="whitespace-nowrap">{voteIndicatorDescription}</span>}
                 </div>
-                {date && <p className="mx-1">{formatterUtils.formatDate(date, { format: DateFormat.RELATIVE })}</p>}
+                {date && <p className="mx-tight">{formatterUtils.formatDate(date, { format: DateFormat.RELATIVE })}</p>}
             </div>
         </DataList.Item>
     );

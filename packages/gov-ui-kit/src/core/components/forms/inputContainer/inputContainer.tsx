@@ -48,6 +48,7 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
         wrapperClassName,
         id,
         useCustomWrapper,
+        spacing = 'default',
         ...otherProps
     } = props;
 
@@ -68,7 +69,15 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
     const containerProps = useCustomWrapper ? {} : { className: containerClasses };
 
     return (
-        <div className={classNames('flex grow flex-col gap-related--8-12', className)} ref={ref} {...otherProps}>
+        <div
+            className={classNames(
+                'flex grow flex-col',
+                { 'gap-related--8-12': spacing === 'default', 'gap-related': spacing === 'related' },
+                className,
+            )}
+            ref={ref}
+            {...otherProps}
+        >
             {(label != null || helpText != null) && (
                 <label className="flex flex-col gap-tight--2-4" htmlFor={id}>
                     {label && (

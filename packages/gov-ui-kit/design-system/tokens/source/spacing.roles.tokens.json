@@ -545,7 +545,7 @@
                 }
             },
             "inset-surface-wide": {
-                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24\u219224 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
+                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24→24 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -1037,7 +1037,7 @@
                 }
             },
             "gap-group-stepped": {
-                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page (split from gap-group by decision 0: 28 places step 16\u219224).",
+                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page (split from gap-group by decision 0: 28 places step 16→24).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "gap"
@@ -1141,6 +1141,62 @@
                                 },
                                 "compact": {
                                     "value": 20,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "gap-section-stepped": {
+                "$description": "Between sections that space out on desktop: wizard steps, settings forms, governance setup sections (split from gap-section by decision 0: 10 places step 24 to 32-48 at md, the L1-optimal md value is 40).",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "gap"
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 24,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 32,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 20,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 40,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 48,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 32,
                                     "unit": "px"
                                 }
                             }
