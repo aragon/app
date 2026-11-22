@@ -14,7 +14,7 @@
         },
         "looser": {
             "selector": "[data-spacing=\"looser\"]",
-            "description": "New, looser: the same roles one step more generous (phone page gutters and item insets stay at New)."
+            "description": "New, looser: the same roles one step more generous (phone page gutters, phone item and surface x insets and the aside cards' x inset stay at New, so looser never narrows a phone line or an aside column)."
         },
         "compact": {
             "selector": "[data-spacing=\"compact\"]",

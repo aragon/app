@@ -32,7 +32,7 @@ export const FooterSidebar: React.FC = () => {
                 </span>
                 <AragonLogo size="sm" />
             </Link>
-            <div className="flex flex-wrap items-center gap-x-nav-related">
+            <div className="flex flex-wrap items-center gap-x-nav-related--fixed-8">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
                         className="text-sm font-normal text-neutral-500 hover:text-neutral-800"

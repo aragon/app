@@ -329,7 +329,7 @@
                 }
             },
             "inset-surface": {
-                "$description": "Padding of a standalone surface that steps up on desktop: card, panel, dialog header/body/footer, alert, empty state.",
+                "$description": "Padding of a standalone surface that steps up on desktop: card, panel, dialog header/body/footer, alert, empty state. Looser keeps New's phone x (O-03 extended: a wider phone padding wraps labels).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -349,7 +349,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 20,
+                                        "value": 16,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -437,7 +437,7 @@
                 }
             },
             "inset-surface-flat": {
-                "$description": "Padding of a small standalone surface that keeps one size: popovers, menus, compact cards and boxes (split from inset-surface by decision 0: 21 x and 19 y places keep one value).",
+                "$description": "Padding of a small standalone surface that keeps one size: popovers, menus, compact cards and boxes (split from inset-surface by decision 0: 21 x and 19 y places keep one value). Looser keeps New's phone x (O-03 extended).",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -457,7 +457,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 20,
+                                        "value": 16,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -545,7 +545,7 @@
                 }
             },
             "inset-surface-wide": {
-                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24→24 is 8 px from the stepped role on phone; 19 Card call sites use p-6).",
+                "$description": "Padding of a large panel that is 24 px at every width: aside cards, the p-6 cards and settings panels (split from inset-surface by decision 0: 24→24 is 8 px from the stepped role on phone; 19 Card call sites use p-6). Looser keeps New's x at every width: these are the narrow aside cards, whose terms and labels have no slack (a definition term fits its 1/3 column by 0.2 px), so looser only adds vertical air.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset"
@@ -565,7 +565,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 32,
+                                        "value": 24,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -589,7 +589,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 32,
+                                        "value": 24,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -1374,7 +1374,7 @@
                 }
             },
             "inset-nav": {
-                "$description": "Navigation chrome (owner decision 6): padding of the app shell around the navigation: the sidebar panel, the top and mobile header bars, the mobile nav menu. New = Today snapped to the scale; looser and compact move one scale step.",
+                "$description": "Navigation chrome (owner decision 6): padding of the app shell around the navigation: the sidebar panel, the top and mobile header bars, the mobile nav menu. New = Today snapped to the scale; looser and compact move one scale step, except x in looser, which keeps New: the sidebar footer link row has 2 px of slack at the sidebar's width, so a wider panel padding wraps it.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "inset",
@@ -1395,7 +1395,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 16,
+                                        "value": 12,
                                         "unit": "px"
                                     },
                                     "compact": {
@@ -1419,7 +1419,7 @@
                                         "unit": "px"
                                     },
                                     "looser": {
-                                        "value": 16,
+                                        "value": 12,
                                         "unit": "px"
                                     },
                                     "compact": {

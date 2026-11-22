@@ -237,6 +237,11 @@ test('the spacing layer writes one value set per mode, the coarse fallback and u
         css,
         /@media \(pointer: coarse\) \{\n {8}\[data-spacing="compact"\] \{\n {12}--space-control-sm-height: 32px;/,
     );
+    // A density-invariant exception renders its role's New value in every preview mode; a density-invariant role
+    // keeps one value in New, looser and compact.
+    const looserBlock = css.slice(css.indexOf('[data-spacing="looser"] {'), css.indexOf('[data-spacing="compact"] {'));
+    assert.match(looserBlock, /--space-gap-group-stepped--16-24-md: 24px;/);
+    assert.match(looserBlock, /--space-gap-phrase: 4px;/);
     // Every block dimension of a target size falls back (heights, the large control's block padding, the row).
     const coarseBlock = css.slice(css.indexOf('@media (pointer: coarse)'));
     for (const name of ['control-md-height', 'control-lg-height', 'control-lg-pad-y', 'row-height']) {

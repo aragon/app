@@ -3,14 +3,14 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 24 roles, 8 component sizes and 93 Today exceptions, 570 utilities. A utility is
+ * Semantic spacing: 24 roles, 8 component sizes and 97 Today exceptions, 574 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
  * Value sets:
  * - :root                     Today: pixel-identical to the product before the roles; every exception keeps its own value.
  * - [data-spacing="new"]      New: every role at its one standard value; exceptions follow their role.
- * - [data-spacing="looser"]   New, looser: the same roles one step more generous (phone page gutters and item insets stay at New).
+ * - [data-spacing="looser"]   New, looser: the same roles one step more generous (phone page gutters, phone item and surface x insets and the aside cards' x inset stay at New, so looser never narrows a phone line or an aside column).
  * - [data-spacing="compact"]  New, compact: the same roles one step denser; control heights fall back to New on coarse pointers.
  * - (pointer: coarse) compact: size.control-sm.height, size.control-md.height, size.control-lg.height, size.control-lg.pad-y, size.control-item.pad-y, size.control-item-flat.pad-y, size.row.height take their new values.
  */
@@ -207,6 +207,9 @@
         /* exception gap-group-stepped--16-20 (its own Today value) */
         --space-gap-group-stepped--16-20: 16px;
         --space-gap-group-stepped--16-20-md: 20px;
+        /* exception gap-group-stepped--16-24 (its own Today value) */
+        --space-gap-group-stepped--16-24: 16px;
+        --space-gap-group-stepped--16-24-md: 24px;
         /* exception gap-group-stepped--20-24 (its own Today value) */
         --space-gap-group-stepped--20-24: 20px;
         --space-gap-group-stepped--20-24-md: 24px;
@@ -225,6 +228,9 @@
         /* exception gap-nav-related--fixed-12 (its own Today value) */
         --space-gap-nav-related--fixed-12: 12px;
         --space-gap-nav-related--fixed-12-md: 12px;
+        /* exception gap-nav-related--fixed-8 (its own Today value) */
+        --space-gap-nav-related--fixed-8: 8px;
+        --space-gap-nav-related--fixed-8-md: 8px;
         /* exception gap-nav-section--fixed-32 (its own Today value) */
         --space-gap-nav-section--fixed-32: 32px;
         --space-gap-nav-section--fixed-32-md: 32px;
@@ -279,6 +285,9 @@
         /* exception gap-section--24-32 (its own Today value) */
         --space-gap-section--24-32: 24px;
         --space-gap-section--24-32-md: 32px;
+        /* exception gap-section--fixed-24 (its own Today value) */
+        --space-gap-section--fixed-24: 24px;
+        --space-gap-section--fixed-24-md: 24px;
         /* exception gap-section--fixed-32 (its own Today value) */
         --space-gap-section--fixed-32: 32px;
         --space-gap-section--fixed-32-md: 32px;
@@ -394,6 +403,9 @@
         /* exception inset-surface--16-20 (its own Today value) */
         --space-inset-surface--16-20-y: 16px;
         --space-inset-surface--16-20-y-md: 20px;
+        /* exception inset-surface--16-24 (its own Today value) */
+        --space-inset-surface--16-24-x: 16px;
+        --space-inset-surface--16-24-x-md: 24px;
         /* exception inset-surface-flat--12-16 (its own Today value) */
         --space-inset-surface-flat--12-16-x: 12px;
         --space-inset-surface-flat--12-16-x-md: 16px;
@@ -659,6 +671,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-group-stepped--16-24 (density-invariant: gap-group-stepped at New) */
+        --space-gap-group-stepped--16-24: 16px;
+        --space-gap-group-stepped--16-24-md: 24px;
         /* exception gap-group-stepped--20-24 (follows gap-group-stepped) */
         --space-gap-group-stepped--20-24: var(--space-gap-group-stepped);
         --space-gap-group-stepped--20-24-md: var(--space-gap-group-stepped-md);
@@ -677,6 +692,9 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 12px;
         --space-gap-nav-related--fixed-12-md: 12px;
+        /* exception gap-nav-related--fixed-8 (chrome: its own snapped value) */
+        --space-gap-nav-related--fixed-8: 8px;
+        --space-gap-nav-related--fixed-8-md: 8px;
         /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
         --space-gap-nav-section--fixed-32: 32px;
         --space-gap-nav-section--fixed-32-md: 32px;
@@ -731,6 +749,9 @@
         /* exception gap-section--24-32 (follows gap-section) */
         --space-gap-section--24-32: var(--space-gap-section);
         --space-gap-section--24-32-md: var(--space-gap-section-md);
+        /* exception gap-section--fixed-24 (density-invariant: gap-section at New) */
+        --space-gap-section--fixed-24: 24px;
+        --space-gap-section--fixed-24-md: 24px;
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
@@ -856,6 +877,9 @@
         /* exception inset-surface--16-20 (follows inset-surface) */
         --space-inset-surface--16-20-y: var(--space-inset-surface-y);
         --space-inset-surface--16-20-y-md: var(--space-inset-surface-y-md);
+        /* exception inset-surface--16-24 (density-invariant: inset-surface at New) */
+        --space-inset-surface--16-24-x: 16px;
+        --space-inset-surface--16-24-x-md: 24px;
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
@@ -997,18 +1021,18 @@
         --space-inset-item-flat-y: 12px;
         --space-inset-item-flat-y-md: 16px;
         /* role inset-surface */
-        --space-inset-surface-x: 20px;
+        --space-inset-surface-x: 16px;
         --space-inset-surface-x-md: 32px;
         --space-inset-surface-y: 20px;
         --space-inset-surface-y-md: 32px;
         /* role inset-surface-flat */
-        --space-inset-surface-flat-x: 20px;
+        --space-inset-surface-flat-x: 16px;
         --space-inset-surface-flat-x-md: 20px;
         --space-inset-surface-flat-y: 16px;
         --space-inset-surface-flat-y-md: 16px;
         /* role inset-surface-wide */
-        --space-inset-surface-wide-x: 32px;
-        --space-inset-surface-wide-x-md: 32px;
+        --space-inset-surface-wide-x: 24px;
+        --space-inset-surface-wide-x-md: 24px;
         --space-inset-surface-wide-y: 32px;
         --space-inset-surface-wide-y-md: 32px;
         /* role inset-page */
@@ -1049,8 +1073,8 @@
         --space-gap-layout: 48px;
         --space-gap-layout-md: 80px;
         /* role inset-nav */
-        --space-inset-nav-x: 16px;
-        --space-inset-nav-x-md: 16px;
+        --space-inset-nav-x: 12px;
+        --space-inset-nav-x-md: 12px;
         --space-inset-nav-y: 20px;
         --space-inset-nav-y-md: 20px;
         /* role inset-nav-item */
@@ -1177,6 +1201,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-group-stepped--16-24 (density-invariant: gap-group-stepped at New) */
+        --space-gap-group-stepped--16-24: 16px;
+        --space-gap-group-stepped--16-24-md: 24px;
         /* exception gap-group-stepped--20-24 (follows gap-group-stepped) */
         --space-gap-group-stepped--20-24: var(--space-gap-group-stepped);
         --space-gap-group-stepped--20-24-md: var(--space-gap-group-stepped-md);
@@ -1195,6 +1222,9 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 16px;
         --space-gap-nav-related--fixed-12-md: 16px;
+        /* exception gap-nav-related--fixed-8 (chrome: its own snapped value) */
+        --space-gap-nav-related--fixed-8: 8px;
+        --space-gap-nav-related--fixed-8-md: 8px;
         /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
         --space-gap-nav-section--fixed-32: 40px;
         --space-gap-nav-section--fixed-32-md: 40px;
@@ -1249,6 +1279,9 @@
         /* exception gap-section--24-32 (follows gap-section) */
         --space-gap-section--24-32: var(--space-gap-section);
         --space-gap-section--24-32-md: var(--space-gap-section-md);
+        /* exception gap-section--fixed-24 (density-invariant: gap-section at New) */
+        --space-gap-section--fixed-24: 24px;
+        --space-gap-section--fixed-24-md: 24px;
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
@@ -1324,8 +1357,8 @@
         --space-inset-nav--fixed-16-x: 20px;
         --space-inset-nav--fixed-16-x-md: 20px;
         /* exception inset-nav--fixed-4 (chrome: its own snapped value) */
-        --space-inset-nav--fixed-4-x: 6px;
-        --space-inset-nav--fixed-4-x-md: 6px;
+        --space-inset-nav--fixed-4-x: 4px;
+        --space-inset-nav--fixed-4-x-md: 4px;
         /* exception inset-nav--fixed-8 (chrome: its own snapped value) */
         --space-inset-nav--fixed-8-x: 12px;
         --space-inset-nav--fixed-8-x-md: 12px;
@@ -1374,6 +1407,9 @@
         /* exception inset-surface--16-20 (follows inset-surface) */
         --space-inset-surface--16-20-y: var(--space-inset-surface-y);
         --space-inset-surface--16-20-y-md: var(--space-inset-surface-y-md);
+        /* exception inset-surface--16-24 (density-invariant: inset-surface at New) */
+        --space-inset-surface--16-24-x: 16px;
+        --space-inset-surface--16-24-x-md: 24px;
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
@@ -1695,6 +1731,9 @@
         /* exception gap-group-stepped--16-20 (follows gap-group-stepped) */
         --space-gap-group-stepped--16-20: var(--space-gap-group-stepped);
         --space-gap-group-stepped--16-20-md: var(--space-gap-group-stepped-md);
+        /* exception gap-group-stepped--16-24 (density-invariant: gap-group-stepped at New) */
+        --space-gap-group-stepped--16-24: 16px;
+        --space-gap-group-stepped--16-24-md: 24px;
         /* exception gap-group-stepped--20-24 (follows gap-group-stepped) */
         --space-gap-group-stepped--20-24: var(--space-gap-group-stepped);
         --space-gap-group-stepped--20-24-md: var(--space-gap-group-stepped-md);
@@ -1713,6 +1752,9 @@
         /* exception gap-nav-related--fixed-12 (chrome: its own snapped value) */
         --space-gap-nav-related--fixed-12: 8px;
         --space-gap-nav-related--fixed-12-md: 8px;
+        /* exception gap-nav-related--fixed-8 (chrome: its own snapped value) */
+        --space-gap-nav-related--fixed-8: 6px;
+        --space-gap-nav-related--fixed-8-md: 6px;
         /* exception gap-nav-section--fixed-32 (chrome: its own snapped value) */
         --space-gap-nav-section--fixed-32: 24px;
         --space-gap-nav-section--fixed-32-md: 24px;
@@ -1767,6 +1809,9 @@
         /* exception gap-section--24-32 (follows gap-section) */
         --space-gap-section--24-32: var(--space-gap-section);
         --space-gap-section--24-32-md: var(--space-gap-section-md);
+        /* exception gap-section--fixed-24 (density-invariant: gap-section at New) */
+        --space-gap-section--fixed-24: 24px;
+        --space-gap-section--fixed-24-md: 24px;
         /* exception gap-section--fixed-32 (follows gap-section) */
         --space-gap-section--fixed-32: var(--space-gap-section);
         --space-gap-section--fixed-32-md: var(--space-gap-section-md);
@@ -1892,6 +1937,9 @@
         /* exception inset-surface--16-20 (follows inset-surface) */
         --space-inset-surface--16-20-y: var(--space-inset-surface-y);
         --space-inset-surface--16-20-y-md: var(--space-inset-surface-y-md);
+        /* exception inset-surface--16-24 (density-invariant: inset-surface at New) */
+        --space-inset-surface--16-24-x: 16px;
+        --space-inset-surface--16-24-x-md: 24px;
         /* exception inset-surface-flat--12-16 (follows inset-surface-flat) */
         --space-inset-surface-flat--12-16-x: var(--space-inset-surface-flat-x);
         --space-inset-surface-flat--12-16-x-md: var(
@@ -5896,6 +5944,14 @@
     }
 }
 
+@utility gap-x-group-stepped--16-24 {
+    column-gap: var(--space-gap-group-stepped--16-24);
+
+    @variant md {
+        column-gap: var(--space-gap-group-stepped--16-24-md);
+    }
+}
+
 @utility gap-group-stepped--20-24 {
     gap: var(--space-gap-group-stepped--20-24);
 
@@ -5957,6 +6013,14 @@
 
     @variant md {
         column-gap: var(--space-gap-nav-related--fixed-12-md);
+    }
+}
+
+@utility gap-x-nav-related--fixed-8 {
+    column-gap: var(--space-gap-nav-related--fixed-8);
+
+    @variant md {
+        column-gap: var(--space-gap-nav-related--fixed-8-md);
     }
 }
 
@@ -6295,6 +6359,14 @@
 
     @variant md {
         margin-top: var(--space-gap-section--24-32-md);
+    }
+}
+
+@utility gap-section--fixed-24 {
+    gap: var(--space-gap-section--fixed-24);
+
+    @variant md {
+        gap: var(--space-gap-section--fixed-24-md);
     }
 }
 
@@ -6837,6 +6909,14 @@
 
     @variant md {
         padding-block: var(--space-inset-surface--16-20-y-md);
+    }
+}
+
+@utility px-inset-surface--16-24 {
+    padding-inline: var(--space-inset-surface--16-24-x);
+
+    @variant md {
+        padding-inline: var(--space-inset-surface--16-24-x-md);
     }
 }
 

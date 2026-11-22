@@ -295,8 +295,20 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
                 fail(`spacing: exception ${name}.${side} must not carry modes: every preview mode renders its role`);
             }
         }
-        const redundant = dims.every(
-            (dim) => values.base.today === role.dims[dim].base.today && values.md.today === role.dims[dim].md.today,
+        // A density-invariant exception (`invariant`: every preview mode renders its role's New value, for a place whose
+        // text has no slack for a looser or denser step) or a chrome exception (its own mode values) is redundant only
+        // when its preview values match the role's too.
+        const invariant = meta.invariant === true;
+        if (invariant && role.chrome) {
+            fail(`spacing: exception ${name}: a chrome exception carries its own mode values, it cannot be invariant`);
+        }
+        const previewOf = (dim, side, mode) => (invariant ? role.dims[dim][side].new : values[side][mode]);
+        const redundant = dims.every((dim) =>
+            SIDES.every((side) =>
+                (role.chrome || invariant ? MODES : ['today']).every(
+                    (mode) => (mode === 'today' ? values[side].today : previewOf(dim, side, mode)) === role.dims[dim][side][mode],
+                ),
+            ),
         );
         if (redundant) {
             fail(
@@ -313,6 +325,7 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             description: group.$description,
             places: meta.places ?? null,
             resolution: meta.resolution ?? '',
+            invariant,
         });
     }
 
@@ -379,15 +392,20 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             }
         }
         for (const exception of exceptions.values()) {
-            lines.push(
-                `/* exception ${exception.name} (${mode === 'today' ? 'its own Today value' : exception.role.chrome ? 'chrome: its own snapped value' : `follows ${exception.role.name}`}) */`,
-            );
+            const how = exception.role.chrome
+                ? 'chrome: its own snapped value'
+                : exception.invariant
+                  ? `density-invariant: ${exception.role.name} at New`
+                  : `follows ${exception.role.name}`;
+            lines.push(`/* exception ${exception.name} (${mode === 'today' ? 'its own Today value' : how}) */`);
             for (const dim of exception.dims) {
                 for (const side of SIDES) {
-                    const value =
-                        mode === 'today' || exception.role.chrome
-                            ? px(exception.values[side][mode])
-                            : `var(${variable(exception.role.name, dim, side)})`;
+                    let value = `var(${variable(exception.role.name, dim, side)})`;
+                    if (mode === 'today' || exception.role.chrome) {
+                        value = px(exception.values[side][mode]);
+                    } else if (exception.invariant) {
+                        value = px(exception.role.dims[dim][side].new);
+                    }
                     lines.push(`${variable(exception.name, dim, side)}: ${value};`);
                 }
             }
