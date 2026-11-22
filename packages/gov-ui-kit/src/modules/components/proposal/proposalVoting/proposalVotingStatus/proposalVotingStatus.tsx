@@ -106,7 +106,7 @@ export const ProposalVotingStatus: React.FC<IProposalVotingStatusProps> = (props
 
     return (
         <div className={classNames('flex flex-row items-center gap-related--fixed-8', className)} {...otherProps}>
-            <div className="flex flex-row gap-tight--fixed-2">
+            <div className="flex flex-row flex-wrap gap-x-phrase--fixed-2">
                 {status === ProposalStatus.ACTIVE && (
                     <span className="text-primary-400">
                         <Rerender>

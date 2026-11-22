@@ -924,6 +924,63 @@
                     }
                 }
             },
+            "gap-phrase": {
+                "$description": "Between the inline text fragments of one phrase laid out as flex children: a value and its unit (48.53M ARA), a count and its noun, \"5 days\" + \"left to vote\", a label and its status (\"Minimum participation\" + \"not reached\"). It is word spacing, not layout, so it is density-invariant: New, looser and compact all keep Today's dominant value (4; the 2 px places are the exception gap-phrase--fixed-2). Phrase rows also wrap (flex-wrap) so a long phrase breaks onto a second line instead of splitting into columns.",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "kind": "gap",
+                        "invariant": true
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 4,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 4,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 4,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 4,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 4,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 4,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "gap-related": {
                 "$description": "Between the parts of one item or field: label and field, avatar and its text block, item header and its lines, a field and its action.",
                 "$extensions": {

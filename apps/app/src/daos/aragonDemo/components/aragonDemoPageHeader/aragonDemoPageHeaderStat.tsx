@@ -30,7 +30,7 @@ export const AragonDemoPageHeaderStat: React.FC<
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-baseline gap-tight leading-tight">
+            <div className="flex flex-row flex-wrap items-baseline gap-x-phrase leading-tight">
                 <p className="text-2xl md:text-4xl">{value}</p>
                 {suffix && <p className="text-base md:text-lg">{suffix}</p>}
             </div>

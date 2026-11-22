@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 23 roles, 6 component sizes and 88 Today exceptions, 546 utilities. A utility is
+ * Semantic spacing: 24 roles, 6 component sizes and 89 Today exceptions, 564 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -60,6 +60,9 @@
         /* role gap-tight */
         --space-gap-tight: 4px;
         --space-gap-tight-md: 4px;
+        /* role gap-phrase */
+        --space-gap-phrase: 4px;
+        --space-gap-phrase-md: 4px;
         /* role gap-related */
         --space-gap-related: 12px;
         --space-gap-related-md: 12px;
@@ -225,6 +228,9 @@
         /* exception gap-nav-tight--fixed-6 (its own Today value) */
         --space-gap-nav-tight--fixed-6: 6px;
         --space-gap-nav-tight--fixed-6-md: 6px;
+        /* exception gap-phrase--fixed-2 (its own Today value) */
+        --space-gap-phrase--fixed-2: 2px;
+        --space-gap-phrase--fixed-2-md: 2px;
         /* exception gap-related--12-16 (its own Today value) */
         --space-gap-related--12-16: 12px;
         --space-gap-related--12-16-md: 16px;
@@ -482,6 +488,9 @@
         /* role gap-tight */
         --space-gap-tight: 4px;
         --space-gap-tight-md: 4px;
+        /* role gap-phrase */
+        --space-gap-phrase: 4px;
+        --space-gap-phrase-md: 4px;
         /* role gap-related */
         --space-gap-related: 8px;
         --space-gap-related-md: 12px;
@@ -647,6 +656,9 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 6px;
         --space-gap-nav-tight--fixed-6-md: 6px;
+        /* exception gap-phrase--fixed-2 (follows gap-phrase) */
+        --space-gap-phrase--fixed-2: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -970,6 +982,9 @@
         /* role gap-tight */
         --space-gap-tight: 6px;
         --space-gap-tight-md: 6px;
+        /* role gap-phrase */
+        --space-gap-phrase: 4px;
+        --space-gap-phrase-md: 4px;
         /* role gap-related */
         --space-gap-related: 12px;
         --space-gap-related-md: 16px;
@@ -1135,6 +1150,9 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 8px;
         --space-gap-nav-tight--fixed-6-md: 8px;
+        /* exception gap-phrase--fixed-2 (follows gap-phrase) */
+        --space-gap-phrase--fixed-2: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -1458,6 +1476,9 @@
         /* role gap-tight */
         --space-gap-tight: 2px;
         --space-gap-tight-md: 2px;
+        /* role gap-phrase */
+        --space-gap-phrase: 4px;
+        --space-gap-phrase-md: 4px;
         /* role gap-related */
         --space-gap-related: 6px;
         --space-gap-related-md: 8px;
@@ -1623,6 +1644,9 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 4px;
         --space-gap-nav-tight--fixed-6-md: 4px;
+        /* exception gap-phrase--fixed-2 (follows gap-phrase) */
+        --space-gap-phrase--fixed-2: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -2794,6 +2818,178 @@
 
     @variant md {
         padding-right: var(--space-gap-tight-md);
+    }
+}
+
+@utility gap-phrase {
+    gap: var(--space-gap-phrase);
+
+    @variant md {
+        gap: var(--space-gap-phrase-md);
+    }
+}
+
+@utility gap-x-phrase {
+    column-gap: var(--space-gap-phrase);
+
+    @variant md {
+        column-gap: var(--space-gap-phrase-md);
+    }
+}
+
+@utility gap-y-phrase {
+    row-gap: var(--space-gap-phrase);
+
+    @variant md {
+        row-gap: var(--space-gap-phrase-md);
+    }
+}
+
+@utility space-x-phrase {
+    :where(& > :not(:last-child)) {
+        --tw-space-x-reverse: 0;
+        margin-inline-start: calc(
+            var(--space-gap-phrase) *
+            var(--tw-space-x-reverse)
+        );
+        margin-inline-end: calc(
+            var(--space-gap-phrase) *
+            calc(1 - var(--tw-space-x-reverse))
+        );
+
+        @variant md {
+            --tw-space-x-reverse: 0;
+            margin-inline-start: calc(
+                var(--space-gap-phrase-md) *
+                var(--tw-space-x-reverse)
+            );
+            margin-inline-end: calc(
+                var(--space-gap-phrase-md) *
+                calc(1 - var(--tw-space-x-reverse))
+            );
+        }
+    }
+}
+
+@utility space-y-phrase {
+    :where(& > :not(:last-child)) {
+        --tw-space-y-reverse: 0;
+        margin-block-start: calc(
+            var(--space-gap-phrase) *
+            var(--tw-space-y-reverse)
+        );
+        margin-block-end: calc(
+            var(--space-gap-phrase) *
+            calc(1 - var(--tw-space-y-reverse))
+        );
+
+        @variant md {
+            --tw-space-y-reverse: 0;
+            margin-block-start: calc(
+                var(--space-gap-phrase-md) *
+                var(--tw-space-y-reverse)
+            );
+            margin-block-end: calc(
+                var(--space-gap-phrase-md) *
+                calc(1 - var(--tw-space-y-reverse))
+            );
+        }
+    }
+}
+
+@utility mx-phrase {
+    margin-inline: var(--space-gap-phrase);
+
+    @variant md {
+        margin-inline: var(--space-gap-phrase-md);
+    }
+}
+
+@utility my-phrase {
+    margin-block: var(--space-gap-phrase);
+
+    @variant md {
+        margin-block: var(--space-gap-phrase-md);
+    }
+}
+
+@utility mt-phrase {
+    margin-top: var(--space-gap-phrase);
+
+    @variant md {
+        margin-top: var(--space-gap-phrase-md);
+    }
+}
+
+@utility mb-phrase {
+    margin-bottom: var(--space-gap-phrase);
+
+    @variant md {
+        margin-bottom: var(--space-gap-phrase-md);
+    }
+}
+
+@utility ml-phrase {
+    margin-left: var(--space-gap-phrase);
+
+    @variant md {
+        margin-left: var(--space-gap-phrase-md);
+    }
+}
+
+@utility mr-phrase {
+    margin-right: var(--space-gap-phrase);
+
+    @variant md {
+        margin-right: var(--space-gap-phrase-md);
+    }
+}
+
+@utility ms-phrase {
+    margin-inline-start: var(--space-gap-phrase);
+
+    @variant md {
+        margin-inline-start: var(--space-gap-phrase-md);
+    }
+}
+
+@utility me-phrase {
+    margin-inline-end: var(--space-gap-phrase);
+
+    @variant md {
+        margin-inline-end: var(--space-gap-phrase-md);
+    }
+}
+
+@utility pt-phrase {
+    padding-top: var(--space-gap-phrase);
+
+    @variant md {
+        padding-top: var(--space-gap-phrase-md);
+    }
+}
+
+@utility pb-phrase {
+    padding-bottom: var(--space-gap-phrase);
+
+    @variant md {
+        padding-bottom: var(--space-gap-phrase-md);
+    }
+}
+
+@utility pl-phrase {
+    padding-left: var(--space-gap-phrase);
+
+    @variant md {
+        padding-left: var(--space-gap-phrase-md);
+    }
+}
+
+@utility pr-phrase {
+    padding-right: var(--space-gap-phrase);
+
+    @variant md {
+        padding-right: var(--space-gap-phrase-md);
     }
 }
 
@@ -5691,6 +5887,14 @@
 
     @variant md {
         gap: var(--space-gap-nav-tight--fixed-6-md);
+    }
+}
+
+@utility gap-x-phrase--fixed-2 {
+    column-gap: var(--space-gap-phrase--fixed-2);
+
+    @variant md {
+        column-gap: var(--space-gap-phrase--fixed-2-md);
     }
 }
 
