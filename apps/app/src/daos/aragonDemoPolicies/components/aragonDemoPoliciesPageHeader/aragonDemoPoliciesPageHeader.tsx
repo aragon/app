@@ -88,7 +88,7 @@ export const AragonDemoPoliciesPageHeader: React.FC<
                 className="absolute top-0 left-0 -z-10 size-full object-cover"
                 src={AragonDemoHeader}
             />
-            <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
+            <Container className="flex w-full flex-col gap-x-section gap-y-section-stepped pt-10 pb-4 md:py-16">
                 <div className="flex flex-col gap-y-related--8-12">
                     <h1 className="text-3xl leading-tight font-normal text-neutral-0 md:text-5xl">
                         {title}

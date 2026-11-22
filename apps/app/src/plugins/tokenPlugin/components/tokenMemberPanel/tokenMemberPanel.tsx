@@ -81,7 +81,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     return (
         <Page.AsideCard title={cardTitle}>
             <Tabs.Root onValueChange={setSelectedTab} value={selectedTab}>
-                <Tabs.List className="pb-inset-flush--fixed-16">
+                <Tabs.List className="mb-group">
                     {visibleTabs.map(({ value }) => (
                         <Tabs.Trigger
                             key={value}

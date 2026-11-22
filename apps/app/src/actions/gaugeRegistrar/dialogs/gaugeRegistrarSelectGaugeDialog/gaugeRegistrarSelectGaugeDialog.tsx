@@ -85,7 +85,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
                     'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.description',
                 )}
             >
-                <div className="flex w-full flex-col gap-related--12-8 py-inset-flush--fixed-8">
+                <div className="my-related--fixed-8 flex w-full flex-col gap-related--12-8">
                     {isLoading && (
                         <DataList.Root
                             entityLabel={t(

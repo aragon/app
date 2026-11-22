@@ -25,7 +25,7 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
     return (
         <>
             {/* Static for small screens */}
-            <div className="relative z-10 flex flex-col items-start gap-tight self-start pr-4 md:hidden md:pr-0">
+            <div className="relative z-10 mr-group flex flex-col items-start gap-tight self-start md:hidden">
                 <p className="text-xl leading-tight font-medium text-white md:text-2xl">
                     {t(title)}
                 </p>

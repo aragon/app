@@ -92,7 +92,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                     />
                     <div
                         className={classNames(
-                            'mt-4 flex w-full grow flex-col gap-related--fixed-8 md:mt-0',
+                            'flex w-full grow flex-col gap-related--fixed-8 max-md:mt-group',
                             {
                                 'self-end': totalLabel,
                             },

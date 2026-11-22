@@ -85,9 +85,9 @@ export const GaugeVoterVotingTerminal: React.FC<
     const showVoteButton = isVotingPeriod && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
-        'flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6',
+        'flex flex-col gap-group-stepped--12-24 md:flex-row md:items-center md:justify-between',
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
-        'rounded-xl border border-b-0 bg-neutral-0 px-inset-surface-flat--12-16 py-inset-flush--12-0 md:h-[64px]',
+        'rounded-xl border border-b-0 bg-neutral-0 px-inset-surface-flat--12-16 md:h-[64px] max-md:py-inset-surface-flat',
         {
             'border-neutral-100 shadow-neutral-md': !showVoteButton,
             'border-primary-100 shadow-primary-xl': showVoteButton,
@@ -96,13 +96,13 @@ export const GaugeVoterVotingTerminal: React.FC<
 
     return (
         <div className={wrapperClassName}>
-            <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-col md:flex-row md:items-center md:gap-section">
                 <p className="text-xs font-semibold text-neutral-800 uppercase md:text-sm">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes',
                     )}
                 </p>
-                <div className="flex items-center gap-8 md:gap-3">
+                <div className="flex items-center gap-section--fixed-32 md:gap-related">
                     <div className="flex items-center gap-tight--fixed-8">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-tight--fixed-2">

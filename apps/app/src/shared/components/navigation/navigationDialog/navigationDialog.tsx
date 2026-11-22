@@ -44,7 +44,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             <Dialog.Content
-                className="flex flex-col gap-nav-group pt-8 pb-4"
+                className="flex flex-col gap-nav-group pt-inset-nav-bar--fixed-32 pb-inset-nav-bar--fixed-16"
                 noInset={true}
             >
                 {children}

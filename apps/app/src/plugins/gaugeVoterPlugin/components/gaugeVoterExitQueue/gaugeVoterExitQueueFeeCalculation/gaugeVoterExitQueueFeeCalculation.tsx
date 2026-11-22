@@ -70,7 +70,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
 
             {/* Help text */}
             {helpText && (
-                <p className="pt-inset-flush--fixed-4 text-sm leading-normal font-normal text-neutral-500">
+                <p className="mt-tight text-sm leading-normal font-normal text-neutral-500">
                     {helpText}
                 </p>
             )}

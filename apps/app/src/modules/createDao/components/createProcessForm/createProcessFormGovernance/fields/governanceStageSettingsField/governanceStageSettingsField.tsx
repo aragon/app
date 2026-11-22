@@ -144,11 +144,12 @@ export const GovernanceStageSettingsField: React.FC<
 
     return (
         <InputContainer
-            className="flex flex-col items-start gap-3"
+            className="flex flex-col items-start"
             id="stageSettings"
             label={t(
                 'app.createDao.createProcessForm.governance.stageSettingsField.label',
             )}
+            spacing="related"
             useCustomWrapper={true}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-inset-surface-wide py-inset-surface-flat--fixed-16">

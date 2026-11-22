@@ -96,7 +96,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
 
     return (
         <Card className="w-full shrink-0 p-inset-surface-flat--fixed-16 shadow-neutral-sm">
-            <div className="flex w-full min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-2">
+            <div className="flex w-full min-w-0 flex-col items-start gap-related sm:flex-row sm:items-start sm:gap-related--fixed-8">
                 <AddressInput
                     aria-label={t(
                         'app.shared.addressesInput.item.input.accessibleName',

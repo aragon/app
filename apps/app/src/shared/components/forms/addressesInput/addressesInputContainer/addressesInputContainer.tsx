@@ -218,7 +218,6 @@ export const AddressesInputContainer: React.FC<
         <AddressesInputContextProvider value={contextValue}>
             <div className="flex w-full shrink-0 grow flex-col gap-related">
                 <InputContainer
-                    className="gap-3"
                     helpText={helpText}
                     id={
                         membersField.length > 0
@@ -230,6 +229,7 @@ export const AddressesInputContainer: React.FC<
                             <span id={addressesLabelId}>{label}</span>
                         )
                     }
+                    spacing="related"
                     useCustomWrapper={true}
                 >
                     <fieldset

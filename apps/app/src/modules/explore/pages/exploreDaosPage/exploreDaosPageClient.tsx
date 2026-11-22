@@ -102,7 +102,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                     >
                         <div
                             className={classNames(
-                                'grid grid-cols-1 gap-4 self-stretch md:grid-cols-2 lg:gap-8',
+                                'grid grid-cols-1 gap-group self-stretch md:grid-cols-2 lg:gap-section--fixed-32',
                                 isEnabled('workspaces')
                                     ? 'xl:grid-cols-4'
                                     : 'lg:grid-cols-3',

@@ -131,7 +131,7 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
     if (!isRegistryReady) {
         return (
             <LayoutSidebar navigation={null}>
-                <div className="flex grow items-center justify-center py-20">
+                <div className="flex min-h-46 grow items-center justify-center">
                     <Spinner size="lg" variant="neutral" />
                 </div>
             </LayoutSidebar>

@@ -44,7 +44,7 @@ export const TokenCreateProposalSettingsForm: React.FC<
     );
 
     return (
-        <div className="flex flex-col gap-6 md:gap-12">
+        <div className="flex flex-col gap-section-stepped--24-48">
             <AdvancedDateInput
                 field="startTime"
                 label={t(

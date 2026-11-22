@@ -82,7 +82,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     return (
         <DataList.Item
-            className="flex flex-col items-center gap-4 p-inset-surface-wide sm:flex-row sm:gap-12"
+            className="flex flex-col items-center gap-group p-inset-surface-wide sm:flex-row sm:gap-section-wide--fixed-48"
             href={isClaimed ? addressLink : undefined}
             onClick={isClaimed ? undefined : handleOpenDialog}
             target="_blank"
@@ -97,7 +97,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                 </div>
             </div>
             <div className="w-full border-t border-neutral-100 sm:hidden" />
-            <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
+            <div className="flex w-full items-center justify-between gap-group sm:w-auto sm:gap-section--fixed-32">
                 <div className="flex grow items-center gap-group">
                     <div className="flex min-w-20 flex-col gap-tight">
                         <h3 className="text-sm text-neutral-500 sm:text-base">

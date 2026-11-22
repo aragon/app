@@ -67,7 +67,7 @@ export const ExploreNav: React.FC = () => {
                     : 'bg-transparent bg-gradient-to-b from-primary-400 to-transparent',
             )}
             containerClasses={classNames(
-                'flex items-center justify-between gap-6 px-4 py-3 lg:gap-12 lg:px-6 lg:py-5',
+                'flex items-center justify-between gap-nav-section px-inset-nav-bar--fixed-16 py-inset-nav-bar--fixed-12 lg:gap-nav-section--fixed-48 lg:px-inset-nav-bar--fixed-24 lg:py-inset-nav-bar--fixed-20',
             )}
             trailing={<SupportChatTrigger />}
         >
@@ -81,7 +81,7 @@ export const ExploreNav: React.FC = () => {
                 </Link>
             </div>
 
-            <div className="flex items-center justify-end gap-4 lg:gap-6">
+            <div className="flex items-center justify-end gap-nav-group lg:gap-nav-section">
                 <Wallet onClick={handleWalletClick} user={walletUser} />
             </div>
         </Navigation.Container>

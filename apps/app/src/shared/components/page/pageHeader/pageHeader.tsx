@@ -96,7 +96,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             )}
                         </div>
                         {stats != null && stats.length > 0 && (
-                            <div className="flex flex-row gap-section py-inset-flush--fixed-12 lg:gap-10 xl:gap-16">
+                            <div className="my-related flex flex-row gap-section lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
                                     <PageHeaderStat
                                         key={stat.label}

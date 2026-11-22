@@ -44,7 +44,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                 />
             </video>
             <Container className="flex w-full flex-col gap-y-section-wide--fixed-48">
-                <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
+                <div className="flex max-w-[720px] flex-col gap-related--6-12 text-center md:text-left">
                     <p className="text-3xl leading-tight text-[#000000] md:text-5xl">
                         {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
                         {ensName && (

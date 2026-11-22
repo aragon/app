@@ -87,7 +87,7 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                 </div>
                 {displayDisclaimer && (
                     <>
-                        <div className="hidden py-inset-flush--fixed-8 md:block">
+                        <div className="my-related--fixed-8 hidden md:block">
                             <div className="h-px w-full bg-neutral-100" />
                         </div>
                         <p className="text-center text-xs leading-normal text-neutral-400 md:text-left md:text-sm">

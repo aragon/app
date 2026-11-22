@@ -183,7 +183,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                     </Page.AsideCard>
                     {dao.links.length > 0 && (
                         <Page.AsideCard
-                            className="flex flex-col gap-4"
                             title={t(
                                 'app.dashboard.daoDashboardPage.aside.links',
                             )}

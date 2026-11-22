@@ -87,7 +87,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
                     }
                 >
                     {status === ProposalStatus.ACTIVE && (
-                        <div className="pt-inset-flush--24-32">
+                        <div className="mt-section--24-32">
                             <PluginSingleComponent
                                 daoId={daoId}
                                 pluginId={proposal.pluginInterfaceType}

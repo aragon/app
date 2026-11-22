@@ -93,7 +93,7 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
 
     // Match the app bar's md height after the docked panel leaves the app column at md width.
     return (
-        <div className="screen-docked-md:h-[91px] flex h-[75px] flex-none items-center gap-3.5 border-b border-neutral-100 pr-3.5 pl-5">
+        <div className="screen-docked-md:h-[91px] flex h-[75px] flex-none items-center gap-nav-group--fixed-14 border-b border-neutral-100 pr-inset-nav-bar--fixed-14 pl-inset-nav-bar--fixed-20">
             {isViewingRequests ? (
                 <Button
                     aria-label={chatCopy.header.back}
@@ -111,7 +111,7 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
                 </Heading>
                 <p className="truncate text-xs text-neutral-400">{context}</p>
             </div>
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-nav-related">
                 {/* One conversation can file several tickets, so a fresh start is always offered —
                     it rotates the session and clears the transcript. Hidden on an already-empty
                     chat where it would do nothing. */}

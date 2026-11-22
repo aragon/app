@@ -85,7 +85,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
             )}
             {...otherProps}
         >
-            <div className="flex flex-col gap-6 md:gap-12">
+            <div className="flex flex-col gap-section-stepped--24-48">
                 <div className="flex flex-col gap-related--fixed-8">
                     <Heading size="h1">{title}</Heading>
                     <p className="text-base leading-normal font-normal text-neutral-500 md:text-lg">

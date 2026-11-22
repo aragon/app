@@ -100,7 +100,7 @@ export const DelegationStatementCard: React.FC<
                     />
                 </Collapsible>
                 {isOwner && (
-                    <div className="pt-inset-flush--12-24">
+                    <div className="mt-group-stepped--12-24">
                         <Button
                             className="w-full md:w-auto"
                             onClick={handleEditClick}

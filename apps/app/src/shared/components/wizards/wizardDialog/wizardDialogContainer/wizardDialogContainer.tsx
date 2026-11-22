@@ -62,9 +62,9 @@ export const WizardDialogContainer = <
                 onClose={close}
                 title={title}
             />
-            <Dialog.Content className="pb-1.5">
+            <Dialog.Content className="pb-inset-tight--fixed-6">
                 <Wizard.Form
-                    className="pt-6"
+                    className="mt-section"
                     id={formId}
                     onSubmit={onSubmit}
                     {...formProps}

@@ -132,8 +132,8 @@ export const WorkspaceGateAccountPrompt: React.FC<
     }
 
     return (
-        <div className="flex grow items-center justify-center px-4 py-10">
-            <Card className="flex w-full max-w-[480px] flex-col gap-section p-inset-surface-wide--24-32">
+        <div className="flex grow items-center justify-center">
+            <Card className="mx-group my-section-wide flex w-full max-w-[480px] flex-col gap-section p-inset-surface-wide--24-32">
                 <div className="flex flex-col gap-tight--4-8">
                     <Heading as="h1" size="h3">
                         {t('app.workspace.workspaceGateAccountPrompt.heading')}

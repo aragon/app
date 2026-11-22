@@ -154,7 +154,7 @@ const WorkspaceEditDetailsDialogForm: React.FC<
             />
             <Dialog.Content>
                 <form
-                    className="flex flex-col gap-section py-inset-flush--fixed-16"
+                    className="my-group flex flex-col gap-section"
                     id={formId}
                     onSubmit={handleSubmit(onFormSubmit)}
                 >

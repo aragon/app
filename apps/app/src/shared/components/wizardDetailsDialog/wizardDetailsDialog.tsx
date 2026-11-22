@@ -54,7 +54,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
             <div className="flex flex-col">
                 {steps.map((step, index) => (
                     <div
-                        className="flex items-center gap-x-section py-4"
+                        className="my-group flex items-center gap-x-section"
                         // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
                         key={index}
                     >
@@ -62,7 +62,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                             className="size-16 rounded-full border border-neutral-100"
                             object={step.icon}
                         />
-                        <p className="grow py-4 leading-normal font-normal text-neutral-800">
+                        <p className="my-group grow leading-normal font-normal text-neutral-800">
                             {step.label}
                         </p>
                         <p className="text-base leading-normal font-normal text-neutral-500">
@@ -73,7 +73,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                     </div>
                 ))}
             </div>
-            <div className="flex gap-x-group pt-6">
+            <div className="mt-section flex gap-x-group">
                 <Button href={wizardLink} onClick={handleActionClick}>
                     {actionLabel}
                 </Button>

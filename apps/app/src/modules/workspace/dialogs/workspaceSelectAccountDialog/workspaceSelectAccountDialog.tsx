@@ -104,13 +104,13 @@ export const WorkspaceSelectAccountDialog: React.FC<
             />
             <Dialog.Content>
                 {isPending && (
-                    <div className="py-inset-flush--fixed-16">
+                    <div className="my-group">
                         <Spinner size="lg" />
                     </div>
                 )}
                 <div
                     className={classNames(
-                        'flex flex-col gap-related--fixed-8 py-inset-flush--fixed-8',
+                        'my-related--fixed-8 flex flex-col gap-related--fixed-8',
                         {
                             hidden: isPending,
                         },

@@ -148,7 +148,7 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="flex items-center gap-related pt-inset-flush--fixed-8 text-sm leading-tight text-neutral-500">
+                        <div className="mt-related--fixed-8 flex items-center gap-related text-sm leading-tight text-neutral-500">
                             <span className="h-px grow bg-neutral-100" />
                             {t('app.application.landingPage.signIn.comingSoon')}
                             <span className="h-px grow bg-neutral-100" />

@@ -98,7 +98,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                     {address}
                 </DefinitionList.Item>
             </DefinitionList.Container>
-            <div className="flex flex-col items-center gap-y-related pt-inset-flush--fixed-16">
+            <div className="mt-group flex flex-col items-center gap-y-related">
                 <Button
                     className="w-full"
                     href={octavLink}

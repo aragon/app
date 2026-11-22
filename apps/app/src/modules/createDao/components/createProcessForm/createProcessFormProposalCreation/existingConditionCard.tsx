@@ -63,7 +63,7 @@ export const ExistingConditionCard: React.FC<IExistingConditionCardProps> = (
 
     return (
         <Card className="w-full shrink-0 border-primary-400 p-inset-surface-flat--fixed-16 shadow-primary">
-            <div className="flex w-full min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:gap-2">
+            <div className="flex w-full min-w-0 flex-col items-start gap-related sm:flex-row sm:items-start sm:gap-related--fixed-8">
                 <AddressInput
                     chainId={chainId}
                     className="w-full min-w-0"

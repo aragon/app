@@ -71,7 +71,7 @@ export const AutocompleteInputMenu = forwardRef<
                 >
                     <div className={menuClassName} ref={ref} {...otherProps}>
                         <div
-                            className="flex max-h-[268px] flex-col gap-related overflow-auto px-inset-flush--fixed-12"
+                            className="flex max-h-[268px] flex-col gap-related overflow-auto px-inset-surface-flat--fixed-12"
                             onWheel={(event) => event.stopPropagation()}
                         >
                             {children}
