@@ -324,12 +324,36 @@ distance between the fragments of a phrase row equals New's in looser and compac
 touch emulation, every sized control up to 64 px tall is as tall in compact as in New; text links, diagram nodes and
 controls whose text re-wrapped are skipped).
 
-AUDIT_TABLE
+On the final branch (kit: 315 stories with popups opened, app: 121 screens; 390 with touch emulation, 1440) [V]:
+
+| Scope / mode | Visual distances changed, mean / max | Paddings and gaps changed, mean / max | No new wrapping (error / warning) | Phrase spacing | Coarse pointer | Other errors |
+| --- | --- | --- | --- | --- | --- | --- |
+| kit New | 957 of 4,978, 3.44 / 8 px | 2,783, 3.48 / 8 px | 0 / 0 of 2,336 text elements | (New is the reference) | (compact) | 0 |
+| kit looser | 1,717 of 4,827, 4.85 / 20 px | 7,563, 4.26 / 12 px | 10 / 2 (below) | 0 of 94 rows | (compact) | 1 single-line (document parser paragraph, 40 → 48, as before) |
+| kit compact | 2,205 of 4,872, 4.08 / 22 px | 7,634, 4.00 / 12 px | 0 / 0 | 0 of 94 rows | 0 of 649 controls | 0 (174 visual-distance warnings, as before) |
+| app New | 4,649 of 24,036, 3.43 / 8 px | 13,018, 3.59 / 8 px | 0 / 0 of 8,408 | (reference) | (compact) | 0 |
+| app looser | 12,314 of 23,701, 4.92 / 44 px | 36,490, 4.42 / 44 px | 3 / 8 body text (below) | 0 of 440 rows | (compact) | 1 single-line (explore section caption) |
+| app compact | 15,035 of 23,853, 3.99 / 22 px | 37,888, 4.01 / 16 px | 0 / 0 | 0 of 440 rows | 0 of 2,404 controls | 12 dead space (the workspace sidebar's justified slack) and 1 single-line, as before |
+
+Before the fixes the same captures found, in looser, 27 kit and 125 app label wraps (83 of them the sidebar footer row,
+17 aside terms) and 94 kit and 440 app phrase rows spaced like gaps; in compact, 124 kit and 191 app controls shorter
+than New on coarse pointers.
 
 Remaining [J]: the explore page's CTA card heading "Multi-DAO workspace" at 1440 in looser (two lines in Today, one
-in New by 3 px): fitting it would freeze the page gutter, the card grid gap and the card padding of the landing CTAs.
+in New by 3 px; 2 views): fitting it would freeze the page gutter, the card grid gap and the card padding of the landing
+CTAs. The proposal action header's contract name ("Unverified contract", "Uniswap V3: Router") at 390 in looser (two
+lines in Today, one in New by 0.08 px after P-27; 9 kit views, 1 app view): the rest comes from the address chip's
+tight icon and copy-button gaps (`gap-tight--fixed-8`, `gap-x-tight--4-6`, 40 places kit-wide), not worth freezing.
 
-PROOF_TEXT
+Today proofs on the final branch [V]: kit visual-diff against `origin/tokens/pipeline`: 314 of 314 identical at 900,
+1300 and 1440; at 390, 313 identical and `proposalvotingprogress--token-voting-progress` 12 px at the right edge of its
+overflowing `min-w-96` box, which also differs between two captures of the base (flaky, not the change). App baseline
+against the base worktree at zero tolerance: 121 of 121 identical at 1440 and 1300; at 900, 116 of 116 identical (the
+5 connected wallet screens do not capture at 900 with the current tooling). Per-element records at 390 and 1440: kit
+0 differ (44 padding→margin moves, P-16), app 0 differ apart from the 29 page `<main>` max-widths of P-21 (79 moves).
+The class-ordering audit of the changed components: 58 call sites, 0 flips. Found and fixed by the proofs: the page
+header stat's suffix truncates, so its phrase row does not wrap (with `flex-wrap` the member detail header grew 24 px
+at 1300 in Today).
 
 ## 10. Allowlist
 
