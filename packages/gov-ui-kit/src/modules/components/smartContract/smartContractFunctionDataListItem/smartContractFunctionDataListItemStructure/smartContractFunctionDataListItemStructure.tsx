@@ -91,7 +91,11 @@ export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContract
                     {functionSelector && <p className="text-lg text-neutral-500">{functionSelector}</p>}
                     {displayWarningFeedback && <Icon className="text-warning-500" icon={IconType.WARNING} size="md" />}
                 </div>
-                <LinkBase className="flex w-fit items-center gap-related--fixed-12" href={blockExplorerHref} target="_blank">
+                <LinkBase
+                    className="flex w-fit items-center gap-related--fixed-12"
+                    href={blockExplorerHref}
+                    target="_blank"
+                >
                     <p className="text-neutral-500">{contractLabel}</p>
                     {/* Using solution from https://kizu.dev/nested-links/ to nest anchor tags */}
                     <object type="unknown">
