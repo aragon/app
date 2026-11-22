@@ -305,6 +305,32 @@ The lint found two places the scan had missed (`proposalVotingProgressContainer`
 InputContainer trap (P-20), the data list caption (P-24), the dialog footer's padding→margin move of phase 1 (kept; a
 move like P-16) and page main's max-width (P-21) are closed. One new role (`gap-section-stepped`, P-17).
 
+## 9a. Review of the real renders (22 November 2026)
+
+The orchestrator's review of the real-code renders found three defects; each is fixed by mechanism, and the audit
+(`mode-audit.cjs`, R-08) gained a check per defect.
+
+| ID | Decision | Why | Alternative |
+| --- | --- | --- | --- |
+| P-25 | **Phrases.** Text that reads as one phrase but is laid out as flex children (a value and its unit, a count and its noun, "5 days" + "left to vote", "Minimum participation" + "not reached", an ID or network beside its title or address) takes the density-invariant role `gap-phrase`: New = looser = compact = Today's dominant 4 px (exceptions `gap-phrase--fixed-2`, `--fixed-6`, `--4-6`, 4 in every preview mode). Rows that may wrap take `flex-wrap`, so a long phrase breaks onto a second line like text instead of splitting into two text columns; rows that truncate stay on one line. 18 places: 5 in the kit (voting progress name and value rows, both voting status rows, the vote list item heading), 13 in the app (page header and demo stats, wizard and transaction step counters, gauge voting power, capital flow counts, the asset input's Max amount, the workspace account and list item labels). | Word spacing is not layout: a density step pulled the words apart, and a narrow column split the phrase. A phrase is Today ≤ 6 px between fragments; 8 px and more separates two labels (proposal ID and title, policy name and key) and stays a layout gap. Generator: a role with `invariant: true` must keep one value in every preview mode, Today snapped. | Keep `gap-tight` (moves 2 px per step). |
+| P-26 | **Coarse pointers.** The compact fallback lists token globs (`size.control-*.height`, `size.control-*.pad-y`, `size.row.height`) and the generator fails when a block dimension (`height`, `pad-y`) of a size that is a target (all but `tag` and `control-label`) has none. Item-shaped controls get sizes with their roles' values: `control-item` (pad-y 12 → 20, inset-item.y) for accordion headers, data list action rows and choice cards (`control-item--12-16`), `control-item-flat` (pad-y 12, inset-item-flat.y) for menu items and options (the app's autocomplete option `control-item-flat--fixed-8`). | The rule listed three heights: the large control's block padding (inputs, tab triggers, the data list filter, the wallet button), the row and every role-padded menu item, header or card still shrank on touch screens (128 kit and 191 app controls before). The kit dropdown trigger the review saw at 44 px is a render artefact: `captureBeyondViewport` drops touch emulation while it renders (the DOM was 48 px); the renders now grow the viewport instead. | Restore role values on coarse pointers inside interactive elements (would undo compact for every clickable card). |
+| P-27 | **No new wrapping in looser.** Looser keeps New's phone x for `inset-surface` and `inset-surface-flat` (O-03 extended) and New's x at every width for `inset-surface-wide` (the aside cards); y still grows. Where a label has no slack for any step, the place takes a density-invariant exception (generator `invariant: true`: every preview mode renders its role's New): the definition list's column gap and the accordion header's gap to its chevron (`gap-group-stepped--16-24`), the voting progress row (`inset-surface--16-24`, `gap-section--fixed-24`), the contract link's name-to-icon gap (`gap-related--fixed-12`). | A wider padding or column gap narrows the line: the aside term "Plugin address" fits its 1/3 column by 0.2 px, phone labels in nested cards by 4-8 px. Horizontal space decides wrapping; vertical air does not. | Truncate or `nowrap` labels (changes Today where Today wraps: 19 aside terms do). |
+| P-28 | **Chrome rows.** The sidebar footer's link row has 2 px of slack at the sidebar's width, so any step wraps it: `inset-nav` x, the footer's padding (`inset-nav--fixed-4`) and its link gap (`gap-nav-related--fixed-8`) keep New in looser (compact still steps down). The generator accepts a chrome exception that shares its role's Today value when its modes differ. | O-06: smallest step at most, invariant where a step wraps. | Narrower link labels (copy change). |
+
+New audit checks [V]: **no new wrapping** (records carry each text element's rendered line count: an element on one
+line in New or Today and on more lines in the mode is an error for labels, terms, buttons, tags, nav and chrome rows
+and single-line titles, a warning for body text; line-clamped and truncated text is skipped), **phrase spacing** (the
+distance between the fragments of a phrase row equals New's in looser and compact), **coarse pointer** (at 390 with
+touch emulation, every sized control up to 64 px tall is as tall in compact as in New; text links, diagram nodes and
+controls whose text re-wrapped are skipped).
+
+AUDIT_TABLE
+
+Remaining [J]: the explore page's CTA card heading "Multi-DAO workspace" at 1440 in looser (two lines in Today, one
+in New by 3 px): fitting it would freeze the page gutter, the card grid gap and the card padding of the landing CTAs.
+
+PROOF_TEXT
+
 ## 10. Allowlist
 
 Raw spacing classes the lint (`scripts/primitive-spacing.mjs`, P-22) allows, per file, with the exact classes. Each
