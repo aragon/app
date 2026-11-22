@@ -24,21 +24,21 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     const { title, onClose, className, description, ...otherProps } = props;
 
     const headerClassNames = classNames(
-        'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-neutral-50-transparent-to-b', // Layout
+        'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-surface-primary-to-b', // Layout
         'pt-inset-surface pr-14 pb-inset-tight--6-8 pl-inset-surface md:pr-16', // Spacings (pr: room for the close button)
         className,
     );
 
     const closeButtonClassNames = classNames(
-        'group cursor-pointer rounded-full border border-neutral-100 bg-neutral-0 p-1 outline-hidden', // Default
+        'group cursor-pointer rounded-full border border-surface-default bg-surface-default p-1 outline-hidden', // Default
         'absolute top-3 right-3 md:top-4 md:right-4', // Positioning
-        'focus-ring-primary hover:border-neutral-200 active:border-neutral-200 active:bg-neutral-50', // Hover/Active/Focus states
+        'focus-ring ring-accent-focus hover:border-surface-hover active:border-surface-active-control active:bg-surface-active-control', // Hover/Active/Focus states
     );
 
     return (
         <div className="flex flex-col items-start gap-y-related--fixed-8">
             <div className={headerClassNames} {...otherProps}>
-                <Title className="flex-1 truncate text-lg leading-tight font-normal text-neutral-800 md:text-xl">
+                <Title className="flex-1 truncate text-lg leading-tight font-normal text-surface-primary md:text-xl">
                     {title}
                 </Title>
                 <Close asChild={true}>
@@ -46,7 +46,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
                         <button className={closeButtonClassNames} onClick={onClose} type="button">
                             <AvatarIcon
                                 backgroundWhite={true}
-                                className="group-hover:bg-neutral-50"
+                                className="group-hover:bg-surface-hover"
                                 icon={IconType.CLOSE}
                                 size="sm"
                             />
@@ -55,7 +55,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
                 </Close>
             </div>
             {description && (
-                <Description className="mb-group--12-16 px-inset-surface text-sm leading-normal text-neutral-500">
+                <Description className="mb-group--12-16 px-inset-surface text-sm leading-normal text-surface-secondary">
                     {description}
                 </Description>
             )}

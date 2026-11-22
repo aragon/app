@@ -49,14 +49,14 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
     const linkClassNames = classNames(
-        'truncate text-base leading-tight font-normal text-neutral-500 hover:text-neutral-800 active:text-neutral-800',
-        'group flex items-center py-inset-nav-item focus-ring-primary',
+        'truncate text-base leading-tight font-normal text-link-secondary-default hover:text-link-secondary-hover-nav active:text-link-secondary-active',
+        'group flex items-center py-inset-nav-item focus-ring ring-accent-focus',
         {
-            'rounded-xl px-inset-nav-item hover:bg-neutral-50':
+            'rounded-xl px-inset-nav-item hover:bg-surface-hover':
                 variant === 'column',
         },
-        { 'bg-neutral-50': isActive && variant === 'column' },
-        { 'text-neutral-800': isActive },
+        { 'bg-surface-selected': isActive && variant === 'column' },
+        { 'text-surface-selected-label': isActive },
         { 'gap-nav-related': iconSide === 'left' },
         { 'flex-row-reverse justify-between': iconSide === 'right' },
         className,
@@ -65,10 +65,10 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const iconClassNames = classNames(
         isActive
             ? variant === 'row'
-                ? 'text-primary-400'
-                : 'text-neutral-800'
-            : 'text-neutral-300',
-        'group-active:text-neutral-500',
+                ? 'icon-accent-selected'
+                : 'icon-accent-selected-nav'
+            : 'icon-surface-default',
+        'group-active:icon-surface-active',
     );
 
     return (

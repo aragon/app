@@ -73,13 +73,13 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
         <>
             <WorkspaceAccountAvatar avatar={avatar} name={name} type={type} />
             <div className="flex min-w-0 grow flex-col">
-                <span className="truncate text-base leading-tight text-neutral-800">
+                <span className="truncate text-base leading-tight text-surface-primary">
                     {name ?? truncatedAddress}
                 </span>
                 <span className="flex gap-phrase truncate text-sm leading-tight">
-                    <span className="text-neutral-800">{networkName}</span>
+                    <span className="text-surface-primary">{networkName}</span>
                     {name != null && (
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             {truncatedAddress}
                         </span>
                     )}

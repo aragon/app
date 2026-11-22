@@ -11,7 +11,7 @@ export const MemberDataListItemSkeleton: React.FC<IMemberDataListItemSkeletonPro
             aria-busy="true"
             aria-label="loading"
             className={classNames(
-                'flex min-h-[147.5px] flex-col items-start justify-center gap-y-related--12-16 bg-neutral-0 py-inset-item--16-24 md:min-h-[179px] md:min-w-44',
+                'flex min-h-[147.5px] flex-col items-start justify-center gap-y-related--12-16 bg-surface-primary py-inset-item--16-24 md:min-h-[179px] md:min-w-44',
                 className,
             )}
             tabIndex={0}

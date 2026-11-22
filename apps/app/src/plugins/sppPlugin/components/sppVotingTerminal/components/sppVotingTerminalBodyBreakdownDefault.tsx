@@ -60,7 +60,7 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<
         <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
             <div
                 className={classNames(
-                    'rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-inset-item shadow-neutral-sm',
+                    'rounded-xl border border-surface-secondary bg-surface-primary px-inset-item py-inset-item shadow-surface-sm',
                     'flex w-full min-w-fit flex-row justify-between gap-related--fixed-8',
                     style,
                 )}

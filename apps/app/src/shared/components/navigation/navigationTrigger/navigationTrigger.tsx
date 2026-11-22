@@ -10,8 +10,8 @@ export const NavigationTrigger: React.FC<INavigationTriggerProps> = (props) => {
     return (
         <button
             className={classNames(
-                'rounded-full border border-neutral-100 bg-neutral-0 p-[3px] outline-none focus-ring-primary', // Default
-                'hover:border-neutral-200 active:border-neutral-200 active:bg-neutral-50', // Hover / Active states
+                'rounded-full border border-surface-default bg-surface-default p-[3px] focus-ring outline-none ring-accent-focus', // Default
+                'hover:border-surface-hover active:border-surface-active-control active:bg-surface-active-control', // Hover / Active states
                 className,
             )}
             {...otherProps}

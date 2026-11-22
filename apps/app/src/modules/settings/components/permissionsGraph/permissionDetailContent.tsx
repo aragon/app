@@ -68,7 +68,7 @@ export const PermissionDetailContent: React.FC<
             }
         >
             <div className="flex items-center justify-between gap-group">
-                <p className="font-medium text-neutral-800">
+                <p className="font-medium text-surface-primary">
                     {t('app.settings.permissionsList.details.heading')}
                 </p>
                 {hasConditionBreakdown && (

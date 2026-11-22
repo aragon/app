@@ -19,12 +19,12 @@ export interface ITagProps {
 }
 
 const variantToClassName: Record<TagVariant, string> = {
-    neutral: 'bg-neutral-100 text-neutral-800',
-    info: 'bg-info-200 text-info-800',
-    warning: 'bg-warning-200 text-warning-800',
-    critical: 'bg-critical-200 text-critical-800',
-    success: 'bg-success-200 text-success-800',
-    primary: 'bg-primary-50 text-primary-400',
+    neutral: 'bg-surface-tertiary text-surface-primary',
+    info: 'bg-info-subtle-tag text-info-primary',
+    warning: 'bg-warning-subtle-tag text-warning-primary',
+    critical: 'bg-critical-subtle-tag text-critical-primary',
+    success: 'bg-success-subtle-tag text-success-primary',
+    primary: 'bg-accent-subtle text-accent-primary',
 };
 
 export const Tag: React.FC<ITagProps> = (props) => {

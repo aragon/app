@@ -87,7 +87,7 @@ export const AdvancedDateInputDuration: React.FC<
     return (
         <Card
             className={classNames(
-                'flex flex-col gap-group shadow-neutral-sm',
+                'flex flex-col gap-group shadow-surface-sm',
                 className,
             )}
             inset="surface-wide"

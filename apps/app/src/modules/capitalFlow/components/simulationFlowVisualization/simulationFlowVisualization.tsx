@@ -44,7 +44,7 @@ export const SimulationFlowVisualization: React.FC<
                     className,
                 )}
             >
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-surface-secondary">
                     {t(
                         'app.capitalFlow.simulationFlowVisualization.summary.empty',
                     )}
@@ -65,7 +65,7 @@ export const SimulationFlowVisualization: React.FC<
                     className="flex w-full flex-col gap-related"
                     key={group.kind}
                 >
-                    <p className="text-xl leading-tight text-neutral-800">
+                    <p className="text-xl leading-tight text-surface-primary">
                         {t(
                             simulationFlowVisualizationUtils.getGroupTitleKey(
                                 group,

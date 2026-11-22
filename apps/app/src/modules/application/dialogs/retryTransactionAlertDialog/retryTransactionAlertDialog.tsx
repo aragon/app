@@ -28,7 +28,7 @@ export const RetryTransactionAlertDialog: React.FC<
         <>
             <DialogAlert.Header title={t(`${namespace}.title`)} />
             <DialogAlert.Content>
-                <div className="mb-group flex flex-col gap-y-group text-base leading-normal font-normal text-neutral-500">
+                <div className="mb-group flex flex-col gap-y-group text-base leading-normal font-normal text-surface-secondary">
                     <p>{t(`${namespace}.description.1`)}</p>
                     <p>{t(`${namespace}.description.2`)}</p>
                 </div>

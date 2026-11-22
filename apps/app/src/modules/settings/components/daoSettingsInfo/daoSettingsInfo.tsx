@@ -37,7 +37,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     term={t('app.settings.daoSettingsInfo.name')}
                 >
                     <div className="flex items-center gap-related--fixed-8">
-                        <p className="text-neutral-500">{dao.name}</p>
+                        <p className="text-surface-secondary">{dao.name}</p>
                         <DaoAvatar name={dao.name} size="md" src={daoAvatar} />
                     </div>
                 </DefinitionList.Item>
@@ -45,7 +45,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     term={t('app.settings.daoSettingsInfo.chain')}
                 >
                     <div className="flex items-center justify-between gap-related--fixed-8">
-                        <p className="text-neutral-500">
+                        <p className="text-surface-secondary">
                             {networkDefinitions[dao.network].name}
                         </p>
                         <Tag
@@ -91,7 +91,9 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         )}
                         collapsedLines={4}
                     >
-                        <p className="text-neutral-500">{dao.description}</p>
+                        <p className="text-surface-secondary">
+                            {dao.description}
+                        </p>
                     </Collapsible>
                 </DefinitionList.Item>
                 {dao.links.length > 0 && (

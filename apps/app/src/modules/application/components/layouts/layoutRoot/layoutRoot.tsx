@@ -10,6 +10,8 @@ import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
 import { spacingPreviewUtils } from '@/modules/application/utils/spacingPreviewUtils';
+import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
+import { typographyPreviewUtils } from '@/modules/application/utils/typographyPreviewUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -54,11 +56,21 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
         false;
 
-    // Spacing preview of the debug panel (an axis of its own, independent of the colour theme and the typography): a
-    // stored spacing is only rendered while the panel is enabled, so a user without the panel always gets Today.
+    // Preview axes of the debug panel (each its own cookie and attribute, independent of the others): a stored value is
+    // only rendered while the panel is enabled, so a user without the panel always gets Today.
+    const cookie = requestHeaders.get('cookie');
+    const themeAttribute = themePreviewUtils.getServerThemeAttribute(
+        isDebugPanelEnabled,
+        cookie,
+    );
+    const typographyAttribute =
+        typographyPreviewUtils.getServerTypographyAttribute(
+            isDebugPanelEnabled,
+            cookie,
+        );
     const spacingAttribute = spacingPreviewUtils.getServerSpacingAttribute(
         isDebugPanelEnabled,
-        requestHeaders.get('cookie'),
+        cookie,
     );
 
     const queryClient = new QueryClient();
@@ -68,10 +80,16 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html className="h-full" data-spacing={spacingAttribute} lang="en">
-            <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
+        <html
+            className="h-full"
+            data-spacing={spacingAttribute}
+            data-theme={themeAttribute}
+            data-typography={typographyAttribute}
+            lang="en"
+        >
+            <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-body-sidebar">
                 <NextTopLoader
-                    color="var(--color-primary-400)"
+                    color="var(--guk-bg-accent-solid)"
                     easing="ease-in-out"
                     height={4}
                     shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"

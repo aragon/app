@@ -135,7 +135,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
     ) {
         return (
             <Card
-                className="flex w-full flex-col border border-neutral-100 shadow-neutral-sm"
+                className="flex w-full flex-col border border-surface-secondary shadow-surface-sm"
                 inset="surface"
             >
                 <AlertInline
@@ -347,7 +347,7 @@ export const SafeTransactionVoting: React.FC<ISafeTransactionVotingProps> = (
 
     return (
         <Card
-            className="flex w-full flex-col border border-neutral-100 shadow-neutral-sm"
+            className="flex w-full flex-col border border-surface-secondary shadow-surface-sm"
             inset="surface"
         >
             <Tabs.Root

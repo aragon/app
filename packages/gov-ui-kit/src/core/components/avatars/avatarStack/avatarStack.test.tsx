@@ -54,7 +54,7 @@ describe('<AvatarStack /> component', () => {
 
         expect(screen.getAllByTestId(/avatar-/).map((avatar) => avatar.textContent)).toEqual(['first', 'second']);
         expect(screen.queryByTestId('avatar-third')).not.toBeInTheDocument();
-        expect(screen.getByText('+1')).toHaveClass('bg-neutral-50');
+        expect(screen.getByText('+1')).toHaveClass('bg-surface-secondary');
         expect(firstSlot).toHaveClass('size-4');
         expect(firstSlot).not.toHaveClass('border-2');
         expect(overflowAvatar).toHaveClass('text-[8px]');

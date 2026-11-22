@@ -105,7 +105,7 @@ export const SafeExecutionDetails: React.FC<ISafeExecutionDetailsProps> = (
             )}
             {isRejection ? (
                 <CardEmptyState
-                    className="border border-neutral-100"
+                    className="border border-surface-secondary"
                     description={t(`${translationKey}.rejection.description`)}
                     heading={t(`${translationKey}.rejection.heading`)}
                     isStacked={false}

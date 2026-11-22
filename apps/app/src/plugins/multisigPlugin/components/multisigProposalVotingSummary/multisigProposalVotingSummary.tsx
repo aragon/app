@@ -39,7 +39,7 @@ export const MultisigProposalVotingSummary: React.FC<
 
     if (!proposal) {
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {name}
             </p>
         );
@@ -79,13 +79,13 @@ export const MultisigProposalVotingSummary: React.FC<
 
         const statusClass =
             isApprovalReached && isVeto
-                ? 'text-critical-800'
+                ? 'text-critical-primary'
                 : isApprovalReached
-                  ? 'text-success-800'
-                  : 'text-neutral-500';
+                  ? 'text-success-primary'
+                  : 'text-surface-secondary';
 
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {name}{' '}
                 <span className={statusClass}>
                     {t(
@@ -98,9 +98,9 @@ export const MultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-related">
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {name}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {isVeto
                         ? t(
                               'app.plugins.multisig.multisigProposalVotingSummary.optimisticApprovalLabel',
@@ -115,9 +115,9 @@ export const MultisigProposalVotingSummary: React.FC<
                 value={currentApprovalsPercentage}
                 variant={isApprovalReached ? 'primary' : 'neutral'}
             />
-            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
+            <p className="text-sm leading-tight font-normal text-surface-primary md:text-base">
                 {formattedApprovalsAmount}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(
                         'app.plugins.multisig.multisigProposalVotingSummary.memberCount',
                         {

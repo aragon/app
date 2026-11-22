@@ -69,6 +69,10 @@ export interface IDropdownContainerProps extends Omit<ComponentProps<'div'>, 'di
     variant?: ButtonVariant;
 }
 
+// The open trigger darkens its border only where that border wins over the Button's own one, as before the semantic
+// tokens: on tertiary and critical Buttons. The other variants keep their own border while open.
+const openBorderVariants: ButtonVariant[] = ['tertiary', 'critical'];
+
 export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
     const {
         children,
@@ -114,7 +118,7 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
             >
                 {customTrigger ?? (
                     <Button
-                        className={isOpen ? 'border-neutral-300' : undefined}
+                        className={isOpen && openBorderVariants.includes(variant) ? 'border-surface-open' : undefined}
                         disabled={disabled}
                         iconLeft={hasLabel ? undefined : triggerIcon}
                         iconRight={hideIcon ? undefined : triggerIcon}
@@ -130,7 +134,7 @@ export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {
                 <RadixDropdown.Content
                     align={align}
                     className={classNames(
-                        'flex min-w-48 flex-col gap-tight--fixed-6 overflow-auto rounded-xl border border-neutral-100 bg-neutral-0 p-inset-tight--fixed-8 shadow-neutral-sm',
+                        'flex min-w-48 flex-col gap-tight--fixed-6 overflow-auto rounded-xl border border-surface-secondary bg-surface-primary p-inset-tight--fixed-8 shadow-surface-sm',
                         'z-[var(--guk-dropdown-container-content-z-index)]',
                         { 'max-h-[var(--radix-dropdown-menu-content-available-height)]': constrainContentHeight },
                         { 'max-w-[var(--radix-dropdown-menu-content-available-width)]': constrainContentWidth },

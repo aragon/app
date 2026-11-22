@@ -45,16 +45,16 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
             <div className="flex flex-col gap-group--12-16">
                 <div className="flex flex-col gap-y-tight">
                     <div className="flex gap-related--fixed-8 text-base leading-tight font-normal md:text-lg">
-                        <p className="truncate text-neutral-800">
+                        <p className="truncate text-surface-primary">
                             {processedName}
                         </p>
                         {policyKey && (
-                            <p className="shrink-0 text-right text-neutral-500 uppercase">
+                            <p className="shrink-0 text-right text-surface-secondary uppercase">
                                 {policyKey}
                             </p>
                         )}
                     </div>
-                    <p className="line-clamp-2 text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                    <p className="line-clamp-2 text-sm leading-normal font-normal text-surface-secondary md:text-base">
                         {processedDescription}
                     </p>
                 </div>

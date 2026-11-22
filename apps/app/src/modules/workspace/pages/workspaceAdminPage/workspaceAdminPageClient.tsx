@@ -87,7 +87,9 @@ export const WorkspaceAdminPageClient: React.FC<
                                 )}
                             >
                                 <div className="flex items-center gap-related--fixed-8">
-                                    <p className="text-neutral-500">{name}</p>
+                                    <p className="text-surface-secondary">
+                                        {name}
+                                    </p>
                                     <DaoAvatar
                                         name={name}
                                         size="md"
@@ -100,7 +102,7 @@ export const WorkspaceAdminPageClient: React.FC<
                                     'app.workspace.workspaceAdminPage.details.description',
                                 )}
                             >
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {description !== ''
                                         ? description
                                         : t(
@@ -144,7 +146,7 @@ export const WorkspaceAdminPageClient: React.FC<
                                     'app.workspace.workspaceAdminPage.storage.published.term',
                                 )}
                             >
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {t(
                                         'app.workspace.workspaceAdminPage.storage.published.value',
                                     )}
@@ -155,7 +157,7 @@ export const WorkspaceAdminPageClient: React.FC<
                                     'app.workspace.workspaceAdminPage.storage.sync.term',
                                 )}
                             >
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {t(
                                         'app.workspace.workspaceAdminPage.storage.sync.value',
                                     )}

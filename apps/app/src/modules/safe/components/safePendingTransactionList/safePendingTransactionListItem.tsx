@@ -159,7 +159,7 @@ export const SafePendingTransactionListItem: React.FC<
                         )}
                     </div>
                     {safeAppLink == null ? (
-                        <span className="text-sm leading-tight text-neutral-500">
+                        <span className="text-sm leading-tight text-surface-secondary">
                             {queuedLabel}
                         </span>
                     ) : (
@@ -173,7 +173,7 @@ export const SafePendingTransactionListItem: React.FC<
                         </Link>
                     )}
                     {isWaitingForTurn && (
-                        <span className="text-sm leading-tight text-neutral-500">
+                        <span className="text-sm leading-tight text-surface-secondary">
                             {t(
                                 'app.safe.safePendingTransactionList.item.waitingForTurn',
                                 { currentNonce },
@@ -192,12 +192,12 @@ export const SafePendingTransactionListItem: React.FC<
                 <div className="flex shrink-0 flex-row items-center gap-related">
                     <span
                         aria-label={confirmationLabel}
-                        className="flex items-center gap-tight text-sm leading-tight text-neutral-500 md:text-base"
+                        className="flex items-center gap-tight text-sm leading-tight text-surface-secondary md:text-base"
                         role="img"
                     >
                         <Icon
                             aria-hidden={true}
-                            className="text-neutral-500"
+                            className="icon-surface-primary-item"
                             icon={IconType.CHECKMARK}
                             size="sm"
                         />

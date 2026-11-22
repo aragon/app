@@ -24,21 +24,21 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
     const { isUnderlined } = useContext(TabsContext);
 
     const triggerClassNames = classNames(
-        'group line-clamp-1 flex items-center gap-x-group rounded-t border-primary-400 py-control-lg text-base leading-tight font-normal', // Base
-        'active:data-[state=active]:text-neutral-800 active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-primary-400', // Active state
+        'group line-clamp-1 flex items-center gap-x-group rounded-t border-surface-selected py-control-lg text-base leading-tight font-normal', // Base
+        'active:data-[state=active]:text-surface-active active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-border-surface-selected', // Active state
         'focus:outline-hidden', // Focus state
-        { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-neutral-800': isUnderlined && !disabled }, //  Underlined & enabled variant
-        'data-[state=active]:text-neutral-800 data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-primary-400', // Active selection
-        { 'cursor-pointer text-neutral-500 hover:text-neutral-800': !disabled }, // Enabled state
-        { 'text-neutral-300': disabled }, // Disabled state
+        { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-border-surface-hover-tab': isUnderlined && !disabled }, //  Underlined & enabled variant
+        'data-[state=active]:text-surface-primary data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-border-surface-selected', // Active selection
+        { 'cursor-pointer text-link-secondary-default hover:text-link-secondary-hover-nav': !disabled }, // Enabled state
+        { 'text-surface-disabled': disabled }, // Disabled state
         className,
     );
 
     const iconClassNames = classNames(
         'group-data-[state=active]:text-neutral-800', // Base
-        { 'text-neutral-200': disabled }, // Disabled state
-        { 'text-neutral-500 group-hover:text-neutral-300': !disabled }, // Enabled state
-        { 'group-focus:text-neutral-500 group-active:text-neutral-600': !disabled }, // Enabled & Active/Focus states
+        { 'icon-surface-disabled-control': disabled }, // Disabled state
+        { 'icon-surface-default-tab group-hover:icon-surface-hover-tab': !disabled }, // Enabled state
+        { 'group-focus:text-neutral-500 group-active:icon-surface-active-control': !disabled }, // Enabled & Active/Focus states
     );
 
     return (

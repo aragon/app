@@ -62,7 +62,7 @@ export const ExistingConditionCard: React.FC<IExistingConditionCardProps> = (
         onAddressChange(value?.address ?? '');
 
     return (
-        <Card className="w-full shrink-0 border-primary-400 p-inset-surface-flat--fixed-16 shadow-primary">
+        <Card className="w-full shrink-0 border-surface-selected p-inset-surface-flat--fixed-16 !shadow-accent-default">
             <div className="flex w-full min-w-0 flex-col items-start gap-related sm:flex-row sm:items-start sm:gap-related--fixed-8">
                 <AddressInput
                     chainId={chainId}

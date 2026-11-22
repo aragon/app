@@ -35,7 +35,7 @@ export const ExecuteSelectorConditionSlot: React.FC<
 
     return (
         <div className="flex flex-col gap-related">
-            <p className="text-neutral-500">
+            <p className="text-surface-secondary">
                 {t('app.settings.executeSelectorConditionSlot.description')}
             </p>
             {shouldShowDecodedActions ? (
@@ -52,7 +52,7 @@ export const ExecuteSelectorConditionSlot: React.FC<
                     chainId={chainId}
                 />
             ) : (
-                <p className="text-neutral-400">
+                <p className="text-surface-tertiary">
                     {t('app.settings.executeSelectorConditionSlot.noActions')}
                 </p>
             )}

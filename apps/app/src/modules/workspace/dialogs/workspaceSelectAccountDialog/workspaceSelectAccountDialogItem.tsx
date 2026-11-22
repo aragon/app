@@ -76,9 +76,9 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
     return (
         <DataList.Item
             className={classNames('px-inset-item py-inset-item--12-24', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
-                'border-neutral-100 bg-neutral-50': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}
             {...otherProps}
             {...(isDisabled ? { onClick: undefined } : {})}
@@ -95,10 +95,10 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col">
-                        <span className="truncate text-base leading-tight text-neutral-800">
+                        <span className="truncate text-base leading-tight text-surface-primary">
                             {name ?? truncatedAddress}
                         </span>
-                        <span className="truncate text-sm leading-tight text-neutral-500">
+                        <span className="truncate text-sm leading-tight text-surface-secondary">
                             {name != null
                                 ? `${networkName} · ${truncatedAddress}`
                                 : networkName}
@@ -113,7 +113,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-neutral-300 md:text-base">
+                    <div className="text-sm text-surface-tertiary-hint md:text-base">
                         {t(
                             'app.workspace.workspaceSelectAccountDialogItem.notEligible',
                         )}

@@ -57,7 +57,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b from-neutral-0 to-neutral-50 pt-inset-page group-has-[[data-app-sidebar]]/app:bg-none',
+                'bg-gradient-to-b from-gradient-surface-secondary to-gradient-surface-primary pt-inset-page group-has-[[data-app-sidebar]]/app:bg-none',
                 className,
             )}
             {...otherProps}
@@ -88,7 +88,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     buttonLabelOpened={t(
                                         'app.shared.page.header.readLess',
                                     )}
-                                    className="text-base text-neutral-500 md:text-lg"
+                                    className="text-base text-surface-secondary md:text-lg"
                                     collapsedLines={2}
                                 >
                                     {description}

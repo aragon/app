@@ -25,11 +25,11 @@ export const SiteHeader = () => {
     const appOrigin = useAppOrigin();
 
     return (
-        <header className="sticky top-0 z-40 h-(--fd-banner-height) bg-primary-400">
+        <header className="sticky top-0 z-40 h-(--fd-banner-height) bg-brand-solid">
             <div className="mx-auto flex h-full max-w-[1550px] items-center justify-between gap-nav-group px-inset-nav-bar--fixed-16">
                 <Link
                     aria-label="Aragon Help"
-                    className="flex items-center gap-nav-related text-neutral-0"
+                    className="flex items-center gap-nav-related text-accent-inverse"
                     href="/"
                 >
                     <AragonLogo className="h-[30px] w-auto" />
@@ -40,7 +40,7 @@ export const SiteHeader = () => {
                 <nav className="flex items-center gap-nav-section--fixed-32">
                     {links.map((link) => (
                         <a
-                            className="inline-flex items-center gap-nav-tight--fixed-6 text-base leading-tight whitespace-nowrap text-primary-50 transition-colors hover:text-neutral-0 max-md:hidden"
+                            className="inline-flex items-center gap-nav-tight--fixed-6 text-base leading-tight whitespace-nowrap text-accent-inverse-brand transition-colors hover:text-accent-inverse max-md:hidden"
                             href={link.url}
                             key={link.url}
                             rel="noopener noreferrer"

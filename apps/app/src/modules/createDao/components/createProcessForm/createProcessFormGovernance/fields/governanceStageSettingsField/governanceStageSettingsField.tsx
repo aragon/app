@@ -152,7 +152,7 @@ export const GovernanceStageSettingsField: React.FC<
             spacing="related"
             useCustomWrapper={true}
         >
-            <DefinitionList.Container className="rounded-xl border border-neutral-100 px-inset-surface-wide py-inset-surface-flat--fixed-16">
+            <DefinitionList.Container className="rounded-xl border border-surface-secondary px-inset-surface-wide py-inset-surface-flat--fixed-16">
                 {approvingBodyCount > 0 && (
                     <DefinitionList.Item
                         term={t(

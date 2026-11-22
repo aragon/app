@@ -4,11 +4,11 @@ export const GaugeVoterGaugeListItemSkeleton: React.FC = () => {
     return (
         <DataList.Item className="flex flex-col gap-related--12-16 px-inset-item py-inset-item-flat md:min-h-20 md:flex-row md:items-center">
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-related--12-16 border-b border-neutral-100 pb-inset-item-flat md:basis-0 md:border-b-0 md:pb-0">
-                <div className="size-8 shrink-0 animate-pulse rounded-full bg-neutral-200 md:size-10" />
+            <div className="flex min-w-0 grow items-center gap-related--12-16 border-b border-surface-secondary pb-inset-item-flat md:basis-0 md:border-b-0 md:pb-0">
+                <div className="size-8 shrink-0 animate-pulse rounded-full bg-surface-secondary-skeleton md:size-10" />
                 <div className="flex min-w-0 flex-1 flex-col gap-tight">
-                    <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-200 md:h-6" />
-                    <div className="h-4 w-1/2 animate-pulse rounded bg-neutral-200" />
+                    <div className="h-5 w-3/4 animate-pulse rounded bg-surface-secondary-skeleton md:h-6" />
+                    <div className="h-4 w-1/2 animate-pulse rounded bg-surface-secondary-skeleton" />
                 </div>
             </div>
 
@@ -17,24 +17,24 @@ export const GaugeVoterGaugeListItemSkeleton: React.FC = () => {
                 {/* Total votes column */}
                 <div className="flex flex-col gap-tight md:grow md:basis-0 md:text-right">
                     {/* Mobile-only label */}
-                    <div className="h-3 w-20 animate-pulse rounded bg-neutral-200 md:hidden" />
-                    <div className="h-5 w-24 animate-pulse rounded bg-neutral-200 md:ml-auto md:h-6" />
-                    <div className="h-4 w-16 animate-pulse rounded bg-neutral-200 md:ml-auto" />
+                    <div className="h-3 w-20 animate-pulse rounded bg-surface-secondary-skeleton md:hidden" />
+                    <div className="h-5 w-24 animate-pulse rounded bg-surface-secondary-skeleton md:ml-auto md:h-6" />
+                    <div className="h-4 w-16 animate-pulse rounded bg-surface-secondary-skeleton md:ml-auto" />
                 </div>
 
                 {/* Your votes column */}
                 <div className="flex flex-col gap-tight text-right md:grow md:basis-0">
                     {/* Mobile-only label */}
-                    <div className="ml-auto h-3 w-20 animate-pulse rounded bg-neutral-200 md:hidden" />
+                    <div className="ml-auto h-3 w-20 animate-pulse rounded bg-surface-secondary-skeleton md:hidden" />
                     <div className="flex min-h-11 flex-col items-end md:justify-center">
-                        <div className="h-5 w-16 animate-pulse rounded bg-neutral-200 md:h-6" />
+                        <div className="h-5 w-16 animate-pulse rounded bg-surface-secondary-skeleton md:h-6" />
                     </div>
                 </div>
             </div>
 
             {/* Button section - full width on mobile */}
             <div className="flex w-full items-center justify-end md:w-36">
-                <div className="h-8 w-full animate-pulse rounded bg-neutral-200 md:w-20" />
+                <div className="h-8 w-full animate-pulse rounded bg-surface-secondary-skeleton md:w-20" />
             </div>
         </DataList.Item>
     );

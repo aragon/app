@@ -9,7 +9,7 @@ import { ProposalActionsDecoderBooleanField } from '../proposalActionsDecoderBoo
 import { ProposalActionsDecoderTextField } from '../proposalActionsDecoderTextField';
 import { proposalActionsDecoderUtils } from '../proposalActionsDecoderUtils';
 
-const nestedParameterHeaderClassName = 'font-normal text-base text-neutral-500 leading-tight md:text-lg';
+const nestedParameterHeaderClassName = 'font-normal text-base text-surface-secondary leading-tight md:text-lg';
 
 export interface IProposalActionsDecoderFieldProps extends Pick<IProposalActionsDecoderProps, 'mode' | 'formPrefix'> {
     /**
@@ -106,7 +106,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
             label={
                 hideLabels ? undefined : (
                     <>
-                        {name} <span className="text-neutral-500">({type})</span>
+                        {name} <span className="text-surface-secondary">({type})</span>
                     </>
                 )
             }
@@ -114,7 +114,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
         >
             <div
                 className={classNames('flex flex-col gap-group', {
-                    'rounded-xl border border-neutral-100 p-inset-surface-flat--fixed-16': isNestedType,
+                    'rounded-xl border border-surface-primary p-inset-surface-flat--fixed-16': isNestedType,
                 })}
             >
                 {/* Render text-field as hidden to register array field */}

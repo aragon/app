@@ -103,11 +103,11 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
             className={classNames(
                 'flex items-center gap-related px-inset-item-flat py-control-item-flat', // Layout
                 'cursor-pointer rounded-xl text-base leading-tight focus-visible:outline-hidden', // Style
-                'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-neutral-0 data-disabled:text-neutral-300', // Disabled
-                { 'bg-neutral-0 text-neutral-500': !selected && !disabled }, // Not selected
-                { 'bg-neutral-50 text-neutral-800': selected && !disabled }, // Selected
-                { 'hover:bg-neutral-50 hover:text-neutral-800': !disabled }, // Hover
-                { 'data-highlighted:bg-neutral-50 data-highlighted:text-neutral-800': !disabled }, // Highlighted
+                'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-surface-default data-disabled:text-surface-disabled', // Disabled
+                { 'bg-surface-default text-surface-default': !selected && !disabled }, // Not selected
+                { 'bg-surface-selected text-surface-active': selected && !disabled }, // Selected
+                { 'hover:bg-surface-hover hover:text-surface-hover-label': !disabled }, // Hover
+                { 'data-highlighted:bg-surface-hover data-highlighted:text-surface-hover-label': !disabled }, // Highlighted
                 { 'flex-row justify-between': iconPosition === 'right' },
                 { 'flex-row-reverse justify-end': iconPosition === 'left' && icon != null },
                 className,
@@ -118,7 +118,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
         >
             <ItemWrapper {...itemWrapperProps}>
                 <p className="truncate">{children}</p>
-                {processedIcon != null && <Icon className="text-neutral-300" icon={processedIcon} size="md" />}
+                {processedIcon != null && <Icon className="icon-surface-default" icon={processedIcon} size="md" />}
             </ItemWrapper>
         </RadixDropdown.Item>
     );

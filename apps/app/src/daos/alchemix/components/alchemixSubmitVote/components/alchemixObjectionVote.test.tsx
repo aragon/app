@@ -105,7 +105,7 @@ describe('<AlchemixObjectionVote /> component', () => {
         const voteButton = screen.getByRole('button', {
             name: /tokenSubmitVote.buttons.vote/,
         });
-        expect(voteButton).toHaveClass('bg-primary-400');
+        expect(voteButton).toHaveClass('bg-accent-default');
     });
 
     it('renders a secondary vote button that triggers the permission guard when the user cannot object', async () => {
@@ -123,7 +123,7 @@ describe('<AlchemixObjectionVote /> component', () => {
         const voteButton = screen.getByRole('button', {
             name: /tokenSubmitVote.buttons.vote/,
         });
-        expect(voteButton).not.toHaveClass('bg-primary-400');
+        expect(voteButton).not.toHaveClass('bg-accent-default');
         await userEvent.click(voteButton);
         expect(check).toHaveBeenCalled();
     });

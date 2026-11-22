@@ -95,7 +95,7 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
                     >
                         {t('app.finance.financeDetailsList.octavLabel')}
                     </Button>
-                    <p className="text-sm text-neutral-500">
+                    <p className="text-sm text-surface-secondary">
                         {t('app.finance.financeDetailsList.octavDescription')}
                     </p>
                 </div>

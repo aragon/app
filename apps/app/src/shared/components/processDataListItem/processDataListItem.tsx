@@ -58,9 +58,9 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     return (
         <DataList.Item
             className={classNames('px-inset-item py-inset-item--12-24', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
-                'border-neutral-100 bg-neutral-50': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}
             key={address}
             {...otherProps}
@@ -74,15 +74,15 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                 >
                     <div className="flex flex-col gap-y-tight">
                         <div className="flex gap-related--fixed-8 text-base leading-tight font-normal md:text-lg">
-                            <p className="truncate text-neutral-800">
+                            <p className="truncate text-surface-primary">
                                 {daoUtils.getPluginName(process)}
                             </p>
-                            <p className="text-right text-neutral-500 uppercase">
+                            <p className="text-right text-surface-secondary uppercase">
                                 {slug}
                             </p>
                         </div>
                         {processDescription && (
-                            <p className="line-clamp-2 text-sm leading-normal font-normal text-neutral-500 md:text-base">
+                            <p className="line-clamp-2 text-sm leading-normal font-normal text-surface-secondary md:text-base">
                                 {processDescription}
                             </p>
                         )}
@@ -90,7 +90,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-neutral-300 md:text-base">
+                    <div className="text-sm text-surface-tertiary-hint md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link
                             href={daoUtils.getDaoUrl(

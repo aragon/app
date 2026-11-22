@@ -95,7 +95,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
     }, [getFieldState, trigger, memberFieldName, value.address]);
 
     return (
-        <Card className="w-full shrink-0 p-inset-surface-flat--fixed-16 shadow-neutral-sm">
+        <Card className="w-full shrink-0 p-inset-surface-flat--fixed-16 shadow-surface-sm">
             <div className="flex w-full min-w-0 flex-col items-start gap-related sm:flex-row sm:items-start sm:gap-related--fixed-8">
                 <AddressInput
                     aria-label={t(

@@ -91,7 +91,10 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
         <Card
             className={classNames(
                 'relative flex flex-col gap-group-stepped',
-                { 'border-primary-200 shadow-primary': isPrimary },
+                {
+                    'border-accent-primary-cta! !shadow-accent-default':
+                        isPrimary,
+                },
                 className,
             )}
             inset="surface"
@@ -104,7 +107,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 />
             )}
             <IllustrationObject
-                className="size-16 rounded-full bg-neutral-50 md:size-24"
+                className="size-16 rounded-full bg-surface-secondary md:size-24"
                 object={objectType}
             />
             <div className="flex flex-col gap-related">
@@ -113,7 +116,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 </Heading>
                 <p
                     className={classNames(
-                        'leading-normal text-neutral-500',
+                        'leading-normal text-surface-secondary',
                         { 'text-sm md:text-base': isSmaller },
                         { 'text-base md:text-lg': !isSmaller },
                     )}

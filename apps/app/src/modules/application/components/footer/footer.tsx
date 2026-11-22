@@ -14,7 +14,7 @@ import { footerLinks } from './footerLinks';
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
 const linkClassNames =
-    'truncate border-neutral-100 border-b font-normal text-base text-neutral-500 leading-tight last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none';
+    'truncate border-surface-secondary border-b font-normal text-base text-surface-secondary leading-tight last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
@@ -36,7 +36,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     return (
         <footer
             className={classNames(
-                'border-t border-neutral-100 bg-neutral-0 py-inset-nav-bar--fixed-20',
+                'border-t border-surface-secondary bg-surface-primary py-inset-nav-bar--fixed-20',
                 className,
             )}
             {...otherProps}
@@ -49,7 +49,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
             >
                 <div className="flex flex-row items-center justify-between gap-nav-group [grid-area:metadata] md:justify-normal lg:justify-self-start max-md:pt-inset-nav-item max-md:pb-inset-nav-item--fixed-16">
                     <div className="flex items-center gap-nav-related--fixed-10">
-                        <p className="text-sm leading-tight text-nowrap text-neutral-800 md:text-base">
+                        <p className="text-sm leading-tight text-nowrap text-surface-primary md:text-base">
                             {t('app.application.footer.governed')}
                         </p>
                         <AragonLogo size="sm" />
@@ -72,7 +72,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         </Link>
                     ))}
                 </div>
-                <p className="truncate text-base leading-tight font-normal text-neutral-500 [grid-area:copyright] lg:justify-self-end max-md:pt-inset-nav-item--fixed-24 max-md:pb-inset-nav-item">
+                <p className="truncate text-base leading-tight font-normal text-surface-secondary [grid-area:copyright] lg:justify-self-end max-md:pt-inset-nav-item--fixed-24 max-md:pb-inset-nav-item">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

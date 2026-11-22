@@ -1,0 +1,166 @@
+const PAGES = __PAGES__; // array of page ids, in order
+const START_COMP = __START__; // component index to resume from on the first page
+const LIMIT = 44000;
+const blen = (s) => { let n = 0; for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); n += (c === 10 || c === 34 || c === 92) ? 2 : c < 32 ? 6 : c < 128 ? 1 : c < 2048 ? 2 : 3; } return n; };
+let outB = 0;
+const SEM = 'VariableCollectionId:26865:22', PRIM = 'VariableCollectionId:13635:31495';
+const vc = {}, sc = {}, mcc = {};
+async function vname(id) {
+  if (!(id in vc)) {
+    let v = null; try { v = await figma.variables.getVariableByIdAsync(id); } catch (e) {}
+    vc[id] = !v ? '?var' : v.variableCollectionId === SEM ? v.name : v.variableCollectionId === PRIM ? 'P:' + v.name : 'O:' + v.name;
+  }
+  return vc[id];
+}
+const h2 = (x) => Math.round(x * 255).toString(16).padStart(2, '0');
+const hex = (c, a) => '#' + h2(c.r) + h2(c.g) + h2(c.b) + (a !== undefined && a < 1 ? h2(a) : '');
+async function sname(sid) {
+  if (typeof sid !== 'string' || !sid) return '';
+  if (!(sid in sc)) { let s = null; try { s = await figma.getStyleByIdAsync(sid); } catch (e) {} sc[sid] = s ? s.name : '?'; }
+  return sc[sid];
+}
+async function paintToks(n, prop) {
+  if (!(prop in n)) return [];
+  let ps = n[prop];
+  if (ps === figma.mixed) {
+    if (n.type === 'TEXT' && prop === 'fills') { ps = []; for (const s of n.getStyledTextSegments(['fills'])) for (const p of s.fills) ps.push(p); }
+    else return ['MIXED'];
+  }
+  if (!Array.isArray(ps)) return [];
+  const out = [];
+  for (const p of ps) {
+    if (p.visible === false) continue;
+    if (p.type === 'SOLID') {
+      const b = p.boundVariables && p.boundVariables.color;
+      let t;
+      if (b) t = await vname(b.id);
+      else { const st = await sname(prop === 'fills' ? n.fillStyleId : n.strokeStyleId); t = 'RAW:' + hex(p.color) + (st ? '{style ' + st + '}' : ''); }
+      if (p.opacity !== undefined && p.opacity < 1) t += '@' + Math.round(p.opacity * 100);
+      out.push(t);
+    } else if (p.type && p.type.startsWith('GRADIENT')) {
+      const ss = [];
+      for (const s of p.gradientStops) { const b = s.boundVariables && s.boundVariables.color; ss.push(b ? await vname(b.id) : 'RAW:' + hex(s.color, s.color.a)); }
+      out.push('GRAD[' + ss.join('>') + ']');
+    } else out.push(p.type);
+  }
+  return [...new Set(out)];
+}
+async function effToks(n) {
+  if (!('effects' in n) || !Array.isArray(n.effects)) return [];
+  const out = [];
+  for (const e of n.effects) {
+    if (e.visible === false || !e.color) continue;
+    const b = e.boundVariables && e.boundVariables.color;
+    out.push((e.type === 'INNER_SHADOW' ? 'in:' : '') + (b ? await vname(b.id) : 'RAW:' + hex(e.color, e.color.a)));
+  }
+  return [...new Set(out)];
+}
+async function mcName(inst) {
+  let mc = null; try { mc = await inst.getMainComponentAsync(); } catch (e) {}
+  if (!mc) return '?';
+  if (!(mc.id in mcc)) mcc[mc.id] = mc.parent && mc.parent.type === 'COMPONENT_SET' ? mc.parent.name : mc.name;
+  return mcc[mc.id];
+}
+const short = (s) => (s.length > 22 ? s.slice(0, 21) + '~' : s);
+// walk one variant; items is a Set of strings
+async function walk(n, path, items, isRoot) {
+  if (!isRoot && n.visible === false) return;
+  const lp = isRoot ? '@' : path.slice(-2).map(short).join('/');
+  if (!isRoot && n.type === 'INSTANCE') {
+    items.add(lp + '=>' + (await mcName(n)));
+    // colour overrides set on the instance (own node or its sublayers)
+    let ov = []; try { ov = n.overrides || []; } catch (e) {}
+    for (const o of ov) {
+      const f = o.overriddenFields.filter((x) => x === 'fills' || x === 'strokes' || x === 'effects');
+      if (!f.length) continue;
+      let t = null; try { t = await figma.getNodeByIdAsync(o.id); } catch (e) {}
+      if (!t || t.visible === false) continue;
+      const sub = t.id === n.id ? '' : '>' + short(t.name);
+      const tag = t.type === 'TEXT' ? 'T' : null;
+      if (f.includes('fills')) for (const k of await paintToks(t, 'fills')) items.add(lp + sub + ' *' + (tag || 'F') + ' ' + k);
+      if (f.includes('strokes')) for (const k of await paintToks(t, 'strokes')) items.add(lp + sub + ' *S ' + k);
+      if (f.includes('effects')) for (const k of await effToks(t)) items.add(lp + sub + ' *E ' + k);
+    }
+    return;
+  }
+  const ft = n.type === 'TEXT' ? 'T' : 'F';
+  for (const k of await paintToks(n, 'fills')) items.add(lp + ' ' + ft + ' ' + k);
+  for (const k of await paintToks(n, 'strokes')) items.add(lp + ' S ' + k);
+  for (const k of await effToks(n)) items.add(lp + ' E ' + k);
+  if ('children' in n) for (const c of n.children) await walk(c, path.concat([c.name]), items, false);
+}
+function vprops(v) {
+  try { if (v.variantProperties) return v.variantProperties; } catch (e) {}
+  const o = {}; for (const kv of v.name.split(',')) { const i = kv.indexOf('='); if (i > 0) o[kv.slice(0, i).trim()] = kv.slice(i + 1).trim(); } return o;
+}
+function describe(vps, allVals) {
+  const keys = Object.keys(allVals);
+  const sets = {}; for (const k of keys) sets[k] = new Set(vps.map((x) => x[k]));
+  let prod = 1; for (const k of keys) prod *= sets[k].size;
+  const fixed = keys.filter((k) => sets[k].size < allVals[k].size);
+  if (prod === vps.length) return fixed.length ? fixed.map((k) => k + '=' + [...sets[k]].join('/')).join('; ') : '(all)';
+  const one = keys.filter((k) => sets[k].size === 1);
+  const vary = keys.filter((k) => sets[k].size > 1);
+  const head = one.filter((k) => allVals[k].size > 1).map((k) => k + '=' + [...sets[k]][0]).join('; ');
+  const combos = vps.slice(0, 10).map((x) => vary.map((k) => x[k]).join(',')).join(' | ');
+  return (head ? head + ' :: ' : '') + '[' + vary.join(',') + '] ' + combos + (vps.length > 10 ? ' | +' + (vps.length - 10) + ' more' : '');
+}
+let out = '', truncated = null;
+const legend = 'LEGEND: @=variant root; path=last 2 layer names; F fill, S stroke, T text fill, E effect colour (in:=inner); X=>Name nested instance (main comp/set name); *F/*S/*T/*E colour override on an instance (>sublayer); P: primitive var; RAW:#hex unbound; @NN paint opacity; "all:" lines shared by every variant; " - " lines = variant groups with identical remaining lines; "ROWS" then " + " lines = where a component is denser that way, each line lists the extra bindings present in exactly that variant subset (additive, not exclusive).\n';
+out += legend; outB = blen(out);
+for (let pi = 0; pi < PAGES.length && !truncated; pi++) {
+  const page = await figma.getNodeByIdAsync(PAGES[pi]);
+  if (!page) { out += '\n=== PAGE ' + PAGES[pi] + ' NOT FOUND\n'; continue; }
+  await figma.setCurrentPageAsync(page);
+  const comps = page.findAllWithCriteria({ types: ['COMPONENT_SET', 'COMPONENT'] }).filter((c) => {
+    if (c.type === 'COMPONENT' && c.parent && c.parent.type === 'COMPONENT_SET') return false;
+    let a = c.parent; while (a && a.type !== 'PAGE') { if (a.type === 'COMPONENT' || a.type === 'INSTANCE' || a.type === 'COMPONENT_SET') return false; a = a.parent; }
+    return true;
+  });
+  const sIdx = pi === 0 ? START_COMP : 0;
+  { const hd = '\n=== PAGE ' + page.name + ' (' + page.id + ') components=' + comps.length + (sIdx ? ' RESUMED at #' + sIdx : '') + '\n'; out += hd; outB += blen(hd); }
+  for (let ci = sIdx; ci < comps.length; ci++) {
+    const c = comps[ci];
+    let txt;
+    try {
+      const isSet = c.type === 'COMPONENT_SET';
+      const variants = isSet ? c.children.filter((x) => x.type === 'COMPONENT') : [c];
+      const allVals = {}; const data = [];
+      for (const v of variants) {
+        const vp = isSet ? vprops(v) : {};
+        for (const k in vp) (allVals[k] = allVals[k] || new Set()).add(vp[k]);
+        const items = new Set(); await walk(v, [], items, true);
+        data.push({ vp, items });
+      }
+      const common = data.length ? [...data[0].items].filter((it) => data.every((d) => d.items.has(it))) : [];
+      const cs = new Set(common);
+      const groups = {};
+      for (const d of data) { const rest = [...d.items].filter((it) => !cs.has(it)).sort(); const key = rest.join(' ; '); (groups[key] = groups[key] || []).push(d.vp); }
+      const pv = Object.keys(allVals).map((k) => k + ':' + [...allVals[k]].join('/')).join('; ');
+      txt = '## [' + ci + '] ' + c.name + ' (' + c.id + ') ' + (isSet ? variants.length + 'v {' + pv + '}' : 'COMP') + '\n';
+      if (common.length) txt += ' all: ' + common.sort().join(' ; ') + '\n';
+      const gk = Object.keys(groups);
+      let gTxt = '';
+      if (gk.length > 1 || (gk.length === 1 && gk[0])) for (const k of gk) gTxt += ' - ' + describe(groups[k], allVals) + ' (' + groups[k].length + '): ' + (k || '(nothing extra)') + '\n';
+      // alternative: rows = items grouped by the exact set of variants they occur in
+      const byItem = {};
+      data.forEach((d, i) => { for (const it of d.items) if (!cs.has(it)) (byItem[it] = byItem[it] || []).push(i); });
+      const bySet = {};
+      for (const it in byItem) { const k = byItem[it].join(','); (bySet[k] = bySet[k] || []).push(it); }
+      let rTxt = '';
+      for (const k in bySet) { const idx = k.split(',').map(Number); rTxt += ' + ' + describe(idx.map((i) => data[i].vp), allVals) + ' (' + idx.length + '): ' + bySet[k].sort().join(' ; ') + '\n'; }
+      if (gTxt && rTxt && rTxt.length < gTxt.length) txt += ' ROWS\n' + rTxt; else txt += gTxt;
+      if (!common.length && gk.length === 1 && !gk[0]) txt += ' (no colour paints)\n';
+    } catch (e) { txt = '## [' + ci + '] ' + c.name + ' (' + c.id + ') ERROR ' + String(e).slice(0, 200) + '\n'; }
+    const tb = blen(txt);
+    if (outB + tb > LIMIT) {
+      if (pi === 0 && ci === START_COMP && tb > LIMIT) { out += txt.slice(0, Math.floor((LIMIT - outB) / 3) - 200) + '\n...(component text cut)\n'; truncated = 'TRUNCATED AT page ' + page.name + ' (' + page.id + ') component ' + (ci + 1) + ' (component ' + ci + ' ' + c.name + ' was cut) of ' + comps.length; }
+      else truncated = 'TRUNCATED AT page ' + page.name + ' (' + page.id + ') component ' + ci + ' ' + c.name + ' of ' + comps.length + ' (resume: START=' + ci + ', pages from ' + page.id + ')';
+      truncated += '; pages not started: ' + (PAGES.slice(pi + 1).join(',') || 'none');
+      break;
+    }
+    out += txt; outB += tb;
+  }
+}
+out += '\n' + (truncated ? truncated : 'COMPLETE') + ' bytes~' + outB + '\n';
+return out;

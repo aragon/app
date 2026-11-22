@@ -62,8 +62,8 @@ export const GaugeDistributionsMembersFileDownload: React.FC<
             useCustomWrapper={true}
         >
             {downloadedFileName && (
-                <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-neutral-sm">
-                    <p className="text-sm text-neutral-400">
+                <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-surface-sm">
+                    <p className="text-sm text-surface-tertiary">
                         {t(
                             'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.downloadedFile',
                             {

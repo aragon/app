@@ -128,7 +128,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                         </DataList.Root>
                     )}
                     {!isLoading && campaigns.length === 0 && (
-                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-neutral-500">
+                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-surface-secondary">
                             {t(
                                 `app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.${activityStatus === 'active' ? 'emptyStateActive' : 'emptyStateInactive'}`,
                             )}

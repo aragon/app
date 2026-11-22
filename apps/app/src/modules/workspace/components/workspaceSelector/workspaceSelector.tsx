@@ -99,7 +99,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                 constrainContentWidth={false}
                 customTrigger={
                     <button
-                        className="group flex min-h-row w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-control-md text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
+                        className="group flex min-h-row w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-surface-default bg-surface-default p-2 pr-control-md text-surface-default focus-ring transition-all ring-accent-focus shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active"
                         type="button"
                     >
                         <span className="flex w-11 shrink-0 items-center">
@@ -109,7 +109,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                                 src={ipfsUtils.cidToSrc(workspace?.avatar)}
                             />
                         </span>
-                        <span className="grow truncate text-left text-base leading-tight text-neutral-800">
+                        <span className="grow truncate text-left text-base leading-tight text-surface-primary">
                             {workspace?.name}
                         </span>
                         <Icon

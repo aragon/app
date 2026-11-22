@@ -28,12 +28,12 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
                 <DefinitionList.Item
                     term={t('app.governance.efpCard.following')}
                 >
-                    <p className="text-neutral-500">{following}</p>
+                    <p className="text-surface-secondary">{following}</p>
                 </DefinitionList.Item>
                 <DefinitionList.Item
                     term={t('app.governance.efpCard.followers')}
                 >
-                    <p className="text-neutral-500">{followers}</p>
+                    <p className="text-surface-secondary">{followers}</p>
                 </DefinitionList.Item>
             </DefinitionList.Container>
             <div className="flex flex-col gap-related">
@@ -47,7 +47,7 @@ export const EfpCard: React.FC<IEfpCardProps> = (props) => {
                 >
                     {t('app.governance.efpCard.cta')}
                 </Button>
-                <p className="text-center text-sm text-neutral-500">
+                <p className="text-center text-sm text-surface-secondary">
                     {t('app.governance.efpCard.info')}
                 </p>
             </div>

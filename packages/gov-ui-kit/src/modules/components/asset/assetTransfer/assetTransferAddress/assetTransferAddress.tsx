@@ -33,9 +33,9 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
     return (
         <div
             className={classNames(
-                'group relative h-20 border-neutral-100', // default
-                'hover:border-neutral-200 hover:shadow-neutral-md', // hover
-                'active:border-neutral-300 active:shadow-none', // active
+                'group relative h-20 border-surface-default', // default
+                'hover:border-surface-hover hover:shadow-surface-md', // hover
+                'active:border-surface-active-card active:shadow-none', // active
                 'md:w-1/2', // responsive
                 {
                     'rounded-t-xl md:rounded-l-xl md:rounded-r-none': txRole === 'sender', // sender base
@@ -67,22 +67,22 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                 <MemberAvatar
                     address={participant.address}
                     avatarSrc={participant.avatarSrc}
-                    className="group-hover:shadow-neutral-md group-active:shadow-none"
+                    className="group-hover:shadow-surface-md group-active:shadow-none"
                     ensName={participant.name}
                     responsiveSize={{ md: 'md' }}
                 />
                 <div className="flex min-w-0 flex-col">
-                    <span className="text-xs leading-tight font-normal text-neutral-500 md:text-sm">
+                    <span className="text-xs leading-tight font-normal text-surface-secondary md:text-sm">
                         {txRole === 'sender' ? 'From' : 'To'}
                     </span>
                     <div className="space-x-tight flex items-center">
                         <AddressOutput
                             address={participant.address}
-                            className="truncate text-sm leading-tight font-normal text-neutral-800 md:text-base"
+                            className="truncate text-sm leading-tight font-normal text-surface-primary md:text-base"
                             label={resolvedUserHandle}
                         />
                         <Icon
-                            className="float-right text-neutral-300 group-hover:text-primary-300 group-active:text-primary-400"
+                            className="float-right icon-surface-default group-hover:icon-surface-default-asset-transfer group-active:icon-accent-active"
                             icon={IconType.LINK_EXTERNAL}
                             size="sm"
                         />

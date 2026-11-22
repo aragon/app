@@ -24,13 +24,13 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center font-mono text-[10px] transition-colors shadow-surface-sm',
                             permission.conditionLabel != null &&
                                 'pb-inset-tight--fixed-4',
                             isSelected
-                                ? 'border-primary-500 bg-primary-500 text-neutral-0'
+                                ? 'border-primary-500 bg-primary-500 text-accent-inverse'
                                 : dimmed
-                                  ? 'border-neutral-200 bg-neutral-200 text-neutral-500'
+                                  ? 'border-neutral-200 bg-neutral-200 text-surface-secondary'
                                   : 'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
                         )}
                         key={permission.edgeId}
@@ -47,12 +47,12 @@ export const PermissionStackNode: React.FC<
                         {permission.conditionLabel != null && (
                             <span
                                 className={classNames(
-                                    'rounded bg-neutral-0 px-inset-tight--fixed-4',
+                                    'rounded bg-surface-primary px-inset-tight--fixed-4',
                                     isSelected
                                         ? 'text-primary-700'
                                         : dimmed
-                                          ? 'text-neutral-500'
-                                          : 'text-neutral-800',
+                                          ? 'text-surface-secondary'
+                                          : 'text-surface-primary',
                                 )}
                             >
                                 {t(

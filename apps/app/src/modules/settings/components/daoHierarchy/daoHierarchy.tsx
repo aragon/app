@@ -51,10 +51,10 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                 term={t('app.settings.daoSettingsInfo.blockchain')}
             >
                 <div className="flex flex-col gap-tight">
-                    <p className="text-neutral-500">
+                    <p className="text-surface-secondary">
                         {networkDefinitions[dao.network].name}
                     </p>
-                    <p className="text-sm leading-tight font-normal text-neutral-400">
+                    <p className="text-sm leading-tight font-normal text-surface-tertiary">
                         {t('app.settings.daoSettingsInfo.notChangeable')}
                     </p>
                 </div>
@@ -108,7 +108,9 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                         )}
                         collapsedLines={4}
                     >
-                        <p className="text-neutral-500">{dao.description}</p>
+                        <p className="text-surface-secondary">
+                            {dao.description}
+                        </p>
                     </Collapsible>
                 </DefinitionList.Item>
             )}
@@ -168,7 +170,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                     size="md"
                                     src={getDaoAvatar(dao)}
                                 />
-                                <p className="truncate text-lg leading-tight text-neutral-800">
+                                <p className="truncate text-lg leading-tight text-surface-primary">
                                     {dao.name}
                                 </p>
                             </div>
@@ -192,7 +194,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                         size="md"
                                         src={getDaoAvatar(linkedAccount)}
                                     />
-                                    <p className="truncate text-lg leading-tight text-neutral-800">
+                                    <p className="truncate text-lg leading-tight text-surface-primary">
                                         {linkedAccount.name}
                                     </p>
                                 </div>

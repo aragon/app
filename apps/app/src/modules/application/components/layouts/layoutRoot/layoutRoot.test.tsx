@@ -4,6 +4,8 @@ import * as headers from 'next/headers';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
 import { spacingPreviewUtils } from '@/modules/application/utils/spacingPreviewUtils';
+import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
+import { typographyPreviewUtils } from '@/modules/application/utils/typographyPreviewUtils';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -39,10 +41,38 @@ describe('<LayoutRoot /> component', () => {
     const cookieToInitialStateSpy = jest.spyOn(wagmi, 'cookieToInitialState');
     const headersSpy = jest.spyOn(headers, 'headers');
     const getSnapshotSpy = jest.spyOn(featureFlags, 'getSnapshot');
-    const { getServerSpacingAttribute } = spacingPreviewUtils;
-    const getServerSpacingAttributeSpy = jest.spyOn(
-        spacingPreviewUtils,
-        'getServerSpacingAttribute',
+    // The three debug-panel preview axes are independent: each has its own server-side resolver, cookie and attribute.
+    const axes = [
+        {
+            name: 'colour theme',
+            utils: themePreviewUtils,
+            method: 'getServerThemeAttribute',
+            attribute: 'data-theme',
+            value: 'next',
+        },
+        {
+            name: 'typography',
+            utils: typographyPreviewUtils,
+            method: 'getServerTypographyAttribute',
+            attribute: 'data-typography',
+            value: 'next',
+        },
+        {
+            name: 'spacing',
+            utils: spacingPreviewUtils,
+            method: 'getServerSpacingAttribute',
+            attribute: 'data-spacing',
+            value: 'compact',
+        },
+    ] as const;
+    const resolvers = axes.map((axis) => {
+        const utils = axis.utils as unknown as Record<
+            string,
+            (...args: never[]) => unknown
+        >;
+        const original = utils[axis.method];
+        return { axis, original, spy: jest.spyOn(utils, axis.method) };
+    });
     );
 
     // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
@@ -59,9 +89,9 @@ describe('<LayoutRoot /> component', () => {
             get: jest.fn(),
         } as unknown as Promise<ReadonlyHeaders>);
         getSnapshotSpy.mockResolvedValue([]);
-        getServerSpacingAttributeSpy.mockImplementation(
-            getServerSpacingAttribute,
-        );
+        for (const { original, spy } of resolvers) {
+            spy.mockImplementation(original);
+        }
         useFeatureFlagsSpy.mockReturnValue({
             isEnabled: () => false,
         } as unknown as ReturnType<
@@ -74,7 +104,9 @@ describe('<LayoutRoot /> component', () => {
         headersSpy.mockReset();
         useFeatureFlagsSpy.mockReset();
         getSnapshotSpy.mockReset();
-        getServerSpacingAttributeSpy.mockReset();
+        for (const { spy } of resolvers) {
+            spy.mockReset();
+        }
     });
 
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
@@ -118,10 +150,10 @@ describe('<LayoutRoot /> component', () => {
         expect(providers.dataset.wagmistate).toEqual(initialState);
     });
 
-    it.each([true, false])(
-        'resolves the previewed spacing from the request cookies with the debug panel enabled: %s',
-        async (enabled) => {
-            const cookie = `${spacingPreviewUtils.cookieName}=compact`;
+    describe.each(resolvers)('$axis.name preview', ({ axis, spy }) => {
+        const cookie = `${axis.utils.cookieName}=${axis.value}`;
+
+        const mockRequest = (enabled: boolean) => {
             headersSpy.mockReturnValue({
                 get: (name: string) => (name === 'cookie' ? cookie : null),
             } as unknown as Promise<ReadonlyHeaders>);
@@ -133,43 +165,35 @@ describe('<LayoutRoot /> component', () => {
                     enabled,
                 },
             ]);
+        };
 
-            render(await createTestComponent());
+        it.each([true, false])(
+            'resolves the previewed value from the request cookies with the debug panel enabled: %s',
+            async (enabled) => {
+                mockRequest(enabled);
 
-            expect(getServerSpacingAttributeSpy).toHaveBeenCalledWith(
-                enabled,
-                cookie,
-            );
-        },
-    );
+                render(await createTestComponent());
 
-    it.each([
-        [true, 'compact'],
-        [false, null],
-    ])(
-        'renders data-spacing from a stored cookie only with the debug panel enabled (%s)',
-        async (enabled, expected) => {
-            const cookie = `${spacingPreviewUtils.cookieName}=compact`;
-            headersSpy.mockReturnValue({
-                get: (name: string) => (name === 'cookie' ? cookie : null),
-            } as unknown as Promise<ReadonlyHeaders>);
-            getSnapshotSpy.mockResolvedValue([
-                {
-                    key: 'debugPanel',
-                    name: 'Debug panel',
-                    description: '',
-                    enabled,
-                },
-            ]);
+                expect(spy).toHaveBeenCalledWith(enabled, cookie);
+            },
+        );
 
-            cookieToInitialStateSpy.mockReturnValue(undefined);
+        it.each([
+            [true, axis.value],
+            [false, null],
+        ])(
+            `renders ${axis.attribute} from a stored cookie only with the debug panel enabled (%s)`,
+            async (enabled, expected) => {
+                mockRequest(enabled);
+                cookieToInitialStateSpy.mockReturnValue(undefined);
 
-            render(await createTestComponent());
+                render(await createTestComponent());
 
-            // React renders <html> as the document's root singleton.
-            expect(
-                document.documentElement.getAttribute('data-spacing'),
-            ).toEqual(expected);
-        },
-    );
+                // React renders <html> as the document's root singleton.
+                expect(
+                    document.documentElement.getAttribute(axis.attribute),
+                ).toEqual(expected);
+            },
+        );
+    });
 });

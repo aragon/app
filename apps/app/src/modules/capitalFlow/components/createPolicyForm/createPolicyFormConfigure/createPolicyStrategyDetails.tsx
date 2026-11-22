@@ -79,7 +79,7 @@ export const CreatePolicyStrategyDetails: React.FC<
             const routerCount = validRouters.length;
             if (routerCount === 0) {
                 return (
-                    <span className="text-sm text-neutral-500">
+                    <span className="text-sm text-surface-secondary">
                         {recipientsEmptyLabel}
                     </span>
                 );
@@ -107,7 +107,7 @@ export const CreatePolicyStrategyDetails: React.FC<
 
         if (recipients.length === 0) {
             return (
-                <span className="text-sm text-neutral-500">
+                <span className="text-sm text-surface-secondary">
                     {recipientsEmptyLabel}
                 </span>
             );
@@ -122,7 +122,7 @@ export const CreatePolicyStrategyDetails: React.FC<
     };
 
     return (
-        <DefinitionList.Container className="rounded-xl border border-neutral-100 bg-neutral-0 px-inset-surface-wide py-inset-surface-flat--fixed-16">
+        <DefinitionList.Container className="rounded-xl border border-surface-secondary bg-surface-primary px-inset-surface-wide py-inset-surface-flat--fixed-16">
             <DefinitionList.Item
                 description={routerTypeDescription}
                 term={t(

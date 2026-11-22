@@ -44,8 +44,8 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
                     variant={proposalStatusToTagVariant[status]}
                 />
                 {showStatusContext && (
-                    <div className="truncate text-sm leading-tight text-neutral-800 md:text-base">
-                        <span className="text-neutral-500">{copy.proposalDataListItemStatus.in} </span>
+                    <div className="truncate text-sm leading-tight text-surface-primary md:text-base">
+                        <span className="text-surface-secondary">{copy.proposalDataListItemStatus.in} </span>
                         {statusContext}
                     </div>
                 )}
@@ -54,8 +54,8 @@ export const ProposalDataListItemStatus: React.FC<IProposalDataListItemStatusPro
                 <div className="flex items-center gap-x-related--8-12">
                     <span
                         className={classNames('text-sm leading-tight md:text-base', {
-                            'text-info-800': isActive,
-                            'text-neutral-800': !isActive,
+                            'text-info-primary': isActive,
+                            'text-surface-primary': !isActive,
                         })}
                     >
                         {isActive && voted && copy.proposalDataListItemStatus.voted}

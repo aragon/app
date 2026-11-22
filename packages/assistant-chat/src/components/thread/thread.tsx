@@ -65,7 +65,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
 
     return (
         <ThreadPrimitive.Root
-            className="flex h-full min-h-0 flex-1 flex-col bg-neutral-0"
+            className="flex h-full min-h-0 flex-1 flex-col bg-surface-primary"
             style={
                 {
                     '--thread-max-width': '100%',
@@ -96,7 +96,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                         </ThreadPrimitive.Messages>
                     </div>
 
-                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-related overflow-visible rounded-t-(--composer-radius) bg-neutral-0 pb-inset-surface">
+                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-related overflow-visible rounded-t-(--composer-radius) bg-surface-primary pb-inset-surface">
                         <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
@@ -165,9 +165,9 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
 
     return (
         <div className="flex items-center gap-related">
-            <span className="h-px flex-1 bg-neutral-100" />
-            <p className="flex-none text-xs text-neutral-400">{label}</p>
-            <span className="h-px flex-1 bg-neutral-100" />
+            <span className="h-px flex-1 bg-surface-tertiary" />
+            <p className="flex-none text-xs text-surface-tertiary">{label}</p>
+            <span className="h-px flex-1 bg-surface-tertiary" />
         </div>
     );
 };
@@ -187,7 +187,7 @@ const ThreadMessage: React.FC = () => {
 // Styled after the gov-ui-kit Link (its own type scale is too large for the caption lines): the
 // app's plain link look, opening in a new tab so the chat stays put.
 const captionLinkClassName =
-    'focus-ring-primary inline-flex items-center gap-tight--fixed-6 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700';
+    'focus-ring ring-accent-focus inline-flex items-center gap-tight--fixed-6 rounded-md text-link-default hover:text-link-hover active:text-link-active';
 
 interface ICaptionLinkProps {
     href: string;
@@ -238,7 +238,7 @@ const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
 
     return (
         <a
-            className="rounded-sm underline underline-offset-2 focus-ring-primary hover:text-neutral-600"
+            className="rounded-sm underline underline-offset-2 focus-ring ring-accent-focus hover:text-link-secondary-hover"
             href={href}
             rel="noopener noreferrer"
             target="_blank"
@@ -256,7 +256,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="mx-related--fixed-8 text-center text-xs leading-normal text-balance text-neutral-400"
+            className="mx-related--fixed-8 text-center text-xs leading-normal text-balance text-surface-tertiary"
             id={id}
         >
             {text}
@@ -286,7 +286,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="mx-auto cursor-pointer rounded-sm text-xs text-neutral-500 underline underline-offset-2 focus-ring-primary"
+            className="mx-auto cursor-pointer rounded-sm text-xs text-surface-secondary underline underline-offset-2 focus-ring ring-accent-focus"
             onClick={onViewRequests}
             type="button"
         >
@@ -296,7 +296,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="flex items-center justify-center gap-tight text-center text-xs text-neutral-400">
+    <p className="flex items-center justify-center gap-tight text-center text-xs text-surface-tertiary">
         {chatCopy.composer.escalationPrompt}
         <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
@@ -324,7 +324,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-neutral-100 px-control-md--fixed-14 py-inset-tight--fixed-6 text-sm whitespace-nowrap text-neutral-800 transition-colors focus-ring-primary hover:bg-neutral-50"
+                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 text-sm whitespace-nowrap text-surface-primary focus-ring transition-colors ring-accent-focus hover:bg-surface-hover"
                         type="button"
                     >
                         {suggestion.label}
@@ -370,14 +370,14 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="flex w-full flex-col gap-related--fixed-8 rounded-(--composer-radius) border border-neutral-200 bg-neutral-0 p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-primary-400 focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-primary-400 data-[dragging=true]:bg-primary-50">
+                <div className="flex w-full flex-col gap-related--fixed-8 rounded-(--composer-radius) border border-surface-default-composer bg-surface-default p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-accent-active focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-accent-active data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="mx-related--fixed-10 text-xs leading-normal text-neutral-300">
+                        <p className="mx-related--fixed-10 text-xs leading-normal text-surface-tertiary-hint">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -388,7 +388,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 text-sm text-neutral-800 caret-primary-400 outline-none placeholder:text-neutral-300"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 text-sm text-surface-primary outline-none caret-text-accent-primary placeholder:text-surface-placeholder"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -438,7 +438,9 @@ const ComposerCharacterCount: React.FC = () => {
         <p
             className={classNames(
                 'text-xs tabular-nums',
-                length >= limit ? 'text-critical-600' : 'text-neutral-400',
+                length >= limit
+                    ? 'text-critical-primary-message'
+                    : 'text-surface-tertiary',
             )}
         >
             {chatCopy.composer.characterCount(
@@ -513,7 +515,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-related--fixed-8 flex flex-col gap-tight rounded-xl border border-critical-300 bg-critical-100/40 p-inset-surface-flat--fixed-12 text-sm leading-normal text-critical-800">
+        <ErrorPrimitive.Root className="mt-related--fixed-8 flex flex-col gap-tight rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-inset-surface-flat--fixed-12 text-sm leading-normal text-critical-primary">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -581,7 +583,7 @@ const AssistantWorking: React.FC = () => {
 // hover autohide): appearing on hover makes the layout feel jumpy.
 const AssistantActionBar: React.FC = () => (
     <ActionBarPrimitive.Root
-        className="-ms-1 flex gap-tight text-neutral-500"
+        className="-ms-1 flex gap-tight text-surface-secondary"
         hideWhenRunning={true}
     >
         <ActionBarPrimitive.Copy asChild={true}>
@@ -602,7 +604,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="mx-related--fixed-8 text-sm leading-relaxed wrap-break-word text-neutral-800">
+        <div className="mx-related--fixed-8 text-sm leading-relaxed wrap-break-word text-surface-primary">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -637,7 +639,7 @@ const UserMessage: React.FC = () => (
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="rounded-xl rounded-br-sm bg-neutral-100 px-inset-item-flat py-inset-item-flat--fixed-8 text-sm wrap-break-word whitespace-pre-wrap text-neutral-800 empty:hidden">
+            <div className="rounded-xl rounded-br-sm bg-surface-tertiary px-inset-item-flat py-inset-item-flat--fixed-8 text-sm wrap-break-word whitespace-pre-wrap text-surface-primary empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

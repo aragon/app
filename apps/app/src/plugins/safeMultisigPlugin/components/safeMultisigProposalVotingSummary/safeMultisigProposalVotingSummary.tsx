@@ -49,7 +49,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     // zero approvals: name the body and say no more.
     if (stageStatus === ProposalStatus.PENDING || safeInfo == null) {
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {displayName}
             </p>
         );
@@ -78,13 +78,13 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
         const statusClass =
             reached && isVeto
-                ? 'text-critical-800'
+                ? 'text-critical-primary'
                 : reached
-                  ? 'text-success-800'
-                  : 'text-neutral-500';
+                  ? 'text-success-primary'
+                  : 'text-surface-secondary';
 
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {displayName}{' '}
                 <span className={statusClass}>
                     {t(`${translationKey}.${statusKey}`)}
@@ -104,9 +104,9 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-related">
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
                 {displayName}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(
                         `${translationKey}.${isVeto ? 'vetoLabel' : 'approvalLabel'}`,
                     )}
@@ -120,11 +120,11 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                 value={approvalsPercentage}
                 variant="neutral"
             />
-            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
+            <p className="text-sm leading-tight font-normal text-surface-primary md:text-base">
                 {formatterUtils.formatNumber(approvalsAmount, {
                     format: NumberFormat.GENERIC_SHORT,
                 })}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(`${translationKey}.ownerCount`, {
                         count: formatterUtils.formatNumber(membersCount, {
                             format: NumberFormat.GENERIC_SHORT,

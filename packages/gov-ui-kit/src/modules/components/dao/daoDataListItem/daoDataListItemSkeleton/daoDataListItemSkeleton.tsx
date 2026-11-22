@@ -19,7 +19,7 @@ export const DaoDataListItemSkeleton: React.FC<IDaoDataListItemSkeletonProps> = 
             {...otherProps}
         >
             <div className="flex w-full justify-between">
-                <div className="flex w-2/3 flex-col gap-y-related--fixed-10 text-neutral-800">
+                <div className="flex w-2/3 flex-col gap-y-related--fixed-10 text-surface-primary">
                     <StateSkeletonBar responsiveSize={{ md: 'xl' }} size="lg" width="100%" />
                     <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="50%" />
                 </div>
@@ -29,7 +29,7 @@ export const DaoDataListItemSkeleton: React.FC<IDaoDataListItemSkeletonProps> = 
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="100%" />
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="85%" />
             </div>
-            <div className="flex w-3/4 justify-between text-neutral-400 md:w-1/2">
+            <div className="flex w-3/4 justify-between text-surface-tertiary md:w-1/2">
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="50%" />
             </div>
         </DataList.Item>

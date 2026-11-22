@@ -85,7 +85,7 @@ describe('<ProposalActionsDecoderField /> component', () => {
         render(createTestComponent({ parameter }));
         expect(screen.getAllByText(parameter.name)).toHaveLength(2); // 2 because of the hidden array input
         parameter.value.forEach((_, index) =>
-            expect(screen.getByText(`[${index.toString()}]:`)).toHaveClass('text-neutral-500'),
+            expect(screen.getByText(`[${index.toString()}]:`)).toHaveClass('text-surface-secondary'),
         );
         const [, ...textInputs] = screen.getAllByRole('textbox');
         expect(textInputs).toHaveLength(parameter.value.length);
@@ -164,7 +164,7 @@ describe('<ProposalActionsDecoderField /> component', () => {
         expect(removeButtons).toHaveLength(parameter.value.length);
         removeButtons.forEach((button) => expect(button).toHaveClass('h-control-sm', 'w-control-sm'));
         parameter.value.forEach((_, index) =>
-            expect(screen.getByText(`[${index.toString()}]:`)).toHaveClass('text-neutral-500'),
+            expect(screen.getByText(`[${index.toString()}]:`)).toHaveClass('text-surface-secondary'),
         );
         // eslint-disable-next-line testing-library/no-node-access
         expect(screen.getByText('[0]:').parentElement).toContainElement(

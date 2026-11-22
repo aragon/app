@@ -26,7 +26,7 @@ export const CreateWorkspaceFormTargetsItem: React.FC<
 
     return (
         <Card
-            className="flex flex-col gap-related--12-8 shadow-neutral-sm md:flex-row"
+            className="flex flex-col gap-related--12-8 shadow-surface-sm md:flex-row"
             inset="surface-wide"
         >
             <div className="min-w-0 grow">

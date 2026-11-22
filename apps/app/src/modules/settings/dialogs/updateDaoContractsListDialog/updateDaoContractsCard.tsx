@@ -50,16 +50,16 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (
         <DataList.Item className="flex flex-col gap-group-stepped py-inset-item--16-24">
             <div className="flex flex-col gap-tight--4-6">
                 <div className="flex items-center justify-between">
-                    <p className="text-base text-neutral-800 md:text-lg">
+                    <p className="text-base text-surface-primary md:text-lg">
                         {name}
                     </p>
                     <AddressOutput
                         address={address}
-                        className="text-base text-neutral-500 md:text-lg"
+                        className="text-base text-surface-secondary md:text-lg"
                         copy={false}
                     />
                 </div>
-                <p className="text-sm text-neutral-500 md:text-base">
+                <p className="text-sm text-surface-secondary md:text-base">
                     {t('app.settings.updateDaoContractsCard.versionUpdate', {
                         from: fromVersion,
                         to: toVersion,

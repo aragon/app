@@ -57,21 +57,21 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     const randomId = useRandomId(id);
 
     const switchClassNames = classNames(
-        'group peer w-10 cursor-default rounded-[40px] border border-neutral-200 bg-neutral-0 p-1 shadow-neutral-sm focus-ring-primary', // Default
-        'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // Checked
-        'disabled:bg-neutral-100 disabled:data-[state=checked]:border-neutral-200 disabled:data-[state=checked]:shadow-none', // Disabled
+        'group peer w-10 cursor-default rounded-[40px] border border-surface-default-switch bg-surface-default p-1 focus-ring ring-accent-focus shadow-surface-sm', // Default
+        'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // Checked
+        'disabled:bg-surface-disabled disabled:data-[state=checked]:border-surface-disabled disabled:data-[state=checked]:shadow-none', // Disabled
     );
 
     const thumbClassNames = classNames(
-        'block size-4 rounded-full bg-neutral-300 transition-transform duration-100 will-change-transform', // Default
-        'data-[state=checked]:translate-x-[14px] data-[state=checked]:bg-primary-400', // Checked
-        'group-disabled:bg-neutral-200 data-[state=checked]:group-disabled:bg-neutral-300', // Disabled
+        'block size-4 rounded-full transition-transform duration-100 will-change-transform bg-icon-surface-secondary', // Default
+        'data-[state=checked]:translate-x-[14px] data-[state=checked]:bg-icon-accent-primary', // Checked
+        'group-disabled:bg-neutral-200 data-[state=checked]:group-disabled:bg-icon-surface-secondary', // Disabled
     );
 
     const labelClassNames = classNames(
-        'pl-control-sm--8-12 text-sm leading-tight font-normal text-neutral-500 md:text-base', // Default
-        'peer-data-[state=checked]:text-neutral-800', // Checked
-        'peer-disabled:text-neutral-300 peer-data-[state=checked]:peer-disabled:text-neutral-800', // Disabled
+        'pl-control-sm--8-12 text-sm leading-tight font-normal text-surface-secondary md:text-base', // Default
+        'peer-data-[state=checked]:text-surface-primary', // Checked
+        'peer-disabled:text-surface-disabled peer-data-[state=checked]:peer-disabled:text-surface-primary', // Disabled
     );
 
     return (

@@ -80,18 +80,19 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             )}
         >
             {selectionRole != null && (
-                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-primary-400 bg-neutral-0 px-inset-item-flat py-inset-tight text-xs font-medium text-neutral-500 uppercase">
+                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-surface-selected bg-surface-primary px-inset-item-flat py-inset-tight text-xs font-medium text-surface-secondary uppercase">
                     {t(SELECTION_LABEL_KEY[selectionRole])}
                 </span>
             )}
             <div
                 className={classNames(
-                    'flex min-w-64 cursor-pointer items-center justify-between gap-group border bg-neutral-0 px-inset-item-flat py-inset-item-flat transition-colors hover:border-primary-300',
-                    isSelected && 'border-primary-400 shadow-primary-lg',
+                    'flex min-w-64 cursor-pointer items-center justify-between gap-group border bg-surface-primary px-inset-item-flat py-inset-item-flat transition-colors hover:border-surface-hover-graph-node',
+                    isSelected && 'border-surface-selected shadow-primary-lg',
                     selectionRole != null
                         ? 'rounded-xl rounded-tl-none'
                         : 'rounded-xl',
-                    !isSelected && 'border-neutral-300 shadow-neutral-sm',
+                    !isSelected &&
+                        'border-surface-default-graph-node shadow-surface-sm',
                 )}
             >
                 <InteractiveAncestorContext.Provider value={true}>
@@ -99,10 +100,10 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                     <div className="flex min-w-0 flex-col gap-tight--fixed-2">
                         <AddressOutput
                             address={address}
-                            className="text-neutral-800"
+                            className="text-surface-primary"
                             label={label}
                         />
-                        <span className="truncate text-sm text-neutral-500">
+                        <span className="truncate text-sm text-surface-secondary">
                             {data.versionName ?? t(subtitleKey)}
                         </span>
                     </div>

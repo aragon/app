@@ -2,3 +2,9 @@
 .docs-story > div {
     z-index: auto;
 }
+
+/* Paint the canvas with the theme's body colour (semantic token bg/body), see the theme switcher in preview.tsx */
+.sb-show-main,
+.docs-story {
+    background-color: var(--guk-bg-body);
+}

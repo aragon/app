@@ -117,7 +117,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
                         </DataList.Root>
                     )}
                     {!isLoading && (gauges == null || gauges.length === 0) && (
-                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-neutral-500">
+                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-surface-secondary">
                             {t(
                                 'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.emptyState',
                             )}

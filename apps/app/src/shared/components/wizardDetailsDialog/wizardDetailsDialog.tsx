@@ -42,7 +42,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                 <Title asChild={true}>
                     <Heading size="h3">{title}</Heading>
                 </Title>
-                <Description className="text-base leading-normal font-normal text-neutral-500">
+                <Description className="text-base leading-normal font-normal text-surface-secondary">
                     {description}
                 </Description>
                 {infoLink && (
@@ -59,13 +59,13 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                         key={index}
                     >
                         <IllustrationObject
-                            className="size-16 rounded-full border border-neutral-100"
+                            className="size-16 rounded-full border border-surface-secondary"
                             object={step.icon}
                         />
-                        <p className="my-group grow leading-normal font-normal text-neutral-800">
+                        <p className="my-group grow leading-normal font-normal text-surface-primary">
                             {step.label}
                         </p>
-                        <p className="text-base leading-normal font-normal text-neutral-500">
+                        <p className="text-base leading-normal font-normal text-surface-secondary">
                             {t('app.shared.wizardDetailsDialog.step', {
                                 number: index + 1,
                             })}

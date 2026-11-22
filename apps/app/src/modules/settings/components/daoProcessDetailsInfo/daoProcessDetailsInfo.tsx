@@ -156,7 +156,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                 >
                     {t('app.settings.daoProcessDetailsInfo.uninstall.action')}
                 </Button>
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                <p className="text-center text-sm leading-normal font-normal text-surface-secondary">
                     {t('app.settings.daoProcessDetailsInfo.uninstall.info')}
                 </p>
             </div>

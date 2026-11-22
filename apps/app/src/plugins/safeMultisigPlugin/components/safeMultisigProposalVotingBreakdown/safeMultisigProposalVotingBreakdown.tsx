@@ -51,7 +51,7 @@ export const SafeMultisigProposalVotingBreakdownView: React.FC<
     if (membersCount == null || membersCount <= 0) {
         return (
             <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
-                <div className="rounded-xl border border-neutral-100 bg-neutral-0 p-inset-surface shadow-neutral-sm">
+                <div className="rounded-xl border border-surface-secondary bg-surface-primary p-inset-surface shadow-surface-sm">
                     <div className="flex flex-col gap-related--fixed-8">
                         <StateSkeletonBar size="lg" width="40%" />
                         <StateSkeletonBar size="lg" width="70%" />

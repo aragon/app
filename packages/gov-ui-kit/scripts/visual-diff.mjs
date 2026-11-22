@@ -13,7 +13,8 @@
 //   node scripts/visual-diff.mjs compare <base-dir> <head-dir> [--diff <dir>]
 //       Pixel comparison of two capture sets; writes a diff image per differing story. Exits 1 on any difference.
 //
-// Options: --spacing today|new|looser|compact (default today) · --filter <text contained in the story id> · --workers <n> (default 4)
+// Options: --theme today|next|dark (default today) · --typography today|next (default today) · --spacing today|new|looser|compact (default today)
+//          --filter <text contained in the story id> · --workers <n> (default 4)
 //          --work-dir <dir> (default node_modules/.cache/visual-diff) · --threshold <pixels> (default 0)
 //
 // Playwright: uses `playwright-core` from the kit if present, else from another workspace (apps/app, apps/docs), or
@@ -47,6 +48,8 @@ const excludedStories = {};
 
 const fixedTime = new Date('2025-01-15T12:00:00Z');
 const viewport = { width: 1280, height: 800 };
+const themes = ['today', 'next', 'dark'];
+const typographies = ['today', 'next'];
 const spacings = ['today', 'new', 'looser', 'compact'];
 
 const log = (message) => console.log(`visual-diff: ${message}`);
@@ -57,7 +60,7 @@ const fail = (message) => {
 
 const parseArgs = (argv) => {
     const positional = [];
-    const options = { spacing: 'today', workers: 4, threshold: 0 };
+    const options = { theme: 'today', typography: 'today', spacing: 'today', workers: 4, threshold: 0 };
     for (let index = 0; index < argv.length; index++) {
         const arg = argv[index];
         if (arg.startsWith('--')) {
@@ -69,6 +72,12 @@ const parseArgs = (argv) => {
     }
     options.workers = Number(options.workers);
     options.threshold = Number(options.threshold);
+    if (!themes.includes(options.theme)) {
+        fail(`unknown theme "${options.theme}" (${themes.join(' | ')})`);
+    }
+    if (!typographies.includes(options.typography)) {
+        fail(`unknown typography "${options.typography}" (${typographies.join(' | ')})`);
+    }
     if (!spacings.includes(options.spacing)) {
         fail(`unknown spacing "${options.spacing}" (${spacings.join(' | ')})`);
     }
@@ -359,7 +368,7 @@ const freezeCss = `*, *::before, *::after {
     scroll-behavior: auto !important;
 }`;
 
-const captureStory = async (browser, origin, story, spacing, outDir) => {
+const captureStory = async (browser, origin, story, modes, outDir) => {
     const context = await browser.newContext({
         viewport,
         deviceScaleFactor: 1,
@@ -377,11 +386,13 @@ const captureStory = async (browser, origin, story, spacing, outDir) => {
         await context.addInitScript(seedRandom);
         const page = await context.newPage();
         await page.clock.setFixedTime(fixedTime);
-        // Today is the toolbar default and is not passed, so a build without the Spacing toolbar (an older ref) captures
-        // exactly as before.
-        await page.goto(
-            `${origin}/iframe.html?id=${story.id}&viewMode=story${spacing === 'today' ? '' : `&globals=spacing:${spacing}`}`,
-        );
+        // Every axis is passed as a Storybook global; Today is the toolbar default and is left out, so a build without
+        // that toolbar (an older ref) captures exactly as before.
+        const globals = Object.entries(modes)
+            .filter(([, value]) => value !== 'today')
+            .map(([axis, value]) => `${axis}:${value}`)
+            .join(';');
+        await page.goto(`${origin}/iframe.html?id=${story.id}&viewMode=story${globals ? `&globals=${globals}` : ''}`);
         const status = await page
             .waitForFunction(
                 () => {
@@ -450,7 +461,13 @@ const capture = async (storybookDir, outDir, options) => {
             while (next < stories.length) {
                 const story = stories[next++];
                 try {
-                    results[story.id] = await captureStory(browser, origin, story, options.spacing, outDir);
+                    results[story.id] = await captureStory(
+                        browser,
+                        origin,
+                        story,
+                        { theme: options.theme, typography: options.typography, spacing: options.spacing },
+                        outDir,
+                    );
                 } catch (error) {
                     results[story.id] = { status: 'failed', error: String(error).split('\n')[0] };
                 }
@@ -466,10 +483,10 @@ const capture = async (storybookDir, outDir, options) => {
     const unstable = Object.entries(results).filter(([, result]) => result.unstable);
     writeFileSync(
         join(outDir, 'manifest.json'),
-        `${JSON.stringify({ spacing: options.spacing, viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
+        `${JSON.stringify({ theme: options.theme, typography: options.typography, spacing: options.spacing, viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
     );
     log(
-        `captured ${stories.length - failed.length}/${stories.length} stories (spacing ${options.spacing}, ` +
+        `captured ${stories.length - failed.length}/${stories.length} stories (theme ${options.theme}, typography ${options.typography}, spacing ${options.spacing}, ` +
             `${Object.keys(excludedStories).length} excluded, ${all.length - stories.length - Object.keys(excludedStories).length} filtered) ` +
             `in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${outDir}`,
     );
@@ -562,7 +579,9 @@ switch (command) {
         await capture(join(workDir, 'base-storybook'), join(workDir, 'base'), options);
         await capture(join(workDir, 'head-storybook'), join(workDir, 'head'), options);
         const same = compare(join(workDir, 'base'), join(workDir, 'head'), { ...options, diff: join(workDir, 'diff') });
-        log(`${args[0]} vs ${options.head ?? 'working tree'} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+        log(
+            `${args[0]} vs ${options.head ?? 'working tree'} (theme ${options.theme}, typography ${options.typography}, spacing ${options.spacing}) in ${((Date.now() - started) / 1000).toFixed(1)}s`,
+        );
         process.exitCode = same ? 0 : 1;
         break;
     }

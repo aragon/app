@@ -138,7 +138,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
                     onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (
-                <p className="text-primary-400">
+                <p className="text-accent-primary">
                     {t('app.governance.createProposalForm.actions.loading')}
                 </p>
             )}

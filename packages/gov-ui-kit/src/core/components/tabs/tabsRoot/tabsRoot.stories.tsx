@@ -27,17 +27,17 @@ const reusableStoryComponent = (props: ITabsRootProps) => (
             <Tabs.Trigger iconRight={IconType.BLOCKCHAIN_BLOCK} label="Icon Tab" value="3" />
         </Tabs.List>
         <Tabs.Content value="1">
-            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-100">
+            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-subtle">
                 Item 1 Content
             </div>
         </Tabs.Content>
         <Tabs.Content value="2">
-            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-100">
+            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-subtle">
                 Item 2 Content
             </div>
         </Tabs.Content>
         <Tabs.Content value="3">
-            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-100">
+            <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-subtle">
                 Item 3 Content
             </div>
         </Tabs.Content>
@@ -80,7 +80,7 @@ export const SingleTab: Story = {
                 <Tabs.Trigger label="Default Tab" value="1" />
             </Tabs.List>
             <Tabs.Content value="1">
-                <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-100">
+                <div className="flex h-24 w-96 items-center justify-center border border-dashed border-info-300 bg-info-subtle">
                     Item 1 Content
                 </div>
             </Tabs.Content>

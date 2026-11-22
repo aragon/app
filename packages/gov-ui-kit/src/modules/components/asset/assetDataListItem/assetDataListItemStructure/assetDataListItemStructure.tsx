@@ -51,13 +51,15 @@ export const AssetDataListItemStructure: React.FC<IAssetDataListItemStructurePro
         >
             <div className="flex min-w-0 items-center gap-related--12-16">
                 <Avatar className="block shrink-0" responsiveSize={{ md: 'md', sm: 'sm' }} src={logoSrc} />
-                <span className="truncate text-base leading-tight text-neutral-800 md:text-lg">{name}</span>
+                <span className="truncate text-base leading-tight text-surface-primary md:text-lg">{name}</span>
             </div>
             <div className="flex min-w-0 gap-x-related--fixed-8 text-right">
                 <div className="flex min-w-0 flex-col gap-y-tight">
-                    <span className="truncate text-base leading-tight text-neutral-800 md:text-lg">{parsedAmount}</span>
+                    <span className="truncate text-base leading-tight text-surface-primary md:text-lg">
+                        {parsedAmount}
+                    </span>
                     {!hideValue && (
-                        <span className="truncate text-sm leading-tight text-neutral-500 md:text-base">
+                        <span className="truncate text-sm leading-tight text-surface-secondary md:text-base">
                             {formattedValue}
                         </span>
                     )}

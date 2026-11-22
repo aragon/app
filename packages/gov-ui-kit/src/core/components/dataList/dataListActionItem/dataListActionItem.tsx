@@ -21,18 +21,18 @@ export interface IDataListActionItemProps extends ComponentProps<'button'> {
 }
 
 const variantRowClasses: Record<DataListActionItemVariant, string> = {
-    primary: 'text-primary-400 hover:bg-primary-400/4 active:bg-primary-400/8',
-    neutral: 'text-neutral-500 hover:bg-neutral-800/4 active:bg-neutral-800/8',
+    primary: 'text-accent-primary hover:bg-accent-transparent-hover active:bg-accent-transparent-active',
+    neutral: 'text-surface-secondary hover:bg-surface-transparent-hover active:bg-surface-transparent-active',
 };
 
 const variantAvatarClasses: Record<DataListActionItemVariant, string> = {
-    primary: 'bg-primary-50',
-    neutral: 'bg-neutral-50',
+    primary: 'bg-accent-subtle',
+    neutral: 'bg-surface-secondary',
 };
 
 const variantIconClasses: Record<DataListActionItemVariant, string> = {
-    primary: 'text-primary-400',
-    neutral: 'text-neutral-500',
+    primary: 'icon-accent-primary',
+    neutral: 'icon-surface-primary-item',
 };
 
 export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) => {
@@ -42,7 +42,7 @@ export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) =>
         <button
             className={classNames(
                 'group flex w-full items-center gap-group--12-16 rounded-xl bg-transparent px-inset-item py-control-item text-base leading-tight transition-colors',
-                'focus-ring-primary md:text-lg',
+                'focus-ring ring-accent-focus md:text-lg',
                 variantRowClasses[variant],
                 className,
             )}
@@ -52,7 +52,7 @@ export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) =>
             <span
                 className={classNames(
                     'flex size-6 shrink-0 items-center justify-center rounded-full transition-colors md:size-8',
-                    'group-hover:bg-neutral-0 group-focus-visible:bg-neutral-0 group-active:bg-neutral-0',
+                    'group-hover:bg-surface-hover-lift group-focus-visible:bg-surface-hover-lift group-active:bg-surface-active',
                     variantAvatarClasses[variant],
                 )}
             >

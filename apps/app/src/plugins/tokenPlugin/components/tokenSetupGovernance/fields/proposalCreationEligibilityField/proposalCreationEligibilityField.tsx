@@ -40,7 +40,7 @@ export const ProposalCreationEligibilityField: React.FC<
 
     return (
         <Card
-            className="flex flex-col gap-section shadow-neutral-sm"
+            className="flex flex-col gap-section shadow-surface-sm"
             inset="surface-wide"
         >
             <RadioGroup

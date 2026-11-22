@@ -17,17 +17,17 @@ export interface IAlertInlineProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantToIconClassNames: Record<AlertVariant, string> = {
-    critical: 'text-critical-500',
-    info: 'text-info-500',
-    success: 'text-success-500',
-    warning: 'text-warning-500',
+    critical: 'icon-critical-primary',
+    info: 'icon-info-primary',
+    success: 'icon-success-primary',
+    warning: 'icon-warning-primary',
 };
 
 const variantToTextClassNames: Record<AlertVariant, string> = {
-    critical: 'text-critical-800',
-    info: 'text-info-800',
-    success: 'text-success-800',
-    warning: 'text-warning-800',
+    critical: 'text-critical-primary',
+    info: 'text-info-primary',
+    success: 'text-success-primary',
+    warning: 'text-warning-primary',
 };
 
 export const AlertInline: React.FC<IAlertInlineProps> = (props) => {
