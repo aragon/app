@@ -668,6 +668,112 @@
                 }
             }
         },
+        "control-item": {
+            "$description": "Block padding of a target laid out as an item that steps up on desktop: accordion headers, data list action rows, choice cards. The values of inset-item.y, but a control: on coarse pointers compact falls back to New (spacing.config.json coarsePointer).",
+            "pad-y": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 12,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 12,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 8,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 20,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 20,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 24,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 16,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "control-item-flat": {
+            "$description": "Block padding of a target laid out as an item that keeps one size: menu items and options. The values of inset-item-flat.y, but a control: on coarse pointers compact falls back to New.",
+            "pad-y": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 12,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 12,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 8,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    },
+                    "$extensions": {
+                        "org.aragon.gov-ui-kit": {
+                            "modes": {
+                                "new": {
+                                    "value": 12,
+                                    "unit": "px"
+                                },
+                                "looser": {
+                                    "value": 16,
+                                    "unit": "px"
+                                },
+                                "compact": {
+                                    "value": 8,
+                                    "unit": "px"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "row": {
             "$description": "Minimum height of a clickable list row that is not an item with padding (account/workspace selector rows).",
             "height": {

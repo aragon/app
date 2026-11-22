@@ -101,7 +101,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
         <RadixDropdown.Item
             asChild={renderLink || renderSubmitButton}
             className={classNames(
-                'flex items-center gap-related px-inset-item-flat py-inset-item-flat', // Layout
+                'flex items-center gap-related px-inset-item-flat py-control-item-flat', // Layout
                 'cursor-pointer rounded-xl text-base leading-tight focus-visible:outline-hidden', // Style
                 'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-neutral-0 data-disabled:text-neutral-300', // Disabled
                 { 'bg-neutral-0 text-neutral-500': !selected && !disabled }, // Not selected

@@ -4,6 +4,54 @@
     "space": {
         "$type": "dimension",
         "exception": {
+            "control-item--12-16": {
+                "$description": "steps 12 → 16 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "py"
+                        ],
+                        "places": 2,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "control-item-flat--fixed-8": {
+                "$description": "unstepped (one value at every width)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "py"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
             "control-lg--fixed-10": {
                 "$description": "unstepped (one value at every width)",
                 "$extensions": {

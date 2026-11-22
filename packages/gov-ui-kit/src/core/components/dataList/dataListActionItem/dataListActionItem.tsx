@@ -41,7 +41,7 @@ export const DataListActionItem: React.FC<IDataListActionItemProps> = (props) =>
     return (
         <button
             className={classNames(
-                'group flex w-full items-center gap-group--12-16 rounded-xl bg-transparent px-inset-item py-inset-item text-base leading-tight transition-colors',
+                'group flex w-full items-center gap-group--12-16 rounded-xl bg-transparent px-inset-item py-control-item text-base leading-tight transition-colors',
                 'focus-ring-primary md:text-lg',
                 variantRowClasses[variant],
                 className,

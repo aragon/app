@@ -23,7 +23,7 @@ export const AutocompleteInputItem = forwardRef<
     const { id, icon, name, info } = item;
 
     const itemClassName = classNames(
-        'flex flex-row items-center justify-between gap-group rounded-lg px-inset-item-flat--fixed-12 py-inset-item-flat--fixed-8 hover:cursor-pointer',
+        'flex flex-row items-center justify-between gap-group rounded-lg px-inset-item-flat--fixed-12 py-control-item-flat--fixed-8 hover:cursor-pointer',
         'leading-tight font-normal',
         { 'bg-neutral-50 text-neutral-800': isActive },
         { 'text-neutral-500': !isActive },

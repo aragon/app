@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 24 roles, 6 component sizes and 89 Today exceptions, 564 utilities. A utility is
+ * Semantic spacing: 24 roles, 8 component sizes and 91 Today exceptions, 568 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -12,7 +12,7 @@
  * - [data-spacing="new"]      New: every role at its one standard value; exceptions follow their role.
  * - [data-spacing="looser"]   New, looser: the same roles one step more generous (phone page gutters and item insets stay at New).
  * - [data-spacing="compact"]  New, compact: the same roles one step denser; control heights fall back to New on coarse pointers.
- * - (pointer: coarse) compact: size.control-sm.height, size.control-md.height, size.control-lg.height, size.control-lg.pad-y, size.row.height take their new values.
+ * - (pointer: coarse) compact: size.control-sm.height, size.control-md.height, size.control-lg.height, size.control-lg.pad-y, size.control-item.pad-y, size.control-item-flat.pad-y, size.row.height take their new values.
  */
 
 @layer theme {
@@ -142,9 +142,21 @@
         /* size control-label */
         --space-control-label-pad-x: 4px;
         --space-control-label-pad-x-md: 4px;
+        /* size control-item */
+        --space-control-item-pad-y: 12px;
+        --space-control-item-pad-y-md: 20px;
+        /* size control-item-flat */
+        --space-control-item-flat-pad-y: 12px;
+        --space-control-item-flat-pad-y-md: 12px;
         /* size row */
         --space-row-height: 56px;
         --space-row-height-md: 56px;
+        /* exception control-item--12-16 (its own Today value) */
+        --space-control-item--12-16-pad-y: 12px;
+        --space-control-item--12-16-pad-y-md: 16px;
+        /* exception control-item-flat--fixed-8 (its own Today value) */
+        --space-control-item-flat--fixed-8-pad-y: 8px;
+        --space-control-item-flat--fixed-8-pad-y-md: 8px;
         /* exception control-lg--fixed-10 (its own Today value) */
         --space-control-lg--fixed-10-pad-y: 10px;
         --space-control-lg--fixed-10-pad-y-md: 10px;
@@ -570,9 +582,27 @@
         /* size control-label */
         --space-control-label-pad-x: 4px;
         --space-control-label-pad-x-md: 4px;
+        /* size control-item */
+        --space-control-item-pad-y: 12px;
+        --space-control-item-pad-y-md: 20px;
+        /* size control-item-flat */
+        --space-control-item-flat-pad-y: 12px;
+        --space-control-item-flat-pad-y-md: 12px;
         /* size row */
         --space-row-height: 56px;
         --space-row-height-md: 56px;
+        /* exception control-item--12-16 (follows control-item) */
+        --space-control-item--12-16-pad-y: var(--space-control-item-pad-y);
+        --space-control-item--12-16-pad-y-md: var(
+            --space-control-item-pad-y-md
+        );
+        /* exception control-item-flat--fixed-8 (follows control-item-flat) */
+        --space-control-item-flat--fixed-8-pad-y: var(
+            --space-control-item-flat-pad-y
+        );
+        --space-control-item-flat--fixed-8-pad-y-md: var(
+            --space-control-item-flat-pad-y-md
+        );
         /* exception control-lg--fixed-10 (follows control-lg) */
         --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -1064,9 +1094,27 @@
         /* size control-label */
         --space-control-label-pad-x: 4px;
         --space-control-label-pad-x-md: 4px;
+        /* size control-item */
+        --space-control-item-pad-y: 12px;
+        --space-control-item-pad-y-md: 24px;
+        /* size control-item-flat */
+        --space-control-item-flat-pad-y: 12px;
+        --space-control-item-flat-pad-y-md: 16px;
         /* size row */
         --space-row-height: 64px;
         --space-row-height-md: 64px;
+        /* exception control-item--12-16 (follows control-item) */
+        --space-control-item--12-16-pad-y: var(--space-control-item-pad-y);
+        --space-control-item--12-16-pad-y-md: var(
+            --space-control-item-pad-y-md
+        );
+        /* exception control-item-flat--fixed-8 (follows control-item-flat) */
+        --space-control-item-flat--fixed-8-pad-y: var(
+            --space-control-item-flat-pad-y
+        );
+        --space-control-item-flat--fixed-8-pad-y-md: var(
+            --space-control-item-flat-pad-y-md
+        );
         /* exception control-lg--fixed-10 (follows control-lg) */
         --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -1558,9 +1606,27 @@
         /* size control-label */
         --space-control-label-pad-x: 4px;
         --space-control-label-pad-x-md: 4px;
+        /* size control-item */
+        --space-control-item-pad-y: 8px;
+        --space-control-item-pad-y-md: 16px;
+        /* size control-item-flat */
+        --space-control-item-flat-pad-y: 8px;
+        --space-control-item-flat-pad-y-md: 8px;
         /* size row */
         --space-row-height: 48px;
         --space-row-height-md: 48px;
+        /* exception control-item--12-16 (follows control-item) */
+        --space-control-item--12-16-pad-y: var(--space-control-item-pad-y);
+        --space-control-item--12-16-pad-y-md: var(
+            --space-control-item-pad-y-md
+        );
+        /* exception control-item-flat--fixed-8 (follows control-item-flat) */
+        --space-control-item-flat--fixed-8-pad-y: var(
+            --space-control-item-flat-pad-y
+        );
+        --space-control-item-flat--fixed-8-pad-y-md: var(
+            --space-control-item-flat-pad-y-md
+        );
         /* exception control-lg--fixed-10 (follows control-lg) */
         --space-control-lg--fixed-10-pad-y: var(--space-control-lg-pad-y);
         --space-control-lg--fixed-10-pad-y-md: var(--space-control-lg-pad-y-md);
@@ -1936,6 +2002,10 @@
             --space-control-lg-height-md: 48px;
             --space-control-lg-pad-y: 12px;
             --space-control-lg-pad-y-md: 12px;
+            --space-control-item-pad-y: 12px;
+            --space-control-item-pad-y-md: 20px;
+            --space-control-item-flat-pad-y: 12px;
+            --space-control-item-flat-pad-y-md: 12px;
             --space-row-height: 56px;
             --space-row-height-md: 56px;
         }
@@ -5518,6 +5588,22 @@
     }
 }
 
+@utility py-control-item {
+    padding-block: var(--space-control-item-pad-y);
+
+    @variant md {
+        padding-block: var(--space-control-item-pad-y-md);
+    }
+}
+
+@utility py-control-item-flat {
+    padding-block: var(--space-control-item-flat-pad-y);
+
+    @variant md {
+        padding-block: var(--space-control-item-flat-pad-y-md);
+    }
+}
+
 @utility h-row {
     height: var(--space-row-height);
 
@@ -5549,6 +5635,22 @@
     @variant md {
         width: var(--space-row-height-md);
         height: var(--space-row-height-md);
+    }
+}
+
+@utility py-control-item--12-16 {
+    padding-block: var(--space-control-item--12-16-pad-y);
+
+    @variant md {
+        padding-block: var(--space-control-item--12-16-pad-y-md);
+    }
+}
+
+@utility py-control-item-flat--fixed-8 {
+    padding-block: var(--space-control-item-flat--fixed-8-pad-y);
+
+    @variant md {
+        padding-block: var(--space-control-item-flat--fixed-8-pad-y-md);
     }
 }
 

@@ -38,13 +38,24 @@ export const spacingRoles = [
  * Component size tokens: control heights with their inner padding and gap, the tag pill, the clickable row
  * (`h-control-md`, `px-control-md`, `h-tag`, `min-h-row`).
  */
-export const spacingSizes = ['control-sm', 'control-md', 'control-lg', 'tag', 'control-label', 'row'] as const;
+export const spacingSizes = [
+    'control-sm',
+    'control-md',
+    'control-lg',
+    'tag',
+    'control-label',
+    'control-item',
+    'control-item-flat',
+    'row',
+] as const;
 
 /**
  * Spacing exceptions: a place that keeps today's value under its role (`<role>--<pattern>`); every preview mode renders
  * the role. Each is meant to be resolved (dropped, moved to another role or promoted).
  */
 export const spacingExceptions = [
+    'control-item--12-16',
+    'control-item-flat--fixed-8',
     'control-lg--fixed-10',
     'control-lg--fixed-16',
     'control-lg--fixed-20',

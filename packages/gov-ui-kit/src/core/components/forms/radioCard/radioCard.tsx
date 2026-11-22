@@ -52,7 +52,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-inset-item--12-16 focus-ring-primary', // default
+        'group flex w-full flex-col gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-control-item--12-16 focus-ring-primary', // default
         'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl', // default
         'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // checked
         'hover:border-neutral-200 hover:shadow-neutral hover:data-[state=checked]:shadow-primary-md', // hover
