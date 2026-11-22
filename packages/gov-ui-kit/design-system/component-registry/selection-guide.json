@@ -5,8 +5,8 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "d15e6878fcc2f2c83ddb2084e2293169b008862eb03fe55542418eb5c1dc2ed3",
-            "totalRecords": 404,
+            "sha256": "06010d0c9a7a64856b582761f3689bd9ac91514f5da27431402600a27a9036a5",
+            "totalRecords": 410,
             "entryCount": 147,
             "uiEntryCount": 140,
             "utilityEntryCount": 7,
@@ -629,7 +629,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/button/button.tsx:188",
+                "source": "kit:src/core/components/button/button.tsx:196",
                 "stories": [
                     "kit:src/core/components/button/button.stories.tsx:1"
                 ]
@@ -1566,7 +1566,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
+                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:76",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
                 ]
@@ -1813,7 +1813,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/heading/heading.tsx:28",
+                "source": "kit:src/core/components/heading/heading.tsx:34",
                 "stories": [
                     "kit:src/core/components/heading/heading.stories.tsx:1"
                 ]
@@ -3975,7 +3975,7 @@
                 "'h4'",
                 "'h5'"
             ],
-            "source": "kit:src/core/components/heading/heading.tsx:4"
+            "source": "kit:src/core/components/heading/heading.tsx:5"
         },
         {
             "name": "IconSize",

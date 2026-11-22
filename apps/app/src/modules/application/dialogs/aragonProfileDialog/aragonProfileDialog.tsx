@@ -356,7 +356,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                     variant="info"
                 >
                     <div className="flex flex-col gap-related">
-                        <p className="text-base leading-normal text-surface-secondary">
+                        <p className="type-body--unstepped text-surface-secondary">
                             {t(
                                 'app.application.aragonProfileDialog.alert.description',
                             )}

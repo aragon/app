@@ -33,7 +33,7 @@ test('every output on disk is what the source generates, and generation is deter
     const first = generateAll().outputs;
     const second = generateAll().outputs;
     assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 12);
+    assert.equal(first.size, 14);
     for (const [file, text] of first) {
         assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
         assert.match(text, /GENERATED/);
@@ -140,7 +140,11 @@ test('an unrewritable relative font URL is rejected', (context) => {
 test('a source without semantic.config.json generates the primitives only', (context) => {
     const dir = scratch(context);
     for (const name of readdirSync(dir).filter(
-        (file) => file === 'semantic.config.json' || file === 'spacing.config.json' || file.endsWith('.tokens.json'),
+        (file) =>
+            file === 'semantic.config.json' ||
+            file === 'spacing.config.json' ||
+            file === 'typography.config.json' ||
+            file.endsWith('.tokens.json'),
     )) {
         if (name !== 'primitives.tokens.json') {
             rmSync(join(dir, name));
@@ -153,7 +157,11 @@ test('a source without semantic.config.json generates the primitives only', (con
     assert.ok(
         ![...outputs.keys()].some(
             (file) =>
-                file.includes('/semantic/') || file.endsWith('tokens/spacing.css') || file.includes('spacingStyles'),
+                file.includes('/semantic/') ||
+                file.endsWith('tokens/spacing.css') ||
+                file.includes('spacingStyles') ||
+                file.endsWith('tokens/typography.css') ||
+                file.includes('typographyStyles'),
         ),
     );
     // The primitive outputs do not depend on the semantic layer.
@@ -220,6 +228,84 @@ test('a mix extension must equal its primitive at that percentage', (context) =>
         json.semantic.bg.accent['transparent-hover'].$extensions['org.aragon.gov-ui-kit'].mix.percent = 5;
     });
     assert.throws(() => generateAll({ sourceDir: dir }), /does not equal .* at 5%/);
+});
+
+test('the typography layer keeps Today inherited and swaps families in Next only', () => {
+    const { outputs, typography } = generateAll();
+    const css = outputs.get('packages/gov-ui-kit/src/theme/tokens/typography.css');
+    const [today, next] = css.split('[data-typography="next"] {');
+    // Today: sizes, line heights and weights are set; family and letter spacing are left to inheritance.
+    assert.match(today, /--type-supporting-font-size: var\(--text-sm\);/);
+    assert.doesNotMatch(today, /--type-supporting-font-family/);
+    assert.doesNotMatch(today, /--type-title-item-letter-spacing/);
+    // Next: the designer's faces, and every exception follows its role.
+    assert.match(next, /--type-display-font-family: var\(--font-sora\);/);
+    assert.match(next, /--type-body-font-family: var\(--font-inter-display\);/);
+    const exception = typography.exceptionNames[0];
+    const role = typography.styles.get(exception).role;
+    assert.match(next, new RegExp(`--type-${exception}-font-size: var\\(\\s*--type-${role}-font-size\\s*\\);`));
+    // One utility per role and exception, switching through the md variant; the modifiers.
+    assert.match(css, /@utility type-supporting \{[^}]*@variant md \{/s);
+    for (const modifier of ['strong', 'mono', 'numeric']) {
+        assert.match(css, new RegExp(`@utility type-${modifier} \\{`));
+    }
+    assert.equal([...css.matchAll(/@utility type-/g)].length, typography.styles.size + 3);
+});
+
+for (const [name, file, change, expected] of [
+    [
+        'a Next mode that misses a Today token',
+        'typography.next.tokens.json',
+        (json) => {
+            const [first] = Object.keys(json.type.exception);
+            delete json.type.exception[first];
+        },
+        /typography mode next differs from today: missing type\.exception\./,
+    ],
+    [
+        'an exception not named after a role',
+        'typography.today.tokens.json',
+        (json) => {
+            const [first] = Object.keys(json.type.exception);
+            json.type.exception[`nonexistent--${first.split('--')[1]}`] = json.type.exception[first];
+            delete json.type.exception[first];
+        },
+        /must be named <role>--<pattern>|differs from today/,
+    ],
+    [
+        'an exception that follows another role in Next',
+        'typography.next.tokens.json',
+        (json) => {
+            const [first] = Object.keys(json.type.exception);
+            const role = first.split('--')[0] === 'caption' ? 'body' : 'caption';
+            json.type.exception[first].base.$value = `{type.role.${role}.base}`;
+        },
+        /may only alias type\.role\./,
+    ],
+]) {
+    test(`the typography layer rejects ${name}`, (context) => {
+        const dir = scratch(context);
+        edit(dir, file, change);
+        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+    });
+}
+
+test('typography mode files without typography.config.json are rejected', (context) => {
+    const dir = scratch(context);
+    rmSync(join(dir, 'typography.config.json'));
+    assert.throws(
+        () => generateAll({ sourceDir: dir }),
+        /typography\..+\.tokens\.json without typography\.config\.json/,
+    );
+});
+
+test('a number ratio must equal the stored value', (context) => {
+    const dir = scratch(context);
+    edit(dir, 'primitives.tokens.json', (json) => {
+        const [key] = Object.keys(json.font.leadingDefault).filter((k) => !k.startsWith('$'));
+        json.font.leadingDefault[key].$extensions = { 'org.aragon.gov-ui-kit': { ratio: [1, 3] } };
+    });
+    assert.throws(() => generateAll({ sourceDir: dir }), /does not equal its value/);
 });
 
 const overrides = (context, css) => {

@@ -55,7 +55,7 @@ export const AutocompleteInputMenu = forwardRef<
     );
 
     const footerClassName = classNames(
-        'absolute left-0 hidden w-full flex-row justify-between px-inset-surface-wide py-inset-surface-flat--fixed-16 text-base leading-tight font-normal backdrop-blur-md md:flex',
+        'absolute left-0 hidden w-full flex-row justify-between px-inset-surface-wide py-inset-surface-flat--fixed-16 type-control backdrop-blur-md md:flex',
         { 'bottom-0': isBottomPlacement },
         { 'top-0': !isBottomPlacement },
     );

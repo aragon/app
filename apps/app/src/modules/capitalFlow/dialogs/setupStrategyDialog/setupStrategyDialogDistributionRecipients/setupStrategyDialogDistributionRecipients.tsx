@@ -126,7 +126,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
             </InputContainer>
 
             <div className="flex items-center justify-between">
-                <span className="text-sm leading-tight font-normal text-surface-secondary">
+                <span className="type-supporting--compact-meta text-surface-secondary">
                     {recipientsField.length}/{maxRecipients}
                 </span>
 

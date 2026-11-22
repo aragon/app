@@ -27,10 +27,10 @@ export const BoundlessActionText: React.FC<IBoundlessActionTextProps> = (
         <>
             {/* Static for small screens */}
             <div className="flex flex-col items-start md:hidden">
-                <p className="text-2xl leading-tight text-[#000000]">
+                <p className="type-title-group--dao-header-action-compact text-[#000000]">
                     {t(title)}
                 </p>
-                <p className="text-lg leading-tight text-nowrap text-[#78716C]">
+                <p className="type-supporting--dao-header-action-compact text-nowrap text-[#78716C]">
                     {t(description)}
                 </p>
             </div>
@@ -44,10 +44,10 @@ export const BoundlessActionText: React.FC<IBoundlessActionTextProps> = (
                 initial={{ y: 0, scale: 1 }}
                 transition={{ type: 'spring', stiffness: 250, damping: 18 }}
             >
-                <p className="text-2xl leading-tight text-[#000000]">
+                <p className="type-title-group--dao-header-action-compact text-[#000000]">
                     {t(title)}
                 </p>
-                <p className="text-lg leading-tight text-nowrap text-[#78716C]">
+                <p className="type-supporting--dao-header-action-compact text-nowrap text-[#78716C]">
                     {t(description)}
                 </p>
             </motion.div>

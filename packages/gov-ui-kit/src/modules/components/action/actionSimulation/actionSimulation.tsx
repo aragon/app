@@ -86,7 +86,12 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                                     <div className="flex size-6 items-center justify-center">
                                         <AvatarIcon icon={statusConfig.icon} size="sm" variant={statusConfig.variant} />
                                     </div>
-                                    <span className={classNames('text-sm md:text-base', statusConfig.textColor)}>
+                                    <span
+                                        className={classNames(
+                                            'type-supporting--framework-leading',
+                                            statusConfig.textColor,
+                                        )}
+                                    >
                                         {statusConfig.label}
                                     </span>
                                 </>
@@ -129,7 +134,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 )}
             </div>
             {error && (
-                <div className="flex items-center gap-related--fixed-8 text-sm text-critical-primary">
+                <div className="flex items-center gap-related--fixed-8 type-body-compact--component-note text-critical-primary">
                     <AvatarIcon icon={IconType.INFO} size="sm" variant="critical" />
                     {error}
                 </div>

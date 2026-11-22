@@ -17,7 +17,7 @@ const restLinks = [
 ];
 
 const linkClassName =
-    'truncate border-surface-secondary border-b text-base text-link-secondary-default leading-tight transition-colors last:border-none hover:text-link-secondary-hover-nav max-md:py-inset-nav-item--fixed-16 md:border-none';
+    'truncate border-surface-secondary border-b type-control text-link-secondary-default transition-colors last:border-none hover:text-link-secondary-hover-nav max-md:py-inset-nav-item--fixed-16 md:border-none';
 
 /**
  * The footer of the app (apps/app/src/modules/application/components/footer), below the whole
@@ -33,7 +33,7 @@ export const SiteFooter = ({ year }: { year: number }) => {
             <div className="mx-auto grid max-w-[1550px] items-center px-inset-nav-bar--fixed-16 [grid-template-areas:'metadata''links''copyright'] md:justify-items-center md:gap-nav-section md:[grid-template-areas:'links''metadata''copyright'] lg:grid-cols-[1fr_min-content_1fr] lg:[grid-template-areas:'metadata_links_copyright']">
                 <div className="flex flex-row items-center justify-between gap-nav-group [grid-area:metadata] max-md:pt-inset-nav-item max-md:pb-inset-nav-item--fixed-16 md:justify-normal lg:justify-self-start">
                     <div className="flex items-center gap-nav-related--fixed-10">
-                        <p className="text-sm leading-tight text-nowrap text-surface-primary md:text-base">
+                        <p className="type-supporting text-nowrap text-surface-primary">
                             Governed on
                         </p>
                         <AragonLogo className="h-[22px] w-auto icon-brand-primary" />
@@ -55,7 +55,7 @@ export const SiteFooter = ({ year }: { year: number }) => {
                         </a>
                     ))}
                 </div>
-                <p className="truncate text-base leading-tight text-surface-secondary [grid-area:copyright] max-md:pt-inset-nav-item--fixed-24 max-md:pb-inset-nav-item lg:justify-self-end">
+                <p className="truncate type-caption--footnote text-surface-secondary [grid-area:copyright] max-md:pt-inset-nav-item--fixed-24 max-md:pb-inset-nav-item lg:justify-self-end">
                     © {year} Aragon
                 </p>
             </div>

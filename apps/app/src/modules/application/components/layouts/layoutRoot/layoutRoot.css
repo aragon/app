@@ -3,6 +3,7 @@
 @import "../../../../../../../../.design-sync/generated/govkit-primitives.css";
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/tokens/semantic/index.css";
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/tokens/spacing.css";
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/tokens/typography.css";
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/utils/index.css";
 /* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
 @import "tailwindcss";

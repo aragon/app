@@ -62,7 +62,7 @@ export const LandingPage: React.FC = () => {
                     role="status"
                 >
                     <Spinner size="lg" variant="neutral" />
-                    <p className="text-base leading-tight">
+                    <p className="type-supporting--detail-value">
                         {t('app.application.landingPage.openingWorkspace')}
                     </p>
                 </div>
@@ -73,7 +73,7 @@ export const LandingPage: React.FC = () => {
     const legalLinks = (
         <nav
             aria-label={t('app.application.landingPage.legal')}
-            className="flex items-center gap-related text-sm leading-tight"
+            className="flex items-center gap-related type-control-sm"
         >
             <span>{t('app.application.landingPage.copyright', { year })}</span>
             <Link href={privacyUrl} target="_blank">
@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
 
     const demoLink = (
         <Link
-            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 text-base whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
+            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 type-control--tall-line whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
         >
@@ -126,10 +126,10 @@ export const LandingPage: React.FC = () => {
 
                 <div className="flex w-full max-w-[560px] flex-col items-center gap-section--24-32 md:items-start">
                     <div className="flex flex-col items-center gap-related md:items-start">
-                        <h1 className="text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] font-normal tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
+                        <h1 className="type-display text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
                             {t('app.application.landingPage.hero.title')}
                         </h1>
-                        <p className="text-base leading-normal text-pretty text-surface-secondary">
+                        <p className="type-body--unstepped text-pretty text-surface-secondary">
                             {t('app.application.landingPage.hero.description')}
                         </p>
                     </div>
@@ -148,14 +148,14 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="mt-related--fixed-8 flex items-center gap-related text-sm leading-tight text-surface-secondary">
+                        <div className="mt-related--fixed-8 flex items-center gap-related type-supporting--compact-meta text-surface-secondary">
                             <span className="h-px grow bg-surface-tertiary" />
                             {t('app.application.landingPage.signIn.comingSoon')}
                             <span className="h-px grow bg-surface-tertiary" />
                         </div>
                         <div className="flex justify-center gap-section-wide--32-40 text-surface-secondary">
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
@@ -168,7 +168,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.email')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
@@ -184,7 +184,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.google')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >

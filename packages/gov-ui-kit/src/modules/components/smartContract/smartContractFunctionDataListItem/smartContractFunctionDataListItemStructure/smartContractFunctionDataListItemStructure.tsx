@@ -87,8 +87,12 @@ export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContract
         <DataList.Item className={classNames(containerClassName, className)} {...otherProps}>
             <div className="flex flex-col gap-tight--fixed-6">
                 <div className="flex items-center gap-related">
-                    <p className={classNames('text-lg text-surface-primary', functionLabelStyle)}>{functionLabel}</p>
-                    {functionSelector && <p className="text-lg text-surface-secondary">{functionSelector}</p>}
+                    <p className={classNames('type-title-item--picker-row text-surface-primary', functionLabelStyle)}>
+                        {functionLabel}
+                    </p>
+                    {functionSelector && (
+                        <p className="type-title-item--picker-row text-surface-secondary">{functionSelector}</p>
+                    )}
                     {displayWarningFeedback && (
                         <Icon className="icon-warning-primary" icon={IconType.WARNING} size="md" />
                     )}

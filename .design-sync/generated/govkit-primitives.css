@@ -278,6 +278,8 @@
 
     --font-sans:
         "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
     --font-weight-normal: 400;
     --font-weight-semibold: 600;
@@ -293,8 +295,36 @@
     --text-5xl: 3rem;
 
     --leading-tight: 1.25;
+    --leading-snug: 1.375;
     --leading-normal: 1.5;
     --leading-relaxed: 1.65;
+}
+
+:root {
+    /* Next typography faces (typography.next.tokens.json): not Tailwind theme fonts, so they get no font-* utility */
+    --font-sora:
+        "Sora", "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-inter-display:
+        "Inter Display", "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+
+
+
+
+
+
+
+
+
+    /* Built-in Tailwind line heights a typography role or exception keeps (not theme values: no leading-* utility) */
+    --leading-default-xs: calc(1 / 0.75);
+    --leading-default-sm: calc(1.25 / 0.875);
+    --leading-default-base: 1.5;
+    --leading-default-lg: calc(1.75 / 1.125);
+    --leading-default-xl: calc(1.75 / 1.25);
+    --leading-default-2xl: calc(2 / 1.5);
+    --leading-default-3xl: calc(2.25 / 1.875);
+    --leading-default-4xl: calc(2.5 / 2.25);
 }
 
 @font-face {

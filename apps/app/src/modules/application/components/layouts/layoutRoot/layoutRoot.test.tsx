@@ -73,7 +73,6 @@ describe('<LayoutRoot /> component', () => {
         const original = utils[axis.method];
         return { axis, original, spy: jest.spyOn(utils, axis.method) };
     });
-    );
 
     // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
     const useFeatureFlagsSpy = jest.spyOn(

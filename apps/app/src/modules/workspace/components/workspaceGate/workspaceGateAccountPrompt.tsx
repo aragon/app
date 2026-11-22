@@ -135,10 +135,10 @@ export const WorkspaceGateAccountPrompt: React.FC<
         <div className="flex grow items-center justify-center">
             <Card className="mx-group my-section-wide flex w-full max-w-[480px] flex-col gap-section p-inset-surface-wide--24-32">
                 <div className="flex flex-col gap-tight--4-8">
-                    <Heading as="h1" size="h3">
+                    <Heading as="h1" typeRole="title-page--gate-prompt">
                         {t('app.workspace.workspaceGateAccountPrompt.heading')}
                     </Heading>
-                    <p className="text-sm leading-tight text-surface-secondary md:text-base">
+                    <p className="type-supporting text-surface-secondary">
                         {t(
                             'app.workspace.workspaceGateAccountPrompt.description',
                             { account: accountLabel },

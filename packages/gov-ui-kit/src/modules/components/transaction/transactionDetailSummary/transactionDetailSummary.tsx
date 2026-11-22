@@ -45,7 +45,12 @@ export const TransactionDetailSummary: React.FC<ITransactionDetailSummaryProps> 
     const formattedDate = formatterUtils.formatDate(date, { format: DateFormat.YEAR_MONTH_DAY_TIME });
 
     return (
-        <div className={classNames('rounded-xl border border-surface-primary bg-surface-primary px-inset-surface', className)}>
+        <div
+            className={classNames(
+                'rounded-xl border border-surface-primary bg-surface-primary px-inset-surface',
+                className,
+            )}
+        >
             <DefinitionList.Container {...otherProps}>
                 <DefinitionList.Item
                     copyValue={executorAddress}

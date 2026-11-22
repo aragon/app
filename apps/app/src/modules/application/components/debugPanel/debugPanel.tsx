@@ -7,8 +7,9 @@ import { useDebugContext } from '@/shared/components/debugProvider/debugProvider
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
-import { useThemePreview } from '../../hooks/useThemePreview';
 import { useSpacingPreview } from '../../hooks/useSpacingPreview';
+import { useThemePreview } from '../../hooks/useThemePreview';
+import { useTypographyPreview } from '../../hooks/useTypographyPreview';
 import { DebugPanelControl } from './debugPanelControl';
 import { WorkspaceRegistryControls } from './workspaceRegistryControls';
 
@@ -25,6 +26,7 @@ export const DebugPanel: React.FC = () => {
     useAddressImpersonation();
     useThemePreview();
     useSpacingPreview();
+    useTypographyPreview();
     const { t } = useTranslations();
     const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 
@@ -100,7 +102,7 @@ export const DebugPanel: React.FC = () => {
                 ref={panelRef}
             >
                 <div className="flex flex-row justify-between">
-                    <Heading size="h2">
+                    <Heading as="h2" typeRole="title-section">
                         {t('app.application.debugPanel.title')}
                     </Heading>
                     <Button
@@ -117,7 +119,9 @@ export const DebugPanel: React.FC = () => {
                                 <WorkspaceRegistryControls />
                             )}
                             <div className="flex flex-col gap-2">
-                                <Heading size="h3">{group}</Heading>
+                                <Heading as="h3" typeRole="title-group">
+                                    {group}
+                                </Heading>
                                 <div className="flex flex-col gap-2">
                                     {groupedControls[group]?.map((control) => (
                                         <DebugPanelControl

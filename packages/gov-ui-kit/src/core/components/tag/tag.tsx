@@ -38,7 +38,7 @@ export const Tag: React.FC<ITagProps> = (props) => {
                 className,
             )}
         >
-            <p className="text-sm leading-tight font-normal md:text-base">{label}</p>
+            <p className="type-supporting">{label}</p>
         </div>
     );
 };

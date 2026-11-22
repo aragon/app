@@ -95,10 +95,10 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col">
-                        <span className="truncate text-base leading-tight text-surface-primary">
+                        <span className="truncate type-title-item--compact-card text-surface-primary">
                             {name ?? truncatedAddress}
                         </span>
-                        <span className="truncate text-sm leading-tight text-surface-secondary">
+                        <span className="truncate type-supporting--compact-meta text-surface-secondary">
                             {name != null
                                 ? `${networkName} · ${truncatedAddress}`
                                 : networkName}
@@ -113,7 +113,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-surface-tertiary-hint md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-tertiary-hint">
                         {t(
                             'app.workspace.workspaceSelectAccountDialogItem.notEligible',
                         )}

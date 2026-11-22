@@ -138,7 +138,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                                     <p className="text-surface-secondary">
                                         {networkDefinitions[network].name}
                                     </p>
-                                    <p className="text-sm leading-tight font-normal text-surface-tertiary">
+                                    <p className="type-supporting--compact-meta text-surface-tertiary">
                                         {t(
                                             `${translationKey}.account.notChangeable`,
                                         )}

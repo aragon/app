@@ -67,11 +67,11 @@ export const PermissionNodeDetailPanel: React.FC<
                         {isAddressLabel ? (
                             <AddressOutput
                                 address={node.address}
-                                className="font-medium text-surface-primary-panel-title"
+                                className="text-surface-primary-panel-title"
                                 copy={false}
                             />
                         ) : (
-                            <p className="truncate font-medium text-surface-primary-panel-title">
+                            <p className="truncate text-surface-primary-panel-title">
                                 {node.label}
                             </p>
                         )}
@@ -79,7 +79,7 @@ export const PermissionNodeDetailPanel: React.FC<
                             <Tag label={node.tag} variant="primary" />
                         )}
                     </div>
-                    <p className="truncate text-sm text-surface-secondary">
+                    <p className="truncate type-supporting--compact-detail text-surface-secondary">
                         {node.versionName ?? t(getPermissionNodeTypeKey(node))}
                     </p>
                 </div>

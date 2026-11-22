@@ -38,9 +38,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
     return (
         <div className="flex flex-col items-start gap-y-related--fixed-8">
             <div className={headerClassNames} {...otherProps}>
-                <Title className="flex-1 truncate text-lg leading-tight font-normal text-surface-primary md:text-xl">
-                    {title}
-                </Title>
+                <Title className="flex-1 truncate type-title-group text-surface-primary">{title}</Title>
                 <Close asChild={true}>
                     {onClose != null && (
                         <button className={closeButtonClassNames} onClick={onClose} type="button">
@@ -55,7 +53,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
                 </Close>
             </div>
             {description && (
-                <Description className="mb-group--12-16 px-inset-surface text-sm leading-normal text-surface-secondary">
+                <Description className="mb-group--12-16 px-inset-surface type-body-compact--unstepped text-surface-secondary">
                     {description}
                 </Description>
             )}

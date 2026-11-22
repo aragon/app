@@ -138,7 +138,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                     className="flex flex-col gap-related"
                     inset="surface-wide"
                 >
-                    <Heading size="h4">
+                    <Heading as="h4" typeRole="title-group--small-panel">
                         {t(
                             'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources',
                         )}

@@ -95,7 +95,7 @@ export const GovernanceStagesFieldItem: React.FC<
         <Card className="flex flex-col gap-y-section-wide" inset="surface-wide">
             <div className="flex flex-col gap-section">
                 <div className="flex items-center justify-between">
-                    <p className="text-xl text-surface-primary">
+                    <p className="type-title-item--stage-card text-surface-primary">
                         {stageNameText}
                     </p>
                     <p className="text-surface-tertiary">{stageNumberText}</p>

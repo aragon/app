@@ -28,7 +28,7 @@ export const AllowedActionsList: React.FC<IAllowedActionsListProps> = ({
                     className="flex min-w-0 flex-col gap-tight border-b border-surface-secondary py-inset-item-flat first:pt-0 last:border-b-0 last:pb-0"
                     key={action.id}
                 >
-                    <div className="flex min-w-0 items-center gap-related--fixed-10 leading-normal">
+                    <div className="flex min-w-0 items-center gap-related--fixed-10 type-title-item--document-default">
                         <span className="truncate text-surface-primary">
                             {action.functionName ??
                                 action.selector ??
@@ -42,7 +42,7 @@ export const AllowedActionsList: React.FC<IAllowedActionsListProps> = ({
                             </span>
                         )}
                     </div>
-                    <div className="flex min-w-0 items-center gap-related--fixed-10 leading-normal text-surface-secondary">
+                    <div className="flex min-w-0 items-center gap-related--fixed-10 type-supporting--body-size text-surface-secondary">
                         <span className="truncate">
                             {action.contractName ??
                                 t(

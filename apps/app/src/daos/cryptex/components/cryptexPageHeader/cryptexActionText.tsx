@@ -35,8 +35,8 @@ export const CryptexActionText: React.FC<ICryptexActionTextProps> = (props) => {
             <p
                 className={
                     isLightMode
-                        ? 'text-xl leading-tight text-[#1A1540] md:text-2xl'
-                        : 'text-xl leading-tight text-white md:text-2xl'
+                        ? 'type-title-group--dao-header-action text-[#1A1540]'
+                        : 'type-title-group--dao-header-action text-white'
                 }
             >
                 {t(title)}
@@ -44,8 +44,8 @@ export const CryptexActionText: React.FC<ICryptexActionTextProps> = (props) => {
             <p
                 className={
                     isLightMode
-                        ? 'text-sm leading-snug text-[#2E2950]/75 md:text-base'
-                        : 'text-sm leading-snug text-white/50 md:text-base'
+                        ? 'type-supporting--cryptex-header text-[#2E2950]/75'
+                        : 'type-supporting--cryptex-header text-white/50'
                 }
             >
                 {t(description)}

@@ -57,10 +57,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
 
                     <div className="relative flex flex-col items-start justify-center gap-related--fixed-8 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-related--8-12 self-stretch">
-                            <h1 className="text-3xl leading-tight font-normal text-accent-inverse md:text-5xl">
+                            <h1 className="type-display text-accent-inverse">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-lg leading-normal font-normal text-accent-inverse-brand md:text-2xl">
+                            <h3 className="type-body--explore-hero text-accent-inverse-brand">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>
@@ -75,7 +75,11 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                     )}
                 >
                     <Container className="w-full">
-                        <Heading as="h2" className="self-stretch" size="h1">
+                        <Heading
+                            as="h2"
+                            className="self-stretch"
+                            typeRole="title-section--explore"
+                        >
                             {t('app.explore.exploreDaosPage.section.featured')}
                         </Heading>
                     </Container>

@@ -230,7 +230,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
 
     const inputClassName = classNames(
         'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg outline-none caret-bg-surface-secondary-inverse', // base styles
-        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-surface-placeholder', // placeholder styles
+        'placeholder:type-control placeholder:text-surface-placeholder', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
 

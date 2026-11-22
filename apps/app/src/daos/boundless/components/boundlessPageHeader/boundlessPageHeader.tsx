@@ -45,7 +45,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
             </video>
             <Container className="flex w-full flex-col gap-y-section-wide--fixed-48">
                 <div className="flex max-w-[720px] flex-col gap-related--6-12 text-center md:text-left">
-                    <p className="text-3xl leading-tight text-[#000000] md:text-5xl">
+                    <p className="type-display text-[#000000]">
                         {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
                         {ensName && (
                             <span className="text-[#537263]">{ensName}</span>
@@ -53,7 +53,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                         <br />
                         {t('app.daos.boundless.boundlessPageHeader.to')}
                     </p>
-                    <p className="text-lg text-[#2D2C2B] md:text-xl">
+                    <p className="type-body--partner-header text-[#2D2C2B]">
                         {t('app.daos.boundless.boundlessPageHeader.info')}
                     </p>
                 </div>

@@ -90,7 +90,7 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                         <div className="my-related--fixed-8 hidden md:block">
                             <div className="h-px w-full bg-surface-tertiary" />
                         </div>
-                        <p className="text-center text-xs leading-normal text-surface-tertiary md:text-left md:text-sm">
+                        <p className="text-center type-caption--definition-description text-surface-tertiary md:text-left">
                             {t('app.governance.delegationStatsCard.disclaimer')}
                         </p>
                     </>

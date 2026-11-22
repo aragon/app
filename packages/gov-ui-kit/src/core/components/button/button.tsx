@@ -84,28 +84,28 @@ const variantToSpinnerVariant: Record<ButtonVariant, SpinnerVariant> = {
 
 const responsiveSizeClassNames: ResponsiveAttributeClassMap<ButtonSize> = {
     sm: {
-        default: 'h-control-sm text-sm rounded-lg gap-control-sm',
-        sm: 'sm:h-control-sm sm:text-sm sm:rounded-lg sm:gap-control-sm',
-        md: 'md:h-control-sm md:text-sm md:rounded-lg md:gap-control-sm',
-        lg: 'lg:h-control-sm lg:text-sm lg:rounded-lg lg:gap-control-sm',
-        xl: 'xl:h-control-sm xl:text-sm xl:rounded-lg xl:gap-control-sm',
-        '2xl': '2xl:h-control-sm 2xl:text-sm 2xl:rounded-lg 2xl:gap-control-sm',
+        default: 'h-control-sm type-control-sm rounded-lg gap-control-sm',
+        sm: 'sm:h-control-sm sm:type-control-sm sm:rounded-lg sm:gap-control-sm',
+        md: 'md:h-control-sm md:type-control-sm md:rounded-lg md:gap-control-sm',
+        lg: 'lg:h-control-sm lg:type-control-sm lg:rounded-lg lg:gap-control-sm',
+        xl: 'xl:h-control-sm xl:type-control-sm xl:rounded-lg xl:gap-control-sm',
+        '2xl': '2xl:h-control-sm 2xl:type-control-sm 2xl:rounded-lg 2xl:gap-control-sm',
     },
     md: {
-        default: 'h-control-md text-base rounded-xl gap-control-md',
-        sm: 'sm:h-control-md sm:text-base sm:rounded-xl sm:gap-control-md',
-        md: 'md:h-control-md md:text-base md:rounded-xl md:gap-control-md',
-        lg: 'lg:h-control-md lg:text-base lg:rounded-xl lg:gap-control-md',
-        xl: 'xl:h-control-md xl:text-base xl:rounded-xl xl:gap-control-md',
-        '2xl': '2xl:h-control-md 2xl:text-base 2xl:rounded-xl 2xl:gap-control-md',
+        default: 'h-control-md type-control rounded-xl gap-control-md',
+        sm: 'sm:h-control-md sm:type-control sm:rounded-xl sm:gap-control-md',
+        md: 'md:h-control-md md:type-control md:rounded-xl md:gap-control-md',
+        lg: 'lg:h-control-md lg:type-control lg:rounded-xl lg:gap-control-md',
+        xl: 'xl:h-control-md xl:type-control xl:rounded-xl xl:gap-control-md',
+        '2xl': '2xl:h-control-md 2xl:type-control 2xl:rounded-xl 2xl:gap-control-md',
     },
     lg: {
-        default: 'h-control-lg text-base rounded-xl gap-control-lg',
-        sm: 'sm:h-control-lg sm:text-base sm:rounded-xl sm:gap-control-lg',
-        md: 'md:h-control-lg md:text-base md:rounded-xl md:gap-control-lg',
-        lg: 'lg:h-control-lg lg:text-base lg:rounded-xl lg:gap-control-lg',
-        xl: 'xl:h-control-lg xl:text-base xl:rounded-xl xl:gap-control-lg',
-        '2xl': '2xl:h-control-lg 2xl:text-base 2xl:rounded-xl 2xl:gap-control-lg',
+        default: 'h-control-lg type-control rounded-xl gap-control-lg',
+        sm: 'sm:h-control-lg sm:type-control sm:rounded-xl sm:gap-control-lg',
+        md: 'md:h-control-lg md:type-control md:rounded-xl md:gap-control-lg',
+        lg: 'lg:h-control-lg lg:type-control lg:rounded-xl lg:gap-control-lg',
+        xl: 'xl:h-control-lg xl:type-control xl:rounded-xl xl:gap-control-lg',
+        '2xl': '2xl:h-control-lg 2xl:type-control 2xl:rounded-xl 2xl:gap-control-lg',
     },
 };
 
@@ -212,7 +212,6 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonP
 
     const commonClasses = [
         'flex flex-row items-center justify-center group', // Layout
-        'leading-tight font-normal', // Typography
         'border transition-all cursor-pointer', // Commons
         'active:shadow-none aria-disabled:shadow-none aria-disabled:cursor-default', // Active/Disabled states
     ];

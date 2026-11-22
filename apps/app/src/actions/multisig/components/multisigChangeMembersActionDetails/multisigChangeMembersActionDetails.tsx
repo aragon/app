@@ -53,7 +53,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                 ))}
             </div>
             <div>
-                <Heading size="h3">
+                <Heading as="h3" typeRole="title-group">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.summary',
                     )}
@@ -94,7 +94,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                         </p>
                     </DefinitionList.Item>
                 </DefinitionList.Container>
-                <p className="text-sm text-surface-secondary">
+                <p className="type-supporting--compact-detail text-surface-secondary">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.blockNote',
                     )}

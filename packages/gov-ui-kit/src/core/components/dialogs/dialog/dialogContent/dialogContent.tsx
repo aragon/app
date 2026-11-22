@@ -22,7 +22,7 @@ export const DialogContent: React.FC<IDialogContentProps> = (props) => {
     return (
         <div className={classNames('overflow-auto', { 'px-inset-surface': !noInset }, className)} {...otherProps}>
             {description && (
-                <Description className="mb-group--12-16 text-sm leading-normal text-surface-secondary">
+                <Description className="mb-group--12-16 type-body-compact--unstepped text-surface-secondary">
                     {description}
                 </Description>
             )}

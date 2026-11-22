@@ -79,7 +79,7 @@ export const CreatePolicyStrategyDetails: React.FC<
             const routerCount = validRouters.length;
             if (routerCount === 0) {
                 return (
-                    <span className="text-sm text-surface-secondary">
+                    <span className="type-supporting--compact-detail text-surface-secondary">
                         {recipientsEmptyLabel}
                     </span>
                 );
@@ -107,7 +107,7 @@ export const CreatePolicyStrategyDetails: React.FC<
 
         if (recipients.length === 0) {
             return (
-                <span className="text-sm text-surface-secondary">
+                <span className="type-supporting--compact-detail text-surface-secondary">
                     {recipientsEmptyLabel}
                 </span>
             );

@@ -182,7 +182,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
                     </p>
                 )}
                 <p
-                    className={`truncate font-mono text-sm ${displayName != null ? 'text-surface-secondary' : 'text-surface-primary'}`}
+                    className={`truncate type-control--compact-value type-mono ${displayName != null ? 'text-surface-secondary' : 'text-surface-primary'}`}
                     title={value}
                 >
                     {value}

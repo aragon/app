@@ -71,7 +71,11 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
   under `src/theme/tokens/` (via `@theme`) that exposes the `--color-*` scale used
-  as utilities such as `bg-primary-500` and `text-neutral-800`. Spacing takes a spacing role instead of a number:
+  as utilities such as `bg-primary-500` and `text-neutral-800`. Text takes a typography role (`type-title-item`,
+  `type-supporting`, …, or a documented `type-<role>--<pattern>` exception; `type-strong` / `type-mono` /
+  `type-numeric` on top), generated into `src/theme/tokens/typography.css`; primitive type classes (`text-sm`,
+  `leading-*`, `font-semibold`, …) fail the typography lint (`pnpm lint:typography:report`). See
+  `design-system/tokens/typography.decisions.md`. Spacing takes a spacing role instead of a number:
   insets `p*-inset-<scope>` (`px-inset-item`, `p-inset-surface`), gaps `gap-<level>` (`gap-group`, `mt-related`,
   `space-y-section`), control sizes (`h-control-md`, `px-control-md`, `h-tag`), or a documented
   `<family>-<role>--<pattern>` exception; each utility holds its md step, so one class replaces `x md:y`. Generated into
@@ -140,7 +144,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
 - `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`; `scripts/tokens/` is the token generator. Plain Node, no
   framework; keep new checks in that shape. `scripts/README.md` covers the local screenshot comparison
-  (`pnpm visual-diff`) and the primitive-colour lint (`pnpm lint:colors:report`).
+  (`pnpm visual-diff`), the primitive-colour lint (`pnpm lint:colors:report`) and the primitive-typography lint
+  (`pnpm lint:typography:report`).
 - `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.
 - Root `AGENTS.md` — monorepo layout, release scopes, CI split and Turbo caching.
 - `.github/workflows/app-development.yml` — CI truth for the type/lint/test gates (all workspaces);

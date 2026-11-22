@@ -45,16 +45,16 @@ export const VoteProposalDataListItemStructure: React.FC<IVoteProposalDataListIt
     return (
         <DataList.Item
             className={classNames(
-                'flex min-w-0 flex-col justify-center gap-x-related--12-16 gap-y-tight--4-6 py-inset-item md:text-lg',
+                'flex min-w-0 flex-col justify-center gap-x-related--12-16 gap-y-tight--4-6 py-inset-item',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex w-full items-center gap-x-phrase--4-6 leading-tight md:text-lg">
+            <div className="flex w-full items-center gap-x-phrase--4-6 type-title-item">
                 <p className="max-w-full shrink-0 truncate text-surface-secondary">{proposalId}</p>
                 <p className="truncate text-surface-primary">{proposalTitle}</p>
             </div>
-            <div className="flex items-center gap-x-group-stepped text-sm leading-tight text-surface-secondary md:text-base">
+            <div className="flex items-center gap-x-group-stepped type-supporting text-surface-secondary">
                 <div className="flex items-center gap-x-tight--4-8">
                     <Tag
                         className="capitalize"

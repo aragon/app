@@ -46,8 +46,10 @@ export const WorkspaceRegistryControls: React.FC = () => {
 
     return (
         <section className="flex flex-col gap-2">
-            <Heading size="h3">Workspace registry</Heading>
-            <p className="text-sm leading-normal text-surface-secondary">
+            <Heading as="h3" typeRole="title-group">
+                Workspace registry
+            </Heading>
+            <p className="type-body-compact--unstepped text-surface-secondary">
                 Save or restore the local workspace JSON for this environment.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -70,7 +72,10 @@ export const WorkspaceRegistryControls: React.FC = () => {
                 type="file"
             />
             {error != null && (
-                <p className="text-sm text-critical-500" role="alert">
+                <p
+                    className="type-body-compact--component-note text-critical-500"
+                    role="alert"
+                >
                     {error}
                 </p>
             )}

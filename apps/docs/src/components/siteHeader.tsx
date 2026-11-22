@@ -33,14 +33,14 @@ export const SiteHeader = () => {
                     href="/"
                 >
                     <AragonLogo className="h-[30px] w-auto" />
-                    <span className="relative -top-[1.5px] text-base leading-normal font-semibold">
+                    <span className="relative -top-[1.5px] type-control--tall-line type-strong">
                         Help
                     </span>
                 </Link>
                 <nav className="flex items-center gap-nav-section--fixed-32">
                     {links.map((link) => (
                         <a
-                            className="inline-flex items-center gap-nav-tight--fixed-6 text-base leading-tight whitespace-nowrap text-accent-inverse-brand transition-colors hover:text-accent-inverse max-md:hidden"
+                            className="inline-flex items-center gap-nav-tight--fixed-6 type-control whitespace-nowrap text-accent-inverse-brand transition-colors hover:text-accent-inverse max-md:hidden"
                             href={link.url}
                             key={link.url}
                             rel="noopener noreferrer"

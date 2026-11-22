@@ -109,11 +109,11 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
             <Dialog.Content className="flex flex-col gap-section py-inset-surface-wide--24-32">
                 <div className="flex flex-col gap-related--12-16">
                     <AragonLogo size="lg" />
-                    <p className="text-lg leading-tight font-normal text-surface-secondary md:text-xl">
+                    <p className="type-body-compact--dialog-lead text-surface-secondary">
                         {t('app.application.connectWalletDialog.connect')}
                     </p>
                 </div>
-                <div className="flex flex-col gap-group text-sm leading-tight font-normal text-surface-secondary">
+                <div className="flex flex-col gap-group type-body-compact--dialog-note text-surface-secondary">
                     <div className="flex flex-row items-center gap-related">
                         <AvatarIcon
                             icon={IconType.CHECKMARK}
@@ -150,7 +150,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
                             )}
                             isExternal={true}
                         >
-                            <span className="text-sm">
+                            <span className="type-supporting--compact-detail">
                                 {t(
                                     'app.application.connectWalletDialog.feature.smartContracts',
                                 )}

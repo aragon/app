@@ -19,6 +19,13 @@
     // To make a migrated folder strict, add its glob to the `error` plugin of each language AND add the same glob
     // negated ("!…") to the matching `warn` plugin; `pnpm lint:colors:check` verifies the scopes stay disjoint.
     // `pnpm lint:colors:report` prints the remaining findings per component folder.
+    // Primitive type classes (text-sm, md:text-lg, leading-*, font-semibold, font-medium, tracking-*, text-[…px]):
+    // text takes a typography role (src/theme/tokens/typography.css). The .grit files are generated
+    // (`pnpm lint:typography:generate`). Production code is at zero findings, so it is an error everywhere; stories only
+    // warn. To relax a folder while it migrates, move its glob to the `warn` plugin of each language and negate it
+    // ("!…") in the `error` plugin; `pnpm lint:typography:check` verifies the scopes stay disjoint and that the
+    // allowlisted files (component-owned glyph sizes, listed with their allowed classes in
+    // scripts/primitive-typography.mjs) hold nothing else. `pnpm lint:typography:report` lists the findings per folder.
     "plugins": [
         {
             "path": "./biome-plugins/primitive-spacing.js.warn.grit",
@@ -258,6 +265,51 @@
                 "src/core/components/toggles/**",
                 "src/modules/components/asset/**",
                 "src/modules/components/wallet/**"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-typography.js.warn.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/**/*.stories.tsx",
+                "!src/core/components/avatars/avatar/avatar.tsx",
+                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "!src/modules/components/dao/daoAvatar/daoAvatar.tsx"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-typography.js.error.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/**/*.ts",
+                "src/**/*.tsx",
+                "!src/theme/tokens/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!src/**/*.stories.tsx",
+                "!src/core/components/avatars/avatar/avatar.tsx",
+                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "!src/modules/components/dao/daoAvatar/daoAvatar.tsx"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-typography.css.warn.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "!src/core/components/avatars/avatar/avatar.tsx",
+                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "!src/modules/components/dao/daoAvatar/daoAvatar.tsx"
+            ]
+        },
+        {
+            "path": "./biome-plugins/primitive-typography.css.error.grit",
+            "resolutionKind": "config",
+            "includes": [
+                "src/**/*.css",
+                "!src/theme/tokens/**",
+                "!src/core/components/avatars/avatar/avatar.tsx",
+                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
+                "!src/modules/components/dao/daoAvatar/daoAvatar.tsx"
             ]
         }
     ],

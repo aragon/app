@@ -42,10 +42,7 @@ export const Breadcrumbs: React.FC<IBreadcrumbsProps> = (props) => {
                         <Icon className="text-neutral-200" icon={IconType.SLASH} responsiveSize={{ md: 'lg' }} />
                     </li>
                 ))}
-                <li
-                    aria-current="page"
-                    className="truncate text-sm leading-tight font-normal text-surface-secondary md:text-base"
-                >
+                <li aria-current="page" className="truncate type-control--stepped-nav text-surface-secondary">
                     {currentPage?.label}
                 </li>
             </ol>

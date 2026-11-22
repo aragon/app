@@ -19,7 +19,7 @@ export type NetworkInputBaseForm = Record<string, Network>;
  * inside paragraphs (see `Dropdown.Item`), where only phrasing content is valid.
  */
 const networkTagClassName =
-    'flex h-tag shrink-0 items-center rounded-full bg-surface-tertiary px-tag text-surface-secondary text-sm leading-tight md:text-base';
+    'flex h-tag shrink-0 items-center rounded-full bg-surface-tertiary px-tag text-surface-secondary type-supporting';
 
 /**
  * Networks selectable in the input, i.e. every supported network that is not disabled, ordered as defined on the
@@ -95,7 +95,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                         />
                         {/* The testnet/beta tag is only rendered on the dropdown items: on the trigger it competes
                          * with the network name for the little width the field has, and truncates it. */}
-                        <span className="grow truncate text-base leading-tight text-surface-primary">
+                        <span className="grow truncate type-control text-surface-primary">
                             {selectedName}
                         </span>
                         <Icon

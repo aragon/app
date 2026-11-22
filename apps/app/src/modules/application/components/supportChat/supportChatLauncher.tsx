@@ -49,7 +49,7 @@ export const SupportChatLauncher: React.FC = () => {
                     icon={IconType.FEEDBACK}
                     size="md"
                 />
-                <span className="hidden text-base leading-tight md:inline">
+                <span className="hidden type-control md:inline">
                     {t('app.application.supportChat.launcher.label')}
                 </span>
             </button>

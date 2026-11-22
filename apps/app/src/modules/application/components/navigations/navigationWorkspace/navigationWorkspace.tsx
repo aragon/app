@@ -175,11 +175,11 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                             size="sm"
                             src={ipfsUtils.cidToSrc(workspace?.avatar)}
                         />
-                        <span className="flex min-w-0 flex-col text-left leading-tight">
-                            <span className="truncate text-sm text-surface-primary md:text-base">
+                        <span className="flex min-w-0 flex-col text-left">
+                            <span className="truncate type-control--workspace-switcher text-surface-primary">
                                 {workspace?.name}
                             </span>
-                            <span className="truncate text-xs md:text-sm">
+                            <span className="truncate type-caption--framework-leading">
                                 {activeOption?.label}
                             </span>
                         </span>

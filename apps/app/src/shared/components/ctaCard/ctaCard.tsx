@@ -111,14 +111,21 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 object={objectType}
             />
             <div className="flex flex-col gap-related">
-                <Heading as="h2" size={isSmaller ? 'h2' : 'h1'}>
+                <Heading
+                    as="h2"
+                    typeRole={
+                        isSmaller
+                            ? 'title-group--cta-card-compact'
+                            : 'title-group--cta-card'
+                    }
+                >
                     {title}
                 </Heading>
                 <p
                     className={classNames(
-                        'leading-normal text-surface-secondary',
-                        { 'text-sm md:text-base': isSmaller },
-                        { 'text-base md:text-lg': !isSmaller },
+                        'text-surface-secondary',
+                        { 'type-body-compact': isSmaller },
+                        { 'type-body': !isSmaller },
                     )}
                 >
                     {description}

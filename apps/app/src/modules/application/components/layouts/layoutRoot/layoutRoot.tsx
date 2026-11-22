@@ -24,6 +24,7 @@ import {
     SupportChatPanel,
 } from '../../supportChat';
 import './layoutRoot.css';
+import './nextTypographyFonts.css';
 
 export interface ILayoutRootProps {
     /**

@@ -37,10 +37,7 @@ export const DialogAlertHeader: React.FC<IDialogAlertHeaderProps> = (props) => {
         className,
     );
 
-    const titleClassNames = classNames(
-        'flex-1 truncate text-lg leading-tight font-normal md:text-xl',
-        dialogAlertVariantToTitleClass[variant],
-    );
+    const titleClassNames = classNames('flex-1 truncate type-title-group', dialogAlertVariantToTitleClass[variant]);
 
     return (
         <div className={headerClassNames} {...otherProps}>

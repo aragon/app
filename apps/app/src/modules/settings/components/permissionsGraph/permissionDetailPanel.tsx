@@ -41,11 +41,11 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                 className="flex cursor-grab touch-none items-start justify-between gap-related border-b border-surface-secondary p-inset-surface-flat--fixed-16 select-none active:cursor-grabbing"
             >
                 <div className="min-w-0">
-                    <p className="truncate font-mono text-sm text-surface-primary-panel-title">
+                    <p className="truncate type-supporting--compact-detail type-mono text-surface-primary-panel-title">
                         {edge.permissionName}
                     </p>
                     {edge.conditionLabel != null && (
-                        <p className="mt-tight w-fit rounded bg-surface-tertiary px-inset-tight--fixed-6 py-inset-tight text-xs text-surface-primary-detail">
+                        <p className="mt-tight w-fit rounded bg-surface-tertiary px-inset-tight--fixed-6 py-inset-tight type-caption--unstepped text-surface-primary-detail">
                             {t(
                                 'app.settings.daoPermissionsPage.graphView.edge.condition',
                                 { condition: edge.conditionLabel },

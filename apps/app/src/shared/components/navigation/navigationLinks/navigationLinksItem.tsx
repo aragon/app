@@ -49,7 +49,7 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
     const isActive = href != null && pathname.includes(href) && href !== '/';
 
     const linkClassNames = classNames(
-        'truncate text-base leading-tight font-normal text-link-secondary-default hover:text-link-secondary-hover-nav active:text-link-secondary-active',
+        'truncate type-control text-link-secondary-default hover:text-link-secondary-hover-nav active:text-link-secondary-active',
         'group flex items-center py-inset-nav-item focus-ring ring-accent-focus',
         {
             'rounded-xl px-inset-nav-item hover:bg-surface-hover':

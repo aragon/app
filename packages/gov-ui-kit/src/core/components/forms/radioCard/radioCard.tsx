@@ -53,7 +53,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
 
     const containerClasses = classNames(
         'group flex w-full flex-col gap-related rounded-xl border border-surface-default bg-surface-primary px-inset-item py-control-item--12-16 focus-ring ring-accent-focus', // default
-        'cursor-pointer shadow-surface-sm outline-hidden transition-all md:rounded-2xl', // default
+        'cursor-pointer outline-hidden transition-all shadow-surface-sm md:rounded-2xl', // default
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
         'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
         'disabled:cursor-default disabled:border-surface-disabled disabled:bg-surface-disabled disabled:shadow-none', // disabled
@@ -62,7 +62,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     );
 
     const labelClasses = classNames(
-        'w-full truncate text-left text-surface-default group-disabled:text-surface-disabled md:text-base',
+        'w-full truncate text-left type-label-option--card text-surface-default group-disabled:text-surface-disabled',
         'group-data-[state=checked]:text-surface-primary group-data-[state=checked]:group-disabled:text-surface-primary',
     );
 
@@ -81,12 +81,12 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                 <div
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4 text-sm leading-tight font-normal">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>
                         {description && (
-                            <p className="w-full truncate text-left text-surface-secondary group-disabled:text-surface-disabled">
+                            <p className="w-full truncate text-left type-supporting--compact-meta text-surface-secondary group-disabled:text-surface-disabled">
                                 {description}
                             </p>
                         )}

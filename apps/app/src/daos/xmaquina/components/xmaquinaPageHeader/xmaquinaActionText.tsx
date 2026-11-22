@@ -26,10 +26,10 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
         <>
             {/* Static for small screens */}
             <div className="relative z-10 mr-group flex flex-col items-start gap-tight self-start md:hidden">
-                <p className="text-xl leading-tight font-medium text-white md:text-2xl">
+                <p className="type-title-group--dao-header-action text-white">
                     {t(title)}
                 </p>
-                <p className="text-base leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black md:text-lg">
+                <p className="type-supporting--dao-header-action text-neutral-400 transition-colors duration-500 group-hover:text-black">
                     {t(description)}
                 </p>
             </div>
@@ -41,10 +41,10 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
                 initial={{ y: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >
-                <p className="text-2xl leading-tight font-medium text-white">
+                <p className="type-title-group--dao-header-action-compact text-white">
                     {t(title)}
                 </p>
-                <p className="text-lg leading-tight text-neutral-400 transition-colors duration-500 group-hover:text-black">
+                <p className="type-supporting--dao-header-action-compact text-neutral-400 transition-colors duration-500 group-hover:text-black">
                     {t(description)}
                 </p>
             </motion.div>

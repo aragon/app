@@ -166,7 +166,7 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
     return (
         <div className="flex items-center gap-related">
             <span className="h-px flex-1 bg-surface-tertiary" />
-            <p className="flex-none text-xs text-surface-tertiary">{label}</p>
+            <p className="flex-none type-caption--unstepped text-surface-tertiary">{label}</p>
             <span className="h-px flex-1 bg-surface-tertiary" />
         </div>
     );
@@ -213,7 +213,7 @@ const CaptionLink: React.FC<ICaptionLinkProps> = (props) => {
 // Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
     <div className="flex flex-1 flex-col items-center justify-center px-inset-surface-wide--fixed-32 py-inset-surface-wide text-center">
-        <Heading as="h2" className="text-balance" size="h3">
+        <Heading as="h2" className="text-balance" typeRole="title-section--chat-empty-state">
             {chatCopy.welcome.greeting}
         </Heading>
     </div>
@@ -256,7 +256,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="mx-related--fixed-8 text-center text-xs leading-normal text-balance text-surface-tertiary"
+            className="mx-related--fixed-8 text-center type-caption--chat-note text-balance text-surface-tertiary"
             id={id}
         >
             {text}
@@ -286,7 +286,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="mx-auto cursor-pointer rounded-sm text-xs text-surface-secondary underline underline-offset-2 focus-ring ring-accent-focus"
+            className="mx-auto cursor-pointer rounded-sm type-control-sm--chat text-surface-secondary underline underline-offset-2 focus-ring ring-accent-focus"
             onClick={onViewRequests}
             type="button"
         >
@@ -296,7 +296,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="flex items-center justify-center gap-tight text-center text-xs text-surface-tertiary">
+    <p className="flex items-center justify-center gap-tight text-center type-caption--unstepped text-surface-tertiary">
         {chatCopy.composer.escalationPrompt}
         <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
@@ -324,7 +324,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 text-sm whitespace-nowrap text-surface-primary focus-ring transition-colors ring-accent-focus hover:bg-surface-hover"
+                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 type-control-sm--framework-leading whitespace-nowrap text-surface-primary focus-ring transition-colors ring-accent-focus hover:bg-surface-hover"
                         type="button"
                     >
                         {suggestion.label}
@@ -377,7 +377,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="mx-related--fixed-10 text-xs leading-normal text-surface-tertiary-hint">
+                        <p className="mx-related--fixed-10 type-caption--chat-note text-surface-tertiary-hint">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -388,7 +388,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 text-sm text-surface-primary outline-none caret-text-accent-primary placeholder:text-surface-placeholder"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 type-control-sm--framework-leading text-surface-primary outline-none caret-text-accent-primary placeholder:text-surface-placeholder"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -437,7 +437,7 @@ const ComposerCharacterCount: React.FC = () => {
     return (
         <p
             className={classNames(
-                'text-xs tabular-nums',
+                'type-caption--unstepped tabular-nums',
                 length >= limit
                     ? 'text-critical-primary-message'
                     : 'text-surface-tertiary',
@@ -515,7 +515,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-related--fixed-8 flex flex-col gap-tight rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-inset-surface-flat--fixed-12 text-sm leading-normal text-critical-primary">
+        <ErrorPrimitive.Root className="mt-related--fixed-8 flex flex-col gap-tight rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-inset-surface-flat--fixed-12 type-body-compact--unstepped text-critical-primary">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -604,7 +604,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="mx-related--fixed-8 text-sm leading-relaxed wrap-break-word text-surface-primary">
+        <div className="mx-related--fixed-8 type-body-compact--chat-message wrap-break-word text-surface-primary">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -639,7 +639,7 @@ const UserMessage: React.FC = () => (
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="rounded-xl rounded-br-sm bg-surface-tertiary px-inset-item-flat py-inset-item-flat--fixed-8 text-sm wrap-break-word whitespace-pre-wrap text-surface-primary empty:hidden">
+            <div className="rounded-xl rounded-br-sm bg-surface-tertiary px-inset-item-flat py-inset-item-flat--fixed-8 type-body-compact--component-note wrap-break-word whitespace-pre-wrap text-surface-primary empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

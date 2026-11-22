@@ -39,11 +39,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
     const { t } = useTranslations();
 
     if (!proposal) {
-        return (
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
-                {name}
-            </p>
-        );
+        return <p className="type-title-item text-surface-primary">{name}</p>;
     }
 
     const { supportThreshold } = proposal.settings;
@@ -90,7 +86,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
                   : 'text-surface-secondary';
 
         return (
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+            <p className="type-title-item text-surface-primary">
                 {name}{' '}
                 <span className={statusClass}>
                     {t(
@@ -103,7 +99,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-related">
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+            <p className="type-title-item text-surface-primary">
                 {name}{' '}
                 <span className="text-surface-secondary">
                     {isVeto
@@ -120,7 +116,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
                 value={supportPercentage}
                 variant={isSupportReached ? 'primary' : 'neutral'}
             />
-            <p className="text-sm leading-tight font-normal text-surface-primary md:text-base">
+            <p className="type-supporting text-surface-primary">
                 {formattedYesVotes}{' '}
                 <span className="text-surface-secondary">
                     {t(

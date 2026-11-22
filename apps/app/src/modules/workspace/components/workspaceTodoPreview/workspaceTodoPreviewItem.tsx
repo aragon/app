@@ -184,10 +184,10 @@ export const WorkspaceTodoPreviewItem: React.FC<
         <div className={rowClassName}>
             {avatar}
             <div className="flex min-w-0 grow flex-col gap-tight">
-                <p className="truncate text-base leading-tight text-surface-primary">
+                <p className="truncate type-title-item--compact-card text-surface-primary">
                     {title}
                 </p>
-                <p className="truncate text-sm leading-tight text-surface-secondary">
+                <p className="truncate type-supporting--compact-meta text-surface-secondary">
                     {meta}
                 </p>
             </div>

@@ -6,21 +6,25 @@
 // - src/theme/tokens/semantic/colors.css   the semantic colour layer (three value sets and its utilities)
 // - src/theme/tokens/spacing.css   the semantic spacing layer (roles, component sizes, exceptions and their utilities)
 //   and src/core/types/spacingStyles.ts (the names as TypeScript lists)
+// - src/theme/tokens/typography.css   the semantic typography layer (roles, exceptions, modifiers and their utilities)
+//   and src/core/types/typographyStyles.ts (the style names as a TypeScript union)
 // - .design-sync/generated/govkit-primitives.css   the app's flattened artifact (primitives plus the app overrides)
 //
 // The semantic colour layer is optional: it is generated when the source has `semantic.config.json`, which then
 // requires `palette.tokens.json` and every mode file the config names. Without it the source is primitives only and
 // the semantic output is not written; a palette or mode file without the config is an error, not ignored.
 // The spacing layer follows the same rule with `spacing.config.json` and its three token files.
+// The typography layer follows the same rule with `typography.config.json` and the mode files it names.
 //
 // Usage: `node scripts/tokens/generate.mjs [--check | --report] [--source <dir>]`
 //   (none)    validate the source, write the outputs
 //   --check   validate the source, fail when an output on disk is stale (writes nothing)
-//   --report  validate the source, print the spacing tables and the semantic fallback / verified-value report
+//   --report  validate the source, print the spacing and typography tables and the semantic fallback / verified-value report
 //             (writes nothing)
 //   --source  read the source from another directory (a scratch copy), outputs stay in the repo
 // See design-system/tokens/README.md.
 
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +33,8 @@ import { collectTokens, createSchemaValidator, mergeSets, readJson, resolveToken
 import { primitiveFiles, renderPrimitives } from './lib/primitives.mjs';
 import { renderSemantic } from './lib/semantic.mjs';
 import { renderSpacing, spacingReport } from './lib/spacing.mjs';
+import { renderTypography } from './lib/typography.mjs';
+import { typographyReport } from './lib/typographyReport.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const repoRoot = resolve(kitRoot, '../..');
@@ -42,6 +48,7 @@ const SPACING_FILES = {
     sizes: 'spacing.sizes.tokens.json',
     exceptions: 'spacing.exceptions.tokens.json',
 };
+const TYPOGRAPHY_CONFIG = 'typography.config.json';
 
 const fail = (message) => {
     throw new Error(message);
@@ -75,6 +82,19 @@ const readSpacingConfig = (sourceDir) => {
     return null;
 };
 
+// The typography config, or null without a typography layer. Typography mode files without the config fail.
+const readTypographyConfig = (sourceDir) => {
+    const file = resolve(sourceDir, TYPOGRAPHY_CONFIG);
+    if (existsSync(file)) {
+        return readJson(file);
+    }
+    const strays = readdirSync(sourceDir).filter((name) => /^typography\..+\.tokens\.json$/.test(name));
+    if (strays.length > 0) {
+        fail(`${strays.join(', ')} without ${TYPOGRAPHY_CONFIG}: add the config or remove the typography files`);
+    }
+    return null;
+};
+
 // Validates the whole source: every document against the published DTCG schema, every alias in every mode (missing
 // target, cycle, type mismatch), every resolved value against its own type. A primitives-only source is validated as
 // one view of the primitives.
@@ -83,6 +103,8 @@ const loadSource = (sourceDir) => {
     const primitivesConfig = readJson(resolve(sourceDir, 'primitives.config.json'));
     const semanticConfig = readSemanticConfig(sourceDir);
     const spacingConfig = readSpacingConfig(sourceDir);
+    const typographyConfig = readTypographyConfig(sourceDir);
+    const typographyModeNames = typographyConfig == null ? [] : Object.keys(typographyConfig.modes);
     const modeNames = semanticConfig == null ? [] : Object.keys(semanticConfig.modes);
     const documents = {
         primitives: readJson(resolve(sourceDir, 'primitives.tokens.json')),
@@ -101,6 +123,9 @@ const loadSource = (sourceDir) => {
             validator.validateValue(entry.type, entry.value, `${file}: ${path}`);
         }
     }
+    for (const [mode, { file }] of Object.entries(typographyConfig?.modes ?? {})) {
+        documents[`typography.${mode}`] = readJson(resolve(sourceDir, file));
+    }
     const entries = {};
     for (const [label, document] of Object.entries(documents)) {
         validator.validateDocument(document, label);
@@ -114,6 +139,12 @@ const loadSource = (sourceDir) => {
                   mode,
                   mergeSets({ primitives: entries.primitives, palette: entries.palette, [mode]: entries[mode] }),
               ]);
+    for (const mode of typographyModeNames) {
+        views.push([
+            `typography.${mode}`,
+            mergeSets({ primitives: entries.primitives, [`typography.${mode}`]: entries[`typography.${mode}`] }),
+        ]);
+    }
     for (const [label, view] of views) {
         for (const [path, entry] of view) {
             validator.validateValue(entry.type, resolveToken(view, path).value, `${label}: ${path}`);
@@ -128,6 +159,9 @@ const loadSource = (sourceDir) => {
         spacingConfig,
         spacingDocuments,
         validateDimension: (value, label) => validator.validateValue('dimension', value, label),
+        typography: Object.fromEntries(typographyModeNames.map((mode) => [mode, entries[`typography.${mode}`]])),
+        typographyToday: documents['typography.today'],
+        typographyConfig,
         cssDir: resolve(sourceDir, 'css'),
     };
 };
@@ -148,8 +182,20 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
         flat: true,
     });
     const outputs = new Map();
+    // Formatted with the repo's Biome config (as the semantic outputs are), so a value Biome wraps differently from the
+    // generator's own wrapping (a short font stack) still passes `lint:check` and `--check` stays byte-exact.
     for (const [file, text] of primitiveFiles(bodies)) {
-        outputs.set(relative(repoRoot, resolve(kitRoot, file)), text);
+        const path = resolve(kitRoot, file);
+        const formatted = execFileSync(
+            resolve(kitRoot, 'node_modules/.bin/biome'),
+            ['format', `--stdin-file-path=${path}`],
+            {
+                cwd: kitRoot,
+                input: text,
+                encoding: 'utf8',
+            },
+        );
+        outputs.set(relative(repoRoot, path), formatted);
     }
     const semantic =
         source.semanticConfig == null
@@ -193,14 +239,49 @@ export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
         outputs.set(relative(repoRoot, resolve(kitRoot, source.spacingConfig.output)), spacing.css);
         outputs.set(relative(repoRoot, resolve(kitRoot, source.spacingConfig.typesOutput)), spacing.ts);
     }
+    const typography =
+        source.typographyConfig == null
+            ? null
+            : renderTypography({
+                  kitRoot,
+                  outputFile: resolve(kitRoot, source.typographyConfig.output),
+                  primitives: source.primitives,
+                  modes: source.typography,
+                  todayDocument: source.typographyToday,
+                  config: source.typographyConfig,
+                  varOf,
+                  fail,
+              });
+    if (typography != null) {
+        // Every exception is a documented entry: the decisions file must list it (its table comes from --report).
+        const decisions = resolve(kitRoot, 'design-system/tokens/typography.decisions.md');
+        if (existsSync(decisions)) {
+            const text = readFileSync(decisions, 'utf8');
+            const missing = typography.exceptionNames.filter((name) => !text.includes(`| ${name} |`));
+            if (missing.length > 0) {
+                fail(
+                    `typography.decisions.md does not list the exceptions ${missing.join(', ')} (paste \`pnpm tokens:report\`)`,
+                );
+            }
+        }
+        outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.output)), typography.css);
+        outputs.set(relative(repoRoot, resolve(kitRoot, source.typographyConfig.typesOutput)), typography.ts);
+    }
     const app = source.primitivesConfig.app;
     outputs.set(app.output, renderAppArtifact({ bodies: flatBodies, appConfig: app, repoRoot }));
-    return { outputs, semantic, spacing, source };
+    return { outputs, semantic, spacing, typography, source };
 };
 
-const report = ({ semantic, spacing, source }) => {
+const report = ({ semantic, spacing, typography, source }) => {
     if (spacing != null) {
         const { text, unused } = spacingReport({ spacing, repoRoot });
+        console.log(`${text}\n`);
+        if (unused.length > 0) {
+            process.exitCode = 1;
+        }
+    }
+    if (typography != null) {
+        const { text, unused } = typographyReport({ typography, primitives: source.primitives, repoRoot });
         console.log(`${text}\n`);
         if (unused.length > 0) {
             process.exitCode = 1;

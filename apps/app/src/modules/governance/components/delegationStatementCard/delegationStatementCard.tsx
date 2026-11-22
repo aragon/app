@@ -83,7 +83,7 @@ export const DelegationStatementCard: React.FC<
     if (statement != null) {
         return (
             <Card className="flex flex-col gap-related--8-12" inset="surface">
-                <Heading size="h3">
+                <Heading as="h3" typeRole="title-group">
                     {t('app.governance.delegationStatementCard.heading')}
                 </Heading>
                 <Collapsible
