@@ -95,6 +95,7 @@ export const spacingExceptions = [
     'gap-related--8-12',
     'gap-related--8-16',
     'gap-related--fixed-10',
+    'gap-related--fixed-12',
     'gap-related--fixed-8',
     'gap-section--24-28',
     'gap-section--24-32',

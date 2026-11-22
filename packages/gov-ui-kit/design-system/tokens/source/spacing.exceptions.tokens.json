@@ -446,13 +446,13 @@
                 }
             },
             "gap-group-stepped--16-24": {
-                "$description": "steps 16 → 24 at md; density-invariant (every preview mode renders the role's New): the definition list's term/description column gap, whose 1/3 term column has no slack in the aside cards",
+                "$description": "steps 16 → 24 at md; density-invariant (every preview mode renders the role's New): the definition list's term/description column gap and the accordion header's gap to its chevron, whose text has no slack for a wider gap (aside definition terms, phone action headers)",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "families": [
                             "gap-x"
                         ],
-                        "places": 1,
+                        "places": 2,
                         "resolution": "",
                         "invariant": true
                     }
@@ -1404,6 +1404,31 @@
                 "md": {
                     "$value": {
                         "value": 10,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--fixed-12": {
+                "$description": "unstepped (one value at every width); density-invariant (every preview mode renders the role's New, 8 → 12): the gap between a contract link's name and its icon in the proposal action header, whose name fits a phone line in New by 4 px",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap"
+                        ],
+                        "places": 1,
+                        "resolution": "",
+                        "invariant": true
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
                         "unit": "px"
                     }
                 }

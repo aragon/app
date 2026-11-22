@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 24 roles, 8 component sizes and 97 Today exceptions, 574 utilities. A utility is
+ * Semantic spacing: 24 roles, 8 component sizes and 98 Today exceptions, 575 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -276,6 +276,9 @@
         /* exception gap-related--fixed-10 (its own Today value) */
         --space-gap-related--fixed-10: 10px;
         --space-gap-related--fixed-10-md: 10px;
+        /* exception gap-related--fixed-12 (its own Today value) */
+        --space-gap-related--fixed-12: 12px;
+        --space-gap-related--fixed-12-md: 12px;
         /* exception gap-related--fixed-8 (its own Today value) */
         --space-gap-related--fixed-8: 8px;
         --space-gap-related--fixed-8-md: 8px;
@@ -740,6 +743,9 @@
         /* exception gap-related--fixed-10 (follows gap-related) */
         --space-gap-related--fixed-10: var(--space-gap-related);
         --space-gap-related--fixed-10-md: var(--space-gap-related-md);
+        /* exception gap-related--fixed-12 (density-invariant: gap-related at New) */
+        --space-gap-related--fixed-12: 8px;
+        --space-gap-related--fixed-12-md: 12px;
         /* exception gap-related--fixed-8 (follows gap-related) */
         --space-gap-related--fixed-8: var(--space-gap-related);
         --space-gap-related--fixed-8-md: var(--space-gap-related-md);
@@ -1270,6 +1276,9 @@
         /* exception gap-related--fixed-10 (follows gap-related) */
         --space-gap-related--fixed-10: var(--space-gap-related);
         --space-gap-related--fixed-10-md: var(--space-gap-related-md);
+        /* exception gap-related--fixed-12 (density-invariant: gap-related at New) */
+        --space-gap-related--fixed-12: 8px;
+        --space-gap-related--fixed-12-md: 12px;
         /* exception gap-related--fixed-8 (follows gap-related) */
         --space-gap-related--fixed-8: var(--space-gap-related);
         --space-gap-related--fixed-8-md: var(--space-gap-related-md);
@@ -1800,6 +1809,9 @@
         /* exception gap-related--fixed-10 (follows gap-related) */
         --space-gap-related--fixed-10: var(--space-gap-related);
         --space-gap-related--fixed-10-md: var(--space-gap-related-md);
+        /* exception gap-related--fixed-12 (density-invariant: gap-related at New) */
+        --space-gap-related--fixed-12: 8px;
+        --space-gap-related--fixed-12-md: 12px;
         /* exception gap-related--fixed-8 (follows gap-related) */
         --space-gap-related--fixed-8: var(--space-gap-related);
         --space-gap-related--fixed-8-md: var(--space-gap-related-md);
@@ -6255,6 +6267,14 @@
 
     @variant md {
         margin-block: var(--space-gap-related--fixed-10-md);
+    }
+}
+
+@utility gap-related--fixed-12 {
+    gap: var(--space-gap-related--fixed-12);
+
+    @variant md {
+        gap: var(--space-gap-related--fixed-12-md);
     }
 }
 

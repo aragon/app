@@ -30,7 +30,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
             <RadixAccordionTrigger
                 asChild={removeControl != null && index != null}
                 className={classNames(
-                    'relative flex flex-1 items-baseline justify-between gap-x-group-stepped px-inset-item py-control-item outline-hidden',
+                    'relative flex flex-1 items-baseline justify-between gap-x-group-stepped--16-24 px-inset-item py-control-item outline-hidden',
                     'focus-ring-primary group-data-disabled:cursor-default group-data-disabled:bg-neutral-100',
                     {
                         'cursor-default': removeControl != null,
