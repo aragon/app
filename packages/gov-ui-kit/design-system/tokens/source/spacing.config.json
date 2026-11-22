@@ -109,9 +109,19 @@
         "media": "(pointer: coarse)",
         "mode": "compact",
         "fallback": "new",
-        "tokens": ["size.control-*.height", "size.control-*.pad-y", "size.row.height"],
-        "blockDimensions": ["height", "pad-y"],
-        "exempt": ["tag", "control-label"]
+        "tokens": [
+            "size.control-*.height",
+            "size.control-*.pad-y",
+            "size.row.height"
+        ],
+        "blockDimensions": [
+            "height",
+            "pad-y"
+        ],
+        "exempt": [
+            "tag",
+            "control-label"
+        ]
     },
     "families": {
         "inset": {

@@ -306,7 +306,9 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
         const redundant = dims.every((dim) =>
             SIDES.every((side) =>
                 (role.chrome || invariant ? MODES : ['today']).every(
-                    (mode) => (mode === 'today' ? values[side].today : previewOf(dim, side, mode)) === role.dims[dim][side][mode],
+                    (mode) =>
+                        (mode === 'today' ? values[side].today : previewOf(dim, side, mode)) ===
+                        role.dims[dim][side][mode],
                 ),
             ),
         );
