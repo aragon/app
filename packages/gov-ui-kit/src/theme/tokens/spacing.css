@@ -12,7 +12,7 @@
  * - [data-spacing="new"]      New: every role at its one standard value; exceptions follow their role.
  * - [data-spacing="looser"]   New, looser: the same roles one step more generous (phone page gutters and item insets stay at New).
  * - [data-spacing="compact"]  New, compact: the same roles one step denser; control heights fall back to New on coarse pointers.
- * - (pointer: coarse) compact: size.control-sm.height, size.control-md.height, size.control-lg.height take their new values.
+ * - (pointer: coarse) compact: size.control-sm.height, size.control-md.height, size.control-lg.height, size.control-lg.pad-y, size.row.height take their new values.
  */
 
 @layer theme {
@@ -1910,6 +1910,10 @@
             --space-control-md-height-md: 40px;
             --space-control-lg-height: 48px;
             --space-control-lg-height-md: 48px;
+            --space-control-lg-pad-y: 12px;
+            --space-control-lg-pad-y-md: 12px;
+            --space-row-height: 56px;
+            --space-row-height-md: 56px;
         }
     }
 }

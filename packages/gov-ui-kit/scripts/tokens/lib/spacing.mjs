@@ -109,6 +109,7 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             name,
             kind: meta.kind,
             chrome: meta.chrome === true,
+            invariant: meta.invariant === true,
             dims,
             description: group.$description,
         });
@@ -159,6 +160,11 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
                 }
                 if (!(v.compact <= v.new && v.new <= v.looser)) {
                     fail(`spacing: ${label(token, dim, side)} must hold compact <= new <= looser`);
+                }
+                if (token.invariant && !(v.looser === v.new && v.compact === v.new && v.new === snap(v.today))) {
+                    fail(
+                        `spacing: density-invariant role ${label(token, dim, side)} must be new = looser = compact = Today snapped (${snap(v.today)})`,
+                    );
                 }
                 if (token.chrome && !chromeOk(v)) {
                     fail(
@@ -213,14 +219,44 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
             fail(`spacing.config.json: floor ${floor.token} matches no token`);
         }
     }
+    // Coarse pointers (touch screens): the listed tokens of one mode fall back to another mode. `tokens` are paths with
+    // `*` globs (`size.control-*.height`, `role.<name>.<axis>`); every block dimension (`blockDimensions`: what sets a
+    // target's height) of every size that is a target (all sizes but `exempt`) must be listed, so no control's height
+    // can escape the fallback.
     const coarse = config.coarsePointer;
-    const coarseTokens = coarse.tokens.map((path) => {
-        const [, name, dim] = path.match(/^size\.([a-z0-9-]+)\.([a-z-]+)$/) ?? [];
-        if (tokens.get(name)?.dims[dim] == null) {
-            fail(`spacing.config.json: coarse-pointer token ${path} does not exist`);
+    const pathOf = (token, dim) => `${token.kind === 'size' ? 'size' : 'role'}.${token.name}${dim ? `.${dim}` : ''}`;
+    const coarseTokens = [];
+    for (const pattern of coarse.tokens) {
+        const matcher = tokenGlob(pattern);
+        const before = coarseTokens.length;
+        for (const token of tokens.values()) {
+            for (const dim of Object.keys(token.dims)) {
+                if (matcher.test(pathOf(token, dim)) && !coarseTokens.some((c) => c.token === token && c.dim === dim)) {
+                    coarseTokens.push({ token, dim });
+                }
+            }
         }
-        return { token: tokens.get(name), dim };
-    });
+        if (coarseTokens.length === before) {
+            fail(`spacing.config.json: coarse-pointer token ${pattern} matches no token`);
+        }
+    }
+    for (const name of coarse.exempt ?? []) {
+        if (tokens.get(name)?.kind !== 'size') {
+            fail(`spacing.config.json: coarse-pointer exemption ${name} is not a size`);
+        }
+    }
+    for (const token of tokens.values()) {
+        if (token.kind !== 'size' || (coarse.exempt ?? []).includes(token.name)) {
+            continue;
+        }
+        for (const dim of coarse.blockDimensions ?? []) {
+            if (Object.hasOwn(token.dims, dim) && !coarseTokens.some((c) => c.token === token && c.dim === dim)) {
+                fail(
+                    `spacing.config.json: ${pathOf(token, dim)} sets a target's height but has no coarse-pointer fallback (list it in coarsePointer.tokens, or exempt the size)`,
+                );
+            }
+        }
+    }
 
     // ------------------------------------------------------------------------------------------------------------
     // Exceptions
@@ -445,7 +481,7 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
  * Every utility reads --${prefix}-<name>[-<axis or dimension>] and, through the \`${desktopVariant}\` variant, the same variable with -md.
  * Value sets:
 ${modeNames.map((mode) => ` * - ${config.modes[mode].selector.padEnd(26)}${config.modes[mode].description}`).join('\n')}
- * - ${coarse.media} ${coarse.mode}: ${coarse.tokens.join(', ')} take their ${coarse.fallback} values.
+ * - ${coarse.media} ${coarse.mode}: ${coarseTokens.map(({ token, dim }) => pathOf(token, dim)).join(', ')} take their ${coarse.fallback} values.
  */
 
 @layer theme {

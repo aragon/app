@@ -1,5 +1,5 @@
 {
-    "$description": "Non-token configuration of the semantic spacing layer (the tokens are spacing.roles.tokens.json, spacing.sizes.tokens.json and spacing.exceptions.tokens.json). output / typesOutput: the generated CSS and the TypeScript lists of the names. prefix: the custom property prefix (`--space-*`, deliberately outside Tailwind's `--spacing-*` theme namespace, so no width, size or inset utility ever reads a role). modes: Today first (the default rendering, on `:root`), then one attribute selector per preview mode. desktopVariant: the Tailwind variant every utility switches to its `md` values with (a media query in the kit, a container query on the app column in the app). scale: the only values a preview mode may use. floors: minimum values per token side in the listed modes. coarsePointer: on touch screens the listed size dimensions of one mode fall back to another mode. families: the utility families of each kind (family -> CSS property and the axis or size dimension it reads; `space` = Tailwind's space-x/space-y child margins, `negate` = a negative margin). gapLevels / chromeGapLevels: gap roles whose values must not decrease along the list in any mode and width. chrome: the navigation chrome roles (owner decision 6) keep Today snapped to the scale in New and move at most one scale step (looser up, compact down, or stay); their exceptions carry their own mode values under the same rule. newBudget: the per-place change budget of New (owner decision 0), checked for every role and exception (an exception's change is its Today value against its role's New value).",
+    "$description": "Non-token configuration of the semantic spacing layer (the tokens are spacing.roles.tokens.json, spacing.sizes.tokens.json and spacing.exceptions.tokens.json). output / typesOutput: the generated CSS and the TypeScript lists of the names. prefix: the custom property prefix (`--space-*`, deliberately outside Tailwind's `--spacing-*` theme namespace, so no width, size or inset utility ever reads a role). modes: Today first (the default rendering, on `:root`), then one attribute selector per preview mode. desktopVariant: the Tailwind variant every utility switches to its `md` values with (a media query in the kit, a container query on the app column in the app). scale: the only values a preview mode may use. floors: minimum values per token side in the listed modes. coarsePointer: on touch screens the listed tokens (`*` globs) of one mode fall back to another mode; every `blockDimensions` dimension of every size not `exempt` (the sizes that are not targets) must be listed, so no control height escapes the fallback. families: the utility families of each kind (family -> CSS property and the axis or size dimension it reads; `space` = Tailwind's space-x/space-y child margins, `negate` = a negative margin). gapLevels / chromeGapLevels: gap roles whose values must not decrease along the list in any mode and width. chrome: the navigation chrome roles (owner decision 6) keep Today snapped to the scale in New and move at most one scale step (looser up, compact down, or stay); their exceptions carry their own mode values under the same rule. newBudget: the per-place change budget of New (owner decision 0), checked for every role and exception (an exception's change is its Today value against its role's New value).",
     "prefix": "space",
     "output": "src/theme/tokens/spacing.css",
     "typesOutput": "src/core/types/spacingStyles.ts",
@@ -109,11 +109,9 @@
         "media": "(pointer: coarse)",
         "mode": "compact",
         "fallback": "new",
-        "tokens": [
-            "size.control-sm.height",
-            "size.control-md.height",
-            "size.control-lg.height"
-        ]
+        "tokens": ["size.control-*.height", "size.control-*.pad-y", "size.row.height"],
+        "blockDimensions": ["height", "pad-y"],
+        "exempt": ["tag", "control-label"]
     },
     "families": {
         "inset": {

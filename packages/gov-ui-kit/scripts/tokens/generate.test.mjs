@@ -237,6 +237,11 @@ test('the spacing layer writes one value set per mode, the coarse fallback and u
         css,
         /@media \(pointer: coarse\) \{\n {8}\[data-spacing="compact"\] \{\n {12}--space-control-sm-height: 32px;/,
     );
+    // Every block dimension of a target size falls back (heights, the large control's block padding, the row).
+    const coarseBlock = css.slice(css.indexOf('@media (pointer: coarse)'));
+    for (const name of ['control-md-height', 'control-lg-height', 'control-lg-pad-y', 'row-height']) {
+        assert.match(coarseBlock, new RegExp(`--space-${name}: `));
+    }
     // Roles keep their md step inside the utility; gap roles drop their prefix; sizes use the size name.
     assert.match(
         css,
