@@ -1,0 +1,12 @@
+{
+    "$description": "Non-token configuration of how the generated value sets are split into stylesheets and scoped to the breakpoints. Today's value sets stay in the kit's CSS (src/theme/tokens), which every consumer downloads; the preview value sets (colour Next and Dark, typography Next, spacing New, looser and compact) are written apart, into stylesheets that are only loaded while a preview is on. The desktop breakpoint is the md primitive (breakpoint.css.md). column: the app's application column (`@container/app` in layoutRoot.tsx), where the app's md variant is a container query on the column and a viewport media query everywhere else; selector matches the children of the column, which set the variables that change at md (the column element itself counts as outside, as a container query never applies to its own container). outputs, relative to the kit root: kitPreview = every preview value set at the media-query scope, for Storybook (never part of the published package, which keeps Today only); appColumn = Today's column scope, imported by layoutRoot.css; appPreview = every preview value set at both scopes, a static file of the app that layoutRoot.tsx links only while the debug panel is on and a preview is selected.",
+    "column": {
+        "selector": ".\\@container\\/app > *",
+        "container": "app"
+    },
+    "outputs": {
+        "kitPreview": ".storybook/tokensPreview.css",
+        "appColumn": "../../apps/app/src/modules/application/components/layouts/layoutRoot/tokensColumn.css",
+        "appPreview": "../../apps/app/public/tokens-preview.css"
+    }
+}

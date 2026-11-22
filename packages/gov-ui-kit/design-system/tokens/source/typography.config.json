@@ -1,5 +1,5 @@
 {
-    "$description": "Non-token configuration of the semantic typography layer (the tokens are typography.today.tokens.json and typography.next.tokens.json). output / typesOutput: the generated CSS and the TypeScript union of the style names. modes: one value set per mode, Today first (the default rendering) and the preview modes on their own attribute. todayInherits: composite properties Today does not set (the variable is left undeclared, so the declaration falls back to inheritance); todayDefaults: the values the Today tokens must state for them. desktopVariant: the Tailwind variant a utility switches to its md values with. modifiers: utilities applied on top of a role; `token` modifiers read type.modifier.<name> of each mode, the others carry per-mode CSS values because DTCG has no type for them (font-variant-numeric).",
+    "$description": "Non-token configuration of the semantic typography layer (the tokens are typography.today.tokens.json and typography.next.tokens.json). output / typesOutput: the generated CSS and the TypeScript union of the style names. modes: one value set per mode, Today first (the default rendering) and the preview modes on their own attribute. todayInherits: composite properties Today does not set (the variable is left undeclared, so the declaration falls back to inheritance); todayDefaults: the values the Today tokens must state for them. modifiers: utilities applied on top of a role; `token` modifiers read type.modifier.<name> of each mode, the others carry per-mode CSS values because DTCG has no type for them (font-variant-numeric).",
     "prefix": "type",
     "output": "src/theme/tokens/typography.css",
     "typesOutput": "src/core/types/typographyStyles.ts",
@@ -14,7 +14,6 @@
             "description": "Next typography preview: the plain role bundles in Sora / Inter Display; exceptions follow their role."
         }
     },
-    "desktopVariant": "md",
     "todayInherits": [
         "fontFamily",
         "letterSpacing"

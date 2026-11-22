@@ -18,7 +18,8 @@
 
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
-import { aliasTarget, dimensionToCss, isAlias } from './dtcg.mjs';
+import { aliasTarget, declaration, dimensionToCss, isAlias } from './dtcg.mjs';
+import { indentLines, renderSet } from './scopes.mjs';
 
 const PROPERTIES = [
     ['fontFamily', 'font-family'],
@@ -30,7 +31,17 @@ const PROPERTIES = [
 const BREAKPOINTS = ['base', 'md'];
 const ROOT = 'type';
 
-export const renderTypography = ({ kitRoot, outputFile, primitives, modes, todayDocument, config, varOf, fail }) => {
+export const renderTypography = ({
+    kitRoot,
+    outputFile,
+    primitives,
+    modes,
+    todayDocument,
+    config,
+    varOf,
+    scopes,
+    fail,
+}) => {
     const { prefix, todayInherits, todayDefaults, modifiers: modifierConfig } = config;
     const modeNames = Object.keys(config.modes);
     if (modeNames[0] !== 'today') {
@@ -87,8 +98,22 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
     const roleNames = [...styles.values()].filter((s) => s.kind === 'role').map((s) => s.name);
     const exceptionNames = [...styles.values()].filter((s) => s.kind === 'exception').map((s) => s.name);
 
-    const variable = (name, breakpoint, property) =>
-        `--${prefix}-${name}${breakpoint === 'md' ? '-md' : ''}-${property}`;
+    const variable = (name, property) => `--${prefix}-${name}-${property}`;
+
+    // A primitive as CSS. The preview stylesheet is plain CSS that Tailwind does not process, and Tailwind only emits the
+    // theme variables its own CSS reads (Next's faces are read by nothing else), so a preview value carries the literal
+    // as the fallback of the variable.
+    const reference = (mode, target) => {
+        const name = varOf(target);
+        if (mode === 'today') {
+            return `var(${name})`;
+        }
+        const literal = declaration(name, primitives.get(target), varOf, true)
+            .replace(/^[^:]+:\s*/, '')
+            .replace(/;\s*$/, '')
+            .replace(/\s+/g, ' ');
+        return `var(${name}, ${literal})`;
+    };
 
     // A composite part as CSS: an alias of a primitive is its variable, a literal is formatted by its type.
     const partCss = (mode, path, key, value) => {
@@ -97,7 +122,7 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
             if (!primitives.has(target)) {
                 fail(`typography ${mode}: ${path}.${key} references ${target}, which is not a primitive`);
             }
-            return `var(${varOf(target)})`;
+            return reference(mode, target);
         }
         switch (key) {
             case 'fontSize':
@@ -111,16 +136,21 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
         }
     };
 
-    // Value set of one mode: [variable, value] lines.
-    const setLines = (mode) => {
-        const lines = [];
+    // Value set of one mode: [property, phone value] items with comments, the values that differ at the desktop
+    // breakpoint, and the properties that alias another one (an exception following its role).
+    const modeValues = (mode) => {
+        const items = [];
+        const desktop = new Map();
+        const aliases = new Set();
         for (const style of styles.values()) {
-            lines.push(
-                `/* ${style.kind} ${style.name}${style.role ? ` (Today: its own bundle; ${mode === 'today' ? 'kept' : `follows ${style.role}`})` : ''} */`,
+            items.push(
+                `${style.kind} ${style.name}${style.role ? ` (Today: its own bundle; ${mode === 'today' ? 'kept' : `follows ${style.role}`})` : ''}`,
             );
+            const cssOf = {};
             for (const breakpoint of BREAKPOINTS) {
                 const path = `${ROOT}.${style.kind}.${style.name}.${breakpoint}`;
                 const { value } = modes[mode].get(path);
+                cssOf[breakpoint] = {};
                 if (isAlias(value)) {
                     // A composite alias: allowed only from an exception to its own role (same breakpoint).
                     const target = aliasTarget(value);
@@ -131,11 +161,8 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
                     ) {
                         fail(`typography ${mode}: ${path} may only alias ${ROOT}.role.${style.role}.${breakpoint}`);
                     }
-                    for (const [key, property] of PROPERTIES) {
-                        lines.push(
-                            `${variable(style.name, breakpoint, property)}: var(${variable(style.role, breakpoint, property)});`,
-                        );
-                        void key;
+                    for (const [, property] of PROPERTIES) {
+                        cssOf[breakpoint][property] = `var(${variable(style.role, property)})`;
                     }
                     continue;
                 }
@@ -149,9 +176,24 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
                     ) {
                         continue;
                     }
-                    lines.push(
-                        `${variable(style.name, breakpoint, property)}: ${partCss(mode, path, key, value[key])};`,
-                    );
+                    cssOf[breakpoint][property] = partCss(mode, path, key, value[key]);
+                }
+            }
+            for (const [, property] of PROPERTIES) {
+                const phone = cssOf.base[property];
+                const wide = cssOf.md[property];
+                if (phone == null && wide == null) {
+                    continue;
+                }
+                if (phone == null || wide == null) {
+                    fail(`typography ${mode}: ${style.name} sets ${property} at one breakpoint only`);
+                }
+                items.push([variable(style.name, property), phone]);
+                if (wide !== phone) {
+                    desktop.set(variable(style.name, property), wide);
+                }
+                if (phone.startsWith('var(')) {
+                    aliases.add(variable(style.name, property));
                 }
             }
         }
@@ -164,7 +206,7 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
                 if (entry == null) {
                     fail(`typography ${mode}: modifier ${name} has no token ${path}`);
                 }
-                css = isAlias(entry.value) ? `var(${varOf(aliasTarget(entry.value))})` : String(entry.value);
+                css = isAlias(entry.value) ? reference(mode, aliasTarget(entry.value)) : String(entry.value);
                 if (isAlias(entry.value) && !primitives.has(aliasTarget(entry.value))) {
                     fail(
                         `typography ${mode}: ${path} references ${aliasTarget(entry.value)}, which is not a primitive`,
@@ -174,10 +216,10 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
                 css = modifierConfig[name].values[mode] ?? null;
             }
             if (css != null) {
-                lines.push(`/* modifier ${name} */`, `--${prefix}-${name}-${property}: ${css};`);
+                items.push(`modifier ${name}`, [`--${prefix}-${name}-${property}`, css]);
             }
         }
-        return lines;
+        return { items, desktop, aliases };
     };
     for (const name of Object.keys(modifierConfig)) {
         if (modifierConfig[name].type === 'token' && !today.has(`${ROOT}.modifier.${name}`)) {
@@ -192,35 +234,41 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
     }
 
     const indent = '    ';
-    const block = (selector, lines) => [
-        `${indent}${selector} {`,
-        ...lines.map((l) => `${indent}${indent}${l}`),
-        `${indent}}`,
-    ];
-
     const utilityOf = (name) => {
-        const declarations = (breakpoint) =>
-            PROPERTIES.map(([key, property]) =>
-                key === 'lineHeight'
-                    ? `@apply leading-(${variable(name, breakpoint, property)});`
-                    : `${property}: var(${variable(name, breakpoint, property)});`,
-            );
-        return [
-            `@utility ${prefix}-${name} {`,
-            ...declarations('base').map((l) => `${indent}${l}`),
-            '',
-            `${indent}@variant ${config.desktopVariant} {`,
-            ...declarations('md').map((l) => `${indent}${indent}${l}`),
-            `${indent}}`,
-            '}',
-        ].join('\n');
+        const declarations = PROPERTIES.map(([key, property]) =>
+            key === 'lineHeight'
+                ? `@apply leading-(${variable(name, property)});`
+                : `${property}: var(${variable(name, property)});`,
+        );
+        return [`@utility ${prefix}-${name} {`, ...declarations.map((l) => `${indent}${l}`), '}'].join('\n');
     };
     const modifierUtilities = Object.entries(modifierConfig).map(
         ([name, { property }]) =>
             `@utility ${prefix}-${name} {\n${indent}${property}: var(--${prefix}-${name}-${property});\n}`,
     );
 
-    const valueSets = modeNames.map((mode) => block(config.modes[mode].selector, setLines(mode)).join('\n'));
+    const todayValues = modeValues('today');
+    const columnPart = scopes.column;
+    const sets = {};
+    for (const mode of modeNames) {
+        const values = modeValues(mode);
+        const selector = config.modes[mode].selector;
+        // Today's column rules set its exceptions' own values on the children, so a mode that makes an exception follow
+        // its role must set it there too (as an alias, next to the variable it aliases).
+        const keys = new Set([...todayValues.desktop.keys(), ...values.desktop.keys()]);
+        sets[mode] = renderSet({
+            selectors: mode === 'today' ? [selector] : [`:root${selector}`, selector],
+            columnSelector:
+                columnPart == null ? null : `${mode === 'today' ? '' : `${selector} `}:where(${columnPart.selector})`,
+            items: values.items,
+            desktop: values.desktop,
+            aliases: values.aliases,
+            columnKeys: mode === 'today' ? new Set(todayValues.desktop.keys()) : keys,
+            query: scopes.query,
+            container: columnPart?.container,
+            wrap: null,
+        });
+    }
 
     const rawCss = `/*
  * GENERATED by scripts/tokens/generate.mjs from design-system/tokens/source/ (typography.*.tokens.json,
@@ -230,10 +278,10 @@ export const renderTypography = ({ kitRoot, outputFile, primitives, modes, today
  * plus the modifiers ${Object.keys(modifierConfig)
      .map((m) => `${prefix}-${m}`)
      .join(', ')}. Every utility reads
- * variables --${prefix}-<style>-<property> and, through the \`${config.desktopVariant}\` variant, --${prefix}-<style>-md-<property>.
- * Value sets:
- * - ${config.modes.today.selector.padEnd(26)}today's rendering: an exception keeps its place's bundle; ${todayInherits.join(' and ')}
- *                            are not declared, so they stay inherited exactly as today;
+ * variables --${prefix}-<style>-<property>, which hold the phone value and take the desktop value under the desktop
+ * media query (the app also sets them on the children of its application column, tokensColumn.css).
+ * This file holds Today's value set (${config.modes.today.selector}): an exception keeps its place's bundle; ${todayInherits.join(' and ')}
+ * are not declared, so they stay inherited exactly as today. The preview modes are in the preview stylesheets:
 ${modeNames
     .slice(1)
     .map((mode) => ` * - ${config.modes[mode].selector.padEnd(26)}${config.modes[mode].description}`)
@@ -241,11 +289,17 @@ ${modeNames
  */
 
 @layer theme {
-${valueSets.join('\n\n')}
+${indentLines(sets.today.root).join('\n')}
 }
 
 ${[...[...styles.keys()].map(utilityOf), ...modifierUtilities].join('\n\n')}
 `;
+    const preview = {
+        comments: modeNames.slice(1).map((mode) => `${config.modes[mode].selector}: ${config.modes[mode].description}`),
+        root: modeNames.slice(1).flatMap((mode) => sets[mode].root),
+        column: modeNames.slice(1).flatMap((mode) => sets[mode].column),
+    };
+    const todayColumn = sets.today.column;
 
     const css = execFileSync(
         resolve(kitRoot, 'node_modules/.bin/biome'),
@@ -310,5 +364,5 @@ export type TypographyStyle = TypographyRole | TypographyException;
             { description: group.$description, extensions: group.$extensions?.['org.aragon.gov-ui-kit'] },
         ]),
     );
-    return { css, ts, styles, roleNames, exceptionNames, describe, today, groups };
+    return { css, ts, preview, todayColumn, styles, roleNames, exceptionNames, describe, today, groups };
 };

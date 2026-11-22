@@ -33,7 +33,7 @@ test('every output on disk is what the source generates, and generation is deter
     const first = generateAll().outputs;
     const second = generateAll().outputs;
     assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 14);
+    assert.equal(first.size, 17);
     for (const [file, text] of first) {
         assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
         assert.match(text, /GENERATED/);
@@ -230,26 +230,51 @@ test('a mix extension must equal its primitive at that percentage', (context) =>
     assert.throws(() => generateAll({ sourceDir: dir }), /does not equal .* at 5%/);
 });
 
+const KIT_PREVIEW = 'packages/gov-ui-kit/.storybook/tokensPreview.css';
+const APP_PREVIEW = 'apps/app/public/tokens-preview.css';
+const APP_COLUMN = 'apps/app/src/modules/application/components/layouts/layoutRoot/tokensColumn.css';
+
 test('the typography layer keeps Today inherited and swaps families in Next only', () => {
     const { outputs, typography } = generateAll();
     const css = outputs.get('packages/gov-ui-kit/src/theme/tokens/typography.css');
-    const [today, next] = css.split('[data-typography="next"] {');
     // Today: sizes, line heights and weights are set; family and letter spacing are left to inheritance.
-    assert.match(today, /--type-supporting-font-size: var\(--text-sm\);/);
-    assert.doesNotMatch(today, /--type-supporting-font-family/);
-    assert.doesNotMatch(today, /--type-title-item-letter-spacing/);
-    // Next: the designer's faces, and every exception follows its role.
-    assert.match(next, /--type-display-font-family: var\(--font-sora\);/);
-    assert.match(next, /--type-body-font-family: var\(--font-inter-display\);/);
+    assert.match(css, /--type-supporting-font-size: var\(--text-sm\);/);
+    assert.doesNotMatch(css, /--type-supporting-font-family:/);
+    assert.doesNotMatch(css, /--type-title-item-letter-spacing:/);
+    // Next is a preview value set: not in the stylesheet every user downloads, in the preview one.
+    assert.doesNotMatch(css, /\[data-typography="next"\] \{/);
+    const next = outputs.get(KIT_PREVIEW).split('[data-typography="next"] {')[1];
+    // Next: the designer's faces (the theme variable carries its literal, as the preview sheet is not processed by
+    // Tailwind), and every exception follows its role.
+    assert.match(next, /--type-display-font-family: var\(\s*--font-sora,/);
+    assert.match(next, /--type-body-font-family: var\(\s*--font-inter-display,/);
     const exception = typography.exceptionNames[0];
     const role = typography.styles.get(exception).role;
     assert.match(next, new RegExp(`--type-${exception}-font-size: var\\(\\s*--type-${role}-font-size\\s*\\);`));
-    // One utility per role and exception, switching through the md variant; the modifiers.
-    assert.match(css, /@utility type-supporting \{[^}]*@variant md \{/s);
+    // One utility per role and exception, reading variables only (the desktop step is a value switch); the modifiers.
+    assert.match(css, /@utility type-supporting \{[^}]*font-size: var\(--type-supporting-font-size\);/s);
+    assert.doesNotMatch(css, /@variant/);
     for (const modifier of ['strong', 'mono', 'numeric']) {
         assert.match(css, new RegExp(`@utility type-${modifier} \\{`));
     }
     assert.equal([...css.matchAll(/@utility type-/g)].length, typography.styles.size + 3);
+});
+
+test('the desktop step switches the variables once per scope, never inside a utility', () => {
+    const { outputs } = generateAll();
+    for (const file of ['spacing', 'typography']) {
+        const css = outputs.get(`packages/gov-ui-kit/src/theme/tokens/${file}.css`);
+        assert.equal([...css.matchAll(/@media \(width >= 48rem\) \{\n {8}:root \{/g)].length, 1, file);
+        assert.doesNotMatch(css, /@container|@variant/, file);
+    }
+    // The app's column scope: the phone values, then the desktop values under a container query, on the column's children.
+    const column = outputs.get(APP_COLUMN);
+    assert.match(column, /:where\(\.\\@container\\\/app > \*\) \{\n {8}--type-display-font-size: var\(--text-3xl\);/);
+    assert.equal([...column.matchAll(/@container app \(width >= 48rem\) \{/g)].length, 2);
+    // Every preview mode is also written for the column's children, and none of it is in Today's files.
+    const app = outputs.get(APP_PREVIEW);
+    assert.match(app, /\[data-spacing="new"\] :where\(\.\\@container\\\/app > \*\) \{/);
+    assert.doesNotMatch(outputs.get(KIT_PREVIEW), /@container/);
 });
 
 for (const [name, file, change, expected] of [
@@ -346,8 +371,10 @@ test('the app overrides must be direct custom properties of one top-level :root'
 // Spacing layer
 // ---------------------------------------------------------------------------------------------------------------
 
-const spacingCss = (dir) =>
-    generateAll({ sourceDir: dir }).outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css');
+const spacingCss = (dir) => {
+    const { outputs } = generateAll({ sourceDir: dir });
+    return `${outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css')}\n${outputs.get(KIT_PREVIEW)}`;
+};
 const px = (value) => ({ value, unit: 'px' });
 const addException = (dir, name, families, base, md, modes) =>
     edit(dir, 'spacing.exceptions.tokens.json', (json) => {
@@ -365,48 +392,54 @@ const addException = (dir, name, families, base, md, modes) =>
 
 test('the spacing layer writes one value set per mode, the coarse fallback and uniform utilities', () => {
     const { outputs, spacing } = generateAll();
-    const css = outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css');
-    assert.match(css, /@layer theme \{\n {4}:root \{/);
+    const today = outputs.get('packages/gov-ui-kit/src/theme/tokens/spacing.css');
+    assert.match(today, /@layer theme \{\n {4}:root \{/);
+    assert.doesNotMatch(
+        today,
+        /\[data-spacing="new"\] \{/,
+        'the preview modes are not in the stylesheet every user downloads',
+    );
+    const css = outputs.get(KIT_PREVIEW);
     for (const mode of ['new', 'looser', 'compact']) {
-        assert.match(css, new RegExp(`\\[data-spacing="${mode}"\\] \\{`));
+        assert.match(css, new RegExp(`:root\\[data-spacing="${mode}"\\],\\n\\s+\\[data-spacing="${mode}"\\] \\{`));
     }
     assert.match(
         css,
-        /@media \(pointer: coarse\) \{\n {8}\[data-spacing="compact"\] \{\n {12}--space-control-sm-height: 32px;/,
+        /@media \(pointer: coarse\) \{\n {8}:root\[data-spacing="compact"\],\n {8}\[data-spacing="compact"\] \{\n {12}--space-control-sm-height: 32px;/,
     );
     // A density-invariant exception renders its role's New value in every preview mode; a density-invariant role
     // keeps one value in New, looser and compact.
-    const looserBlock = css.slice(css.indexOf('[data-spacing="looser"] {'), css.indexOf('[data-spacing="compact"] {'));
-    assert.match(looserBlock, /--space-gap-group-stepped--16-24-md: 24px;/);
+    const looserBlock = css.slice(
+        css.indexOf(':root[data-spacing="looser"]'),
+        css.indexOf(':root[data-spacing="compact"]'),
+    );
+    assert.match(looserBlock, /--space-gap-group-stepped--16-24: 24px;/);
     assert.match(looserBlock, /--space-gap-phrase: 4px;/);
     // Every block dimension of a target size falls back (heights, the large control's block padding, the row).
     const coarseBlock = css.slice(css.indexOf('@media (pointer: coarse)'));
     for (const name of ['control-md-height', 'control-lg-height', 'control-lg-pad-y', 'row-height']) {
         assert.match(coarseBlock, new RegExp(`--space-${name}: `));
     }
-    // Roles keep their md step inside the utility; gap roles drop their prefix; sizes use the size name.
+    // A utility reads one variable; gap roles drop their prefix; sizes use the size name.
+    assert.match(today, /@utility px-inset-item \{\n {4}padding-inline: var\(--space-inset-item-x\);\n\}/);
     assert.match(
-        css,
-        /@utility px-inset-item \{\n {4}padding-inline: var\(--space-inset-item-x\);\n\n {4}@variant md \{\n {8}padding-inline: var\(--space-inset-item-x-md\);/,
-    );
-    assert.match(
-        css,
+        today,
         /@utility p-inset-surface \{\n {4}padding: var\(--space-inset-surface-y\) var\(--space-inset-surface-x\);/,
     );
-    assert.match(css, /@utility gap-group \{\n {4}gap: var\(--space-gap-group\);/);
-    assert.match(css, /@utility space-y-related \{\n {4}:where\(& > :not\(:last-child\)\) \{/);
-    assert.match(css, /@utility -mx-inset-page \{\n {4}margin-inline: calc\(var\(--space-inset-page-x\) \* -1\);/);
-    assert.match(css, /@utility h-control-md \{/);
-    assert.match(css, /@utility min-h-row \{/);
-    assert.doesNotMatch(css, /@utility py-control-md /, 'no utility for a dimension a size does not have');
+    assert.match(today, /@utility gap-group \{\n {4}gap: var\(--space-gap-group\);/);
+    assert.match(today, /@utility space-y-related \{\n {4}:where\(& > :not\(:last-child\)\) \{/);
+    assert.match(today, /@utility -mx-inset-page \{\n {4}margin-inline: calc\(var\(--space-inset-page-x\) \* -1\);/);
+    assert.match(today, /@utility h-control-md \{/);
+    assert.match(today, /@utility min-h-row \{/);
+    assert.doesNotMatch(today, /@utility py-control-md /, 'no utility for a dimension a size does not have');
     // Nothing enters Tailwind's spacing namespace, so no width or inset utility can read a role.
-    assert.doesNotMatch(css, /--spacing/);
-    assert.doesNotMatch(css, /@utility (w|inset|top|translate)-(inset|gap)/);
-    // Every utility has the same shape: one base declaration group and one md group.
-    const blocks = css.split('@utility ').slice(1);
+    assert.doesNotMatch(today, /--spacing/);
+    assert.doesNotMatch(today, /@utility (w|inset|top|translate)-(inset|gap)/);
+    // Every utility has the same shape: one declaration group, no breakpoint of its own.
+    const blocks = today.split('@utility ').slice(1);
     assert.equal(blocks.length, spacing.utilities.length);
     for (const block of blocks) {
-        assert.equal(block.match(/@variant md/g)?.length, 1, block.split('\n')[0]);
+        assert.doesNotMatch(block, /@variant|@media|@container/, block.split('\n')[0]);
     }
     assert.match(outputs.get('packages/gov-ui-kit/src/core/types/spacingStyles.ts'), /export const spacingRoles = \[/);
 });
@@ -417,10 +450,8 @@ test('an exception renders its Today value and follows its role per axis in ever
     addException(dir, 'gap-group--test-12-16', ['gap', 'mt'], 12, 16);
     const css = spacingCss(dir);
     assert.match(css, /--space-inset-item-flat--test-14-x: 14px;/);
-    assert.match(css, /--space-inset-item-flat--test-14-y-md: 14px;/);
     assert.match(css, /--space-inset-item-flat--test-14-x: var\(\s*--space-inset-item-flat-x\s*\);/);
-    assert.match(css, /--space-inset-item-flat--test-14-y-md: var\(\s*--space-inset-item-flat-y-md\s*\);/);
-    assert.match(css, /--space-gap-group--test-12-16-md: 16px;/);
+    assert.match(css, /@media \(width >= 48rem\) \{\n {8}:root \{[^}]*--space-gap-group--test-12-16: 16px;/s);
     assert.match(css, /--space-gap-group--test-12-16: var\(--space-gap-group\);/);
     // Only the families it lists.
     assert.match(css, /@utility px-inset-item-flat--test-14 \{/);

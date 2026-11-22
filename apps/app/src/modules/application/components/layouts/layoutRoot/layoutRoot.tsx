@@ -74,6 +74,14 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         cookie,
     );
 
+    // The preview value sets (colour Next and Dark, typography Next, spacing New, looser and compact) are not part of
+    // the stylesheet every user downloads: this one is linked, in the head so that there is no flash of Today, only
+    // while a preview is selected on a debug panel that is on.
+    const isPreviewActive =
+        themeAttribute != null ||
+        typographyAttribute != null ||
+        spacingAttribute != null;
+
     const queryClient = new QueryClient();
     await Promise.all([
         queryClient.prefetchQuery(sanctionedAddressesOptions()),
@@ -88,6 +96,11 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
             data-typography={typographyAttribute}
             lang="en"
         >
+            <head>
+                {isPreviewActive && (
+                    <link href="/tokens-preview.css" rel="stylesheet" />
+                )}
+            </head>
             <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-body-sidebar">
                 <NextTopLoader
                     color="var(--guk-bg-accent-solid)"

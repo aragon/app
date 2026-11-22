@@ -78,9 +78,11 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `design-system/tokens/typography.decisions.md`. Spacing takes a spacing role instead of a number:
   insets `p*-inset-<scope>` (`px-inset-item`, `p-inset-surface`), gaps `gap-<level>` (`gap-group`, `mt-related`,
   `space-y-section`), control sizes (`h-control-md`, `px-control-md`, `h-tag`), or a documented
-  `<family>-<role>--<pattern>` exception; each utility holds its md step, so one class replaces `x md:y`. Generated into
+  `<family>-<role>--<pattern>` exception; one class replaces `x md:y` (the md step is a switch of the variable the utility reads). Generated into
   `src/theme/tokens/spacing.css`; see `design-system/tokens/spacing.decisions.md`. A raw class passed in `className`
-  always beats a role (the roles sort first), so check callers when converting a component.
+  always beats a role (the roles sort first), so check callers when converting a component. The preview value sets
+  (colour Next/Dark, typography Next, spacing New/looser/compact) are generated apart (`.storybook/tokensPreview.css`,
+  the app's `public/tokens-preview.css`) and are not part of `build.css`; see `design-system/tokens/README.md`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).

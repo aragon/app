@@ -9,16 +9,19 @@
 //                                  renders the exception's value, every preview mode renders the role (per axis or
 //                                  dimension of the family). Exceptions of a navigation chrome role carry their own mode
 //                                  values under the chrome rule instead.
-// Output: one value set per mode (`--<prefix>-<name>[-<axis|dimension>][-md]`) on the mode's selector, the coarse-pointer
-// fallback, and one Tailwind `@utility` per role or size × family and per exception × the families it lists. Every
-// utility has the same shape: the base value, then the md value through Tailwind's own `md` variant (so it steps on the
-// app column in the app), even when both are equal. Themes swap variables, never utilities. Nothing is written into
-// Tailwind's `--spacing-*` namespace, so widths, sizes and offsets never read a role.
+// Output: one custom property per role, size and exception (`--<prefix>-<name>[-<axis|dimension>]`) and one Tailwind
+// `@utility` per role or size × family and per exception × the families it lists; a utility only reads its variable.
+// The variable holds the phone value and is set again to the desktop value once per breakpoint, at the scope where the
+// breakpoint is measured (lib/scopes.mjs: `:root` under the desktop media query, and in the app the children of the
+// application column under a container query). Today's value set is the kit's file; the preview modes (and the
+// coarse-pointer fallback) are returned apart, for the preview stylesheets. Themes swap variables, never utilities.
+// Nothing is written into Tailwind's `--spacing-*` namespace, so widths, sizes and offsets never read a role.
 
 import { execFileSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { EXT } from './dtcg.mjs';
+import { indentLines, renderSet } from './scopes.mjs';
 
 const MODES = ['today', 'new', 'looser', 'compact'];
 const SIDES = ['base', 'md'];
@@ -71,8 +74,8 @@ const familySpec = (kind, family, spec) => {
     return { family, properties, dims, negate: spec.negate === true, space: spec.space ?? null };
 };
 
-export const renderSpacing = ({ kitRoot, config, documents, validateDimension, fail }) => {
-    const { prefix, scale, desktopVariant } = config;
+export const renderSpacing = ({ kitRoot, config, documents, validateDimension, scopes, fail }) => {
+    const { prefix, scale } = config;
     const modeNames = Object.keys(config.modes);
     if (modeNames.join() !== MODES.join()) {
         fail(`spacing.config.json: the modes must be ${MODES.join(', ')} (Today first)`);
@@ -380,17 +383,28 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
     // ------------------------------------------------------------------------------------------------------------
     // CSS
     // ------------------------------------------------------------------------------------------------------------
-    const variable = (name, dim, side) => `--${prefix}-${name}${dim ? `-${dim}` : ''}${side === 'md' ? '-md' : ''}`;
+    const variable = (name, dim) => `--${prefix}-${name}${dim ? `-${dim}` : ''}`;
     const px = (value) => (value === 0 ? '0px' : `${value}px`);
 
-    const setLines = (mode) => {
-        const lines = [];
+    // The custom properties of one mode: [property, phone value] items with comments, and the values that differ from
+    // the phone ones at the desktop breakpoint (the root scope switches them once under the desktop media query).
+    const modeValues = (mode) => {
+        const items = [];
+        const desktop = new Map();
+        const aliases = new Set();
+        const put = (key, phone, wide) => {
+            items.push([key, phone]);
+            if (wide !== phone) {
+                desktop.set(key, wide);
+            }
+            if (phone.startsWith('var(')) {
+                aliases.add(key);
+            }
+        };
         for (const token of tokens.values()) {
-            lines.push(`/* ${token.kind === 'size' ? 'size' : 'role'} ${token.name} */`);
+            items.push(`${token.kind === 'size' ? 'size' : 'role'} ${token.name}`);
             for (const [dim, sides] of Object.entries(token.dims)) {
-                for (const side of SIDES) {
-                    lines.push(`${variable(token.name, dim, side)}: ${px(sides[side][mode])};`);
-                }
+                put(variable(token.name, dim), px(sides.base[mode]), px(sides.md[mode]));
             }
         }
         for (const exception of exceptions.values()) {
@@ -399,34 +413,71 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
                 : exception.invariant
                   ? `density-invariant: ${exception.role.name} at New`
                   : `follows ${exception.role.name}`;
-            lines.push(`/* exception ${exception.name} (${mode === 'today' ? 'its own Today value' : how}) */`);
+            items.push(`exception ${exception.name} (${mode === 'today' ? 'its own Today value' : how})`);
             for (const dim of exception.dims) {
-                for (const side of SIDES) {
-                    let value = `var(${variable(exception.role.name, dim, side)})`;
+                const sideValue = (side) => {
                     if (mode === 'today' || exception.role.chrome) {
-                        value = px(exception.values[side][mode]);
-                    } else if (exception.invariant) {
-                        value = px(exception.role.dims[dim][side].new);
+                        return px(exception.values[side][mode]);
                     }
-                    lines.push(`${variable(exception.name, dim, side)}: ${value};`);
-                }
+                    if (exception.invariant) {
+                        return px(exception.role.dims[dim][side].new);
+                    }
+                    return `var(${variable(exception.role.name, dim)})`;
+                };
+                put(variable(exception.name, dim), sideValue('base'), sideValue('md'));
             }
         }
-        return lines;
+        return { items, desktop, aliases };
     };
-    const block = (selector, lines, depth = 1) => {
-        const pad = INDENT.repeat(depth);
-        return [`${pad}${selector} {`, ...lines.map((line) => `${pad}${INDENT}${line}`), `${pad}}`];
-    };
-    const coarseLines = coarseTokens.flatMap(({ token, dim }) =>
-        SIDES.map((side) => `${variable(token.name, dim, side)}: ${px(token.dims[dim][side][coarse.fallback])};`),
-    );
+    const todayValues = modeValues('today');
+    const columnPart = scopes.column;
+    const sets = {};
+    for (const mode of modeNames) {
+        const values = modeValues(mode);
+        const selector = config.modes[mode].selector;
+        // Today's column rules set its exceptions' own values on the children, so a mode that makes an exception follow
+        // its role must set it there too (as an alias, next to the variable it aliases).
+        const keys = new Set([...todayValues.desktop.keys(), ...values.desktop.keys()]);
+        sets[mode] = renderSet({
+            selectors: mode === 'today' ? [selector] : [`:root${selector}`, selector],
+            columnSelector:
+                columnPart == null ? null : `${mode === 'today' ? '' : `${selector} `}:where(${columnPart.selector})`,
+            items: values.items,
+            desktop: values.desktop,
+            aliases: values.aliases,
+            columnKeys: mode === 'today' ? new Set(todayValues.desktop.keys()) : keys,
+            query: scopes.query,
+            container: columnPart?.container,
+            wrap: null,
+        });
+    }
+    // Coarse pointers: the listed tokens of one mode take another mode's values, at both widths.
+    const coarseItems = [];
+    const coarseDesktop = new Map();
+    for (const { token, dim } of coarseTokens) {
+        const sides = token.dims[dim];
+        coarseItems.push([variable(token.name, dim), px(sides.base[coarse.fallback])]);
+        if (sides.md[coarse.fallback] !== sides.base[coarse.fallback]) {
+            coarseDesktop.set(variable(token.name, dim), px(sides.md[coarse.fallback]));
+        }
+    }
+    const coarseSelector = config.modes[coarse.mode].selector;
+    const coarseSet = renderSet({
+        selectors: [`:root${coarseSelector}`, coarseSelector],
+        columnSelector: columnPart == null ? null : `${coarseSelector} :where(${columnPart.selector})`,
+        items: coarseItems,
+        desktop: coarseDesktop,
+        aliases: new Set(),
+        columnKeys: new Set(coarseItems.map(([key]) => key)),
+        query: scopes.query,
+        container: columnPart?.container,
+        wrap: `@media ${coarse.media}`,
+    });
 
     const stem = (token) => (token.kind === 'gap' ? token.name.replace(/^gap-/, '') : token.name);
     const utilityName = (family, name) => `${family}-${name}`;
-    const declarations = (spec, name, side) => {
-        const value = (dim) =>
-            spec.negate ? `calc(var(${variable(name, dim, side)}) * -1)` : `var(${variable(name, dim, side)})`;
+    const declarations = (spec, name) => {
+        const value = (dim) => (spec.negate ? `calc(var(${variable(name, dim)}) * -1)` : `var(${variable(name, dim)})`);
         if (spec.space != null) {
             const axis = spec.space;
             const [start, end] =
@@ -447,13 +498,7 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
         return spec.properties.map((property, index) => `${property}: ${value(spec.dims[index] ?? spec.dims[0])};`);
     };
     const utilityCss = (className, spec, name) => {
-        const body = [
-            ...declarations(spec, name, 'base'),
-            '',
-            `@variant ${desktopVariant} {`,
-            ...declarations(spec, name, 'md').map((line) => `${INDENT}${line}`),
-            '}',
-        ];
+        const body = declarations(spec, name);
         const wrapped =
             spec.space != null ? [':where(& > :not(:last-child)) {', ...body.map((l) => `${INDENT}${l}`), '}'] : body;
         return [`@utility ${className} {`, ...wrapped.map((l) => (l ? `${INDENT}${l}` : '')), '}'].join('\n');
@@ -498,22 +543,29 @@ export const renderSpacing = ({ kitRoot, config, documents, validateDimension, f
  * Semantic spacing: ${roleCount} roles, ${sizeCount} component sizes and ${exceptions.size} Today exceptions, ${utilities.length} utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their \`gap-\` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
- * Every utility reads --${prefix}-<name>[-<axis or dimension>] and, through the \`${desktopVariant}\` variant, the same variable with -md.
- * Value sets:
-${modeNames.map((mode) => ` * - ${config.modes[mode].selector.padEnd(26)}${config.modes[mode].description}`).join('\n')}
- * - ${coarse.media} ${coarse.mode}: ${coarseTokens.map(({ token, dim }) => pathOf(token, dim)).join(', ')} take their ${coarse.fallback} values.
+ * Every utility reads --${prefix}-<name>[-<axis or dimension>], which holds the phone value and takes the desktop value
+ * under the desktop media query (the app also sets it on the children of its application column, tokensColumn.css).
+ * This file holds Today's value set (:root); the preview modes (${modeNames.slice(1).join(', ')}) are in the preview stylesheets.
  */
 
 @layer theme {
-${modeNames.map((mode) => block(config.modes[mode].selector, setLines(mode)).join('\n')).join('\n\n')}
-
-${INDENT}@media ${coarse.media} {
-${block(config.modes[coarse.mode].selector, coarseLines, 2).join('\n')}
-${INDENT}}
+${indentLines(sets.today.root).join('\n')}
 }
 
 ${utilities.map(({ className, spec, name }) => utilityCss(className, spec, name)).join('\n\n')}
 `;
+    const modeComments = modeNames
+        .slice(1)
+        .map((mode) => `${config.modes[mode].selector}: ${config.modes[mode].description}`);
+    const preview = {
+        comments: [
+            ...modeComments,
+            `${coarse.media} ${coarse.mode}: ${coarseTokens.map(({ token, dim }) => pathOf(token, dim)).join(', ')} take their ${coarse.fallback} values.`,
+        ],
+        root: [...modeNames.slice(1).flatMap((mode) => sets[mode].root), ...coarseSet.root],
+        column: [...modeNames.slice(1).flatMap((mode) => sets[mode].column), ...coarseSet.column],
+    };
+    const todayColumn = sets.today.column;
     const outputFile = resolve(kitRoot, config.output);
     const css = formatWithBiome(kitRoot, outputFile, rawCss);
 
@@ -552,7 +604,21 @@ export type SpacingException = (typeof spacingExceptions)[number];
 `;
     const ts = formatWithBiome(kitRoot, resolve(kitRoot, config.typesOutput), rawTs);
 
-    return { css, ts, tokens, exceptions, utilities, roleNames, sizeNames, exceptionNames, stem, changes, config };
+    return {
+        css,
+        ts,
+        preview,
+        todayColumn,
+        tokens,
+        exceptions,
+        utilities,
+        roleNames,
+        sizeNames,
+        exceptionNames,
+        stem,
+        changes,
+        config,
+    };
 };
 
 // ----------------------------------------------------------------------------------------------------------------

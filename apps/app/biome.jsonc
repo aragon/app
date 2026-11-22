@@ -497,6 +497,20 @@
     },
     "overrides": [
         {
+            // Generated value sets (pnpm tokens:generate in the kit): a selector repeats in the phone, desktop and mode blocks.
+            "includes": [
+                "public/tokens-preview.css",
+                "src/**/tokensColumn.css"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noDuplicateSelectors": "off"
+                    }
+                }
+            }
+        },
+        {
             // Biome reads tsconfig path aliases shaped like package names (@e2e/*, @aragon/gov-ui-kit-original) as packages.
             "includes": [
                 "e2e/**",

@@ -115,6 +115,23 @@ describe('<LayoutRoot /> component', () => {
         return Component;
     };
 
+    it('links no preview stylesheet when no preview is selected', async () => {
+        getSnapshotSpy.mockResolvedValue([
+            {
+                key: 'debugPanel',
+                name: 'Debug panel',
+                description: '',
+                enabled: true,
+            },
+        ]);
+
+        render(await createTestComponent());
+
+        expect(
+            document.querySelector('link[href="/tokens-preview.css"]'),
+        ).toBeNull();
+    });
+
     it('renders the children property and the application footer', async () => {
         const children = 'test-children';
         render(await createTestComponent({ children }));
@@ -192,6 +209,25 @@ describe('<LayoutRoot /> component', () => {
                 expect(
                     document.documentElement.getAttribute(axis.attribute),
                 ).toEqual(expected);
+            },
+        );
+
+        it.each([
+            [true, true],
+            [false, false],
+        ])(
+            'links the preview stylesheet only with the debug panel enabled and the preview selected (%s)',
+            async (enabled, linked) => {
+                mockRequest(enabled);
+                cookieToInitialStateSpy.mockReturnValue(undefined);
+
+                render(await createTestComponent());
+
+                expect(
+                    document.querySelector(
+                        'link[rel="stylesheet"][href="/tokens-preview.css"]',
+                    ) != null,
+                ).toEqual(linked);
             },
         );
     });

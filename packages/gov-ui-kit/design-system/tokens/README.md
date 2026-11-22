@@ -16,22 +16,24 @@ design-system/tokens/source/
   spacing.exceptions.tokens.json  Today exceptions of the spacing roles (`<role>--<pattern>`)
   spacing.config.json           not tokens: modes and selectors, families, scale, floors, budget, chrome rule, outputs
   semantic.config.json          not tokens: renames, code-only additions (order, usedBy), utilities, primitiveRemap
+  scopes.config.json            not tokens: how the value sets are split into stylesheets and scoped to the breakpoint
   typography.today.tokens.json  semantic typography, Today: roles, exceptions, modifiers (what the code renders)
   typography.next.tokens.json   semantic typography, Next preview: plain role bundles in Sora / Inter Display
-  typography.config.json        not tokens: modes and their selectors, the md variant, the modifiers, outputs
+  typography.config.json        not tokens: modes and their selectors, the modifiers, outputs
   css/                          CSS that holds no token value and is copied verbatim: utilities, @font-face
   schema/format.2025.10.json    the published DTCG schema, unmodified
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
 ```
 
 The semantic spacing layer (`lib/spacing.mjs`) follows the same rule with `spacing.config.json`: it renders
-`src/theme/tokens/spacing.css` (one value set per mode on `:root` and `[data-spacing="new|looser|compact"]`, the
-coarse-pointer fallback, one `@utility` per role or size × family and per exception × the families it lists) and
+`src/theme/tokens/spacing.css` (Today's value set on `:root`, one `@utility` per role or size × family and per exception ×
+the families it lists; the `[data-spacing="new|looser|compact"]` sets and the coarse-pointer fallback are preview value
+sets, see below) and
 `src/core/types/spacingStyles.ts` (the names as TypeScript lists). Decisions, the role, size and exception tables:
 `spacing.decisions.md`.
 
 The semantic typography layer (`lib/typography.mjs`) follows the same rule with `typography.config.json`: it renders
-`src/theme/tokens/typography.css` (one value set per mode, one `@utility type-*` per role and exception, the modifiers)
+`src/theme/tokens/typography.css` (Today's value set, one `@utility type-*` per role and exception, the modifiers)
 and `src/core/types/typographyStyles.ts` (the style names as a TypeScript union and a class map, for `Heading`'s
 `typeRole`). Decisions, the role table and the exception table: `typography.decisions.md`.
 
@@ -59,7 +61,10 @@ Outputs, all with a do-not-edit header:
 | Output | Consumer |
 | --- | --- |
 | `src/theme/tokens/primitives/*.css` and `index.css` | the kit build, Storybook, npm consumers |
-| `src/theme/tokens/semantic/colors.css` | the kit, the app |
+| `src/theme/tokens/semantic/colors.css` | the kit, the app (Today's colours and the utilities) |
+| `.storybook/tokensPreview.css` | Storybook only (`.storybook/preview.tsx`): every preview value set; not in the published package |
+| `apps/app/public/tokens-preview.css` | the app: every preview value set at both breakpoint scopes, linked by `layoutRoot.tsx` only while the debug panel is on and a preview is selected |
+| `apps/app/src/modules/application/components/layouts/layoutRoot/tokensColumn.css` | the app (`layoutRoot.css`): Today's value sets at the application column's scope |
 | `.design-sync/generated/govkit-primitives.css` | the app (`layoutRoot.css` imports it instead of the primitives barrel) |
 | `src/theme/tokens/spacing.css` | the kit (via `tokens/index.css`), the app (`layoutRoot.css`), the help center |
 | `src/core/types/spacingStyles.ts` | the role, size and exception names as TypeScript lists |
@@ -160,8 +165,8 @@ The utility is `<family>-<role>` (`px-inset-item`, `gap-group`, `mt-related`: ga
 `<family>-<size>` (`h-control-md`), an exception's `<family>-<role>--<pattern>` (`gap-group--12-16`). An exception
 (`space.exception.<role>--<pattern>`) holds its Today pair and the utility families it uses; every preview mode renders
 its role (per axis for insets, per dimension for sizes), except under a navigation chrome role, whose exceptions carry
-their own snapped values. Every utility declares the base value and the md value through Tailwind's `md` variant, so it
-steps on the app column in the app. Nothing is written into Tailwind's `--spacing-*` namespace (it would turn every role
+their own snapped values. A utility reads one variable; the variable is set to its desktop value once per breakpoint
+(see "Breakpoint scopes" below). Nothing is written into Tailwind's `--spacing-*` namespace (it would turn every role
 into width, size and inset utilities).
 
 The generator validates: preview values on the scale, compact ≤ new ≤ looser, no step down at md, gap levels in order,
@@ -184,10 +189,31 @@ A role, in `typography.today.tokens.json` (two DTCG `typography` composites, `ba
 An exception (`type.exception.<role>--<pattern>`) keeps the bundle its places render today, with the pattern in
 `$description` and `resolution` in its extension; in Next it is a composite alias of its role. Today never sets the
 family or the letter spacing where they are the inherited defaults (`todayInherits`), so a role cannot override what a
-parent sets. The desktop step is applied through Tailwind's `md` variant inside each utility, so it follows whatever
-`md` means where the CSS is compiled (a container query on the app column in the app). The Next value set is keyed off
+parent sets. The desktop step is a value switch of the variables (see "Breakpoint scopes" below). The Next value set is keyed off
 `[data-typography="next"]`, an axis independent of the colour theme. `pnpm tokens:report` prints the role and exception
 tables with every place that uses them (and fails when an exception has no place).
+
+## Breakpoint scopes and preview stylesheets
+
+A spacing or typography utility reads one custom property (`gap: var(--space-gap-group)`); it carries no desktop rule.
+The property holds the phone value and is set again to the desktop value once per breakpoint, where the breakpoint is
+measured (`scripts/tokens/lib/scopes.mjs`, `scopes.config.json`; only the properties whose value changes are set again):
+
+- root scope, in `spacing.css` / `typography.css`: `:root` under `@media (width >= 48rem)` (the `breakpoint.css.md`
+  primitive). This is the kit's `md` and, in the app, everything outside the application column, where its `md` variant
+  is a viewport media query too (dialogs and menus portalled to the body, the assistant panel, the column element itself);
+- column scope, in the app only (`tokensColumn.css`): the children of the application column (`@container/app`) set the
+  same properties to their phone value and, under `@container app (width >= 48rem)`, to their desktop value. The reset
+  matters when the viewport is wide but the column narrow (the assistant docked beside it).
+
+The preview value sets (colour Next and Dark, typography Next, spacing New, looser and compact, the coarse-pointer
+fallback) are not in the stylesheet every user downloads. They are written to `.storybook/tokensPreview.css` (Storybook
+loads it always) and `apps/app/public/tokens-preview.css` (the same sets at both scopes; `layoutRoot.tsx` links it in the
+head only while the debug panel flag is on and a preview cookie is set, so there is no flash). The published kit keeps
+`build.css` with Today only: the preview sheet is not part of the package, because the package has no subpath export for
+it (`AGENTS.md`: no subpath exports). A preview rule is `:root[data-x="v"], [data-x="v"]`, one class more specific than
+Today's `:root`, so the order of the sheets does not matter; and, as the sheet is plain CSS that Tailwind does not
+process, a preview value that reads a theme variable carries its literal as the variable's fallback.
 
 ## Representation boundaries
 

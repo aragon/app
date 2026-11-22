@@ -4,6 +4,7 @@ import '../index.css';
 import { GukModulesProvider } from '../src/modules';
 import { DocsPage } from './components';
 import './nextTypographyFonts.css';
+import './tokensPreview.css';
 import './style.css';
 
 // Colour themes of the semantic tokens (src/theme/tokens/semantic): "today" is the default value set (no attribute),

@@ -417,8 +417,9 @@ export const renderSemantic = ({ kitRoot, outputFile, palette, primitives, modes
  * primitives.tokens.json, semantic.{today,next,dark}.tokens.json and semantic.config.json).
  * Do not edit: change those files and run \`pnpm tokens:generate\`.
  *
- * Semantic colour tokens. Every token is a variable --guk-<property>-<group>-<role> with three value sets:
- * - :root                  today's colours ("parity"), so converted components keep their pixels;
+ * Semantic colour tokens. Every token is a variable --guk-<property>-<group>-<role>. This file holds the value set of
+ * ${config.modes.today.selector}: today's colours ("parity"), so converted components keep their pixels. The Figma palette
+ * (--guk-palette-*) and the other value sets are in the preview stylesheets:
  * - [data-theme="next"]    Figma Light values on the Figma palette, plus the primitive colours (--color-*) on the
  *                          same step of the Figma palette (palette-change preview, so primitive classes follow);
  * - [data-theme="dark"]    Figma Dark values on the Figma palette (primitive colours unchanged).
@@ -430,15 +431,31 @@ export const renderSemantic = ({ kitRoot, outputFile, palette, primitives, modes
  */
 
 @layer theme {
-${block(config.modes.today.selector, [...paletteLines, '', ...parityLines]).join('\n')}
-
-${block(config.modes.next.selector, lightLines).join('\n')}
-
-${block(config.modes.dark.selector, darkLines).join('\n')}
+${block(config.modes.today.selector, parityLines).join('\n')}
 }
 
-${remapCss}${utilities.join('\n\n')}
+${utilities.join('\n\n')}
 `;
+    const previewSelectors = (mode) => {
+        const selector = config.modes[mode].selector;
+        return `:root${selector},\n${indent}${selector}`;
+    };
+    const preview = {
+        comments: [
+            `${config.modes.next.selector}: ${'Figma Light values on the Figma palette, plus the primitive colours remapped onto it.'}`,
+            `${config.modes.dark.selector}: Figma Dark values on the Figma palette.`,
+        ],
+        root: [
+            ...block(':root', ['/* Figma palette (private) */', ...paletteLines]),
+            '',
+            ...block(previewSelectors('next'), lightLines),
+            '',
+            ...block(previewSelectors('dark'), darkLines),
+        ],
+        // Outside the theme layer, see the remap rule above.
+        unlayered: remapCss === '' ? [] : remapCss.trimEnd().split('\n'),
+        column: [],
+    };
 
     // Formatted with the repo's Biome config, so the committed file passes `lint:check` and `--check` stays byte-exact.
     const css = execFileSync(
@@ -451,5 +468,5 @@ ${remapCss}${utilities.join('\n\n')}
         },
     );
 
-    return { css, tokens, utilities, paletteHex, fallbacks };
+    return { css, preview, tokens, utilities, paletteHex, fallbacks };
 };
