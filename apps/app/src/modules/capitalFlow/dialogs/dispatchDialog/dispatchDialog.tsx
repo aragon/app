@@ -214,7 +214,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="flex flex-wrap gap-x-phrase--fixed-2 text-base">
+                                    <span className="flex flex-wrap gap-phrase--fixed-2 text-base">
                                         <span className="text-neutral-800">
                                             {index + 1}
                                         </span>

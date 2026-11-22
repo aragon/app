@@ -33,7 +33,7 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
             )}
             {...otherProps}
         >
-            <div className="flex flex-row flex-wrap items-baseline gap-x-phrase">
+            <div className="flex flex-row flex-wrap items-baseline gap-phrase">
                 <p className="text-lg text-neutral-800 md:text-xl">
                     {parsedValue}
                 </p>

@@ -1073,12 +1073,36 @@
                     }
                 }
             },
+            "gap-phrase--4-6": {
+                "$description": "steps 4 → 6 at md",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap-x"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
             "gap-phrase--fixed-2": {
                 "$description": "unstepped (one value at every width)",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "families": [
-                            "gap-x"
+                            "gap"
                         ],
                         "places": 7,
                         "resolution": ""
@@ -1093,6 +1117,30 @@
                 "md": {
                     "$value": {
                         "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--fixed-6": {
+                "$description": "unstepped (one value at every width)",
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "families": [
+                            "gap-x"
+                        ],
+                        "places": 1,
+                        "resolution": ""
+                    }
+                },
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
                         "unit": "px"
                     }
                 }
@@ -1539,7 +1587,7 @@
                             "gap-x",
                             "gap-y"
                         ],
-                        "places": 10,
+                        "places": 9,
                         "resolution": ""
                     }
                 },
@@ -1619,7 +1667,7 @@
                             "mt",
                             "mb"
                         ],
-                        "places": 14,
+                        "places": 13,
                         "resolution": ""
                     }
                 },

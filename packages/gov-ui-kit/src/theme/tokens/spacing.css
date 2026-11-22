@@ -3,7 +3,7 @@
  * spacing.sizes.tokens.json, spacing.exceptions.tokens.json and spacing.config.json). Do not edit: change those files and
  * run `pnpm tokens:generate`.
  *
- * Semantic spacing: 24 roles, 8 component sizes and 91 Today exceptions, 568 utilities. A utility is
+ * Semantic spacing: 24 roles, 8 component sizes and 93 Today exceptions, 570 utilities. A utility is
  * <family>-<role> (px-inset-item, gap-group, mt-related, space-y-section; gap roles drop their `gap-` prefix),
  * <family>-<size> (h-control-md, px-tag, min-h-row) or <family>-<role>--<pattern> for an exception (gap-group--16-24).
  * Every utility reads --space-<name>[-<axis or dimension>] and, through the `md` variant, the same variable with -md.
@@ -240,9 +240,15 @@
         /* exception gap-nav-tight--fixed-6 (its own Today value) */
         --space-gap-nav-tight--fixed-6: 6px;
         --space-gap-nav-tight--fixed-6-md: 6px;
+        /* exception gap-phrase--4-6 (its own Today value) */
+        --space-gap-phrase--4-6: 4px;
+        --space-gap-phrase--4-6-md: 6px;
         /* exception gap-phrase--fixed-2 (its own Today value) */
         --space-gap-phrase--fixed-2: 2px;
         --space-gap-phrase--fixed-2-md: 2px;
+        /* exception gap-phrase--fixed-6 (its own Today value) */
+        --space-gap-phrase--fixed-6: 6px;
+        --space-gap-phrase--fixed-6-md: 6px;
         /* exception gap-related--12-16 (its own Today value) */
         --space-gap-related--12-16: 12px;
         --space-gap-related--12-16-md: 16px;
@@ -686,9 +692,15 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 6px;
         --space-gap-nav-tight--fixed-6-md: 6px;
+        /* exception gap-phrase--4-6 (follows gap-phrase) */
+        --space-gap-phrase--4-6: var(--space-gap-phrase);
+        --space-gap-phrase--4-6-md: var(--space-gap-phrase-md);
         /* exception gap-phrase--fixed-2 (follows gap-phrase) */
         --space-gap-phrase--fixed-2: var(--space-gap-phrase);
         --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
+        /* exception gap-phrase--fixed-6 (follows gap-phrase) */
+        --space-gap-phrase--fixed-6: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-6-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -1198,9 +1210,15 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 8px;
         --space-gap-nav-tight--fixed-6-md: 8px;
+        /* exception gap-phrase--4-6 (follows gap-phrase) */
+        --space-gap-phrase--4-6: var(--space-gap-phrase);
+        --space-gap-phrase--4-6-md: var(--space-gap-phrase-md);
         /* exception gap-phrase--fixed-2 (follows gap-phrase) */
         --space-gap-phrase--fixed-2: var(--space-gap-phrase);
         --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
+        /* exception gap-phrase--fixed-6 (follows gap-phrase) */
+        --space-gap-phrase--fixed-6: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-6-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -1710,9 +1728,15 @@
         /* exception gap-nav-tight--fixed-6 (chrome: its own snapped value) */
         --space-gap-nav-tight--fixed-6: 4px;
         --space-gap-nav-tight--fixed-6-md: 4px;
+        /* exception gap-phrase--4-6 (follows gap-phrase) */
+        --space-gap-phrase--4-6: var(--space-gap-phrase);
+        --space-gap-phrase--4-6-md: var(--space-gap-phrase-md);
         /* exception gap-phrase--fixed-2 (follows gap-phrase) */
         --space-gap-phrase--fixed-2: var(--space-gap-phrase);
         --space-gap-phrase--fixed-2-md: var(--space-gap-phrase-md);
+        /* exception gap-phrase--fixed-6 (follows gap-phrase) */
+        --space-gap-phrase--fixed-6: var(--space-gap-phrase);
+        --space-gap-phrase--fixed-6-md: var(--space-gap-phrase-md);
         /* exception gap-related--12-16 (follows gap-related) */
         --space-gap-related--12-16: var(--space-gap-related);
         --space-gap-related--12-16-md: var(--space-gap-related-md);
@@ -5992,11 +6016,27 @@
     }
 }
 
-@utility gap-x-phrase--fixed-2 {
-    column-gap: var(--space-gap-phrase--fixed-2);
+@utility gap-x-phrase--4-6 {
+    column-gap: var(--space-gap-phrase--4-6);
 
     @variant md {
-        column-gap: var(--space-gap-phrase--fixed-2-md);
+        column-gap: var(--space-gap-phrase--4-6-md);
+    }
+}
+
+@utility gap-phrase--fixed-2 {
+    gap: var(--space-gap-phrase--fixed-2);
+
+    @variant md {
+        gap: var(--space-gap-phrase--fixed-2-md);
+    }
+}
+
+@utility gap-x-phrase--fixed-6 {
+    column-gap: var(--space-gap-phrase--fixed-6);
+
+    @variant md {
+        column-gap: var(--space-gap-phrase--fixed-6-md);
     }
 }
 

@@ -76,7 +76,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
                 <span className="truncate text-base leading-tight text-neutral-800">
                     {name ?? truncatedAddress}
                 </span>
-                <span className="flex gap-tight truncate text-sm leading-tight">
+                <span className="flex gap-phrase truncate text-sm leading-tight">
                     <span className="text-neutral-800">{networkName}</span>
                     {name != null && (
                         <span className="text-neutral-500">

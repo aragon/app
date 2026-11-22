@@ -925,7 +925,7 @@
                 }
             },
             "gap-phrase": {
-                "$description": "Between the inline text fragments of one phrase laid out as flex children: a value and its unit (48.53M ARA), a count and its noun, \"5 days\" + \"left to vote\", a label and its status (\"Minimum participation\" + \"not reached\"). It is word spacing, not layout, so it is density-invariant: New, looser and compact all keep Today's dominant value (4; the 2 px places are the exception gap-phrase--fixed-2). Phrase rows also wrap (flex-wrap) so a long phrase breaks onto a second line instead of splitting into columns.",
+                "$description": "Between the inline text fragments of one phrase laid out as flex children: a value and its unit (48.53M ARA), a count and its noun, \"5 days\" + \"left to vote\", a label and its status (\"Minimum participation\" + \"not reached\"), an ID or network beside its title or address (Today at most 6 px; 8 px and more separates two labels and stays a layout gap). It is word spacing, not layout, so it is density-invariant: New, looser and compact all keep Today's dominant value (4; the 2 and 6 px places are exceptions, 4 in every preview mode). Phrase rows that may wrap also take flex-wrap, so a long phrase breaks onto a second line instead of splitting into columns; rows that truncate stay on one line.",
                 "$extensions": {
                     "org.aragon.gov-ui-kit": {
                         "kind": "gap",

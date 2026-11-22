@@ -105,7 +105,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                 <div className="flex items-center gap-section--fixed-32 md:gap-related">
                     <div className="flex items-center gap-tight--fixed-8">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
-                        <div className="flex flex-wrap items-baseline gap-x-phrase--fixed-2">
+                        <div className="flex flex-wrap items-baseline gap-phrase--fixed-2">
                             <span className="text-sm text-neutral-800 md:text-lg">
                                 {displayVotingPower}
                             </span>
@@ -114,7 +114,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-wrap items-baseline gap-x-phrase--fixed-2">
+                    <div className="flex flex-wrap items-baseline gap-phrase--fixed-2">
                         <span className="text-sm text-neutral-800 md:text-lg">
                             {formattedUsagePercentage}
                         </span>

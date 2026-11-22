@@ -133,7 +133,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
-                                <span className="flex flex-wrap gap-x-phrase--fixed-2 text-base">
+                                <span className="flex flex-wrap gap-phrase--fixed-2 text-base">
                                     <span className="text-neutral-800">
                                         {policy.strategy?.subRouters?.length ??
                                             0}
