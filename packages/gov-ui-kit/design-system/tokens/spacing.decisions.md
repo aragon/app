@@ -56,6 +56,16 @@ simulated previews, and the phase 1 build (generator, previews, kit core primiti
 | P-12 | Raw classes left in kit core: `emptyState` stacked `p-6 md:p-12` (no role within the budget), `radioCard` `gap-x-0.5 md:gap-x-4` (2→16), `dialogHeader` `pr-14 md:pr-16` (room for the absolute close button = surface inset + the button), `checkboxCard` `mt-0.5 md:mt-1` (optical nudges of 2→4 px that follow the line height), and the frame geometry of R-06 (`p-1`, `p-2.5`, `m-1`). | No role fits, or the number is geometry; listed for the owner and the judgement pass. | Widen the allowlist, or budget-exempt exceptions. |
 | P-13 | The definition list's column gap is `md:gap-x-group-stepped`: the grid only has columns from md. A phone `gap-x` on the flex column would change the computed column gap (invisible) and fail the per-element proof. | Exact per-element Today. | `gap-x-group-stepped` on the base class. |
 | P-14 | Tooling for the batches (scratchpad `spacing/tools/`): `today-check.mjs` (fast Today check of a diff), `sync-exceptions.mjs` (adds used exceptions to the source), `order-audit.mjs`, `compare-records.cjs` (per-element proof), `mode-audit.cjs` (R-08 checks), `app-capture.sh`, `remaining.cjs`. | Each batch can prove Today in seconds before the full proofs. | Only the full captures. |
+| P-15 | The New-mode audit measures **visual distance** (R-04, R-08): the distance between the ink boxes of a container's consecutive children and, for a painted container, from its inner edge to its children's ink, whatever CSS makes it. An ink box is the border box of a painted element (background, border, shadow, media, form control, or a padded click target) and otherwise the union of its in-flow children and its own text. Compared per element path and child pair, Today against New: an error when it moves by more than the O-00 budget either way; in looser and compact a warning when a space shrinks to 0 or moves more than two scale steps. Distances set by free space are skipped (justify-content other than start, auto margins and centring with free space down a single-child chain, the far edge of a container not sized by its content, distances over 100 px, rows that re-wrapped). | The element-level budget exempted `inset-flush` and only flagged growth, so a zeroed text-line padding with no gap behind it lost 10–32 px in New unseen (dialog descriptions, tabs lists, voting terminals, alert dialogs). | Inspect the previews by eye. |
+| P-16 | A text-line padding (R-01) that New sets to zero is carried by a **margin of the same size on a gap role** (`pt-inset-flush--24-32` → `mt-section--24-32`, `py-inset-flush--fixed-8` → `my-related--fixed-8`): Today keeps the box's outer size (the element's own box shrinks; `today-check` and `compare-records` count these as padding→margin moves), New gets the gap role's value instead of 0. Where the padded element is a box (the dialog header's gradient, the autocomplete menu's scroller), the padding takes an inset role instead. `inset-flush` keeps its role (0 in every mode) but has no exception left in the source; `mx`/`my` join the gap families. | 28 places: a parent gap would have to change from its Today value by more than the budget (the generator rejects it), a same-size margin never does. | Restructure each parent's gap (over budget at the element). |
+| P-17 | New role `gap-section-stepped` (Today and New 24 → 40, looser 32 → 48, compact 20 → 32), between `gap-section` and `gap-section-wide`: wizard steps and the three create-proposal settings forms (24 → 48, `--24-48`), the multisig and two demo page headers (24 → 40). | O-00: 10 places step 24 to 32–48 at md (these 7 and the three `gap-section--24-32` places: permissions row, landing, proposal actions item, which fit either role and stay); 40 is their L1-optimal md value and keeps each within 8 px. | Leave them raw (over the budget of `gap-section`). |
+| P-18 | A spacing that only exists below md (it flips to 0 at md: footer link rows, numberProgressInput, the DAO list item network line, gauge terminal) takes `max-md:<role>`: the role's md step never applies inside `max-md`, so md keeps 0 in every mode. The app's `max-md` is the same container query as its `md`. | Same idea as P-13 (a property that only exists from md); a `--16-0` exception would move by 16 at md in New. | Exceptions with md 0 (over budget). |
+| P-19 | Steps at `sm:`, `lg:`, `xl:` on chrome take chrome exceptions behind the variant (`lg:gap-nav-related--fixed-12`, `lg:px-inset-nav-bar--fixed-24`, `xl:gap-x-nav-section--fixed-40`); on content, a role or fixed exception behind the variant when its New fits (`sm:gap-related--fixed-8`, `lg:gap-section--fixed-32`, `sm:gap-section-wide--fixed-48`), else the place is an outlier (P-22). | The typography P-07 pattern; chrome exceptions keep Today snapped in New (P-07 of this file). | A role per breakpoint. |
+| P-20 | `InputContainer` (and the inputs built on `useInputProps`) gets `spacing?: 'default' \| 'related'`: `default` is the stepped `gap-related--8-12`, `related` the plain `gap-related` (12 px at every width). Four callers that passed a raw `gap-3` (which only won because roles sort first) use `spacing="related"`. | The generator forbids an exception equal to its role's Today value (`gap-related--fixed-12`), and a role in `className` would lose to the root's later-named exception (P-03). | Keep the raw `gap-3` in the callers. |
+| P-21 | Spinner placeholders (`py-20` around a 24 px spinner in a growing centred box) take `min-h-46` (184 px, the same box); page main's `lg:px-28` becomes `lg:max-w-[848px]` (800 px content at the 24 px gutter, O-04); the dashboard links aside card drops a `gap-4` equal to its root's `gap-group`. | The 80 px is a placeholder height, not spacing; the max-width is what the owner asked for. | Allowlist the paddings. |
+| P-22 | Raw classes that stay are **allowlisted per file with their exact classes and reason** in `scripts/primitive-spacing.mjs` (section 10): `geometry` (overlaps, button frames, line-height alignment, room for an absolute control, offsets that centre a small button on a field), `outlier` (no role's New value within the budget and fewer than 10 places sharing the pattern: they keep Today in every mode, listed for the owner), `devtools` (the debug panel). | Everything stays within the budget; nothing qualitative is decided for the owner. | New roles for patterns with fewer than 10 places. |
+| P-23 | `packages/assistant-chat` (the support chat, compiled by the app's Tailwind) moves onto roles and exceptions; its 14 px values snap through exceptions whose New is within 2 px (`gap-group--fixed-14`, `p-inset-surface-flat--fixed-14`); the chat header is chrome. `apps/docs` converts its own header, footer (mirroring the app footer) and pager; classes passed into Fumadocs components (`DocsTitle`, the page action buttons) stay raw: Fumadocs merges them with tailwind-merge, which does not know the role utilities, so a role there would lose to Fumadocs' own classes. Neither package is in the lint scope. | Both render the kit's tokens (`@source` / `tokens/index.css`). | Allowlist both packages whole. |
+| P-24 | The data list caption (OPEN-1) is not restructured: putting the status line with the list would change its distances, a qualitative decision O-00 excludes. Its 10 px paddings are 10 px margins on `gap-related` (P-16), so New keeps both distances within the budget. | O-00. | The restructure (needs the owner). |
 
 ## 4. Proofs of phase 1 (21 November 2026)
 
@@ -82,12 +92,39 @@ New-mode audits (R-08) on the phase 1 state (kit core converted, the app not yet
 the app batches move the chrome to its roles; the looser "Developer portal" wrap in the connect-wallet dialog is app
 code and is re-checked after batch A1.
 
+### Proofs of the judgement pass (22 November 2026)
+
+Today [V] on the final branch: kit `pnpm visual-diff ref origin/tokens/pipeline`: 314 of 314 stories identical (the
+new `core-cards-card--inset` only in head). App baseline against the `origin/tokens/pipeline` worktree: 121 of 121
+screens identical at zero tolerance. Per-element records: kit 0 differ, 44 padding→margin moves (P-16; 12 sub-pixel
+text-width readings under load were identical when re-captured); app 0 differ apart from the 29 page `<main>` records
+whose width is now the max-width of P-21 (848 instead of 1024 px with 800 px of content either way), 79 padding→margin
+moves. `today-check` on every changed literal: 0 differences apart from the moves, the InputContainer prop, the
+spinner min-height and the max-width.
+
+The fixed New audit (P-15) on the branch as the conversion lanes left it found 54 errors in 17 kit stories (dialog
+header and content descriptions, the data list status line) and 123 in 30 app screens (page header stats, the spp and
+proposal voting terminals, tabs lists, alert dialogs, select dialogs, transaction dialog, workspace dialogs); all are
+fixed (P-16). On the final branch [V]:
+
+| Scope / mode | Visual distances changed, mean / max | Paddings and gaps changed, mean / max | Errors | Visual-distance warnings |
+| --- | --- | --- | --- | --- |
+| kit New | 960 of 4,954, 3.43 / 8 px | 2,783, 3.48 / 8 px | 0 | (errors in New) |
+| kit looser | 1,925 of 4,819, 4.88 / 20 px | 8,080, 4.34 / 12 px | 1 single-line (document parser paragraph, 40 → 48) | 0 |
+| kit compact | 2,187 of 4,815, 4.18 / 12 px | 8,272, 4.03 / 12 px | 0 | 174 (fixed-8 tight exceptions at compact's 2 px) |
+| app New | 4,649 of 24,036, 3.43 / 8 px | 13,018, 3.59 / 8 px | 0 | (errors in New) |
+| app looser | 13,555 of 23,518, 5.03 / 44 px | 39,244, 4.49 / 44 px | 23 single-line (aside card headings, 80 → 88) | 47 |
+| app compact | 15,032 of 23,818, 4.03 / 24 px | 39,523, 4.00 / 16 px | 12 dead space (justified slack in the workspace sidebar), 1 single-line | 425 |
+
+Square buttons, chrome bars and the sidebar footer pass in every mode; the decoder's delete button stopped shrinking in
+looser (`shrink-0`). The 44 px in app looser is the autocomplete menu flipping above its field, not a spacing value.
+
 ## 5. Open
 
 | ID | Question |
 | --- | --- |
-| OPEN-1 | The data list caption+list block (R-03 in full): the status line and the list share one container with the related gap; needs a DataList structure change (DataListRoot children order is chosen by consumers). |
-| OPEN-2 | Gap pairs no role fits within the budget (24→40 page header, 24→48 landing / explore nav / wizard step, 40→64, 24→64, 12→0 and 4→0 footer and DAO item flips, 0→36, 2→16) and the inset outliers (emptyState stacked, landing 24→72, page 72→96 / 40→64 / 40→80): split roles or allowlist. |
+| OPEN-1 | The data list caption+list block (R-03 in full): not restructured under O-00 (P-24); open for the owner if R-03 should override O-00 here. |
+| OPEN-2 | The outliers of section 10 (kind `outlier`: page header and page content 40 → 64 → 40 → 64, page main 24 / 40 → 80, the 40 px gutter between lg and xl, the stacked empty state 24 → 48, the stage card 16 → 48, empty-state cards 40, the DAO-branded headers, the landing and explore heroes, the wizard intro dialog, the radio card's 2 → 16 label gap, the 24 → 12 setup-governance field gaps, the markdown blockquote 40): each keeps Today in every mode. A role for any of them changes Today's design by more than the budget; owner to decide per pattern. |
 
 ## 6. Roles
 
@@ -231,3 +268,90 @@ when an exception is missing here or moves over the O-00 budget (except `inset-f
 | inset-tight--fixed-8 | inset-tight | p, px, py, pr | unstepped (one value at every width) | 8 | y 2 · x 2 | y 4 · x 4 | 10 | `core/components/dropdown/dropdownContainer/dropdownContainer.tsx`, `packages/assistant-chat/src/components/attachment/attachment.tsx`, `packages/assistant-chat/src/components/markdownText/markdownText.tsx`, `packages/assistant-chat/src/components/thread/thread.tsx`, `modules/application/pages/landingPage/landingPage.tsx`, `plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogContent/gaugeVoterVoteDialogContent.tsx` |  |
 
 Change in New (decision 0 budget): max 4px over roles and exceptions; exceptions mean 1.95px per side (weighted by places); 6 exempt sides (inset-flush).
+
+## 9. Judgement pass (22 November 2026)
+
+What the mechanical batches left (`remaining-after-merge`: 246 source places), the open items of the conversion
+manual and the lane reports, resolved under O-00 (a role, an exception, a new role only for 10 or more places, or an
+allowlisted entry with its reason; nothing over the budget, nothing qualitative).
+
+| Outcome | Places | Where |
+| --- | --- | --- |
+| Role or exception | 122 | kit modules (wallet, transaction detail, DAO and vote list items, decoder), `prose.css` (9 margins and the code chip), app chrome steps at sm/lg/xl (P-19), md flips (P-18), section gaps (P-17), the support chat (56 lines, P-23), the docs site (14) |
+| Allowlisted geometry | 78 | avatar-stack overlaps (36 lines), icon/avatar button frames, line-height nudges, centring and label-row offsets, room for absolute controls, icon indents, the explore hero pull-up, the support chat's list-marker indents and nudge (not linted) |
+| Allowlisted outlier (no role within the budget) | 24 | OPEN-2 |
+| Allowlisted devtools | 6 | the debug panel |
+| Zero or `auto` (nothing to convert, not flagged) | 13 | `p-0`, `gap-0`, `mt-0`, `first:pt-0 last:pb-0` |
+| Third party (Fumadocs, tailwind-merge) | 3 | `apps/docs` `DocsTitle` and page actions (P-23) |
+
+Beyond the list: 28 `inset-flush` places the fixed audit caught (P-15) moved to same-size gap-role margins (25) or
+inset roles (3: the dialog header, the autocomplete scroller, the gauge terminal box; P-16); the one left
+(`assetTransferAddress` `py-inset-flush--0-24`) centres its content in a fixed 80 px box, so New's 0 is invisible.
+The lint found two places the scan had missed (`proposalVotingProgressContainer` `*:pb-6 md:*:pr-6`, now
+`*:pb-inset-surface-wide`; `governanceBodyField` `gap-y-4 md:gap-y-6`, now `gap-y-group-stepped`). The
+InputContainer trap (P-20), the data list caption (P-24), the dialog footer's padding→margin move of phase 1 (kept; a
+move like P-16) and page main's max-width (P-21) are closed. One new role (`gap-section-stepped`, P-17).
+
+## 10. Allowlist
+
+Raw spacing classes the lint (`scripts/primitive-spacing.mjs`, P-22) allows, per file, with the exact classes. Each
+file is excluded from both plugin scopes in the kit's and the app's `biome.jsonc`; `pnpm lint:spacing:check` fails
+when such a file holds any other raw spacing class. Outside the lint scope: `packages/assistant-chat` (list-marker
+indents `ms-5` / `pl-5`, the `-ms-1` action bar nudge, the `p-(--composer-padding)` variable) and `apps/docs`
+(classes passed into Fumadocs components).
+
+| File | Kind | Allowed classes | Reason |
+| --- | --- | --- | --- |
+| `kit: core/components/avatars/avatarStack/avatarStack.tsx` | geometry | `^(?:(?:sm\|md\|lg\|xl\|2xl):)?-ml-(?:1\|1\.5\|2\|2\.5\|3\|4)$` | the avatar overlap follows the avatar size at every breakpoint (O-04) |
+| `kit: core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx` | geometry | `^(?:pr-14\|md:pr-16\|p-1)$` | the title keeps room for the absolute close button (surface inset + button); the close button frame (R-06) |
+| `kit: core/components/dataList/dataListFilter/dataListFilter.tsx` | geometry | `^(?:p-2\.5\|m-1)$` | frame of the search clear button and of the spinner slot (R-06) |
+| `kit: core/components/forms/inputFileAvatar/inputFileAvatar.tsx` | geometry | `^p-1$` | frame of the image remove button (R-06) |
+| `kit: core/components/forms/switch/switch.tsx` | geometry | `^p-1$` | the switch track around its thumb |
+| `kit: core/components/forms/checkboxCard/checkboxCard.tsx` | geometry | `^(?:mt-0\.5\|md:mt-1)$` | the indicator aligns with the first text line (2 px, 4 px from md, with the line height) |
+| `kit: core/components/forms/radioCard/radioCard.tsx` | outlier | `^(?:gap-x-0\.5\|md:gap-x-4)$` | label to tag gap 2 px on phones, 16 px from md: no role within the budget |
+| `kit: core/components/states/emptyState/emptyState.tsx` | outlier | `^(?:p-6\|md:p-12)$` | stacked empty state 24 px, 48 px from md: no role within the budget |
+| `kit: modules/components/wallet/wallet.tsx` | geometry | `^p-1$` | frame of the avatar-only wallet button (R-06) |
+| `kit: modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx` | geometry | `^mt-2$` | centres the small delete button on the large field ((48 - 32) / 2) |
+| `kit: theme/utils/prose.css` | outlier | `^p-10$` | markdown blockquote 40 px: no inset role within the budget |
+| `app: daos/aragonDemo/components/aragonDemoPageHeader/aragonDemoPageHeader.tsx` | outlier | `^(?:pt-10\|pb-4\|md:py-16)$` | DAO-branded page header (40/16 px, 64 px from md): no role within the budget |
+| `app: daos/aragonDemoPolicies/components/aragonDemoPoliciesPageHeader/aragonDemoPoliciesPageHeader.tsx` | outlier | `^(?:pt-10\|pb-4\|md:py-16)$` | DAO-branded page header (40/16 px, 64 px from md): no role within the budget |
+| `app: daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx` | geometry | `^p-\[1px\]$` | a 1 px ring around the avatar (optical, O-04) |
+| `app: daos/boundless/components/boundlessPageHeader/boundlessPageHeader.tsx` | outlier | `^(?:gap-y-4\|pt-6\|pb-4\|md:gap-y-12\|md:pt-16\|md:pb-10)$` | DAO-branded page header (16 -> 48 gap, 24 -> 64 / 16 -> 40 padding): no role within the budget |
+| `app: daos/cryptex/components/cryptexPageHeader/cryptexPageHeader.tsx` | outlier | `^(?:gap-y-4\|pt-6\|pb-4\|md:gap-y-12\|md:pt-16\|md:pb-10)$` | DAO-branded page header (16 -> 48 gap, 24 -> 64 / 16 -> 40 padding): no role within the budget |
+| `app: modules/application/components/debugPanel/debugPanel.tsx` | devtools | `^(?:gap-2\|gap-4\|px-4\|py-2)$` | the debug panel (feature flag debugPanel), never shown to users |
+| `app: modules/application/components/debugPanel/workspaceRegistryControls.tsx` | devtools | `^gap-2$` | the debug panel (feature flag debugPanel), never shown to users |
+| `app: modules/application/components/navigations/navigationDao/navigationDaoHome.tsx` | geometry | `^p-1$` | frame of the DAO avatar button (R-06; the label padding is control padding) |
+| `app: modules/application/components/navigations/navigationSidebarAccount/navigationSidebarAccount.tsx` | geometry | `^p-2$` | frame of the account avatar button (R-06) |
+| `app: modules/application/components/navigations/navigationWizard/navigationWizard.tsx` | geometry | `^p-4$` | frame of the icon-only exit link (R-06) |
+| `app: modules/application/components/navigations/navigationWorkspace/navigationWorkspace.tsx` | geometry | `^(?:py-1\.5\|pl-1\.5\|md:py-2\|md:pl-2\|-space-y-1)$` | frame of the workspace avatar button (R-06) and the overlap of the stacked chevrons |
+| `app: modules/application/pages/landingPage/landingPage.tsx` | outlier | `^(?:px-6\|pt-6\|pb-5\|md:px-12\|md:py-12\|xl:px-\[72px\]\|md:pl-12\|xl:pl-\[72px\])$` | the landing composition (24 -> 48 -> 72 px gutters at the viewport edges): no role within the budget |
+| `app: modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx` | geometry | `^pl-9$` | indent of the description to the title text past its icon (icon + gap) |
+| `app: modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx` | geometry | `^mt-0\.5$` | 2 px optical nudge of the warning icon to the first text line (O-04) |
+| `app: modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionRecipients/setupStrategyDialogDistributionRecipientItem.tsx` | geometry | `^pt-1$` | aligns the remove button with the field top |
+| `app: modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionStream/setupStrategyDialogDistributionStreamRecipientItem.tsx` | geometry | `^pt-1$` | aligns the remove button with the field top |
+| `app: modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx` | outlier | `^(?:p-4\|md:p-12)$` | stage card 16 px, 48 px from md: no role within the budget |
+| `app: modules/createDao/components/createProcessForm/createProcessFormProposalCreation/existingConditionCard.tsx` | geometry | `^sm:mt-2$` | centres the small remove button on the large field in the row layout ((48 - 32) / 2) |
+| `app: modules/explore/pages/exploreDaosPage/exploreDaosPageClient.tsx` | outlier | `^(?:mt-\[-72px\]\|pt-\[72px\]\|md:-mt-24\|md:pt-24\|py-10\|md:px-6\|md:py-12\|pt-10\|md:pt-16\|pb-16\|md:py-20)$` | the explore hero pulled up by the header height (geometry, O-04) and its 40 -> 48 / 40 -> 64 / 40 -> 80 section paddings (no role within the budget) |
+| `app: modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts/createWorkspaceFormAccountsItem.tsx` | geometry | `^md:mt-9$` | aligns the menu button with the field below the label in the row layout (md) |
+| `app: modules/workspace/components/createWorkspaceForm/createWorkspaceFormTargets/createWorkspaceFormTargetsItem.tsx` | geometry | `^md:mt-9$` | aligns the menu button with the field below the label in the row layout (md) |
+| `app: shared/components/forms/resourcesInput/resourcesInputItem.tsx` | geometry | `^md:mt-9$` | aligns the remove button with the field below the label in the row layout (md) |
+| `app: modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx` | geometry | `^p-2$` | frame of the account avatar trigger (R-06) |
+| `app: modules/workspace/components/workspaceSelector/workspaceSelector.tsx` | geometry | `^p-2$` | frame of the workspace avatar trigger (R-06) |
+| `app: modules/workspace/components/workspaceAccountStateCard/workspaceAccountStateCard.tsx` | outlier | `^py-10$` | empty-state card 40 px: no inset role within the budget |
+| `app: modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx` | outlier | `^py-10$` | empty-state card 40 px: no inset role within the budget |
+| `app: plugins/gaugeVoterPlugin/components/gaugeVoterVotingTerminal/gaugeVoterVotingTerminal.tsx` | geometry | `^lg:-mx-4$` | the sticky terminal bleeds past the column from lg |
+| `app: plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogItem/gaugeVoterVoteDialogItem.tsx` | geometry | `^pr-10$` | room for the absolute remove button on phones |
+| `app: plugins/lockToVotePlugin/components/lockToVoteSetupGovernance/lockToVoteSetupGovernance.tsx` | outlier | `^(?:gap-6\|md:gap-3)$` | field gap 24 px, 12 px from md: no role within the budget |
+| `app: plugins/tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance.tsx` | outlier | `^(?:gap-6\|md:gap-3)$` | field gap 24 px, 12 px from md: no role within the budget |
+| `app: plugins/safeMultisigPlugin/components/safeMultisigSubmitVote/safeMultisigSubmitVote.tsx` | geometry | `^-mt-4$` | pulls the alerts into the section gap above them (24 - 16) |
+| `app: shared/components/banner/banner.tsx` | geometry | `^(?:mt-1\|ml-7)$` | icon nudge to the first text line and the action indent past the icon (icon + gap), both until lg |
+| `app: shared/components/container/container.tsx` | outlier | `^lg:px-10$` | the 40 px gutter between lg and xl: no inset role within the budget |
+| `app: shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx` | geometry | `^sm:mt-2$` | centres the small remove button on the large field in the row layout ((48 - 32) / 2) |
+| `app: shared/components/forms/autocompleteInput/autocompleteInputItem.tsx` | geometry | `^mr-7$` | keeps room for the check icon of the active item (icon + gap) |
+| `app: shared/components/forms/autocompleteInput/autocompleteInputMenu.tsx` | geometry | `^(?:md:pb-12\|md:pt-12)$` | the menu runs under the field it is attached to (the field height, 48 px) |
+| `app: shared/components/navigation/navigationTrigger/navigationTrigger.tsx` | geometry | `^p-\[3px\]$` | frame of the menu trigger (R-06) |
+| `app: shared/components/page/pageContent/pageContent.tsx` | outlier | `^(?:gap-10\|pb-20\|md:gap-16\|lg:gap-10\|xl:gap-16)$` | page column gap 40 -> 64 -> 40 -> 64 px (md, lg, xl) and the 80 px page bottom: no role within the budget |
+| `app: shared/components/page/pageHeader/pageHeader.tsx` | outlier | `^(?:gap-10\|md:gap-16\|lg:gap-10\|xl:gap-16)$` | page header gaps 40 -> 64 -> 40 -> 64 px (md, lg, xl): no role within the budget |
+| `app: shared/components/page/pageMain/pageMain.tsx` | outlier | `^(?:pt-6\|pb-10\|md:pb-20)$` | the full-width page main 24 px top and 40 -> 80 px bottom: no role within the budget |
+| `app: shared/components/transactionStatus/transactionStatusStep/transactionStatusStep.tsx` | geometry | `^p-0\.5$` | 2 px frame that gives the spinner the icon size (O-04) |
+| `app: shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx` | outlier | `^(?:px-12\|py-10\|md:px-6)$` | wizard intro dialog 48 -> 24 px horizontal and 40 px vertical inset: no role within the budget |
