@@ -48,7 +48,7 @@ export default async function Page({ params }: IPageProps) {
             </DocsTitle>
             {/* The markdown copy of the page, which the build publishes next to it: copy it, or open
                 it in an assistant. The actions add the base path themselves. */}
-            <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row items-center gap-related--fixed-8">
                 <MarkdownCopyButton
                     className={pageActionClassName}
                     markdownUrl={markdownPath}
