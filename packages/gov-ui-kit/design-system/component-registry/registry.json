@@ -6,7 +6,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "8dd694baf3562889aecee4306ec2822cdc06f8bb",
+            "commit": "27e11540301a584ef0ac00873131a74384c50a96",
             "dirty": [],
             "sourceVersion": "3.0.1",
             "entrypoints": {
