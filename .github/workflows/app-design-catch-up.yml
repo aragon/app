@@ -1,0 +1,547 @@
+# The "App Design Catch-up" workflow brings the design prototypes (design/, see design/README.md) up
+# to an app release. App code that changes without a design leaves a prototype behind; when the app
+# release PR opens (or by hand, for any branch), `affected` lists the prototype parts the branch's
+# app changes since the recorded appCommit touched. No part: the run ends there, having spent
+# nothing. Otherwise `catch-up` runs Claude Code headless through Vercel AI Gateway, following
+# design/RUNBOOK.md "Catch up with main" in CI mode, `publish` opens a PR with the result into the
+# branch for the designer to review and merge, and `report` says where it stands in the release's
+# Slack thread and in a comment on the release PR: a ping to check the catch-up PR, or a line that
+# the run failed or found nothing behind.
+#
+# It never blocks a release: no job here is a required check (`test` and `deploy` are, so those
+# names stay unused here) and every failure ends as that line.
+#
+# The session holds no GitHub credential, only the gateway key: the checkout persists none, the file
+# tools reach only the paths a catch-up may change and Bash only read-only git and the triage
+# script. Its changes leave the job as a patch; `publish` applies it on a fresh runner, checks the
+# paths again and only then loads the arabot PAT and signing key. A rerun rebuilds the catch-up
+# branch from scratch.
+
+name: App Design Catch-up
+
+on:
+  pull_request:
+    types: [opened]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to catch the prototypes up with (normally the open release/app/… branch)"
+        required: true
+        type: string
+
+permissions: {}
+
+# One run per branch. A second run queues instead of cancelling: a cancelled session has spent its
+# budget for nothing, and a cancelled publish can leave a pushed branch without its PR.
+concurrency:
+  group: app-design-catch-up-${{ github.event.pull_request.head.ref || inputs.branch }}
+  cancel-in-progress: false
+
+env:
+  CLAUDE_CODE_VERSION: "2.1.325"
+  DESIGN_CATCH_UP_MODEL: ${{ vars.DESIGN_CATCH_UP_MODEL || 'anthropic/claude-sonnet-5.5' }}
+  DESIGN_CATCH_UP_MAX_TURNS: "150"
+  # --max-budget-usd is Claude Code's own estimate from its price table; a model name it does not
+  # know may estimate as zero, so the gateway key's own limit is the hard stop.
+  DESIGN_CATCH_UP_MAX_BUDGET_USD: "10"
+  # Keep below the catch-up job's timeout-minutes (job timeouts cannot read env).
+  DESIGN_CATCH_UP_TIMEOUT_MINUTES: "60"
+  # The only paths a catch-up may change (RUNBOOK "Catch up with main", step 5).
+  DESIGN_CATCH_UP_ALLOWED_PATHS: '^design/(canvas/.+|README\.md|canvases/prototypes\.json)$'
+
+jobs:
+  affected:
+    if: >
+      github.event_name == 'workflow_dispatch'
+      || (startsWith(github.event.pull_request.head.ref, 'release/app/')
+          && github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Finds the release PR of a branch run by hand.
+      pull-requests: read
+    outputs:
+      count: ${{ steps.triage.outputs.count }}
+      head: ${{ steps.triage.outputs.head }}
+      owners: ${{ steps.triage.outputs.owners }}
+      branch: ${{ steps.target.outputs.branch }}
+      catch-up-branch: ${{ steps.target.outputs.catch_up_branch }}
+      release-pr: ${{ steps.target.outputs.release_pr }}
+    steps:
+      - name: Resolve the branch
+        id: target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          INPUT_BRANCH: ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "pull_request" ]; then
+            branch="$PR_BRANCH"
+            release_pr="$PR_NUMBER"
+          else
+            branch="$(printf '%s' "$INPUT_BRANCH" | xargs)"
+            git check-ref-format --branch "$branch" > /dev/null
+            # No open PR into main: the run still opens the catch-up PR, it just has nowhere to report.
+            release_pr="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$branch" --base main --state open \
+              --json number -q '.[0].number // empty')"
+          fi
+          suffix="${branch#release/app/}"
+          suffix="$(printf '%s' "$suffix" | tr -c 'A-Za-z0-9._-' '-')"
+          {
+            echo "branch=$branch"
+            echo "catch_up_branch=design/catch-up-$suffix"
+            echo "release_pr=$release_pr"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || steps.target.outputs.branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup node
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: List the affected parts
+        id: triage
+        run: |
+          set -euo pipefail
+          head="$(git rev-parse HEAD)"
+          out="$RUNNER_TEMP/triage"
+          mkdir -p "$out"
+          node design/publish/affected.cjs --head "$head" --json > "$out/affected.json"
+          base="$(jq -r '.base' "$out/affected.json")"
+          count="$(jq '.parts | length' "$out/affected.json")"
+          node design/publish/affected.cjs --base "$base" --head "$head" > "$out/affected.md"
+          {
+            echo "## Design catch-up triage: $count part(s) affected"
+            echo
+            cat "$out/affected.md"
+          } >> "$GITHUB_STEP_SUMMARY"
+          # Whoever owns design/ in CODEOWNERS is who the release PR comment asks to check the catch-up.
+          owners="$(grep -E '^/design/[[:space:]]' .github/CODEOWNERS | grep -oE '@[A-Za-z0-9_/-]+' | tr '\n' ' ' | sed 's/ $//' || true)"
+          {
+            echo "count=$count"
+            echo "head=$head"
+            echo "owners=$owners"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload the triage report
+        if: steps.triage.outputs.count != '0'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: design-catch-up-triage
+          path: ${{ runner.temp }}/triage/
+          if-no-files-found: error
+          retention-days: 7
+
+  catch-up:
+    needs: affected
+    if: needs.affected.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    # Read-only on purpose: this job runs the session, and the job token is the only GitHub
+    # credential on its runner.
+    permissions:
+      contents: read
+    outputs:
+      reason: ${{ steps.agent.outputs.reason || steps.guard.outputs.reason }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.affected.outputs.head }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup node
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Download the triage report
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: design-catch-up-triage
+          path: ${{ runner.temp }}/triage
+
+      # design/.runtime/ is gitignored: the session's input and its report never reach the diff.
+      - name: Hand the triage report to the session
+        run: |
+          set -euo pipefail
+          mkdir -p design/.runtime
+          cp "$RUNNER_TEMP/triage/affected.md" design/.runtime/affected.md
+
+      - name: Install Claude Code
+        run: |
+          set -euo pipefail
+          npm install -g --no-fund --no-audit "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}"
+          claude --version
+
+      # The only code the session may run is the triage script: neither it, its inputs nor the git
+      # config and hooks can be rewritten under it, whatever slips past the allow-list.
+      - name: Lock what the session may not write
+        run: chmod -R a-w .git design/publish design/sources.json
+
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@v1
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            AI_GATEWAY_KEY=op://kv_app_infra/AI_GATEWAY_DESIGN_CATCH_UP_KEY/credential
+
+      # The gateway key is the step's only secret. ANTHROPIC_API_KEY stays empty: set, it wins over
+      # ANTHROPIC_AUTH_TOKEN. dontAsk + no prompts: whatever the allow-list does not name is denied.
+      # File writes are limited to the paths a catch-up may change; `--output` is denied because it
+      # lets git diff/log/show write any file.
+      - name: Catch up the prototypes
+        id: agent
+        timeout-minutes: ${{ fromJSON(env.DESIGN_CATCH_UP_TIMEOUT_MINUTES) }}
+        env:
+          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh/claude-code
+          ANTHROPIC_AUTH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).AI_GATEWAY_KEY }}
+          ANTHROPIC_API_KEY: ""
+          DISABLE_UPDATES: "1"
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          GIT_CONFIG_GLOBAL: /dev/null
+          GIT_CONFIG_NOSYSTEM: "1"
+        run: |
+          set -uo pipefail
+          cat > "$RUNNER_TEMP/prompt.md" <<'PROMPT'
+          Follow "Catch up with main" in design/RUNBOOK.md, in CI mode (its "In CI" part), for the parts
+          listed in design/.runtime/affected.md, the triage report of this run.
+          Change files only under design/. Do not run --record: the job sets appCommit.
+          Write what you changed and what you left out, as a markdown table for the designer, to
+          design/.runtime/catch-up.md. It becomes the pull request description.
+          PROMPT
+
+          allowed=(Read Glob Grep)
+          for path in "design/canvas/**" design/README.md design/canvases/prototypes.json "design/.runtime/**"; do
+            allowed+=("Edit($path)" "Write($path)")
+          done
+          allowed+=("Bash(git diff:*)" "Bash(git log:*)" "Bash(git show:*)" "Bash(node design/publish/affected.cjs:*)")
+
+          claude -p \
+            --model "$DESIGN_CATCH_UP_MODEL" \
+            --max-turns "$DESIGN_CATCH_UP_MAX_TURNS" \
+            --max-budget-usd "$DESIGN_CATCH_UP_MAX_BUDGET_USD" \
+            --permission-mode dontAsk \
+            --permission-prompts none \
+            --no-session-persistence \
+            --allowedTools "${allowed[@]}" \
+            --disallowedTools "Bash(git *--output*)" \
+            --output-format json \
+            < "$RUNNER_TEMP/prompt.md" > "$RUNNER_TEMP/claude-result.json"
+          status=$?
+
+          # The result shape is not pinned down: take the last object of type "result", whether it
+          # comes alone or inside an array.
+          jq -s -c 'map(if type == "array" then .[] else . end) | map(select(type == "object"))
+            | (map(select(.type? == "result")) | last) // last // {}' \
+            "$RUNNER_TEMP/claude-result.json" > "$RUNNER_TEMP/result.json" 2>/dev/null || echo '{}' > "$RUNNER_TEMP/result.json"
+          subtype="$(jq -r '.subtype // "unknown"' "$RUNNER_TEMP/result.json" | tr -cd 'A-Za-z0-9_-')"
+          is_error="$(jq -r '.is_error // false' "$RUNNER_TEMP/result.json")"
+          if [ "$status" -ne 0 ] || [ "$is_error" = "true" ] || [ "$subtype" != "success" ]; then
+            echo "reason=session ${subtype:-unknown} (exit $status)" >> "$GITHUB_OUTPUT"
+            echo "::error::The catch-up session failed: subtype=${subtype:-unknown}, exit=$status"
+            exit 1
+          fi
+
+      - name: Summarize the session
+        if: ${{ !cancelled() && steps.agent.outcome != 'skipped' }}
+        run: |
+          set -euo pipefail
+          result="$RUNNER_TEMP/result.json"
+          [ -s "$result" ] || echo '{}' > "$result"
+          jq -r '"Turns \(.num_turns // "?"), tokens \(
+              ((.usage.input_tokens // 0) + (.usage.output_tokens // 0)
+               + (.usage.cache_read_input_tokens // 0) + (.usage.cache_creation_input_tokens // 0))
+            ), cost $\(if (.total_cost_usd | type) == "number" then (.total_cost_usd * 100 | round / 100) else "?" end
+            ) (Claude Code estimate), session \(.session_id // "?")."' \
+            "$result" > "$RUNNER_TEMP/stats.md"
+          {
+            echo "## Design catch-up session"
+            echo
+            cat "$RUNNER_TEMP/stats.md"
+            echo
+            [ -f design/.runtime/catch-up.md ] && cat design/.runtime/catch-up.md || echo "_No catch-up.md written._"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Git runs here with no global or system config, no hooks and no fsmonitor, and without
+      # external diff or textconv drivers: nothing the session could have planted executes.
+      - name: Check the changed paths
+        id: guard
+        env:
+          AI_GATEWAY_KEY: ${{ fromJSON(steps.op.outputs.secrets).AI_GATEWAY_KEY }}
+          GIT_CONFIG_GLOBAL: /dev/null
+          GIT_CONFIG_NOSYSTEM: "1"
+        run: |
+          set -euo pipefail
+          chmod -R u+w .git design/publish design/sources.json
+          git() { command git -c core.hooksPath=/dev/null -c core.fsmonitor=false "$@"; }
+          git add -A
+          outside="$(git diff --cached --name-only --no-renames | grep -Ev "$DESIGN_CATCH_UP_ALLOWED_PATHS" || true)"
+          links="$(git diff --cached --raw --no-renames | awk '$2 ~ /^(120000|160000)$/ {print $NF}')"
+          if [ -n "$outside$links" ]; then
+            echo "reason=changes outside the allowed design paths" >> "$GITHUB_OUTPUT"
+            echo "::error::The session changed paths it may not change (or added links):"
+            printf '%s\n' "$outside" "$links"
+            exit 1
+          fi
+          out="$RUNNER_TEMP/result"
+          mkdir -p "$out"
+          git diff --cached --binary --no-ext-diff --no-textconv --no-renames > "$out/catch-up.patch"
+          if [ -f design/.runtime/catch-up.md ]; then
+            cp design/.runtime/catch-up.md "$out/catch-up.md"
+          else
+            echo "_The session wrote no report._" > "$out/catch-up.md"
+          fi
+          cp "$RUNNER_TEMP/stats.md" "$out/stats.md"
+          if grep -qF -- "$AI_GATEWAY_KEY" "$out/catch-up.patch" "$out/catch-up.md"; then
+            echo "reason=the gateway key appeared in the output" >> "$GITHUB_OUTPUT"
+            echo "::error::The gateway key appeared in the session's output."
+            exit 1
+          fi
+          git diff --cached --stat
+
+      - name: Upload the catch-up
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: design-catch-up-result
+          path: ${{ runner.temp }}/result/
+          if-no-files-found: error
+          retention-days: 7
+
+  # A fresh runner: nothing the session left behind reaches the PAT or the signing key.
+  publish:
+    needs: [affected, catch-up]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Pushes and the PR go through ARABOT_PAT, so the job token only reads.
+    permissions:
+      contents: read
+    outputs:
+      pr-url: ${{ steps.pr.outputs.url }}
+      files: ${{ steps.apply.outputs.files }}
+    steps:
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@v1
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            ARABOT_PAT=op://kv_app_infra/ARABOT_PAT/credential
+            GPG_PRIVATE_KEY=op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+            GPG_PASSPHRASE=op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.affected.outputs.head }}
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Download the catch-up
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: design-catch-up-result
+          path: ${{ runner.temp }}/result
+
+      # Checked again here, on the applied patch: this job trusts nothing the session's runner says.
+      - name: Apply the catch-up and record the app commit
+        id: apply
+        env:
+          HEAD_SHA: ${{ needs.affected.outputs.head }}
+        run: |
+          set -euo pipefail
+          patch="$RUNNER_TEMP/result/catch-up.patch"
+          if [ -s "$patch" ]; then git apply --index "$patch"; fi
+          node design/publish/affected.cjs --record "$HEAD_SHA"
+          git add -A
+          outside="$(git diff --cached --name-only --no-renames | grep -Ev "$DESIGN_CATCH_UP_ALLOWED_PATHS" || true)"
+          links="$(git diff --cached --raw --no-renames | awk '$2 ~ /^(120000|160000)$/ {print $NF}')"
+          if [ -n "$outside$links" ]; then
+            echo "::error::The catch-up changes paths it may not change (or adds links):"
+            printf '%s\n' "$outside" "$links"
+            exit 1
+          fi
+          git diff --cached --stat
+          files="$(git diff --cached --name-only --no-renames | grep -c '^design/canvas/' || true)"
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
+        with:
+          gpg_private_key: ${{ fromJSON(steps.op.outputs.secrets).GPG_PRIVATE_KEY }}
+          passphrase: ${{ fromJSON(steps.op.outputs.secrets).GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      # The lease is the remote head read just before, so a branch someone pushed to in between is
+      # not stomped; a rerun otherwise replaces the previous catch-up.
+      - name: Commit and push the catch-up branch
+        env:
+          BRANCH: ${{ needs.affected.outputs.branch }}
+          CATCH_UP_BRANCH: ${{ needs.affected.outputs.catch-up-branch }}
+        run: |
+          set -euo pipefail
+          git checkout -B "$CATCH_UP_BRANCH"
+          git commit -m "chore: Catch up the design prototypes with $BRANCH"
+          expected="$(git ls-remote --heads origin "refs/heads/$CATCH_UP_BRANCH" | cut -f1)"
+          git push --force-with-lease="refs/heads/$CATCH_UP_BRANCH:$expected" origin "HEAD:refs/heads/$CATCH_UP_BRANCH"
+
+      - name: Open the catch-up PR
+        id: pr
+        uses: aragon/github-templates/steps/gh-ensure-pr@v1
+        with:
+          base: ${{ needs.affected.outputs.branch }}
+          head: ${{ needs.affected.outputs.catch-up-branch }}
+          title: "chore: Catch up the design prototypes with ${{ needs.affected.outputs.branch }}"
+          body: "Design catch-up, run ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          token: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+
+      # The session's text goes in as a file, never through an expression or the shell. Set on
+      # every run, since gh-ensure-pr leaves the body of an existing PR alone.
+      - name: Set the PR description
+        env:
+          GH_TOKEN: ${{ fromJSON(steps.op.outputs.secrets).ARABOT_PAT }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+          body="$RUNNER_TEMP/pr-body.md"
+          # GitHub caps a PR body at 65536 characters.
+          head -c 60000 "$RUNNER_TEMP/result/catch-up.md" > "$body"
+          if [ "$(wc -c < "$RUNNER_TEMP/result/catch-up.md")" -gt 60000 ]; then
+            printf '\n\n_Truncated: the full report is in the run summary._\n' >> "$body"
+          fi
+          printf '\n\n' >> "$body"
+          cat "$RUNNER_TEMP/result/stats.md" >> "$body"
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" -F body=@"$body" > /dev/null
+
+  # Tells the release where the catch-up stands, in two places: the release's Slack thread, the
+  # way the e2e suites report there, and one comment on the release PR, edited on every run, as
+  # the record. A catch-up PR pings for a check: the group the release thread pings in Slack, the
+  # owners of design/ on the PR. A failure or an empty triage is a status line with no ping. A run
+  # by hand on a branch without an open release PR has nowhere to say it.
+  report:
+    needs: [affected, catch-up, publish]
+    if: >
+      !cancelled()
+      && needs.affected.result == 'success'
+      && needs.affected.outputs.release-pr != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      # Writes the comment and reads the release PR's body, which carries the Slack thread marker.
+      pull-requests: write
+    steps:
+      # Counts, links and job results only: nothing the session wrote reaches the comment or Slack.
+      - name: Compose the PR comment
+        id: comment
+        env:
+          COUNT: ${{ needs.affected.outputs.count }}
+          FILES: ${{ needs.publish.outputs.files }}
+          PR_URL: ${{ needs.publish.outputs.pr-url }}
+          PUBLISHED: ${{ needs.publish.result }}
+          REASON: ${{ needs.catch-up.outputs.reason }}
+          OWNERS: ${{ needs.affected.outputs.owners }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$COUNT" = "0" ]; then
+            text="🎨 **Design catch-up:** no prototype is behind this release."
+          elif [ "$PUBLISHED" = "success" ]; then
+            if [ "${FILES:-0}" = "0" ]; then
+              changed="no prototype needed a change"
+            else
+              changed="${FILES} prototype file(s) updated"
+            fi
+            text="🎨 **Design catch-up ready for review:** ${PR_URL}"$'\n\n'"${COUNT} part(s) checked, ${changed}. ${OWNERS:+$OWNERS }please check it on a canvas and merge it into this branch. The release does not wait for it."
+          else
+            text="❌ **Design catch-up failed** (${REASON:-see the run}). The prototypes stay behind, the release is not affected."
+          fi
+          text="${text}"$'\n\n'"[View run](${RUN_URL})"
+          delimiter="ghadelim_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          { echo "text<<$delimiter"; printf '%s\n' "$text"; echo "$delimiter"; } >> "$GITHUB_OUTPUT"
+
+      - name: Comment on the release PR
+        uses: aragon/github-templates/steps/gh-ensure-pr-comment@v1
+        with:
+          tag: design-catch-up
+          pr-number: ${{ needs.affected.outputs.release-pr }}
+          token: ${{ github.token }}
+          message: ${{ steps.comment.outputs.text }}
+
+      - name: Resolve 1Password secrets
+        id: op
+        uses: aragon/github-templates/steps/credential-retrieval@v1
+        with:
+          mode: byref
+          op-token: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          secret-refs: |
+            SLACK_BOT_TOKEN=op://kv_app_infra/SLACK_BOT_TOKEN/credential
+            SLACK_CHANNEL_ID=op://kv_app_infra/SLACK_CHANNEL_ID/credential
+            SLACK_CODEOWNERS_GROUP_ID=op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+
+      - name: Resolve the release thread
+        id: thread
+        uses: aragon/github-templates/steps/resolve-slack-thread@v1
+        with:
+          pr-number: ${{ needs.affected.outputs.release-pr }}
+
+      - name: Compose the Slack status
+        id: text
+        if: steps.thread.outputs.ts != ''
+        env:
+          COUNT: ${{ needs.affected.outputs.count }}
+          FILES: ${{ needs.publish.outputs.files }}
+          PR_URL: ${{ needs.publish.outputs.pr-url }}
+          PUBLISHED: ${{ needs.publish.result }}
+          REASON: ${{ needs.catch-up.outputs.reason }}
+          TEAM: ${{ fromJSON(steps.op.outputs.secrets).SLACK_CODEOWNERS_GROUP_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          if [ "$COUNT" = "0" ]; then
+            text="🎨 *Design catch-up:* no prototype is behind this release."
+          elif [ "$PUBLISHED" = "success" ]; then
+            ping=""
+            [ -n "$TEAM" ] && ping=" <!subteam^${TEAM}>"
+            if [ "${FILES:-0}" = "0" ]; then
+              changed="no prototype needed a change"
+            else
+              changed="${FILES} prototype file(s) updated"
+            fi
+            text="🎨 *Design catch-up ready for review*${ping}"$'\n'"${COUNT} part(s) checked, ${changed}."$'\n'"[Review the PR](${PR_URL}) on a canvas and merge it into the release branch. The release does not wait for it."
+          else
+            text="❌ *Design catch-up failed* (${REASON:-see the run}). The prototypes stay behind, the release is not affected."$'\n'"[View run](${RUN_URL})"
+          fi
+          delimiter="ghadelim_$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          { echo "text<<$delimiter"; printf '%s\n' "$text"; echo "$delimiter"; } >> "$GITHUB_OUTPUT"
+
+      # Never a gate: a Slack hiccup does not fail the run.
+      - name: Post to the release thread
+        if: steps.thread.outputs.ts != ''
+        continue-on-error: true
+        uses: aragon/github-templates/steps/slack-notify@v1
+        with:
+          slack-bot-token: ${{ fromJSON(steps.op.outputs.secrets).SLACK_BOT_TOKEN }}
+          slack-channel-id: ${{ fromJSON(steps.op.outputs.secrets).SLACK_CHANNEL_ID }}
+          thread-ts: ${{ steps.thread.outputs.ts }}
+          message: ${{ steps.text.outputs.text }}
