@@ -211,6 +211,14 @@ class WorkspaceUtils {
     };
 
     /**
+     * Prefixes `https://` to a URL typed without a protocol (e.g. `aragon.org`), which the resources input accepts
+     * but the workspace import validation rejects.
+     * @returns The URL with a protocol, unchanged when it already has one.
+     */
+    ensureUrlProtocol = (url: string): string =>
+        /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
+    /**
      * URL of a workspace.
      *
      * Takes the ID rather than the workspace itself so that callers holding only a route parameter — which is most

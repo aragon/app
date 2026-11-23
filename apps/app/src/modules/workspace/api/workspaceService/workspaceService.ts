@@ -193,11 +193,11 @@ const normaliseWorkspaceLinks = (value: unknown): unknown => {
             }
 
             const { url } = link as { url?: unknown };
-            if (typeof url !== 'string' || /^https?:\/\//i.test(url)) {
+            if (typeof url !== 'string') {
                 return link;
             }
 
-            return { ...link, url: `https://${url}` };
+            return { ...link, url: workspaceUtils.ensureUrlProtocol(url) };
         }),
     };
 };
@@ -400,12 +400,9 @@ class WorkspaceService {
      */
     exportWorkspace = async (params: IGetWorkspaceParams): Promise<string> => {
         const { id: _id, ...workspace } = await this.getWorkspace(params);
-        // The resources input accepts a URL without a protocol, which the import validation rejects.
         const links = workspace.links.map((link) => ({
             ...link,
-            url: /^https?:\/\//i.test(link.url)
-                ? link.url
-                : `https://${link.url}`,
+            url: workspaceUtils.ensureUrlProtocol(link.url),
         }));
         const workspaceExport: IWorkspaceExport = {
             version: workspaceExportVersion,

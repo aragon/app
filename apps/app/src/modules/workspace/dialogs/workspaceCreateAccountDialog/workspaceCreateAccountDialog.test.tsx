@@ -691,4 +691,31 @@ describe('buildCreatedAccount util', () => {
             });
         },
     );
+
+    it('keeps the given details as the account metadata', () => {
+        const account = buildCreatedAccount(
+            WorkspaceCreateAccountType.SAFE,
+            { address, network, avatarUri: 'ipfs://QmSafeLogo' },
+            {
+                name: 'Treasury',
+                description: 'Main treasury',
+                resources: [{ name: 'Site', url: 'aragon.org' }],
+            },
+        );
+        expect(account.metadata).toEqual({
+            name: 'Treasury',
+            description: 'Main treasury',
+            links: [{ name: 'Site', url: 'https://aragon.org' }],
+            avatar: 'ipfs://QmSafeLogo',
+        });
+    });
+
+    it('leaves empty details out of the account metadata', () => {
+        const account = buildCreatedAccount(
+            WorkspaceCreateAccountType.SAFE,
+            { address, network },
+            { name: 'Treasury', description: '', resources: [] },
+        );
+        expect(account.metadata).toEqual({ name: 'Treasury' });
+    });
 });

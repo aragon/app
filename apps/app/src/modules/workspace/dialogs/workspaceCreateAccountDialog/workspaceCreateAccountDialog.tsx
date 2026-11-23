@@ -34,6 +34,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     type IWorkspaceAccount,
+    type IWorkspaceAccountMetadata,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import {
@@ -198,18 +199,53 @@ const workspaceAccountTypes: Record<
     [WorkspaceCreateAccountType.ARAGON]: WorkspaceAccountType.DAO,
 };
 
+export interface ICreatedAccountDeployment extends IWorkspaceNetworkAddress {
+    /**
+     * IPFS URI of the logo pinned during the deployment.
+     */
+    avatarUri?: string;
+}
+
+export type CreatedAccountDetails = Pick<
+    IWorkspaceCreateAccountForm,
+    'name' | 'description' | 'resources'
+>;
+
 /**
  * Maps an account deployed as the given account type to its workspace account.
+ * @param details - Form details kept as the account metadata, for account types with no metadata of their own.
  */
 export const buildCreatedAccount = (
     accountType: WorkspaceCreateAccountType,
-    deployed: IWorkspaceNetworkAddress,
-): IWorkspaceAccount => ({
-    id: workspaceUtils.buildAccountId(deployed),
-    type: workspaceAccountTypes[accountType],
-    address: deployed.address,
-    network: deployed.network,
-});
+    deployed: ICreatedAccountDeployment,
+    details?: CreatedAccountDetails,
+): IWorkspaceAccount => {
+    const { address, network, avatarUri } = deployed;
+    const account: IWorkspaceAccount = {
+        id: workspaceUtils.buildAccountId({ address, network }),
+        type: workspaceAccountTypes[accountType],
+        address,
+        network,
+    };
+
+    if (details == null) {
+        return account;
+    }
+
+    const { name, description, resources } = details;
+    const links = resources.map((link) => ({
+        ...link,
+        url: workspaceUtils.ensureUrlProtocol(link.url),
+    }));
+    const metadata: IWorkspaceAccountMetadata = {
+        name,
+        ...(description && { description }),
+        ...(links.length > 0 && { links }),
+        ...(avatarUri && { avatar: avatarUri }),
+    };
+
+    return { ...account, metadata };
+};
 
 export interface IBuildCreateAccountRequestOptions {
     /**
@@ -253,24 +289,13 @@ export const buildCreateAccountRequest = (
                 owners: form.members.map(({ address }) => address),
                 threshold: form.threshold,
                 onCreated: (deployed) =>
-                    onCreated({
-                        ...buildCreatedAccount(accountType, deployed),
-                        metadata: {
+                    onCreated(
+                        buildCreatedAccount(accountType, deployed, {
                             name,
-                            ...(description && { description }),
-                            ...(resources.length > 0 && {
-                                links: resources.map((link) => ({
-                                    ...link,
-                                    url: /^https?:\/\//i.test(link.url)
-                                        ? link.url
-                                        : `https://${link.url}`,
-                                })),
-                            }),
-                            ...(deployed.avatarUri && {
-                                avatar: deployed.avatarUri,
-                            }),
-                        },
-                    }),
+                            description,
+                            resources,
+                        }),
+                    ),
             },
         };
     }
