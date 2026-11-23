@@ -49,8 +49,8 @@ Full wiring conventions (dynamic imports, definitions map, params) live in the `
 
 Two parallel trees, each split into `shared/` (checked in) and `local/` (gitignored):
 
-- `.agents/shared/` — agent-neutral commons: guardrails loader, metrics. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
-- `.agents/local/` — IC-personal agent-neutral stuff (drafts, metric buffer). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
+- `.agents/shared/` — agent-neutral commons: guardrails loader. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
+- `.agents/local/` — IC-personal agent-neutral stuff (drafts). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
 - `.claude/shared/` — Claude-specific shared wiring (the adapter hook). Tiny on purpose.
 - `.claude/` (root) — Claude's required fixed paths: `settings.json` (checked in), `settings.local.json` and `CLAUDE.md` (gitignored, IC-personal).
 
@@ -64,7 +64,7 @@ Rules live at `skills/shared/rules/<name>/SKILL.md` — always checked in, never
 
 The shared loader lives at `.agents/shared/hooks/inject-rules.mjs`. The rule stream stays agent-agnostic; only the proprietary adapter shape differs. Claude Code consumes it via `.claude/shared/hooks/inject-rules.mjs`. Spec: `skills/shared/rules/README.md`.
 
-In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. The MVP/POC and its proof live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
+In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. Implementation and contract docs live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
 
 To author a new rule, copy an existing one in `skills/shared/rules/` and follow the README — the `rule-authoring` rule-skill auto-injects when you edit anything in that folder.
 
