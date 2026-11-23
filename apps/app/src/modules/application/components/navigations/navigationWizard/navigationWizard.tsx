@@ -48,6 +48,10 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      * `wizardReturnToParam`).
      */
     exitPath: Route;
+    /**
+     * Called on a click of the close link; `preventDefault` cancels the exit navigation.
+     */
+    onExit?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 /**
@@ -96,7 +100,7 @@ const resolveDisplayDao = (
 };
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, dao, targetDaoAddress, exitPath } = props;
+    const { name, dao, targetDaoAddress, exitPath, onExit } = props;
 
     const returnTo = useSearchParams().get(wizardReturnToParam);
     const exitHref = isAppPath(returnTo) ? returnTo : exitPath;
@@ -140,7 +144,11 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
             trailing={<SupportChatTrigger />}
         >
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <Link className={linkClassName} href={exitHref}>
+                <Link
+                    className={linkClassName}
+                    href={exitHref}
+                    onClick={onExit}
+                >
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">

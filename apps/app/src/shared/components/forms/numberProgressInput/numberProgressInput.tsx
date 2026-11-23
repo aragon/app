@@ -29,6 +29,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         suffix,
         thresholdIndicator,
         tags,
+        hideInputLabel = false,
         ...otherProps
     } = props;
 
@@ -43,6 +44,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         value = 0,
         onChange,
         alert,
+        label: inputLabel,
         ...numberField
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(
         fieldName,
@@ -84,6 +86,9 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                         prefix={prefix}
                         suffix={suffix}
                         value={value}
+                        {...(hideInputLabel
+                            ? { id: containerId }
+                            : { label: inputLabel })}
                         {...numberField}
                         {...otherProps}
                     />

@@ -50,6 +50,9 @@ export const ManagedTransactionController = <TCustomStepId extends string>(
         stepper,
         submitLabel,
         successLink,
+        dialogId,
+        onProceedAnyway,
+        preventCloseWhileBusy = false,
         children,
         prepareTransaction,
         onCancelClick,
@@ -74,7 +77,7 @@ export const ManagedTransactionController = <TCustomStepId extends string>(
 
     const { t } = useTranslations();
     // eslint-disable-next-line @typescript-eslint/no-deprecated
-    const { open, updateOptions } = useDialogContext();
+    const { open, close, updateOptions } = useDialogContext();
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
@@ -494,11 +497,35 @@ export const ManagedTransactionController = <TCustomStepId extends string>(
         transactionStepAddon,
     ]);
 
-    // Disable outside click for all transaction dialogs
-    useEffect(
-        () => updateOptions({ disableOutsideClick: true }),
-        [updateOptions],
-    );
+    // With `preventCloseWhileBusy`, the wallet prompt also blocks Cancel: signing after it would drop the result.
+    const isWalletPromptBlocking =
+        preventCloseWhileBusy &&
+        activeStepInfo?.id === TransactionDialogStep.APPROVE &&
+        activeStepInfo.meta.state === 'pending';
+    const isCancelBlocked = disableCancel === true || isWalletPromptBlocking;
+
+    // With `preventCloseWhileBusy`, Escape is ignored while Cancel is blocked or the transaction is in flight
+    // (confirmation to the success action), and otherwise closes by `dialogId`.
+    const isCloseBlockedRef = useRef(false);
+    isCloseBlockedRef.current =
+        isCancelBlocked ||
+        transactionDialogUtils.isTransactionInFlight(
+            activeStepInfo?.id,
+            activeStepInfo?.meta.state,
+        );
+
+    // Disable outside click for all transaction dialogs, and guard their close when opted in
+    useEffect(() => {
+        const onClose = () => {
+            if (!isCloseBlockedRef.current) {
+                close(dialogId);
+            }
+        };
+        updateOptions({
+            disableOutsideClick: true,
+            ...(preventCloseWhileBusy && { onClose }),
+        });
+    }, [updateOptions, close, preventCloseWhileBusy, dialogId]);
 
     useEffect(() => {
         const { state, action, auto } = activeStepInfo?.meta ?? {};
@@ -598,10 +625,12 @@ export const ManagedTransactionController = <TCustomStepId extends string>(
             footer={
                 <TransactionDialogFooter
                     activeStep={activeStepInfo}
-                    disableCancel={disableCancel}
+                    dialogId={dialogId}
+                    disableCancel={isCancelBlocked}
                     indexingFallbackUrl={indexingFallbackUrl}
                     onCancelClick={onCancelClick}
                     onError={handleTransactionError(activeStepInfo?.id)}
+                    onProceedAnyway={onProceedAnyway}
                     proposalSlug={transactionStatus?.slug}
                     submitLabel={submitLabel}
                     successLink={successLink}
