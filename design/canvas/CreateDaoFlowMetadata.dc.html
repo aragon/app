@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create DAO: describe</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe your DAO</x-import>
+    <p class="wizard-step__description">Describe your DAO so visitors know they've come to the right place. Don't worry if they're not final—any of these fields can be changed later.</p>
+  </div>
+  <div class="wizard-fields">
+    <x-import component-from-global-scope="GovUiKit.InputText" label="DAO name" max-length="{{d128}}" value="{{name}}" alert="{{nameAlert}}" on-change="{{changeName}}" on-blur="{{blurName}}"></x-import>
+    <sc-if value="{{showEns}}" hint-placeholder-val="{{no}}">
+      <x-import component-from-global-scope="GovUiKit.InputText" label="ENS subname" help-text="This is a custom onchain identifier for your DAO. It can be used in URLs to access your DAO as well as send assets." is-optional="{{yes}}" addon=".dao.eth" addon-position="right" max-length="{{d18}}" wrapper-class-name="cdf-ens" value="{{ens}}" alert="{{ensAlert}}" on-change="{{changeEns}}"></x-import>
+    </sc-if>
+    <x-import component-from-global-scope="GovUiKit.InputFileAvatar" label="Logo" help-text="JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px." accepted-file-types="{{acceptedFileTypes}}" is-optional="{{yes}}" max-file-size="{{d1mb}}" max-dimension="{{d1024}}" value="{{avatar}}" alert="{{avatarAlert}}" on-change="{{changeAvatar}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the DAO's dashboard and the Explore page so visitors can easily find you." is-optional="{{yes}}" max-length="{{d480}}" value="{{description}}" on-change="{{changeDescription}}"></x-import>
+    <div class="resources-input">
+      <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the DAO dashboard. They are best suited for your website, social media, or other communication channels." use-custom-wrapper="{{yes}}"></x-import>
+      <sc-if value="{{hasResources}}" hint-placeholder-val="{{no}}">
+        <div class="resources-input__list">
+          <sc-for list="{{resources}}" as="res" hint-placeholder-count="1">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm resources-input__item">
+              <x-import component-from-global-scope="GovUiKit.InputText" label="URL" placeholder="https://" value="{{res.url}}" alert="{{res.urlAlert}}" on-change="{{res.changeUrl}}" on-blur="{{res.blurUrl}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.InputText" label="Link text" is-optional="{{yes}}" max-length="{{d40}}" placeholder="{{res.namePlaceholder}}" value="{{res.name}}" on-change="{{res.changeName}}"></x-import>
+              <div class="resources-input__menu">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{res.trigger}}" constrain-content-width="{{no}}" size="md">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{res.remove}}">Remove</x-import>
+                </x-import>
+              </div>
+            </x-import>
+          </sc-for>
+        </div>
+      </sc-if>
+      <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{addResource}}">Add</x-import>
+    </div>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null},"$preview":{"width":800,"height":1500}}'>
+// Step 2 body of the create-DAO wizard, "Describe your DAO" (apps/app: modules/createDao/components/createDaoForm/createDaoFormMetadata,
+// shared/components/forms/{avatarInput,resourcesInput}). The .wizard-step__content block: heading, description, fields.
+//   <dc-import name="CreateDaoFlowMetadata" vm="{{metaVm}}" hint-size="100%,1500px"></dc-import>
+// Props: vm = { name, nameAlert, ens, ensAlert, showEns, avatar, avatarAlert, description,
+//   resources: [{ url, name, urlAlert }],
+//   onName(v) onNameBlur() onEns(v) onAvatar(v) onDescription(v) onAddResource() onResourceUrl(i, v) onResourceUrlBlur(i)
+//   onResourceName(i, v) onRemoveResource(i) }. ENS field only when showEns (Ethereum mainnet chosen).
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {}, h = React.createElement, K = GovUiKit;
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const resources = (vm.resources || []).map((r, i) => ({
+      url: r.url ?? '', name: r.name ?? '', urlAlert: r.urlAlert,
+      namePlaceholder: r.url ? r.url : undefined,
+      changeUrl: (e) => call(vm.onResourceUrl, i, e.target.value),
+      blurUrl: () => call(vm.onResourceUrlBlur, i),
+      changeName: (e) => call(vm.onResourceName, i, e.target.value),
+      remove: () => call(vm.onRemoveResource, i),
+      trigger: h(K.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' }),
+    }));
+    return {
+      yes: true, no: false, d128: 128, d480: 480, d40: 40, d18: 18, d1mb: 1048576, d1024: 1024,
+      acceptedFileTypes: { "image/png": [], "image/gif": [], "image/jpeg": [".jpg", ".jpeg"], "image/webp": [] },
+      name: vm.name ?? '', nameAlert: vm.nameAlert, ens: vm.ens ?? '', ensAlert: vm.ensAlert, showEns: !!vm.showEns,
+      avatar: vm.avatar, avatarAlert: vm.avatarAlert, description: vm.description ?? '',
+      resources, hasResources: resources.length > 0,
+      changeName: (e) => call(vm.onName, e.target.value),
+      blurName: () => call(vm.onNameBlur),
+      changeEns: (e) => call(vm.onEns, e.target.value),
+      changeAvatar: (v) => call(vm.onAvatar, v),
+      changeDescription: (e) => call(vm.onDescription, e.target.value),
+      addResource: () => call(vm.onAddResource),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO Proposal</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{is8}}" hint-placeholder-val="{{true}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p8.breadcrumbs}}" tag="{{p8.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Fund the Q1 2027 Ecosystem Grants Program</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p8.two}}" class-name="text-base text-neutral-500 md:text-lg">Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p8.description}}" immediately-render="{{p8.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="ACTIVE" end-date="{{p8.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACTIVE">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="{{p8.totalYes}}" total-no="{{p8.totalNo}}" total-abstain="{{p8.totalAbstain}}" support-threshold="{{p8.supportThreshold}}" min-participation="{{p8.minParticipation}}" token-symbol="MRD" token-total-supply="50000000">
+                    <div style="padding-top: 32px;">
+                      <dc-import name="DaoProposalVote" mode="{{p8.voteMode}}" selected="{{p8.selected}}" voted-as="{{p8.votedAs}}" on-open="{{p8.onOpen}}" on-select="{{p8.onSelect}}" on-submit="{{p8.onSubmit}}" on-cancel="{{p8.onCancel}}" hint-size="100%,40px"></dc-import>
+                    </div>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p8.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p8.two}}" is-enabled="{{p8.yes}}" is-loading="{{p8.simLoading}}" last-simulation="{{p8.simLast}}" on-simulate="{{p8.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p8.two}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p8.actions.usdc}}" action-function-selector="0xa9059cbb" chain-id="{{p8.one}}" index="{{p8.zero}}" read-only="{{p8.yes}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p8.actions.mrd}}" action-function-selector="0xa9059cbb" chain-id="{{p8.one}}" index="{{p8.one}}" read-only="{{p8.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p8.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="7"><p class="truncate text-neutral-500">7</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-8</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" link="{{p8.creatorLink}}" children="lenaweber.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p8.publishedLink}}" children="{{p8.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-8" is-external="{{p8.yes}}" show-url="{{p8.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/8" is-external="{{p8.yes}}" show-url="{{p8.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is7}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p7.breadcrumbs}}" tag="{{p7.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Adopt the Meridian Constitution v2</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p7.two}}" class-name="text-base text-neutral-500 md:text-lg">Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p7.description}}" immediately-render="{{p7.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="PENDING" end-date="{{p7.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="PENDING">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="0" total-no="0" total-abstain="0" support-threshold="{{p7.supportThreshold}}" min-participation="{{p7.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p7.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p7.one}}" is-enabled="{{p7.yes}}" is-loading="{{p7.simLoading}}" last-simulation="{{p7.simLast}}" on-simulate="{{p7.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p7.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p7.action}}" action-function-selector="0xee57e36f" chain-id="{{p7.one}}" index="{{p7.zero}}" read-only="{{p7.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p7.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="6"><p class="truncate text-neutral-500">6</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-7</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" link="{{p7.creatorLink}}" children="nadia.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p7.publishedLink}}" children="{{p7.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Pending" variant="neutral" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-7" is-external="{{p7.yes}}" show-url="{{p7.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/7" is-external="{{p7.yes}}" show-url="{{p7.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is6}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p6.breadcrumbs}}" tag="{{p6.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Allocate 120 ETH to Uniswap v4 liquidity provisioning</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p6.two}}" class-name="text-base text-neutral-500 md:text-lg">Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p6.description}}" immediately-render="{{p6.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p6.votingStatus}}" end-date="{{p6.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="{{p6.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="9810000" total-no="910000" total-abstain="330000" support-threshold="{{p6.supportThreshold}}" min-participation="{{p6.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p6.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p6.one}}" is-enabled="{{p6.yes}}" is-loading="{{p6.simLoading}}" last-simulation="{{p6.simLast}}" on-simulate="{{p6.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p6.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p6.action}}" chain-id="{{p6.one}}" index="{{p6.zero}}" read-only="{{p6.yes}}"></x-import>
+                </x-import>
+                <sc-if value="{{p6.canExecute}}" hint-placeholder-val="{{true}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p6.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" on-click="{{p6.onExecute}}">Execute</x-import>
+                </x-import>
+                </sc-if>
+                <sc-if value="{{p6.isExecuted}}" hint-placeholder-val="{{false}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p6.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p6.executedLink}}" target="_blank">View execution</x-import>
+                </x-import>
+                </sc-if>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="5"><p class="truncate text-neutral-500">5</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-6</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xac6399087027f972e6d2ab830dc9b33cda035642" link="{{p6.creatorLink}}" children="kofi-mensah.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p6.publishedLink}}" children="{{p6.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p6.tagLabel}}" variant="{{p6.tagVariant}}" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-6" is-external="{{p6.yes}}" show-url="{{p6.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/6" is-external="{{p6.yes}}" show-url="{{p6.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is5}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p5.breadcrumbs}}" tag="{{p5.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Signal: Expand the delegate compensation framework</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p5.two}}" class-name="text-base text-neutral-500 md:text-lg">Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p5.description}}" immediately-render="{{p5.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="ACCEPTED" end-date="{{p5.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="ACCEPTED">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="8240000" total-no="2130000" total-abstain="540000" support-threshold="{{p5.supportThreshold}}" min-participation="{{p5.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p5.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p5.zero}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" children="{{p5.no}}"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="4"><p class="truncate text-neutral-500">4</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-5</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" link="{{p5.creatorLink}}" children="sofiaruiz.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p5.publishedLink}}" children="{{p5.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Accepted" variant="success" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-5" is-external="{{p5.yes}}" show-url="{{p5.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/5" is-external="{{p5.yes}}" show-url="{{p5.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is4}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p4.breadcrumbs}}" tag="{{p4.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Reduce proposal threshold to 25,000 MRD</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p4.two}}" class-name="text-base text-neutral-500 md:text-lg">Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p4.description}}" immediately-render="{{p4.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="REJECTED" end-date="{{p4.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="REJECTED">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="3140000" total-no="5420000" total-abstain="760000" support-threshold="{{p4.supportThreshold}}" min-participation="{{p4.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p4.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p4.zero}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""></x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" children="{{p4.no}}"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="3"><p class="truncate text-neutral-500">3</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-4</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089" link="{{p4.creatorLink}}" children="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p4.publishedLink}}" children="{{p4.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Rejected" variant="critical" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-4" is-external="{{p4.yes}}" show-url="{{p4.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/4" is-external="{{p4.yes}}" show-url="{{p4.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is3}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p3.breadcrumbs}}" tag="{{p3.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Update DAO metadata and website links</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p3.two}}" class-name="text-base text-neutral-500 md:text-lg">Refresh the DAO description to reflect the cross-chain routing roadmap and add the new Discord and forum links.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p3.description}}" immediately-render="{{p3.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="EXECUTED" end-date="{{p3.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="EXECUTED">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="9870000" total-no="120000" total-abstain="400000" support-threshold="{{p3.supportThreshold}}" min-participation="{{p3.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p3.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p3.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p3.action}}" action-function-selector="0xee57e36f" chain-id="{{p3.one}}" index="{{p3.zero}}" read-only="{{p3.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p3.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p3.executedLink}}" target="_blank">Executed</x-import>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="2"><p class="truncate text-neutral-500">2</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-3</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xac6399087027f972e6d2ab830dc9b33cda035642" link="{{p3.creatorLink}}" children="kofi-mensah.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p3.publishedLink}}" children="{{p3.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-3" is-external="{{p3.yes}}" show-url="{{p3.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/3" is-external="{{p3.yes}}" show-url="{{p3.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is2}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p2.breadcrumbs}}" tag="{{p2.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Q4 2026 Contributor Compensation</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p2.two}}" class-name="text-base text-neutral-500 md:text-lg">Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p2.description}}" immediately-render="{{p2.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="EXECUTED" end-date="{{p2.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0xa147…8fda" status="EXECUTED">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="11420000" total-no="640000" total-abstain="210000" support-threshold="{{p2.supportThreshold}}" min-participation="{{p2.minParticipation}}" token-symbol="MRD" token-total-supply="50000000"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="DaoVoteList" votes="{{p2.votes}}"></x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p2.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p2.action}}" action-function-selector="0xa9059cbb" chain-id="{{p2.one}}" index="{{p2.zero}}" read-only="{{p2.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p2.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p2.executedLink}}" target="_blank">Executed</x-import>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="1"><p class="truncate text-neutral-500">1</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">MGP-2</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" link="{{p2.creatorLink}}" children="nadia.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p2.publishedLink}}" children="{{p2.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz/t/mgp-2" is-external="{{p2.yes}}" show-url="{{p2.yes}}">Forum discussion</x-import>
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://snapshot.org/#/meridian.eth/proposal/2" is-external="{{p2.yes}}" show-url="{{p2.yes}}">Temperature check</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<dc-import name="TxFlowDialog" open="{{txOpen}}" title="{{tx.title}}" description="{{tx.description}}" steps="{{tx.steps}}" submit-label="{{tx.submitLabel}}" success-label="View proposal" summary="{{tx.summary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,0px"></dc-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"proposal":{"editor":"text","default":"MGP-8"},"onNav":{"editor":null},"wallet":{"editor":"text","default":""},"onConnect":{"editor":null}}'>
+// Global kit component for the Votes tab: the token plugin's vote list (apps/app: plugins/tokenPlugin/components/tokenVoteList)
+// is a DataList of VoteDataListItem rows. Built with createElement so the pagination counts real children (page size 6).
+window.DaoVoteList = (props) => {
+  const h = React.createElement, K = GovUiKit;
+  const votes = props.votes || [];
+  const rows = votes.map((v) => h(K.VoteDataListItem.Structure, {
+    key: v.address,
+    voter: { address: v.address, name: v.name || undefined },
+    voteIndicator: v.indicator,
+    voteIndicatorDescription: v.indicator === 'abstain' ? undefined : 'to approve',
+    votingPower: String(v.vp),
+    tokenSymbol: 'MRD',
+    href: '#nav:member:' + v.address
+  }));
+  return h(K.DataList.Root, { entityLabel: 'Votes', itemsCount: votes.length, pageSize: 6, state: 'idle' },
+    h(K.DataList.Container, { emptyState: { heading: 'No votes found', description: 'No votes found.' } }, rows),
+    h(K.DataList.Pagination));
+};
+
+// Voters of the Meridian mock data (design/baseline-check/data.cjs PEOPLE[0..9]) and the vote choice rule of its VOTES table.
+const VOTERS = [
+  { name: 'nadia.eth', address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', vp: 4850000 },
+  { name: 'kofi-mensah.eth', address: '0xac6399087027f972e6d2ab830dc9b33cda035642', vp: 3920000 },
+  { name: 'lenaweber.eth', address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', vp: 2740000 },
+  { name: '', address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', vp: 2115000 },
+  { name: 'sofiaruiz.eth', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', vp: 1680000 },
+  { name: 'tomas.eth', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', vp: 1245500 },
+  { name: '', address: '0x697d04244eda05202c0c06aea0bfeced540eb42d', vp: 980200 },
+  { name: 'marcusj.eth', address: '0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', vp: 760000 },
+  { name: 'chenwei.eth', address: '0x8a25faabbd80f71248328cf3a5867d3168210a46', vp: 512340 },
+  { name: '', address: '0x8ac8d965669201c92279ef49be1a5564b908ee27', vp: 388000 }
+];
+const VOTE_CYCLE = [2, 2, 3, 2, 1, 2, 3, 2, 2, 1, 2, 3]; // 1 abstain, 2 yes, 3 no
+const INDICATOR = { 1: 'abstain', 2: 'yes', 3: 'no' };
+
+// "Published" dates: copied from the reference (clock 2026-11-16) and moved with the viewer's clock, so a proposal that ends
+// "in 3 days" is never shown as published months ago. Prints the reference text at the reference time.
+const pubDate = (y, m, d) => {
+  const t = GovUiKit.formatterUtils.formatDate(Date.now() - (Date.UTC(2026, 10, 16, 18) - Date.UTC(y, m, d, 12)), { format: GovUiKit.DateFormat.YEAR_MONTH_DAY });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+
+// PART of the DAO prototype (mounted by Dao.dc.html). Props: proposal (slug MGP-1 ... MGP-8; unknown slugs show MGP-8),
+// onNav(target) - navigation, wallet ('connected' | ''), onConnect() - opens the connect dialog (Vote / Execute while disconnected).
+// Own parts: DaoProposalVote (vote area). Voting, simulation and execute (MGP-6) are simulated in this part's state.
+// onNav(target) - navigation only. The seven Meridian proposal screens (Proposal / ProposalMGP2..7) are lifted in, one
+// <sc-if> each; every hole is prefixed p<N>. (v<N>() below = that screen's renderVals). MGP-1 shows MGP-4 (the only
+// rejected-proposal screen). Links carry href="#nav:<target>"; one delegated click handler on each root calls onNav.
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { options: false, selected: '', txOpen: false, txKind: '', voted: window.__daoVote || '', executed: !!window.__daoExecuted, pendingVote: false, sim: {} };
+    this.timers = [];
+  }
+  componentDidUpdate(prev) {
+    // "Vote on proposal" clicked while disconnected: once the wallet connects, continue to the options (as the app's guard does).
+    if (this.state.pendingVote && prev.wallet !== 'connected' && this.props.wallet === 'connected') {
+      this.setState({ pendingVote: false, options: true });
+    }
+    // The connect dialog was dismissed without connecting: forget the pending vote (a later connect must not open the options).
+    else if (this.state.pendingVote && prev.connecting && !this.props.connecting && this.props.wallet !== 'connected') {
+      this.setState({ pendingVote: false });
+    }
+  }
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
+  renderVals() {
+    const nav = (t) => { if (this.props.onNav) this.props.onNav(t); };
+    const m = /^(?:MGP-)?(\d+)$/i.exec(String(this.props.proposal || '').trim());
+    let n = m ? Number(m[1]) : 8;
+    if (n === 1) n = 4;
+    if (n < 2 || n > 8) n = 8;
+    const st = this.state;
+    const up = (k, v) => this.setState({ [k]: v });
+    const connected = this.props.wallet === 'connected';
+    const mine = connected ? st.voted : '';
+    const settings = this.v7().settings;
+    const votesOf = (k, extra) => {
+      if (k === 7) return [];
+      let list = VOTERS.map((m, i) => ({ name: m.name, address: m.address, vp: m.vp,
+        indicator: INDICATOR[k === 4 && i < 3 ? 3 : VOTE_CYCLE[(i + k) % 12]] }));
+      if (k === 8) list = list.filter((v) => v.address !== VOTERS[0].address); // nadia (the mock wallet) has not voted on MGP-8 yet
+      return extra ? [extra].concat(list) : list;
+    };
+    const sim = (k) => {
+      const x = (st.sim || {})[k] || {};
+      return { simLoading: !!x.loading, simLast: x.last, onSimulate: () => this.simulate(k) };
+    };
+    const p = {
+      p8: this.v8(), p7: this.v7(), p6: this.v6(), p5: this.v5(), p4: this.v4(), p3: this.v3(), p2: this.v2()
+    };
+    [2, 3, 4, 5, 6, 7].forEach((k) => { p['p' + k].votes = votesOf(k); });
+    [6, 7, 8].forEach((k) => Object.assign(p['p' + k], sim(k)));
+    // MGP-8: voting
+    const me = { name: 'nadia.eth', address: VOTERS[0].address, vp: VOTERS[0].vp, indicator: mine };
+    const base = { yes: 6215000, no: 1104000, abstain: 402000 };
+    if (mine) base[mine] += VOTERS[0].vp;
+    Object.assign(p.p8, {
+      votes: votesOf(8, mine ? me : null),
+      totalYes: base.yes, totalNo: base.no, totalAbstain: base.abstain,
+      voteMode: mine ? 'voted' : st.options && connected ? 'options' : 'start',
+      selected: st.selected, votedAs: mine || 'yes',
+      onOpen: () => {
+        if (!connected) { this.setState({ pendingVote: true }); if (this.props.onConnect) this.props.onConnect(); }
+        else this.setState({ options: true });
+      },
+      onSelect: (k) => up('selected', k),
+      onCancel: () => this.setState({ options: false, selected: '' }),
+      onSubmit: () => { if (st.selected) this.setState({ txOpen: true, txKind: 'vote' }); }
+    });
+    // MGP-6: execute
+    const done = !!st.executed;
+    Object.assign(p.p6, {
+      votingStatus: done ? 'EXECUTED' : 'EXECUTABLE',
+      statusTag: { label: done ? 'Executed' : 'Executable', variant: done ? 'success' : 'info' },
+      tagLabel: done ? 'Executed' : 'Executable', tagVariant: done ? 'success' : 'info',
+      canExecute: !done, isExecuted: done,
+      onExecute: () => {
+        if (!connected) { if (this.props.onConnect) this.props.onConnect(); return; }
+        this.setState({ txOpen: true, txKind: 'execute' });
+      }
+    });
+    const isVote = st.txKind === 'vote';
+    const tx = isVote ? {
+      title: 'Submit vote', description: 'To submit your vote, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Submit vote', steps: [],
+      summary: { type: 'vote', proposalId: 'MGP-8', proposalTitle: 'Fund the Q1 2027 Ecosystem Grants Program', voteIndicator: st.selected || 'yes', voteIndicatorDescription: st.selected === 'abstain' ? undefined : 'to approve' }
+    } : {
+      title: 'Execute proposal', description: 'To execute the proposal, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Execute proposal', steps: [], summary: null
+    };
+    return Object.assign({
+      onClick: (e) => {
+        const a = e.target && e.target.closest ? e.target.closest('a') : null;
+        const h = a && a.getAttribute('href');
+        if (h && h.indexOf('#nav:') === 0) { e.preventDefault(); nav(h.slice(5)); }
+      },
+      is8: n === 8, is7: n === 7, is6: n === 6, is5: n === 5, is4: n === 4, is3: n === 3, is2: n === 2,
+      settings, tx, txOpen: st.txOpen,
+      closeTx: () => this.setState({ txOpen: false }),
+      txDone: () => {
+        // kept on window: the proposal page is unmounted when the user navigates, the app keeps the vote and the status
+        if (this.state.txKind === 'vote') { window.__daoVote = this.state.selected; this.setState({ txOpen: false, voted: this.state.selected, options: false }); }
+        else { window.__daoExecuted = true; this.setState({ txOpen: false, executed: true }); }
+      }
+    }, p);
+  }
+
+  simulate(k) {
+    const cur = Object.assign({}, this.state.sim);
+    cur[k] = Object.assign({}, cur[k], { loading: true });
+    this.setState({ sim: cur });
+    this.timers.push(setTimeout(() => {
+      const nxt = Object.assign({}, this.state.sim);
+      nxt[k] = { loading: false, last: { timestamp: Date.now(), url: 'https://dashboard.tenderly.co/explorer', status: 'success' } };
+      this.setState({ sim: nxt });
+    }, 1600));
+  }
+
+  v8() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    const grants = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const transfer = (token, contract, data, amount) => ({
+      type: 'Transfer', from: dao, to: token, value: '0', data,
+      inputData: { function: 'transfer', contract, parameters: [
+        { name: 'to', type: 'address', value: grants },
+        { name: 'value', type: 'uint256', value: amount }
+      ] }
+    });
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-8' }],
+      published: pubDate(2026, 10, 14),
+      statusTag: { label: 'Active', variant: 'info' },
+      description: '<h2>Summary</h2><p>Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>',
+      // The kit prints "3 days left to vote" relative to the viewer's clock, so the end date is an offset from now:
+      // the label then reads the same as in the reference screenshot on any day.
+      endDate: Date.now() + 3 * day + hour,
+      supportThreshold: 50,
+      minParticipation: 15,
+      actions: {
+        usdc: transfer('0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', 'USD Coin', '0xa9059cbb00000000000000000000000031154ff59ea91264c4fd75aba7d8a2fc5a69d3680000000000000000000000000000000000000000000000000000003a35294400', '250000000000'),
+        mrd: transfer('0xc6cf3058f8fd5eb7074109b3b531364a4af59dae', 'Meridian', '0xa9059cbb00000000000000000000000031154ff59ea91264c4fd75aba7d8a2fc5a69d3680000000000000000000000000000000000000000000054b40b1f852bda000000', '400000000000000000000000')
+      },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      creatorLink: { href: '#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', isOnchainEntity: true },
+      publishedLink: { href: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c' }
+    };
+  }
+
+  v7() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-7' }],
+      statusTag: { label: 'Pending', variant: 'neutral' },
+      description: "<h2>Summary</h2><p>Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() + 5 * day + 4 * hour,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: [
+        { term: 'Plugin address', definition: '0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', description: 'Token Voting v1.3', link: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isExternal: true, isOnchainEntity: true } },
+        { term: 'Launched', definition: 'October 2025', link: { href: 'https://etherscan.io/tx/0x45bb30f18a31d380003fb757d247a11ddae38c7ca421a7fb18abc972ff7fc412' } },
+        { term: 'Support threshold', definition: '> 50%' },
+        { term: 'Minimum participation', definition: '≥ 15.00%  (≥ 7.5M MRD)' },
+        { term: 'Minimum duration', definition: '5 days 0 hours 0 minutes' },
+        { term: 'Early execution', definition: 'Enabled' },
+        { term: 'Vote change', definition: 'Disabled' },
+        { term: 'Proposal creation', definition: 'Members with ≥ 100,000 MRD voting power or balance' }
+      ],
+      action: { type: 'MetadataUpdate', from: dao, to: dao, data: '0xee57e36f', value: '0', inputData: { function: 'setMetadata', contract: 'DAO', parameters: [{ name: '_metadata', type: 'bytes', value: '0x697066733a2f2f62616679' }] } },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
+      published: (() => { const t = GovUiKit.formatterUtils.formatDate(Date.now() + 22 * hour, { format: GovUiKit.DateFormat.YEAR_MONTH_DAY }); return t.charAt(0).toUpperCase() + t.slice(1); })(),
+      publishedLink: { href: 'https://etherscan.io/tx/0xab6d82ee9d2765c7c239ae1cbd5689e116dbe2e759b0796fbe61091a7e99bb1f' }
+    };
+  }
+
+  v6() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-6' }],
+      statusTag: { label: 'Executable', variant: 'info' },
+      description: "<h2>Summary</h2><p>Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() - 2 * day,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: undefined,
+      action: { type: 'TransferNative', from: dao, to: '0xd35945d0b4d4a6f6f4d2f902cf0cf3e970e8e551', data: '0x', value: '120000000000000000000', inputData: { function: '', contract: '', parameters: [] } },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
+      published: pubDate(2026, 10, 10),
+      publishedLink: { href: 'https://etherscan.io/tx/0xd766c4a7e9750f51b940227e2749c5997f7a947d0f419189f22621bafc66b860' }
+    };
+  }
+
+  v5() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-5' }],
+      statusTag: { label: 'Accepted', variant: 'success' },
+      description: "<h2>Summary</h2><p>Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() - 2 * day,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: undefined,
+      action: undefined,
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isOnchainEntity: true },
+      published: pubDate(2026, 10, 5),
+      publishedLink: { href: 'https://etherscan.io/tx/0xdf19ec2ddc9916c7045e4710d3c839a9fb1eec162743e12beb3d68dcd0a41479' }
+    };
+  }
+
+  v4() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-4' }],
+      statusTag: { label: 'Rejected', variant: 'critical' },
+      description: "<h2>Summary</h2><p>Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() - 2 * day,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: undefined,
+      action: undefined,
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', isOnchainEntity: true },
+      published: pubDate(2026, 9, 29),
+      publishedLink: { href: 'https://etherscan.io/tx/0x912f406bab4c48d03e1b94456d8504b2a30975ec83ff18ba72e397958b2a03ff' }
+    };
+  }
+
+  v3() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-3' }],
+      statusTag: { label: 'Executed', variant: 'success' },
+      description: "<h2>Summary</h2><p>Refresh the DAO description to reflect the cross-chain routing roadmap and add the new Discord and forum links.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() - 2 * day,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: undefined,
+      action: { type: 'MetadataUpdate', from: dao, to: dao, data: '0xee57e36f', value: '0', inputData: { function: 'setMetadata', contract: 'DAO', parameters: [{ name: '_metadata', type: 'bytes', value: '0x697066733a2f2f62616679' }] } },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x16df34ecd492fa69b80b0ed6d5b2a2c9f41f4cdf2c2ffc8f1dda86e6058569b0',
+      creatorLink: { href: '#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642', isOnchainEntity: true },
+      published: pubDate(2026, 9, 16),
+      publishedLink: { href: 'https://etherscan.io/tx/0xc9bcc5f67114b2d1e36f26516d8f72031069325c31699a328154b47b272b3573' }
+    };
+  }
+
+  v2() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'MGP-2' }],
+      statusTag: { label: 'Executed', variant: 'success' },
+      description: "<h2>Summary</h2><p>Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe.</p><h2>Motivation</h2><p>Over the last two quarters Meridian has grown routed volume by 38% while the number of active contributors has stayed flat. This proposal is part of the community roadmap ratified in MGP-3 and has been discussed on the forum for two weeks, with feedback from delegates incorporated into the final version.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Execution risk is limited to the amounts listed in the actions. The Security Council retains its existing veto rights and no protocol parameters are changed by this proposal.</p>",
+      endDate: Date.now() - 2 * day,
+      supportThreshold: 50,
+      minParticipation: 15,
+      settings: undefined,
+      action: { type: 'Transfer', from: dao, to: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', value: '0', data: '0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000029e8d60800', inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: 'to', type: 'address', value: '0xdce3a01d0357efb601efac0fdd836d2e1b3bc242' }, { name: 'value', type: 'uint256', value: '180000000000' }] } },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
+      published: pubDate(2026, 9, 3),
+      publishedLink: { href: 'https://etherscan.io/tx/0x2a011ced91eb99998338a160332d85541408e9ecf928b780a2a52d2730e1028d' }
+    };
+  }
+}
+</script>
+</body>
+</html>

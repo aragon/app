@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Members</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <div class="flex flex-col gap-2 md:gap-3">
+              <sc-if value="{{asTabs}}" hint-placeholder-val="{{yes}}">
+              <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{body}}" on-change="{{setBody}}">
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="tv" label="NSP Token Holders"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="ms" label="Core Team"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="c" label="Safe 0x515f…02e2"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.Toggle" value="g" label="Safe 0xf361…465e"></x-import>
+              </x-import>
+              </sc-if>
+              <sc-if value="{{asDropdown}}" hint-placeholder-val="{{no}}">
+              <div>
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="{{bodyLabel}}">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.tv}}" on-select="{{pick.tv}}">NSP Token Holders</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.ms}}" on-select="{{pick.ms}}">Core Team</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.c}}" on-select="{{pick.c}}">Safe 0x515f…02e2</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{is.g}}" on-select="{{pick.g}}">Safe 0xf361…465e</x-import>
+                </x-import>
+              </div>
+              </sc-if>
+<sc-if value="{{is.tv}}" hint-placeholder-val="{{yes}}">
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{tv.count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" delegation-count="{{d41}}" token-amount="3200000" class-name="min-w-0" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" delegation-count="{{d28}}" token-amount="2450000" class-name="min-w-0" href="#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" delegation-count="{{d17}}" token-amount="1980000" class-name="min-w-0" href="#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" ens-name="ines-alvarez.eth" delegation-count="{{d9}}" token-amount="1640000" class-name="min-w-0" href="#nav:member:0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" delegation-count="{{d6}}" token-amount="1210000" class-name="min-w-0" href="#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x865f1f2c83b0ee4a9116da01bcc1e2661086e089" delegation-count="{{d0}}" token-amount="980000" class-name="min-w-0" href="#nav:member:0x865f1f2c83b0ee4a9116da01bcc1e2661086e089"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fd8c5d6a351f67a517e6b0f452f63" ens-name="dmitri.eth" delegation-count="{{d3}}" token-amount="860000" class-name="min-w-0" href="#nav:member:0x7331c334835fd8c5d6a351f67a517e6b0f452f63"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" delegation-count="{{d0}}" token-amount="720000" class-name="min-w-0" href="#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x66b7d87059d8d1cf9da8842075250fd8a2e20805" delegation-count="{{d0}}" token-amount="550000" class-name="min-w-0" href="#nav:member:0x66b7d87059d8d1cf9da8842075250fd8a2e20805"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" delegation-count="{{d0}}" token-amount="430000" class-name="min-w-0" href="#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+</sc-if>
+<sc-if value="{{is.ms}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{ms.count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" class-name="min-w-0" href="#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" class-name="min-w-0" href="#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+</sc-if>
+<sc-if value="{{is.c}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{c.count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xac6399087027f972e6d2ab830dc9b33cda035642" ens-name="kofi-mensah.eth" class-name="min-w-0" href="#nav:member:0xac6399087027f972e6d2ab830dc9b33cda035642"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81" ens-name="ines-alvarez.eth" class-name="min-w-0" href="#nav:member:0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fd8c5d6a351f67a517e6b0f452f63" ens-name="dmitri.eth" class-name="min-w-0" href="#nav:member:0x7331c334835fd8c5d6a351f67a517e6b0f452f63"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+</sc-if>
+<sc-if value="{{is.g}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{g.count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" class-name="min-w-0" href="#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xde0da1b2c117fda1a3e2dc30bc213d3b6baf40ec" ens-name="oren.eth" class-name="min-w-0" href="#nav:member:0xde0da1b2c117fda1a3e2dc30bc213d3b6baf40ec"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x78084649f806810005aca274afe28cd141a74124" ens-name="priya-n.eth" class-name="min-w-0" href="#nav:member:0x78084649f806810005aca274afe28cd141a74124"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+</sc-if>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+          <sc-if value="{{is.tv}}" hint-placeholder-val="{{yes}}">
+<div style="display:contents">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">NSP Token Holders</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <div style="display: flex; flex-direction: column; row-gap: 24px;">
+                  <p class="page-aside__text">Every NSP holder and delegate can veto a council-approved proposal during the 7-day community window.</p>
+                  <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi/governance/delegates" is-external="{{yes}}" show-url="{{yes}}">Delegate guide</x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x65bcf0e7d2a74d45fe702135d19f954d59658f36" description="Token Voting v1.3" link="{{tv.pluginLink}}" children="0x65bcf0e7d2a74d45fe702135d19f954d59658f36"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{tv.launchLink}}" children="January 2026"></x-import>
+                </x-import>
+              </div>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Delegation</x-import>
+              <form class="flex flex-col gap-4" onSubmit="{{submitDelegate}}">
+                <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Who would you like to delegate to?" name="selection" value="{{sel}}" on-value-change="{{onSel}}">
+                  <x-import component-from-global-scope="GovUiKit.RadioCard" label="Yourself" value="YOURSELF"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.RadioCard" label="Someone else" value="OTHER"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.AddressInput" label="Your delegation" help-text="Enter the address where you want to delegate your current or future token balance's voting power." placeholder="ENS or 0x…" disabled="{{isSelf}}" value="{{text}}" on-change="{{onText}}" enforce-checksum="{{no}}" alert="{{alert}}" variant="{{inputVariant}}" chain-id="{{chainId}}"></x-import>
+                <div class="flex flex-col gap-3">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="{{delegateVariant}}" size="lg" disabled="{{delegateDisabled}}" on-click="{{delegate}}">{{delegateLabel}}</x-import>
+                  <p class="footer-info">Delegating increases the voting power of the address above by your balance.</p>
+                </div>
+              </form>
+            </x-import>
+</div>
+          </sc-if>
+          <sc-if value="{{is.ms}}" hint-placeholder-val="{{no}}">
+<div style="display:contents">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Core Team</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <p class="page-aside__text">Three core contributors review every proposal for technical soundness. Two approvals clear the council stage.</p>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x566805a83e872e67a32d84596b81d16faa7ba6a2" description="Multisig v1.3" link="{{ms.pluginLink}}" children="0x566805a83e872e67a32d84596b81d16faa7ba6a2"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{ms.launchLink}}" children="January 2026"></x-import>
+                </x-import>
+              </div>
+            </x-import>
+</div>
+          </sc-if>
+          <sc-if value="{{is.c}}" hint-placeholder-val="{{no}}">
+<div style="display:contents">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Safe 0x515f…02e2</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Safe 1.4.1" link="{{c.pluginLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Required confirmations" children="{{c.conf}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Current Safe nonce" children="{{c.nonce}}"></x-import>
+              </x-import>
+            </x-import>
+</div>
+          </sc-if>
+          <sc-if value="{{is.g}}" hint-placeholder-val="{{no}}">
+<div style="display:contents">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Safe 0xf361…465e</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe address" copy-value="0xf361d5ca8adAa59365A6A6144db5FA7d0b4f465e" description="Safe 1.4.1" link="{{g.pluginLink}}" children="0xf361d5ca8adAa59365A6A6144db5FA7d0b4f465e"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Required confirmations" children="{{g.conf}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Current Safe nonce" children="{{g.nonce}}"></x-import>
+              </x-import>
+            </x-import>
+</div>
+          </sc-if>
+          </aside>
+        </div>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":null}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet ('connected' | ''), onConnect(), scope (set by Workspace.dc.html to any value: the body filter is then the dropdown of the workspace page, showFiltersAsDropdown; unset (NorthstarDao) keeps the toggle tabs).
+// Members page (apps/app: modules/governance/pages/daoMembersPage + PluginFilterComponent). Northstar has several bodies, so the page shows the
+// body tabs of a multi-body DAO: NSP Token Holders (token list + Delegation card), Core Team (multisig members), and one tab per Safe (owners, with
+// the Safe settings aside). The toggle is state: it switches the list and the aside card, and the count under the list follows. The list items are
+// written out one per line at column 0 (the kit pagination counts direct children). Delegate: disconnected calls onConnect; connected opens
+// TxFlowDialog (simulated signing), and its success sets the Delegation button to the delegated state.
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  state = { body: 'tv', sel: 'YOURSELF', text: '', touched: false, txOpen: false, delegated: false };
+  setBody = (v) => { if (typeof v === 'string' && v) this.setState({ body: v }); };
+  resolved() {
+    const t = String(this.state.text || '').trim();
+    return /^0x[0-9a-fA-F]{40}$/.test(t) || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(t);
+  }
+  press = () => {
+    const connected = this.props.wallet === 'connected';
+    if (!connected) { if (typeof this.props.onConnect === 'function') this.props.onConnect(); return; }
+    if (this.state.sel === 'OTHER' && !this.resolved()) { this.setState({ touched: true }); return; }
+    this.setState({ txOpen: true });
+  };
+  renderVals() {
+    const s = this.state;
+    const connected = this.props.wallet === 'connected';
+    // the delegation done here (or on a member page) is kept in window.__nspDelegate, so it survives a trip to another page
+    const delegatedNow = s.delegated || (connected && !!window.__nspDelegate);
+    const isSelf = s.sel === 'YOURSELF';
+    const invalid = connected && s.touched && !isSelf && !this.resolved();
+    const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    return { noIndexing: false,
+      click: this.click, yes: true, no: false, chainId: 1, pageSize: 12, noSteps: [],
+      body: s.body, setBody: this.setBody,
+      asTabs: !this.props.scope, asDropdown: !!this.props.scope,
+      bodyLabel: { tv: 'NSP Token Holders', ms: 'Core Team', c: 'Safe 0x515f…02e2', g: 'Safe 0xf361…465e' }[s.body],
+      pick: { tv: () => this.setBody('tv'), ms: () => this.setBody('ms'), c: () => this.setBody('c'), g: () => this.setBody('g') },
+      is: { tv: s.body === 'tv', ms: s.body === 'ms', c: s.body === 'c', g: s.body === 'g' },
+      d0: 0, d3: 3, d6: 6, d9: 9, d17: 17, d28: 28, d41: 41,
+      tv: { count: 10, pluginLink: { href: 'https://etherscan.io/address/0x65bcf0e7d2a74d45fe702135d19f954d59658f36', isOnchainEntity: true }, launchLink: { href: 'https://etherscan.io/tx/0x3995ecdb4ac48b1d2129986ea48b2668d1fc8f8f4cb3fb59dad4f99f4e868c6e' } },
+      ms: { count: 3, pluginLink: { href: 'https://etherscan.io/address/0x566805a83e872e67a32d84596b81d16faa7ba6a2', isOnchainEntity: true }, launchLink: { href: 'https://etherscan.io/tx/0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f' } },
+      c: { count: 5, pluginLink: { href: 'https://etherscan.io/address/0x515fec2e8f6553948b1d57c14c1243a1405c02e2', isOnchainEntity: true }, launchLink: { href: 'https://etherscan.io/tx/0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f' }, conf: '3 of 5', nonce: '5' },
+      g: { count: 4, pluginLink: { href: 'https://etherscan.io/address/0xf361d5ca8adaa59365a6a6144db5fa7d0b4f465e', isOnchainEntity: true }, launchLink: { href: 'https://etherscan.io/tx/0x350264a8296d3b22cb75d8c310e9991fd9fab80bd18d85b9fa0148c3be5a955f' }, conf: '2 of 4', nonce: '1' },
+      sel: s.sel, isSelf, text: isSelf ? (connected ? '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a' : '') : s.text,
+      onSel: (v) => this.setState({ sel: v, text: '', touched: false }),
+      onText: (v) => this.setState({ text: v || '', touched: false }),
+      alert: invalid ? { message: 'Your delegation is invalid.', variant: 'critical' } : undefined,
+      inputVariant: invalid ? 'critical' : 'default',
+      delegate: (e) => { stop(e); this.press(); },
+      submitDelegate: (e) => { stop(e); this.press(); },
+      delegateLabel: delegatedNow ? 'Delegated' : 'Delegate NSP', delegateVariant: delegatedNow ? 'secondary' : 'primary', delegateDisabled: !!delegatedNow,
+      txOpen: s.txOpen, closeTx: () => this.setState({ txOpen: false }),
+      txDone: () => { window.__nspDelegate = this.state.sel === 'YOURSELF' ? '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a' : String(this.state.text || '').trim().toLowerCase(); this.setState({ txOpen: false, delegated: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

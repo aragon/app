@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create Safe transaction dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="{{title}}" hidden-description="{{hiddenDescription}}">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="{{title}}" on-close="{{dismiss}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" description="{{description}}">
+    <div class="sf-dialog-body">
+      <sc-if value="{{status}}" hint-placeholder-val="{{false}}">
+        <p class="sf-status">{{status}}</p>
+      </sc-if>
+      <sc-if value="{{showContent}}" hint-placeholder-val="{{true}}">
+        <dc-import name="SafeFlowReviewContent" tx="{{tx}}" hint-size="100%,300px"></dc-import>
+      </sc-if>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tx":{"editor":null},"rejection":{"editor":null},"onCancel":{"editor":null},"onDone":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// The app's SafeCreateTransactionDialog (apps/app: modules/safe/dialogs/safeCreateTransactionDialog): "Create Safe transaction", the review
+// content of the transaction built from the wizard's actions (SafeFlowReviewContent), and a footer with "Sign and create" + "Close".
+// PART of SafeTransactionFlow. Props: tx (the Safe transaction as SafeFlowReviewContent reads it), onCancel() (Close, X, Escape before the
+// transaction is created: back to the wizard), onDone() (Done, or X / Close after success: the wizard leaves).
+// Sequence (state `phase`): loading "Preparing the Safe transaction…" ~0.6 s -> ready -> "Sign and create" -> signing "Creating the Safe
+// transaction…" ~1.6 s with the simulated owner signature (dismiss blocked) -> success "Safe transaction created. It is queued on the Safe and
+// waits for the other owners' approvals." (the Safe's threshold is 3) with Done.
+// Rejection mode (WsTransactions, "Reject transaction"): prop `rejection` (an object, e.g. { nonce: 5 }; absent = the create dialog above, unchanged) is the app's
+// SafeCreateTransactionDialog with rejectedNonce: title "Reject Safe transaction", the rejection description, button "Sign rejection", success "Rejection signed. It is
+// queued on the Safe. Once it has enough approvals, execute it from the transactions list to reject the transaction." The `tx` it reviews is the empty call on that nonce.
+// The Safe's threshold is 3, so only the `created` success text applies; the threshold-1 text ("Rejection signed and queued on the Safe. Execute it from the transactions
+// list to reject the transaction.") and the "nonce already used" error are not drawn.
+// Source-only: no screenshot exists. Not drawn: the wallet-connection and network-switch steps, signature rejected, queue changed (rebuild),
+// uncertain / re-check and error states.
+class Component extends DCLogic {
+  state = { phase: 'loading' };
+  timers = [];
+  componentDidMount() { this.later(() => this.setState({ phase: 'ready' }), 600); }
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+  run = () => {
+    this.setState({ phase: 'signing' });
+    this.later(() => this.setState({ phase: 'success' }), 1600);
+  };
+  dismiss = () => {
+    const ph = this.state.phase;
+    if (ph === 'signing') return;
+    const fn = ph === 'success' ? this.props.onDone : this.props.onCancel;
+    if (typeof fn === 'function') fn();
+  };
+  renderVals() {
+    const ph = this.state.phase;
+    const rej = !!this.props.rejection;
+    const status = {
+      loading: 'Preparing the Safe transaction…',
+      signing: 'Creating the Safe transaction…',
+      success: rej
+        ? 'Rejection signed. It is queued on the Safe. Once it has enough approvals, execute it from the transactions list to reject the transaction.'
+        : "Safe transaction created. It is queued on the Safe and waits for the other owners' approvals.",
+    }[ph] || '';
+    let primary;
+    if (ph === 'ready') primary = { label: rej ? 'Sign rejection' : 'Sign and create', onClick: this.run };
+    else if (ph === 'success') primary = { label: 'Done', onClick: this.dismiss };
+    return {
+      yes: true, tx: this.props.tx || {}, status, primary,
+      title: rej ? 'Reject Safe transaction' : 'Create Safe transaction',
+      hiddenDescription: rej ? 'Review the rejection, then sign it' : 'Review the exact Safe transaction, then sign it',
+      description: rej
+        ? 'A rejection is an empty Safe transaction on the same nonce as the one it rejects. Review it, then sign it. Once it has enough approvals and is executed, the rejected transaction can never be executed.'
+        : "Review the exact Safe transaction, then sign it to queue it on the Safe for the other owners' approvals.",
+      showContent: ph !== 'loading',
+      secondary: { label: 'Close', onClick: this.dismiss, disabled: ph === 'signing' },
+      dismiss: this.dismiss,
+      openChange: (o) => { if (!o) this.dismiss(); },
+      noFocus: (e) => e.preventDefault(),
+    };
+  }
+}
+</script>
+</body>
+</html>

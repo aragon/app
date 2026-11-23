@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO settings page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Settings</x-import>
+          </header>
+
+          <div class="page-section">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Account</x-import>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Blockchain">
+                  <div class="settings-info__value">
+                    <p class="text-neutral-500">Ethereum</p>
+                    <p class="settings-info__note">Not changeable</p>
+                  </div>
+                </x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ENS name" copy-value="0xc8c322384903ee8f11f511b71d0504237886bcde" description="Not changeable" link="{{daoLink}}" children="meridian.dao.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Summary">
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{four}}"><p class="text-neutral-500">Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance.</p></x-import>
+                </x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Links">
+                  <div class="settings-info__links">
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.meridian.xyz" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/meridianproto" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+                    <x-import component-from-global-scope="GovUiKit.Link" href="https://discord.gg/meridian" is-external="{{yes}}" show-url="{{yes}}">Discord</x-import>
+                  </div>
+                </x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Permissions" description="Get an overview of all permissions related to this account and its actors" link="{{permissionsLink}}" children="View all permissions"></x-import>
+              </x-import>
+            </x-import>
+          </div>
+
+          <div class="page-section page-section--compact" id="governance">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS" href="CreateProcessFlow.dc.html">Process</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DataList.Item" href="#nav:process:mgp" class-name="px-4 py-3 md:p-6">
+              <div class="process-item">
+                <div class="process-item__title">
+                  <p class="process-item__name">Meridian Token Voting</p>
+                  <p class="process-item__key">mgp</p>
+                </div>
+                <p class="process-item__description">Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.</p>
+              </div>
+            </x-import>
+          </div>
+
+          <div class="page-section page-section--compact">
+            <div class="page-section__header">
+              <div class="page-section__title">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Automation</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS">Policy</x-import>
+            </div>
+          </div>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contracts</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Operating system" description="Aragon OSx v1.4.0" link="{{osLink}}" children="0xc8c322384903ee8f11f511b71d0504237886bcde"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Meridian Token Voting" description="Token Voting v1.3" link="{{pluginLink}}" children="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda"></x-import>
+            </x-import>
+            <div class="update-contracts">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="RELOAD">Upgrade contracts</x-import>
+              <p class="update-contracts__text">There are updates available for Aragon OSx and its plugin contracts.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// Props: onNav(target), wallet, onConnect(). Permissions item -> permissions page; process row -> process:mgp; + Process -> CreateProcessFlow.dc.html.
+// DAO settings (apps/app: modules/settings/pages/daoSettingsPage/daoSettingsPageClient.tsx). linkedAccount flag on, so
+// the Account section is DaoHierarchy (a Card with DaoInfo; Meridian has no linked accounts); Automation is shown
+// (capitalFlowAutomation on) with no policies. Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
+// Process item: shared/components/processDataListItem. Mock data: design/baseline-check/data.cjs (Meridian DAO).
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    return {
+      click: this.click,
+      yes: true,
+      four: 4,
+      daoLink: { href: 'https://etherscan.io/address/0xc8c322384903ee8f11f511b71d0504237886bcde', isExternal: true, isOnchainEntity: true },
+      permissionsLink: { href: '#nav:permissions', isExternal: false },
+      osLink: { href: 'https://etherscan.io/address/0xc8c322384903ee8f11f511b71d0504237886bcde', isExternal: false, isOnchainEntity: true },
+      pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

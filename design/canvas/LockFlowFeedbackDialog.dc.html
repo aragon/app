@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Submit vote feedback dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Submit vote" hidden-description="Submit your vote or lock more tokens.">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <x-import component-from-global-scope="GovUiKit.EmptyState" heading="{{heading}}" description="{{description}}" object-illustration="{{illustration}}" primary-button="{{primary}}" secondary-button="{{secondary}}"></x-import>
+  </x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"symbol":{"editor":"text","default":"ORB"},"locked":{"editor":"float","default":0},"canVote":{"editor":"boolean","default":true},"on-lock":{"editor":null},"on-vote":{"editor":null},"on-close":{"editor":null},"$preview":{"width":480,"height":420}}'>
+// SUBMIT_VOTE_FEEDBACK (plugins/lockToVotePlugin/dialogs/lockToVoteSubmitVoteFeedbackDialog): shown when the user submits a vote while
+// still holding unlocked tokens. No locked tokens: "You have no voting power" (Lock now / Cancel). Locked tokens: "You have unlocked tokens"
+// (Lock now / Proceed to vote when the user may vote). Props: symbol, locked, canVote, on-lock(), on-vote(), on-close(). Mount only while open.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const sym = p.symbol || 'ORB';
+    const hasPower = (Number(p.locked) || 0) > 0;
+    const canVote = p.canVote === undefined ? true : !!p.canVote;
+    const call = (f) => () => { if (typeof f === 'function') f(); };
+    const close = call(p.onClose);
+    return {
+      yes: true,
+      heading: hasPower ? 'You have unlocked tokens' : 'You have no voting power',
+      description: hasPower ? 'Lock more ' + sym + ' to increase your voting power.' : 'Lock ' + sym + ' in order to be able to vote.',
+      illustration: { object: hasPower ? 'WALLET' : 'USERS' },
+      primary: { label: 'Lock now', onClick: call(p.onLock) },
+      secondary: hasPower && canVote ? { label: 'Proceed to vote', onClick: call(p.onVote) } : { label: 'Cancel', onClick: close },
+      noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

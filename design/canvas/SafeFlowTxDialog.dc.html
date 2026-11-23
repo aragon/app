@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Safe approve or execute dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Review Safe transaction" hidden-description="Approve or execute the Safe transaction">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Review Safe transaction" on-close="{{dismiss}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" description="Review the exact Safe transaction before approving or executing it.">
+    <div class="sf-dialog-body">
+      <sc-if value="{{status}}" hint-placeholder-val="{{false}}">
+        <p class="sf-status">{{status}}</p>
+      </sc-if>
+      <sc-if value="{{showContent}}" hint-placeholder-val="{{true}}">
+        <dc-import name="SafeFlowReviewContent" tx="{{tx}}" hint-size="100%,300px"></dc-import>
+      </sc-if>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"tx":{"editor":null},"mode":{"editor":"enum","options":["approve","execute"],"default":"approve"},"onCancel":{"editor":null},"onApplied":{"editor":null},"onDone":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// The app's own SafeTransactionDialog (apps/app: modules/safe/dialogs/safeTransactionDialog): "Review Safe transaction", the review
+// content, and a footer with Approve transaction / Execute + Cancel. Simulated wallet, no chain. Props:
+//   open, tx (entry derived by SafeFlow), mode ('approve' | 'execute', fixed by the flow when it opens the dialog),
+//   onCancel() (Cancel, X, Escape: back to the review), onApplied() (called once when the signature / execution succeeded: the flow
+//   adds the confirmation or marks the transaction executed), onDone() (the Done button).
+// Sequence (state `phase`, restarted on every open): loading "Preparing the Safe transaction…" ~0.6 s -> ready -> primary click ->
+// signing "Approving the Safe transaction…" / executing "Executing the Safe transaction…" ~1.6 s (dismiss blocked) -> success
+// "Your approval was added to the Safe transaction." / "Safe transaction executed successfully." with Done.
+// Source-only: every state (no screenshot exists); the error, uncertain, rejected-in-wallet and re-check states are not drawn.
+class Component extends DCLogic {
+  state = { phase: 'loading' };
+  timers = [];
+  componentDidMount() { if (this.props.open) this.start(); }
+  componentDidUpdate(prev) {
+    if (prev.open !== this.props.open) {
+      if (this.props.open) this.start();
+      else { this.clear(); this.later(() => this.setState({ phase: 'loading' }), 400); }
+    }
+  }
+  componentWillUnmount() { this.clear(); }
+  clear() { this.timers.forEach((t) => clearTimeout(t)); this.timers = []; }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+  start() {
+    this.clear();
+    this.setState({ phase: 'loading' });
+    this.later(() => this.setState({ phase: 'ready' }), 600);
+  }
+  run = () => {
+    this.clear();
+    this.setState({ phase: this.props.mode === 'execute' ? 'executing' : 'signing' });
+    this.later(() => {
+      this.setState({ phase: 'success' });
+      if (typeof this.props.onApplied === 'function') this.props.onApplied();
+    }, 1600);
+  };
+  cancel = () => {
+    const ph = this.state.phase;
+    if (ph === 'signing' || ph === 'executing') return;
+    if (typeof this.props.onCancel === 'function') this.props.onCancel();
+  };
+  done = () => { if (typeof this.props.onDone === 'function') this.props.onDone(); };
+  renderVals() {
+    const p = this.props;
+    const phase = this.state.phase;
+    const execute = p.mode === 'execute';
+    const status = {
+      loading: 'Preparing the Safe transaction…',
+      signing: 'Approving the Safe transaction…',
+      executing: 'Executing the Safe transaction…',
+      success: execute ? 'Safe transaction executed successfully.' : 'Your approval was added to the Safe transaction.'
+    }[phase] || '';
+    let primary;
+    if (phase === 'ready') primary = { label: execute ? 'Execute' : 'Approve transaction', onClick: this.run };
+    else if (phase === 'success') primary = { label: 'Done', onClick: this.done };
+    const hasDismiss = phase !== 'success';
+    return {
+      isOpen: p.open === undefined ? true : !!p.open,
+      tx: p.tx || {},
+      status, primary,
+      showContent: phase !== 'loading',
+      secondary: hasDismiss ? { label: 'Cancel', onClick: this.cancel, disabled: phase === 'signing' || phase === 'executing' } : undefined,
+      dismiss: this.cancel,
+      openChange: (o) => { if (!o) this.cancel(); },
+      noFocus: (e) => e.preventDefault()
+    };
+  }
+}
+</script>
+</body>
+</html>
