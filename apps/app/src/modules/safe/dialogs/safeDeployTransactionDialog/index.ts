@@ -6,7 +6,7 @@ export const SafeDeployTransactionDialog = dynamic(() =>
     ),
 );
 export type {
-    ISafeDeployedSafe,
+    ISafeDeployTransactionDialogCreatedSafe,
     ISafeDeployTransactionDialogParams,
     ISafeDeployTransactionDialogProps,
 } from './safeDeployTransactionDialog';

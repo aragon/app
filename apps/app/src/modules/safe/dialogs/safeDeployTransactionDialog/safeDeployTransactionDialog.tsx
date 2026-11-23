@@ -23,9 +23,18 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { safeDeploymentUtils } from '../../utils/safeDeploymentUtils';
 
-export interface ISafeDeployedSafe {
+export interface ISafeDeployTransactionDialogCreatedSafe {
+    /**
+     * Network the Safe is deployed on.
+     */
     network: Network;
+    /**
+     * Address of the deployed Safe.
+     */
     address: string;
+    /**
+     * IPFS URI of the Safe logo, when one was uploaded.
+     */
     avatarUri?: string;
 }
 
@@ -51,7 +60,7 @@ export interface ISafeDeployTransactionDialogParams {
     /**
      * Called when the user finishes the confirmed deployment.
      */
-    onCreated: (safe: ISafeDeployedSafe) => void;
+    onCreated: (safe: ISafeDeployTransactionDialogCreatedSafe) => void;
 }
 
 export interface ISafeDeployTransactionDialogProps
