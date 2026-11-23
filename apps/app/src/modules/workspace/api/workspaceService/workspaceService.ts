@@ -481,6 +481,20 @@ class WorkspaceService {
     ): Promise<IWorkspace[]> => {
         const target = this.getPersistentStorage();
         const imported = parseWorkspaceRegistry(rawRegistry);
+        // A demo ID would be listed here but read from the demo registry, so it could never be opened. Checked here
+        // and not in the parser, which also loads the demo fixture.
+        const demoIds = Object.keys(imported).filter(
+            (id) =>
+                workspaceUtils.getRegistryScope(id) ===
+                WorkspaceRegistryScope.DEMO,
+        );
+
+        if (demoIds.length > 0) {
+            throw new Error(
+                `The registry uses reserved demo IDs: ${demoIds.join(', ')}.`,
+            );
+        }
+
         const workspaces = merge
             ? { ...this.getStoredWorkspaces(target), ...imported }
             : imported;

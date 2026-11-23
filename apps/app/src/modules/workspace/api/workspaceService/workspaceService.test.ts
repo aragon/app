@@ -423,6 +423,26 @@ describe('workspace service', () => {
             );
         });
 
+        it('rejects a registry using a demo ID and leaves the stored one in place', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+            const registry = {
+                'aragon-demo': {
+                    ...buildBody({ name: 'Demo' }),
+                    id: 'aragon-demo',
+                },
+            };
+
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    JSON.stringify(registry),
+                    true,
+                ),
+            ).rejects.toThrow('aragon-demo');
+            expect(getStoredWorkspaces()).toEqual({ [existing.id]: existing });
+        });
+
         it('repairs links saved without a protocol, so an older export re-imports', async () => {
             // Exports before the repair kept whatever the resources input accepted, which may lack a scheme.
             const registry = {
