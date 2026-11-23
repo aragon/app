@@ -134,7 +134,7 @@ export const WorkspaceAccountSelector: React.FC<
     };
 
     const accountAvatars = options
-        .filter((option) => !option.isAllAccounts)
+        .filter((option) => !option.isAllAccounts && !option.isExternal)
         .map((option) => (
             <DaoAvatar
                 key={option.id}
@@ -142,21 +142,20 @@ export const WorkspaceAccountSelector: React.FC<
                 src={getOptionAvatar(option)}
             />
         ));
-    // The trigger lets the stack size itself to its slot; the menu pins it to the size of the account rows.
-    const renderAllAccountsAvatar = (size?: AvatarSize) =>
+    // Both the trigger and menu reserve the same width for the auto-sized stack; only the fallback size varies.
+    const renderAllAccountsAvatar = (fallbackSize: AvatarSize = 'md') =>
         accountAvatars.length > 0 ? (
             <AvatarStack
                 aria-hidden={true}
                 avatars={accountAvatars}
                 className="shrink-0"
-                size={size}
             />
         ) : (
             <DaoAvatar
                 aria-hidden={true}
                 className="shrink-0"
                 name={workspace?.name}
-                size={size ?? 'md'}
+                size={fallbackSize}
                 src={ipfsUtils.cidToSrc(workspace?.avatar)}
             />
         );
@@ -217,16 +216,18 @@ export const WorkspaceAccountSelector: React.FC<
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is
                      * allowed here. */}
                     <span className="flex min-w-0 items-center gap-3">
-                        {option.isAllAccounts ? (
-                            renderAllAccountsAvatar('sm')
-                        ) : (
-                            <DaoAvatar
-                                className="shrink-0"
-                                name={option.label}
-                                size="sm"
-                                src={getOptionAvatar(option)}
-                            />
-                        )}
+                        <span className="flex w-11 shrink-0 items-center">
+                            {option.isAllAccounts ? (
+                                renderAllAccountsAvatar('sm')
+                            ) : (
+                                <DaoAvatar
+                                    className="shrink-0"
+                                    name={option.label}
+                                    size="sm"
+                                    src={getOptionAvatar(option)}
+                                />
+                            )}
+                        </span>
                         <span className="flex min-w-0 flex-col leading-tight">
                             <span className="truncate">{option.label}</span>
                             {option.account != null &&
@@ -251,12 +252,20 @@ export const WorkspaceAccountSelector: React.FC<
                     </span>
                 </Dropdown.Item>
             ))}
-            <Dropdown.Item
-                href={addAccountUrl}
-                icon={IconType.PLUS}
-                iconPosition="left"
-            >
-                {t('app.workspace.workspaceAccountSelector.addAccount')}
+            <Dropdown.Item href={addAccountUrl}>
+                <span className="flex min-w-0 items-center gap-3">
+                    <span className="flex w-11 shrink-0 items-center">
+                        <Icon
+                            aria-hidden={true}
+                            className="text-neutral-300"
+                            icon={IconType.PLUS}
+                            size="md"
+                        />
+                    </span>
+                    <span className="truncate">
+                        {t('app.workspace.workspaceAccountSelector.addAccount')}
+                    </span>
+                </span>
             </Dropdown.Item>
         </Dropdown.Container>
     );

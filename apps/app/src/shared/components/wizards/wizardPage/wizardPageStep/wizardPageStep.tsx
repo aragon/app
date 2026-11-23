@@ -49,6 +49,7 @@ export interface IWizardPageStepProps extends IWizardStepProps {
     disableNext?: boolean;
     /**
      * Hides the right caret on the next or submit button.
+     * @default false
      */
     hideNextIcon?: boolean;
     /**

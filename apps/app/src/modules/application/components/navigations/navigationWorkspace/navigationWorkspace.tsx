@@ -179,12 +179,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                         </span>
                     </button>
                     {workspace != null ? (
-                        <Wallet
-                            // Rectangular once the handle shows next to the avatar (md+), a circle below.
-                            className="md:rounded-xl md:[&>button]:rounded-xl"
-                            onClick={handleWalletClick}
-                            user={walletUser}
-                        />
+                        <Wallet onClick={handleWalletClick} user={walletUser} />
                     ) : null}
                 </div>
                 <Navigation.Dialog

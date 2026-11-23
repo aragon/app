@@ -1,8 +1,22 @@
+import { Button, type IButtonProps, IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { generateWizardContext } from '@/shared/testUtils';
 import * as Wizard from '../../wizard';
 import { type IWizardPageStepProps, WizardPageStep } from './wizardPageStep';
+
+jest.mock('@aragon/gov-ui-kit', () => {
+    const actual =
+        jest.requireActual<typeof import('@aragon/gov-ui-kit')>(
+            '@aragon/gov-ui-kit',
+        );
+
+    return {
+        ...actual,
+        // Observe the step's icon choice while keeping the real button rendered.
+        Button: jest.fn((props: IButtonProps) => <actual.Button {...props} />),
+    };
+});
 
 jest.mock('../../wizard', () => ({
     useWizardContext: jest.fn(),
@@ -17,6 +31,7 @@ describe('<WizardPageStep /> component', () => {
     const useWizardFooterSpy = jest.spyOn(Wizard, 'useWizardFooter');
 
     beforeEach(() => {
+        jest.mocked(Button).mockClear();
         useWizardContextSpy.mockReturnValue(generateWizardContext());
         useWizardFooterSpy.mockReturnValue({} as Wizard.IUseWizardFooterReturn);
     });
@@ -95,18 +110,33 @@ describe('<WizardPageStep /> component', () => {
         ).toContain('invisible');
     });
 
-    it('renders a submit button to submit the values of the current step', () => {
-        const submitLabel = 'Save';
-        useWizardFooterSpy.mockReturnValue({
-            submitLabel,
-        } as Wizard.IUseWizardFooterReturn);
-        render(createTestComponent());
-        const button = screen.getByRole<HTMLButtonElement>('button', {
-            name: submitLabel,
-        });
-        expect(button).toBeInTheDocument();
-        expect(button.type).toEqual('submit');
-    });
+    it.each([
+        { hideNextIcon: undefined, iconRight: IconType.CHEVRON_RIGHT },
+        { hideNextIcon: false, iconRight: IconType.CHEVRON_RIGHT },
+        { hideNextIcon: true, iconRight: undefined },
+    ])(
+        'renders the submit button with hideNextIcon=$hideNextIcon',
+        ({ hideNextIcon, iconRight }) => {
+            const submitLabel = 'Save';
+            useWizardFooterSpy.mockReturnValue({
+                submitLabel,
+            } as Wizard.IUseWizardFooterReturn);
+            render(createTestComponent({ hideNextIcon }));
+            const button = screen.getByRole<HTMLButtonElement>('button', {
+                name: submitLabel,
+            });
+            expect(button).toBeInTheDocument();
+            expect(button.type).toEqual('submit');
+            expect(Button).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    children: submitLabel,
+                    iconRight,
+                    type: 'submit',
+                }),
+                undefined,
+            );
+        },
+    );
 
     it('renders a submit help text when provided', () => {
         const submitHelpText = 'Some useful help text';

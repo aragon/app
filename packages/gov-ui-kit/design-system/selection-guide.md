@@ -1813,7 +1813,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **Usage notes**
 
-- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.
+- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states use rounded rectangular buttons from `md` upward.
 - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`.
 
 **Use when**
@@ -1827,7 +1827,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **References**
 
-- `kit:src/modules/components/wallet/wallet.tsx:30`
+- `kit:src/modules/components/wallet/wallet.tsx:31`
 - `kit:src/modules/components/wallet/wallet.stories.tsx:1`
 
 ## Compound components

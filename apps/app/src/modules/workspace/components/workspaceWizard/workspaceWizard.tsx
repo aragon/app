@@ -36,6 +36,7 @@ export interface IWorkspaceWizardProps {
     secondaryActions?: Partial<Record<WorkspaceWizardStep, ReactNode>>;
     /**
      * Hides the right caret on the wizard's next and submit buttons.
+     * @default false
      */
     hideNextIcon?: boolean;
     /**

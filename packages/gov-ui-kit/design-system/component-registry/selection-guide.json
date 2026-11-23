@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "cb7752a87062b7f953ef06eb577cda3949ad637d4bbbd2c03ae16bc8d25b3c36",
+            "sha256": "90f5f3f8f04d13189f4c0b6f7a4ea91a3f30a08f19d5ae2e3843317ef5766258",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -3796,7 +3796,7 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
+                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states use rounded rectangular buttons from `md` upward.",
                 "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
             ],
             "constraints": [
@@ -3805,7 +3805,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/wallet/wallet.tsx:30",
+                "source": "kit:src/modules/components/wallet/wallet.tsx:31",
                 "stories": [
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ]

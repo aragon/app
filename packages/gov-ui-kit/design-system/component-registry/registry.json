@@ -6,9 +6,9 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "297dfd8ceef31a225b4f0613b525b84bc6249a80",
+            "commit": "c94d17c8f69f14afc5f72e500141cb3389546577",
             "dirty": [
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx"
+                "packages/gov-ui-kit/src/modules/components/wallet/wallet.tsx"
             ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -21640,7 +21640,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
                 "line": 10,
-                "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
             },
             "props": [],
             "stories": [
@@ -32352,15 +32352,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
-                "line": 30,
-                "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                "line": 31,
+                "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.tsx",
                     "line": 10,
-                    "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                    "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                 }
             ],
             "stories": [
@@ -32381,7 +32381,7 @@
             ],
             "docs": [],
             "usageNotes": [
-                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
+                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states use rounded rectangular buttons from `md` upward.",
                 "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
             ],
             "intent": {
@@ -32413,20 +32413,20 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
-                        "line": 30,
-                        "sha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d"
+                        "line": 31,
+                        "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "line": 10,
-                        "sha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d"
+                        "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "line": 14,
-                        "sha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d"
+                        "sha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
@@ -32445,23 +32445,23 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
-                        "status": "changed",
-                        "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "status": "current",
+                        "expectedSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df",
+                        "actualSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
-                        "status": "changed",
-                        "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "status": "current",
+                        "expectedSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df",
+                        "actualSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
-                        "status": "changed",
-                        "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "status": "current",
+                        "expectedSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df",
+                        "actualSha256": "474b77cf4d6b522a2e057df36759195e7c0885c6306f797dc662bb3428ed75df"
                     },
                     {
                         "repository": "kit",
@@ -32483,7 +32483,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": true
+                "stale": false
             }
         }
     ]

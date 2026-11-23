@@ -559,5 +559,46 @@ describe('<WorkspaceAccountSelector /> component', () => {
                 await within(externalItem).findByRole('img'),
             ).toHaveAttribute('src', 'https://ipfs/external-cid');
         });
+
+        it('excludes the external account avatar from All accounts', async () => {
+            stubImageLoading();
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            await waitFor(() =>
+                expect(
+                    within(allAccountsItem)
+                        .getAllByRole('img', { hidden: true })
+                        .map((avatar) => avatar.getAttribute('src')),
+                ).toEqual(['https://ipfs/dao-cid']),
+            );
+        });
+
+        it('uses the workspace avatar for All accounts when only an external account exists', async () => {
+            stubImageLoading();
+            getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
+            mockAccountOptions({
+                options: [allAccountsOption, externalOption],
+                accountId: externalOption.id,
+                activeOption: externalOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            expect(
+                await within(allAccountsItem).findByRole('img', {
+                    hidden: true,
+                }),
+            ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
+        });
     });
 });
