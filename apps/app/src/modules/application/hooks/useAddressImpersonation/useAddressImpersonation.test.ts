@@ -1,6 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import * as wagmi from 'wagmi';
+import * as wagmiActions from 'wagmi/actions';
 import * as wagmiConnectors from 'wagmi/connectors';
 import type { IDebugContext } from '@/shared/components/debugProvider';
 import * as debugProvider from '@/shared/components/debugProvider';
@@ -17,8 +18,19 @@ describe('useAddressImpersonation', () => {
 
     const useConnectSpy = jest.spyOn(wagmi, 'useConnect');
     const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
-    const mockSpy = jest.spyOn(wagmiConnectors, 'mock');
+    const mockConnectorType = wagmiConnectors.mock.type;
+    // The spy replaces the connector factory, so its static `type` is restored for the hook to compare against.
+    const mockSpy = Object.assign(jest.spyOn(wagmiConnectors, 'mock'), {
+        type: mockConnectorType,
+    });
+    const useConfigSpy = jest.spyOn(wagmi, 'useConfig');
+    const getConnectionSpy = jest.spyOn(wagmiActions, 'getConnection');
     const useDebugContextSpy = jest.spyOn(debugProvider, 'useDebugContext');
+
+    const mockConnectedType = (type?: string) =>
+        getConnectionSpy.mockReturnValue({
+            connector: type == null ? undefined : { type },
+        } as unknown as ReturnType<typeof wagmiActions.getConnection>);
 
     const createDebugContext = (
         values: Record<string, unknown> = {},
@@ -40,6 +52,8 @@ describe('useAddressImpersonation', () => {
         } as unknown as wagmi.UseDisconnectReturnType);
 
         mockSpy.mockReturnValue(mockConnector as never);
+        useConfigSpy.mockReturnValue({} as wagmi.Config);
+        mockConnectedType(undefined);
         useDebugContextSpy.mockReturnValue(createDebugContext());
     });
 
@@ -47,6 +61,8 @@ describe('useAddressImpersonation', () => {
         useConnectSpy.mockReset();
         useDisconnectSpy.mockReset();
         mockSpy.mockReset();
+        useConfigSpy.mockReset();
+        getConnectionSpy.mockReset();
         mockConnectAsync.mockReset();
         mockDisconnectAsync.mockReset();
         mockRegisterControl.mockReset();
@@ -106,7 +122,8 @@ describe('useAddressImpersonation', () => {
         });
     });
 
-    it('does not disconnect the connected wallet when onChange fires with undefined without impersonation', async () => {
+    it('does not disconnect a real wallet when onChange fires with undefined', async () => {
+        mockConnectedType('injected');
         renderHook(() => useAddressImpersonation());
 
         const addressControl = mockRegisterControl.mock.calls[0][0];
@@ -117,16 +134,42 @@ describe('useAddressImpersonation', () => {
     });
 
     it('disconnects the impersonated address when onChange fires with undefined', async () => {
+        mockConnectedType(mockConnectorType);
+        renderHook(() => useAddressImpersonation());
+
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        await act(() => addressControl.onChange(undefined));
+
+        expect(mockDisconnectAsync).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not disconnect a real wallet connected after a failed address switch', async () => {
+        const otherAddress = '0x0000000000000000000000000000000000000001';
+        renderHook(() => useAddressImpersonation());
+
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        await act(() => addressControl.onChange(validAddress));
+        mockConnectAsync.mockRejectedValueOnce(new Error('connect failed'));
+        await act(() => addressControl.onChange(otherAddress));
+        mockDisconnectAsync.mockClear();
+
+        mockConnectedType('injected');
+        await act(() => addressControl.onChange(undefined));
+
+        expect(mockDisconnectAsync).not.toHaveBeenCalled();
+    });
+
+    it('does not disconnect a real wallet connected after the mock was disconnected elsewhere', async () => {
+        mockConnectedType(mockConnectorType);
         renderHook(() => useAddressImpersonation());
 
         const addressControl = mockRegisterControl.mock.calls[0][0];
         await act(() => addressControl.onChange(validAddress));
         mockDisconnectAsync.mockClear();
 
+        mockConnectedType('injected');
         await act(() => addressControl.onChange(undefined));
-        expect(mockDisconnectAsync).toHaveBeenCalledTimes(1);
 
-        await act(() => addressControl.onChange(undefined));
-        expect(mockDisconnectAsync).toHaveBeenCalledTimes(1);
+        expect(mockDisconnectAsync).not.toHaveBeenCalled();
     });
 });

@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 import type { Address } from 'viem';
-import { type UseConnectReturnType, useConnect, useDisconnect } from 'wagmi';
+import {
+    type UseConnectReturnType,
+    useConfig,
+    useConnect,
+    useDisconnect,
+} from 'wagmi';
+import { getConnection } from 'wagmi/actions';
 import { mock } from 'wagmi/connectors';
 import { useDebugContext } from '@/shared/components/debugProvider';
 
@@ -19,14 +25,12 @@ const connectMock = async (
 
 export const useAddressImpersonation = () => {
     const { registerControl, unregisterControl } = useDebugContext();
+    const config = useConfig();
     const { connectAsync } = useConnect();
     const { disconnectAsync } = useDisconnect();
 
     const connectRef = useRef(connectAsync);
     const disconnectRef = useRef(disconnectAsync);
-
-    // The address input reports an empty value on mount; disconnecting then would drop a real wallet.
-    const isImpersonatingRef = useRef(false);
 
     connectRef.current = connectAsync;
     disconnectRef.current = disconnectAsync;
@@ -47,9 +51,11 @@ export const useAddressImpersonation = () => {
                             connectRef.current,
                             address,
                         );
-                        isImpersonatingRef.current = true;
-                    } else if (isImpersonatingRef.current) {
-                        isImpersonatingRef.current = false;
+                    } else if (
+                        getConnection(config).connector?.type === mock.type
+                    ) {
+                        // The input reports an empty value on mount, so only the mock is dropped, never a real
+                        // wallet. Read on clear, so a failed switch or a disconnect from the wallet UI counts too.
                         await disconnectRef.current();
                     }
                 } catch {
@@ -61,5 +67,5 @@ export const useAddressImpersonation = () => {
         return () => {
             unregisterControl(ADDRESS_CONTROL);
         };
-    }, [registerControl, unregisterControl]);
+    }, [registerControl, unregisterControl, config]);
 };
