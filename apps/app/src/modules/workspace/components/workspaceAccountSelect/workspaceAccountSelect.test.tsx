@@ -488,10 +488,9 @@ describe('<WorkspaceAccountSelect /> component', () => {
         render(createTestComponent({ value: [deployed] }));
 
         expect(getCheckbox(/Deployed DAO/)).toBeChecked();
-        expect(await screen.findByRole('img')).toHaveAttribute(
-            'src',
-            ipfsUtils.cidToSrc('deployed-cid'),
-        );
+        expect(
+            await screen.findByRole('img', { name: 'avatar' }),
+        ).toHaveAttribute('src', ipfsUtils.cidToSrc('deployed-cid'));
     });
 
     it('shows the Safe logo for a selected Safe no suggestion holds', async () => {
