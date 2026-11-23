@@ -122,27 +122,40 @@ export const SafeDeployTransactionDialog: React.FC<
         }
     };
 
-    const steps = stepper.steps.map((step) =>
-        step.id === TransactionDialogStep.CONFIRM &&
-        step.meta.state === 'success'
-            ? {
-                  ...step,
-                  meta: {
-                      ...step.meta,
-                      state: addressRead?.status ?? 'pending',
-                      errorLabel:
-                          addressRead?.status === 'error'
-                              ? t(`${translationKey}.addressError`)
-                              : step.meta.errorLabel,
-                      action:
-                          addressRead?.status === 'error'
-                              ? () =>
-                                    void handleReadAddress(addressRead.receipt)
-                              : undefined,
-                  },
-              }
-            : step,
-    );
+    // A confirmed transaction is not enough: the confirm step only succeeds once the Safe address is read.
+    const steps = stepper.steps.map((step) => {
+        const isConfirmed =
+            step.id === TransactionDialogStep.CONFIRM &&
+            step.meta.state === 'success';
+
+        if (!isConfirmed) {
+            return step;
+        }
+
+        if (addressRead?.status === 'error') {
+            const retryReadAddress = () =>
+                void handleReadAddress(addressRead.receipt);
+
+            return {
+                ...step,
+                meta: {
+                    ...step.meta,
+                    state: 'error' as const,
+                    errorLabel: t(`${translationKey}.addressError`),
+                    action: retryReadAddress,
+                },
+            };
+        }
+
+        return {
+            ...step,
+            meta: {
+                ...step.meta,
+                state: addressRead?.status ?? 'pending',
+                action: undefined,
+            },
+        };
+    });
 
     const handleCreated = (receipt: TransactionReceipt) => {
         invariant(
