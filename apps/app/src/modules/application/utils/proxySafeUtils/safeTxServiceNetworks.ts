@@ -4,14 +4,18 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 /**
  * Chain short names used by the Safe transaction service, keyed by app network. Networks absent
- * from this map are not served by Safe (Citrea, Chiliz) — a first-class "unsupported" state, not
- * a failure. This module holds no secrets and is safe to import from client code.
+ * from this map are not served by Safe (Citrea, Chiliz, BNB Testnet, Hoodi, Polygon Amoy) — a
+ * first-class "unsupported" state, not a failure. This module holds no secrets and is safe to
+ * import from client code.
+ *
+ * Source: https://docs.safe.global/core-api/transaction-service-supported-networks
  */
 export const safeTxServiceShortNames: Partial<Record<Network, string>> = {
     [Network.ETHEREUM_MAINNET]: 'eth',
     [Network.ETHEREUM_SEPOLIA]: 'sep',
     [Network.POLYGON_MAINNET]: 'pol',
     [Network.BASE_MAINNET]: 'base',
+    [Network.BASE_SEPOLIA]: 'basesep',
     [Network.ARBITRUM_MAINNET]: 'arb1',
     [Network.OPTIMISM_MAINNET]: 'oeth',
     [Network.AVAX_MAINNET]: 'avax',
@@ -19,6 +23,8 @@ export const safeTxServiceShortNames: Partial<Record<Network, string>> = {
     [Network.HEMI_MAINNET]: 'hemi',
     [Network.KATANA_MAINNET]: 'katana',
     [Network.MONAD_MAINNET]: 'monad',
+    [Network.ROBINHOOD_MAINNET]: 'robinhood',
+    [Network.BNB_MAINNET]: 'bnb',
 };
 
 /**
