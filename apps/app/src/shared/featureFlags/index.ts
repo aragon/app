@@ -6,3 +6,4 @@ export type {
     FeatureFlagSnapshot,
 } from './featureFlags.api';
 export { getEnvironment } from './utils/getEnvironment';
+export { getEnvironmentValue } from './utils/getEnvironmentValue';

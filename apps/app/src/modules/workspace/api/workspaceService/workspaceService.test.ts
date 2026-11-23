@@ -611,6 +611,49 @@ describe('workspace service', () => {
             });
         });
 
+        it('keeps the links of an account metadata', async () => {
+            const [account] = buildBody().accounts;
+            const accountWithLinks: IWorkspaceAccount = {
+                ...account,
+                type: WorkspaceAccountType.SAFE,
+                metadata: {
+                    name: 'Treasury',
+                    links: [{ name: 'Site', url: 'https://aragon.org' }],
+                },
+            };
+
+            const imported = await workspaceService.importWorkspace(
+                JSON.stringify({
+                    version: 1,
+                    workspace: buildBody({ accounts: [accountWithLinks] }),
+                }),
+            );
+
+            expect(imported.accounts).toEqual([accountWithLinks]);
+        });
+
+        it('rejects an account metadata link that is not a web URL', async () => {
+            const [account] = buildBody().accounts;
+            const accountWithBadLink = {
+                ...account,
+                metadata: {
+                    name: 'Treasury',
+                    links: [{ name: 'Site', url: 'javascript:alert(1)' }],
+                },
+            };
+
+            await expect(
+                workspaceService.importWorkspace(
+                    JSON.stringify({
+                        version: 1,
+                        workspace: buildBody({
+                            accounts: [accountWithBadLink],
+                        }),
+                    }),
+                ),
+            ).rejects.toThrow();
+        });
+
         it('never takes the ID of a demo workspace', async () => {
             const imported = await workspaceService.importWorkspace(
                 JSON.stringify({

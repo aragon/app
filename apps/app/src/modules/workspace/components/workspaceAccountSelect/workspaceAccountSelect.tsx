@@ -18,6 +18,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
+    useWorkspaceAccounts,
     WorkspaceAccountSuggestionRole,
 } from '../../api/workspaceQueryService';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
@@ -105,9 +106,6 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
     const isInWorkspace = (account: IWorkspaceAccount) =>
         workspaceAccounts.some((held) => isSameAccount(held, account));
 
-    // Read for their names and avatars, from the cache the workspace pages fill.
-    const { daos: workspaceDaos } = useWorkspaceDaos(workspaceAccounts);
-
     const suggestedOptions: IAccountOption[] = suggestions;
     // The latest of every suggestion seen, so a selected one a refetch drops keeps its name, avatar and note.
     // Compared by reference, which the query keeps for unchanged suggestions.
@@ -133,7 +131,7 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
                     isSameAccount(option.account, account),
                 ),
         )
-        .map((account) => ({ account, dao: workspaceDaos[account.id] }));
+        .map((account) => ({ account }));
     // Suggestions arrive ranked: accounts in the workspace go last, keeping that order, then the unsuggested ones.
     const rankedOptions = [
         ...suggestedOptions.filter(({ account }) => !isInWorkspace(account)),
@@ -150,23 +148,67 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
         ),
         ...rankedOptions,
     ];
+    const isListed = (account: IWorkspaceAccount) =>
+        listedOptions.some((option) => isSameAccount(option.account, account));
+    const isSeen = (account: IWorkspaceAccount) =>
+        seenOptions.some((option) => isSameAccount(option.account, account));
+    // Selected accounts never listed, e.g. one just created, stay listed once unticked, as added ones do.
+    const [keptAccounts, setKeptAccounts] = useState<IWorkspaceAccount[]>([]);
+    const newKeptAccounts = value.filter(
+        (account) =>
+            !(
+                isListed(account) ||
+                isSeen(account) ||
+                keptAccounts.some((kept) => isSameAccount(kept, account))
+            ),
+    );
+    if (newKeptAccounts.length > 0) {
+        setKeptAccounts([...keptAccounts, ...newKeptAccounts]);
+    }
+    const unlistedAccounts = [
+        ...value,
+        ...keptAccounts.filter((account) => !isSelected(account)),
+    ].filter((account) => !isListed(account));
+    // They are named by the accounts API, whatever their type.
+    const unseenAccounts = unlistedAccounts.filter(
+        (account) => !isSeen(account),
+    );
+    const { data: unseenInfos } = useWorkspaceAccounts(
+        {
+            body: {
+                accounts: unseenAccounts.map(({ network, address }) => ({
+                    network,
+                    address,
+                })),
+            },
+        },
+        { enabled: unseenAccounts.length > 0 },
+    );
     // A refetch can drop a selected account from the suggestions: it stays listed, first, so it can be unticked.
     const options: IAccountOption[] = [
-        ...value
-            .filter(
-                (account) =>
-                    !listedOptions.some((option) =>
-                        isSameAccount(option.account, account),
+        ...unlistedAccounts.map(
+            (account) =>
+                seenOptions.find((option) =>
+                    isSameAccount(option.account, account),
+                ) ?? {
+                    account,
+                    accountInfo: workspaceUtils.findAccountInfo(
+                        unseenInfos,
+                        account,
                     ),
-            )
-            .map(
-                (account) =>
-                    seenOptions.find((option) =>
-                        isSameAccount(option.account, account),
-                    ) ?? { account },
-            ),
+                },
+        ),
         ...listedOptions,
     ];
+    // DAO rows no suggestion describes (held, added by address, just created) read their DAO for name and avatar,
+    // from the cache the workspace pages fill. Safes have no avatar source and show the Safe logo.
+    const { daos } = useWorkspaceDaos(
+        options
+            .filter((option) => option.dao == null)
+            .map(({ account }) => account),
+    );
+    const getDao = (option: IAccountOption) =>
+        option.dao ?? daos[option.account.id];
 
     const toggle = (account: IWorkspaceAccount) =>
         onChange(
@@ -210,13 +252,12 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
         return undefined;
     };
 
-    const filterOption = (
-        { account, dao, accountInfo }: IAccountOption,
-        search: string,
-    ) => {
+    const filterOption = (option: IAccountOption, search: string) => {
+        const { account, accountInfo } = option;
         const lowerSearch = search.toLowerCase();
         const name =
-            dao?.name ?? workspaceUtils.getAccountName(account, accountInfo);
+            getDao(option)?.name ??
+            workspaceUtils.getAccountName(account, accountInfo);
 
         return (
             (name?.toLowerCase().includes(lowerSearch) ?? false) ||
@@ -291,7 +332,7 @@ export const WorkspaceAccountSelect: React.FC<IWorkspaceAccountSelectProps> = (
                 <WorkspaceSelectAccountDialogItem
                     account={option.account}
                     accountInfo={option.accountInfo}
-                    dao={option.dao}
+                    dao={getDao(option)}
                     isActive={
                         isSelected(option.account) ||
                         isInWorkspace(option.account)

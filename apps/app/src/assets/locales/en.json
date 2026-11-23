@@ -3577,7 +3577,7 @@
             "description": "To delegate to this address, confirm the onchain transaction in your wallet.",
             "title": "Delegate"
           },
-          "info": "Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.",
+          "info": "Delegating increases the voting power of the address above by your balance.",
           "selection": {
             "label": "Who would you like to delegate to?",
             "option": {
@@ -4333,6 +4333,7 @@
         },
         "section": {
           "actions": "Authorized actions",
+          "actionsAuthorizedBy": "These actions are authorized by",
           "creationEligibility": "Proposal creation eligibility",
           "details": "Details",
           "governanceProcess": "Governance process"
@@ -4510,14 +4511,14 @@
       },
       "avatarInput": {
         "error": {
-          "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+          "file-invalid-type": "The selected file type is not supported. Upload a PNG, JPG, GIF, or WebP image.",
           "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
           "square-only": "The image must be square. Upload a square image.",
           "too-many-files": "Only one file can be uploaded at a time.",
           "unknown-file-error": "Unable to upload image",
           "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
         },
-        "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+        "helpText": "JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px.",
         "label": "Logo"
       },
       "confirmWizardExit": {
@@ -5244,6 +5245,76 @@
           "createAccount": "Create a new account"
         },
         "error": "Unable to add the accounts. Try again."
+      },
+      "workspaceCreateAccountDialog": {
+        "title": "Create account",
+        "submit": "Deploy account",
+        "steps": {
+          "NETWORK": {
+            "title": "Select chain",
+            "description": "The chain you choose is where your account will be deployed."
+          },
+          "DETAILS": {
+            "title": "Account details",
+            "description": "Describe your account so people know they’ve come to the right place. Don’t worry if these aren’t final—any of these fields can be changed later."
+          },
+          "SIGNERS": {
+            "title": "Signers and approvals",
+            "description": "Choose who can approve transactions and how many approvals are needed."
+          },
+          "TYPE": {
+            "title": "Account type",
+            "description": "Choose how the account is deployed. Both use the signers and approvals you set."
+          }
+        },
+        "network": {
+          "mainnets": "Mainnets",
+          "testnets": "Testnets",
+          "showAllTestnets": "Show all testnets",
+          "showFewer": "Show fewer",
+          "tag": {
+            "beta": "Beta",
+            "disabled": "Soon"
+          }
+        },
+        "details": {
+          "name": {
+            "label": "Name",
+            "required": "Name is required."
+          },
+          "description": {
+            "label": "Description",
+            "helpText": "This is shown on the account’s dashboard."
+          },
+          "resources": {
+            "helpText": "These are shown as links on the account dashboard. They are best suited for your website, social media, or other communication channels."
+          }
+        },
+        "signers": {
+          "label": "Signers",
+          "helpText": "Wallets that can approve the transactions of this account."
+        },
+        "approvals": {
+          "label": "Approvals",
+          "helpText": "How many signers must approve a transaction before it can be executed.",
+          "total": "{{value}} of {{total}} must approve"
+        },
+        "accountType": {
+          "SAFE": {
+            "label": "Safe",
+            "description": "A Safe multisig. Works with the Safe ecosystem."
+          },
+          "ARAGON": {
+            "label": "Aragon",
+            "description": "An Aragon OSx multisig. Governance can be extended later."
+          }
+        },
+        "deploy": {
+          "title": "Deploy Aragon Account",
+          "description": "To deploy the account, confirm the onchain transaction in your wallet.",
+          "submit": "Deploy Aragon Account",
+          "success": "Continue"
+        }
       },
       "workspaceWelcomeDialog": {
         "title": "Your workspace is ready",

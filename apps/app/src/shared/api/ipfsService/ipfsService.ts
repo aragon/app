@@ -7,6 +7,9 @@ export interface IPinMetadata {
     keyvalues: Record<string, string | undefined>;
 }
 
+// Any value: the 4-byte chunk size between the RIFF and WEBP markers of a WebP file
+const riffChunkSize = [null, null, null, null];
+
 class IpfsService extends HttpService {
     jwt = process.env.NEXT_SECRET_IPFS_JWT!;
 
@@ -22,14 +25,16 @@ class IpfsService extends HttpService {
     maxFileSize = 1024 * 1024;
 
     /**
-     * Leading bytes of the image formats the avatar inputs accept (PNG, GIF, JPEG). The content is checked
-     * instead of the client-supplied MIME type.
+     * Leading bytes of the image formats the avatar inputs accept (PNG, GIF, JPEG, WebP), `null` matching any
+     * byte. The content is checked instead of the client-supplied MIME type, which browsers derive from the file
+     * extension.
      */
-    private readonly imageSignatures = [
+    private readonly imageSignatures: (number | null)[][] = [
         [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
         [0x47, 0x49, 0x46, 0x38, 0x37, 0x61],
         [0x47, 0x49, 0x46, 0x38, 0x39, 0x61],
         [0xff, 0xd8, 0xff],
+        [0x52, 0x49, 0x46, 0x46, ...riffChunkSize, 0x57, 0x45, 0x42, 0x50],
     ];
 
     constructor() {
@@ -65,7 +70,7 @@ class IpfsService extends HttpService {
     };
 
     /**
-     * Throws when the file is not a PNG, GIF or JPEG image within the size limit.
+     * Throws when the file is not a PNG, GIF, JPEG or WebP image within the size limit.
      */
     validateFile = async (file: unknown): Promise<void> => {
         if (
@@ -78,14 +83,18 @@ class IpfsService extends HttpService {
             );
         }
 
-        const header = new Uint8Array(await file.slice(0, 8).arrayBuffer());
-        const isImage = this.imageSignatures.some((signature) =>
-            signature.every((byte, index) => header[index] === byte),
+        const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+        const isImage = this.imageSignatures.some(
+            (signature) =>
+                header.length >= signature.length &&
+                signature.every(
+                    (byte, index) => byte == null || header[index] === byte,
+                ),
         );
 
         if (!isImage) {
             throw new Error(
-                'IpfsService: pinned file must be a PNG, GIF or JPEG image.',
+                'IpfsService: pinned file must be a PNG, GIF, JPEG or WebP image.',
             );
         }
     };
