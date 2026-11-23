@@ -3577,7 +3577,7 @@
             "description": "To delegate to this address, confirm the onchain transaction in your wallet.",
             "title": "Delegate"
           },
-          "info": "Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.",
+          "info": "Delegating increases the voting power of the address above by your balance.",
           "selection": {
             "label": "Who would you like to delegate to?",
             "option": {
@@ -4340,6 +4340,7 @@
         },
         "section": {
           "actions": "Authorized actions",
+          "actionsAuthorizedBy": "These actions are authorized by",
           "creationEligibility": "Proposal creation eligibility",
           "details": "Details",
           "governanceProcess": "Governance process"
@@ -4517,14 +4518,14 @@
       },
       "avatarInput": {
         "error": {
-          "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+          "file-invalid-type": "The selected file type is not supported. Upload a PNG, JPG, GIF, or WebP image.",
           "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
           "square-only": "The image must be square. Upload a square image.",
           "too-many-files": "Only one file can be uploaded at a time.",
           "unknown-file-error": "Unable to upload image",
           "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
         },
-        "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+        "helpText": "JPG, PNG, GIF, or WebP of no more than 1 MB and less than 1024x1024px.",
         "label": "Logo"
       },
       "confirmWizardExit": {

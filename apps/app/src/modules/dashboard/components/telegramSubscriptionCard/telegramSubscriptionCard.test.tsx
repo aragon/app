@@ -27,6 +27,7 @@ describe('<TelegramSubscriptionCard /> component', () => {
     afterEach(() => {
         useFeatureFlagsSpy.mockReset();
         process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME = originalBotName;
+        delete process.env.NEXT_PUBLIC_TELEGRAM_APP_CODE;
     });
 
     const createTestComponent = (
@@ -59,6 +60,34 @@ describe('<TelegramSubscriptionCard /> component', () => {
             `https://t.me/aragon_test_bot?start=${daoId}`,
         );
         expect(link).toHaveAttribute('target', '_blank');
+    });
+
+    it('appends the app code to the start parameter when it is set', () => {
+        process.env.NEXT_PUBLIC_TELEGRAM_APP_CODE = 'o';
+        render(createTestComponent({ daoId: 'ethereum-sepolia-0x2da3' }));
+
+        expect(
+            screen.getByRole('link', {
+                name: /telegramSubscriptionCard.action/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            'https://t.me/aragon_test_bot?start=ethereum-sepolia-0x2da3_o',
+        );
+    });
+
+    it('leaves the start parameter unchanged when the app code is empty', () => {
+        process.env.NEXT_PUBLIC_TELEGRAM_APP_CODE = '';
+        render(createTestComponent({ daoId: 'ethereum-sepolia-0x2da3' }));
+
+        expect(
+            screen.getByRole('link', {
+                name: /telegramSubscriptionCard.action/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            'https://t.me/aragon_test_bot?start=ethereum-sepolia-0x2da3',
+        );
     });
 
     it('renders nothing when the feature flag is disabled', () => {

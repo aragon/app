@@ -107,6 +107,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: "0"
+      - name: Check workflow job guards
+        uses: aragon/github-templates/steps/workflow-guards@v1
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter
@@ -115,6 +117,10 @@ jobs:
         run: pnpm test:coverage
       - name: Check published CSS bundles
         run: pnpm css:check
+      - name: Check GovKit component registry
+        run: |
+          node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+          node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
 
   # The PR head is tagged (the commit the checks ran on), never the merge commit, which would also
   # carry whatever landed on main while the PR was open. Release PRs are merged with a merge

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Heading } from '@aragon/gov-ui-kit';
+import { useDisconnect } from '@reown/appkit/react';
 import { type ChangeEvent, useRef, useState } from 'react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 
@@ -10,6 +11,7 @@ const buildExportFilename = () =>
 export const WorkspaceRegistryControls: React.FC = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [error, setError] = useState<string>();
+    const { disconnect } = useDisconnect();
 
     const handleExport = async () => {
         const registry = await workspaceService.exportWorkspaceRegistry();
@@ -53,10 +55,14 @@ export const WorkspaceRegistryControls: React.FC = () => {
 
         try {
             await workspaceService.deleteWorkspaceRegistry();
-            window.location.assign('/workspace');
         } catch (error: unknown) {
             setError(error instanceof Error ? error.message : String(error));
+            return;
         }
+
+        // Disconnects, or the landing page sends the wallet straight back to `/workspace`; leaves even if that fails.
+        await disconnect().catch(() => undefined);
+        window.location.assign('/');
     };
 
     return (

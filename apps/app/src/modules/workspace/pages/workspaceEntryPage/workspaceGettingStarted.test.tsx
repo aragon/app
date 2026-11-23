@@ -579,6 +579,25 @@ describe('<WorkspaceGettingStarted /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('opens a switched wallet on the list, even from the address view', async () => {
+        mockSuggestions({ suggestions: [] });
+        const { rerender } = render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.workspace.workspaceGettingStarted.emptyState.addByAddress',
+            }),
+        );
+
+        mockSuggestions();
+        mockWalletAddress(otherWallet);
+        rerender(createTestComponent());
+
+        expect(selectSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ initialMode: 'list' }),
+            undefined,
+        );
+    });
+
     it('prefetches the landing page on mount', () => {
         render(createTestComponent());
 

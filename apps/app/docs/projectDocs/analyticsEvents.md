@@ -32,6 +32,7 @@ Tracking is controlled by committed env config plus deployment overrides:
 | --- | --- | --- |
 | `config/.env.development` | `dev.app.aragon.org` | Development deploys emit to the dev Plausible site. |
 | `config/.env.production` | `app.aragon.org` | Production emits to the production Plausible site. |
+| `config/.env.occ` | `new.app.aragon.org` | OCC emits to its own Plausible site, separate from production. |
 | `config/.env.preview` | unset | PR previews do not emit unless Vercel/1Password injects an override. |
 | `config/.env.staging` | unset | Staging does not emit unless deployment secrets inject an override. |
 | `.env.local` | IC-local | Never commit local analytics overrides. |
@@ -314,7 +315,7 @@ Each event is fired by exactly one place in the app: a page, dialog, or hook. Th
 
 Plausible is a passive receiver. It has no registry of the app's event names; it only learns an event exists once the tracker sends it to `/api/event`. Both steps are required, in order: the app emits the event, and a matching Custom event Goal exists for the count to appear. A Goal with no matching event sits at zero forever, and an event with no Goal is received but never shown. Past events are not backfilled, so a Goal counts only from when you create it.
 
-In the development site (`dev.app.aragon.org`) and production site (`app.aragon.org`), create one Custom event Goal for each exact event name the app emits:
+In the development site (`dev.app.aragon.org`), production site (`app.aragon.org`) and OCC site (`new.app.aragon.org`), create one Custom event Goal for each exact event name the app emits:
 
 - `wizard_start`
 - `wizard_step`

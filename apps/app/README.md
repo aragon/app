@@ -133,6 +133,7 @@ environments:
 | **Develop**    | https://dev.app.aragon.org  | Automatic on `main` branch push              | `.env.develop`    |
 | **Staging**    | https://stg.app.aragon.org  | Manual through the `Staging` Github workflow | `.env.staging`    |
 | **Production** | https://app.aragon.org      | Manual through the `Release` Github workflow | `.env.production` |
+| **OCC**        | https://new.app.aragon.org  | Automatic with every production release      | `.env.occ`        |
 
 ## Documentation
 

@@ -1,6 +1,6 @@
-# Guardrails Hook MVP
+# Guardrails hook
 
-This folder contains the executable part of the guardrails spike.
+This folder contains the executable path-scoped guardrails loader.
 
 In plain English: we want the agent to get the right project-specific advice right before it edits a file, without forcing that advice into every prompt all the time.
 
@@ -26,11 +26,11 @@ Without this, we have two bad options:
 - stuff every convention into `AGENTS.md` / `CLAUDE.md` and make every session noisy
 - rely on the agent to rediscover subtle project conventions from scratch every time
 
-This spike tests a third option: lazy-load only the narrow rules that match the file being edited.
+The loader takes a third option: lazy-load only the narrow rules that match the file being edited.
 
 ## Why the split looks like this
 
-This is an MVP, so the design is intentionally small:
+The design is intentionally small:
 
 - centralize only the parts that are truly agent-neutral
 - isolate proprietary hook wiring at the edge
@@ -38,9 +38,9 @@ This is an MVP, so the design is intentionally small:
 
 If another runtime needs a different wrapper, it should reuse the shared loader if possible and only replace the last-mile adapter.
 
-## What counts as proof
+## Runtime contract
 
-This spike is real because all of these are present:
+The checked-in system consists of:
 
 - checked-in shared rules under `skills/shared/rules/`
 - a shared loader that can be run directly from the CLI
@@ -70,10 +70,10 @@ node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs
 pnpm test:guardrails
 ```
 
-These tests intentionally use Node's built-in test runner, not Jest. The main repo Jest suite ignores `/.agents/shared/hooks/` and `/.claude/shared/hooks/` so the guardrails spike can use ESM `.mjs` tests without changing the application's Jest setup.
+These tests intentionally use Node's built-in test runner, not Jest. The main repo Jest suite ignores `/.agents/shared/hooks/` and `/.claude/shared/hooks/`, so the guardrail hooks can use ESM `.mjs` tests without changing the application's Jest setup.
 
 ## Current limits
 
-- The only checked-in runtime adapter in this spike is Claude.
+- The only checked-in runtime adapter is Claude.
 - The architecture is agent-agnostic, but not every agent runtime exposes a repo-local hook surface yet.
 - Rule quality still depends on humans writing narrow, useful rules instead of bloated policy docs.
