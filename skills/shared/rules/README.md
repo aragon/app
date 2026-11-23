@@ -10,9 +10,9 @@ The frontmatter field is named `globs` to match the convention emerging across a
 
 Rules live at `skills/shared/rules/<rule-name>/SKILL.md` and are always checked in. By design there is no per-IC override layer — a rule that's worth firing on every PR is by definition a shared convention, not a personal preference. Personal agent customizations belong elsewhere (`.claude/CLAUDE.md`, IC settings), not in the rule stream.
 
-## MVP in plain English
+## How it works
 
-This spike is trying to solve a simple problem: the agent should get the right project rule at the moment it becomes relevant, instead of carrying the whole project handbook in every prompt.
+The agent should get the right project rule when it becomes relevant instead of carrying the whole project handbook in every prompt.
 
 The flow is:
 
@@ -33,9 +33,9 @@ In a codebase this size, many mistakes are not syntax mistakes. They are "you to
 
 Rule-skills are meant to catch that kind of error early.
 
-## Proof this spike works
+## Runtime contract
 
-If someone asks "is this just a concept doc?" the concrete proof is:
+The checked-in contract is:
 
 - shared rule skills exist in `skills/shared/rules/<name>/SKILL.md`
 - the shared loader exists at `.agents/shared/hooks/inject-rules.mjs`
@@ -110,7 +110,7 @@ It only fires for `Edit`, `Write`, and `MultiEdit`. Failures are silent (exit 0)
 
 The intent is agnosticism, not lock-in: the guardrails logic lives in `.agents/shared/`, while agent-specific hook plumbing stays in that agent's local/config surface. Codex and Claude are the current standard-setters, but the rule stream should remain portable beyond them; only the final proprietary wrapper should change.
 
-For the executable side of the spike, see `.agents/shared/hooks/README.md`.
+For the executable loader, see `.agents/shared/hooks/README.md`.
 
 To inspect what would fire for a path, run the hook directly:
 
