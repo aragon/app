@@ -34,14 +34,7 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 
 ## Token generator (`tokens/generate.mjs`)
 
-The one generator for every token CSS output: the primitive CSS and the app's artifact, plus the semantic colour layer
-when the source has one (`semantic.config.json`), from the DTCG source in `design-system/tokens/source/`.
-`pnpm tokens:generate` writes, `pnpm tokens:check` fails when an output is stale, `pnpm tokens:report` lists verified
-and fallback Today values of the semantic layer. Tests: `scripts/tokens/generate.test.mjs` (run by the root
-`pnpm test:tokens`). Details: `design-system/tokens/README.md`.
-
-## App screenshot baseline (`app-baseline/`)
-
-The app-side counterpart of `visual-diff`: a patch for the app screenshot check of the `docs/design-canvas` branch
-(121 screenshots of the real app on a mock backend, production build) and `recheck.sh`, which captures a checkout and
-compares it with a saved capture at zero tolerance. Not run in CI. See `app-baseline/README.md`.
+The one generator for every token CSS output: the primitive CSS and the app's artifact, from the DTCG source in
+`design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when an output is stale.
+Tests: `scripts/tokens/generate.test.mjs` (run by the root `pnpm test:tokens`). Details:
+`design-system/tokens/README.md`.
