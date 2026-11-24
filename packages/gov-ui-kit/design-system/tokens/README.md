@@ -118,8 +118,7 @@ and every resolved value against its own type.
   rename source is a Figma token; a code-only alias aliases a token with values of its own.
 - Today values: the evidence / fallback rule above, and `mix` tokens against their primitive.
 - The app overrides rule above; font URLs in the artifact all rebased.
-- No palette or semantic mode file without `semantic.config.json`.
-- `pnpm tokens:check` fails when any output is stale.
+- `pnpm tokens:check` fails when any output is stale; `pnpm test:tokens` runs the same comparison in CI.
 
 ## Representation boundaries
 
@@ -131,8 +130,6 @@ and every resolved value against its own type.
   (`--color-*: initial`).
 - Utilities, the focus-ring behaviour, the font faces and the app's z-index and position configuration are CSS, not
   tokens: `css/` and `layoutRoot.overrides.css`.
-- The app artifact's header still carries the provenance of its first snapshot (`primitives.config.json`, `app.provenance`)
-  because the artifact is kept byte-identical; it is not the current kit version.
 
 ## Changing tokens
 
