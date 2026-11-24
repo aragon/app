@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock amount field</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="l2v-amount">
+  <x-import component-from-global-scope="GovUiKit.InputContainer" id="l2v-amount" wrapper-class-name="transfer-amount__field items-center" variant="{{variant}}" alert="{{alert}}">
+    <div class="l2v-token">
+      <x-import component-from-global-scope="GovUiKit.Avatar" size="xs" alt="{{symbol}}"></x-import>
+      <span>{{symbol}}</span>
+    </div>
+    <input class="size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 transfer-amount__input" type="number" placeholder="0" value="{{amount}}" onChange="{{onChange}}">
+    <p>{{value}}</p>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{percent}}" on-change="{{onPercent}}" variant="space-between">
+    <x-import component-from-global-scope="GovUiKit.Toggle" value="0" label="None"></x-import>
+    <x-import component-from-global-scope="GovUiKit.Toggle" value="25" label="25%"></x-import>
+    <x-import component-from-global-scope="GovUiKit.Toggle" value="50" label="50%"></x-import>
+    <x-import component-from-global-scope="GovUiKit.Toggle" value="75" label="75%"></x-import>
+    <x-import component-from-global-scope="GovUiKit.Toggle" value="100" label="100%"></x-import>
+  </x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"amount":{"editor":"text","default":"0"},"percent":{"editor":"text","default":"100"},"symbol":{"editor":"text","default":"ORB"},"price":{"editor":"float","default":0.42},"alert":{"editor":null},"variant":{"editor":"text","default":"default"},"on-amount":{"editor":null},"on-percent":{"editor":null},"$preview":{"width":400,"height":150}}'>
+// The app's asset amount field with percentage selection (apps/app: modules/finance/components/assetInput, token fixed, no Max link).
+// Props: amount (string), percent ('' | '0' | '25' | '50' | '75' | '100'), symbol, price (USD per token), alert ({message, variant}), variant,
+// on-amount(string), on-percent(string). Controlled by the parent form.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const usd = (Number(p.amount) || 0) * (Number(p.price) || 0);
+    return {
+      no: false, symbol: p.symbol || 'ORB', amount: p.amount == null ? '' : p.amount, percent: p.percent || '',
+      variant: p.variant || 'default', alert: p.alert,
+      value: GovUiKit.formatterUtils.formatNumber(usd, { format: GovUiKit.NumberFormat.FIAT_TOTAL_SHORT }),
+      onChange: (e) => { if (typeof p.onAmount === 'function') p.onAmount(e && e.target ? e.target.value : ''); },
+      onPercent: (v) => { if (typeof p.onPercent === 'function') p.onPercent(v); }
+    };
+  }
+}
+</script>
+</body>
+</html>

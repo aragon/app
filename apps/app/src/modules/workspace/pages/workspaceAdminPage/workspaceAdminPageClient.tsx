@@ -166,7 +166,7 @@ export const WorkspaceAdminPageClient: React.FC<
                         </DefinitionList.Container>
                         <Button
                             className="w-full"
-                            iconLeft={IconType.DEPOSIT}
+                            iconLeft={IconType.WITHDRAW}
                             onClick={handleExport}
                             variant="tertiary"
                         >

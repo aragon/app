@@ -1972,10 +1972,10 @@
         "src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx": [
             {
                 "line": 23,
-                "old": "divide-neutral-100",
-                "new": "divide-border-surface-secondary",
+                "old": "[&>*+*]:border-t-neutral-100!",
+                "new": "[&>*+*]:border-t-surface-secondary!",
                 "part": "dropdown group dividers (APP-1454)",
-                "reason": "cross-family utility (utilities.crossFamily): the dividers take the group's own static container border border/surface/secondary; same default-theme colour"
+                "reason": "cross-family utility (utilities.crossFamily): the dividers (an important top border on every item after the first) take the group's own static container border border/surface/secondary; same default-theme colour"
             },
             {
                 "line": 23,
@@ -4955,13 +4955,6 @@
                 "line": 27,
                 "old": "bg-neutral-0",
                 "new": "bg-surface-primary"
-            }
-        ],
-        "src/core/components/avatars/avatarStack/avatarStack.test.tsx": [
-            {
-                "line": 57,
-                "old": "bg-neutral-50",
-                "new": "bg-surface-secondary"
             }
         ],
         "src/core/components/dataList/dataListActionItem/dataListActionItem.test.tsx": [

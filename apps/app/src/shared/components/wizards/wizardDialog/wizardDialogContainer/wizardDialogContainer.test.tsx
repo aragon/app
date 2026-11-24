@@ -16,7 +16,9 @@ jest.mock('../../wizard', () => ({
 }));
 
 jest.mock('./wizardDialogContainerFooter', () => ({
-    WizardDialogContainerFooter: () => <div data-testid="footer" />,
+    WizardDialogContainerFooter: (props: { dialogId?: string }) => (
+        <div data-dialog-id={props.dialogId} data-testid="footer" />
+    ),
 }));
 
 describe('<WizardDialogContainer /> component', () => {
@@ -57,5 +59,13 @@ describe('<WizardDialogContainer /> component', () => {
         expect(screen.getByText(title)).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
         expect(screen.getByTestId('footer')).toBeInTheDocument();
+    });
+
+    it('passes its dialog id to the footer', () => {
+        render(createTestComponent({ dialogId: 'DIALOG' }));
+        expect(screen.getByTestId('footer')).toHaveAttribute(
+            'data-dialog-id',
+            'DIALOG',
+        );
     });
 });

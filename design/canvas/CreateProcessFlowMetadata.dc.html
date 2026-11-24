@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create process: metadata step</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-fields">
+  <x-import component-from-global-scope="GovUiKit.InputText" label="Process name" max-length="{{d40}}" value="{{name}}" on-change="{{onName}}" on-blur="{{onNameBlur}}" alert="{{nameAlert}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.InputText" label="Key" help-text="The key is part of the unique identifier for proposals of this type. Something like EIP would lead to EIP-1 and increment for each proposal." max-length="{{d5}}" value="{{processKey}}" on-change="{{onKey}}" on-blur="{{onKeyBlur}}" alert="{{keyAlert}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the proposals list to help users understand the governance for proposals of this type." is-optional="{{yes}}" max-length="{{d480}}" value="{{description}}" on-change="{{onDescription}}" on-blur="{{onDescriptionBlur}}" alert="{{descriptionAlert}}" wrapper-class-name="{{descriptionWrap}}"></x-import>
+  <dc-import name="ResourcesInput" vm="{{resourcesVm}}" hint-size="100%,150px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// Step 1 body "Describe new proposal type" of the Create process wizard (apps/app: modules/createDao/components/
+// createProcessForm/createProcessFormMetadata/createProcessFormMetadata.tsx, shared/components/forms/resourcesInput).
+// One source for the static screens CreateProcessStep1 / CreateProcessStep1Filled and the CreateProcessFlow flow.
+// Props: vm = { name, processKey, description, nameAlert, keyAlert, descriptionAlert ({message, variant:'critical'} | undefined),
+//   descriptionWrap (class for the focused description ring), onName / onKey / onDescription (change events),
+//   onNameBlur / onKeyBlur / onDescriptionBlur, resources: [{ url, name, urlAlert, namePlaceholder, onUrl, onName, onUrlBlur,
+//   onRemove }], onAddResource }. Without handlers the fields are read-only.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const R = window.React, G = window.GovUiKit;
+    const noop = () => undefined;
+    const resourcesVm = { helpText: 'These are shown as links on the proposal list under the description as additional external resources.',
+      resources: vm.resources || [], onAdd: vm.onAddResource || noop };
+    return { onName: noop, onKey: noop, onDescription: noop, onNameBlur: noop, onKeyBlur: noop, onDescriptionBlur: noop, onAddResource: noop,
+      name: '', processKey: '', description: '', ...vm, resourcesVm,
+      yes: true, no: false, d40: 40, d5: 5, d480: 480 };
+  }
+}
+</script>
+</body>
+</html>

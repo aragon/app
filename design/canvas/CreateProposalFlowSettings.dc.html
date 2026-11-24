@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal settings step</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposal settings</x-import>
+    <p class="wizard-step__description">Configure the settings for this proposal.</p>
+  </div>
+  <div class="advanced-date-input-stack">
+    <div class="advanced-date-input">
+      <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting start time" value="{{startMode}}" on-value-change="{{changeStartMode}}" class-name="advanced-date-input__modes">
+        <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Now" value="now"></x-import>
+        <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
+      </x-import>
+      <sc-if value="{{startFixed}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm advanced-date-input__duration">
+          <div class="advanced-date-input__fields">
+            <x-import component-from-global-scope="GovUiKit.InputDate" label="Date" value="{{start.date}}" min="{{minDate}}" on-change="{{changeStartDate}}" on-blur="{{blurStart}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputTime" label="Time" value="{{start.time}}" on-change="{{changeStartTime}}" on-blur="{{blurStart}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Timezone" disabled="{{yes}}" placeholder="UTC +2"></x-import>
+          </div>
+          <sc-if value="{{startError}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="Voting start time" variant="critical">{{startError}}</x-import>
+          </sc-if>
+        </x-import>
+      </sc-if>
+    </div>
+    <div class="advanced-date-input">
+      <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Voting duration / end time" value="{{endMode}}" on-value-change="{{changeEndMode}}" class-name="advanced-date-input__modes">
+        <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Duration" value="duration"></x-import>
+        <x-import component-from-global-scope="GovUiKit.RadioCard" class-name="w-full" description="" label="Specific date &amp; time" value="fixed"></x-import>
+      </x-import>
+      <sc-if value="{{endDuration}}" hint-placeholder-val="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm advanced-date-input__duration">
+          <div class="advanced-date-input__fields">
+            <x-import component-from-global-scope="GovUiKit.InputNumber" label="Minutes" max="{{d59}}" min="{{zero}}" placeholder="0 min" suffix="min" value="{{duration.minutes}}" on-change="{{changeMinutes}}" on-blur="{{blurEnd}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputNumber" label="Hours" max="{{d23}}" min="{{zero}}" placeholder="0 h" suffix="h" value="{{duration.hours}}" on-change="{{changeHours}}" on-blur="{{blurEnd}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputNumber" label="Days" min="{{zero}}" placeholder="0 d" suffix="d" value="{{duration.days}}" on-change="{{changeDays}}" on-blur="{{blurEnd}}"></x-import>
+          </div>
+          <x-import component-from-global-scope="GovUiKit.AlertCard" message="Voting duration / end time" variant="{{endVariant}}">{{endText}}</x-import>
+        </x-import>
+      </sc-if>
+      <sc-if value="{{endFixed}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm advanced-date-input__duration">
+          <div class="advanced-date-input__fields">
+            <x-import component-from-global-scope="GovUiKit.InputDate" label="Date" value="{{end.date}}" min="{{minDate}}" on-change="{{changeEndDate}}" on-blur="{{blurEnd}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputTime" label="Time" value="{{end.time}}" on-change="{{changeEndTime}}" on-blur="{{blurEnd}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Timezone" disabled="{{yes}}" placeholder="UTC +2"></x-import>
+          </div>
+          <x-import component-from-global-scope="GovUiKit.AlertCard" message="Voting duration / end time" variant="{{endVariant}}">{{endText}}</x-import>
+        </x-import>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startMode":{"editor":null},"endMode":{"editor":null},"start":{"editor":null},"end":{"editor":null},"duration":{"editor":null},"errors":{"editor":null},"callbacks":{"editor":null},"$preview":{"width":1216,"height":800}}'>
+// Step 3 body of the create-proposal wizard, "Proposal settings" (apps/app: plugins/tokenPlugin/components/
+// tokenCreateProposalSettingsForm, shared/components/forms/advancedDateInput/*). The .wizard-step__content block.
+//   <dc-import name="CreateProposalFlowSettings" start-mode="now" end-mode="duration" duration="{{d}}" errors="{{e}}" callbacks="{{cb}}" hint-size="100%,800px">
+// Props (no callbacks = a static drawing):
+//   startMode  'now' | 'fixed'.   endMode  'duration' | 'fixed'.
+//   start, end { date: 'yyyy-mm-dd', time: 'hh:mm' } of the fixed pickers.   duration { minutes, hours, days } (numbers).
+//   errors     { start: message, end: message } shown in red in the alert card of the field (end otherwise shows the info line).
+//   callbacks  { startMode(v), endMode(v), start(field, v), end(field, v), duration(field, v), blur(key: 'start' | 'end') }.
+//   minDurationText  the info line (default "The minimum duration is 5 days, 0 hours, and 0 minutes, set by DAO governance.").
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, cb = p.callbacks || {}, e = p.errors || {};
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const startMode = p.startMode ?? 'now', endMode = p.endMode ?? 'duration';
+    const pad = (n) => String(n).padStart(2, '0'), d = new Date();
+    return {
+      yes: true, no: false, zero: 0, d59: 59, d23: 23,
+      startMode, endMode, startFixed: startMode === 'fixed', endDuration: endMode === 'duration', endFixed: endMode === 'fixed',
+      start: p.start ?? { date: '', time: '' }, end: p.end ?? { date: '', time: '' },
+      duration: p.duration ?? { minutes: 0, hours: 0, days: 5 },
+      minDate: d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()),
+      startError: e.start,
+      endVariant: e.end ? 'critical' : 'info',
+      endText: e.end ?? p.minDurationText ?? 'The minimum duration is 5 days, 0 hours, and 0 minutes, set by DAO governance.',
+      changeStartMode: (v) => call(cb.startMode, v), changeEndMode: (v) => call(cb.endMode, v),
+      changeStartDate: (ev) => call(cb.start, 'date', ev.target.value), changeStartTime: (ev) => call(cb.start, 'time', ev.target.value),
+      changeEndDate: (ev) => call(cb.end, 'date', ev.target.value), changeEndTime: (ev) => call(cb.end, 'time', ev.target.value),
+      changeMinutes: (v) => call(cb.duration, 'minutes', v), changeHours: (v) => call(cb.duration, 'hours', v), changeDays: (v) => call(cb.duration, 'days', v),
+      blurStart: () => call(cb.blur, 'start'), blurEnd: () => call(cb.blur, 'end'),
+    };
+  }
+}
+</script>
+</body>
+</html>

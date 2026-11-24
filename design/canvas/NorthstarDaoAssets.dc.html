@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Assets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Assets</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Northstar" symbol="NSP" amount="8500000" fiat-price="0.42" hide-value="{{no}}" logo-src="assets/mock/token/nsp.svg" href="https://etherscan.io/token/0x384915d45e1807d6d3875540263d2801b9309e70" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="USD Coin" symbol="USDC" amount="2415380.42" fiat-price="1.00" hide-value="{{no}}" logo-src="assets/mock/token/usdc.svg" href="https://etherscan.io/token/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Ether" symbol="ETH" amount="612.48" fiat-price="3148.62" hide-value="{{no}}" logo-src="assets/mock/token/eth.svg" href="https://etherscan.io/token/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" target="_blank"></x-import>
+<x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="Dai Stablecoin" symbol="DAI" amount="384210.07" fiat-price="0.9998" hide-value="{{no}}" logo-src="assets/mock/token/dai.svg" href="https://etherscan.io/token/0x6b175474e89094c44da98b954eedeac495271d0f" target="_blank"></x-import>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Northstar Protocol</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">$8.30M</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">4</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{addressLink}}" children="0xa767846912853e30403f3efb946a5250e8e6a063"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Website</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Forum</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.northstar.fi" is-external="{{yes}}" show-url="{{yes}}">Docs</x-import>
+              <x-import component-from-global-scope="GovUiKit.Link" href="https://x.com/northstar_fi" is-external="{{yes}}" show-url="{{yes}}">X</x-import>
+              </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0xa767846912853e30403f3efb946a5250e8e6a063" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+        </aside>
+      </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
+// PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet, onConnect (neither is needed here).
+// DAO assets (apps/app: modules/finance/pages/daoAssetsPage, aside: daoFilterAsideCard + daoInfoAside). Mock data: data-spp.cjs (Northstar).
+// The app has no filter or sort on this page. The list items are written out one by one at the start of the line: the kit's
+// pagination counts the list's direct children.
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    return Object.assign({ click: this.click }, {
+      yes: true,
+      no: false,
+      two: 2,
+      count: 4,
+      pageSize: 20,
+      addressLink: { href: 'https://etherscan.io/address/0xa767846912853e30403f3efb946a5250e8e6a063', isOnchainEntity: true }
+    });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
+import type { Hex, TransactionReceipt } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import type { Network } from '@/shared/api/daoService';
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -16,11 +18,40 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
+import { CreateDaoSlotId } from '../../constants/moduleSlots';
+import type {
+    IBuildCreateDaoPluginSettingsParams,
+    ICreateDaoPluginSettings,
+} from '../../types';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
 
 export enum PublishDaoStep {
     PIN_METADATA = 'PIN_METADATA',
+}
+
+export interface IPublishDaoDialogPlugin {
+    /**
+     * Id of the plugin to install on the DAO.
+     */
+    pluginId: string;
+    /**
+     * Signers and approvals of the plugin to install.
+     */
+    settings: Omit<IBuildCreateDaoPluginSettingsParams, 'network'>;
+}
+
+export interface IPublishDaoDialogLabels {
+    title: string;
+    description: string;
+    submit: string;
+    success: string;
+}
+
+export interface IPublishDaoDialogCreatedDao {
+    address: Hex;
+    network: Network;
 }
 
 export interface IPublishDaoDialogParams {
@@ -28,6 +59,18 @@ export interface IPublishDaoDialogParams {
      * Values of the create-dao form.
      */
     values: ICreateDaoFormData;
+    /**
+     * Installs this plugin instead of the Admin plugin.
+     */
+    plugin?: IPublishDaoDialogPlugin;
+    /**
+     * Replaces the success link to the DAO page; called with the deployed DAO from the success action or "Proceed anyway".
+     */
+    onCreated?: (dao: IPublishDaoDialogCreatedDao) => void;
+    /**
+     * Replaces the default copy.
+     */
+    labels?: IPublishDaoDialogLabels;
 }
 
 export interface IPublishDaoDialogProps
@@ -44,7 +87,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { address } = useWalletAccount();
     invariant(address != null, 'PublishDaoDialog: user must be connected.');
 
-    const { values } = location.params;
+    const { values, plugin, onCreated, labels } = location.params;
     const { name, description, network, avatar, ens } = values;
     const { name: networkName } = networkDefinitions[network];
 
@@ -120,6 +163,26 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         return 'idle';
     }, [values.avatar, pinFileStatus, pinJsonStatus]);
 
+    const buildPluginSettings = (): ICreateDaoPluginSettings[] | undefined => {
+        if (plugin == null) {
+            return undefined;
+        }
+
+        const buildSettings = pluginRegistryUtils.getSlotFunction<
+            IBuildCreateDaoPluginSettingsParams,
+            ICreateDaoPluginSettings
+        >({
+            slotId: CreateDaoSlotId.CREATE_DAO_BUILD_PLUGIN_SETTINGS,
+            pluginId: plugin.pluginId,
+        });
+        invariant(
+            buildSettings != null,
+            `PublishDaoDialog: no plugin settings builder registered for plugin "${plugin.pluginId}".`,
+        );
+
+        return [buildSettings({ network, ...plugin.settings })];
+    };
+
     const handlePrepareTransaction = () => {
         invariant(
             pinJsonData != null,
@@ -131,17 +194,38 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             values,
             metadataCid,
             connectedAddress: address,
+            pluginSettings: buildPluginSettings(),
         });
     };
+
+    const getCreatedDao = (receipt: TransactionReceipt) => {
+        const address = publishDaoDialogUtils.getDaoAddress(receipt);
+        invariant(
+            address != null,
+            'PublishDaoDialog: no DAORegistered event found in the receipt.',
+        );
+
+        return address;
+    };
+
+    const handleCreated = (receipt: TransactionReceipt) =>
+        onCreated?.({ address: getCreatedDao(receipt), network });
 
     const getDaoLink = ({
         receipt,
     }: IBuildTransactionDialogSuccessLinkHref) => {
-        const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
+        const daoAddress = getCreatedDao(receipt);
         const daoEnsName = ens !== '' ? `${ens}.dao.eth` : undefined;
 
         return `/dao/${network}/${daoEnsName ?? daoAddress}`;
     };
+
+    const successLabel =
+        labels?.success ?? t('app.createDao.publishDaoDialog.button.success');
+    const successLink =
+        onCreated != null
+            ? { label: successLabel, onClick: handleCreated }
+            : { label: successLabel, href: getDaoLink };
 
     const metadataPinAction = values.avatar?.file
         ? handlePinFile
@@ -175,16 +259,22 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                 transactionTypeEvent: 'dao_create',
             }}
             customSteps={customSteps}
-            description={t('app.createDao.publishDaoDialog.description')}
+            description={
+                labels?.description ??
+                t('app.createDao.publishDaoDialog.description')
+            }
+            dialogId={location.id}
             network={network}
+            onProceedAnyway={onCreated != null ? handleCreated : undefined}
             prepareTransaction={handlePrepareTransaction}
+            preventCloseWhileBusy={onCreated != null}
             stepper={stepper}
-            submitLabel={t('app.createDao.publishDaoDialog.button.submit')}
-            successLink={{
-                label: t('app.createDao.publishDaoDialog.button.success'),
-                href: getDaoLink,
-            }}
-            title={t('app.createDao.publishDaoDialog.title')}
+            submitLabel={
+                labels?.submit ??
+                t('app.createDao.publishDaoDialog.button.submit')
+            }
+            successLink={successLink}
+            title={labels?.title ?? t('app.createDao.publishDaoDialog.title')}
             transactionType={TransactionType.PLUGIN_CREATE}
         >
             <DaoDataListItem.Structure
