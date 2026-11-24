@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock-to-vote proposal</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{breadcrumbs}}" tag="{{statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Fund the Orbit Community Grants round 2</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}" class-name="text-base text-neutral-500 md:text-lg">Allocate 180,000 USDC from the treasury to a second round of community grants for tools, events and research that grow the Orbit ecosystem.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{description}}" immediately-render="{{no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="ACTIVE" end-date="{{endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x5d3f…c7e3" status="ACTIVE">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownToken" total-yes="{{totalYes}}" total-no="{{totalNo}}" total-abstain="{{totalAbstain}}" support-threshold="{{supportThreshold}}" min-participation="{{minParticipation}}" token-symbol="ORB" token-total-supply="10000000">
+                    <div style="padding-top: 32px;">
+                      <div class="l2v-vote-area">
+                        <sc-if value="{{showStart}}" hint-placeholder-val="{{yes}}">
+                          <x-import component-from-global-scope="GovUiKit.Button" class-name="w-fit" size="md" on-click="{{onVote}}">Vote on proposal</x-import>
+                        </sc-if>
+                        <sc-if value="{{showVoted}}" hint-placeholder-val="{{no}}">
+                          <div class="l2v-vote-actions">
+                            <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" href="https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c" target="_blank">Vote submitted</x-import>
+                            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{onUpdate}}">Update vote</x-import>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{showOptions}}" hint-placeholder-val="{{no}}">
+                          <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm p-6">
+                            <x-import component-from-global-scope="GovUiKit.InputContainer" id="vote-options" label="Do you want to approve this proposal?" use-custom-wrapper="{{yes}}">
+                              <div class="vote-options" role="radiogroup">
+                              <sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
+                              <button type="button" role="radio" aria-checked="{{t.checked}}" class="vote-toggle {{t.shadow}} {{t.on}}" onClick="{{t.pick}}">
+                                <p>{{t.label}}<sc-if value="{{t.desc}}" hint-placeholder-val="{{no}}"><span>{{t.desc}}</span></sc-if></p>
+                                <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="{{t.icon}}" size="sm" variant="{{t.iconVariant}}"></x-import>
+                              </button>
+                              </sc-for>
+                              </div>
+                            </x-import>
+                          </x-import>
+                          <div class="l2v-vote-actions">
+                            <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" disabled="{{noSelection}}" on-click="{{onSubmit}}">{{submitLabel}}</x-import>
+                            <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{onCancel}}">Cancel</x-import>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </div>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{voteCount}}" page-size="{{voteCount}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v0.voter}}" vote-indicator="{{v0.indicator}}" vote-indicator-description="{{v0.description}}" voting-power="{{v0.vp}}" token-symbol="ORB"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v1.voter}}" vote-indicator="{{v1.indicator}}" vote-indicator-description="{{v1.description}}" voting-power="{{v1.vp}}" token-symbol="ORB"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v2.voter}}" vote-indicator="{{v2.indicator}}" vote-indicator-description="{{v2.description}}" voting-power="{{v2.vp}}" token-symbol="ORB"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v3.voter}}" vote-indicator="{{v3.indicator}}" vote-indicator-description="{{v3.description}}" voting-power="{{v3.vp}}" token-symbol="ORB"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v4.voter}}" vote-indicator="{{v4.indicator}}" vote-indicator-description="{{v4.description}}" voting-power="{{v4.vp}}" token-symbol="ORB"></x-import>
+<x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{v5.voter}}" vote-indicator="{{v5.indicator}}" vote-indicator-description="{{v5.description}}" voting-power="{{v5.vp}}" token-symbol="ORB"></x-import>
+                      </x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="3"><p class="truncate text-neutral-500">3</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">ORB-4</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" children="lenaweber.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" children="{{published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://forum.orbit.xyz/t/orb-4" is-external="{{yes}}" show-url="{{yes}}">Forum discussion</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"locked":{"editor":"float","default":0},"voted":{"editor":"enum","options":["","yes","abstain","no"],"default":""},"options":{"editor":"boolean","default":false},"selected":{"editor":"enum","options":["","yes","abstain","no"],"default":""},"on-vote":{"editor":null},"on-update":{"editor":null},"on-select":{"editor":null},"on-submit":{"editor":null},"on-cancel":{"editor":null},"$preview":{"width":1440,"height":1500}}'>
+// Proposal page of a lock-to-vote DAO (apps/app: proposal page with the plugin slots LockToVoteProposalVotingBreakdown (BreakdownToken),
+// TokenVoteList (Votes tab) and LockToVoteSubmitVote (vote area); settings from useLockToVoteGovernanceSettings).
+// Props: wallet, locked (ORB; the user's voting power), voted ('' | yes | abstain | no), options (bool: the option card is open),
+// selected, on-vote() ("Vote on proposal"), on-update() ("Update vote"), on-select(key), on-submit(), on-cancel(), on-nav(target).
+// Vote change is Enabled in the sample settings, so a voted user can "Update vote" and pick another option.
+// Source-only: lock-to-vote has no mock DAO or screenshot; proposal content and votes are sample data.
+const VOTERS = [
+  { name: 'kofi-mensah.eth', address: '0xac6399087027f972e6d2ab830dc9b33cda035642', vp: 1200000, ind: 'yes' },
+  { name: 'lenaweber.eth', address: '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', vp: 910000, ind: 'yes' },
+  { name: 'sofiaruiz.eth', address: '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', vp: 410000, ind: 'no' },
+  { name: '', address: '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', vp: 200000, ind: 'yes' },
+  { name: 'tomas.eth', address: '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', vp: 120000, ind: 'abstain' },
+  { name: 'marcusj.eth', address: '0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', vp: 80000, ind: 'no' }
+];
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const hour = 3600000;
+    const day = 24 * hour;
+    const connected = p.wallet === 'connected';
+    const locked = Number(p.locked) || 0;
+    const voted = connected ? (p.voted || '') : '';
+    const selected = p.selected || '';
+    const options = !!p.options && connected;
+    const call = (f, a) => () => { if (typeof f === 'function') f(a); };
+    const cfg = {
+      yes: { label: 'Yes', desc: ', I approve', icon: 'CHECKMARK', variant: 'success', on: 'vote-toggle--on', shadow: 'shadow-success-sm' },
+      abstain: { label: 'Abstain', desc: '', icon: 'RADIO', variant: 'primary', on: 'vote-toggle--on-neutral', shadow: 'shadow-primary-sm' },
+      no: { label: 'No', desc: ", I don't approve", icon: 'CLOSE', variant: 'critical', on: 'vote-toggle--on-critical', shadow: 'shadow-critical-sm' }
+    };
+    const base = { yes: 2310000, no: 410000, abstain: 120000 };
+    if (voted) base[voted] += locked;
+    const votes = VOTERS.map((v) => ({ voter: { address: v.address, name: v.name || undefined }, indicator: v.ind, description: v.ind === 'abstain' ? undefined : 'to approve', vp: String(v.vp) }));
+    if (voted) votes.pop();
+    if (voted) votes.unshift({ voter: { address: '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', name: 'nadia.eth' }, indicator: voted, description: voted === 'abstain' ? undefined : 'to approve', vp: String(locked) });
+    const settings = [
+      { term: 'Plugin address', definition: '0x5d3f0c7a91b24e86d0a7c1f3b9e2486a0d51c7e3', description: 'Lock To Vote v1.3', link: { href: 'https://etherscan.io/address/0x5d3f0c7a91b24e86d0a7c1f3b9e2486a0d51c7e3', isExternal: true, isOnchainEntity: true } },
+      { term: 'Launched', definition: 'March 2026', link: { href: 'https://etherscan.io/tx/0x45bb30f18a31d380003fb757d247a11ddae38c7ca421a7fb18abc972ff7fc412' } },
+      { term: 'Support threshold', definition: '> 50%' },
+      { term: 'Minimum participation', definition: '≥ 15.00%  (≥ 1.5M ORB)' },
+      { term: 'Proposal duration', definition: '5 days 0 hours 0 minutes' },
+      { term: 'Vote change', definition: 'Enabled' },
+      { term: 'Proposal creation', definition: 'Members with ≥ 50,000 ORB voting power or balance' }
+    ];
+    return {
+      yes: true, no: false, two: 2,
+      onClick: (e) => {
+        const a = e.target && e.target.closest ? e.target.closest('a') : null;
+        const h = a && a.getAttribute('href');
+        if (h && h.indexOf('#nav:') === 0) { e.preventDefault(); if (typeof p.onNav === 'function') p.onNav(h.slice(5)); }
+      },
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'ORB-4' }],
+      statusTag: { label: 'Active', variant: 'info' },
+      description: '<h2>Summary</h2><p>Allocate 180,000 USDC from the Orbit treasury to a second round of community grants for tools, events and research.</p><h2>Motivation</h2><p>Round 1 funded twelve projects and brought 40 new contributors into the DAO. Round 2 keeps that momentum going with a larger pool and a lighter application process.</p><h2>Specification</h2><p>The treasury transfers 180,000 USDC to the Grants Safe. A committee of five token holders reviews applications and publishes every payout onchain.</p>',
+      // 5 day proposal that ends in 3 days and 1 hour: published 2 days minus 1 hour ago
+      published: GovUiKit.formatterUtils.formatDate(Date.now() - (2 * day - hour), { format: GovUiKit.DateFormat.YEAR_MONTH_DAY }),
+      endDate: Date.now() + 3 * day + hour,
+      totalYes: base.yes, totalNo: base.no, totalAbstain: base.abstain, supportThreshold: 50, minParticipation: 15,
+      showStart: !options && !voted, showVoted: !options && !!voted, showOptions: options,
+      noSelection: !selected, submitLabel: voted ? 'Submit update' : 'Submit vote',
+      toggles: ['yes', 'abstain', 'no'].map((k) => {
+        const c = cfg[k]; const on = selected === k;
+        return { label: c.label, desc: c.desc, checked: on, icon: c.icon, iconVariant: on ? c.variant : 'neutral',
+          on: on ? c.on : '', shadow: on ? c.shadow : 'shadow-neutral-sm', pick: call(p.onSelect, on ? '' : k) };
+      }),
+      onVote: call(p.onVote), onUpdate: call(p.onUpdate), onSubmit: call(p.onSubmit), onCancel: call(p.onCancel),
+      v0: votes[0], v1: votes[1], v2: votes[2], v3: votes[3], v4: votes[4], v5: votes[5], voteCount: votes.length, settings
+    };
+  }
+}
+</script>
+</body>
+</html>

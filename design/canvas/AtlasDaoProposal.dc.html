@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO proposal page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{is1}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p1.breadcrumbs}}" tag="{{p1.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Grant: Open-source zk proving benchmarks</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p1.two}}" class-name="text-base text-neutral-500 md:text-lg">Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p1.description}}" immediately-render="{{p1.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p1.votingStatus}}" end-date="{{p1.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p1.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p1.approvals}}" min-approvals="{{p1.three}}" members-count="{{p1.five}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p1.approvals}}" page-size="{{p1.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p1.emptyState}}">
+<sc-if value="{{p1.a0}}" hint-placeholder-val="{{p1.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p1.v0}}" vote-indicator="approve" href="{{p1.h0}}"></x-import></sc-if>
+<sc-if value="{{p1.a1}}" hint-placeholder-val="{{p1.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p1.v1}}" vote-indicator="approve" href="{{p1.h1}}"></x-import></sc-if>
+<sc-if value="{{p1.a2}}" hint-placeholder-val="{{p1.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p1.v2}}" vote-indicator="approve" href="{{p1.h2}}"></x-import></sc-if>
+<sc-if value="{{p1.a3}}" hint-placeholder-val="{{p1.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p1.v3}}" vote-indicator="approve" href="{{p1.h3}}"></x-import></sc-if>
+<sc-if value="{{p1.a4}}" hint-placeholder-val="{{p1.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p1.v4}}" vote-indicator="approve" href="{{p1.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p1.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p1.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p1.action}}" action-function-selector="0xa9059cbb" chain-id="{{p1.one}}" index="{{p1.zero}}" read-only="{{p1.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p1.dropdownItems}}">
+                  <x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p1.executedLink}}" target="_blank">Executed</x-import>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="0"><p class="truncate text-neutral-500">0</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-1</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" link="{{p1.creatorLink}}" children="nadia.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p1.publishedLink}}" children="{{p1.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/1" is-external="{{p1.yes}}" show-url="{{p1.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is2}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p2.breadcrumbs}}" tag="{{p2.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Grant: Governance analytics dashboard</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p2.two}}" class-name="text-base text-neutral-500 md:text-lg">Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC).</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p2.description}}" immediately-render="{{p2.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p2.votingStatus}}" end-date="{{p2.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p2.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p2.approvals}}" min-approvals="{{p2.three}}" members-count="{{p2.five}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p2.approvals}}" page-size="{{p2.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p2.emptyState}}">
+<sc-if value="{{p2.a0}}" hint-placeholder-val="{{p2.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p2.v0}}" vote-indicator="approve" href="{{p2.h0}}"></x-import></sc-if>
+<sc-if value="{{p2.a1}}" hint-placeholder-val="{{p2.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p2.v1}}" vote-indicator="approve" href="{{p2.h1}}"></x-import></sc-if>
+<sc-if value="{{p2.a2}}" hint-placeholder-val="{{p2.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p2.v2}}" vote-indicator="approve" href="{{p2.h2}}"></x-import></sc-if>
+<sc-if value="{{p2.a3}}" hint-placeholder-val="{{p2.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p2.v3}}" vote-indicator="approve" href="{{p2.h3}}"></x-import></sc-if>
+<sc-if value="{{p2.a4}}" hint-placeholder-val="{{p2.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p2.v4}}" vote-indicator="approve" href="{{p2.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p2.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p2.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p2.action}}" action-function-selector="0xa9059cbb" chain-id="{{p2.one}}" index="{{p2.zero}}" read-only="{{p2.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p2.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="1"><p class="truncate text-neutral-500">1</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-2</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" link="{{p2.creatorLink}}" children="sofiaruiz.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p2.publishedLink}}" children="{{p2.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Expired" variant="critical" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/2" is-external="{{p2.yes}}" show-url="{{p2.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is3}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p3.breadcrumbs}}" tag="{{p3.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Grant: Hackathon prize pool for Q4</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p3.two}}" class-name="text-base text-neutral-500 md:text-lg">Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p3.description}}" immediately-render="{{p3.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p3.votingStatus}}" end-date="{{p3.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p3.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p3.approvals}}" min-approvals="{{p3.three}}" members-count="{{p3.five}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p3.approvals}}" page-size="{{p3.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p3.emptyState}}">
+<sc-if value="{{p3.a0}}" hint-placeholder-val="{{p3.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p3.v0}}" vote-indicator="approve" href="{{p3.h0}}"></x-import></sc-if>
+<sc-if value="{{p3.a1}}" hint-placeholder-val="{{p3.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p3.v1}}" vote-indicator="approve" href="{{p3.h1}}"></x-import></sc-if>
+<sc-if value="{{p3.a2}}" hint-placeholder-val="{{p3.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p3.v2}}" vote-indicator="approve" href="{{p3.h2}}"></x-import></sc-if>
+<sc-if value="{{p3.a3}}" hint-placeholder-val="{{p3.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p3.v3}}" vote-indicator="approve" href="{{p3.h3}}"></x-import></sc-if>
+<sc-if value="{{p3.a4}}" hint-placeholder-val="{{p3.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p3.v4}}" vote-indicator="approve" href="{{p3.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p3.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p3.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p3.action}}" action-function-selector="0xa9059cbb" chain-id="{{p3.one}}" index="{{p3.zero}}" read-only="{{p3.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p3.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="2"><p class="truncate text-neutral-500">2</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-3</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x8a25faabbd80f71248328cf3a5867d3168210a46" link="{{p3.creatorLink}}" children="chenwei.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p3.publishedLink}}" children="{{p3.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Rejected" variant="critical" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/3" is-external="{{p3.yes}}" show-url="{{p3.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is4}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p4.breadcrumbs}}" tag="{{p4.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add a sixth council seat for research</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p4.two}}" class-name="text-base text-neutral-500 md:text-lg">Expand the council with a research seat to improve technical review of grant applications.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p4.description}}" immediately-render="{{p4.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p4.votingStatus}}" end-date="{{p4.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p4.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p4.approvals}}" min-approvals="{{p4.three}}" members-count="{{p4.five}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p4.approvals}}" page-size="{{p4.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p4.emptyState}}">
+<sc-if value="{{p4.a0}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p4.v0}}" vote-indicator="approve" href="{{p4.h0}}"></x-import></sc-if>
+<sc-if value="{{p4.a1}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p4.v1}}" vote-indicator="approve" href="{{p4.h1}}"></x-import></sc-if>
+<sc-if value="{{p4.a2}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p4.v2}}" vote-indicator="approve" href="{{p4.h2}}"></x-import></sc-if>
+<sc-if value="{{p4.a3}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p4.v3}}" vote-indicator="approve" href="{{p4.h3}}"></x-import></sc-if>
+<sc-if value="{{p4.a4}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p4.v4}}" vote-indicator="approve" href="{{p4.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p4.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p4.one}}" is-enabled="{{p4.yes}}" is-loading="{{p4.simLoading}}" last-simulation="{{p4.simLast}}" on-simulate="{{p4.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p4.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p4.action}}" chain-id="{{p4.one}}" index="{{p4.zero}}" read-only="{{p4.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p4.dropdownItems}}">
+                  <sc-if value="{{p4.canExecute}}" hint-placeholder-val="{{p4.true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" on-click="{{p4.onExecute}}">Execute</x-import></sc-if>
+                  <sc-if value="{{p4.isExecuted}}" hint-placeholder-val="{{p4.false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="success" size="md" icon-right="LINK_EXTERNAL" href="{{p4.executedLink}}" target="_blank">Executed</x-import></sc-if>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="3"><p class="truncate text-neutral-500">3</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-4</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" link="{{p4.creatorLink}}" children="nadia.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p4.publishedLink}}" children="{{p4.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p4.tagLabel}}" variant="{{p4.tagVariant}}" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/4" is-external="{{p4.yes}}" show-url="{{p4.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is5}}" hint-placeholder-val="{{true}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p5.breadcrumbs}}" tag="{{p5.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Grant: Wallet accessibility audit</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p5.two}}" class-name="text-base text-neutral-500 md:text-lg">Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p5.description}}" immediately-render="{{p5.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p5.votingStatus}}" end-date="{{p5.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p5.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p5.approvals}}" min-approvals="{{p5.three}}" members-count="{{p5.five}}">
+                    <sc-if value="{{p5.canApprove}}" hint-placeholder-val="{{p5.true}}">
+                    <div style="padding-top: 32px;">
+                      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="w-fit" on-click="{{p5.onApprove}}">Approve proposal</x-import>
+                    </div>
+                    </sc-if>
+                    <sc-if value="{{p5.hasApproved}}" hint-placeholder-val="{{p5.false}}">
+                    <div style="padding-top: 32px;">
+                      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="w-fit" href="{{p5.approveTx}}" target="_blank">Approved</x-import>
+                    </div>
+                    </sc-if>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p5.approvals}}" page-size="{{p5.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p5.emptyState}}">
+<sc-if value="{{p5.a0}}" hint-placeholder-val="{{p5.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p5.v0}}" vote-indicator="approve" href="{{p5.h0}}"></x-import></sc-if>
+<sc-if value="{{p5.a1}}" hint-placeholder-val="{{p5.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p5.v1}}" vote-indicator="approve" href="{{p5.h1}}"></x-import></sc-if>
+<sc-if value="{{p5.a2}}" hint-placeholder-val="{{p5.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p5.v2}}" vote-indicator="approve" href="{{p5.h2}}"></x-import></sc-if>
+<sc-if value="{{p5.a3}}" hint-placeholder-val="{{p5.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p5.v3}}" vote-indicator="approve" href="{{p5.h3}}"></x-import></sc-if>
+<sc-if value="{{p5.a4}}" hint-placeholder-val="{{p5.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p5.v4}}" vote-indicator="approve" href="{{p5.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p5.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p5.one}}" is-enabled="{{p5.yes}}" is-loading="{{p5.simLoading}}" last-simulation="{{p5.simLast}}" on-simulate="{{p5.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p5.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p5.action}}" action-function-selector="0xa9059cbb" chain-id="{{p5.one}}" index="{{p5.zero}}" read-only="{{p5.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p5.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="4"><p class="truncate text-neutral-500">4</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-5</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" link="{{p5.creatorLink}}" children="tomas.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p5.publishedLink}}" children="{{p5.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Active" variant="info" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/5" is-external="{{p5.yes}}" show-url="{{p5.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<sc-if value="{{is6}}" hint-placeholder-val="{{false}}">
+      <div class="page-container" onClick="{{onClick}}">
+        <header class="page-header">
+          <div class="app-container page-header__inner">
+            <x-import component-from-global-scope="GovUiKit.Breadcrumbs" links="{{p6.breadcrumbs}}" tag="{{p6.statusTag}}"></x-import>
+            <div class="page-header__row">
+              <div class="page-header__text">
+                <div class="page-header__title">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Q1 2027 council operating budget</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{p6.two}}" class-name="text-base text-neutral-500 md:text-lg">Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="app-container page-content">
+          <main class="page-main">
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Proposal</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.CardCollapsible" button-label-closed="Read more" button-label-opened="Read less">
+                <x-import component-from-global-scope="GovUiKit.DocumentParser" document="{{p6.description}}" immediately-render="{{p6.no}}"></x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Voting</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ProposalVoting.Container" status="{{p6.votingStatus}}" end-date="{{p6.endDate}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalVoting.BodyContent" name="0x2c50…a5ae" status="{{p6.votingStatus}}">
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.BreakdownMultisig" approvals-amount="{{p6.approvals}}" min-approvals="{{p6.three}}" members-count="{{p6.five}}"></x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes">
+                    <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Votes" items-count="{{p6.approvals}}" page-size="{{p6.pageSize}}" state="idle">
+                      <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{p6.emptyState}}">
+<sc-if value="{{p6.a0}}" hint-placeholder-val="{{p6.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p6.v0}}" vote-indicator="approve" href="{{p6.h0}}"></x-import></sc-if>
+<sc-if value="{{p6.a1}}" hint-placeholder-val="{{p6.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p6.v1}}" vote-indicator="approve" href="{{p6.h1}}"></x-import></sc-if>
+<sc-if value="{{p6.a2}}" hint-placeholder-val="{{p6.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p6.v2}}" vote-indicator="approve" href="{{p6.h2}}"></x-import></sc-if>
+<sc-if value="{{p6.a3}}" hint-placeholder-val="{{p6.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p6.v3}}" vote-indicator="approve" href="{{p6.h3}}"></x-import></sc-if>
+<sc-if value="{{p6.a4}}" hint-placeholder-val="{{p6.false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{p6.v4}}" vote-indicator="approve" href="{{p6.h4}}"></x-import></sc-if>
+</x-import>
+                      <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+                    </x-import>
+                  </x-import>
+                  <x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{p6.settings}}"></x-import>
+                </x-import>
+              </x-import>
+            </div>
+
+            <div class="page-section">
+              <div class="page-section__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Actions</x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{p6.one}}" is-enabled="{{p6.yes}}" is-loading="{{p6.simLoading}}" last-simulation="{{p6.simLast}}" on-simulate="{{p6.onSimulate}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{p6.one}}">
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description="">
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{p6.action}}" action-function-selector="0xa9059cbb" chain-id="{{p6.one}}" index="{{p6.zero}}" read-only="{{p6.yes}}"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{p6.dropdownItems}}">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-500);">The proposal must pass before its actions can be executed.</p>
+                </x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Details</x-import>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Onchain ID" copy-value="5"><p class="truncate text-neutral-500">5</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="ID"><p class="truncate text-neutral-500">AGC-6</p></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Proposed by" copy-value="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" link="{{p6.creatorLink}}" children="lenaweber.eth"></x-import></div>
+                <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Published" link="{{p6.publishedLink}}" children="{{p6.published}}"></x-import></div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Status"><x-import component-from-global-scope="GovUiKit.Tag" label="Pending" variant="neutral" class-name="w-fit"></x-import></x-import>
+              </x-import>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Links</x-import>
+              <div style="display: flex; flex-direction: column; gap: 16px;">
+                <x-import component-from-global-scope="GovUiKit.Link" href="https://atlasgrants.org/applications/6" is-external="{{p6.yes}}" show-url="{{p6.yes}}">Grant application</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</sc-if>
+<dc-import name="TxFlowDialog" open="{{txOpen}}" title="{{tx.title}}" description="{{tx.description}}" steps="{{tx.steps}}" submit-label="{{tx.submitLabel}}" success-label="View proposal" summary="{{tx.summary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,0px"></dc-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"proposal":{"editor":"text","default":"AGC-5"},"onNav":{"editor":null},"wallet":{"editor":"text","default":""},"onConnect":{"editor":null}}'>// Shared state of the prototype (parts remount when you navigate): the mock user nadia.eth approved AGC-5, AGC-4 was executed.
+// "Published" dates are fixed text in the reference (relative to 2026-11-16); shift them with the clock so they stay before the end date on any day.
+const shiftDay = (text) => {
+  const m = /^([A-Za-z]+) (\d+), (\d{4})$/.exec(String(text || ''));
+  if (!m) return text;
+  const ref = Date.UTC(2026, 10, 16);
+  const then = Date.parse(m[1] + ' ' + m[2] + ', ' + m[3] + ' 00:00:00 GMT');
+  if (isNaN(then)) return text;
+  const d = new Date(Date.now() - Math.round((ref - then) / 86400000) * 86400000);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+const atlasState = () => (window.__atlasDao = window.__atlasDao || { approved5: false, executed4: false });
+
+// PART of the Atlas Grants Council prototype (AtlasDao.dc.html). Props: proposal (slug AGC-1 ... AGC-6; unknown slugs show AGC-5),
+// onNav(target), wallet ('connected' | ''), onConnect() (Approve / Execute while disconnected open the connect dialog).
+// The six proposal screens (MsProposalAGC1..6) are lifted in, one <sc-if> each; every hole is prefixed p<N> (vN() below = that
+// screen's renderVals). The voting block has the tabs of the multisig terminal: the approval breakdown, the list of approvals
+// (one <sc-if> per council member so the pagination count is right) and the process settings.
+// Live: AGC-5 "Approve proposal" (connected as nadia.eth, a council member) -> TxFlowDialog with a simulated wallet -> the
+// approval count rises by one, nadia.eth appears in the approvals and the button becomes "Approved"; AGC-4 "Execute" ->
+// TxFlowDialog -> "Executed". Both are remembered for the other pages in window.__atlasDao.
+// Data deviation: in data.cjs the one approval of AGC-5 is nadia.eth (the first signer). The mock user is nadia.eth, so the
+// existing approval is shown as chenwei.eth's instead, which keeps the Approve action available to the mock user.
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { txOpen: false, txKind: '', pendingApprove: false, sim: {}, tick: 0 };
+    this.timers = [];
+  }
+  componentDidUpdate(prev) {
+    // "Approve proposal" clicked while disconnected: once the wallet connects, continue to the transaction (as the app's guard does).
+    if (this.state.pendingApprove && prev.wallet !== 'connected' && this.props.wallet === 'connected') {
+      this.setState({ pendingApprove: false, txOpen: true, txKind: 'approve' });
+    } else if (this.state.pendingApprove && prev.connectOpen && !this.props.connectOpen) {
+      // the connect dialog was dismissed without connecting: forget the click, a later connect must not open the transaction
+      this.setState({ pendingApprove: false });
+    }
+  }
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
+  simulate(k) {
+    const cur = Object.assign({}, this.state.sim);
+    cur[k] = Object.assign({}, cur[k], { loading: true });
+    this.setState({ sim: cur });
+    this.timers.push(setTimeout(() => {
+      const nxt = Object.assign({}, this.state.sim);
+      nxt[k] = { loading: false, last: { timestamp: Date.now(), url: 'https://dashboard.tenderly.co/explorer', status: 'success' } };
+      this.setState({ sim: nxt });
+    }, 1600));
+  }
+  renderVals() {
+    const nav = (t) => { if (this.props.onNav) this.props.onNav(t); };
+    const m = /^(?:AGC-)?(\d+)$/i.exec(String(this.props.proposal || '').trim());
+    let n = m ? Number(m[1]) : 5;
+    if (n < 1 || n > 6) n = 5;
+    const st = this.state;
+    const A = atlasState();
+    const connected = this.props.wallet === 'connected';
+    const MEMBERS = [['0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth'], ['0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth'], ['0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth'], ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth'], ['0x8a25faabbd80f71248328cf3a5867d3168210a46', 'chenwei.eth']];
+    const BASE = { 1: [0, 1, 2, 3], 2: [0, 1, 2], 3: [0], 4: [0, 1, 2], 5: [4], 6: [] };
+    const VSTATUS = { 1: 'EXECUTED', 2: 'EXPIRED', 3: 'REJECTED', 4: A.executed4 ? 'EXECUTED' : 'EXECUTABLE', 5: 'ACTIVE', 6: 'PENDING' };
+    const settings = [
+      { term: 'Plugin address', definition: '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', description: 'Multisig v1.3', link: { href: 'https://etherscan.io/address/0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', isExternal: true, isOnchainEntity: true } },
+      { term: 'Launched', definition: 'March 2026', link: { href: 'https://etherscan.io/tx/0x145a7ae04cba403de6e76cd3eb13de56deb884cdfb97af3e9de4f224aa7952c3' } },
+      { term: 'Minimum approval', definition: '3 of 5 members' },
+      { term: 'Proposal creation', definition: 'Multisig members' }
+    ];
+    const p = { p1: this.v1(), p2: this.v2(), p3: this.v3(), p4: this.v4(), p5: this.v5(), p6: this.v6() };
+    [1, 2, 3, 4, 5, 6].forEach((k) => {
+      const list = BASE[k].slice();
+      if (k === 5 && A.approved5) list.unshift(0);
+      const q = p['p' + k];
+      q.approvals = list.length;
+      q.pageSize = 6;
+      q.votingStatus = VSTATUS[k];
+      q.settings = settings;
+      q.emptyState = { heading: 'No approvals found', description: 'No council member has approved this proposal yet.' };
+      MEMBERS.forEach((mm, i) => {
+        q['a' + i] = list.indexOf(i) >= 0;
+        q['v' + i] = { address: mm[0], name: mm[1] };
+        q['h' + i] = '#nav:member:' + mm[0];
+      });
+      const x = (st.sim || {})[k] || {};
+      Object.assign(q, { simLoading: !!x.loading, simLast: x.last, onSimulate: () => this.simulate(k) });
+    });
+    // AGC-5: approve
+    Object.assign(p.p5, {
+      canApprove: !A.approved5, hasApproved: !!A.approved5,
+      approveTx: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c',
+      onApprove: () => {
+        if (!connected) { this.setState({ pendingApprove: true }); if (this.props.onConnect) this.props.onConnect(); return; }
+        this.setState({ txOpen: true, txKind: 'approve' });
+      }
+    });
+    // AGC-4: execute
+    const done = !!A.executed4;
+    Object.assign(p.p4, {
+      statusTag: { label: done ? 'Executed' : 'Executable', variant: done ? 'success' : 'info' },
+      tagLabel: done ? 'Executed' : 'Executable', tagVariant: done ? 'success' : 'info',
+      canExecute: !done, isExecuted: done,
+      onExecute: () => {
+        if (!connected) { if (this.props.onConnect) this.props.onConnect(); return; }
+        this.setState({ txOpen: true, txKind: 'execute' });
+      }
+    });
+    const isApprove = st.txKind === 'approve';
+    const tx = isApprove ? {
+      title: 'Approve proposal', description: 'To approve the proposal, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Approve proposal', steps: [],
+      summary: { type: 'vote', proposalId: 'AGC-5', proposalTitle: 'Grant: Wallet accessibility audit', voteIndicator: 'approve' }
+    } : {
+      title: 'Execute proposal', description: 'To execute the proposal, confirm the onchain transaction in your wallet.',
+      submitLabel: 'Execute proposal', steps: [], summary: null
+    };
+    return Object.assign({
+      onClick: (e) => {
+        const a = e.target && e.target.closest ? e.target.closest('a') : null;
+        const h = a && a.getAttribute('href');
+        if (h && h.indexOf('#nav:') === 0) { e.preventDefault(); nav(h.slice(5)); }
+      },
+      is1: n === 1, is2: n === 2, is3: n === 3, is4: n === 4, is5: n === 5, is6: n === 6,
+      tx, txOpen: st.txOpen,
+      closeTx: () => this.setState({ txOpen: false }),
+      txDone: () => {
+        if (this.state.txKind === 'approve') atlasState().approved5 = true;
+        else atlasState().executed4 = true;
+        this.setState({ txOpen: false, tick: this.state.tick + 1 });
+      }
+    }, p);
+  }
+
+  v1() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-1' }],
+      statusTag: { label: 'Executed', variant: 'success' },
+      description: "<h2>Summary</h2><p>Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems.</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() - 2 * day,
+      settings: undefined,
+      action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000cb4003064c1bf62be86062f29f4efc2196d328c300000000000000000000000000000000000000000000000000000009502f9000", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0xcb4003064c1bf62be86062f29f4efc2196d328c3"}, {"name": "value", "type": "uint256", "value": "40000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x5f2cd08d93a483f7ad67d1652b2197ea6cc8cbac0d8ee52801216a7a96d563a2',
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
+      published: shiftDay("October 7, 2026"),
+      publishedLink: { href: 'https://etherscan.io/tx/0x16b51fe60d97a8e2ab8ac0372a49a691985bd4d0ab73aba3bf5d8347b24be966' }
+    };
+  }
+
+  v2() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-2' }],
+      statusTag: { label: 'Expired', variant: 'critical' },
+      description: "<h2>Summary</h2><p>Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC).</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() - 2 * day,
+      settings: undefined,
+      action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000005d21dba00", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0xdce3a01d0357efb601efac0fdd836d2e1b3bc242"}, {"name": "value", "type": "uint256", "value": "25000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', isOnchainEntity: true },
+      published: shiftDay("October 17, 2026"),
+      publishedLink: { href: 'https://etherscan.io/tx/0x873c23c998b5e1556868cd9fbbf91607b287b7392782460a1eae614c7e15b7be' }
+    };
+  }
+
+  v3() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-3' }],
+      statusTag: { label: 'Rejected', variant: 'critical' },
+      description: "<h2>Summary</h2><p>Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks.</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() - 2 * day,
+      settings: undefined,
+      action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0x6b175474e89094c44da98b954eedeac495271d0f", "data": "0xa9059cbb000000000000000000000000cb4003064c1bf62be86062f29f4efc2196d328c300000000000000000000000000000000000000000000032d26d12e980b600000", "value": "0", "inputData": {"function": "transfer", "contract": "Dai Stablecoin", "parameters": [{"name": "to", "type": "address", "value": "0xcb4003064c1bf62be86062f29f4efc2196d328c3"}, {"name": "value", "type": "uint256", "value": "15000000000000000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46', isOnchainEntity: true },
+      published: shiftDay("October 27, 2026"),
+      publishedLink: { href: 'https://etherscan.io/tx/0xd6c4184eea0ddcfc2bcc03b8ea2ce16e821e65f1204403e6363137bf12661879' }
+    };
+  }
+
+  v4() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-4' }],
+      statusTag: { label: 'Executable', variant: 'info' },
+      description: "<h2>Summary</h2><p>Expand the council with a research seat to improve technical review of grant applications.</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() - 2 * day,
+      settings: undefined,
+      action: { type: 'Unknown', from: dao, to: plugin, data: '0x', value: '0', inputData: null },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x7d3a61c2e0b94f58a1c6d2e93b7f4085a6c1d9e2f3b4a5968778695a4b3c2d1e',
+      creatorLink: { href: '#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', isOnchainEntity: true },
+      published: shiftDay("November 13, 2026"),
+      publishedLink: { href: 'https://etherscan.io/tx/0xd9dba209d0ceab4b361350e615b76f605d3a149163769c13a9a2ded12b279e85' }
+    };
+  }
+
+  v5() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-5' }],
+      statusTag: { label: 'Active', variant: 'info' },
+      description: "<h2>Summary</h2><p>Commission an accessibility audit of the five most-used governance wallets (18,500 USDC).</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() + 6 * day + hour,
+      settings: undefined,
+      action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000d35945d0b4d4a6f6f4d2f902cf0cf3e970e8e551000000000000000000000000000000000000000000000000000000044eaf9900", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0xd35945d0b4d4a6f6f4d2f902cf0cf3e970e8e551"}, {"name": "value", "type": "uint256", "value": "18500000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', isOnchainEntity: true },
+      published: (() => { const t = GovUiKit.formatterUtils.formatDate(Date.now() - 20 * hour, { format: GovUiKit.DateFormat.YEAR_MONTH_DAY }); return t.charAt(0).toUpperCase() + t.slice(1); })(),
+      publishedLink: { href: 'https://etherscan.io/tx/0x428c6416f66eb40ab00640318b6966819040e987ab2ac7342e7daa3f3e159745' }
+    };
+  }
+
+  v6() {
+    const hour = 3600000;
+    const day = 24 * hour;
+    const dao = '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368';
+    const plugin = '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae';
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, three: 3, five: 5,
+      breadcrumbs: [{ label: 'Proposals', href: '#nav:proposals' }, { label: 'AGC-6' }],
+      statusTag: { label: 'Pending', variant: 'neutral' },
+      description: "<h2>Summary</h2><p>Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027.</p><h2>Motivation</h2><p>The applicant team has shipped two previous milestones on time and the work is fully open source. The council reviewed the application in the monthly grants call and the scope was reduced after feedback from two council members.</p><h2>Specification</h2><ul><li>Funds are transferred directly from the DAO treasury upon execution.</li><li>Recipients report progress publicly on the forum every month.</li><li>Any unspent funds are returned to the treasury at the end of the period.</li></ul><h2>Risks</h2><p>Funds are released in a single transfer upon execution. The council can claw back unspent funds if milestones are missed for more than 60 days.</p>",
+      endDate: Date.now() + 5 * day + 4 * hour,
+      settings: [
+        { term: 'Plugin address', definition: '0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', description: 'Multisig v1.3', link: { href: 'https://etherscan.io/address/0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', isExternal: true, isOnchainEntity: true } },
+        { term: 'Launched', definition: 'March 2026', link: { href: 'https://etherscan.io/tx/0x145a7ae04cba403de6e76cd3eb13de56deb884cdfb97af3e9de4f224aa7952c3' } },
+        { term: 'Minimum approval', definition: '3 of 5 members' },
+        { term: 'Proposal creation', definition: 'Multisig members' }
+      ],
+      action: {"type": "Transfer", "from": "0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368", "to": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", "data": "0xa9059cbb000000000000000000000000dce3a01d0357efb601efac0fdd836d2e1b3bc24200000000000000000000000000000000000000000000000000000006fc23ac00", "value": "0", "inputData": {"function": "transfer", "contract": "USD Coin", "parameters": [{"name": "to", "type": "address", "value": "0xdce3a01d0357efb601efac0fdd836d2e1b3bc242"}, {"name": "value", "type": "uint256", "value": "30000000000"}]}},
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      executedLink: 'https://etherscan.io/tx/0x',
+      creatorLink: { href: '#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', isOnchainEntity: true },
+      published: (() => { const t = GovUiKit.formatterUtils.formatDate(Date.now() + 22 * hour, { format: GovUiKit.DateFormat.YEAR_MONTH_DAY }); return t.charAt(0).toUpperCase() + t.slice(1); })(),
+      publishedLink: { href: 'https://etherscan.io/tx/0x174a42f444d11c710faad57552dc9d17a73ad474c32204ba50b2763d912cd1f9' }
+    };
+  }
+}
+</script>
+</body>
+</html>

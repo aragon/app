@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace flow: targets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Add targets</x-import>
+    <p class="wizard-step__description">Add the addresses this workspace relates to. This step is optional and can be left empty.</p>
+  </div>
+  <div class="workspace-list">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="workspaceTargets" label="Targets" is-optional="{{yes}}" help-text="Addresses this workspace relates to. They are stored as-is for now and will later be used to discover accounts automatically." use-custom-wrapper="{{yes}}" class-name="gap-3">
+      <div class="cwf-rows">
+        <sc-for list="{{rows}}" as="row" hint-placeholder-count="1">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm workspace-target">
+            <div class="cwf-fill"><dc-import name="CreateWorkspaceFlowAddressFields" row="{{row}}" hint-size="100%,100px"></dc-import></div>
+            <div class="workspace-account__menu">
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{menuTrigger}}" constrain-content-width="{{no}}" size="md">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{row.remove}}">Remove target</x-import>
+              </x-import>
+            </div>
+          </x-import>
+        </sc-for>
+      </div>
+    </x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{onAdd}}">Add target</x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"rows":{"editor":null},"onAdd":{"editor":null},"$preview":{"width":800,"height":420}}'>
+// Step 2 body of the create-workspace wizard, "Add targets" (apps/app: createWorkspaceFormTargets, createWorkspaceFormTargetsItem).
+//   rows   [{ ...row of CreateWorkspaceFlowAddressFields, remove() }]     onAdd()   appends an empty row.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const rows = p.rows || [];
+    return {
+      yes: true, no: false, rows, onAdd: p.onAdd || (() => undefined),
+      menuTrigger: React.createElement(GovUiKit.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' })
+    };
+  }
+}
+</script>
+</body>
+</html>

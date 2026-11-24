@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unlock blocked dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="You can't unlock yet" hidden-description="Dialog informing user they cannot unlock tokens due to active proposals">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <x-import component-from-global-scope="GovUiKit.EmptyState" heading="You can't unlock yet" description="There's an active proposal that you've created or voted on." object-illustration="{{illustration}}" primary-button="{{primary}}"></x-import>
+  </x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"$preview":{"width":480,"height":380}}'>
+// UNLOCK_BLOCKED_INFO (plugins/lockToVotePlugin/dialogs/unlockBlockedInfoDialog): the unlock simulation fails while the user has voted
+// on (or created) an active proposal. Prop on-close() (OK, Esc, overlay). Mount only while open.
+class Component extends DCLogic {
+  renderVals() {
+    const close = () => { if (typeof this.props.onClose === 'function') this.props.onClose(); };
+    return {
+      yes: true, illustration: { object: 'TIMELOCK' }, primary: { label: 'OK', onClick: close },
+      noFocus: (e) => e.preventDefault(), openChange: (o) => { if (!o) close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

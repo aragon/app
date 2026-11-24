@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add contract dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" on-open-change="{{openChange}}" dc-props="{{rootProps}}" hidden-title="Add contract address" hidden-description="The write functions on this contract can be used to add actions.">
+<x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Add contract address" description="The write functions on this contract can be used to add actions." on-close="{{close}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="flex flex-col gap-4 pb-4">
+<x-import component-from-global-scope="GovUiKit.AddressInput" chain-id="{{one}}" label="Address" placeholder="ENS or 0x…" value="{{value}}" on-change="{{change}}" on-accept="{{accept}}" auto-focus="{{yes}}"></x-import>
+<sc-if value="{{verifying}}" hint-placeholder-val="{{false}}"><p class="sf-muted">Retrieve ABI…</p></sc-if>
+<sc-if value="{{verified}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Verified contract: USD Coin (USDC)" variant="success"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onClose":{"editor":null},"onAdd":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Add contract address dialog (apps/app: modules/governance/dialogs/verifySmartContractDialog): an address input, "Verify contract", then
+// "Add contract". PART of SafeTransactionFlow. Props: onClose(), onAdd() (the contract was added: the flow adds its functions to the menu).
+// No backend: any 0x address or *.eth name is accepted and resolves to USD Coin (sample ABI) after a short "Retrieve ABI" step.
+// Source-only: the "Unable to retrieve ABI" / unverified-contract warning states are not drawn.
+class Component extends DCLogic {
+  state = { value: '', accepted: false, phase: 'input' };
+  componentWillUnmount() { clearTimeout(this.t); }
+  change = (v) => {
+    const t = (v || '').trim();
+    this.setState({ value: v || '', accepted: /^0x[0-9a-fA-F]{40}$/.test(t) || /^[\w-]+(\.[\w-]+)*\.eth$/i.test(t), phase: 'input' });
+  };
+  accept = (v) => { if (v && v.address && !this.state.accepted) this.setState({ accepted: true }); };
+  verify = () => {
+    this.setState({ phase: 'verifying' });
+    this.t = setTimeout(() => this.setState({ phase: 'verified' }), 900);
+  };
+  add = () => { if (typeof this.props.onAdd === 'function') this.props.onAdd(); };
+  close = () => { if (typeof this.props.onClose === 'function') this.props.onClose(); };
+  renderVals() {
+    const s = this.state;
+    const primary = s.phase === 'verified' ? { label: 'Add contract', onClick: this.add }
+      : { label: 'Verify contract', onClick: this.verify, disabled: !s.accepted || s.phase === 'verifying', isLoading: s.phase === 'verifying' };
+    return {
+      yes: true, one: 1, value: s.value, change: this.change, accept: this.accept,
+      verifying: s.phase === 'verifying', verified: s.phase === 'verified',
+      primary, secondary: { label: 'Cancel', onClick: this.close },
+      close: this.close, openChange: (o) => { if (!o) this.close(); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault() },
+    };
+  }
+}
+</script>
+</body>
+</html>

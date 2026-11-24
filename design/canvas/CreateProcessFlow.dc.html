@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create process flow</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create process" exit-href="Dao.dc.html" dao-name="Meridian DAO" dao-address="0xc8c322384903ee8f11f511b71d0504237886bcde" dao-avatar="assets/mock/avatar/meridian.svg" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onSubmit="{{onFormSubmit}}">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{total}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <div class="wizard-step__content">
+          <div class="wizard-step__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">{{title}}</x-import>
+            <p class="wizard-step__description">{{description}}</p>
+          </div>
+          <sc-if value="{{isStep1}}" hint-placeholder-val="{{yes}}"><dc-import name="CreateProcessFlowMetadata" vm="{{metadataVm}}" hint-size="100%,1000px"></dc-import></sc-if>
+          <sc-if value="{{isStep2}}" hint-placeholder-val="{{no}}"><dc-import name="CreateProcessFlowDesigner" vm="{{designerVm}}" hint-size="100%,300px"></dc-import></sc-if>
+          <sc-if value="{{isStep3}}" hint-placeholder-val="{{no}}"><dc-import name="CreateProcessFlowProposalCreation" vm="{{creationVm}}" hint-size="100%,400px"></dc-import></sc-if>
+          <sc-if value="{{isStep4}}" hint-placeholder-val="{{no}}"><dc-import name="CreateProcessFlowPermissions" vm="{{permissionsVm}}" hint-size="100%,400px"></dc-import></sc-if>
+        </div>
+        <sc-if value="{{showErrorFooter}}" hint-placeholder-val="{{no}}">
+          <div class="wizard-step__errors">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{errorTitle}}" variant="critical">{{errorDescription}}</x-import>
+            <div class="wizard-actions">
+              <div class="wizard-actions__buttons">
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" on-click="{{back}}" class-name="{{backClass}}">Back</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="critical" size="lg" icon-right="CHEVRON_RIGHT" type="submit" on-click="{{next}}">{{nextLabel}}</x-import>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{showFooter}}" hint-placeholder-val="{{yes}}">
+          <dc-import name="WizardActions" has-back="{{hasBack}}" is-last="{{isLast}}" submit-label="Publish process" help-text="You will have to sign two transactions." on-next="{{next}}" on-back="{{back}}" hint-size="100%,48px"></dc-import>
+        </sc-if>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+</div>
+<dc-import name="CreateProcessFlowBodyDialog" vm="{{bodyDialogVm}}" hint-size="0px,0px"></dc-import>
+<dc-import name="CreateProcessFlowStageDialog" vm="{{stageDialogVm}}" hint-size="0px,0px"></dc-import>
+<a id="cpr-dao-link" class="cdf-hidden-link" href="Dao.dc.html" tabindex="-1" aria-hidden="true">View settings</a>
+<sc-if value="{{tx1Open}}" hint-placeholder-val="{{no}}">
+<dc-import name="TxFlowDialog" open="{{yes}}" title="Publish governance process" description="Step 1 of 2: prepare the installation of your governance process. Confirm the onchain transaction in your wallet." steps="{{txSteps}}" submit-label="Prepare installation" success-label="Continue" on-close="{{closeTx}}" on-success="{{tx1Done}}" hint-size="0px,0px"></dc-import>
+</sc-if>
+<sc-if value="{{tx2Open}}" hint-placeholder-val="{{no}}">
+<dc-import name="TxFlowDialog" open="{{yes}}" title="Publish governance process" description="Step 2 of 2: create the proposal that installs your governance process. Confirm the onchain transaction in your wallet." steps="{{txSteps2}}" summary="{{txSummary}}" submit-label="Propose process" success-label="View settings" on-close="{{closeTx}}" on-success="{{tx2Done}}" hint-size="0px,0px"></dc-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"advancedGated":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":1351}}'>
+// FLOW: Create governance process on Meridian, all four steps (route /dao/ethereum-mainnet/meridian.dao.eth/create/<plugin>/process).
+// ONE artboard: frame (WizardNav, WizardProgress, WizardActions, Footer) + the state machine; every step body and dialog is a part with
+// its state in props: CreateProcessFlowMetadata (step 1), CreateProcessFlowDesigner (+ CreateProcessFlowBodyCard) (step 2), CreateProcessFlowProposalCreation (3),
+// CreateProcessFlowPermissions (4), CreateProcessFlowBodyDialog, CreateProcessFlowStageDialog, TxFlowDialog (publish).
+// Initial render = static CreateProcessStep1 (same parts). Apps/app: modules/createDao/pages/createProcessPage/*, components/createProcessForm/*,
+// dialogs/setupBodyDialog, dialogs/setupStageSettingsDialog, dialogs/prepareProcessDialog.
+// Validation as the app (react-hook-form mode onTouched): errors under a field after its blur, all of the step's errors after "Next"; the
+// footer then shows "Missing data" / "Invalid data" and a critical Next button. Back drops the errors.
+// Simulations (no chain): address checks resolve after 1 s. Token import: an address ending 0000 is "Not compatible" (not ERC-20), one ending
+// 1111 "Requires wrapping", any other is fully compatible. Any address: 0x515f…02e2 is detected as a Safe, others as a plain address.
+// Tweak `advancedGated` draws the gated "On request" Advanced option (feature flag gateAdvancedGovernance).
+const WALLET = '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A';
+const COUNCIL_SAFE = '0x515fec2e8f6553948b1d57c14c1243a1405c02e2';
+const ADDR = /^0x[0-9a-fA-F]{40}$/;
+const trunc = (a) => (a && a.length > 12 ? a.slice(0, 6) + '…' + a.slice(-4) : a || '');
+const PLUGIN = { multisig: { id: 'multisig', v: '1.3', label: 'Multisig' }, tokenVoting: { id: 'tokenVoting', v: '1.5', label: 'TokenVoting' }, lockToVote: { id: 'lockToVote', v: '1.1', label: 'LockToVote' } };
+const ZERO = '0x0000000000000000000000000000000000000000';
+const MENU = [
+  { name: 'DAO', info: '0xc8c3…bcde', address: '0xc8c322384903ee8f11f511b71d0504237886bcde', contract: 'DAO', items: [{ name: 'Set metadata', selector: '0xee57e36f' }] },
+  { name: 'Meridian', info: '0xc6cf…9dae', address: '0xc6cf4d8a0d5f1f1c8e6c3d9e3a8e0f6bd5139dae', contract: 'Meridian', items: [{ name: 'Mint', selector: '0x40c10f19' }] },
+  { name: 'Meridian Token Voting', info: '0xa147…8fda', address: '0xa1479b0d2d7a8d2e0b64a2d5a1f6c8f3c9b78fda', contract: 'Meridian Token Voting', items: [{ name: 'Update settings', selector: '0x4a2b1c3d' }, { name: 'Set metadata', selector: '0x13e1d06a' }] }
+];
+const fmtDur = (d) => {
+  const p = [['days', 'day'], ['hours', 'hour'], ['minutes', 'minute']].filter(([k]) => d && d[k]).map(([k, s]) => d[k] + ' ' + (d[k] === 1 ? s : k));
+  return p.length ? p.join(', ') : '0 minutes';
+};
+const durSecs = (d) => ((d.days || 0) * 24 + (d.hours || 0)) * 3600 + (d.minutes || 0) * 60;
+let uid = 0;
+const newId = () => 'id' + (++uid);
+const emptyForm = () => ({ plugin: 'multisig', name: '', description: '', resources: [], address: '', isSafe: false, proposalType: 'approve',
+  members: [WALLET], threshold: 1,
+  token: { type: 'new', name: '', symbol: '', recipients: [{ address: WALLET, amount: '1' }], address: '' },
+  lock: { address: '' },
+  gov: { support: 50, participation: 1, days: 1, hours: 0, minutes: 0, early: false, voteChange: false },
+  canCreate: true, minReq: '1' });
+const defaultStage = () => ({ id: newId(), name: '', bodies: [], settings: { days: 7, hours: 0, minutes: 0, early: true, approval: 1, veto: 1, expiration: false, expDays: 7, expHours: 0, expMinutes: 0 } });
+const checkOf = (addr) => (/0000$/.test(addr) ? 'notErc20' : /1111$/.test(addr) ? 'wrap' : 'ok');
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: 1, sub: {}, touched: {}, name: '', key: '', desc: '', descFocus: false, resources: [],
+      gov: 'BASIC', body: null, stages: [], mode: 'LISTED_BODIES', conditions: [], perm: 'ANY', selectors: [], menuOpen: false, search: '',
+      dlg: null, sdlg: null, chk: {}, tx1: false, tx2: false };
+  }
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); clearTimeout(this.t3); }
+
+  // ---------- generic state helpers
+  mut(fn) { const s = JSON.parse(JSON.stringify(this.state)); fn(s); this.setState(s); }
+  touch(k) { this.mut((s) => { s.touched[k] = true; }); }
+
+  // ---------- step 1
+  step1Errors() {
+    const s = this.state; const e = {};
+    if (!s.name.trim()) e.name = 'Process name is mandatory.'; else if (s.name.length > 40) e.name = 'Process name must be 40 characters or fewer.';
+    if (!s.key.trim()) e.key = 'Key is mandatory.'; else if (!/^[A-Z]+$/.test(s.key)) e.key = 'Invalid Key format.'; else if (s.key.length > 5) e.key = 'Key must be 5 characters or fewer.';
+    if (s.desc.length > 480) e.desc = 'Description must be 480 characters or fewer.';
+    s.resources.forEach((r, i) => { if (!r.url.trim()) e['res' + i] = 'URL is mandatory.'; else if (!/^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/.test(r.url.trim())) e['res' + i] = 'Invalid URL format.'; });
+    return e;
+  }
+  // ---------- step 2
+  basicBodyErrors() { return this.state.body == null ? { body: 'A body must be added to this process.' } : {}; }
+  stageErrors(i) { const st = this.state.stages[i]; const e = {}; if (!st.name.trim()) e.name = 'Name is mandatory.'; else if (st.name.length > 40) e.name = 'Name must be 40 characters or fewer.'; return e; }
+  step2Errors() {
+    const s = this.state; const e = {};
+    if (s.gov === 'BASIC') Object.assign(e, this.basicBodyErrors());
+    else if (this.props.advancedGated) e.gated = 'gated';
+    else s.stages.forEach((_, i) => { const x = this.stageErrors(i); if (x.name) e['stage' + i] = x.name; });
+    return e;
+  }
+  // ---------- step 3
+  processBodies() {
+    const s = this.state;
+    const all = s.gov === 'BASIC' ? (s.body ? [{ ref: { kind: 'basic' }, b: s.body }] : []) : s.stages.flatMap((st, si) => st.bodies.map((b, bi) => ({ ref: { kind: 'stage', si, bi }, b })));
+    return all.filter((x) => x.b.plugin !== 'external' || x.b.isSafe);
+  }
+  step3Errors() {
+    const s = this.state; const e = {};
+    const bodies = this.processBodies();
+    const hasSources = bodies.some((x) => x.b.canCreate) || (s.gov === 'ADVANCED' && s.conditions.length > 0);
+    if (s.mode !== 'ANY_WALLET' && !hasSources) e.bodies = 'You must select at least one body or existing condition.';
+    if (s.mode !== 'ANY_WALLET') bodies.forEach((x, i) => { if (x.b.canCreate && x.b.plugin === 'tokenVoting' && !(Number(x.b.minReq) > 0)) e['min' + i] = 'Minimum requirement is invalid.'; });
+    if (s.gov === 'ADVANCED') s.conditions.forEach((c, i) => { if (!ADDR.test(c.address)) e['cond' + i] = 'Address is required'; });
+    return e;
+  }
+  // ---------- step 4
+  step4Errors() {
+    const sel = this.state.selectors; const e = {};
+    if (sel.some((a, i) => sel.findIndex((b) => b.address === a.address && b.selector === a.selector) !== i)) e.dup = 'Duplicate actions found in list';
+    return e;
+  }
+  errorsFor(step) { return [null, () => this.step1Errors(), () => this.step2Errors(), () => this.step3Errors(), () => this.step4Errors()][step](); }
+
+  // ---------- wizard navigation
+  next = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const s = this.state; const errs = this.errorsFor(s.step);
+    if (Object.keys(errs).length) { this.mut((x) => { x.sub[x.step] = true; }); return; }
+    if (s.step < 4) this.mut((x) => { x.step += 1; x.menuOpen = false; });
+    else this.setState({ tx1: true });
+  };
+  back = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    this.mut((x) => { x.sub = {}; x.touched = {}; x.step = Math.max(1, x.step - 1); x.menuOpen = false; });
+  };
+
+  // ---------- body dialog
+  openBodyDialog(stageIdx, bodyRef) {
+    let form = emptyForm(); let edit = null;
+    if (bodyRef) { form = JSON.parse(JSON.stringify(bodyRef.body)); edit = { id: bodyRef.body.id }; }
+    this.setState({ dlg: { stageIdx, edit, screen: bodyRef ? this.seq(form, stageIdx != null)[1] : 'select', form, tried: {}, touched: {} }, chk: {} });
+  }
+  seq(f, isSub) {
+    const s = ['select'];
+    if (isSub) s.push(f.plugin === 'external' ? 'external' : 'metadata');
+    if (isSub) s.push('proposalType');
+    if (f.plugin !== 'external') s.push('membership', 'governance');
+    return s;
+  }
+  dlgSeq() { const d = this.state.dlg; const full = this.seq(d.form, d.stageIdx != null); return d.edit ? full.slice(1) : full; }
+  bodyDlgErrors(d = this.state.dlg) {
+    const f = d.form; const e = {}; const sc = d.screen;
+    const addrErr = (a, list, i) => (!a ? 'Address is required' : !ADDR.test(a) ? 'Address is not valid.' : list.findIndex((x, j) => j !== i && x.toLowerCase() === a.toLowerCase()) >= 0 ? 'Address has already been added.' : null);
+    if (sc === 'metadata') {
+      if (!f.name.trim()) e.name = 'Body name is mandatory.';
+      f.resources.forEach((r, i) => { if (!r.url.trim()) e['res' + i] = 'URL is mandatory.'; else if (!/^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/.test(r.url.trim())) e['res' + i] = 'Invalid URL format.'; });
+    }
+    if (sc === 'external') {
+      if (!f.address) e.address = 'Any address is mandatory.'; else if (!ADDR.test(f.address)) e.address = 'Any address is invalid.';
+      else if (!this.chkDone('ext', f.address)) e.address = 'Please wait for the address type checks to complete';
+    }
+    if (sc === 'membership') {
+      if (f.plugin === 'multisig') f.members.forEach((m, i) => { const x = m ? (!m ? 'Address is required' : !ADDR.test(m) ? 'Address is not valid.' : f.members.findIndex((y, j) => j !== i && y.toLowerCase() === m.toLowerCase()) >= 0 ? 'Address has already been added.' : null) : 'Address is required'; if (x) e['m' + i] = x; });
+      if (f.plugin === 'tokenVoting') {
+        const t = f.token;
+        if (t.type === 'new') {
+          if (!t.name.trim()) e.tname = 'Token name is mandatory.';
+          if (!t.symbol.trim()) e.tsymbol = 'Token symbol is mandatory.'; else if (!/^[A-Z][A-Z0-9]*$/.test(t.symbol)) e.tsymbol = 'Invalid Token symbol format.';
+          t.recipients.forEach((r, i) => { const x = addrErr(r.address, t.recipients.map((q) => q.address), i); if (x) e['ra' + i] = x === 'Address is required' ? 'Address is mandatory.' : x; if (r.amount === '' || r.amount == null) e['rt' + i] = 'Tokens is mandatory.'; else if (!(Number(r.amount) > 0)) e['rt' + i] = 'Tokens must be greater than 0.'; });
+        } else {
+          if (!t.address) e.taddr = 'Token address is mandatory.'; else if (!ADDR.test(t.address)) e.taddr = 'Token address is invalid.';
+          else if (!this.chkDone('tok', t.address) || checkOf(t.address) === 'notErc20') e.tblock = 'blocked';
+        }
+      }
+      if (f.plugin === 'lockToVote') {
+        const a = f.lock.address;
+        if (!a) e.laddr = 'Token address is mandatory.'; else if (!ADDR.test(a)) e.laddr = 'Token address is invalid.'; else if (!this.chkDone('lock', a)) e.lblock = 'blocked';
+      }
+    }
+    if (sc === 'governance' && f.plugin !== 'multisig' && !(d.stageIdx != null)) {
+      if (durSecs({ days: f.gov.days, hours: f.gov.hours, minutes: f.gov.minutes }) < 3600) e.duration = 'Duration must be at least 1 hour.';
+    }
+    return e;
+  }
+  chkDone(kind, addr) { const c = this.state.chk[kind]; return !!c && c.addr === addr && c.done; }
+  startCheck(kind, addr) {
+    if (!ADDR.test(addr)) return;
+    this.mut((s) => { s.chk[kind] = { addr, done: false }; });
+    setTimeout(() => { const c = this.state.chk[kind]; if (c && c.addr === addr) this.mut((s) => { s.chk[kind].done = true; }); }, 1000);
+  }
+  setForm(fn) { this.mut((s) => { fn(s.dlg.form); }); }
+  dlgNext = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const d = this.state.dlg; const errs = this.bodyDlgErrors();
+    if (Object.keys(errs).length) { this.mut((s) => { s.dlg.tried[s.dlg.screen] = true; }); return; }
+    const seq = this.dlgSeq(); const i = seq.indexOf(d.screen);
+    if (i < seq.length - 1) { this.mut((s) => { s.dlg.screen = seq[i + 1]; }); return; }
+    this.saveBody();
+  };
+  dlgBack = () => {
+    const seq = this.dlgSeq(); const i = seq.indexOf(this.state.dlg.screen);
+    if (i > 0) this.mut((s) => { s.dlg.screen = seq[i - 1]; }); else this.closeDlg();
+  };
+  closeDlg = () => this.setState({ dlg: null });
+  saveBody() {
+    const d = this.state.dlg;
+    this.mut((s) => {
+      const f = JSON.parse(JSON.stringify(s.dlg.form));
+      f.id = d.edit ? d.edit.id : newId();
+      if (d.stageIdx == null) { f.name = s.name; f.canCreate = true; s.body = f; }
+      else {
+        const bodies = s.stages[d.stageIdx].bodies;
+        if (d.edit) { const i = bodies.findIndex((b) => b.id === d.edit.id); f.canCreate = bodies[i].canCreate; f.minReq = bodies[i].minReq; bodies[i] = f; } else { f.canCreate = true; bodies.push(f); }
+      }
+      s.dlg = null;
+    });
+  }
+
+  // ---------- stage settings dialog
+  openStageDialog(i) {
+    const st = this.state.stages[i]; const eff = this.effective(st);
+    const se = st.settings;
+    this.setState({ sdlg: { i, f: { days: se.days, hours: se.hours, minutes: se.minutes, early: se.early, approval: eff.approval, veto: eff.veto, expiration: se.expiration, expDays: se.expDays, expHours: se.expHours, expMinutes: se.expMinutes }, touched: false, tried: false } });
+  }
+  effective(st) {
+    const veto = st.bodies.filter((b) => b.proposalType === 'veto').length; const appr = st.bodies.length - veto;
+    const cl = (v, n) => (n > 0 ? Math.min(Math.max(v, 1), n) : 0);
+    return { appr, vetoN: veto, approval: cl(st.settings.approval, appr), veto: cl(st.settings.veto, veto) };
+  }
+  stageDlgError() { const f = this.state.sdlg.f; return durSecs({ days: f.days, hours: f.hours, minutes: f.minutes }) < 3600 ? 'Duration must be at least 1 hour.' : null; }
+  saveStage = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    if (this.stageDlgError()) { this.mut((s) => { s.sdlg.tried = true; }); return; }
+    this.mut((s) => {
+      const f = s.sdlg.f; const se = s.stages[s.sdlg.i].settings;
+      Object.assign(se, { days: f.days, hours: f.hours, minutes: f.minutes, early: f.early, approval: f.approval, veto: f.veto, expiration: f.expiration, expDays: f.expDays, expHours: f.expHours, expMinutes: f.expMinutes });
+      s.sdlg = null;
+    });
+  };
+
+  // ---------- view models
+  alertOf(msg) { return msg ? { message: msg, variant: 'critical' } : undefined; }
+  show(step, key) { return !!(this.state.sub[step] || this.state.touched[key]); }
+  numHandler(fn) { return (v) => fn(v === '' || v == null ? 0 : Number(v)); }
+
+  metadataVm() {
+    const s = this.state; const e = this.step1Errors(); const R = (k) => this.show(1, k);
+    return {
+      name: s.name, processKey: s.key, description: s.desc,
+      nameAlert: R('name') ? this.alertOf(e.name) : undefined, keyAlert: R('key') ? this.alertOf(e.key) : undefined, descriptionAlert: R('desc') ? this.alertOf(e.desc) : undefined,
+      descriptionWrap: s.descFocus ? 'border-primary-400 shadow-primary' : '',
+      onName: (ev) => this.setState({ name: ev.target.value }), onNameBlur: () => this.mut((x) => { x.name = x.name.trim(); x.touched.name = true; }),
+      onKey: (ev) => this.setState({ key: ev.target.value.replace(/[<>]/g, '').toUpperCase() }), onKeyBlur: () => this.mut((x) => { x.key = x.key.trim(); x.touched.key = true; }),
+      onDescription: (ev) => this.setState({ desc: ev.target.value, descFocus: true }), onDescriptionBlur: () => this.mut((x) => { x.touched.desc = true; x.descFocus = false; }),
+      resources: s.resources.map((r, i) => ({ url: r.url, name: r.name, namePlaceholder: r.url || undefined, urlAlert: R('res' + i) ? this.alertOf(e['res' + i]) : undefined,
+        onUrl: (ev) => this.mut((x) => { x.resources[i].url = ev.target.value; }), onUrlBlur: () => this.mut((x) => { x.resources[i].url = x.resources[i].url.trim(); x.touched['res' + i] = true; }),
+        onName: (ev) => this.mut((x) => { x.resources[i].name = ev.target.value; }), onRemove: () => this.mut((x) => { x.resources.splice(i, 1); }) })),
+      onAddResource: () => this.mut((x) => { x.resources.push({ url: '', name: '' }); })
+    };
+  }
+
+  bodyRows(b, advanced) {
+    const rows = [];
+    if (advanced) rows.push({ term: 'Governance type', kind: 'note', text: b.proposalType === 'veto' ? 'Veto' : 'Approval', note: b.proposalType === 'veto' ? 'This body is able to veto the proposal to prevent it from advancing this stage.' : 'This body is able to approve the proposal to advance this stage.' });
+    if (b.plugin === 'external') {
+      rows.push({ term: 'Address', kind: 'link', text: b.address, link: { href: 'https://etherscan.io/address/' + b.address, isOnchainEntity: true } });
+      if (b.isSafe) rows.push({ term: 'Type', kind: 'text', text: 'Safe{Wallet}' });
+      return rows;
+    }
+    if (b.plugin === 'multisig') {
+      rows.push({ term: 'Members', kind: 'text', text: b.members.length + ' members' });
+      rows.push({ term: 'Multisig threshold', kind: 'text', text: Math.min(b.threshold, b.members.length) + ' of ' + b.members.length });
+      return rows;
+    }
+    const isTok = b.plugin === 'tokenVoting';
+    const imp = isTok ? b.token.type === 'imported' : true;
+    const addr = isTok ? (imp ? b.token.address : ZERO) : b.lock.address;
+    const compat = checkOf(addr) === 'ok';
+    const nm = isTok ? (imp ? (compat ? 'Governance Token' : 'Governance Wrapped Token') : b.token.name) : 'Governance Token';
+    const sym = isTok ? (imp ? (compat ? 'GOV' : 'gGOV') : b.token.symbol) : 'GOV';
+    const total = isTok && !imp ? b.token.recipients.reduce((a, r) => a + Number(r.amount || 0), 0) : (isTok && !compat ? 0 : 1000000);
+    rows.push({ term: 'Token', kind: 'link', text: addr, link: { href: 'https://etherscan.io/token/' + addr, isOnchainEntity: true }, description: nm && sym ? nm + ' (' + sym + ')' : undefined });
+    if (isTok && !imp && b.token.recipients.length > 0) rows.push({ term: 'Members', kind: 'text', text: b.token.recipients.length + ' delegates' });
+    if (!isTok) rows.push({ term: 'Members', kind: 'text', text: '0 token holders' });
+    if (total > 0) rows.push({ term: 'Supply', kind: 'text', text: total.toLocaleString('en-US') + ' (' + sym + ')' });
+    rows.push({ term: 'Support threshold', kind: 'text', text: '> ' + b.gov.support + '%' });
+    rows.push({ term: 'Minimum participation', kind: 'text', text: '≥ ' + b.gov.participation + '%' });
+    if (!advanced) {
+      rows.push({ term: isTok ? 'Minimum duration' : 'Proposal duration', kind: 'text', text: b.gov.days + ' days ' + b.gov.hours + ' hours ' + b.gov.minutes + ' minutes' });
+      if (isTok) rows.push({ term: 'Early execution', kind: 'tag', text: b.gov.early ? 'Enabled' : 'Disabled', variant: b.gov.early ? 'primary' : 'neutral' });
+    }
+    rows.push({ term: 'Vote change', kind: 'tag', text: b.gov.voteChange ? 'Enabled' : 'Disabled', variant: b.gov.voteChange ? 'primary' : 'neutral' });
+    return rows;
+  }
+  bodyVm(b, advanced, nameOverride, handlers) {
+    const ext = b.plugin === 'external'; const p = PLUGIN[b.plugin];
+    return { id: b.id, name: ext ? trunc(b.address) : (nameOverride != null ? nameOverride : b.name), logo: ext && b.isSafe,
+      subtitle: ext ? 'External address' : p.label + ' v' + p.v, rows: this.bodyRows(b, advanced), actions: true, canEdit: true, ...handlers };
+  }
+  designerVm() {
+    const s = this.state; const e = this.step2Errors(); const sub = !!s.sub[2];
+    const basic = s.gov === 'BASIC';
+    const vm = { govType: s.gov, advancedGated: !!this.props.advancedGated, daoName: 'Meridian DAO',
+      onGovType: (v) => this.mut((x) => { if (v === 'ADVANCED') { x.body = null; x.stages = []; } else x.stages = []; x.gov = v; x.sub = {}; }),
+      onAddBody: () => this.openBodyDialog(null, null), onAddStage: () => this.mut((x) => { x.stages.push(defaultStage()); }) };
+    if (basic && s.body) vm.body = this.bodyVm(s.body, false, s.name, { onEdit: () => this.openBodyDialog(null, { body: s.body }), onRemove: () => this.mut((x) => { x.body = null; }) });
+    if (basic && sub && e.body) vm.bodyAlert = this.alertOf(e.body);
+    if (!basic) vm.stages = s.stages.map((st, i) => {
+      const eff = this.effective(st); const se = st.settings; const nameErr = this.stageErrors(i).name;
+      const settings = [];
+      if (eff.appr > 0) settings.push({ term: 'Approval threshold', text: String(eff.approval) });
+      if (eff.vetoN > 0) settings.push({ term: 'Veto threshold', text: String(eff.veto) });
+      settings.push({ term: 'Stage duration', text: fmtDur(se) });
+      if (eff.vetoN === 0 && st.bodies.length > 0) settings.push({ term: 'Early stage advance', kind: 'tag', text: se.early ? 'Enabled' : 'Disabled', variant: se.early ? 'primary' : 'neutral' });
+      settings.push({ term: 'Stage expiration', kind: 'tag', text: se.expiration ? 'Enabled' : 'Disabled', variant: se.expiration ? 'primary' : 'neutral' });
+      if (se.expiration) settings.push({ term: 'Expiration period', text: fmtDur({ days: se.expDays, hours: se.expHours, minutes: se.expMinutes }) });
+      const veto = st.bodies.length > 0 && st.bodies.every((b) => b.proposalType === 'veto');
+      return { title: st.name !== '' ? st.name : 'Stage name', number: 'Stage ' + (i + 1), name: st.name,
+        nameAlert: (sub || s.touched['stage' + i]) ? this.alertOf(nameErr) : undefined,
+        onName: (ev) => this.mut((x) => { x.stages[i].name = ev.target.value; }), onNameBlur: () => this.mut((x) => { x.stages[i].name = x.stages[i].name.trim(); x.touched['stage' + i] = true; }),
+        bodiesLabel: veto ? 'Vetoing bodies' : 'Voting bodies',
+        bodies: st.bodies.map((b) => this.bodyVm(b, true, null, { canEdit: true, onEdit: () => this.openBodyDialog(i, { body: b }), onRemove: () => this.mut((x) => { const l = x.stages[i].bodies; l.splice(l.findIndex((q) => q.id === b.id), 1); }) })),
+        onAddBody: () => this.openBodyDialog(i, null), settings, onEditSettings: () => this.openStageDialog(i), onRemove: () => this.mut((x) => { x.stages.splice(i, 1); }) };
+    });
+    return vm;
+  }
+
+  creationVm() {
+    const s = this.state; const e = this.step3Errors(); const bodies = this.processBodies();
+    const tried = !!s.sub[3];
+    const wanted = (k) => tried || s.touched[k];
+    return { mode: s.mode, onMode: (v) => this.setState({ mode: v }), bodiesAlert: s.mode !== 'ANY_WALLET' ? this.alertOf(e.bodies) : undefined,
+      bodies: bodies.map((x, i) => {
+        const b = x.b; const ext = b.plugin === 'external';
+        return { label: ext ? trunc(b.address) : b.name, description: ext ? 'Safe{Wallet}' : b.description, avatar: ext ? 'assets/safeWallet.png' : undefined, checked: !!b.canCreate,
+          onChecked: (c) => this.mut((st) => { const t = x.ref.kind === 'basic' ? st.body : st.stages[x.ref.si].bodies[x.ref.bi]; t.canCreate = c === true; }),
+          hasMinReq: b.plugin === 'tokenVoting', minReq: b.minReq, minReqAlert: e['min' + i] ? this.alertOf(e['min' + i]) : undefined,
+          onMinReq: (v) => this.mut((st) => { const t = x.ref.kind === 'basic' ? st.body : st.stages[x.ref.si].bodies[x.ref.bi]; t.minReq = v; }) };
+      }),
+      conditions: s.conditions.map((c, i) => ({ address: c.address, alert: wanted('cond' + i) ? this.alertOf(e['cond' + i]) : undefined,
+        onAddress: (v) => this.mut((st) => { st.conditions[i].address = v; }), onAccept: noopAccept, onBlur: () => this.touch('cond' + i), onRemove: () => this.mut((st) => { st.conditions.splice(i, 1); }) })),
+      showExisting: s.gov === 'ADVANCED', onAddCondition: () => this.mut((st) => { st.conditions.push({ address: '' }); }), showBasicNotSupported: s.gov !== 'ADVANCED' };
+  }
+
+  permissionsVm() {
+    const s = this.state; const e = this.step4Errors();
+    const groups = MENU.map((g) => ({ name: g.name, info: g.info, items: g.items.map((it) => ({ name: it.name, selector: it.selector,
+      onSelect: () => this.mut((x) => { x.selectors.push({ address: g.address, contract: g.contract, name: it.name, selector: it.selector }); x.menuOpen = false; x.search = ''; }) })) }));
+    const q = s.search.trim().toLowerCase();
+    const filtered = q ? groups.map((g) => ({ ...g, items: g.items.filter((i) => i.name.toLowerCase().includes(q) || g.name.toLowerCase().includes(q)) })).filter((g) => g.items.length) : groups;
+    return { mode: s.perm, onMode: (v) => this.setState({ perm: v, menuOpen: false }), alert: this.alertOf(e.dup),
+      selectors: s.selectors.map((a, i) => ({ ...a, onRemove: () => this.mut((x) => { x.selectors.splice(i, 1); }) })),
+      search: s.search, onSearch: (ev) => this.setState({ search: ev.target.value, menuOpen: true }), onSearchFocus: () => this.setState({ menuOpen: true }), onSearchKey: (ev) => { if (ev.key === 'Enter') { if (ev.preventDefault) ev.preventDefault(); const f = filtered.flatMap((g) => g.items)[0]; if (f) f.onSelect(); } else if (ev.key === 'Escape') this.setState({ menuOpen: false }); }, onSearchBlur: () => { clearTimeout(this.t3); this.t3 = setTimeout(() => this.setState({ menuOpen: false }), 250); }, menuOpen: s.menuOpen, groups: filtered };
+  }
+
+  bodyDialogVm() {
+    const d = this.state.dlg;
+    if (!d) return { open: false };
+    const f = d.form; const errs = this.bodyDlgErrors(); const tried = !!d.tried[d.screen]; const sc = d.screen;
+    const T = (k) => tried || d.touched[k];
+    const A = (k) => (T(k) && errs[k] ? this.alertOf(errs[k]) : undefined);
+    const seq = this.dlgSeq(); const idx = seq.indexOf(sc); const isSub = d.stageIdx != null;
+    const set = (fn) => this.setForm(fn);
+    const blur = (k) => () => this.mut((s) => { s.dlg.touched[k] = true; });
+    const accept = () => undefined;
+    const ck = (kind, addr) => {
+      const done = this.chkDone(kind, addr);
+      return done;
+    };
+    const vm = { open: true, screen: sc, plugin: f.plugin, isSubPlugin: isSub, hasPrevious: idx > 0 || false, primaryLabel: idx === seq.length - 1 ? 'Save' : 'Next',
+      hasError: tried && Object.keys(errs).length > 0, onPrimary: this.dlgNext, onSecondary: this.dlgBack, onClose: this.closeDlg,
+      onPlugin: (v) => set((x) => { x.plugin = v; }), proposalType: f.proposalType, onProposalType: (v) => set((x) => { x.proposalType = v; }) };
+    vm.meta = { name: f.name, nameAlert: A('name'), onName: (ev) => set((x) => { x.name = ev.target.value; }), onNameBlur: blur('name'), description: f.description,
+      onDescription: (ev) => set((x) => { x.description = ev.target.value; }),
+      resourcesVm: { helpText: 'These are shown as links on the members list under the description as additional external resources.',
+        resources: f.resources.map((r, i) => ({ url: r.url, name: r.name, namePlaceholder: r.url || undefined, urlAlert: A('res' + i), onUrlBlur: blur('res' + i), onUrl: (ev) => set((x) => { x.resources[i].url = ev.target.value; }), onName: (ev) => set((x) => { x.resources[i].name = ev.target.value; }), onRemove: () => set((x) => { x.resources.splice(i, 1); }) })),
+        onAdd: () => set((x) => { x.resources.push({ url: '', name: '' }); }) } };
+    const chk = this.state.chk.ext;
+    const extPending = ADDR.test(f.address) && !ck('ext', f.address);
+    vm.external = { address: f.address, alert: A('address'), onAddress: (v) => { set((x) => { x.address = v; x.isSafe = v.toLowerCase() === COUNCIL_SAFE; }); this.startCheck('ext', v); }, onAccept: accept, onBlur: blur('address'),
+      check: f.address ? { title: trunc(f.address), steps: [{ label: extPending ? 'Analyzing address type' : (f.isSafe ? 'Safe contract detected' : 'Address type detected'), state: extPending ? 'pending' : 'success' }] } : null };
+    vm.multisig = { members: f.members.map((m, i) => ({ value: m, alert: A('m' + i), ariaLabel: 'Member ' + (i + 1), onChange: (v) => set((x) => { x.members[i] = v; }), onAccept: accept, onBlur: blur('m' + i),
+      cannotRemove: f.members.length <= 1, onRemove: () => set((x) => { x.members.splice(i, 1); }) })),
+      onAdd: () => set((x) => { x.members.push(''); }), canClear: f.members.length > 1, onClear: () => set((x) => { x.members = ['']; }) };
+    const t = f.token;
+    const tokChecks = (addr, kind, lockOnly) => {
+      if (!addr) return null; const done = ck(kind, addr); const c = checkOf(addr);
+      if (!done) return { title: trunc(addr), steps: lockOnly ? [{ label: 'ERC-20 token standard', state: 'pending' }] : [{ label: 'ERC-20 token standard', state: 'pending' }, { label: 'Governance compatible', state: 'pending' }, { label: 'Delegation compatible', state: 'pending' }] };
+      if (lockOnly) return { title: trunc(addr), steps: [{ label: 'ERC-20 token standard', state: 'success' }] };
+      if (c === 'notErc20') return { title: trunc(addr), steps: [{ label: 'ERC-20 token standard', state: 'error' }, { label: 'Governance compatible', state: 'error' }, { label: 'Delegation compatible', state: 'error' }] };
+      return { title: trunc(addr), steps: [{ label: 'ERC-20 token standard', state: 'success' }, { label: 'Governance compatible', state: c === 'ok' ? 'success' : 'warning' }, { label: 'Delegation compatible', state: c === 'ok' ? 'success' : 'warning' }] };
+    };
+    let importAlert = null;
+    if (t.type === 'imported' && ADDR.test(t.address) && ck('tok', t.address)) {
+      const c = checkOf(t.address);
+      if (c === 'notErc20') importAlert = { message: 'Not compatible', variant: 'critical', description1: 'The address isn’t a valid ERC-20 address and therefore can\'t be used in governance.' };
+      if (c === 'wrap') importAlert = { message: 'Requires wrapping', variant: 'warning', description1: 'This token must be wrapped by its holders to be used in governance.', description2: 'Token holders will be able to wrap their tokens at any time to receive equivalent governance tokens, which can be used to vote on proposals. They can unwrap at any time to receive their original tokens.' };
+    }
+    vm.token = { type: t.type, onType: (v) => set((x) => { x.token.type = v; x.token.name = ''; x.token.symbol = ''; x.token.address = ''; x.token.recipients = v === 'new' ? [{ address: WALLET, amount: '1' }] : []; }),
+      name: t.name, nameAlert: A('tname'), onName: (ev) => set((x) => { x.token.name = ev.target.value; }), onNameBlur: blur('tname'),
+      symbol: t.symbol, symbolAlert: A('tsymbol'), onSymbol: (ev) => set((x) => { x.token.symbol = ev.target.value.toUpperCase(); }), onSymbolBlur: blur('tsymbol'),
+      recipients: t.recipients.map((r, i) => ({ address: r.address, addressAlert: A('ra' + i), onAddress: (v) => set((x) => { x.token.recipients[i].address = v; }), onAccept: accept, onAddressBlur: blur('ra' + i),
+        amount: r.amount, amountAlert: A('rt' + i), onAmount: (v) => set((x) => { x.token.recipients[i].amount = v; }), onAmountBlur: blur('rt' + i), canRemove: t.recipients.length > 1, onRemove: () => set((x) => { x.token.recipients.splice(i, 1); }) })),
+      onAddRecipient: () => set((x) => { x.token.recipients.push({ address: '', amount: '1' }); }),
+      address: t.address, addressAlert: A('taddr'), onAddress: (v) => { set((x) => { x.token.address = v; }); this.startCheck('tok', v); }, onAccept: accept, onAddressBlur: blur('taddr'),
+      checks: tokChecks(t.address, 'tok', false), importAlert };
+    vm.lock = { address: f.lock.address, addressAlert: A('laddr'), onAddress: (v) => { set((x) => { x.lock.address = v; }); this.startCheck('lock', v); }, onAccept: accept, onAddressBlur: blur('laddr'), checks: tokChecks(f.lock.address, 'lock', true) };
+    // governance
+    const g = f.gov; const n = Math.max(f.members.length, 1);
+    const thr = Math.min(f.threshold, n);
+    const major = thr > Math.floor(n / 2);
+    const supplyTotal = t.type === 'new' ? t.recipients.reduce((a, r) => a + Number(r.amount || 0), 0) : 1000000;
+    const sym = t.type === 'new' ? (t.symbol || '') : 'GOV';
+    const fmtK = (v) => (v >= 1e6 ? (v / 1e6).toFixed(v % 1e6 ? 2 : 0).replace(/\.?0+$/, '') + 'M' : v >= 1e3 ? (v / 1e3).toFixed(2).replace(/\.?0+$/, '') + 'K' : String(Math.round(v * 100) / 100));
+    const durErr = errs.duration;
+    const durTouched = d.touched.duration || tried;
+    const supportMajor = g.support >= 50;
+    vm.gov = {
+      threshold: { id: 'minApprovals', label: 'Multisig threshold', helpText: 'At least this many members will have to sign a transaction to make a decision.', min: 1, total: n, value: thr, valueLabel: String(thr), totalLabel: 'of ' + n + ' addresses',
+        onChange: this.numHandler((v) => set((x) => { x.threshold = v; })), alert: { message: major ? 'Decisions will be made by majority' : 'Decisions could be made by a minority rather than a majority.', variant: major ? 'success' : 'warning' } },
+      support: { id: 'supportThreshold', label: 'Support threshold', helpText: "The percentage of tokens that vote 'Yes' in support of a proposal, out of all tokens that have voted, must be greater than this value.", min: 1, total: 99, value: g.support, prefix: '>', suffix: '%', valueLabel: '> ' + g.support + ' %',
+        tags: [{ label: 'Yes', variant: 'primary' }, { label: 'No', variant: 'neutral' }], onChange: this.numHandler((v) => set((x) => { x.gov.support = v; })),
+        alert: { message: supportMajor ? 'Proposal will be approved by majority' : 'Proposals could be approved by a minority rather than a majority.', variant: supportMajor ? 'success' : 'warning' } },
+      participation: { id: 'minParticipation', label: 'Minimum participation', helpText: 'The percentage of tokens that participate in a proposal, out of the total supply, must be greater than or equal to this value.', min: 0, total: 100, value: g.participation, prefix: '≥', suffix: '%',
+        valueLabel: supplyTotal > 0 && sym ? fmtK(supplyTotal * g.participation / 100) + ' ' + sym : undefined, onChange: this.numHandler((v) => set((x) => { x.gov.participation = v; })) },
+      hasDuration: !isSub, durationLabel: f.plugin === 'lockToVote' ? 'Proposal duration' : 'Minimum duration',
+      durationHelp: f.plugin === 'lockToVote' ? 'The amount of time a proposal is open for voting.' : 'The shortest time a proposal is open for voting. Proposals can have a longer duration but not shorter.',
+      duration: !isSub ? { label: f.plugin === 'lockToVote' ? 'Proposal duration' : 'Minimum duration', days: g.days, hours: g.hours, minutes: g.minutes, infoText: "Ensure members have enough time to vote. It's recommended to set this to at least 1 day.", infoDisplay: 'card',
+        error: durTouched ? durErr : undefined, onDays: this.numHandler((v) => set((x) => { x.gov.days = v; })), onHours: this.numHandler((v) => set((x) => { x.gov.hours = v; })), onMinutes: this.numHandler((v) => set((x) => { x.gov.minutes = v; })), onBlur: blur('duration') } : null,
+      early: g.early, earlyDisabled: g.voteChange, onEarly: f.plugin === 'tokenVoting' && !isSub ? (c) => set((x) => { x.gov.early = c; if (c) x.gov.voteChange = false; }) : undefined,
+      voteChange: g.voteChange, voteChangeDisabled: f.plugin === 'tokenVoting' && g.early, onVoteChange: (c) => set((x) => { x.gov.voteChange = c; if (c) x.gov.early = false; }) };
+    return vm;
+  }
+
+  stageDialogVm() {
+    const sd = this.state.sdlg;
+    if (!sd) return { open: false };
+    const st = this.state.stages[sd.i]; const eff = this.effective(st); const f = sd.f; const err = this.stageDlgError();
+    const set = (fn) => this.mut((s) => { fn(s.sdlg.f); });
+    const nb = this.numHandler;
+    const show = sd.tried || sd.touched;
+    const total = eff.appr + eff.vetoN;
+    const npi = (label, help, key, n, value) => ({ id: key, label, helpText: help, min: 1, total: n, value, valueLabel: String(value), totalLabel: 'of ' + n + ' bodies', onChange: nb((v) => set((x) => { x[key] = Math.min(Math.max(v, 1), n); })) });
+    return { open: true,
+      approve: eff.appr > 0 ? npi('Approval threshold', 'The number of bodies that must approve this proposal to advance it.', 'approval', eff.appr, Math.min(f.approval || 1, eff.appr)) : null,
+      veto: eff.vetoN > 0 ? npi('Veto threshold', 'The number of bodies that must veto this proposal to stop it from advancing.', 'veto', eff.vetoN, Math.min(f.veto || 1, eff.vetoN)) : null,
+      duration: { label: 'Stage duration', days: f.days, hours: f.hours, minutes: f.minutes, infoText: total > 0 ? 'Recommended minimum voting period is 7 days.' : undefined, infoDisplay: 'inline', error: show ? err : undefined,
+        onDays: nb((v) => set((x) => { x.days = v; })), onHours: nb((v) => set((x) => { x.hours = v; })), onMinutes: nb((v) => set((x) => { x.minutes = v; })), onBlur: () => this.mut((s) => { s.sdlg.touched = true; }) },
+      hasEarly: total > 0 && eff.vetoN === 0, early: f.early, onEarly: (c) => set((x) => { x.early = c; }),
+      expiration: f.expiration, onExpiration: (c) => set((x) => { x.expiration = c; }),
+      expirationDuration: { label: 'Stage expiration', days: f.expDays, hours: f.expHours, minutes: f.expMinutes, infoText: 'Recommended minimum expiration time is 7 days.', infoDisplay: 'inline',
+        onDays: nb((v) => set((x) => { x.expDays = v; })), onHours: nb((v) => set((x) => { x.expHours = v; })), onMinutes: nb((v) => set((x) => { x.expMinutes = v; })) },
+      onSave: this.saveStage, onCancel: () => this.setState({ sdlg: null }), onClose: () => this.setState({ sdlg: null }) };
+  }
+
+  renderVals() {
+    const s = this.state; const step = s.step;
+    const noop = () => undefined;
+    const titles = [null,
+      ['Describe new proposal type', 'Describe the governance process so visitors understand its purpose and how decisions are made. Any of these fields can be changed later via governance.', 'Governance design'],
+      ['Design the governance process', 'Design how decisions are made in this type of proposal. A proposal can go through multiple sequential stages and have any number of governing bodies.', 'Proposal creation rules'],
+      ['Set proposal creation rules', 'Define who can create proposals of this type.', 'Proposal permissions'],
+      ['Set permissions', 'Define what this governance process is authorized to do. Proposals of this type will only be able to execute the actions specified here.', 'Publish process']][step];
+    const errs = this.errorsFor(step);
+    const keys = Object.keys(errs);
+    const showErr = !!s.sub[step] && keys.length > 0;
+    const required = keys.filter((k) => /mandatory|required|must be added|at least one|Address is required/i.test(String(errs[k])));
+    const status = required.length === keys.length ? 'required' : required.length === 0 ? 'invalid' : 'invalid-required';
+    const E = { required: ['Missing data', 'Some inputs are missing. Fill out all mandatory fields to proceed.'], invalid: ['Invalid data', 'Some values are invalid. Review and fix them to proceed.'], 'invalid-required': ['Missing and invalid data', 'Some inputs are missing or invalid. Fix them to proceed.'] }[status];
+    const gatedBlock = step === 2 && s.gov === 'ADVANCED' && !!this.props.advancedGated;
+    const txSteps = ['Pin data on IPFS'];
+    const processName = s.name || 'Treasury Council';
+    return { yes: true, no: false, step, total: 4, nextStepName: titles[2], title: titles[0], description: titles[1],
+      isStep1: step === 1, isStep2: step === 2, isStep3: step === 3, isStep4: step === 4,
+      metadataVm: step === 1 ? this.metadataVm() : {}, designerVm: step === 2 ? this.designerVm() : {}, creationVm: step === 3 ? this.creationVm() : {}, permissionsVm: step === 4 ? this.permissionsVm() : {},
+      onFormSubmit: (ev) => { if (ev && ev.preventDefault) ev.preventDefault(); },
+      showErrorFooter: showErr || false, showFooter: !showErr, errorTitle: E[0], errorDescription: E[1], backClass: step > 1 ? '' : 'invisible', nextLabel: step === 4 ? 'Publish process' : 'Next',
+      hasBack: step > 1, isLast: step === 4, next: gatedBlock ? noop : this.next, back: this.back,
+      bodyDialogVm: this.bodyDialogVm(), stageDialogVm: this.stageDialogVm(),
+      tx1Open: !!s.tx1, tx2Open: !!s.tx2, txSteps,
+      txSummary: { type: 'proposal', title: 'Create ' + processName + ' process', summary: 'Install the ' + processName + ' governance process and grant it permission to execute on behalf of the DAO.' },
+      closeTx: () => this.setState({ tx1: false, tx2: false }), tx1Done: () => this.setState({ tx1: false, tx2: true }), tx2Done: () => { this.setState({ tx2: false }); const a = document.getElementById('cpr-dao-link'); if (a) a.click(); }, txSteps2: [] };
+  }
+}
+const noopAccept = () => undefined;
+</script>
+</body>
+</html>
