@@ -279,7 +279,6 @@
         "output": ".design-sync/generated/govkit-primitives.css",
         "overridesSource": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css",
         "fontUrlFrom": "../../fonts/",
-        "fontUrlTo": "../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/",
-        "provenance": "@aragon/gov-ui-kit@2.11.4 (64b517f5b90052797ecaced5f15ab616b5733f30)"
+        "fontUrlTo": "../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/"
     }
 }
