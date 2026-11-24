@@ -1,3 +1,4 @@
+import type { WorkspaceRegistryScope } from './domain';
 import type { IGetWorkspaceParams } from './workspaceService.api';
 
 export enum WorkspaceServiceKey {
@@ -10,5 +11,12 @@ export const workspaceServiceKeys = {
         WorkspaceServiceKey.WORKSPACE,
         params,
     ],
-    workspaceList: () => [WorkspaceServiceKey.WORKSPACE_LIST],
+    /**
+     * Each registry is cached apart, so the demo list never stands in for the persistent one. Without a scope, the key
+     * matches the lists of every registry, e.g. to invalidate them after a write.
+     */
+    workspaceList: (scope?: WorkspaceRegistryScope) =>
+        scope == null
+            ? [WorkspaceServiceKey.WORKSPACE_LIST]
+            : [WorkspaceServiceKey.WORKSPACE_LIST, scope],
 };

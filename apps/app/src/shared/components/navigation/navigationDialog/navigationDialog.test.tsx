@@ -140,6 +140,16 @@ describe('<Navigation.Dialog /> component', () => {
         ).toHaveAttribute('href', '/explore');
     });
 
+    it('hides the Explore link when hideExplore is set', () => {
+        render(createTestComponent({ open: true, hideExplore: true }));
+
+        expect(
+            within(screen.getByRole('dialog')).queryByRole('link', {
+                name: /navigationDao.dialog.explore/,
+            }),
+        ).not.toBeInTheDocument();
+    });
+
     it('does not crash when onOpenChange property is not defined', async () => {
         testLogger.suppressErrors(); // suppress navigation not implemented error
         const links = [

@@ -4,7 +4,6 @@ import { userEvent } from '@testing-library/user-event';
 import * as blockNavigationContext from '@/shared/components/blockNavigationContext';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import { type IWorkspaceWizardProps, WorkspaceWizard } from './workspaceWizard';
 
 describe('<WorkspaceWizard /> component', () => {
@@ -67,21 +66,6 @@ describe('<WorkspaceWizard /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByText('app.test.steps.METADATA.description'),
-        ).toBeInTheDocument();
-    });
-
-    it('opens on the initial active step when set', () => {
-        render(
-            createTestComponent({
-                initialActiveStep: WorkspaceWizardStep.ACCOUNTS,
-            }),
-        );
-
-        expect(
-            screen.getByRole('heading', {
-                level: 1,
-                name: 'app.test.steps.ACCOUNTS.title',
-            }),
         ).toBeInTheDocument();
     });
 

@@ -4,11 +4,21 @@ pnpm workspaces + Turborepo monorepo. Node >=24.22.3, pnpm. The main package is 
 
 This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGENTS.md` so Claude Code picks up the same content. Personal/IC-local agent context lives under `.agents/local/` and `.claude/` (both gitignored) and **supplements** — never replaces — what's here.
 
+## Commits from interactive agent sessions
+
+A commit an agent makes for someone is that person's commit: they are its author, and it carries no agent co-author line (`.claude/settings.json` turns Claude Code's off). Commit and push only when they asked for it.
+
+- **Local checkout:** commit with the checkout's own identity and signing, and override neither.
+- **Cloud session:** git is set up as the platform's account (`Claude <noreply@anthropic.com>`), which also signs the commit, and the person's own key is not there. Leave the committer and the signature as they are and name the person as the author: `git commit --author="Name <id+login@users.noreply.github.com>"`, their GitHub noreply address. Ask for it if the session does not know it.
+
+Check before pushing (`git log -1 --format='%an <%ae>'`): a commit whose author is the agent is not pushed. Say so and leave the change uncommitted instead. Keep the original author when applying someone else's commits.
+
 ## Monorepo layout
 
 - `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
 - `packages/*` — workspace libraries. Most are version-only and ship inside their consumers; `@aragon/gov-ui-kit` and `@aragon/aragon-domain` are the exceptions — they are also published to npm for external consumers and own release flows of their own (see Releases). Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
 - The product knowledge base (`aragon/platform-doc`, branch `development`) is not vendored here: `packages/docs-corpus` fetches and filters it at build time for its consumers — the assistant's documentation index (`apps/assistant/README.md`, "Documentation answering") and the public docs site `apps/docs`, served at app.aragon.org/help.
+- `design/` — live prototypes of the app's flows for design work on a claude.ai canvas, driven by the `/aragon-app-canvas` skill (`design/README.md`). Not a workspace: nothing in it is built, released or run in CI.
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
 - CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`, `gov-ui-kit-*.yml`, `aragon-domain-*.yml`). Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 
@@ -49,8 +59,8 @@ Full wiring conventions (dynamic imports, definitions map, params) live in the `
 
 Two parallel trees, each split into `shared/` (checked in) and `local/` (gitignored):
 
-- `.agents/shared/` — agent-neutral commons: guardrails loader, metrics. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
-- `.agents/local/` — IC-personal agent-neutral stuff (drafts, metric buffer). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
+- `.agents/shared/` — agent-neutral commons: guardrails loader. Rule-skills live at `skills/shared/rules/` (see below). Consumed by any runtime.
+- `.agents/local/` — IC-personal agent-neutral stuff (drafts). Personal *skills* belong in `skills/local/` instead — that catalog is gitignored the same way but is synced to your agent discovery roots, so the skills actually reach your agents.
 - `.claude/shared/` — Claude-specific shared wiring (the adapter hook). Tiny on purpose.
 - `.claude/` (root) — Claude's required fixed paths: `settings.json` (checked in), `settings.local.json` and `CLAUDE.md` (gitignored, IC-personal).
 
@@ -64,7 +74,7 @@ Rules live at `skills/shared/rules/<name>/SKILL.md` — always checked in, never
 
 The shared loader lives at `.agents/shared/hooks/inject-rules.mjs`. The rule stream stays agent-agnostic; only the proprietary adapter shape differs. Claude Code consumes it via `.claude/shared/hooks/inject-rules.mjs`. Spec: `skills/shared/rules/README.md`.
 
-In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. The MVP/POC and its proof live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
+In plain English: this is a lazy-loaded guardrails system. Instead of putting every subtle convention in the root prompt, we keep narrow rules in Markdown and load only the ones that match the file being edited. Implementation and contract docs live in `skills/shared/rules/README.md` and `.agents/shared/hooks/README.md`.
 
 To author a new rule, copy an existing one in `skills/shared/rules/` and follow the README — the `rule-authoring` rule-skill auto-injects when you edit anything in that folder.
 

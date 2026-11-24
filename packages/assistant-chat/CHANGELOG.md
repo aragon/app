@@ -1,5 +1,11 @@
 # @aragon/assistant-chat
 
+## 0.5.6
+
+### Patch Changes
+
+- [#1591](https://github.com/aragon/app/pull/1591) [`a3c7bc7`](https://github.com/aragon/app/commit/a3c7bc7959a37d48fe791e2c01c9e73fc93f7ab3) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add the OCC soft-launch environment, served at new.app.aragon.org, with its own feature flags and analytics.
+
 ## 0.5.5
 
 ### Patch Changes

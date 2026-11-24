@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Number progress input</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.InputContainer" id="{{id}}" label="{{label}}" help-text="{{helpText}}" use-custom-wrapper="{{yes}}">
+  <x-import component-from-global-scope="GovUiKit.Card" class-name="num-progress">
+    <div class="num-progress__row">
+      <div class="num-progress__input"><x-import component-from-global-scope="GovUiKit.InputNumber" min="{{min}}" max="{{total}}" prefix="{{prefix}}" suffix="{{suffix}}" value="{{value}}" on-change="{{onChange}}" alert="{{fieldAlert}}"></x-import></div>
+      <div class="{{barClass}}">
+        <div class="num-progress__line">
+          <sc-if value="{{hasTags}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{tagLeft.label}}" variant="{{tagLeft.variant}}"></x-import></sc-if>
+          <div class="num-progress__track">
+            <sc-if value="{{hasValueLabel}}" hint-placeholder-val="{{yes}}"><p class="num-progress__value" style="left: {{valueLeft}}%; transform: translateX(-50%)">{{valueLabel}}</p></sc-if>
+            <x-import component-from-global-scope="GovUiKit.Progress" value="{{progress}}"></x-import>
+          </div>
+          <sc-if value="{{hasTags}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{tagRight.label}}" variant="{{tagRight.variant}}"></x-import></sc-if>
+        </div>
+        <sc-if value="{{hasTotalLabel}}" hint-placeholder-val="{{no}}"><p class="num-progress__total">{{totalLabel}}</p></sc-if>
+      </div>
+    </div>
+    <sc-if value="{{hasAlert}}" hint-placeholder-val="{{no}}">
+      <div class="num-progress__alert"><x-import component-from-global-scope="GovUiKit.AlertInline" message="{{alert.message}}" variant="{{alert.variant}}"></x-import></div>
+    </sc-if>
+  </x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// CreateProcessFlowNumberInput (apps/app: shared/components/forms/numberProgressInput/numberProgressInput.tsx): a number input next to a
+// progress bar with an optional floating value label, tags, "of N" label and an inline alert, inside a Card.
+// Props: vm = { id, label, helpText, value (number), onChange(value string), min, total, prefix, suffix, valueLabel, totalLabel,
+//   tags: [{label, variant}, {label, variant}], alert: {message, variant: 'success'|'warning'|'critical'|'info'}, fieldAlert }.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const total = vm.total || 100;
+    const value = Number(vm.value || 0);
+    const progress = (value * 100) / total;
+    const vl = (vm.valueLabel || '').length;
+    const left = Math.min(100 - vl, Math.max(progress, vl));
+    const tags = vm.tags || null;
+    return { yes: true, no: false, id: vm.id || 'numberProgress', label: vm.label, helpText: vm.helpText, min: vm.min ?? 0, total, prefix: vm.prefix, suffix: vm.suffix,
+      value, onChange: vm.onChange || (() => undefined), fieldAlert: vm.fieldAlert, progress,
+      hasTags: !!tags, tagLeft: tags ? tags[0] : {}, tagRight: tags ? tags[1] : {},
+      hasValueLabel: !!vm.valueLabel, valueLabel: vm.valueLabel, valueLeft: left,
+      hasTotalLabel: !!vm.totalLabel, totalLabel: vm.totalLabel, barClass: 'num-progress__bar' + (vm.totalLabel ? ' num-progress__bar--end' : ''),
+      hasAlert: !!vm.alert, alert: vm.alert || {} };
+  }
+}
+</script>
+</body>
+</html>

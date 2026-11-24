@@ -15,9 +15,9 @@
         "Ordering (P-26/P-27, P-37…P-40): Tailwind orders utilities by its own sort, so renaming can change which of two classes on one element wins. The validator compiles every class involved and compares the winner (by !important, specificity, then position) of every same-property pair on one element, in the file and across a className passed into another component (kit or app). Pairs that can never meet are listed in orderingReviewed with the reason."
     ],
     "summary": {
-        "files": 231,
-        "occurrences": 896,
-        "converted": 840,
+        "files": 235,
+        "occurrences": 906,
+        "converted": 850,
         "unconverted": 56,
         "unconvertedByReason": {
             "ordering": 5,
@@ -35,10 +35,11 @@
         "bg-accent-hover": 1,
         "bg-accent-hover-inverse": 1,
         "bg-accent-solid": 11,
+        "bg-accent-subtle": 1,
         "bg-body": 1,
         "bg-body-sidebar": 1,
         "bg-brand-solid": 4,
-        "bg-critical-subtle": 1,
+        "bg-critical-subtle": 2,
         "bg-surface-active": 3,
         "bg-surface-active-control": 4,
         "bg-surface-default": 11,
@@ -52,7 +53,7 @@
         "bg-surface-secondary-skeleton": 9,
         "bg-surface-selected": 1,
         "bg-surface-tertiary": 16,
-        "bg-warning-subtle": 1,
+        "bg-warning-subtle": 2,
         "border-accent-active": 5,
         "border-accent-default": 1,
         "border-accent-hover": 1,
@@ -71,9 +72,9 @@
         "border-surface-default-graph-node": 1,
         "border-surface-disabled-item": 2,
         "border-surface-disabled-toggle": 1,
-        "border-surface-hover": 10,
+        "border-surface-hover": 11,
         "border-surface-hover-graph-node": 1,
-        "border-surface-secondary": 80,
+        "border-surface-secondary": 81,
         "border-surface-secondary-panel": 7,
         "border-surface-selected": 5,
         "gradient-brand-primary": 1,
@@ -83,6 +84,7 @@
         "icon-accent-default": 1,
         "icon-accent-hover": 1,
         "icon-accent-inverse": 1,
+        "icon-accent-primary": 1,
         "icon-accent-selected": 1,
         "icon-accent-selected-nav": 1,
         "icon-brand-primary": 4,
@@ -91,16 +93,15 @@
         "icon-success-primary-chat": 1,
         "icon-surface-active": 1,
         "icon-surface-default": 3,
-        "icon-surface-primary": 1,
         "icon-surface-primary-item": 2,
-        "icon-surface-secondary": 3,
+        "icon-surface-secondary": 4,
         "icon-warning-primary": 2,
         "ring-accent-focus": 16,
         "shadow-accent-default": 16,
         "shadow-accent-sm": 2,
-        "shadow-surface-default": 14,
+        "shadow-surface-default": 16,
         "shadow-surface-md": 8,
-        "shadow-surface-sm": 12,
+        "shadow-surface-sm": 13,
         "text-accent-default": 1,
         "text-accent-inverse": 10,
         "text-accent-inverse-brand": 2,
@@ -130,7 +131,7 @@
         "text-surface-primary": 130,
         "text-surface-primary-detail": 3,
         "text-surface-primary-panel-title": 3,
-        "text-surface-secondary": 237,
+        "text-surface-secondary": 239,
         "text-surface-secondary-ticket": 2,
         "text-surface-selected-label": 2,
         "text-surface-tertiary": 26,
@@ -1465,6 +1466,32 @@
                 "new": "bg-accent-default",
                 "note": "asserts the kit Button variant (not the primary fill): follows the kit Button"
             }
+        ],
+        "apps/app/src/modules/workspace/pages/workspaceEntryPage/workspaceGettingStarted.test.tsx": [
+            {
+                "line": 292,
+                "old": "bg-neutral-0",
+                "new": "bg-accent-default-inverse",
+                "note": "asserts the kit Button's fill, which follows the component"
+            },
+            {
+                "line": 463,
+                "old": "bg-primary-400",
+                "new": "bg-accent-default",
+                "note": "asserts the kit Button's fill, which follows the component"
+            },
+            {
+                "line": 534,
+                "old": "bg-primary-400",
+                "new": "bg-accent-default",
+                "note": "asserts the kit Button's fill, which follows the component"
+            },
+            {
+                "line": 558,
+                "old": "bg-neutral-0",
+                "new": "bg-accent-default-inverse",
+                "note": "asserts the kit Button's fill, which follows the component"
+            }
         ]
     },
     "storiesToUpdate": {},
@@ -2302,13 +2329,6 @@
                 "new": "text-surface-secondary",
                 "part": "<span> text",
                 "reason": "static content, secondary level: text/surface/secondary"
-            },
-            {
-                "line": 72,
-                "old": "text-neutral-400",
-                "new": "icon-surface-primary",
-                "part": "<Icon> icon",
-                "reason": "static content, primary level: icon/surface/primary"
             }
         ],
         "apps/app/src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx": [
@@ -2645,20 +2665,6 @@
             }
         ],
         "apps/app/src/modules/application/pages/landingPage/landingPage.tsx": [
-            {
-                "line": 57,
-                "old": "bg-neutral-0",
-                "new": "bg-surface-primary",
-                "part": "landing page",
-                "reason": "fill, neutral content: static content, primary level"
-            },
-            {
-                "line": 61,
-                "old": "text-neutral-500",
-                "new": "text-surface-secondary",
-                "part": "landing page",
-                "reason": "text, neutral content: static content, secondary level"
-            },
             {
                 "line": 110,
                 "old": "border-neutral-0/55",
@@ -4736,6 +4742,22 @@
                 "reason": "static content, secondary level: text/surface/secondary"
             }
         ],
+        "apps/app/src/modules/workspace/components/workspaceAccountSelect/workspaceAccountSelectStatusAlert.tsx": [
+            {
+                "line": 1,
+                "old": "bg-critical-100",
+                "new": "bg-critical-subtle",
+                "part": "status alert fill",
+                "reason": "subtle critical fill: bg/critical/subtle"
+            },
+            {
+                "line": 1,
+                "old": "bg-warning-100",
+                "new": "bg-warning-subtle",
+                "part": "status alert fill",
+                "reason": "subtle warning fill: bg/warning/subtle"
+            }
+        ],
         "apps/app/src/modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx": [
             {
                 "line": 157,
@@ -4834,6 +4856,13 @@
                 "new": "text-surface-secondary",
                 "part": "account selector text",
                 "reason": "text, neutral content: static content, secondary level"
+            },
+            {
+                "line": 1,
+                "old": "text-neutral-300",
+                "new": "icon-surface-secondary",
+                "part": "<Icon> icon",
+                "reason": "static content, secondary level: icon/surface/secondary"
             }
         ],
         "apps/app/src/modules/workspace/components/workspaceGate/workspaceGateAccountPrompt.tsx": [
@@ -5025,6 +5054,15 @@
                 "reason": "static content, secondary level: text/surface/secondary"
             }
         ],
+        "apps/app/src/modules/workspace/dialogs/workspaceCreateAccountDialog/workspaceCreateAccountDialog.tsx": [
+            {
+                "line": 1,
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary",
+                "part": "dialog text",
+                "reason": "text, neutral content: static content, secondary level"
+            }
+        ],
         "apps/app/src/modules/workspace/dialogs/workspaceSelectAccountDialog/workspaceSelectAccountDialogItem.tsx": [
             {
                 "line": 79,
@@ -5067,16 +5105,23 @@
                 "new": "text-surface-tertiary-hint",
                 "part": "<div> text",
                 "reason": "component-level alias token (P-66): text/surface/tertiary-hint holds today's neutral-300 in the default theme and follows text/surface/tertiary in \"next\" and \"dark\". Was unconverted (conflict: text/surface/tertiary has default value `neutral-400`, today `neutral-300`)"
+            },
+            {
+                "line": 1,
+                "old": "hover:border-neutral-200",
+                "new": "hover:border-surface-hover",
+                "part": "account item, in-workspace hover border",
+                "reason": "hover state: border/surface/hover"
+            },
+            {
+                "line": 1,
+                "old": "hover:shadow-neutral",
+                "new": "hover:shadow-surface-default",
+                "part": "account item, in-workspace hover elevation",
+                "reason": "hover elevation: shadow/surface/default"
             }
         ],
         "apps/app/src/modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx": [
-            {
-                "line": 49,
-                "old": "text-neutral-500",
-                "new": "text-surface-secondary",
-                "part": "welcome dialog text",
-                "reason": "text, neutral content: static content, secondary level"
-            },
             {
                 "line": 60,
                 "old": "text-neutral-800",
@@ -5097,6 +5142,20 @@
                 "new": "text-surface-secondary",
                 "part": "welcome dialog text",
                 "reason": "text, neutral content: static content, secondary level"
+            },
+            {
+                "line": 1,
+                "old": "bg-primary-50",
+                "new": "bg-accent-subtle",
+                "part": "welcome item icon disc",
+                "reason": "fill, accent content: bg/accent/subtle"
+            },
+            {
+                "line": 1,
+                "old": "text-primary-400",
+                "new": "icon-accent-primary",
+                "part": "<Icon> icon",
+                "reason": "accent content: icon/accent/primary"
             }
         ],
         "apps/app/src/modules/workspace/pages/workspaceAccountSettingsPage/workspaceSafeSettingsPageClient.tsx": [
@@ -5173,6 +5232,52 @@
                 "new": "text-surface-secondary",
                 "part": "<span> text",
                 "reason": "static content, secondary level: text/surface/secondary"
+            }
+        ],
+        "apps/app/src/modules/workspace/pages/workspaceEntryPage/workspaceEntryPageClient.tsx": [
+            {
+                "line": 1,
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary",
+                "part": "empty state text",
+                "reason": "text, neutral content: static content, secondary level"
+            }
+        ],
+        "apps/app/src/modules/workspace/pages/workspaceEntryPage/workspaceGettingStarted.tsx": [
+            {
+                "line": 1,
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary",
+                "part": "getting started text",
+                "reason": "text, neutral content: static content, secondary level"
+            },
+            {
+                "line": 1,
+                "old": "text-neutral-500",
+                "new": "text-surface-secondary",
+                "part": "getting started text",
+                "reason": "text, neutral content: static content, secondary level"
+            },
+            {
+                "line": 1,
+                "old": "shadow-neutral-sm",
+                "new": "shadow-surface-sm",
+                "part": "<Card> elevation",
+                "reason": "elevation: shadow/surface/sm"
+            },
+            {
+                "line": 1,
+                "old": "border-neutral-100",
+                "new": "border-surface-secondary",
+                "part": "sticky action bar",
+                "reason": "border, neutral content: static container"
+            },
+            {
+                "line": 1,
+                "old": "bg-neutral-0",
+                "new": "bg-surface-primary",
+                "part": "sticky action bar",
+                "reason": "fill, neutral content: static content, primary level"
             }
         ],
         "apps/app/src/plugins/adminPlugin/components/adminGovernanceInfo/adminGovernanceInfo.tsx": [

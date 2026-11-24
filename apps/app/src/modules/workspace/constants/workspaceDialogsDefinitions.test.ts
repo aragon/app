@@ -12,8 +12,8 @@ describe('workspaceDialogsDefinitions', () => {
         ).toBeFalsy();
     });
 
-    it('does not require a wallet to create or update a workspace', () => {
-        // Workspaces are stored locally, so neither mode reads the connected address. Flagging it
+    it('does not require a wallet to create a workspace', () => {
+        // Workspaces are stored locally, so creating one does not read the connected address. Flagging it
         // would make `DialogRoot` render null for a disconnected user, and saving would silently do nothing.
         expect(
             workspaceDialogsDefinitions[WorkspaceDialogId.PUBLISH_WORKSPACE]
@@ -24,6 +24,27 @@ describe('workspaceDialogsDefinitions', () => {
     it('does not require a wallet to edit the workspace details', () => {
         expect(
             workspaceDialogsDefinitions[WorkspaceDialogId.EDIT_DETAILS]
+                .requiresWallet,
+        ).toBeFalsy();
+    });
+
+    it("requires a wallet to add accounts, as the suggestions are the wallet's", () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.ADD_ACCOUNTS]
+                .requiresWallet,
+        ).toBe(true);
+    });
+
+    it('requires a wallet to create an account', () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.CREATE_ACCOUNT]
+                .requiresWallet,
+        ).toBe(true);
+    });
+
+    it('does not require a wallet for the welcome dialog', () => {
+        expect(
+            workspaceDialogsDefinitions[WorkspaceDialogId.WELCOME]
                 .requiresWallet,
         ).toBeFalsy();
     });

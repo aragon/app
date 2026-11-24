@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace account to-dos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+  <div class="app-container page-content">
+    <main class="page-main page-main--titled">
+      <header class="page-main__header">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h1">To-dos</x-import>
+      </header>
+      <sc-if value="{{disconnected}}" hint-placeholder-val="{{false}}">
+        <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="Connect a wallet to see your to-dos" description="To-dos are what your wallet can vote on or sign right now across the accounts of this workspace." object-illustration="{{walletIllustration}}" is-stacked="{{no}}" primary-button="{{connectButton}}"></x-import>
+      </sc-if>
+      <sc-if value="{{connected}}" hint-placeholder-val="{{true}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="to-dos" items-count="{{count}}" page-size="{{twelve}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyState}}">
+<sc-if value="{{show.t0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t0.href}}"><div class="ws-summary"><sc-if value="{{t0.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t0.account}}" src="{{t0.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if><sc-if value="{{t0.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if><div class="ws-summary__text"><div class="ws-summary__title"><span>{{t0.title}}</span><span class="ws-summary__identifier">{{t0.identifier}}</span></div><p class="ws-summary__description">{{t0.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{t0.action}}" variant="{{t0.tagVariant}}" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t1.href}}"><div class="ws-summary"><sc-if value="{{t1.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t1.account}}" src="{{t1.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if><sc-if value="{{t1.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if><div class="ws-summary__text"><div class="ws-summary__title"><span>{{t1.title}}</span><span class="ws-summary__identifier">{{t1.identifier}}</span></div><p class="ws-summary__description">{{t1.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{t1.action}}" variant="{{t1.tagVariant}}" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t2.href}}"><div class="ws-summary"><sc-if value="{{t2.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t2.account}}" src="{{t2.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if><sc-if value="{{t2.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if><div class="ws-summary__text"><div class="ws-summary__title"><span>{{t2.title}}</span><span class="ws-summary__identifier">{{t2.identifier}}</span></div><p class="ws-summary__description">{{t2.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{t2.action}}" variant="{{t2.tagVariant}}" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex items-center py-3 md:py-5" href="{{t3.href}}"><div class="ws-summary"><sc-if value="{{t3.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{t3.account}}" src="{{t3.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if><sc-if value="{{t3.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if><div class="ws-summary__text"><div class="ws-summary__title"><span>{{t3.title}}</span><span class="ws-summary__identifier">{{t3.identifier}}</span></div><p class="ws-summary__description">{{t3.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{t3.action}}" variant="{{t3.tagVariant}}" class-name="shrink-0"></x-import></div></x-import></sc-if>
+</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+        </x-import>
+      </sc-if>
+    </main>
+
+    <aside class="page-aside">
+      <sc-if value="{{connected}}" hint-placeholder-val="{{true}}">
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+          <div class="aside-card__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{name}}</x-import>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{toVote}}</x-import>
+              <p class="stat-card__label">To vote</p>
+            </div>
+            <div class="stat-card">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{toSign}}</x-import>
+              <p class="stat-card__label">To sign</p>
+            </div>
+          </div>
+        </x-import>
+      </sc-if>
+    </aside>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"account":{"editor":"enum","options":["meridian","atlas","northstar","safe"],"default":"meridian"},"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"todoRows":{"editor":null},"safe":{"editor":null},"$preview":{"width":1100,"height":700}}'>
+// To-dos of one account of the workspace (apps/app: workspaceTodosPage in account scope; static screens WorkspaceAccountTodos / ConnectedWorkspaceAccountTodos).
+// Props: account (meridian | atlas | northstar | safe), onNav(target) (bare account targets), wallet, onConnect().
+// Without a wallet: the connect card (the aside is empty). Connected (nadia.eth): that account's rows and the aside card with To vote / To sign.
+// Rows: the shell's todoRows of this account (prop todoRows; the same list as the all-accounts page and the navigation badge): MGP-8 for Meridian, AGC-5 for Atlas,
+// NSP-8 and NSP-6 for Northstar, the Safe transactions still to sign for the Safe. They leave the list once acted on. Four fixed slots at column 0 (pagination counts children).
+class Component extends DCLogic {
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const account = this.props.account || 'meridian';
+    const connected = this.props.wallet === 'connected';
+    const names = { meridian: 'Meridian DAO', atlas: 'Atlas Grants Council', northstar: 'Northstar Protocol', safe: 'Northstar Council Safe' };
+    // the shell's rows of this account (the same list the all-accounts page and the navigation badge count)
+    const all = connected && Array.isArray(this.props.todoRows) ? this.props.todoRows.filter((r) => r.acct === account) : [];
+    const v = {
+      yes: true, no: false, twelve: 12,
+      click: this.click,
+      connected, disconnected: !connected,
+      name: names[account] || names.meridian,
+      toVote: String(all.filter((t) => t.isDao).length), toSign: String(all.filter((t) => t.isSafe).length),
+      count: all.length, show: {},
+      emptyState: { heading: 'Nothing is waiting for you', description: 'Active proposals you can vote on and Safe transactions you can sign will show up here.' },
+      walletIllustration: { object: 'WALLET' },
+      connectButton: { label: 'Connect wallet', iconLeft: 'BLOCKCHAIN_WALLET', onClick: () => { if (typeof this.props.onConnect === 'function') this.props.onConnect(); } }
+    };
+    for (let i = 0; i < 4; i++) { v['t' + i] = all[i] || {}; v.show['t' + i] = !!all[i]; }
+    return v;
+  }
+}
+</script>
+</body>
+</html>

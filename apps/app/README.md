@@ -23,7 +23,7 @@ integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the
 
 Before setting up the project, ensure you have the following installed:
 
-- Node.js: Version >= 24
+- Node.js: Version >= 24.22.3 (see the root `.nvmrc`)
 - EditorConfig: Ensure your IDE has EditorConfig support enabled
 
 ## Getting Started
@@ -61,8 +61,8 @@ This step is required because automatic running of the `prepare` script is disab
 git config blame.ignoreRevsFile .git-blame-ignore-revs
 ```
 
-4. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
-   `.env.example` file as a template:
+4. Create a `.env` file in this workspace (`apps/app/.env`, not the repository root: Next.js only reads env files
+   from the app folder) and fill in the secrets. Use the `.env.example` file as a template:
 
 ```bash
 cp .env.example .env
@@ -71,7 +71,7 @@ cp .env.example .env
 5. Start the development server with:
 
 ```bash
-pnpm dev
+pnpm dev --filter=@aragon/app
 ```
 
 6. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.

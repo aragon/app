@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create workspace</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" wizard-name="Create workspace" exit-href="Explore.dc.html" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onSubmit="{{onFormSubmit}}">
+      <dc-import name="WizardProgress" step="{{stepNumber}}" total="{{three}}" next-step="{{nextStepName}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <sc-if value="{{isStep1}}" hint-placeholder-val="{{yes}}">
+          <dc-import name="CreateWorkspaceFlowMetadata" vm="{{metaProps}}" hint-size="100%,1100px"></dc-import>
+        </sc-if>
+        <sc-if value="{{isStep2}}" hint-placeholder-val="{{no}}">
+          <dc-import name="CreateWorkspaceFlowTargets" rows="{{targetRows}}" on-add="{{addTarget}}" hint-size="100%,420px"></dc-import>
+        </sc-if>
+        <sc-if value="{{isStep3}}" hint-placeholder-val="{{no}}">
+          <dc-import name="CreateWorkspaceFlowAccounts" rows="{{accountRows}}" on-add="{{addAccount}}" hint-size="100%,520px"></dc-import>
+        </sc-if>
+        <div class="{{footerClass}}">
+          <sc-if value="{{showAlert}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{alertTitle}}" variant="critical">{{alertText}}</x-import>
+          </sc-if>
+          <dc-import name="WizardActions" has-back="{{hasBack}}" is-last="{{isLast}}" submit-label="Create workspace" on-next="{{next}}" on-back="{{back}}" hint-size="100%,48px"></dc-import>
+        </div>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+  <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="{{name}}" avatar-url="{{avatarUrl}}" description="{{description}}" accounts="{{accountCount}}" targets="{{targetCount}}" on-close="{{closeDialog}}" success-href="Workspace.dc.html?welcome=1" hint-size="100%,1px"></dc-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1330}}'>
+// Create workspace wizard as one live prototype (apps/app: app/create/workspace, modules/workspace/pages/createWorkspacePage,
+// components/workspaceWizard, components/createWorkspaceForm/*, dialogs/publishWorkspaceDialog). Three steps in one artboard:
+// "Describe your workspace" (CreateWorkspaceFlowMetadata), "Add targets" (CreateWorkspaceFlowTargets), "Add accounts"
+// (CreateWorkspaceFlowAccounts, rows via CreateWorkspaceFlowAddressFields), then the PUBLISH_WORKSPACE dialog
+// (CreateWorkspaceFlowPublishDialog). Frame: WizardNav / WizardProgress / WizardActions.
+// Exits: the close button goes to Explore.dc.html; "View workspace" (after the simulated save) opens the workspace prototype, Workspace.dc.html?welcome=1, which greets with the welcome dialog.
+// Validation (shown on a failed Next, then live; and on blur): name required, URL required / valid, address required / valid /
+// not a duplicate on the same network, account must be a DAO or Safe (try the Meridian DAO 0xC8C3…BCde, Atlas Grants Council
+// 0x3115…d368 or the Northstar Council Safe 0x515f…02e2), account name required once "Add metadata" is open.
+// Not covered: failure of the avatar upload checks (the kit input does them), ENS names (the lookup is offline here).
+// Literal paths, so the publish step can swap each for its canvas upload.
+const NETWORK_LOGOS = { 'arbitrum': 'assets/networks/arbitrum.svg', 'avalanche': 'assets/networks/avalanche.svg', 'base': 'assets/networks/base.svg', 'base_sepolia': 'assets/networks/base_sepolia.svg', 'bnb': 'assets/networks/bnb.svg', 'bnb_testnet': 'assets/networks/bnb_testnet.svg', 'chiliz': 'assets/networks/chiliz.svg', 'citrea': 'assets/networks/citrea.svg', 'ethereum': 'assets/networks/ethereum.svg', 'hemi': 'assets/networks/hemi.svg', 'hoodi': 'assets/networks/hoodi.svg', 'katana': 'assets/networks/katana.svg', 'monad': 'assets/networks/monad.svg', 'optimism': 'assets/networks/optimism.svg', 'polygon': 'assets/networks/polygon.svg', 'polygon_amoy': 'assets/networks/polygon_amoy.svg', 'robinhood': 'assets/networks/robinhood.svg', 'sepolia': 'assets/networks/sepolia.svg', 'zksync': 'assets/networks/zksync.svg' };
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.nextId = 10;
+    this.timers = {};
+    this.state = {
+      step: 0, attempted: false, dialogOpen: false,
+      name: '', nameTouched: false, avatar: undefined, description: '',
+      resources: [], targets: [],
+      accounts: []
+    };
+  }
+  componentWillUnmount() { Object.values(this.timers).forEach(clearTimeout); }
+
+  emptyRow(id) { return { id, network: 'ETHEREUM_SEPOLIA', address: '', touched: false, resolving: false, showMeta: false, meta: { avatar: undefined, name: '', nameTouched: false, description: '' } }; }
+
+  networks() {
+    return [
+      ['ETHEREUM_SEPOLIA', 'Ethereum Sepolia', 'sepolia', 11155111, 'Testnet'],
+      ['ETHEREUM_MAINNET', 'Ethereum', 'ethereum', 1],
+      ['BASE_MAINNET', 'Base', 'base', 8453],
+      ['BNB_MAINNET', 'BNB Smart Chain', 'bnb', 56],
+      ['MONAD_MAINNET', 'Monad', 'monad', 143],
+      ['ARBITRUM_MAINNET', 'Arbitrum', 'arbitrum', 42161],
+      ['POLYGON_MAINNET', 'Polygon', 'polygon', 137],
+      ['AVAX_MAINNET', 'Avalanche', 'avalanche', 43114],
+      ['OPTIMISM_MAINNET', 'Optimism', 'optimism', 10],
+      ['KATANA_MAINNET', 'Katana', 'katana', 747474],
+      ['ZKSYNC_MAINNET', 'zkSync', 'zksync', 324],
+      ['CITREA_MAINNET', 'Citrea', 'citrea', 4114],
+      ['CHILIZ_MAINNET', 'Chiliz', 'chiliz', 88888],
+      ['HEMI_MAINNET', 'Hemi', 'hemi', 43111],
+      ['ETHEREUM_HOODI', 'Ethereum Hoodi', 'hoodi', 560048, 'Testnet'],
+      ['BASE_SEPOLIA', 'Base Sepolia', 'base_sepolia', 84532, 'Testnet'],
+      ['BNB_TESTNET', 'BNB Smart Chain Testnet', 'bnb_testnet', 97, 'Testnet'],
+      ['POLYGON_AMOY', 'Polygon Amoy', 'polygon_amoy', 80002, 'Testnet']
+    ].map(([key, name, logo, chainId, tag]) => ({ key, name, logo: NETWORK_LOGOS[logo], chainId, tag }));
+  }
+
+  // address lookups of the mocked accounts API (design/baseline-check/data.cjs, data-spp.cjs)
+  lookup(address) {
+    const a = address.toLowerCase();
+    const dao = {
+      '0xc8c322384903ee8f11f511b71d0504237886bcde': { name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg' },
+      '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368': { name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg' }
+    }[a];
+    if (dao) return { type: 'DAO', ...dao };
+    if (['0x515fec2e8f6553948b1d57c14c1243a1405c02e2', '0x218a13d397f83eff76af3830062b559dc1d1130d'].includes(a)) return { type: 'SAFE' };
+    // A prototype has no backend: any other valid address resolves too, so the flow can always continue.
+    // Addresses ending in an even hex digit read as a DAO, the rest as a Safe.
+    if (parseInt(a.slice(-1), 16) % 2 === 0) return { type: 'DAO', name: 'Northstar Protocol', avatar: 'assets/mock/avatar/northstar.svg' };
+    return { type: 'SAFE' };
+  }
+  isAddr(v) { return /^0x[0-9a-fA-F]{40}$/.test(v); }
+  trunc(v) { return v.slice(0, 6) + '…' + v.slice(-4); }
+
+  addressError(list, i, isAccount) {
+    const r = list[i], v = (r.address || '').trim();
+    if (v === '') return { kind: 'required', message: 'Address is mandatory.' };
+    if (!this.isAddr(v)) return { kind: 'invalid', message: 'Enter a valid address or ENS name.', onTouch: true };
+    if (list.slice(0, i).some((o) => o.network === r.network && o.address.toLowerCase() === v.toLowerCase())) return { kind: 'invalid', message: 'This address is already used on the selected network.' };
+    if (isAccount && !r.resolving && this.lookup(v).type === 'UNSUPPORTED') return { kind: 'invalid', message: 'This address is not an Aragon DAO or a Safe on the selected network.' };
+    return null;
+  }
+
+  validate() {
+    const s = this.state, urlRe = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+    const e1 = [];
+    const nameErr = s.name.trim() === '' ? { kind: 'required', message: 'Workspace name is mandatory.' } : null;
+    if (nameErr) e1.push(nameErr);
+    const resErrs = s.resources.map((r) => {
+      const v = r.url.trim();
+      const err = v === '' ? { kind: 'required', message: 'URL is mandatory.' } : !urlRe.test(v) ? { kind: 'invalid', message: 'Invalid URL format.' } : null;
+      if (err) e1.push(err);
+      return err;
+    });
+    const targetErrs = s.targets.map((_, i) => this.addressError(s.targets, i, false));
+    const accountErrs = s.accounts.map((_, i) => this.addressError(s.accounts, i, true));
+    const metaErrs = s.accounts.map((a) => (a.showMeta && a.meta.name.trim() === '' ? { kind: 'required', message: 'Account name is mandatory.' } : null));
+    return { nameErr, resErrs, targetErrs, accountErrs, metaErrs,
+      steps: [e1, targetErrs.filter(Boolean), accountErrs.concat(metaErrs).filter(Boolean)] };
+  }
+
+  patch(listKey, id, fn) { this.setState((s) => ({ [listKey]: s[listKey].map((r) => (r.id === id ? fn(r) : r)) })); }
+
+  setAddress(listKey, id, value) {
+    const isAccount = listKey === 'accounts';
+    this.patch(listKey, id, (r) => ({ ...r, address: value, resolving: isAccount && this.isAddr(value) }));
+    clearTimeout(this.timers[id]);
+    if (isAccount && this.isAddr(value)) {
+      this.timers[id] = setTimeout(() => this.patch('accounts', id, (r) => (r.address === value ? { ...r, resolving: false } : r)), 700);
+    }
+  }
+
+  next() {
+    const v = this.validate(), s = this.state;
+    if (v.steps[s.step].length > 0) { this.setState({ attempted: true }); return; }
+    if (s.step < 2) { this.setState({ step: s.step + 1, attempted: false }); this.toTop(); } else { this.setState({ dialogOpen: true }); }
+  }
+  back() { this.setState((s) => ({ step: Math.max(0, s.step - 1), attempted: false })); this.toTop(); }
+  toTop() { try { window.scrollTo(0, 0); } catch (e) {} }
+
+  rowVm(listKey, i, v) {
+    const s = this.state, list = s[listKey], r = list[i], isAccount = listKey === 'accounts';
+    const err = (isAccount ? v.accountErrs : v.targetErrs)[i];
+    const show = err && (s.attempted || r.touched || !err.onTouch && err.kind !== 'required');
+    const net = this.networks().find((n) => n.key === r.network);
+    let identity = null;
+    if (isAccount && this.isAddr(r.address)) {
+      if (r.resolving) identity = 'loading';
+      else {
+        const info = this.lookup(r.address);
+        if (info.type === 'DAO') identity = { isDao: true, isSafe: false, name: info.name, avatar: info.avatar, primary: info.name, truncated: this.trunc(r.address), hasName: true, tag: 'DAO', tagVariant: 'primary' };
+        else if (info.type === 'SAFE') identity = { isDao: false, isSafe: true, primary: this.trunc(r.address), truncated: '', hasName: false, tag: 'Safe', tagVariant: 'neutral' };
+      }
+    }
+    const id = r.id;
+    const vm = {
+      id, networkName: net.name, networkLogo: net.logo, chainId: net.chainId,
+      options: this.networks().map((n) => ({ name: n.name, logo: n.logo, tag: n.tag, selected: n.key === r.network, pick: () => this.patch(listKey, id, (x) => ({ ...x, network: n.key })) })),
+      address: r.address,
+      alert: show ? { message: err.message, variant: 'critical' } : undefined,
+      identity,
+      onAddress: (val) => this.setAddress(listKey, id, val),
+      onBlur: () => this.patch(listKey, id, (x) => ({ ...x, touched: true })),
+      remove: () => this.setState((st) => ({ [listKey]: st[listKey].filter((x) => x.id !== id) }))
+    };
+    if (isAccount) {
+      const me = v.metaErrs[i], m = r.meta;
+      const setMeta = (p) => this.patch('accounts', id, (x) => ({ ...x, meta: { ...x.meta, ...p } }));
+      Object.assign(vm, {
+        showMeta: r.showMeta,
+        toggleMeta: () => this.patch('accounts', id, (x) => ({ ...x, showMeta: !x.showMeta, meta: x.showMeta ? this.emptyRow(0).meta : x.meta })),
+        meta: { avatar: m.avatar, avatarAlert: undefined, name: m.name, description: m.description,
+          nameAlert: me && (s.attempted || m.nameTouched) ? { message: me.message, variant: 'critical' } : undefined },
+        changeAvatar: (val) => setMeta({ avatar: val }),
+        changeName: (e) => setMeta({ name: e.target.value }),
+        blurName: () => setMeta({ nameTouched: true }),
+        changeDescription: (e) => setMeta({ description: e.target.value })
+      });
+    }
+    return vm;
+  }
+
+  renderVals() {
+    const s = this.state, v = this.validate();
+    const stepErrs = v.steps[s.step];
+    const req = stepErrs.some((e) => e.kind === 'required'), inv = stepErrs.some((e) => e.kind === 'invalid');
+    const status = req && inv ? 'invalid-required' : req ? 'required' : 'invalid';
+    const alerts = {
+      invalid: ['Invalid data', 'Some values are invalid. Review and fix them to proceed.'],
+      'invalid-required': ['Missing and invalid data', 'Some inputs are missing or invalid. Fix them to proceed.'],
+      required: ['Missing data', 'Some inputs are missing. Fill out all mandatory fields to proceed.']
+    };
+    const showAlert = s.attempted && stepErrs.length > 0;
+    const newRow = () => this.emptyRow(this.nextId++);
+    const resources = s.resources.map((r, i) => ({
+      url: r.url, name: r.name,
+      urlAlert: v.resErrs[i] && (s.attempted || r.touched) ? { message: v.resErrs[i].message, variant: 'critical' } : undefined
+    }));
+    const upRes = (i, p) => this.setState((st) => ({ resources: st.resources.map((r, j) => (j === i ? { ...r, ...p } : r)) }));
+    return {
+      yes: true, no: false, three: 3,
+      stepNumber: s.step + 1,
+      nextStepName: ['Add targets', 'Add accounts', 'Create workspace'][s.step],
+      isStep1: s.step === 0, isStep2: s.step === 1, isStep3: s.step === 2,
+      hasBack: s.step > 0, isLast: s.step === 2,
+      footerClass: showAlert ? 'wizard-footer wizard-footer--critical' : 'wizard-footer',
+      showAlert, alertTitle: alerts[status][0], alertText: alerts[status][1],
+      // step 1
+      name: s.name, description: s.description,
+      // step bodies
+      targetRows: s.targets.map((_, i) => this.rowVm('targets', i, v)),
+      accountRows: s.accounts.map((_, i) => this.rowVm('accounts', i, v)),
+      addTarget: () => this.setState((st) => ({ targets: st.targets.concat([newRow()]) })),
+      addAccount: () => this.setState((st) => ({ accounts: st.accounts.concat([newRow()]) })),
+      // dialog
+      dialogOpen: s.dialogOpen, closeDialog: () => this.setState({ dialogOpen: false }),
+      avatarUrl: s.avatar && s.avatar.url, accountCount: s.accounts.length, targetCount: s.targets.length,
+      next: () => this.next(), back: () => this.back(),
+      onFormSubmit: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      // handlers for the metadata body
+      metaProps: {
+        name: s.name, avatar: s.avatar, description: s.description, resources,
+        nameAlert: v.nameErr && (s.attempted || s.nameTouched) ? { message: v.nameErr.message, variant: 'critical' } : undefined,
+        onName: (val) => this.setState({ name: val }), onNameBlur: () => this.setState({ nameTouched: true }),
+        onAvatar: (val) => this.setState({ avatar: val }), onDescription: (val) => this.setState({ description: val }),
+        onAddResource: () => this.setState((st) => ({ resources: st.resources.concat([{ url: '', name: '', touched: false }]) })),
+        onResourceUrl: (i, val) => upRes(i, { url: val }), onResourceUrlBlur: (i) => upRes(i, { touched: true }),
+        onResourceName: (i, val) => upRes(i, { name: val }),
+        onRemoveResource: (i) => this.setState((st) => ({ resources: st.resources.filter((_, j) => j !== i) }))
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

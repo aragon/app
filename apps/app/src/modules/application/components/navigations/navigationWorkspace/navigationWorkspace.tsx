@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    DaoAvatar,
-    Dropdown,
-    Icon,
-    IconType,
-    Wallet,
-} from '@aragon/gov-ui-kit';
+import { DaoAvatar, Dropdown, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -183,13 +177,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                                 {activeOption?.label}
                             </span>
                         </span>
-                        <span
-                            aria-hidden={true}
-                            className="flex shrink-0 flex-col items-center -space-y-1"
-                        >
-                            <Icon icon={IconType.CHEVRON_UP} size="sm" />
-                            <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
-                        </span>
                     </button>
                     {workspace != null ? (
                         <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -203,6 +190,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     hiddenTitle={t(
                         'app.application.navigationWorkspace.a11y.title',
                     )}
+                    hideExplore={true}
                     onOpenChange={handleDialogOpenChange}
                     open={isDialogOpen}
                 >

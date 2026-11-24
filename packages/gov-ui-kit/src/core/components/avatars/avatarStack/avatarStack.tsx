@@ -7,8 +7,8 @@ import { Avatar, type AvatarSize, type IAvatarProps } from '../avatar';
 
 export interface IAvatarStackProps extends Omit<ComponentPropsWithoutRef<'span'>, 'children'> {
     /**
-     * Avatar nodes rendered in order. The first two are shown; any remaining avatars are collapsed into
-     * a trailing count avatar capped visually at `9+`.
+     * Avatar nodes rendered in order. Up to three are shown; larger collections show the first two
+     * plus a trailing count avatar capped visually at `9+`.
      */
     avatars: readonly ReactElement<IAvatarProps>[];
     /**
@@ -134,7 +134,8 @@ const responsiveOverlapClasses: ResponsiveAttributeClassMap<AvatarSize> = {
  * - Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared
  *   size to them.
  * - The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.
- * - Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.
+ * - Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar
+ *   capped visually at `9+`.
  * - Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed.
  */
 export const AvatarStack: React.FC<IAvatarStackProps> = (props) => {
@@ -145,8 +146,8 @@ export const AvatarStack: React.FC<IAvatarStackProps> = (props) => {
     const overlapClassName = responsiveUtils.generateClassNames(stackSize, responsiveSize, responsiveOverlapClasses);
     const slotBaseClassName = 'relative flex shrink-0 overflow-hidden rounded-full [&>*]:size-full!';
 
-    const visibleAvatars = avatars.slice(0, 2);
-    const overflowCount = avatars.length - 2;
+    const visibleAvatars = avatars.length > 3 ? avatars.slice(0, 2) : avatars;
+    const overflowCount = avatars.length - visibleAvatars.length;
 
     return (
         <span className={classNames('inline-flex items-center', className)} {...otherProps}>

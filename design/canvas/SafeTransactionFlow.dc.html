@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create Safe transaction</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" exit-href="Workspace.dc.html" wizard-name="Create transaction" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onSubmit="{{submitForm}}">
+      <dc-import name="WizardProgress" step="{{one}}" total="{{one}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <dc-import name="SafeTransactionFlowActions" actions="{{actionsView}}" contract="{{contract}}" menu-open="{{menuOpen}}" menu-query="{{menuQuery}}" callbacks="{{actionCallbacks}}" hint-size="100%,500px"></dc-import>
+        <div class="wizard-step__footer">
+          <sc-if value="{{showAlert}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{alertTitle}}" variant="critical">{{alertText}}</x-import>
+          </sc-if>
+          <sc-if value="{{footerPlain}}" hint-placeholder-val="{{yes}}">
+            <dc-import name="WizardActions" has-back="{{no}}" is-last="{{yes}}" submit-label="Create transaction" on-next="{{next}}" hint-size="100%,48px"></dc-import>
+          </sc-if>
+          <sc-if value="{{footerDisabled}}" hint-placeholder-val="{{no}}">
+            <div class="wizard-actions">
+              <div class="wizard-actions__buttons">
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" class-name="invisible">Back</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" icon-right="CHEVRON_RIGHT" type="submit" disabled="{{yes}}">Create transaction</x-import>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{footerCritical}}" hint-placeholder-val="{{no}}">
+            <div class="wizard-actions">
+              <div class="wizard-actions__buttons">
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" class-name="invisible">Back</x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="critical" size="lg" icon-right="CHEVRON_RIGHT" type="submit" on-click="{{next}}">Create transaction</x-import>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+  <a id="stf-home-link" class="cdf-hidden-link" href="Workspace.dc.html" tabindex="-1" aria-hidden="true">Back to the workspace</a>
+</div>
+</x-import>
+<sc-if value="{{dlgContract}}" hint-placeholder-val="{{no}}">
+  <dc-import name="SafeTransactionFlowContractDialog" on-close="{{closeDialog}}" on-add="{{addContract}}" hint-size="1440px,900px"></dc-import>
+</sc-if>
+<sc-if value="{{dlgCreate}}" hint-placeholder-val="{{no}}">
+  <dc-import name="SafeTransactionFlowDialog" tx="{{tx}}" on-cancel="{{closeDialog}}" on-done="{{done}}" hint-size="1440px,900px"></dc-import>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Create Safe transaction, from the workspace transactions page of the Northstar Council Safe (3-of-5, nonce 5, queue 5-7 as in SafeFlow).
+// SOURCE-ONLY (no static screen or screenshot): apps/app modules/workspace/pages/workspaceCreateTransactionPage (route
+// /workspace/<id>/<safe>/create/transaction), components/layoutWizardCreateWorkspaceTransaction (LayoutWizard, name "Create transaction"),
+// modules/safe/components/safeCreateTransactionWizard (one step, "Add actions", Next disabled until an action exists, submit label "Create
+// transaction") and modules/safe/dialogs/safeCreateTransactionDialog (review the Safe transaction, sign, success).
+// The app's wizard has ONE step: composing actions; "Create transaction" opens the dialog that holds the review and the signature. There is no
+// separate summary step. One artboard, state in `this.state`; parts SafeTransactionFlow<Actions|ContractDialog|Dialog>.
+// Outside a DAO the composer offers only "Add contract address" (then that contract's functions). Here: Action -> Add contract address ->
+// any 0x address (sample ABI: USD Coin) -> Action -> transfer adds a USDC transfer with the token locked (the app's TransferActionLocked).
+// Validation (app strings, shown on submit, then per field after blur): "Amount is mandatory." / "Amount is invalid." / "Recipient is mandatory." and
+// the step alert "Missing data" / "Invalid data". The simulated owner (nadia.eth, an owner of the Safe) signs; no backend, always succeeds.
+// Exit (X), and Done / Close after the transaction is created, go to Workspace.dc.html (the app returns to the account's transactions page).
+// Not built: raw calldata and the other functions of the contract, Connect, Upload, Download as JSON, the wallet and network switch steps.
+const SAFE = '0x515feC2E8F6553948b1D57C14c1243a1405C02e2';
+const USDC = { symbol: 'USDC', name: 'USD Coin', logo: 'assets/mock/token/usdc.svg', address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', balance: 185000, price: 1, decimals: 6 };
+const KNOWN_ENS = { 'atlas-grants.dao.eth': '0x31154ff59eA91264C4fd75aBA7D8a2Fc5a69d368' };
+const SAMPLE_ADDRESS = '0x4b3f5d1a0c8e7d2b9a6f1e3c5d7b9a0c2e4f6a8b';
+const hex = (seed, n) => { let h = 2166136261 >>> 0, o = ''; for (let i = 0; o.length < n; i++) { h = Math.imul(h ^ (seed.charCodeAt(i % seed.length) + i), 16777619) >>> 0; o += h.toString(16).padStart(8, '0'); } return o.slice(0, n); };
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { submitted: false, touched: {}, actions: [], menuOpen: false, menuQuery: '', contract: false, dlg: null };
+  }
+  touch(key) { this.setState((s) => (s.touched[key] ? null : { touched: { ...s.touched, [key]: true } })); }
+  errorsFor(s) {
+    const e = { required: false, invalid: false, actions: [] };
+    s.actions.forEach((a, i) => {
+      const amt = a.amount === '' || a.amount == null ? 'Amount is mandatory.' : !(parseFloat(a.amount) > 0) ? 'Amount is invalid.' : null;
+      e.actions[i] = { amount: amt, recipient: a.accepted ? null : 'Recipient is mandatory.' };
+      if (e.actions[i].amount === 'Amount is mandatory.' || e.actions[i].recipient) e.required = true;
+      else if (amt) e.invalid = true;
+    });
+    e.status = s.actions.length === 0 ? 'empty' : e.required && e.invalid ? 'invalid-required' : e.required ? 'required' : e.invalid ? 'invalid' : 'valid';
+    return e;
+  }
+  submitForm = (ev) => { if (ev && ev.preventDefault) ev.preventDefault(); this.next(); };
+  // "Create transaction": validate the step; invalid -> stay and show the errors, valid -> the create dialog (review + signature).
+  next = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    const e = this.errorsFor(this.state);
+    if (e.status === 'empty') return;
+    if (e.status !== 'valid') { this.setState({ submitted: true }); return; }
+    this.setState({ dlg: 'create' });
+  };
+  closeDialog = () => this.setState({ dlg: null });
+  addContract = () => this.setState({ dlg: null, contract: true });
+  // Done: leave through the hidden real link, so the canvas navigates.
+  done = () => { this.setState({ dlg: null }); const a = document.getElementById('stf-home-link'); if (a) a.click(); };
+  patchAction(i, patch) { this.setState((s) => ({ actions: s.actions.map((a, j) => (j === i ? { ...a, ...(typeof patch === 'function' ? patch(a) : patch) } : a)) })); }
+  actionCallbacks = {
+    openMenu: () => this.setState({ menuOpen: true, menuQuery: '' }),
+    closeMenu: () => this.setState({ menuOpen: false }),
+    query: (v) => this.setState({ menuQuery: v }),
+    pick: (kind) => this.setState((s) => (kind === 'contract'
+      ? { menuOpen: false, dlg: 'contract' }
+      : { menuOpen: false, actions: [...s.actions, { asset: USDC, amount: '', recipient: '', recipientEdit: false, accepted: null }] })),
+    amount: (i, v) => this.patchAction(i, { amount: v }),
+    max: (i) => this.patchAction(i, (a) => ({ amount: String(a.asset.balance) })),
+    recipient: (i, v) => this.patchAction(i, (a) => {
+      const t = v.trim();
+      const ok = KNOWN_ENS[t.toLowerCase()] || (/^0x[0-9a-fA-F]{40}$/.test(t) ? t : /^[\w-]+(\.[\w-]+)*\.eth$/i.test(t) ? SAMPLE_ADDRESS : null);
+      return { recipient: v, accepted: ok };
+    }),
+    accept: (i, v) => this.patchAction(i, (a) => {
+      const known = KNOWN_ENS[(a.recipient || '').trim().toLowerCase()];
+      const next = v && v.address ? v.address : known || null;
+      return next === a.accepted ? {} : { accepted: next };
+    }),
+    blur: (i, field) => { this.touch('a' + i + field); if (field === 'recipient') this.patchAction(i, { recipientEdit: false }); },
+    edit: (i) => this.patchAction(i, { recipientEdit: true }),
+    remove: (i) => this.setState((s) => ({ actions: s.actions.filter((a, j) => j !== i), touched: {} })),
+    move: (i, dir) => this.setState((s) => {
+      const j = i + dir; if (j < 0 || j >= s.actions.length) return null;
+      const a = s.actions.slice(); [a[i], a[j]] = [a[j], a[i]]; return { actions: a, touched: {} };
+    }),
+    removeAll: () => this.setState({ actions: [], touched: {}, submitted: false }),
+  };
+  // The Safe transaction the dialog reviews, at the next free nonce (8: the queue holds 5-7). One action is a plain call; several are batched
+  // into a delegate call to MultiSendCallOnly.
+  buildTx(s) {
+    const call = (a) => '0xa9059cbb' + (a.accepted || SAMPLE_ADDRESS).slice(2).toLowerCase().padStart(64, '0') + Math.round((parseFloat(a.amount) || 0) * 1e6).toString(16).padStart(64, '0');
+    const seed = JSON.stringify(s.actions.map((a) => [a.amount, a.accepted]));
+    const one = s.actions.length === 1;
+    return {
+      nonceText: '8',
+      fn: one ? 'transfer' : 'multiSend',
+      to: one ? USDC.address : '0x9641d764fc13c8B624c04430C7356C1C7C8102e2',
+      value: '0',
+      data: one ? call(s.actions[0]) : '0x8d80ff0a' + s.actions.map(call).join('').slice(0, 120) + '…',
+      domainHash: '0x' + hex('d' + SAFE, 64), messageHash: '0x' + hex('m' + seed, 64), safeTxHash: '0x' + hex('t' + seed, 64),
+    };
+  }
+  renderVals() {
+    const s = this.state, e = this.errorsFor(s);
+    const shown = (key) => s.submitted || !!s.touched[key];
+    const showAlert = s.submitted && e.status !== 'valid' && e.status !== 'empty';
+    const alertKey = { required: 'Missing data', invalid: 'Invalid data', 'invalid-required': 'Missing and invalid data' };
+    const alertDesc = {
+      required: 'Some inputs are missing. Fill out all mandatory fields to proceed.',
+      invalid: 'Some values are invalid. Review and fix them to proceed.',
+      'invalid-required': 'Some inputs are missing or invalid. Fix them to proceed.',
+    };
+    const actionsView = s.actions.map((a, i) => {
+      const known = !!a.accepted && !!KNOWN_ENS[(a.recipient || '').trim().toLowerCase()];
+      const er = e.actions[i] || {};
+      return {
+        asset: a.asset, amount: a.amount, recipient: a.recipient, recipientAddress: a.accepted || undefined,
+        recipientResolved: known && !a.recipientEdit, recipientEdit: a.recipientEdit,
+        errors: { amount: shown('a' + i + 'amount') ? er.amount : null, recipient: shown('a' + i + 'recipient') ? er.recipient : null },
+      };
+    });
+    const empty = s.actions.length === 0;
+    return {
+      yes: true, no: false, one: 1,
+      actionsView, contract: s.contract, menuOpen: s.menuOpen, menuQuery: s.menuQuery, actionCallbacks: this.actionCallbacks,
+      showAlert, alertTitle: alertKey[e.status], alertText: alertDesc[e.status],
+      footerPlain: !empty && !showAlert, footerDisabled: empty, footerCritical: !empty && showAlert,
+      next: this.next, submitForm: this.submitForm,
+      dlgContract: s.dlg === 'contract', dlgCreate: s.dlg === 'create', closeDialog: this.closeDialog, addContract: this.addContract, done: this.done,
+      tx: s.dlg === 'create' ? this.buildTx(s) : {},
+    };
+  }
+}
+</script>
+</body>
+</html>

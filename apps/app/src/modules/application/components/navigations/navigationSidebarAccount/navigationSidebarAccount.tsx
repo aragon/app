@@ -4,8 +4,6 @@ import {
     addressUtils,
     Button,
     type ICompositeAddress,
-    Icon,
-    IconType,
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -68,11 +66,6 @@ export const NavigationSidebarAccount: React.FC<
                     </span>
                 )}
             </span>
-            <Icon
-                className="shrink-0 icon-surface-primary"
-                icon={IconType.CHEVRON_RIGHT}
-                size="md"
-            />
         </button>
     );
 };

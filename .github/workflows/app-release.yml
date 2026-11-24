@@ -130,12 +130,20 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: "0"
+      - name: Check workflow job guards
+        uses: aragon/github-templates/steps/workflow-guards@v1
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter
         run: pnpm lint:check
       - name: Run tests with coverage
         run: pnpm test:coverage
+      - name: Check published CSS bundles
+        run: pnpm css:check
+      - name: Check GovKit component registry
+        run: |
+          node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+          node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
 
   # Every push lands on staging, announced in the release thread (found through the PR body).
   # Staging has no required reviewers, so there is no gate message.

@@ -1,0 +1,223 @@
+/* Prototype glue: a page part mounted in the DAO shell. The canvas wraps every <dc-import> in an extra element;
+   make the slot and that wrapper transparent to layout so the part's root sits in .app-column as in the app. */
+.dao-slot, .dao-slot > *:not(.page-container) { display: contents; }
+
+/* DAO prototype shell (Dao.dc.html): page parts are mounted in .dao-slot (see proto.css); nothing else needed yet. */
+
+/* ---- CreateDaoFlow: apps/app modules/createDao/components/createDaoForm (createDaoFormNetwork, createDaoFormMetadata) ---- */
+/* createDaoFormNetwork: sections `flex flex-col gap-10`, section `gap-4`, list `gap-y-2 md:gap-y-3` */
+.cdf-sections { display: flex; flex-direction: column; gap: 40px; }
+.cdf-section { display: flex; flex-direction: column; gap: 16px; }
+.cdf-list { display: flex; flex-direction: column; gap: 8px; }
+@media (min-width: 48rem) { .cdf-list { gap: 12px; } }
+/* ENS input wrapperClassName "w-full md:w-1/2" */
+.cdf-ens { width: 100%; }
+@media (min-width: 48rem) { .cdf-ens { width: 50%; } }
+.cdf-self-start { align-self: flex-start; }
+.cdf-hidden-link { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* CreateWorkspaceFlow prototype (agent F): glue only; the form layout classes live in app.css ("Create workspace"). */
+/* AccountsItem Card: shadow-neutral-sm flex flex-col gap-4 p-6 */
+.cwf-account-card { box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 24px; }
+/* canvas wraps every <dc-import>: keep the wrapper from collapsing the flex children */
+.cwf-fill { min-width: 0; flex-grow: 1; }
+.cwf-fill > * { min-width: 0; }
+/* InputContainer children of the targets / accounts lists: flex flex-col gap-3 (className="gap-3") */
+.cwf-rows { display: flex; flex-direction: column; gap: 12px; }
+/* the part wrappers of the flow must not add layout of their own */
+.cwf-flow { display: contents; }
+
+/* Explore: exploreNav.tsx turns the bar solid (bg-primary-400) once the hero has scrolled under it. */
+.explore-nav--solid { background: var(--color-primary-400); }
+
+/* A sticky bar inside an imported part: the canvas wraps each part in an element only as tall as the part, which leaves
+   the bar nothing to stick within. Make that wrapper transparent to layout, so the bar sticks in the page as in the app
+   (navigationContainer.tsx: sticky top-0). */
+.sc-host:has(> .sc-host-x > .wizard-nav), .sc-host:has(> .sc-host-x > .app-topbar) { display: contents; }
+/* navigationSidebar.tsx: the sidebar is as tall as the window (h-dvh), not a fixed 900 px. */
+.app-sidebar { height: 100dvh; }
+
+/* Agent D: DAO shell + wallet. Connect-wallet SDK modal (Reown AppKit look, third-party markup). */
+.wc-scrim { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(235,235,235,.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.wc-modal { width: 100%; max-width: 368px; box-sizing: border-box; padding: 20px 14px 18px; background: #fff; border-radius: 20px; box-shadow: 0 0 0 1px rgba(0,0,0,.04), 0 4px 20px rgba(0,0,0,.08); color: #141414; font-family: var(--font-sans), sans-serif; }
+.wc-modal__head { position: relative; display: flex; align-items: center; justify-content: center; height: 32px; margin-bottom: 14px; }
+.wc-modal__title { font-size: 16px; line-height: 24px; letter-spacing: -.2px; }
+.wc-modal__help { position: absolute; left: 10px; top: 6px; display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1.4px solid #141414; border-radius: 50%; font-size: 11px; line-height: 1; }
+.wc-modal__close { position: absolute; right: 8px; top: 0; width: 32px; height: 32px; border: 0; background: transparent; cursor: pointer; font-size: 24px; line-height: 32px; color: #141414; }
+.wc-modal__terms { display: flex; align-items: center; gap: 8px; padding: 0 12px 14px; font-size: 12px; line-height: 20px; letter-spacing: -.3px; color: #3a3a3a; }
+.wc-modal__check { flex: none; width: 20px; height: 20px; box-sizing: border-box; border: 1.2px solid #8a8a8a; border-radius: 5px; }
+.wc-modal__list { display: flex; flex-direction: column; gap: 4px; }
+.wc-row { display: flex; width: 100%; align-items: center; gap: 12px; padding: 10px 12px; border: 0; border-radius: 14px; background: transparent; cursor: pointer; font: inherit; text-align: left; }
+.wc-row:hover { background: #f1f1f1; }
+.wc-row__icon { flex: none; width: 32px; height: 32px; border-radius: 8px; }
+.wc-row__name { flex: 1; font-size: 17px; line-height: 32px; letter-spacing: -.3px; color: #141414; }
+.wc-row__tag { padding: 0 8px; border-radius: 6px; font-size: 12px; line-height: 20px; letter-spacing: -.3px; }
+.wc-row__tag:empty { display: none; }
+.wc-row__chev { font-size: 22px; line-height: 1; color: #9a9a9a; }
+.wc-modal__foot { margin: 14px 0 0; text-align: center; font-size: 12px; line-height: 24px; color: #666; }
+
+/* proto-e.css: SafeFlow (Safe account prototype). Sources: modules/safe/components/safeTransactionReviewContent,
+   safeTransactionVoting, safePendingTransactionList, safeTransactionDialog. */
+
+/* Top bar: the app's navigation on non-DAO routes (logo + wallet), over the page header's white-to-grey gradient. */
+
+.sf-muted { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+
+/* Dialog bodies */
+.sf-dialog-body { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; min-width: 0; }
+@media (min-width: 48rem) { .sf-dialog-body { padding-bottom: 24px; } }
+.sf-status { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-neutral-500); }
+.sf-review { display: flex; flex-direction: column; min-width: 0; }
+
+/* safeTransactionReviewContent: dl flex flex-col gap-3 pt-4; rows flex justify-between gap-4 */
+.sf-dl { display: flex; flex-direction: column; gap: 12px; margin: 0; padding-top: 16px; }
+.sf-dl--flush { padding-top: 0; }
+.sf-dl--tight { gap: 8px; padding-top: 0; }
+.sf-row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+.sf-row dt { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+.sf-row dd { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 1.25; color: var(--color-neutral-800); }
+@media (min-width: 48rem) { .sf-row dt, .sf-row dd { font-size: 16px; } }
+.sf-alert { margin-top: 16px; }
+.sf-box { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; border-radius: 12px; background: var(--color-neutral-50); padding: 16px; min-width: 0; }
+.sf-details { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.sf-hash { display: flex; flex-direction: column; gap: 4px; }
+.sf-hash dt { margin: 0; font-size: 14px; line-height: 1.25; color: var(--color-neutral-500); }
+.sf-hash dd { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 16px; word-break: break-all; color: var(--color-neutral-800); }
+.sf-calls { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sf-call { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--color-neutral-100); padding-top: 12px; min-width: 0; }
+.sf-call__head { display: flex; flex-direction: row; align-items: center; gap: 8px; min-width: 0; }
+.sf-call__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; line-height: 1.25; color: var(--color-neutral-800); }
+@media (min-width: 48rem) { .sf-call__name { font-size: 16px; } }
+.sf-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 16px; word-break: break-all; color: var(--color-neutral-500); }
+
+/* Simulation card: kit ActionSimulation (a DataList.Item) */
+.sf-sim { min-width: 0; }
+
+/* safeTransactionVoting card: Card border border-neutral-100 p-4 shadow-neutral-sm md:p-6 */
+.sf-card { display: flex; flex-direction: column; gap: 16px; min-width: 0; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0, #fff); padding: 16px; box-shadow: 0 1px 2px rgba(0, 0, 0, .04); }
+@media (min-width: 48rem) { .sf-card { padding: 24px; } }
+.sf-signers { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.sf-signer { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; font-size: 14px; }
+.sf-card .sf-alert { margin-top: 0; }
+
+/* permissionsListRow.tsx Accordion.ItemContent body: flex flex-col gap-3; heading text-lg leading-tight text-neutral-800 */
+.perm-detail { display: flex; flex-direction: column; gap: 12px; }
+.perm-detail__heading { margin: 0; font-size: 18px; line-height: 22.5px; color: var(--color-neutral-800); }
+/* permissionsListRow.tsx: below md each row is a card (flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:hidden)
+   and the accordion item is hidden (hidden md:block); both switch on the page column's container width. */
+.perm-card { display: flex; flex-direction: column; gap: 16px; padding: 16px; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); }
+.perm-card__name { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-neutral-800); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 18px; line-height: 22.5px; }
+.perm-acc { display: none; }
+@container app (min-width: 48rem) {
+    .perm-card { display: none; }
+    .perm-acc { display: block; }
+}
+
+/* proto-gc.css: Workspace shell, Ws* parts, SafeFlow*, SafeTransactionFlow* (break-it pass, agent GC). */
+.ws-safe-tx { display: flex; flex-direction: column; gap: 12px; width: 100%; min-width: 0; }
+.ws-safe-tx__actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+@media (min-width: 48rem) { .ws-safe-tx__actions { flex-direction: row; align-items: center; } }
+.ws-safe-tx__call { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ws-safe-tx__fn { font-size: 16px; line-height: 24px; overflow-wrap: anywhere; }
+
+/* GD: fixes found in the break-it pass (create-proposal settings) */
+/* the three date/duration fields share the card width: let the kit input roots shrink below their content width */
+.advanced-date-input__fields .grow,
+.advanced-date-input__fields label,
+.advanced-date-input__fields label > div { min-width: 0; }
+/* app: "flex flex-col justify-between gap-4 md:flex-row" (md = 768px, a window breakpoint here: the wizard has no container) */
+@media (max-width: 767px) {
+  .advanced-date-input__fields { flex-direction: column; }
+}
+/* create process, body dialog, token recipient row: let the fields shrink so the remove menu stays inside the card at phone width */
+.token-member__fields { min-width: 0; }
+/* the hidden "View settings" link sits outside .app-page: pin it to the top so it does not add 1px of scroll at the page end */
+#cpr-dao-link { top: 0; left: 0; }
+
+/* TransactionStatusInfo (apps/app shared/components/transactionStatus): "Step {current}" in neutral-800 and "of {total}" in neutral-500 */
+.tx-info__step { display: flex; flex-direction: row; gap: 4px; font-size: 16px; line-height: 1.25; font-weight: 400; }
+.tx-info__current { color: var(--color-neutral-800); }
+.tx-info__total { color: var(--color-neutral-500); }
+@media (max-width: 767px) { .tx-info__step { font-size: 14px; } }
+
+/* Lock-to-vote prototype (LockFlow*.dc.html) */
+.l2v-info { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-info-sm { margin: 0; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-footer-info { margin: 0; font-size: 14px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+.l2v-footer-info--center { text-align: center; }
+.l2v-footer-info--left { text-align: left; }
+.l2v-form { display: flex; flex-direction: column; gap: 16px; }
+.l2v-form__col { display: flex; flex-direction: column; gap: 12px; }
+.l2v-form__col--tall { gap: 36px; }
+.l2v-form__row { display: flex; justify-content: space-between; gap: 12px; }
+.l2v-amount { display: flex; flex-direction: column; gap: 12px; }
+.l2v-token { display: flex; align-items: center; column-gap: 6px; padding: 0 8px; flex-shrink: 0; font-size: 16px; line-height: 1.25; color: var(--color-neutral-800); }
+.l2v-vote-area { display: flex; flex-direction: column; gap: 16px; }
+.l2v-vote-actions { display: flex; width: 100%; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.l2v-vote-actions > * { max-width: 100%; }
+@media (max-width: 767px) { .l2v-vote-actions > * { width: 100%; } }
+
+/* WrapFlow: plugins/tokenPlugin/components/tokenMemberPanel/tokenWrap/tokenWrapForm.tsx + modules/finance/components/assetInput */
+.wf-info { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-neutral-500); }
+/* assetInputToken.tsx (disabled asset field): flex items-center gap-x-1.5 px-2 cursor-default */
+.wf-token { display: flex; align-items: center; flex-shrink: 0; gap: 6px; padding: 0 8px; cursor: default; font-size: 16px; line-height: 1.25; }
+.wf-fiat { margin: 0; flex-shrink: 0; font-size: 16px; line-height: 1.25; }
+
+/* Workspace prototype (agent X): WsNav menus (workspace and account selectors, drawn like the kit's Dropdown) */
+.ws-menu-wrap { position: relative; width: 100%; }
+.ws-menu__scrim { position: fixed; inset: 0; z-index: 60; background: transparent; }
+.ws-menu {
+    position: absolute; top: calc(100% + 4px); left: 0; z-index: 61;
+    box-sizing: border-box; display: flex; width: 100%; min-width: 232px; flex-direction: column; gap: 2px;
+    padding: 8px; border: 1px solid var(--color-neutral-100); border-radius: 12px;
+    background: var(--color-neutral-0); box-shadow: 0 8px 24px -8px rgba(50, 63, 75, 0.28);
+    font-family: var(--font-sans);
+}
+.ws-menu__item {
+    box-sizing: border-box; display: flex; width: 100%; min-width: 0; align-items: center; gap: 12px;
+    padding: 8px 12px; border-radius: 8px; color: var(--color-neutral-500);
+    font-size: 16px; line-height: 1.25; text-decoration: none; text-align: left; cursor: pointer;
+}
+.ws-menu__item:hover, .ws-menu__item[aria-current="true"] { background: var(--color-neutral-50); color: var(--color-neutral-800); }
+.ws-menu__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; line-height: 1.25; }
+.ws-menu__name { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 24px; text-overflow: ellipsis; white-space: nowrap; }
+.ws-menu__meta { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
+.ws-menu__sep { height: 1px; margin: 4px 0; background: var(--color-neutral-100); }
+.ws-nav-dialog { display: flex; flex-direction: column; gap: 16px; padding: 32px 0 16px; }
+.ws-nav-dialog__selectors { padding: 0 16px; }
+.ws-nav-dialog__groups { display: flex; flex-direction: column; gap: 16px; padding: 0 16px; }
+/* Workspace shell: the account pages keep their own shell classes */
+.ws-shell-slot, .ws-shell-slot > *:not(.page-container) { display: contents; }
+
+/* Workspace prototype (agent Y): all-accounts pages */
+/* workspaceSelectAccountDialogItem: DataList.Item with px-4 py-3 md:p-6, active: border-primary-400 shadow-primary */
+.wsy-pick-list { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.wsy-pick { padding: 12px 16px; text-align: left; }
+@container app (min-width: 48rem) { .wsy-pick { padding: 24px; } }
+.wsy-pick--active, .wsy-pick--active:hover { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary) !important; }
+
+/* Agent Z: select-account dialog of the workspace transactions page (WsTransactionsAccountDialog) */
+.ws-acc-list { display: flex; flex-direction: column; gap: 8px; padding-block: 8px; }
+.ws-acc-item { display: flex; flex-direction: column; gap: 12px; }
+.ws-acc-item__lead { display: flex; align-items: center; gap: 12px; }
+.ws-acc-item__lead--dimmed { opacity: .6; }
+.ws-acc-item__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.ws-acc-item__name, .ws-acc-item__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25; }
+.ws-acc-item__name { font-size: 16px; color: var(--color-neutral-800); }
+.ws-acc-item__meta { font-size: 14px; color: var(--color-neutral-500); }
+.ws-acc-item__help { margin: 0; font-size: 14px; line-height: 20px; color: var(--color-neutral-300); }
+.ws-acc-item--active { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary); }
+.ws-acc-item--disabled { border-color: var(--color-neutral-100) !important; background-color: var(--color-neutral-50); cursor: default; }
+@media (min-width: 768px) { .ws-acc-item__name { font-size: 18px; } .ws-acc-item__meta, .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
+/* Agent Z: data-list rows of the workspace transactions page that are not accordion items (pending Safe, DAO execution), padded as the app's px-4 py-3 md:p-6 */
+.ws-dli { padding: 12px 16px; }
+@media (min-width: 768px) { .ws-dli { padding: 24px; } }
+
+/* WsTransactions: expanded pending Safe transaction (workspaceTransactionListItem: flex w-full flex-col gap-y-2 md:gap-y-3; safeTransactionVoting actions/alerts pt-6) */
+.ws-safe-tx { gap: 8px; }
+@container app (min-width: 48rem) { .ws-safe-tx { gap: 12px; } }
+.ws-sv-pt { padding-top: 24px; }
+/* safeTransactionVoting actions row: flex flex-col items-start gap-3 pt-6 md:flex-row md:items-center; buttons w-full md:w-fit (md = the page column, and the kit stylesheet lacks md:w-fit) */
+.ws-sv-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-top: 24px; }
+.ws-sv-btn { width: 100%; }
+@container app (min-width: 48rem) { .ws-sv-actions { flex-direction: row; align-items: center; } .ws-sv-btn { width: fit-content; } }

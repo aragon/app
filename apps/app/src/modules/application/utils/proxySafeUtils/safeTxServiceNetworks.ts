@@ -3,15 +3,26 @@ import { checksumSafeAddress } from '@/shared/api/safeService/safeAddressUtils';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 /**
- * Chain short names used by the Safe transaction service, keyed by app network. Networks absent
- * from this map are not served by Safe (Citrea, Chiliz) — a first-class "unsupported" state, not
- * a failure. This module holds no secrets and is safe to import from client code.
+ * Chain short names used by the Safe transaction service, keyed by app network. `null` marks a
+ * network Safe does not serve — a first-class "unsupported" state, not a failure. This module
+ * holds no secrets and is safe to import from client code.
+ *
+ * Every network must have an entry, so adding a network fails to compile until its Safe support
+ * is decided. Check it against Safe's list:
+ * https://docs.safe.global/core-api/transaction-service-supported-networks
+ *
+ * The value is the transaction service path segment (the last segment of its `txServiceUrl`). It
+ * usually matches the Safe app link prefix (Safe's `shortName`); where it doesn't, the prefix goes
+ * in `safeAppShortNameOverrides`.
  */
-export const safeTxServiceShortNames: Partial<Record<Network, string>> = {
+export const safeTxServiceShortNames: Record<Network, string | null> = {
     [Network.ETHEREUM_MAINNET]: 'eth',
     [Network.ETHEREUM_SEPOLIA]: 'sep',
+    [Network.ETHEREUM_HOODI]: null,
     [Network.POLYGON_MAINNET]: 'pol',
+    [Network.POLYGON_AMOY]: null,
     [Network.BASE_MAINNET]: 'base',
+    [Network.BASE_SEPOLIA]: 'basesep',
     [Network.ARBITRUM_MAINNET]: 'arb1',
     [Network.OPTIMISM_MAINNET]: 'oeth',
     [Network.AVAX_MAINNET]: 'avax',
@@ -19,6 +30,19 @@ export const safeTxServiceShortNames: Partial<Record<Network, string>> = {
     [Network.HEMI_MAINNET]: 'hemi',
     [Network.KATANA_MAINNET]: 'katana',
     [Network.MONAD_MAINNET]: 'monad',
+    [Network.ROBINHOOD_MAINNET]: 'robinhood',
+    [Network.BNB_MAINNET]: 'bnb',
+    [Network.BNB_TESTNET]: null,
+    [Network.CITREA_MAINNET]: null,
+    [Network.CHILIZ_MAINNET]: null,
+};
+
+/**
+ * Safe app link prefixes (Safe's config service `shortName`) for the networks where they differ
+ * from the transaction service path segment in `safeTxServiceShortNames`.
+ */
+const safeAppShortNameOverrides: Partial<Record<Network, string>> = {
+    [Network.POLYGON_MAINNET]: 'matic',
 };
 
 /**
@@ -46,7 +70,7 @@ export const safeNetworkFromChainId = (
  */
 export const safeShortNameFromNetwork = (
     network: Network,
-): string | undefined => safeTxServiceShortNames[network];
+): string | undefined => safeTxServiceShortNames[network] ?? undefined;
 
 /**
  * Addresses a Safe in the Safe web app, EIP-3770 style (`<shortName>:<checksummedAddress>`). The app
@@ -62,11 +86,13 @@ const safeAppUrl = (
     query?: Record<string, string>,
 ): string | undefined => {
     const { network, address } = params;
-    const shortName = safeShortNameFromNetwork(network);
+    const txServiceShortName = safeShortNameFromNetwork(network);
 
-    if (shortName == null) {
+    if (txServiceShortName == null) {
         return undefined;
     }
+
+    const shortName = safeAppShortNameOverrides[network] ?? txServiceShortName;
 
     // Assembled by hand rather than with `URLSearchParams`: it percent-encodes the colon in the
     // EIP-3770 `safe=<shortName>:<address>` pair, and every value here is already URL-safe.
