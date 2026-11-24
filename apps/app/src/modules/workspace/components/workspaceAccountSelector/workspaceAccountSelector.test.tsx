@@ -215,7 +215,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
     });
 
-    it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
+    it('lists every option with its avatar, using the account avatars for the aggregated option, then the add account item', async () => {
+        stubImageLoading();
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+        });
         render(createTestComponent());
 
         await waitFor(() =>
@@ -224,15 +228,42 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(screen.getByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('All accounts');
         expect(items[1]).toHaveTextContent('Demo DAO');
-        expect(items[2]).toHaveTextContent(
+        expect(items[2]).toHaveTextContent('Treasury Safe');
+        expect(items[3]).toHaveTextContent(
             /workspaceAccountSelector\.addAccount$/,
         );
-        expect(
-            within(items[0]).getByTestId('RICHTEXT_LIST_UNORDERED'),
-        ).toBeInTheDocument();
+        await waitFor(() =>
+            expect(
+                within(items[0])
+                    .getAllByRole('img', { hidden: true })
+                    .map((avatar) => avatar.getAttribute('src')),
+            ).toEqual(['https://ipfs/dao-cid', safeWallet.src]),
+        );
+    });
+
+    it('sizes a single-account stack like the account rows in the menu, keeping md on the trigger', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, daoOption] });
+        render(createTestComponent());
+
+        const trigger = screen.getByRole('button');
+        await userEvent.click(trigger);
+
+        const allAccountsItem = await screen.findByRole('menuitem', {
+            name: 'All accounts',
+        });
+        const menuAvatar = await within(allAccountsItem).findByRole('img', {
+            hidden: true,
+        });
+        const triggerAvatar = within(trigger).getByRole('img', {
+            hidden: true,
+        });
+        // Avatar slots: `size-6` is sm, `size-8` is md.
+        expect(menuAvatar.closest('.size-6')).not.toBeNull();
+        expect(triggerAvatar.closest('.size-8')).not.toBeNull();
     });
 
     it('opens the add accounts dialog from the add account item', async () => {
@@ -419,6 +450,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     });
 
     it('offers to add an account to a workspace holding none', async () => {
+        stubImageLoading();
         getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
         mockAccountOptions({ options: [allAccountsOption] });
         render(createTestComponent());
@@ -426,10 +458,14 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(await screen.findByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items.map((item) => item.textContent)).toEqual([
-            'All accounts',
-            expect.stringMatching(/workspaceAccountSelector\.addAccount$/),
-        ]);
+        expect(items).toHaveLength(2);
+        expect(within(items[0]).getByText('All accounts')).toBeInTheDocument();
+        expect(
+            await within(items[0]).findByRole('img', { hidden: true }),
+        ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
+        expect(items[1]).toHaveTextContent(
+            /workspaceAccountSelector\.addAccount$/,
+        );
     });
 
     it('badges each account option with its network, not the aggregated one', async () => {
@@ -606,6 +642,47 @@ describe('<WorkspaceAccountSelector /> component', () => {
                     name: 'avatar',
                 }),
             ).toHaveAttribute('src', 'https://ipfs/external-cid');
+        });
+
+        it('excludes the external account avatar from All accounts', async () => {
+            stubImageLoading();
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            await waitFor(() =>
+                expect(
+                    within(allAccountsItem)
+                        .getAllByRole('img', { hidden: true })
+                        .map((avatar) => avatar.getAttribute('src')),
+                ).toEqual(['https://ipfs/dao-cid']),
+            );
+        });
+
+        it('uses the workspace avatar for All accounts when only an external account exists', async () => {
+            stubImageLoading();
+            getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
+            mockAccountOptions({
+                options: [allAccountsOption, externalOption],
+                accountId: externalOption.id,
+                activeOption: externalOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            expect(
+                await within(allAccountsItem).findByRole('img', {
+                    hidden: true,
+                }),
+            ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
         });
     });
 });

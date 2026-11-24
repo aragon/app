@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    AvatarIcon,
+    type AvatarSize,
     AvatarStack,
     addressUtils,
     DaoAvatar,
@@ -28,7 +28,7 @@ import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
 
 export interface IWorkspaceAccountSelectorProps {
     /**
-     * ID of the workspace, whose avatar represents the aggregated option.
+     * ID of the workspace whose accounts are displayed.
      */
     workspaceId: string;
     /**
@@ -127,7 +127,7 @@ export const WorkspaceAccountSelector: React.FC<
     };
 
     const accountAvatars = options
-        .filter((option) => !option.isAllAccounts)
+        .filter((option) => !option.isAllAccounts && !option.isExternal)
         .map((option) => (
             <DaoAvatar
                 key={option.id}
@@ -135,6 +135,25 @@ export const WorkspaceAccountSelector: React.FC<
                 src={getStackAvatar(option.account)}
             />
         ));
+    // Both the trigger and menu reserve the same width for the auto-sized stack. A lone avatar takes the given size
+    // instead of the stack's `md`, so it matches the account rows beside it.
+    const renderAllAccountsAvatar = (singleSize: AvatarSize = 'md') =>
+        accountAvatars.length > 0 ? (
+            <AvatarStack
+                aria-hidden={true}
+                avatars={accountAvatars}
+                className="shrink-0"
+                size={accountAvatars.length === 1 ? singleSize : undefined}
+            />
+        ) : (
+            <DaoAvatar
+                aria-hidden={true}
+                className="shrink-0"
+                name={workspace?.name}
+                size={singleSize}
+                src={ipfsUtils.cidToSrc(workspace?.avatar)}
+            />
+        );
     const activeOptionAddress =
         activeOption?.account == null
             ? undefined
@@ -154,18 +173,7 @@ export const WorkspaceAccountSelector: React.FC<
                 >
                     <span className="flex w-11 shrink-0 items-center">
                         {activeOption?.isAllAccounts ? (
-                            accountAvatars.length > 0 ? (
-                                <AvatarStack
-                                    aria-hidden={true}
-                                    avatars={accountAvatars}
-                                />
-                            ) : (
-                                <DaoAvatar
-                                    name={workspace?.name}
-                                    size="md"
-                                    src={ipfsUtils.cidToSrc(workspace?.avatar)}
-                                />
-                            )
+                            renderAllAccountsAvatar()
                         ) : (
                             // Unbadged, as in the design.
                             <WorkspaceAccountAvatar
@@ -207,26 +215,23 @@ export const WorkspaceAccountSelector: React.FC<
                     {/* Dropdown.Item renders its children inside a paragraph, therefore only phrasing content is
                      * allowed here. */}
                     <span className="flex min-w-0 items-center gap-3">
-                        {option.isAllAccounts ? (
-                            <AvatarIcon
-                                className="shrink-0"
-                                icon={IconType.RICHTEXT_LIST_UNORDERED}
-                                size="sm"
-                                variant="primary"
-                            />
-                        ) : (
-                            // An unresolved external account shows its label's initials, unbadged.
-                            <WorkspaceAccountAvatar
-                                avatar={getAccountAvatar(option.account)}
-                                name={option.label}
-                                network={option.account?.network}
-                                size="sm"
-                                type={
-                                    option.account?.type ??
-                                    WorkspaceAccountType.DAO
-                                }
-                            />
-                        )}
+                        <span className="flex w-11 shrink-0 items-center">
+                            {option.isAllAccounts ? (
+                                renderAllAccountsAvatar('sm')
+                            ) : (
+                                // An unresolved external account shows its label's initials, unbadged.
+                                <WorkspaceAccountAvatar
+                                    avatar={getAccountAvatar(option.account)}
+                                    name={option.label}
+                                    network={option.account?.network}
+                                    size="sm"
+                                    type={
+                                        option.account?.type ??
+                                        WorkspaceAccountType.DAO
+                                    }
+                                />
+                            )}
+                        </span>
                         <span className="flex min-w-0 flex-col leading-tight">
                             <span className="truncate">{option.label}</span>
                             {option.account != null &&
@@ -251,12 +256,20 @@ export const WorkspaceAccountSelector: React.FC<
                     </span>
                 </Dropdown.Item>
             ))}
-            <Dropdown.Item
-                icon={IconType.PLUS}
-                iconPosition="left"
-                onSelect={handleAddAccounts}
-            >
-                {t('app.workspace.workspaceAccountSelector.addAccount')}
+            <Dropdown.Item onSelect={handleAddAccounts}>
+                <span className="flex min-w-0 items-center gap-3">
+                    <span className="flex w-11 shrink-0 items-center">
+                        <Icon
+                            aria-hidden={true}
+                            className="text-neutral-300"
+                            icon={IconType.PLUS}
+                            size="md"
+                        />
+                    </span>
+                    <span className="truncate">
+                        {t('app.workspace.workspaceAccountSelector.addAccount')}
+                    </span>
+                </span>
             </Dropdown.Item>
         </Dropdown.Container>
     );

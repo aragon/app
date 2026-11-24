@@ -79,6 +79,15 @@ export const Two: Story = {
 };
 
 /**
+ * AvatarStack with three avatars and no overflow count.
+ */
+export const Three: Story = {
+    args: {
+        avatars: avatars.slice(0, 3),
+    },
+};
+
+/**
  * AvatarStack with an overflow count.
  */
 export const Overflow: Story = {
