@@ -417,6 +417,18 @@ describe('workspace utils', () => {
         );
     });
 
+    describe('ensureUrlProtocol', () => {
+        it.each([
+            ['aragon.org', 'https://aragon.org'],
+            ['aragon.org?from=app#docs', 'https://aragon.org?from=app#docs'],
+            ['https://aragon.org', 'https://aragon.org'],
+            ['http://aragon.org', 'http://aragon.org'],
+            ['HTTPS://aragon.org', 'HTTPS://aragon.org'],
+        ])('returns %s as %s', (url, expected) => {
+            expect(workspaceUtils.ensureUrlProtocol(url)).toEqual(expected);
+        });
+    });
+
     describe('resolveAccountScope', () => {
         it('reads the admin page segment as the aggregated scope', () => {
             expect(workspaceUtils.resolveAccountScope('admin')).toEqual(

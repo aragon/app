@@ -4,11 +4,17 @@ import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAccount';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { IPublishDaoDialogParams } from '@/modules/createDao/dialogs/publishDaoDialog';
+import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
+import type { ISafeDeployTransactionDialogParams } from '@/modules/safe/dialogs/safeDeployTransactionDialog';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
-import { WorkspaceAccountType } from '../../api/workspaceService';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+    workspaceService,
+} from '../../api/workspaceService';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     buildCreateAccountRequest,
@@ -88,6 +94,20 @@ describe('<WorkspaceCreateAccountDialog /> component', () => {
     const walkToTypeStep = async () => {
         await walkToSignersStep();
         await clickNext();
+    };
+    const backToNetwork = async () => {
+        for (let step = 0; step < 3; step++) {
+            await userEvent.click(
+                screen.getByRole('button', {
+                    name: /wizardDialog.container.back/,
+                }),
+            );
+        }
+    };
+    const returnToTypeStep = async () => {
+        for (let step = 0; step < 3; step++) {
+            await clickNext();
+        }
     };
 
     it('walks the four steps with the design copy', async () => {
@@ -281,7 +301,7 @@ describe('<WorkspaceCreateAccountDialog /> component', () => {
         expect(approvals).toHaveValue('1');
     });
 
-    it('offers Aragon selected and Safe disabled', async () => {
+    it('selects Safe on Sepolia', async () => {
         render(createTestComponent());
         await walkToTypeStep();
 
@@ -291,13 +311,118 @@ describe('<WorkspaceCreateAccountDialog /> component', () => {
         const safe = screen.getByRole('radio', {
             name: /accountType.SAFE.label/,
         });
-        expect(aragon).toBeChecked();
-        expect(safe).toBeDisabled();
+        expect(aragon).not.toBeChecked();
+        expect(safe).toBeEnabled();
+        expect(safe).toBeChecked();
+    });
+
+    it('opens the Safe deploy dialog with the chosen network and signers', async () => {
+        render(createTestComponent());
+        await walkToTypeStep();
+        await userEvent.click(
+            screen.getByRole('radio', { name: /accountType.SAFE.label/ }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /workspaceCreateAccountDialog.submit/,
+            }),
+        );
+
+        expect(open).toHaveBeenCalledWith(SafeDialogId.DEPLOY_TRANSACTION, {
+            stack: true,
+            params: {
+                network: Network.ETHEREUM_SEPOLIA,
+                name: 'My account',
+                description: '',
+                avatar: undefined,
+                owners: [address],
+                threshold: 1,
+                onCreated: expect.any(Function),
+            },
+        });
+        const [, { params }] = open.mock.calls[0] as [
+            string,
+            { params: ISafeDeployTransactionDialogParams },
+        ];
+        const safeAddress = '0x1F01e6fe406295c9fe42189A2ef999636a04132a';
+        params.onCreated({
+            network: Network.ETHEREUM_SEPOLIA,
+            address: safeAddress,
+        });
+        expect(onCreated).toHaveBeenCalledWith({
+            id: workspaceUtils.buildAccountId({
+                network: Network.ETHEREUM_SEPOLIA,
+                address: safeAddress,
+            }),
+            type: WorkspaceAccountType.SAFE,
+            address: safeAddress,
+            network: Network.ETHEREUM_SEPOLIA,
+            metadata: { name: 'My account' },
+        });
+        expect(close).toHaveBeenCalledWith('WORKSPACE_CREATE_ACCOUNT');
+    });
+
+    it('selects Aragon on Chiliz and explains why Safe is disabled', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByRole('radio', { name: /^Chiliz$/ }));
+        await walkToTypeStep();
+        expect(
+            screen.getByRole('radio', { name: /accountType.SAFE.label/ }),
+        ).toBeDisabled();
+        expect(
+            screen.getByText(/accountType.SAFE.unsupported/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('radio', { name: /accountType.ARAGON.label/ }),
+        ).toBeChecked();
+    });
+
+    it('opens Aragon after Safe was chosen on Sepolia and the network changes to Citrea', async () => {
+        render(createTestComponent());
+        await walkToTypeStep();
+        expect(
+            screen.getByRole('radio', { name: /accountType.SAFE.label/ }),
+        ).toBeChecked();
+        await backToNetwork();
+        await userEvent.click(screen.getByRole('radio', { name: /^Citrea$/ }));
+        await returnToTypeStep();
+        expect(
+            screen.getByRole('radio', { name: /accountType.SAFE.label/ }),
+        ).toBeDisabled();
+        expect(
+            screen.getByText(/accountType.SAFE.unsupported/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('radio', { name: /accountType.ARAGON.label/ }),
+        ).toBeChecked();
+        await backToNetwork();
+        await userEvent.click(
+            screen.getByRole('radio', { name: /^Ethereum Sepolia/ }),
+        );
+        await returnToTypeStep();
+        expect(
+            screen.getByRole('radio', { name: /accountType.SAFE.label/ }),
+        ).toBeChecked();
+        await backToNetwork();
+        await userEvent.click(screen.getByRole('radio', { name: /^Citrea$/ }));
+        await returnToTypeStep();
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /workspaceCreateAccountDialog.submit/,
+            }),
+        );
+        expect(open).toHaveBeenCalledWith(
+            CreateDaoDialogId.PUBLISH_DAO,
+            expect.objectContaining({ stack: true }),
+        );
     });
 
     it('opens the deploy dialog stacked, with the multisig plugin and the account labels', async () => {
         render(createTestComponent());
         await walkToTypeStep();
+        await userEvent.click(
+            screen.getByRole('radio', { name: /accountType.ARAGON.label/ }),
+        );
         await userEvent.click(
             await screen.findByRole('button', {
                 name: /workspaceCreateAccountDialog.submit/,
@@ -335,6 +460,9 @@ describe('<WorkspaceCreateAccountDialog /> component', () => {
     it('hands the created account to its caller and closes', async () => {
         render(createTestComponent());
         await walkToTypeStep();
+        await userEvent.click(
+            screen.getByRole('radio', { name: /accountType.ARAGON.label/ }),
+        );
         await userEvent.click(
             await screen.findByRole('button', {
                 name: /workspaceCreateAccountDialog.submit/,
@@ -384,6 +512,8 @@ describe('buildCreateAccountRequest util', () => {
     };
     const t = (key: string) => key;
 
+    afterEach(() => localStorage.clear());
+
     it('maps an Aragon account to the deploy dialog of a DAO with the multisig plugin', () => {
         const onCreated = jest.fn();
         const request = buildCreateAccountRequest(
@@ -421,6 +551,9 @@ describe('buildCreateAccountRequest util', () => {
         });
 
         const address = '0x1F01e6fe406295c9fe42189A2ef999636a04132a';
+        if (request.dialogId !== CreateDaoDialogId.PUBLISH_DAO) {
+            throw new Error('Expected the Aragon deploy dialog');
+        }
         request.params.onCreated?.({ address, network: form.network });
         expect(onCreated).toHaveBeenCalledWith(
             buildCreatedAccount(WorkspaceCreateAccountType.ARAGON, {
@@ -430,14 +563,106 @@ describe('buildCreateAccountRequest util', () => {
         );
     });
 
-    it('throws for a Safe account, which cannot be created yet', () => {
-        expect(() =>
-            buildCreateAccountRequest(
-                { ...form, accountType: WorkspaceCreateAccountType.SAFE },
-                { onCreated: jest.fn(), t },
-            ),
-        ).toThrow(/Safe/);
+    it('uses Aragon when Safe was chosen on an unsupported chain', () => {
+        const request = buildCreateAccountRequest(
+            {
+                ...form,
+                network: Network.CITREA_MAINNET,
+                accountType: WorkspaceCreateAccountType.SAFE,
+            },
+            { onCreated: jest.fn(), t },
+        );
+        expect(request.dialogId).toBe(CreateDaoDialogId.PUBLISH_DAO);
     });
+
+    it('keeps the Safe name, description, links and pinned logo in the account', () => {
+        const onCreated = jest.fn();
+        const avatar = {
+            file: new File(['image'], 'logo.png'),
+            url: 'blob:preview',
+        };
+        const request = buildCreateAccountRequest(
+            { ...form, avatar, accountType: WorkspaceCreateAccountType.SAFE },
+            { onCreated, t },
+        );
+        expect(request.dialogId).toBe(SafeDialogId.DEPLOY_TRANSACTION);
+        expect(request.params).toMatchObject({
+            network: form.network,
+            name: form.name,
+            avatar,
+            owners: form.members.map(({ address }) => address),
+            threshold: form.threshold,
+        });
+        const { onCreated: complete } =
+            request.params as ISafeDeployTransactionDialogParams;
+        const address = '0x1F01e6fe406295c9fe42189A2ef999636a04132a';
+        complete({
+            network: form.network,
+            address,
+            avatarUri: 'ipfs://QmSafeLogo',
+        });
+        expect(onCreated).toHaveBeenCalledWith({
+            id: workspaceUtils.buildAccountId({
+                network: form.network,
+                address,
+            }),
+            type: WorkspaceAccountType.SAFE,
+            address,
+            network: form.network,
+            metadata: {
+                name: form.name,
+                description: form.description,
+                links: form.resources,
+                avatar: 'ipfs://QmSafeLogo',
+            },
+        });
+    });
+
+    it.each([
+        ['aragon.org', 'https://aragon.org'],
+        ['aragon.org?from=app#docs', 'https://aragon.org?from=app#docs'],
+        ['http://aragon.org', 'http://aragon.org'],
+    ])(
+        'saves %s as a Safe link that survives export and import',
+        async (url, savedUrl) => {
+            const onCreated = jest.fn<void, [IWorkspaceAccount]>();
+            const request = buildCreateAccountRequest(
+                {
+                    ...form,
+                    accountType: WorkspaceCreateAccountType.SAFE,
+                    resources: [{ name: 'Site', url }],
+                },
+                { onCreated, t },
+            );
+            if (request.dialogId !== SafeDialogId.DEPLOY_TRANSACTION) {
+                throw new Error('Expected the Safe deploy dialog');
+            }
+            request.params.onCreated({
+                network: form.network,
+                address: '0x1F01e6fe406295c9fe42189A2ef999636a04132a',
+            });
+            const [account] = onCreated.mock.calls[0];
+            const created = await workspaceService.createWorkspace({
+                body: {
+                    name: 'Workspace',
+                    description: '',
+                    avatar: null,
+                    links: [],
+                    accounts: [account],
+                    targets: [],
+                },
+            });
+            const exported = await workspaceService.exportWorkspace({
+                urlParams: { id: created.id },
+            });
+            const imported = await workspaceService.importWorkspace(exported);
+
+            expect(account.metadata?.links).toEqual([
+                { name: 'Site', url: savedUrl },
+            ]);
+            expect(imported.accounts).toEqual([account]);
+        },
+    );
 });
 
 describe('buildCreatedAccount util', () => {
@@ -466,4 +691,31 @@ describe('buildCreatedAccount util', () => {
             });
         },
     );
+
+    it('keeps the given details as the account metadata', () => {
+        const account = buildCreatedAccount(
+            WorkspaceCreateAccountType.SAFE,
+            { address, network, avatarUri: 'ipfs://QmSafeLogo' },
+            {
+                name: 'Treasury',
+                description: 'Main treasury',
+                resources: [{ name: 'Site', url: 'aragon.org' }],
+            },
+        );
+        expect(account.metadata).toEqual({
+            name: 'Treasury',
+            description: 'Main treasury',
+            links: [{ name: 'Site', url: 'https://aragon.org' }],
+            avatar: 'ipfs://QmSafeLogo',
+        });
+    });
+
+    it('leaves empty details out of the account metadata', () => {
+        const account = buildCreatedAccount(
+            WorkspaceCreateAccountType.SAFE,
+            { address, network },
+            { name: 'Treasury', description: '', resources: [] },
+        );
+        expect(account.metadata).toEqual({ name: 'Treasury' });
+    });
 });
