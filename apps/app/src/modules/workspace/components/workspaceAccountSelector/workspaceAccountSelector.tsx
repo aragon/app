@@ -135,20 +135,22 @@ export const WorkspaceAccountSelector: React.FC<
                 src={getStackAvatar(option.account)}
             />
         ));
-    // Both the trigger and menu reserve the same width for the auto-sized stack; only the fallback size varies.
-    const renderAllAccountsAvatar = (fallbackSize: AvatarSize = 'md') =>
+    // Both the trigger and menu reserve the same width for the auto-sized stack. A lone avatar takes the given size
+    // instead of the stack's `md`, so it matches the account rows beside it.
+    const renderAllAccountsAvatar = (singleSize: AvatarSize = 'md') =>
         accountAvatars.length > 0 ? (
             <AvatarStack
                 aria-hidden={true}
                 avatars={accountAvatars}
                 className="shrink-0"
+                size={accountAvatars.length === 1 ? singleSize : undefined}
             />
         ) : (
             <DaoAvatar
                 aria-hidden={true}
                 className="shrink-0"
                 name={workspace?.name}
-                size={fallbackSize}
+                size={singleSize}
                 src={ipfsUtils.cidToSrc(workspace?.avatar)}
             />
         );

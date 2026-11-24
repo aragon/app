@@ -244,6 +244,28 @@ describe('<WorkspaceAccountSelector /> component', () => {
         );
     });
 
+    it('sizes a single-account stack like the account rows in the menu, keeping md on the trigger', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, daoOption] });
+        render(createTestComponent());
+
+        const trigger = screen.getByRole('button');
+        await userEvent.click(trigger);
+
+        const allAccountsItem = await screen.findByRole('menuitem', {
+            name: 'All accounts',
+        });
+        const menuAvatar = await within(allAccountsItem).findByRole('img', {
+            hidden: true,
+        });
+        const triggerAvatar = within(trigger).getByRole('img', {
+            hidden: true,
+        });
+        // Avatar slots: `size-6` is sm, `size-8` is md.
+        expect(menuAvatar.closest('.size-6')).not.toBeNull();
+        expect(triggerAvatar.closest('.size-8')).not.toBeNull();
+    });
+
     it('opens the add accounts dialog from the add account item', async () => {
         const openAddAccounts = jest.fn();
         jest.spyOn(
