@@ -70,7 +70,7 @@ export const renderAppArtifact = ({ bodies, appConfig, repoRoot }) => {
     const overrides = readAppOverrides(resolve(repoRoot, appConfig.overridesSource), appConfig.overridesSource);
     return [
         '/* GENERATED FILE. Run `pnpm tokens:generate`; do not edit. */',
-        `/* DTCG source: ${appConfig.provenance} */`,
+        '/* DTCG source: packages/gov-ui-kit/design-system/tokens/source */',
         '/* Primitive CSS imports are flattened here; utilities and font faces remain CSS. */',
         '/* CSS-only unsupported values remain from GovKit, including --radius-none: none. */',
         chunks.join('\n\n'),

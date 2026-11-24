@@ -137,34 +137,23 @@ test('an unrewritable relative font URL is rejected', (context) => {
     assert.throws(() => generateAll({ sourceDir: dir }), /Unresolved relative font URLs/);
 });
 
-test('a source without semantic.config.json generates the primitives only', (context) => {
+test('a source without typography.config.json generates the primitives only', (context) => {
     const dir = scratch(context);
     for (const name of readdirSync(dir).filter(
-        (file) => file === 'semantic.config.json' || file === 'typography.config.json' || file.endsWith('.tokens.json'),
+        (file) => file === 'typography.config.json' || file.endsWith('.tokens.json'),
     )) {
         if (name !== 'primitives.tokens.json') {
             rmSync(join(dir, name));
         }
     }
-    const { outputs, semantic } = generateAll({ sourceDir: dir });
-    assert.equal(semantic, null);
+    const { outputs, typography } = generateAll({ sourceDir: dir });
+    assert.equal(typography, null);
     assert.equal(outputs.size, 9);
-    assert.ok(
-        ![...outputs.keys()].some((file) => file.includes('/semantic/') || file.endsWith('tokens/typography.css')),
-    );
-    // The primitive outputs do not depend on the semantic layer.
+    assert.ok(![...outputs.keys()].some((file) => file.endsWith('tokens/typography.css')));
+    // The primitive outputs do not depend on the typography layer.
     for (const [file, text] of outputs) {
         assert.equal(text, generateAll().outputs.get(file), file);
     }
-    // A palette or semantic mode file without the config is an error, not silently ignored.
-    writeFileSync(join(dir, 'palette.tokens.json'), '{}');
-    assert.throws(() => generateAll({ sourceDir: dir }), /palette\.tokens\.json without semantic\.config\.json/);
-    rmSync(join(dir, 'palette.tokens.json'));
-    writeFileSync(join(dir, 'semantic.today.tokens.json'), '{}');
-    assert.throws(
-        () => generateAll({ sourceDir: dir }),
-        /semantic\.today\.tokens\.json without semantic\.config\.json/,
-    );
 });
 
 test('the typography layer keeps Today inherited and swaps families in Next only', () => {
