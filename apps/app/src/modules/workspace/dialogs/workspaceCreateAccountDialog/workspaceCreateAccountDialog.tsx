@@ -9,10 +9,14 @@ import {
     TextArea,
 } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
+import { useWatch } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { IPublishDaoDialogParams } from '@/modules/createDao/dialogs/publishDaoDialog';
+import { SafeDialogId } from '@/modules/safe/constants/safeDialogId';
+import type { ISafeDeployTransactionDialogParams } from '@/modules/safe/dialogs/safeDeployTransactionDialog';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { Network } from '@/shared/api/daoService';
 import {
@@ -30,6 +34,7 @@ import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     type IWorkspaceAccount,
+    type IWorkspaceAccountMetadata,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
 import {
@@ -58,6 +63,15 @@ const i18nBase = 'app.workspace.workspaceCreateAccountDialog';
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
+
+const resolveAccountType = (
+    network: Network,
+    chosen: WorkspaceCreateAccountType,
+): WorkspaceCreateAccountType =>
+    chosen === WorkspaceCreateAccountType.SAFE &&
+    safeShortNameFromNetwork(network) == null
+        ? WorkspaceCreateAccountType.ARAGON
+        : chosen;
 
 // Rendered inside its step only, so its rules validate on that step alone.
 const WorkspaceCreateAccountDialogDetails: React.FC = () => {
@@ -102,6 +116,12 @@ const WorkspaceCreateAccountDialogDetails: React.FC = () => {
 
 const WorkspaceCreateAccountDialogSteps: React.FC = () => {
     const { t } = useTranslations();
+    const network = useWatch<IWorkspaceCreateAccountForm, 'network'>({
+        name: 'network',
+    });
+    const safeAvailable =
+        resolveAccountType(network, WorkspaceCreateAccountType.SAFE) ===
+        WorkspaceCreateAccountType.SAFE;
 
     const { onChange: onAccountTypeChange, ...accountTypeField } = useFormField<
         IWorkspaceCreateAccountForm,
@@ -135,8 +155,8 @@ const WorkspaceCreateAccountDialogSteps: React.FC = () => {
                 <RadioGroup
                     onValueChange={onAccountTypeChange}
                     {...accountTypeField}
+                    value={resolveAccountType(network, accountTypeField.value)}
                 >
-                    {/* Safe stays disabled until Safe accounts can be created (#1580). */}
                     {[
                         WorkspaceCreateAccountType.SAFE,
                         WorkspaceCreateAccountType.ARAGON,
@@ -145,9 +165,23 @@ const WorkspaceCreateAccountDialogSteps: React.FC = () => {
                             description={t(
                                 `${i18nBase}.accountType.${type}.description`,
                             )}
-                            disabled={type === WorkspaceCreateAccountType.SAFE}
+                            disabled={
+                                type === WorkspaceCreateAccountType.SAFE &&
+                                !safeAvailable
+                            }
                             key={type}
                             label={t(`${i18nBase}.accountType.${type}.label`)}
+                            tag={
+                                type === WorkspaceCreateAccountType.SAFE &&
+                                !safeAvailable
+                                    ? {
+                                          label: t(
+                                              `${i18nBase}.accountType.SAFE.unsupported`,
+                                          ),
+                                          variant: 'info',
+                                      }
+                                    : undefined
+                            }
                             value={type}
                         />
                     ))}
@@ -165,18 +199,53 @@ const workspaceAccountTypes: Record<
     [WorkspaceCreateAccountType.ARAGON]: WorkspaceAccountType.DAO,
 };
 
+export interface ICreatedAccountDeployment extends IWorkspaceNetworkAddress {
+    /**
+     * IPFS URI of the logo pinned during the deployment.
+     */
+    avatarUri?: string;
+}
+
+export type CreatedAccountDetails = Pick<
+    IWorkspaceCreateAccountForm,
+    'name' | 'description' | 'resources'
+>;
+
 /**
  * Maps an account deployed as the given account type to its workspace account.
+ * @param details - Form details kept as the account metadata, for account types with no metadata of their own.
  */
 export const buildCreatedAccount = (
     accountType: WorkspaceCreateAccountType,
-    deployed: IWorkspaceNetworkAddress,
-): IWorkspaceAccount => ({
-    id: workspaceUtils.buildAccountId(deployed),
-    type: workspaceAccountTypes[accountType],
-    address: deployed.address,
-    network: deployed.network,
-});
+    deployed: ICreatedAccountDeployment,
+    details?: CreatedAccountDetails,
+): IWorkspaceAccount => {
+    const { address, network, avatarUri } = deployed;
+    const account: IWorkspaceAccount = {
+        id: workspaceUtils.buildAccountId({ address, network }),
+        type: workspaceAccountTypes[accountType],
+        address,
+        network,
+    };
+
+    if (details == null) {
+        return account;
+    }
+
+    const { name, description, resources } = details;
+    const links = resources.map((link) => ({
+        ...link,
+        url: workspaceUtils.ensureUrlProtocol(link.url),
+    }));
+    const metadata: IWorkspaceAccountMetadata = {
+        name,
+        ...(description && { description }),
+        ...(links.length > 0 && { links }),
+        ...(avatarUri && { avatar: avatarUri }),
+    };
+
+    return { ...account, metadata };
+};
 
 export interface IBuildCreateAccountRequestOptions {
     /**
@@ -189,16 +258,15 @@ export interface IBuildCreateAccountRequestOptions {
     t: TranslationFunction;
 }
 
-export interface ICreateAccountRequest {
-    /**
-     * Dialog deploying the account.
-     */
-    dialogId: string;
-    /**
-     * Parameters of that dialog.
-     */
-    params: IPublishDaoDialogParams;
-}
+export type ICreateAccountRequest =
+    | {
+          dialogId: CreateDaoDialogId.PUBLISH_DAO;
+          params: IPublishDaoDialogParams;
+      }
+    | {
+          dialogId: SafeDialogId.DEPLOY_TRANSACTION;
+          params: ISafeDeployTransactionDialogParams;
+      };
 
 /**
  * Maps the account form to the deploy dialog of the selected account type.
@@ -207,13 +275,30 @@ export const buildCreateAccountRequest = (
     form: IWorkspaceCreateAccountForm,
     options: IBuildCreateAccountRequestOptions,
 ): ICreateAccountRequest => {
-    const { accountType, network, name, description, avatar, resources } = form;
+    const { network, name, description, avatar, resources } = form;
+    const accountType = resolveAccountType(network, form.accountType);
     const { onCreated, t } = options;
-    // Safe creation lands with #1580, its card is disabled until then.
-    invariant(
-        accountType !== WorkspaceCreateAccountType.SAFE,
-        'buildCreateAccountRequest: Safe accounts cannot be created yet.',
-    );
+    if (accountType === WorkspaceCreateAccountType.SAFE) {
+        return {
+            dialogId: SafeDialogId.DEPLOY_TRANSACTION,
+            params: {
+                network,
+                name,
+                description,
+                avatar,
+                owners: form.members.map(({ address }) => address),
+                threshold: form.threshold,
+                onCreated: (deployed) =>
+                    onCreated(
+                        buildCreatedAccount(accountType, deployed, {
+                            name,
+                            description,
+                            resources,
+                        }),
+                    ),
+            },
+        };
+    }
 
     return {
         dialogId: CreateDaoDialogId.PUBLISH_DAO,
@@ -263,7 +348,7 @@ export const WorkspaceCreateAccountDialog: React.FC<
         resources: [],
         members: [{ address: address ?? '' }],
         threshold: 1,
-        accountType: WorkspaceCreateAccountType.ARAGON,
+        accountType: WorkspaceCreateAccountType.SAFE,
     };
 
     // Stacked, so closing the deploy dialog returns to the filled-in wizard.
