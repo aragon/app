@@ -75,7 +75,12 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
 
     const content = (
         <>
-            <WorkspaceAccountAvatar avatar={avatar} name={name} type={type} />
+            <WorkspaceAccountAvatar
+                avatar={avatar}
+                name={name}
+                network={network}
+                type={type}
+            />
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate text-base leading-tight text-neutral-800">
                     {name ?? addressOutput}

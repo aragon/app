@@ -975,6 +975,14 @@ when the lookup fails. Names are resolved with one batched `useWorkspaceAccounts
 not store the DAO name — and the account metadata name wins over it, being what the workspace owner chose to call
 the account.
 
+`WorkspaceAccountAvatar` takes the account's `network` and passes `NetworkBadge` (`shared/components/networkBadge`)
+as the kit `Avatar` badge: the network logo, named and titled by the network (some rows show the network in text,
+the selector's rows don't). The kit sizes the badge from the avatar size; any avatar can take one the same way.
+Badged: these rows, the rows of `WorkspaceSelectAccountDialogItem` (the Add accounts and Getting started selector,
+and the "Select an account" dialog of new proposals and transactions) and the account rows of the
+`WorkspaceAccountSelector` dropdown. Not badged: the selector trigger, its avatar stack and the to-do rows; an
+external account the selector has not resolved yet shows its label's initials, unbadged.
+
 ### Workspace not found
 
 The registry lives on one device, so a shared `/workspace/{id}/…` link usually names a workspace the reader does
@@ -1376,8 +1384,6 @@ Keep it that way when extending this.
 
 ## Known gaps
 
-- **Admin page account rows show no network badge.** `WorkspaceAccountAvatar` takes no network; extending it is a
-  follow-up ticket.
 - **Account suggestions come from a stand-in** until a backend endpoint serves them (see
   [Suggestions backend endpoint](#suggestions-backend-endpoint)). Until then:
   - DAOs the wallet deployed without being a member are not suggested: `daos/member` only lists memberships.

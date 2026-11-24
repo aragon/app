@@ -1,5 +1,7 @@
-import { Avatar, DaoAvatar } from '@aragon/gov-ui-kit';
+import { Avatar, type AvatarSize, DaoAvatar } from '@aragon/gov-ui-kit';
 import safeWallet from '@/assets/images/safeWallet.png';
+import type { Network } from '@/shared/api/daoService';
+import { NetworkBadge } from '@/shared/components/networkBadge';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { WorkspaceAccountType } from '../../api/workspaceService';
@@ -17,6 +19,15 @@ export interface IWorkspaceAccountAvatarProps {
      * Avatar of the account, as an IPFS CID or a URL.
      */
     avatar?: string | null;
+    /**
+     * Network of the account, shown as a badge on the avatar.
+     */
+    network?: Network;
+    /**
+     * Size of the avatar.
+     * @default md
+     */
+    size?: Extract<AvatarSize, 'sm' | 'md'>;
 }
 
 /**
@@ -26,23 +37,32 @@ export interface IWorkspaceAccountAvatarProps {
 export const WorkspaceAccountAvatar: React.FC<IWorkspaceAccountAvatarProps> = (
     props,
 ) => {
-    const { type, name, avatar } = props;
+    const { type, name, avatar, network, size = 'md' } = props;
 
     const { t } = useTranslations();
 
     const src = ipfsUtils.cidToSrc(avatar);
 
+    const badge = network != null && <NetworkBadge network={network} />;
+
     if (type === WorkspaceAccountType.DAO) {
         return (
-            <DaoAvatar className="shrink-0" name={name} size="md" src={src} />
+            <DaoAvatar
+                badge={badge}
+                className="shrink-0"
+                name={name}
+                size={size}
+                src={src}
+            />
         );
     }
 
     return (
         <Avatar
             alt={t('app.workspace.workspaceAccountAvatar.safe')}
+            badge={badge}
             className="shrink-0"
-            size="md"
+            size={size}
             src={src ?? safeWallet.src}
         />
     );

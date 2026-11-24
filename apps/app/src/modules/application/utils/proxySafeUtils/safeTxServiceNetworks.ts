@@ -11,10 +11,9 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
  * is decided. Check it against Safe's list:
  * https://docs.safe.global/core-api/transaction-service-supported-networks
  *
- * One value serves both the Safe app link prefix (Safe's `shortName`) and the transaction service
- * path segment (the last segment of its `txServiceUrl`). They match for every network here, but
- * not for every Safe chain (e.g. MegaETH: `megaeth` vs `mega`). Adding such a chain needs the two
- * split into separate values.
+ * The value is the transaction service path segment (the last segment of its `txServiceUrl`). It
+ * usually matches the Safe app link prefix (Safe's `shortName`); where it doesn't, the prefix goes
+ * in `safeAppShortNameOverrides`.
  */
 export const safeTxServiceShortNames: Record<Network, string | null> = {
     [Network.ETHEREUM_MAINNET]: 'eth',
@@ -36,6 +35,14 @@ export const safeTxServiceShortNames: Record<Network, string | null> = {
     [Network.BNB_TESTNET]: null,
     [Network.CITREA_MAINNET]: null,
     [Network.CHILIZ_MAINNET]: null,
+};
+
+/**
+ * Safe app link prefixes (Safe's config service `shortName`) for the networks where they differ
+ * from the transaction service path segment in `safeTxServiceShortNames`.
+ */
+const safeAppShortNameOverrides: Partial<Record<Network, string>> = {
+    [Network.POLYGON_MAINNET]: 'matic',
 };
 
 /**
@@ -79,11 +86,13 @@ const safeAppUrl = (
     query?: Record<string, string>,
 ): string | undefined => {
     const { network, address } = params;
-    const shortName = safeShortNameFromNetwork(network);
+    const txServiceShortName = safeShortNameFromNetwork(network);
 
-    if (shortName == null) {
+    if (txServiceShortName == null) {
         return undefined;
     }
+
+    const shortName = safeAppShortNameOverrides[network] ?? txServiceShortName;
 
     // Assembled by hand rather than with `URLSearchParams`: it percent-encodes the colon in the
     // EIP-3770 `safe=<shortName>:<address>` pair, and every value here is already URL-safe.

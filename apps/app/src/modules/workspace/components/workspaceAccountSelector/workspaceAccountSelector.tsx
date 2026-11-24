@@ -15,14 +15,16 @@ import { useMemo } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { useWorkspace, WorkspaceAccountType } from '../../api/workspaceService';
 import {
-    type IWorkspaceAccountOption,
-    useWorkspaceAccountOptions,
-} from '../../hooks/useWorkspaceAccountOptions';
+    type IWorkspaceAccount,
+    useWorkspace,
+    WorkspaceAccountType,
+} from '../../api/workspaceService';
+import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
+import { WorkspaceAccountAvatar } from '../workspaceAccountAvatar';
 
 export interface IWorkspaceAccountSelectorProps {
     /**
@@ -109,23 +111,19 @@ export const WorkspaceAccountSelector: React.FC<
         return null;
     }
 
-    const getOptionAvatar = (option?: IWorkspaceAccountOption) => {
-        if (option?.isAllAccounts) {
-            return ipfsUtils.cidToSrc(workspace?.avatar);
-        }
+    // A DAO's avatar comes from the indexed DAO (the registry stores none), a Safe's from its metadata.
+    const getAccountAvatar = (account?: IWorkspaceAccount) =>
+        account?.type === WorkspaceAccountType.DAO
+            ? daos[account.id]?.avatar
+            : account?.metadata?.avatar;
 
-        switch (option?.account?.type) {
-            case WorkspaceAccountType.SAFE:
-                return (
-                    ipfsUtils.cidToSrc(option.account?.metadata?.avatar) ??
-                    safeWallet.src
-                );
-            case WorkspaceAccountType.DAO:
-                return ipfsUtils.cidToSrc(daos[option.account.id]?.avatar);
+    // The stack clones kit avatars, so it can't take WorkspaceAccountAvatar and resolves the Safe logo itself.
+    const getStackAvatar = (account?: IWorkspaceAccount) => {
+        const src = ipfsUtils.cidToSrc(getAccountAvatar(account));
 
-            default:
-                return ipfsUtils.cidToSrc(option?.account?.metadata?.avatar);
-        }
+        return account?.type === WorkspaceAccountType.SAFE
+            ? (src ?? safeWallet.src)
+            : src;
     };
 
     const accountAvatars = options
@@ -134,7 +132,7 @@ export const WorkspaceAccountSelector: React.FC<
             <DaoAvatar
                 key={option.id}
                 name={option.label}
-                src={getOptionAvatar(option)}
+                src={getStackAvatar(option.account)}
             />
         ));
     const activeOptionAddress =
@@ -169,10 +167,14 @@ export const WorkspaceAccountSelector: React.FC<
                                 />
                             )
                         ) : (
-                            <DaoAvatar
+                            // Unbadged, as in the design.
+                            <WorkspaceAccountAvatar
+                                avatar={getAccountAvatar(activeOption?.account)}
                                 name={activeOption?.label}
-                                size="md"
-                                src={getOptionAvatar(activeOption)}
+                                type={
+                                    activeOption?.account?.type ??
+                                    WorkspaceAccountType.DAO
+                                }
                             />
                         )}
                     </span>
@@ -213,11 +215,16 @@ export const WorkspaceAccountSelector: React.FC<
                                 variant="primary"
                             />
                         ) : (
-                            <DaoAvatar
-                                className="shrink-0"
+                            // An unresolved external account shows its label's initials, unbadged.
+                            <WorkspaceAccountAvatar
+                                avatar={getAccountAvatar(option.account)}
                                 name={option.label}
+                                network={option.account?.network}
                                 size="sm"
-                                src={getOptionAvatar(option)}
+                                type={
+                                    option.account?.type ??
+                                    WorkspaceAccountType.DAO
+                                }
                             />
                         )}
                         <span className="flex min-w-0 flex-col leading-tight">
