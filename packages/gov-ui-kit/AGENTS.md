@@ -22,7 +22,8 @@ or from the root as `pnpm --filter @aragon/gov-ui-kit <script>`.
 - `pnpm storybook` — Storybook dev server on :6006; primary component dev surface.
 - `pnpm build` — Rollup build to `dist/` plus compiled `build.css`.
 - `pnpm build:storybook` — static Storybook build used in CI.
-- `pnpm test` — Jest. Variants: `pnpm test:watch`, `pnpm test:coverage`.
+- `pnpm test` — the token generator tests (`pnpm test:tokens`), then Jest. Variants: `pnpm test:watch`,
+  `pnpm test:coverage`.
 - `pnpm type-check` — `tsc --noemit`.
 - `pnpm lint` — Biome check with writes. `pnpm lint:check` — no writes.
 - `pnpm css:check` — verify `build.css` still matches a source compile (runs in CI after `pnpm build`).
@@ -70,7 +71,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   imports `./src/index.css` and `tailwindcss`, scanning only `src` for class names;
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
-  under `src/theme/tokens/` (via `@theme`) that exposes the `--color-*` scale used
+  under `src/theme/tokens/primitives/` (via `@theme`) that exposes the `--color-*` scale used
   as utilities such as `bg-primary-500` and `text-neutral-800`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
@@ -90,8 +91,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.
 - **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
-  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/**` CSS by hand
-  (`pnpm tokens:check` fails on a stale file). Do not edit tokens without CODEOWNERS review
+  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/primitives/` by hand
+  (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
   `src/modules` must keep labeling, focus order, and keyboard interaction intact, and rely on
@@ -127,15 +128,15 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
 - `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
-  `src/theme/tokens/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
+  `src/theme/tokens/primitives/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules
   for this package. Install policy and the dependency catalog are at the repo root.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
-- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`; `scripts/tokens/` is the token generator. Plain Node, no
-  framework; keep new checks in that shape. `scripts/README.md` covers the local screenshot comparison
-  (`pnpm visual-diff`).
+- `scripts/` — plain Node, no framework; keep new scripts in that shape. `check-build-css.mjs` is the check CI runs
+  outside Biome/tsc/Jest, `scripts/tokens/` is the token generator, and `scripts/README.md` covers the local
+  screenshot comparison (`pnpm visual-diff`).
 - `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.
 - Root `AGENTS.md` — monorepo layout, release scopes, CI split and Turbo caching.
 - `.github/workflows/app-development.yml` — CI truth for the type/lint/test gates (all workspaces);

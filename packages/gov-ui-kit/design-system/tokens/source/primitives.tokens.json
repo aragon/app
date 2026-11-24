@@ -1,6 +1,6 @@
 {
     "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-    "$description": "GovKit primitive tokens (DTCG 2025.10): the values behind src/theme/tokens/primitives/*.css and the app artifact. Generated CSS only; edit here.",
+    "$description": "GovKit primitive tokens (DTCG 2025.10): the values behind src/theme/tokens/primitives/*.css. The CSS is generated; edit here.",
     "color": {
         "$type": "color",
         "primary": {
@@ -2573,37 +2573,6 @@
                     },
                     "spread": {
                         "value": -12,
-                        "unit": "px"
-                    }
-                }
-            ]
-        },
-        "none": {
-            "$value": [
-                {
-                    "color": {
-                        "colorSpace": "srgb",
-                        "components": [
-                            0,
-                            0,
-                            0
-                        ],
-                        "alpha": 0
-                    },
-                    "offsetX": {
-                        "value": 0,
-                        "unit": "px"
-                    },
-                    "offsetY": {
-                        "value": 0,
-                        "unit": "px"
-                    },
-                    "blur": {
-                        "value": 0,
-                        "unit": "px"
-                    },
-                    "spread": {
-                        "value": 0,
                         "unit": "px"
                     }
                 }
