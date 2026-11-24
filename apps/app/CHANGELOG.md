@@ -1,5 +1,58 @@
 # @aragon/app
 
+## 1.46.0
+
+### Minor Changes
+
+- [#1568](https://github.com/aragon/app/pull/1568) [`60e56de`](https://github.com/aragon/app/commit/60e56de4853be368d81cdd19df467b9d4b17d995) Thanks [@milosh86](https://github.com/milosh86)! - Reject pending Safe transactions from the workspace transactions list: an owner signs the onchain rejection of the transaction's nonce from a Reject action next to approve or execute. A rejection is listed as one and has no actions, the transaction it competes with shows its approvals, and the signing review warns when a Safe transaction pays a gas refund out of the Safe.
+
+- [#1568](https://github.com/aragon/app/pull/1568) [`60e56de`](https://github.com/aragon/app/commit/60e56de4853be368d81cdd19df467b9d4b17d995) Thanks [@milosh86](https://github.com/milosh86)! - Create transactions directly on a Safe from the workspace transactions page: the Transaction action opens a full-page wizard for Safe owners, and the composed actions become one Safe transaction, batched when there is more than one, that the owner reviews, signs and queues for the other owners' approvals
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add the workspace admin page: edit a workspace's details, remove its accounts and export it as JSON, plus an Import workspace item in the workspace selector. The sidebar's Workspace group is now Settings and links to the admin page instead of the edit wizard.
+
+- [#1591](https://github.com/aragon/app/pull/1591) [`a3c7bc7`](https://github.com/aragon/app/commit/a3c7bc7959a37d48fe791e2c01c9e73fc93f7ab3) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add the OCC soft-launch environment, served at new.app.aragon.org, with its own feature flags and analytics.
+
+- [#1606](https://github.com/aragon/app/pull/1606) [`4c59651`](https://github.com/aragon/app/commit/4c596514a81d19e04680cfbfad4fccd8b029b4d9) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Show each workspace account's network as a logo badge on its avatar, in the workspace account rows, the Add accounts and Select an account dialogs, Getting started and the account selector.
+
+- [#1595](https://github.com/aragon/app/pull/1595) [`c69a277`](https://github.com/aragon/app/commit/c69a277914ecb72b3ebd4f839e75fb9896fb70ed) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Add a Getting started screen that creates the first workspace from the accounts a connected wallet picks.
+
+- [#1595](https://github.com/aragon/app/pull/1595) [`c69a277`](https://github.com/aragon/app/commit/c69a277914ecb72b3ebd4f839e75fb9896fb70ed) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Add a Create account dialog that deploys a multisig DAO from Getting started and the Add accounts dialog.
+
+- [#1595](https://github.com/aragon/app/pull/1595) [`c69a277`](https://github.com/aragon/app/commit/c69a277914ecb72b3ebd4f839e75fb9896fb70ed) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Add accounts to a workspace from a dialog: suggested DAOs and Safes of the connected wallet, search, and lookup by address or ENS name across every network. The withdraw asset selector and the account selector now share one select component.
+
+- [#1575](https://github.com/aragon/app/pull/1575) [`172862c`](https://github.com/aragon/app/commit/172862c4f231012ebe455ca4dfc18d0be5dda829) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Open the create-proposal wizard of a DAO account inside the workspace: the proposals page's create action leads to a workspace route that exits back to the account's proposals
+
+### Patch Changes
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add a feature-flagged demo fixture with example DAO and Safe accounts that runs in an isolated, tab-scoped workspace registry.
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add the feature-flagged first-time landing page and workspace account setup actions. Developer tools can export timestamped local workspace registries and replace them from JSON, resuming at the first available workspace after import.
+
+- [#1580](https://github.com/aragon/app/pull/1580) [`e58a6eb`](https://github.com/aragon/app/commit/e58a6eb9981bffacc1160c62428a4c40750cb003) Thanks [@harryburger](https://github.com/harryburger)! - Allow creating a Safe account from the workspace wizard.
+
+- [#1589](https://github.com/aragon/app/pull/1589) [`0cce3df`](https://github.com/aragon/app/commit/0cce3dfe1503e30a5ea3b5960b8b30ff39427e57) Thanks [@milosh86](https://github.com/milosh86)! - Replace the plugin filter tabs with a dropdown on the workspace member, proposal and account members lists
+
+- [#1615](https://github.com/aragon/app/pull/1615) [`0514838`](https://github.com/aragon/app/commit/0514838cc40c5ee5c27a29ed3b5092b60b0fbe7b) Thanks [@milosh86](https://github.com/milosh86)! - Fix search results past the first page in the account select, stop a recent demo visit from sending the workspace entry into the demo, and keep account suggestions when a DAO page fails to load
+
+- [#1595](https://github.com/aragon/app/pull/1595) [`c69a277`](https://github.com/aragon/app/commit/c69a277914ecb72b3ebd4f839e75fb9896fb70ed) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Smooth the hand-off between the landing page and the workspace, show DAO avatars on the workspace overview, and remove the unreachable workspace edit wizard.
+
+- [#1598](https://github.com/aragon/app/pull/1598) [`2621c8a`](https://github.com/aragon/app/commit/2621c8ab55aef79bb2d63ae24401a56931e6beca) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Accept WebP images in avatar and logo uploads. The upload check reads the file content, so a WebP image saved with a `.png` name failed to pin to IPFS.
+
+- [#1581](https://github.com/aragon/app/pull/1581) [`0bc09d3`](https://github.com/aragon/app/commit/0bc09d3c17d68a0048ac52156c35640980af39a9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix the cross-chain forward-message action crashing when a nested action carries a bigint parameter, such as a token amount.
+
+- [#1590](https://github.com/aragon/app/pull/1590) [`08999bc`](https://github.com/aragon/app/commit/08999bcd34caed93bb28c0e8d2662c1fdd3d311d) Thanks [@milosh86](https://github.com/milosh86)! - Redirect DAO accounts away from the Safe create-transaction wizard and return a 404 for unknown accounts
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Bump Next.js to 16.4.6 (catalog floor raised from `^16.4.2`), fixing the vulnerability Next flags on dev start.
+
+- [#1601](https://github.com/aragon/app/pull/1601) [`412581b`](https://github.com/aragon/app/commit/412581b819db469c9b348f9ddd5083ad3fb8ba9c) Thanks [@evanaronson](https://github.com/evanaronson)! - - Show the condition contract that authorizes a process's actions on the process details page when the process has limited execution.
+    - Update the description on the delegation panel
+
+- [#1581](https://github.com/aragon/app/pull/1581) [`0bc09d3`](https://github.com/aragon/app/commit/0bc09d3c17d68a0048ac52156c35640980af39a9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Stop refusing chain reads from browsers that fail the BotID check, deliver server-side Sentry events before the function is suspended, count BotID detections as a metric, record a session replay for every error that is not classified as noise, trace browser requests more often and stop tracing uptime probes.
+
+- [#1608](https://github.com/aragon/app/pull/1608) [`e38b0c7`](https://github.com/aragon/app/commit/e38b0c7afafccb5ea685ef5eaa9ce6a2e5ceaf03) Thanks [@evanaronson](https://github.com/evanaronson)! - Polish workspace navigation: remove the workspace and sidebar account carets, restore the divider between joined selectors, and hide Explore all DAOs from the workspace mobile menu. Use rounded rectangular wallet buttons from tablet width up across navigation. Align account menu labels and show only workspace accounts in the All accounts avatar stack, falling back to the workspace avatar when empty. Correct import/export icons.
+- Updated dependencies [[`a3c7bc7`](https://github.com/aragon/app/commit/a3c7bc7959a37d48fe791e2c01c9e73fc93f7ab3)]:
+    - @aragon/assistant-chat@0.5.6
+
 ## 1.45.0
 
 ### Minor Changes
