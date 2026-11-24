@@ -11,6 +11,7 @@ import {
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
+    WorkspaceRegistryScope,
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
 import {
@@ -749,6 +750,23 @@ describe('workspace utils', () => {
             });
 
             expect(result).toBeUndefined();
+        });
+    });
+
+    describe('getRegistryScope', () => {
+        it('returns the demo registry for a demo workspace', () => {
+            expect(workspaceUtils.getRegistryScope('aragon-demo')).toBe(
+                WorkspaceRegistryScope.DEMO,
+            );
+        });
+
+        it.each([
+            ['another workspace', 'my-workspace'],
+            ['no workspace', undefined],
+        ])('returns the persistent registry for %s', (_, workspaceId) => {
+            expect(workspaceUtils.getRegistryScope(workspaceId)).toBe(
+                WorkspaceRegistryScope.PERSISTENT,
+            );
         });
     });
 

@@ -22,21 +22,46 @@ const daoPageSize = 50;
 // Reading every Safe network at once gets 429s on the shared Safe API key.
 const safeNetworkConcurrency = 3;
 
+interface ISuggestionSource<TItem> {
+    /**
+     * Items read from the source.
+     */
+    items: TItem[];
+    /**
+     * Whether part of the source could not be read, so items may be missing.
+     */
+    isIncomplete: boolean;
+    /**
+     * Whether none of the source could be read.
+     */
+    isFailed: boolean;
+    /**
+     * Error of a failed source.
+     */
+    error?: unknown;
+}
+
 /**
  * Stands in for the suggestions endpoint: every page of `daos/member` and the Safes the wallet signs for on each
- * Safe network, ranked and returned as one page.
+ * Safe network, ranked and returned as one page. What fails to load is left out and the list flagged incomplete; it
+ * rejects only when nothing could be read.
  */
 export const getWorkspaceAccountSuggestions = async (
     params: IGetWorkspaceAccountSuggestionsParams,
 ): Promise<IWorkspaceAccountSuggestionListResponse> => {
     const { address } = params.urlParams;
 
-    const [daos, { safes, isIncomplete }] = await Promise.all([
+    const [daoSource, safeSource] = await Promise.all([
         getMemberDaos(address),
         getSignerSafes(address),
     ]);
 
-    const daoSuggestions = daos.map((dao) => ({
+    // An empty list would read as a wallet without accounts, so a total failure stays an error.
+    if (daoSource.isFailed && safeSource.isFailed) {
+        throw daoSource.error;
+    }
+
+    const daoSuggestions = daoSource.items.map((dao) => ({
         account: buildAccount(WorkspaceAccountType.DAO, dao),
         dao,
         role:
@@ -46,7 +71,7 @@ export const getWorkspaceAccountSuggestions = async (
                 : WorkspaceAccountSuggestionRole.MEMBER,
     }));
     // Every signer is an owner to the Safe API, so the wallet's own Safes cannot be told apart yet.
-    const safeSuggestions = safes.map((safe) => ({
+    const safeSuggestions = safeSource.items.map((safe) => ({
         account: buildAccount(WorkspaceAccountType.SAFE, safe),
         role: WorkspaceAccountSuggestionRole.MEMBER,
     }));
@@ -64,36 +89,50 @@ export const getWorkspaceAccountSuggestions = async (
             totalPages: 1,
             totalRecords: data.length,
         },
-        isIncomplete,
+        isIncomplete: daoSource.isIncomplete || safeSource.isIncomplete,
     };
 };
 
-// Page 1 gives the page count, so the others are read in parallel.
-const getMemberDaos = async (address: string): Promise<IDao[]> => {
+// Page 1 gives the page count, so the others are read in parallel. A failed page is left out and the list flagged
+// incomplete; without page 1 nothing is read.
+const getMemberDaos = async (
+    address: string,
+): Promise<ISuggestionSource<IDao>> => {
     const getPage = (page: number) =>
         daoExplorerService.getDaoListByMemberAddress({
             urlParams: { address },
             queryParams: { page, pageSize: daoPageSize },
         });
 
-    const firstPage = await getPage(1);
-    const otherPages = await Promise.all(
+    let firstPage: Awaited<ReturnType<typeof getPage>>;
+
+    try {
+        firstPage = await getPage(1);
+    } catch (error: unknown) {
+        return { items: [], isIncomplete: true, isFailed: true, error };
+    }
+
+    const otherResults = await Promise.allSettled(
         Array.from(
             { length: Math.max(firstPage.metadata.totalPages - 1, 0) },
             (_, index) => getPage(index + 2),
         ),
     );
+    const otherPages = otherResults.flatMap((result) =>
+        result.status === 'fulfilled' ? [result.value] : [],
+    );
 
-    return [firstPage, ...otherPages].flatMap((page) => page.data);
+    return {
+        items: [firstPage, ...otherPages].flatMap((page) => page.data),
+        isIncomplete: otherPages.length < otherResults.length,
+        isFailed: false,
+    };
 };
 
 // A failed network is left out and the list flagged incomplete.
 const getSignerSafes = async (
     address: string,
-): Promise<{
-    safes: { network: Network; address: string }[];
-    isIncomplete: boolean;
-}> => {
+): Promise<ISuggestionSource<{ network: Network; address: string }>> => {
     // Only the networks both the app and the Safe transaction service support.
     const safeNetworks = networkUtils
         .getSupportedNetworks()
@@ -125,9 +164,15 @@ const getSignerSafes = async (
               }))
             : [],
     );
-    const isIncomplete = results.some(({ status }) => status === 'rejected');
+    const failedCount = results.filter(
+        ({ status }) => status === 'rejected',
+    ).length;
 
-    return { safes, isIncomplete };
+    return {
+        items: safes,
+        isIncomplete: failedCount > 0,
+        isFailed: failedCount > 0 && failedCount === results.length,
+    };
 };
 
 const isCreator = ({ role }: IWorkspaceAccountSuggestion) =>

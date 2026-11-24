@@ -22,6 +22,7 @@ export enum WorkspaceQueryServiceKey {
 export const workspaceQueryServiceKeys = {
     accountSuggestions: (params: IGetWorkspaceAccountSuggestionsParams) => [
         WorkspaceQueryServiceKey.ACCOUNT_SUGGESTIONS,
+        apiVersionUtils.getApiVersion(),
         params,
     ],
     accounts: (params: IGetWorkspaceAccountsParams) => [

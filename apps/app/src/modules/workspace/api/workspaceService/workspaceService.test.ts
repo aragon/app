@@ -1,5 +1,9 @@
 import { Network } from '@/shared/api/daoService';
-import { type IWorkspaceAccount, WorkspaceAccountType } from './domain';
+import {
+    type IWorkspaceAccount,
+    WorkspaceAccountType,
+    WorkspaceRegistryScope,
+} from './domain';
 import {
     defaultWorkspaceName,
     workspaceService,
@@ -73,9 +77,11 @@ describe('workspace service', () => {
 
     describe('getWorkspaceList', () => {
         it('resolves an empty list without seeding when no workspace is persisted', async () => {
-            await expect(workspaceService.getWorkspaceList()).resolves.toEqual(
-                [],
-            );
+            await expect(
+                workspaceService.getWorkspaceList(
+                    WorkspaceRegistryScope.PERSISTENT,
+                ),
+            ).resolves.toEqual([]);
             expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
         });
 
@@ -87,10 +93,11 @@ describe('workspace service', () => {
                 body: buildBody({ name: 'Second' }),
             });
 
-            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
-                first,
-                second,
-            ]);
+            await expect(
+                workspaceService.getWorkspaceList(
+                    WorkspaceRegistryScope.PERSISTENT,
+                ),
+            ).resolves.toEqual([first, second]);
         });
     });
 
@@ -291,56 +298,75 @@ describe('workspace service', () => {
             ).rejects.toMatchObject({ status: 404 });
         });
     });
-    describe('session workspace registry', () => {
-        it('uses the fixture only on its routes and discards it on a persistent route', async () => {
+    describe('demo workspace registry', () => {
+        const demo = {
+            'aragon-demo': {
+                ...buildBody({ name: 'Demo' }),
+                id: 'aragon-demo',
+            },
+        };
+
+        it('lists each registry apart, whatever the route', async () => {
             const persistent = await workspaceService.createWorkspace({
                 body: buildBody({ name: 'Persistent' }),
             });
-            const fixture = {
-                fixture: {
-                    ...buildBody({ name: 'Fixture' }),
-                    id: 'fixture',
-                },
-            };
             await workspaceService.activateSessionWorkspaceRegistry(
-                JSON.stringify(fixture),
+                JSON.stringify(demo),
             );
-            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(true);
+            window.history.pushState(null, '', '/workspace');
+
+            await expect(
+                workspaceService.getWorkspaceList(WorkspaceRegistryScope.DEMO),
+            ).resolves.toEqual([demo['aragon-demo']]);
+            await expect(
+                workspaceService.getWorkspaceList(
+                    WorkspaceRegistryScope.PERSISTENT,
+                ),
+            ).resolves.toEqual([persistent]);
+        });
+
+        it('reads and writes a demo workspace on the demo registry only', async () => {
+            const persistent = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Persistent' }),
+            });
+            await workspaceService.activateSessionWorkspaceRegistry(
+                JSON.stringify(demo),
+            );
+            expect(workspaceService.hasSessionWorkspace('aragon-demo')).toBe(
+                true,
+            );
             expect(workspaceService.hasSessionWorkspace('unknown')).toBe(false);
 
-            window.history.pushState(
-                null,
-                '',
-                '/workspace/fixture/all/overview',
-            );
-            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
-                fixture.fixture,
-            ]);
             await workspaceService.updateWorkspaceDetails({
-                urlParams: { id: 'fixture' },
-                body: { ...buildBody(), name: 'Changed fixture' },
+                urlParams: { id: 'aragon-demo' },
+                body: { ...buildBody(), name: 'Changed demo' },
             });
+
+            await expect(
+                workspaceService.getWorkspace({
+                    urlParams: { id: 'aragon-demo' },
+                }),
+            ).resolves.toMatchObject({ name: 'Changed demo' });
             expect(getStoredWorkspaces()).toEqual({
                 [persistent.id]: persistent,
             });
+        });
 
-            window.history.pushState(
-                null,
-                '',
-                `/workspace/${persistent.id}/all/overview`,
+        it('drops the demo registry once the persistent one is read', async () => {
+            await workspaceService.activateSessionWorkspaceRegistry(
+                JSON.stringify(demo),
             );
-            await expect(workspaceService.getWorkspaceList()).resolves.toEqual([
-                persistent,
-            ]);
-            expect(workspaceService.hasSessionWorkspace('fixture')).toBe(false);
-            window.history.pushState(
-                null,
-                '',
-                '/workspace/fixture/all/overview',
+
+            await workspaceService.getWorkspaceList(
+                WorkspaceRegistryScope.PERSISTENT,
+            );
+
+            expect(workspaceService.hasSessionWorkspace('aragon-demo')).toBe(
+                false,
             );
             await expect(
                 workspaceService.getWorkspace({
-                    urlParams: { id: 'fixture' },
+                    urlParams: { id: 'aragon-demo' },
                 }),
             ).rejects.toMatchObject({ status: 404 });
         });
@@ -378,14 +404,7 @@ describe('workspace service', () => {
             expect(getStoredWorkspaces()).toEqual({ existing, ...fixture });
         });
 
-        it('reads and writes the persistent registry even on a demo route', async () => {
-            // The route decides `getActiveStorage`, so on a demo page the debug panel used to export the fixture
-            // and write its import to the session registry, where navigating away lost it.
-            window.history.pushState(
-                {},
-                '',
-                '/workspace/aragon-demo/all/overview',
-            );
+        it('writes the persistent registry and leaves the demo one in place', async () => {
             sessionStorage.setItem(
                 'aragon-session-workspaces',
                 JSON.stringify({ 'aragon-demo': { id: 'aragon-demo' } }),
@@ -402,9 +421,26 @@ describe('workspace service', () => {
             expect(sessionStorage.getItem('aragon-session-workspaces')).toBe(
                 JSON.stringify({ 'aragon-demo': { id: 'aragon-demo' } }),
             );
+        });
 
-            window.history.pushState({}, '', '/');
-            sessionStorage.clear();
+        it('rejects a registry using a demo ID and leaves the stored one in place', async () => {
+            const existing = await workspaceService.createWorkspace({
+                body: buildBody({ name: 'Existing' }),
+            });
+            const registry = {
+                'aragon-demo': {
+                    ...buildBody({ name: 'Demo' }),
+                    id: 'aragon-demo',
+                },
+            };
+
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    JSON.stringify(registry),
+                    true,
+                ),
+            ).rejects.toThrow('aragon-demo');
+            expect(getStoredWorkspaces()).toEqual({ [existing.id]: existing });
         });
 
         it('repairs links saved without a protocol, so an older export re-imports', async () => {
@@ -465,7 +501,11 @@ describe('workspace service', () => {
             await workspaceService.deleteWorkspaceRegistry();
 
             expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
-            expect(await workspaceService.getWorkspaceList()).toEqual([]);
+            expect(
+                await workspaceService.getWorkspaceList(
+                    WorkspaceRegistryScope.PERSISTENT,
+                ),
+            ).toEqual([]);
         });
     });
 
@@ -665,17 +705,14 @@ describe('workspace service', () => {
             expect(imported.id).toEqual('aragon-demo-2');
         });
 
-        it('stores the workspace on local storage when opened from a session workspace route', async () => {
-            const fixture = {
-                fixture: { ...buildBody({ name: 'Fixture' }), id: 'fixture' },
-            };
+        it('stores the workspace on local storage, leaving the demo registry in place', async () => {
             await workspaceService.activateSessionWorkspaceRegistry(
-                JSON.stringify(fixture),
-            );
-            window.history.pushState(
-                null,
-                '',
-                '/workspace/fixture/all/overview',
+                JSON.stringify({
+                    'aragon-demo': {
+                        ...buildBody({ name: 'Demo' }),
+                        id: 'aragon-demo',
+                    },
+                }),
             );
 
             const imported = await workspaceService.importWorkspace(
@@ -685,6 +722,9 @@ describe('workspace service', () => {
             expect(getStoredWorkspaces()).toEqual({ [imported.id]: imported });
             expect(workspaceService.hasSessionWorkspace(imported.id)).toBe(
                 false,
+            );
+            expect(workspaceService.hasSessionWorkspace('aragon-demo')).toBe(
+                true,
             );
         });
 

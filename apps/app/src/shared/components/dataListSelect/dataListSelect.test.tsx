@@ -153,6 +153,49 @@ describe('<DataListSelect /> component', () => {
         expect(screen.getByText(`address view ${unknown}`)).toBeInTheDocument();
     });
 
+    it('pages the search matches beyond the first page', async () => {
+        const manyItems = Array.from({ length: 5 }, (_, index) => ({
+            name: `Match ${index}`,
+            address: `0x${index}`,
+        }));
+        render(
+            createTestComponent({
+                items: [...items, ...manyItems],
+                itemsCount: items.length + manyItems.length,
+                pageSize: 2,
+            }),
+        );
+
+        await userEvent.type(screen.getByRole('searchbox'), 'match');
+        expect(screen.getAllByText(/Match/)).toHaveLength(2);
+        expect(screen.getByText('of 5 Items')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('button', { name: 'More' }));
+        await userEvent.click(screen.getByRole('button', { name: 'More' }));
+        expect(screen.getAllByText(/Match/)).toHaveLength(5);
+        expect(screen.getByRole('button', { name: 'More' })).toBeDisabled();
+    });
+
+    it('hides the pagination while searching a list not fully loaded', async () => {
+        render(createTestComponent({ itemsCount: 30, pageSize: 2 }));
+        expect(screen.getByRole('button', { name: 'More' })).toBeEnabled();
+
+        await userEvent.type(screen.getByRole('searchbox'), 'alp');
+
+        expect(screen.getByText('Alpha')).toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: 'More' }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('hides the pagination when hidePagination is true', () => {
+        render(createTestComponent({ itemsCount: 2, hidePagination: true }));
+
+        expect(
+            screen.queryByRole('button', { name: 'More' }),
+        ).not.toBeInTheDocument();
+    });
+
     it('hides the search when hasSearch is false', () => {
         render(createTestComponent({ hasSearch: false }));
 

@@ -91,6 +91,44 @@ describe('useWorkspaceAccountSuggestions hook', () => {
         );
     });
 
+    it('reads each page once, however many instances are mounted', async () => {
+        getAccountSuggestionsSpy
+            .mockResolvedValueOnce({
+                data: [first],
+                metadata: {
+                    page: 1,
+                    pageSize: 1,
+                    totalPages: 2,
+                    totalRecords: 2,
+                },
+                isIncomplete: false,
+            })
+            .mockResolvedValue({
+                data: [second],
+                metadata: {
+                    page: 2,
+                    pageSize: 1,
+                    totalPages: 2,
+                    totalRecords: 2,
+                },
+                isIncomplete: false,
+            });
+        // As in Getting started, where the page, the select and the status alert each read the suggestions.
+        const { result } = renderHook(
+            () => [
+                useWorkspaceAccountSuggestions(wallet),
+                useWorkspaceAccountSuggestions(wallet),
+                useWorkspaceAccountSuggestions(wallet),
+            ],
+            { wrapper: ReactQueryWrapper },
+        );
+
+        await waitFor(() => expect(result.current[0].isPending).toBe(false));
+
+        expect(result.current[0].suggestions).toEqual([first, second]);
+        expect(getAccountSuggestionsSpy).toHaveBeenCalledTimes(2);
+    });
+
     it('reports a list that is missing accounts', async () => {
         getAccountSuggestionsSpy.mockResolvedValue({
             data: [first],
