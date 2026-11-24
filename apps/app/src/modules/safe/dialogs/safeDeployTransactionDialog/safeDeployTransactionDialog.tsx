@@ -118,8 +118,8 @@ export const SafeDeployTransactionDialog: React.FC<
         return transaction;
     };
 
-    // TODO: Remove the receipt read and use predictedAddress. The address is CREATE2-deterministic and the transaction
-    // is built from the same config, so a successful receipt already means the Safe lives at the predicted address.
+    // The address is read from the receipt instead of using predictedAddress: when the user cancels in the wallet, viem
+    // resolves with the replacement's receipt, which is successful but deploys nothing.
     const handleReadAddress = async (receipt: TransactionReceipt) => {
         setAddressRead({ status: 'pending', receipt });
         try {
