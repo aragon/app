@@ -39,13 +39,11 @@ const resolveToken = (tokens, path, chain = []) => {
     return resolved;
 };
 
-// Reads a token document and validates it: the document against the published schema (`schemaFile`, unmodified),
-// every alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. JSON
-// Schema cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not
-// satisfy Ajv's strict mode, and its only `format` keywords describe schema URIs.
-export const readTokens = (file, schemaFile) => {
-    const schema = readJson(schemaFile);
-    const document = readJson(file);
+// The tokens of a document (path -> { type, value }), validated: the document against the published schema, every
+// alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. JSON Schema
+// cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not satisfy
+// Ajv's strict mode, and its only `format` keywords describe schema URIs.
+export const readTokens = (document, schema) => {
     const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
     const validateDocument = ajv.compile(schema);
     assert.equal(document.$schema, schema.$id, 'DTCG schema version changed');
@@ -62,20 +60,49 @@ export const readTokens = (file, schemaFile) => {
     return tokens;
 };
 
-const hex2 = (byte) => byte.toString(16).padStart(2, '0');
-
-// Hex, `rgba(r, g, b, a)` with an alpha, `transparent` for zero-alpha black. sRGB with numeric components only.
-const colorToCss = ({ colorSpace, components, alpha = 1 }) => {
+// The 8-bit channels of a colour. sRGB with numeric components only.
+const srgbBytes = ({ colorSpace, components }) => {
     assert.equal(colorSpace, 'srgb', 'Only sRGB colours are supported');
     assert(
         components.every((component) => typeof component === 'number'),
         `Unsupported colour: ${components}`,
     );
-    const bytes = components.map((component) => Math.round(component * 255));
+    return components.map((component) => Math.round(component * 255));
+};
+const toHex = (bytes) => `#${bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+const hexToComponents = (hex) => hex.match(/[0-9a-f]{2}/gi).map((pair) => Number.parseInt(pair, 16) / 255);
+
+// The document with every colour's `hex` written from its components. The hex is DTCG's optional readable form of
+// a colour; this source always carries it, so a colour can be read in the JSON and in a diff. A hex that disagrees
+// with its components is an ambiguous edit and fails.
+export const withColorHex = (node) => {
+    if (Array.isArray(node)) {
+        return node.map(withColorHex);
+    }
+    if (node === null || typeof node !== 'object') {
+        return node;
+    }
+    if (!Object.hasOwn(node, 'colorSpace')) {
+        return Object.fromEntries(Object.entries(node).map(([key, value]) => [key, withColorHex(value)]));
+    }
+    const { colorSpace, components, hex, ...rest } = node;
+    const expected = toHex(srgbBytes(node));
+    if (hex !== undefined && hex !== expected) {
+        throw new Error(
+            `Colour hex ${hex} does not match its components (${expected}): remove the hex to have it rewritten, or set the components to ${JSON.stringify(hexToComponents(hex))}`,
+        );
+    }
+    return { colorSpace, components, hex: expected, ...rest };
+};
+
+// Hex, `rgba(r, g, b, a)` with an alpha, `transparent` for zero-alpha black.
+const colorToCss = (color) => {
+    const bytes = srgbBytes(color);
+    const { alpha = 1 } = color;
     if (alpha === 0 && bytes.every((byte) => byte === 0)) {
         return 'transparent';
     }
-    return alpha === 1 ? `#${bytes.map(hex2).join('')}` : `rgba(${bytes.join(', ')}, ${alpha})`;
+    return alpha === 1 ? toHex(bytes) : `rgba(${bytes.join(', ')}, ${alpha})`;
 };
 
 const dimensionToCss = ({ value, unit }) => `${value}${unit}`;

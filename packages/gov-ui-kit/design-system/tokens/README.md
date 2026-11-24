@@ -22,7 +22,7 @@ the docs site import the kit's CSS by path, so a regenerated file reaches them w
 2. Run `pnpm tokens:generate` in the kit and review the CSS diff.
 3. Commit the JSON and the CSS together. A change under `src/` needs a kit changeset.
 
-`pnpm tokens:check` fails when the CSS on disk is stale and writes nothing. `pnpm test` runs the generator tests
+`pnpm tokens:check` fails when a file on disk is stale and writes nothing. `pnpm test` runs the generator tests
 (`pnpm test:tokens`), which include that check, so CI catches a forgotten regeneration.
 
 ## Token shapes
@@ -30,11 +30,15 @@ the docs site import the kit's CSS by path, so a regenerated file reaches them w
 Tokens follow the DTCG format. A colour is a colour object, a dimension a value with a unit:
 
 ```json
-"color": { "$type": "color", "primary": { "500": { "$value": { "colorSpace": "srgb", "components": [0, 0.23137254901960785, 0.9607843137254902] } } } }
+"color": { "$type": "color", "primary": { "500": { "$value": { "colorSpace": "srgb", "components": [0, 0.23137254901960785, 0.9607843137254902], "hex": "#003bf5" } } } }
 "radius": { "$type": "dimension", "md": { "$value": { "value": 4, "unit": "px" } } }
 ```
 
 A token can alias another of the same type (`"$value": "{color.primary.200}"`); the CSS then holds a `var()`.
+
+The `components` are the colour; the `hex` is its readable form, which DTCG keeps optional and this source always
+carries. `pnpm tokens:generate` writes it, so a new colour needs only its components. To change a colour by its hex,
+edit the hex and run the generator: it stops on the mismatch and prints the components of that hex to paste in.
 
 ## Layout config
 
@@ -48,6 +52,7 @@ document order.
 - The document against the DTCG 2025.10 schema, every alias (missing target, cycle, type mismatch), every resolved
   value against the schema of its type.
 - Every token has a CSS name and is placed exactly once.
+- Every colour's `hex` agrees with its components.
 
 ## Representation boundaries
 
