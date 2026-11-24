@@ -34,7 +34,7 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 
 ## Token generator (`tokens/generate.mjs`)
 
-The one generator for every token CSS output: the primitive CSS and the app's artifact, from the DTCG source in
-`design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when an output is stale.
-Tests: `scripts/tokens/generate.test.mjs` (run by the root `pnpm test:tokens`). Details:
+Writes the primitive token CSS (`src/theme/tokens/primitives/`) from the DTCG source in
+`design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when the CSS is stale.
+Tests: `scripts/tokens/generate.test.mjs` (`pnpm test:tokens`, part of `pnpm test`). Details:
 `design-system/tokens/README.md`.

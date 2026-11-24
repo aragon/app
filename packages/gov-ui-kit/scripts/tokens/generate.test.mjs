@@ -1,92 +1,69 @@
-// Regression tests of the token generator: `node --test scripts/tokens/generate.test.mjs` (root `pnpm test:tokens`).
-// Each mutation runs against a scratch copy of the token source; the repository files are never touched.
+// Tests of the token generator (`pnpm test:tokens`). Mutations run against a scratch copy of the token source; the
+// repository files are never touched.
 
 import assert from 'node:assert/strict';
-import { execFileSync, spawnSync } from 'node:child_process';
 import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { generateAll } from './generate.mjs';
-import { readAppOverrides } from './lib/app.mjs';
+import { generate, staleFiles } from './generate.mjs';
 
-const here = dirname(fileURLToPath(import.meta.url));
-const kitRoot = resolve(here, '../..');
-const repoRoot = resolve(kitRoot, '../..');
-const sourceDir = resolve(kitRoot, 'design-system/tokens/source');
+const sourceDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../design-system/tokens/source');
 
-const scratch = (context) => {
+// A scratch copy of the source with one JSON file changed.
+const mutated = (context, file, change) => {
     const dir = mkdtempSync(join(tmpdir(), 'govkit-tokens-'));
     context.after(() => rmSync(dir, { recursive: true, force: true }));
     cpSync(sourceDir, dir, { recursive: true });
+    const json = JSON.parse(readFileSync(join(dir, file), 'utf8'));
+    change(json);
+    writeFileSync(join(dir, file), JSON.stringify(json));
     return dir;
 };
-const edit = (dir, file, change) => {
-    const path = join(dir, file);
-    const json = JSON.parse(readFileSync(path, 'utf8'));
-    change(json);
-    writeFileSync(path, JSON.stringify(json, null, 4));
-};
 
-test('every output on disk is what the source generates, and generation is deterministic', () => {
-    const first = generateAll().outputs;
-    const second = generateAll().outputs;
-    assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 9);
-    for (const [file, text] of first) {
-        assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
-        assert.match(text, /GENERATED/);
-    }
+test('the CSS on disk is what the source generates, and generation is deterministic', () => {
+    const files = generate();
+    assert.deepEqual(staleFiles(files), []);
+    assert.deepEqual([...generate()], [...files]);
 });
 
-test('the kit and the app artifact keep their CSS constructs', () => {
-    const { outputs } = generateAll();
-    const kit = (name) => outputs.get(`packages/gov-ui-kit/src/theme/tokens/primitives/${name}.css`);
-    const app = outputs.get('.design-sync/generated/govkit-primitives.css');
-    assert.match(kit('colors'), /--color-\*: initial;/);
-    assert.match(kit('colors'), /--color-primary-500: #003bf5;/);
-    assert.match(kit('colors'), /@utility gradient-neutral-50-transparent-to-b/);
-    assert.match(kit('borderRadius'), /--radius-none: none;/);
-    assert.match(kit('focusRing'), /--ring-color-primary: var\(--color-primary-200\);/);
-    assert.match(kit('focusRing'), /@utility focus-ring-primary/);
-    assert.match(kit('typography'), /url\("\.\.\/\.\.\/fonts\/Manrope-Regular\.ttf"\)/);
+test('the generated CSS keeps its constructs', () => {
+    const files = generate();
+    const css = (name) => files.get(`src/theme/tokens/primitives/${name}.css`);
+    assert.match(css('colors'), /GENERATED/);
+    assert.match(css('colors'), /@theme \{\n {4}--color-\*: initial;\n {4}--color-primary-50: #f5f8ff;/);
+    assert.match(css('colors'), /--color-primary-500: #003bf5;/);
+    assert.match(css('colors'), /--color-transparent: transparent;/);
+    assert.match(css('borderRadius'), /--radius-none: none;/);
+    assert.match(css('focusRing'), /--ring-color-primary: var\(--color-primary-200\);/);
+    assert.match(css('shadows'), /--shadow-neutral: 0px 1px 3px 0px rgba\(97, 110, 124, 0\.1\), 0px 1px 2px -1px rgba/);
+    assert.match(css('typography'), /--font-sans: "Manrope", ui-sans-serif, /);
     // Pixel breakpoints stay in a plain :root rule, rem breakpoints in @theme.
-    assert.match(kit('breakpoints'), /:root \{\n {4}--breakpoint-sm-px: 640;/);
-    assert.match(kit('breakpoints'), /@theme \{\n {4}--breakpoint-\*: initial;\n {4}--breakpoint-sm: 40rem;/);
-    // The app artifact is flat, rebases the font URLs and ends with the seven app overrides.
-    assert.match(
-        app,
-        /url\("\.\.\/\.\.\/apps\/app\/node_modules\/@aragon\/gov-ui-kit\/src\/theme\/fonts\/Manrope-Regular\.ttf"\)/,
-    );
-    assert.match(app, /--guk-dialog-overlay-z-index: 20;/);
-    assert.equal([...app.matchAll(/--guk-[a-z-]+: [a-z0-9]+;/g)].length, 7);
-    assert.doesNotMatch(app, /@import ["']tailwindcss["']/);
+    assert.match(css('breakpoints'), /:root \{\n {4}--breakpoint-sm-px: 640;/);
+    assert.match(css('breakpoints'), /@theme \{\n {4}--breakpoint-\*: initial;\n {4}--breakpoint-sm: 40rem;/);
+    assert.match(css('index'), /@import "\.\/borderRadius\.css";\n@import "\.\/breakpoints\.css";/);
 });
 
-test('the check fails when a generated file is stale', (context) => {
-    const dir = scratch(context);
-    edit(dir, 'primitives.tokens.json', (json) => {
+test('a changed token makes its file stale', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', (json) => {
         json.color.primary['500'].$value.components = [0, 0, 0];
     });
-    const result = spawnSync('node', [join(here, 'generate.mjs'), '--check', '--source', dir], { encoding: 'utf8' });
-    assert.equal(result.status, 1);
-    assert.match(result.stderr, /stale generated files: .*primitives\/colors\.css/);
-    assert.match(result.stderr, /govkit-primitives\.css/);
-    // The untouched source passes.
-    execFileSync('node', [join(here, 'generate.mjs'), '--check'], { stdio: 'ignore' });
+    assert.deepEqual(staleFiles(generate(dir)), ['src/theme/tokens/primitives/colors.css']);
 });
 
-for (const [name, change, expected] of [
+for (const [name, file, change, expected] of [
     [
         'a dangling alias',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{color.missing.100}';
         },
-        /Missing alias target/,
+        /Missing alias target: color\.missing\.100 \(from ring\.color\.primary\)/,
     ],
     [
         'an alias cycle',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{ring.color.success}';
             json.ring.color.success.$value = '{ring.color.primary}';
@@ -95,78 +72,54 @@ for (const [name, change, expected] of [
     ],
     [
         'an alias of another type',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{spacing.base}';
         },
-        /Alias type mismatch/,
+        /Alias type mismatch: ring\.color\.primary/,
     ],
     [
         'a value of another type',
+        'primitives.tokens.json',
         (json) => {
             json.color.transparent.$value = structuredClone(json.spacing.base.$value);
         },
-        /DTCG value .*color\.transparent/,
+        /DTCG value color\.transparent/,
     ],
     [
         'a changed schema version',
+        'primitives.tokens.json',
         (json) => {
             json.$schema = 'https://example.com/other.json';
         },
         /DTCG schema version changed/,
     ],
+    [
+        'a token the layout does not place',
+        'primitives.tokens.json',
+        (json) => {
+            json.zindex = { $type: 'number', modal: { $value: 30 } };
+        },
+        /places no CSS for: zindex\.modal/,
+    ],
+    [
+        'a token the layout places twice',
+        'primitives.config.json',
+        (json) => {
+            json.files['colors.css']['@theme'].push('color.primary');
+        },
+        /token color\.primary\.50 is placed twice/,
+    ],
+    [
+        'a layout line that matches no token',
+        'primitives.config.json',
+        (json) => {
+            json.files['colors.css']['@theme'].push('colour');
+        },
+        /no token at or under colour/,
+    ],
 ]) {
-    test(`the source rejects ${name}`, (context) => {
-        const dir = scratch(context);
-        edit(dir, 'primitives.tokens.json', change);
-        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+    test(`the generator rejects ${name}`, (context) => {
+        assert.throws(() => generate(mutated(context, file, change)), expected);
     });
 }
-
-test('a primitive token the layout does not place is rejected', (context) => {
-    const dir = scratch(context);
-    edit(dir, 'primitives.tokens.json', (json) => {
-        json.zindex = { $type: 'number', modal: { $value: 30 } };
-    });
-    assert.throws(() => generateAll({ sourceDir: dir }), /places no CSS for: zindex\.modal/);
-});
-
-test('an unrewritable relative font URL is rejected', (context) => {
-    const dir = scratch(context);
-    const path = join(dir, 'css/typography.fontFaces.css');
-    writeFileSync(path, readFileSync(path, 'utf8').replaceAll('../../fonts/', '../fonts/'));
-    assert.throws(() => generateAll({ sourceDir: dir }), /Unresolved relative font URLs/);
-});
-
-const overrides = (context, css) => {
-    const dir = mkdtempSync(join(tmpdir(), 'govkit-overrides-'));
-    context.after(() => rmSync(dir, { recursive: true, force: true }));
-    const file = join(dir, 'overrides.css');
-    writeFileSync(file, css);
-    return () => readAppOverrides(file, relative(dir, file));
-};
-const base = ':root {\n    --guk-dialog-overlay-z-index: 20;\n}\n';
-
-test('the app overrides must be direct custom properties of one top-level :root', (context) => {
-    assert.match(overrides(context, `/* note */\n@import "x.css";\n${base}`)(), /--guk-dialog-overlay-z-index: 20;/);
-    for (const [css, expected] of [
-        [`${base}html.dark { --guk-dialog-overlay-z-index: 99; }`, /Unsupported scoped or conditional construct/],
-        [`${base}.dark { --guk-dialog-overlay-z-index: 99; }`, /Unsupported scoped or conditional construct/],
-        [base.replace(':root', 'html'), /Unsupported scoped or conditional construct/],
-        [`${base}:root, .dark { --color-primary-500: #000; }`, /Unsupported scoped or conditional construct/],
-        [`@media (min-width: 99999px) { ${base} }`, /Unsupported scoped or conditional construct/],
-        [base.replace('--guk', 'color: red;\n--guk'), /Unsupported non-custom property declaration/],
-        [
-            base.replace('--guk-dialog-overlay-z-index: 20;', '@media (min-width: 1px) { --a: 1; }'),
-            /Unsupported nested or conditional scope/,
-        ],
-        [
-            base.replace('--guk-dialog-overlay-z-index: 20;', '&:hover { --a: 1; }'),
-            /Unsupported nested or conditional scope/,
-        ],
-        [base.replace('20;', '20 !important;'), /Unsupported !important/],
-        ['/* nothing */\n', /Expected one top-level :root/],
-        [`${base}${base}`, /Expected one top-level :root/],
-    ]) {
-        assert.throws(overrides(context, css), expected, css);
-    }
-});
