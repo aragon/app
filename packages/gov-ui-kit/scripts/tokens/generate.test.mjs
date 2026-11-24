@@ -9,7 +9,9 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { generate, staleFiles } from './generate.mjs';
 
-const sourceDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../design-system/tokens/source');
+const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
+const sourceDir = resolve(kitRoot, 'design-system/tokens/source');
+const cssFile = (name) => resolve(kitRoot, `src/theme/tokens/primitives/${name}.css`);
 
 // A scratch copy of the source with one JSON file changed.
 const mutated = (context, file, change) => {
@@ -18,11 +20,11 @@ const mutated = (context, file, change) => {
     cpSync(sourceDir, dir, { recursive: true });
     const json = JSON.parse(readFileSync(join(dir, file), 'utf8'));
     change(json);
-    writeFileSync(join(dir, file), JSON.stringify(json));
+    writeFileSync(join(dir, file), `${JSON.stringify(json, null, 4)}\n`);
     return dir;
 };
 
-test('the CSS on disk is what the source generates, and generation is deterministic', () => {
+test('the files on disk are what the source generates, and generation is deterministic', () => {
     const files = generate();
     assert.deepEqual(staleFiles(files), []);
     assert.deepEqual([...generate()], [...files]);
@@ -30,7 +32,7 @@ test('the CSS on disk is what the source generates, and generation is determinis
 
 test('the generated CSS keeps its constructs', () => {
     const files = generate();
-    const css = (name) => files.get(`src/theme/tokens/primitives/${name}.css`);
+    const css = (name) => files.get(cssFile(name));
     assert.match(css('colors'), /GENERATED/);
     assert.match(css('colors'), /@theme \{\n {4}--color-\*: initial;\n {4}--color-primary-50: #f5f8ff;/);
     assert.match(css('colors'), /--color-primary-500: #003bf5;/);
@@ -47,9 +49,19 @@ test('the generated CSS keeps its constructs', () => {
 
 test('a changed token makes its file stale', (context) => {
     const dir = mutated(context, 'primitives.tokens.json', (json) => {
-        json.color.primary['500'].$value.components = [0, 0, 0];
+        json.radius.md.$value.value = 5;
     });
-    assert.deepEqual(staleFiles(generate(dir)), ['src/theme/tokens/primitives/colors.css']);
+    assert.deepEqual(staleFiles(generate(dir)), [cssFile('borderRadius')]);
+});
+
+test('a colour without a hex gets it written into the source', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', (json) => {
+        delete json.color.primary['500'].$value.hex;
+    });
+    const files = generate(dir);
+    const source = join(dir, 'primitives.tokens.json');
+    assert.deepEqual(staleFiles(files), [source]);
+    assert.equal(files.get(source), readFileSync(join(sourceDir, 'primitives.tokens.json'), 'utf8'));
 });
 
 for (const [name, file, change, expected] of [
@@ -85,6 +97,14 @@ for (const [name, file, change, expected] of [
             json.color.transparent.$value = structuredClone(json.spacing.base.$value);
         },
         /DTCG value color\.transparent/,
+    ],
+    [
+        'a hex that disagrees with its components',
+        'primitives.tokens.json',
+        (json) => {
+            json.color.primary['500'].$value.hex = '#112233';
+        },
+        /Colour hex #112233 does not match its components \(#003bf5\).*set the components to \[0\.0666/,
     ],
     [
         'a changed schema version',
