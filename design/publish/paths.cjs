@@ -1,0 +1,45 @@
+'use strict';
+// Shared by the publish scripts: where things are.
+const fs = require('node:fs');
+const path = require('node:path');
+
+const die = (message) => {
+    console.error(message);
+    process.exit(1);
+};
+
+const DESIGN = path.join(__dirname, '..');
+const REPO = path.join(DESIGN, '..');
+// The canvas files: prototypes, their parts, the stylesheets, the layout index and the mock images.
+const CANVAS = path.join(DESIGN, 'canvas');
+// A canvas's record: which canvas it is, the version last published or pulled, and the upload of each image on it
+// (uploads belong to one canvas, so every canvas has a record of its own). `name` is the file name without .json;
+// the reference canvas, the one that mirrors main, is "prototypes".
+//
+// A record is in one place at a time. It starts as a draft in design/.runtime/canvases/, which git ignores, so a
+// canvas that is never saved leaves nothing in git. The first save moves it to design/canvases/, where it is
+// committed with the design.
+const pointerFile = (name = 'prototypes') => {
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) {
+        die(
+            `"${name}" is not a canvas name (lower-case letters, digits and dashes)`,
+        );
+    }
+    const saved = path.join(DESIGN, 'canvases', `${name}.json`);
+    const draft = path.join(DESIGN, '.runtime', 'canvases', `${name}.json`);
+    if (name === 'prototypes') {
+        return saved;
+    }
+    if (fs.existsSync(saved) && fs.existsSync(draft)) {
+        die(
+            `"${name}" has two records, ${path.relative(REPO, saved)} and ${path.relative(REPO, draft)}: they are two canvases, rename the draft`,
+        );
+    }
+    return fs.existsSync(saved) ? saved : draft;
+};
+// Images the prototypes show that belong to the app (chain logos): canvas path → path in the repo.
+const APP_ASSETS = JSON.parse(
+    fs.readFileSync(path.join(DESIGN, 'app-assets.json'), 'utf8'),
+);
+
+module.exports = { APP_ASSETS, CANVAS, REPO, die, pointerFile };

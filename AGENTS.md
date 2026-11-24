@@ -4,11 +4,21 @@ pnpm workspaces + Turborepo monorepo. Node >=24.22.3, pnpm. The main package is 
 
 This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGENTS.md` so Claude Code picks up the same content. Personal/IC-local agent context lives under `.agents/local/` and `.claude/` (both gitignored) and **supplements** — never replaces — what's here.
 
+## Commits from interactive agent sessions
+
+A commit an agent makes for someone is that person's commit: they are its author, and it carries no agent co-author line (`.claude/settings.json` turns Claude Code's off). Commit and push only when they asked for it.
+
+- **Local checkout:** commit with the checkout's own identity and signing, and override neither.
+- **Cloud session:** git is set up as the platform's account (`Claude <noreply@anthropic.com>`), which also signs the commit, and the person's own key is not there. Leave the committer and the signature as they are and name the person as the author: `git commit --author="Name <id+login@users.noreply.github.com>"`, their GitHub noreply address. Ask for it if the session does not know it.
+
+Check before pushing (`git log -1 --format='%an <%ae>'`): a commit whose author is the agent is not pushed. Say so and leave the change uncommitted instead. Keep the original author when applying someone else's commits.
+
 ## Monorepo layout
 
 - `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
 - `packages/*` — workspace libraries. Most are version-only and ship inside their consumers; `@aragon/gov-ui-kit` and `@aragon/aragon-domain` are the exceptions — they are also published to npm for external consumers and own release flows of their own (see Releases). Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
 - The product knowledge base (`aragon/platform-doc`, branch `development`) is not vendored here: `packages/docs-corpus` fetches and filters it at build time for its consumers — the assistant's documentation index (`apps/assistant/README.md`, "Documentation answering") and the public docs site `apps/docs`, served at app.aragon.org/help.
+- `design/` — live prototypes of the app's flows for design work on a claude.ai canvas, driven by the `/aragon-app-canvas` skill (`design/README.md`). Not a workspace: nothing in it is built, released or run in CI.
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
 - CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`, `gov-ui-kit-*.yml`, `aragon-domain-*.yml`). Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 

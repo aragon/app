@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>User wallet dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Connected user" hidden-description="Information about the connected user">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:24px;padding:32px 0 16px">
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<div style="display:flex;align-items:flex-start;justify-content:space-between">
+<x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" ens-name="nadia.eth" size="xl"></x-import>
+<div style="display:flex;gap:8px">
+<x-import component-from-global-scope="GovUiKit.Button" icon-left="PEN" size="md" variant="tertiary" href="#" on-click="{{inert}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.Button" icon-left="LOGOUT" size="md" variant="tertiary" on-click="{{disconnect}}"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="margin:0;font-size:20px;line-height:1.25;font-weight:400;color:var(--color-neutral-800)">nadia.eth</p>
+<x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" class-name="text-base" href="https://etherscan.io/address/0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" is-external="{{yes}}"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full" size="md" variant="tertiary" on-click="{{profile}}">View profile</x-import>
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full" size="md" variant="tertiary" href="Explore.dc.html">My DAOs</x-import>
+<x-import component-from-global-scope="GovUiKit.Button" class-name="w-full" size="md" variant="secondary" icon-left="LOGOUT" on-click="{{disconnect}}">Disconnect</x-import>
+</div>
+</div>
+</x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"on-disconnect":{"editor":null},"on-nav":{"editor":null},"$preview":{"width":480,"height":400}}'>
+// Props: onClose(), onDisconnect() (shell sets wallet back to ''), onNav(target) (View profile -> member page).
+// Mirrors userDialog.tsx. The pen (Aragon profile) is inert in the prototype. Mount only while open.
+class Component extends DCLogic {
+  renderVals() {
+    const close = () => { if (this.props.onClose) this.props.onClose(); };
+    return {
+      yes: true,
+      inert: (e) => { if (e && e.preventDefault) e.preventDefault(); },
+      disconnect: () => { if (this.props.onDisconnect) this.props.onDisconnect(); },
+      profile: () => { close(); if (this.props.onNav) this.props.onNav('member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a'); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) close(); } }
+    };
+  }
+}
+</script>
+</body></html>

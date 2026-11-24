@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Setup body dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{open}}" on-open-change="{{onOpenChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" size="lg" hidden-title="Add voting body" hidden-description="Create a new voting body for your DAO">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Add voting body" on-close="{{onClose}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pb-1.5">
+    <div class="dlg-wizard-form" onKeyDown="{{onEnter}}">
+
+      <sc-if value="{{isSelect}}" hint-placeholder-val="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Governance type" help-text="This determines the governance the body uses to make decisions." value="{{plugin}}" on-value-change="{{onPlugin}}">
+          <x-import component-from-global-scope="GovUiKit.RadioCard" label="Multisig" description="Designated members must reach a minimum threshold" value="multisig"></x-import>
+          <x-import component-from-global-scope="GovUiKit.RadioCard" label="Token voting" description="Majority voting based on token voting power" value="tokenVoting"></x-import>
+          <x-import component-from-global-scope="GovUiKit.RadioCard" label="Lock to vote" description="Temporarily lock ERC-20 tokens to vote, even after a proposal opens." value="lockToVote"></x-import>
+          <sc-if value="{{isSubPlugin}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.RadioCard" label="Any address" description="Add any address as a body, such as a Safe or Governor" value="external"></x-import>
+          </sc-if>
+        </x-import>
+      </sc-if>
+
+      <sc-if value="{{isMetadata}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__fields">
+          <x-import component-from-global-scope="GovUiKit.InputText" label="Body name" max-length="{{d40}}" value="{{meta.name}}" on-change="{{meta.onName}}" on-blur="{{meta.onNameBlur}}" alert="{{meta.nameAlert}}"></x-import>
+          <x-import component-from-global-scope="GovUiKit.TextArea" label="Description" help-text="This is shown on the members list to help visitors understand what the body is responsible for." is-optional="{{yes}}" max-length="{{d480}}" value="{{meta.description}}" on-change="{{meta.onDescription}}"></x-import>
+          <dc-import name="ResourcesInput" vm="{{meta.resourcesVm}}" hint-size="100%,150px"></dc-import>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isExternal}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__external">
+          <x-import component-from-global-scope="GovUiKit.AddressInput" label="Any address" help-text="Add any address as a body, such as a Safe or Governor" chain-id="{{chainId}}" value="{{external.address}}" on-change="{{external.onAddress}}" on-accept="{{external.onAccept}}" on-blur="{{external.onBlur}}" alert="{{external.alert}}"></x-import>
+          <sc-if value="{{external.hasCheck}}" hint-placeholder-val="{{no}}">
+            <dc-import name="TransactionStatus" vm="{{external.check}}" hint-size="100%,120px"></dc-import>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isProposalType}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.RadioGroup" label="Governance type" help-text="This will determine the role this body plays in the stage's governance." value="{{proposalType}}" on-value-change="{{onProposalType}}">
+          <x-import component-from-global-scope="GovUiKit.RadioCard" label="Approval" description="This body is able to approve the proposal to advance this stage." value="approve"></x-import>
+          <x-import component-from-global-scope="GovUiKit.RadioCard" label="Veto" description="This body is able to veto the proposal to prevent it from advancing this stage." value="veto"></x-import>
+        </x-import>
+      </sc-if>
+
+      <sc-if value="{{isMultisigMembership}}" hint-placeholder-val="{{no}}">
+        <div class="addr-list">
+          <x-import component-from-global-scope="GovUiKit.InputContainer" id="members" label="Members" help-text="These addresses will be the only ones able to participate." use-custom-wrapper="{{yes}}" class-name="gap-3">
+            <fieldset class="addr-list__fieldset">
+              <sc-for list="{{multisig.members}}" as="m" hint-placeholder-count="1">
+                <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm addr-item">
+                  <div class="addr-item__inner">
+                    <div class="addr-item__input"><x-import component-from-global-scope="GovUiKit.AddressInput" aria-label="{{m.ariaLabel}}" placeholder="ENS or 0x…" chain-id="{{chainId}}" value="{{m.value}}" on-change="{{m.onChange}}" on-accept="{{m.onAccept}}" on-blur="{{m.onBlur}}" alert="{{m.alert}}"></x-import></div>
+                    <div class="addr-item__remove"><x-import component-from-global-scope="GovUiKit.Button" aria-label="Remove member" icon-left="CLOSE" size="sm" variant="tertiary" disabled="{{m.cannotRemove}}" on-click="{{m.onRemove}}"></x-import></div>
+                  </div>
+                </x-import>
+              </sc-for>
+            </fieldset>
+          </x-import>
+          <div class="addr-list__actions">
+            <x-import component-from-global-scope="GovUiKit.Button" class-name="w-fit" icon-left="PLUS" size="md" variant="secondary" on-click="{{multisig.onAdd}}">Add</x-import>
+            <sc-if value="{{multisig.canClear}}" hint-placeholder-val="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{moreTriggerSm}}" size="md" align="end">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{multisig.onClear}}">Clear all</x-import>
+              </x-import>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isTokenMembership}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__fields">
+          <x-import component-from-global-scope="GovUiKit.InputContainer" id="token" label="ERC-20 token" help-text="You can either create a new ERC-20 token to be used in governance or import an existing one." use-custom-wrapper="{{yes}}">
+            <x-import component-from-global-scope="GovUiKit.RadioGroup" class-name="w-full" value="{{token.type}}" on-value-change="{{token.onType}}">
+              <div class="setup-token-type">
+                <x-import component-from-global-scope="GovUiKit.RadioCard" label="Create new token" value="new"></x-import>
+                <x-import component-from-global-scope="GovUiKit.RadioCard" label="Import token" value="imported"></x-import>
+              </div>
+            </x-import>
+          </x-import>
+          <sc-if value="{{token.isNew}}" hint-placeholder-val="{{yes}}">
+            <div class="setup-body__fields">
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Token name" help-text="This is the full name of the token. For example: Uniswap" max-length="{{d40}}" value="{{token.name}}" on-change="{{token.onName}}" on-blur="{{token.onNameBlur}}" alert="{{token.nameAlert}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputText" label="Token symbol" help-text="This is the abbreviated ticker of the token. For example: UNI" max-length="{{d12}}" value="{{token.symbol}}" on-change="{{token.onSymbol}}" on-blur="{{token.onSymbolBlur}}" alert="{{token.symbolAlert}}"></x-import>
+            <x-import component-from-global-scope="GovUiKit.InputContainer" id="distribute" label="Token recipients" help-text="These addresses will receive newly minted tokens." use-custom-wrapper="{{yes}}">
+              <sc-for list="{{token.recipients}}" as="r" hint-placeholder-count="1">
+                <div class="token-member">
+                  <div class="token-member__fields">
+                    <div class="token-member__address"><x-import component-from-global-scope="GovUiKit.AddressInput" label="Address" placeholder="ENS or 0x…" chain-id="{{chainId}}" value="{{r.address}}" on-change="{{r.onAddress}}" on-accept="{{r.onAccept}}" on-blur="{{r.onAddressBlur}}" alert="{{r.addressAlert}}"></x-import></div>
+                    <div class="token-member__amount"><x-import component-from-global-scope="GovUiKit.InputNumber" label="Tokens" min="{{zero}}" value="{{r.amount}}" on-change="{{r.onAmount}}" on-blur="{{r.onAmountBlur}}" alert="{{r.amountAlert}}"></x-import></div>
+                  </div>
+                  <sc-if value="{{r.canRemove}}" hint-placeholder-val="{{no}}">
+                    <div class="{{r.removeClass}}">
+                      <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{dotsTrigger}}" size="md">
+                        <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{r.onRemove}}">Remove</x-import>
+                      </x-import>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </x-import>
+            <div class="addr-list__actions"><x-import component-from-global-scope="GovUiKit.Button" icon-left="PLUS" size="md" variant="secondary" on-click="{{token.onAddRecipient}}">Add</x-import></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{token.isImported}}" hint-placeholder-val="{{no}}">
+            <div class="setup-body__fields">
+            <div class="setup-body__import">
+              <x-import component-from-global-scope="GovUiKit.AddressInput" label="Token address" help-text="The address must be an ERC-20 token contract deployed on the same chain as your DAO." chain-id="{{chainId}}" value="{{token.address}}" on-change="{{token.onAddress}}" on-accept="{{token.onAccept}}" on-blur="{{token.onAddressBlur}}" alert="{{token.addressAlert}}"></x-import>
+              <sc-if value="{{token.hasChecks}}" hint-placeholder-val="{{no}}">
+                <dc-import name="TransactionStatus" vm="{{token.checks}}" hint-size="100%,180px"></dc-import>
+              </sc-if>
+            </div>
+            <sc-if value="{{token.hasImportAlert}}" hint-placeholder-val="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{token.importAlert.message}}" variant="{{token.importAlert.variant}}">
+                <div class="setup-body__alert">
+                  <div class="setup-body__alert-text">
+                    <p>{{token.importAlert.description1}}</p>
+                    <sc-if value="{{token.importAlert.hasDescription2}}" hint-placeholder-val="{{no}}"><p>{{token.importAlert.description2}}</p></sc-if>
+                  </div>
+                  <x-import component-from-global-scope="GovUiKit.Link" href="#" is-external="{{yes}}" variant="neutral">Learn more</x-import>
+                </div>
+              </x-import>
+            </sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isLockMembership}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__import">
+          <x-import component-from-global-scope="GovUiKit.AddressInput" label="Token address" help-text="The address must be an ERC-20 token contract deployed on the same chain as your DAO." chain-id="{{chainId}}" value="{{lock.address}}" on-change="{{lock.onAddress}}" on-accept="{{lock.onAccept}}" on-blur="{{lock.onAddressBlur}}" alert="{{lock.addressAlert}}"></x-import>
+          <sc-if value="{{lock.hasChecks}}" hint-placeholder-val="{{no}}">
+            <dc-import name="TransactionStatus" vm="{{lock.checks}}" hint-size="100%,100px"></dc-import>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isMultisigGovernance}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__fields setup-body__fields--wide">
+          <dc-import name="CreateProcessFlowNumberInput" vm="{{gov.threshold}}" hint-size="100%,200px"></dc-import>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isTokenGovernance}}" hint-placeholder-val="{{no}}">
+        <div class="setup-body__governance">
+          <dc-import name="CreateProcessFlowNumberInput" vm="{{gov.support}}" hint-size="100%,220px"></dc-import>
+          <dc-import name="CreateProcessFlowNumberInput" vm="{{gov.participation}}" hint-size="100%,200px"></dc-import>
+          <sc-if value="{{gov.hasDuration}}" hint-placeholder-val="{{yes}}">
+            <x-import component-from-global-scope="GovUiKit.InputContainer" class-name="flex flex-col gap-6" id="minDuration" label="{{gov.durationLabel}}" help-text="{{gov.durationHelp}}" use-custom-wrapper="{{yes}}">
+              <dc-import name="CreateProcessFlowDuration" vm="{{gov.duration}}" hint-size="100%,260px"></dc-import>
+            </x-import>
+          </sc-if>
+          <sc-if value="{{gov.hasEarly}}" hint-placeholder-val="{{yes}}">
+            <x-import component-from-global-scope="GovUiKit.Switch" label="Early execution" help-text="Allows a proposal to be executed before the voting period ends. This is only possible if the proposal meets the support threshold, satisfies the minimum participation, and can’t be overturned by remaining voters." inline-label="Enabled" checked="{{gov.early}}" disabled="{{gov.earlyDisabled}}" on-checked-changed="{{gov.onEarly}}"></x-import>
+          </sc-if>
+          <x-import component-from-global-scope="GovUiKit.Switch" label="Vote change" help-text="Allows voters to change their vote during the voting period. This prevents the body from giving early approval or veto." inline-label="Enabled" checked="{{gov.voteChange}}" disabled="{{gov.voteChangeDisabled}}" on-checked-changed="{{gov.onVoteChange}}"></x-import>
+        </div>
+      </sc-if>
+
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}" variant="wizard" has-error="{{hasError}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// SETUP_BODY dialog (apps/app: modules/createDao/dialogs/setupBodyDialog/*: setupBodyDialog.tsx, setupBodyDialogSteps.tsx, setupBodyDialogSelect,
+// setupBodyDialogMetadata, setupBodySialogExternalAddress, setupBodyProposalTypeField; plugins/{multisig,token,lockToVote}Plugin/components/
+// *SetupMembership / *SetupGovernance). A WizardDialog: header, one step body, footer (Back/Close left, Next/Save right).
+// One source for the static screen DialogAddVotingBody and the CreateProcessFlow flow. Draws only the kit dialog (portaled over the page).
+// Props: vm = {
+//   open, screen: 'select'|'metadata'|'external'|'proposalType'|'membership'|'governance', plugin: 'multisig'|'tokenVoting'|'lockToVote'|'external',
+//   isSubPlugin (stage body: adds "Any address"), hasPrevious (secondary = Back, else Close), primaryLabel ('Next' | 'Save'), hasError,
+//   onPrimary, onSecondary, onClose, onOpenChange, onPlugin(value),
+//   meta { name, nameAlert, onName, onNameBlur, description, onDescription, resourcesVm },
+//   external { address, alert, onAddress, onAccept, onBlur, check: TransactionStatus vm | null },
+//   proposalType 'approve'|'veto', onProposalType(value),
+//   multisig { members: [{ value, alert, onChange, onAccept, onBlur, onRemove, cannotRemove, ariaLabel }], onAdd, canClear, onClear },
+//   token { type 'new'|'imported', onType, name/symbol (+Alert, onName, onNameBlur, onSymbol, onSymbolBlur), recipients [{ address, addressAlert, onAddress,
+//     onAccept, onAddressBlur, amount, amountAlert, onAmount, onAmountBlur, canRemove, onRemove }], onAddRecipient,
+//     address, addressAlert, onAddress, onAccept, onAddressBlur, checks (TransactionStatus vm), importAlert { message, variant, description1, description2 } },
+//   lock { address, addressAlert, onAddress, onAccept, onAddressBlur, checks },
+//   gov { threshold | support, participation, duration, durationLabel, durationHelp, early, onEarly, voteChange, onVoteChange, ... } }.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const R = window.React, G = window.GovUiKit;
+    const noop = () => undefined;
+    const screen = vm.screen || 'select';
+    const plugin = vm.plugin || 'multisig';
+    const token = vm.token ? { ...vm.token, isNew: vm.token.type !== 'imported', isImported: vm.token.type === 'imported',
+      hasChecks: !!vm.token.checks, hasImportAlert: !!vm.token.importAlert,
+      importAlert: vm.token.importAlert ? { ...vm.token.importAlert, hasDescription2: !!vm.token.importAlert.description2 } : {},
+      recipients: (vm.token.recipients || []).map((r) => ({ ...r, removeClass: 'token-member__remove' + ((r.addressAlert || r.amountAlert) ? ' token-member__remove--center' : '') })) } : {};
+    const gov = vm.gov || {};
+    const isMembership = screen === 'membership', isGovernance = screen === 'governance';
+    return { yes: true, no: false, zero: 0, d40: 40, d12: 12, d480: 480, chainId: 1,
+      open: vm.open !== false, onOpenChange: (o) => { if (!o && vm.onClose) vm.onClose(); }, onClose: vm.onClose || noop, noFocus: (e) => e.preventDefault(),
+      isSubPlugin: !!vm.isSubPlugin, plugin, onPlugin: vm.onPlugin || noop,
+      isSelect: screen === 'select', isMetadata: screen === 'metadata', isExternal: screen === 'external', isProposalType: screen === 'proposalType',
+      isMultisigMembership: isMembership && plugin === 'multisig', isTokenMembership: isMembership && plugin === 'tokenVoting', isLockMembership: isMembership && plugin === 'lockToVote',
+      isMultisigGovernance: isGovernance && plugin === 'multisig', isTokenGovernance: isGovernance && plugin !== 'multisig',
+      meta: vm.meta || {}, external: vm.external ? { ...vm.external, hasCheck: !!vm.external.check } : {}, proposalType: vm.proposalType || 'approve', onProposalType: vm.onProposalType || noop,
+      multisig: vm.multisig || {}, token, lock: vm.lock ? { ...vm.lock, hasChecks: !!vm.lock.checks } : {},
+      gov: { ...gov, hasDuration: !!gov.duration, hasEarly: gov.onEarly != null },
+      moreTriggerSm: R.createElement(G.Button, { iconRight: 'DOTS_VERTICAL', size: 'md', variant: 'tertiary' }, 'More'),
+      dotsTrigger: R.createElement(G.Button, { className: 'shrink-0', iconLeft: 'DOTS_VERTICAL', variant: 'tertiary' }),
+      hasError: !!vm.hasError,
+      onEnter: (e) => { if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT' && vm.onPrimary) { e.preventDefault(); vm.onPrimary(); } },
+      primary: { label: vm.primaryLabel || 'Next', onClick: vm.onPrimary || noop, type: 'button' },
+      secondary: { label: vm.hasPrevious ? 'Back' : 'Close', onClick: vm.onSecondary || noop } };
+  }
+}
+</script>
+</body>
+</html>

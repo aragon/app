@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Transaction status</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<ul class="tx-steps">
+  <sc-if value="{{hasTitle}}" hint-placeholder-val="{{yes}}">
+    <div class="tx-steps__info"><x-import component-from-global-scope="GovUiKit.Heading" size="h4">{{title}}</x-import></div>
+  </sc-if>
+  <sc-for list="{{steps}}" as="step" hint-placeholder-count="1">
+    <li class="tx-step">
+      <div class="tx-step__main">
+        <sc-if value="{{step.isSpinner}}" hint-placeholder-val="{{no}}"><div class="tx-step__spinner"><x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="{{step.spinnerVariant}}" is-loading="{{step.isPending}}"></x-import></div></sc-if>
+        <sc-if value="{{step.isWarning}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WARNING" size="sm" variant="warning"></x-import></sc-if>
+        <sc-if value="{{step.isError}}" hint-placeholder-val="{{no}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CRITICAL" size="sm" variant="critical"></x-import></sc-if>
+        <sc-if value="{{step.isSuccess}}" hint-placeholder-val="{{yes}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="success"></x-import></sc-if>
+        <p class="{{step.labelClass}}">{{step.label}}</p>
+      </div>
+    </li>
+  </sc-for>
+</ul>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
+// TransactionStatus.Container + Step of the app (apps/app: shared/components/transactionStatus/*), used as a check list in the
+// setup-body dialog (address type check) and the import-token membership (token checks). Rules `.tx-steps*` in app.css.
+// Props: vm = { title (truncated address; omit for no header), steps: [{ label, state: 'pending'|'idle'|'success'|'warning'|'error' }] }.
+class Component extends DCLogic {
+  renderVals() {
+    const vm = this.props.vm || {};
+    const steps = (vm.steps || []).map((s) => ({ ...s,
+      isSpinner: s.state === 'pending' || s.state === 'idle', isPending: s.state === 'pending', spinnerVariant: s.state === 'pending' ? 'primary' : 'neutral',
+      isWarning: s.state === 'warning', isError: s.state === 'error', isSuccess: s.state === 'success',
+      labelClass: 'tx-step__label tx-step__label--' + s.state }));
+    return { yes: true, no: false, hasTitle: !!vm.title, title: vm.title, steps };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal describe step</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Describe proposal</x-import>
+    <p class="wizard-step__description">Describe the proposal so voters have the information they need to understand it and make a decision.</p>
+  </div>
+  <div class="wizard-fields">
+    <x-import component-from-global-scope="GovUiKit.InputText" label="Proposal title" max-length="{{d128}}" value="{{title}}" alert="{{titleAlert}}" on-change="{{changeTitle}}" on-blur="{{blurTitle}}"></x-import>
+    <x-import component-from-global-scope="GovUiKit.TextArea" label="Summary" help-text="This is shown at the top of the proposal page and on the proposal list so anyone can quickly understand what it's about." is-optional="{{yes}}" max-length="{{d480}}" value="{{summary}}" on-change="{{changeSummary}}"></x-import>
+    <div class="{{bodyClass}}"><x-import component-from-global-scope="GovUiKit.TextAreaRichText" label="Body" help-text="This is the full proposal text that is viewable only on the proposal details page." is-optional="{{yes}}" value="{{body}}" on-change="{{changeBody}}"></x-import></div>
+    <div class="resources-input">
+      <x-import component-from-global-scope="GovUiKit.InputContainer" id="resourcesInput" label="Resources" is-optional="{{yes}}" help-text="These are shown as links on the proposal page. They can be used to help members understand the proposal." use-custom-wrapper="{{yes}}"></x-import>
+      <sc-if value="{{hasResources}}" hint-placeholder-val="{{no}}">
+        <div class="resources-input__list">
+          <sc-for list="{{resources}}" as="res">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm resources-input__item">
+              <x-import component-from-global-scope="GovUiKit.InputText" label="URL" placeholder="https://" value="{{res.url}}" alert="{{res.urlAlert}}" on-change="{{res.changeUrl}}" on-blur="{{res.blurUrl}}"></x-import>
+              <x-import component-from-global-scope="GovUiKit.InputText" label="Link text" is-optional="{{yes}}" max-length="{{d40}}" placeholder="{{res.namePlaceholder}}" value="{{res.name}}" on-change="{{res.changeName}}"></x-import>
+              <div class="resources-input__menu">
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" custom-trigger="{{res.trigger}}" constrain-content-width="{{no}}" size="md">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" on-click="{{res.remove}}">Remove resource</x-import>
+                </x-import>
+              </div>
+            </x-import>
+          </sc-for>
+        </div>
+      </sc-if>
+      <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="PLUS" class-name="w-fit" on-click="{{addResource}}">Add</x-import>
+    </div>
+    <x-import component-from-global-scope="GovUiKit.Switch" label="Add actions" help-text="Actions are onchain transactions that can be executed if the proposal passes." inline-label="Yes" checked="{{addActions}}" on-checked-changed="{{changeAddActions}}"></x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"title":{"editor":null},"summary":{"editor":null},"body":{"editor":null},"bodyFocused":{"editor":null},"titleAlert":{"editor":null},"resources":{"editor":null},"addActions":{"editor":null},"onTitle":{"editor":null},"onTitleBlur":{"editor":null},"onSummary":{"editor":null},"onBody":{"editor":null},"onAddResource":{"editor":null},"onResourceUrl":{"editor":null},"onResourceUrlBlur":{"editor":null},"onResourceName":{"editor":null},"onRemoveResource":{"editor":null},"onAddActions":{"editor":null},"$preview":{"width":1216,"height":1500}}'>
+// Step 1 body of the create-proposal wizard, "Describe proposal" (apps/app: modules/governance/components/createProposalForm/
+// createProposalFormMetadata, shared/components/forms/resourcesInput). The .wizard-step__content block: heading, description, fields.
+//   <dc-import name="CreateProposalFlowMetadata" title="…" summary="…" body="<p>…</p>" resources="{{list}}" add-actions="{{yes}}"
+//     title-alert="{{alert}}" on-title="{{fn}}" … hint-size="100%,1400px"></dc-import>
+// Props (all optional; no callbacks = a static drawing):
+//   title, summary   strings.   body: HTML string of the rich-text editor.   bodyFocused: boolean, draws the editor focused.
+//   titleAlert       { message, variant: 'critical' } shown under the title.
+//   resources        [{ url, name, urlAlert }] resource cards ({message, variant} alert for the URL).
+//   addActions       boolean, the "Add actions" switch (default true).
+//   onTitle(v) onTitleBlur() onSummary(v) onBody(html) onAddResource() onResourceUrl(i, v) onResourceUrlBlur(i)
+//   onResourceName(i, v) onRemoveResource(i) onAddActions(bool)   callbacks of the state owner.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, h = React.createElement, K = GovUiKit;
+    const call = (fn, ...a) => (fn ? fn(...a) : undefined);
+    const resources = (p.resources || []).map((r, i) => ({
+      url: r.url ?? '', name: r.name ?? '', urlAlert: r.urlAlert,
+      namePlaceholder: r.url ? r.url : undefined,
+      changeUrl: (e) => call(p.onResourceUrl, i, e.target.value),
+      blurUrl: () => call(p.onResourceUrlBlur, i),
+      changeName: (e) => call(p.onResourceName, i, e.target.value),
+      remove: () => call(p.onRemoveResource, i),
+      trigger: h(K.Button, { iconLeft: 'DOTS_VERTICAL', size: 'lg', variant: 'tertiary', 'aria-label': 'Options' }),
+    }));
+    return {
+      yes: true, no: false, d128: 128, d480: 480, d40: 40,
+      title: p.title ?? '', summary: p.summary ?? '', body: p.body ?? '',
+      titleAlert: p.titleAlert,
+      bodyClass: p.bodyFocused ? 'rich-text rich-text--focused' : 'rich-text',
+      resources, hasResources: resources.length > 0,
+      addActions: p.addActions !== false,
+      changeTitle: (e) => call(p.onTitle, e.target.value),
+      blurTitle: () => call(p.onTitleBlur),
+      changeSummary: (e) => call(p.onSummary, e.target.value),
+      changeBody: (v) => call(p.onBody, v),
+      addResource: () => call(p.onAddResource),
+      changeAddActions: (v) => call(p.onAddActions, v),
+    };
+  }
+}
+</script>
+</body>
+</html>
