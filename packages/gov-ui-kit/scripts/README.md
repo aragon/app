@@ -80,9 +80,3 @@ classes can sit on one element) and `lib/primitive-colors-lint.mjs` (the lint pa
 the findings report) are also used by the app's semantic colour map and colour lint (`apps/app/scripts/semanticColors`).
 A change here is checked by both `pnpm tokens:semantic:map:check` / `pnpm lint:colors:check` in the kit and
 `pnpm --filter @aragon/app colors:map:check` / `lint:colors:check` in the app.
-
-## App screenshot baseline (`app-baseline/`)
-
-The app-side counterpart of `visual-diff`: a patch for the app screenshot check of the `docs/design-canvas` branch
-(121 screenshots of the real app on a mock backend, production build) and `recheck.sh`, which captures a checkout and
-compares it with a saved capture at zero tolerance. Not run in CI. See `app-baseline/README.md`.

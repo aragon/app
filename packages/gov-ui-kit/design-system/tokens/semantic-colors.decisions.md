@@ -156,7 +156,7 @@ sources of `apps/app/src`, `packages/assistant-chat/src` and `apps/docs/src`, wi
 and its validator `apps/app/scripts/semanticColors/validate-app-map.mjs` (real Tailwind compiles of the app's and the
 docs' stylesheet entries). Default theme: `validate-app-map` ok before and after applying; the override audit of P-37
 against `623561ab1`: 117 colour-class usages on kit components, 0 flipped, 0 changed values; the app screenshot
-baseline (`recheck.sh`, production build on mock data): 121 compared, 0 differ.
+baseline (production build on mock data; that tooling lives outside the repo): 121 compared, 0 differ.
 
 | ID | Decision | Why | Alternative |
 | --- | --- | --- | --- |
