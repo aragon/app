@@ -98,9 +98,8 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
         { enabled: isRegistryReady, retry: false },
     );
 
-    // The user who just created this workspace enters it here: greet them once. The flag stays pending until they
-    // acknowledge the dialog, so closing the tab mid-dialog owes it again; returning to the workspace or creating
-    // another one shows nothing, and the demo is never greeted.
+    // The user who just created this workspace enters it here: greet them once. Returning to the workspace or
+    // creating another one shows nothing, and the demo is never greeted.
     const hasOpenedWelcomeRef = useRef(false);
 
     useEffect(() => {
@@ -117,11 +116,9 @@ export const LayoutWorkspaceContent: React.FC<ILayoutWorkspaceContentProps> = (
         }
 
         hasOpenedWelcomeRef.current = true;
-        // The no-op `onClose` keeps Escape from dismissing it: acknowledging is the only way out.
-        open(WorkspaceDialogId.WORKSPACE_WELCOME, {
-            disableOutsideClick: true,
-            onClose: () => undefined,
-        });
+        // Seen once shown, as every way out of the dialog dismisses it.
+        workspaceWelcomeUtils.markWelcomeSeen();
+        open(WorkspaceDialogId.WELCOME);
     }, [isRegistryReady, isDemoWorkspace, open]);
     const hasNavigation =
         status === 'success' ||

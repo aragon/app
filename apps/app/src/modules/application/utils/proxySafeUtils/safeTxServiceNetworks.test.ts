@@ -27,6 +27,18 @@ describe('safeTxServiceNetworks', () => {
             );
         });
 
+        it('uses the Safe app short name where it differs from the transaction service one', () => {
+            // Polygon is served at `/pol` by the transaction service, but its Safe `shortName` is `matic`.
+            expect(
+                safeAppAccountUrl({
+                    network: Network.POLYGON_MAINNET,
+                    address: '0xd84C233A7D1578021d21E39785439bEdDB165F3D',
+                }),
+            ).toEqual(
+                'https://app.safe.global/home?safe=matic:0xd84C233A7D1578021d21E39785439bEdDB165F3D',
+            );
+        });
+
         it('returns no link for a network Safe does not serve', () => {
             // Better to state the Safe without a link than to send someone to a page that cannot
             // resolve it.

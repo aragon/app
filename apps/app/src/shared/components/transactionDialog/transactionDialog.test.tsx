@@ -32,6 +32,7 @@ import {
 } from '@/shared/utils/pendingTransactionManager';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
+import type { TransactionStatusState } from '../transactionStatus';
 import { TransactionDialog } from './transactionDialog';
 import {
     type ITransactionDialogCustomProps,
@@ -45,13 +46,29 @@ import { transactionDialogUtils } from './transactionDialogUtils';
 jest.mock('./transactionDialogFooter', () => ({
     TransactionDialogFooter: ({
         activeStep,
+        dialogId,
+        disableCancel,
+        onProceedAnyway,
     }: {
         activeStep?: ITransactionDialogStep<string>;
+        dialogId?: string;
+        disableCancel?: boolean;
+        onProceedAnyway?: () => void;
     }) => {
         const action = activeStep?.meta.action;
         const label = activeStep?.meta.label;
         return (
-            <div data-testid="footer-mock">
+            <div data-dialog-id={dialogId} data-testid="footer-mock">
+                <button disabled={disableCancel} type="button">
+                    cancel
+                </button>
+                {onProceedAnyway != null && (
+                    <button
+                        data-testid="footer-proceed-anyway"
+                        onClick={onProceedAnyway}
+                        type="button"
+                    />
+                )}
                 <span data-testid="footer-active-step">
                     {activeStep?.id ?? ''}
                 </span>
@@ -277,6 +294,18 @@ describe('<TransactionDialog /> component', () => {
         expect(screen.getByText(description)).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
         expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
+    });
+
+    it('forwards its dialog id and proceed-anyway callback to the footer', () => {
+        const onProceedAnyway = jest.fn();
+        render(createTestComponent({ dialogId: 'DIALOG', onProceedAnyway }));
+
+        expect(screen.getByTestId('footer-mock')).toHaveAttribute(
+            'data-dialog-id',
+            'DIALOG',
+        );
+        fireEvent.click(screen.getByTestId('footer-proceed-anyway'));
+        expect(onProceedAnyway).toHaveBeenCalled();
     });
 
     it('renders the transaction steps', () => {
@@ -659,6 +688,171 @@ describe('<TransactionDialog /> component', () => {
         rerender(renderDialog(false));
         onClose?.();
         expect(onDismiss).toHaveBeenCalledTimes(1);
+        useDialogContextSpy.mockRestore();
+    });
+
+    it('ignores root dismissal of a preventCloseWhileBusy managed dialog while its cancel is disabled and closes only itself otherwise', () => {
+        const updateOptions = jest.fn();
+        const close = jest.fn();
+        const useDialogContextSpy = jest
+            .spyOn(DialogProviderModule, 'useDialogContext')
+            .mockReturnValue(generateDialogContext({ updateOptions, close }));
+        const buildStepper = (state: TransactionStatusState) =>
+            generateStepperResult<ITransactionDialogStepMeta, string>({
+                steps: [
+                    {
+                        id: TransactionDialogStep.INDEXING,
+                        order: 0,
+                        meta: { label: 'indexing', state },
+                    },
+                ],
+                activeStep: TransactionDialogStep.INDEXING,
+                activeStepIndex: 0,
+            });
+
+        const { rerender } = render(
+            createTestComponent({
+                dialogId: 'OWN',
+                preventCloseWhileBusy: true,
+                stepper: buildStepper('pending'),
+            }),
+        );
+        const onClose = (
+            updateOptions.mock.calls[0]?.[0] as
+                | { onClose?: () => void }
+                | undefined
+        )?.onClose;
+        expect(onClose).toEqual(expect.any(Function));
+        act(() => onClose?.());
+        expect(close).not.toHaveBeenCalled();
+
+        rerender(
+            createTestComponent({
+                dialogId: 'OWN',
+                preventCloseWhileBusy: true,
+                stepper: buildStepper('error'),
+            }),
+        );
+        act(() => onClose?.());
+        expect(close).toHaveBeenCalledWith('OWN');
+        useDialogContextSpy.mockRestore();
+    });
+
+    it('ignores root dismissal of a preventCloseWhileBusy managed dialog while the wallet prompt is open', () => {
+        const updateOptions = jest.fn();
+        const close = jest.fn();
+        const useDialogContextSpy = jest
+            .spyOn(DialogProviderModule, 'useDialogContext')
+            .mockReturnValue(generateDialogContext({ updateOptions, close }));
+        const buildStepper = (state: TransactionStatusState) =>
+            generateStepperResult<ITransactionDialogStepMeta, string>({
+                steps: [
+                    {
+                        id: TransactionDialogStep.APPROVE,
+                        order: 0,
+                        meta: { label: 'approve', state },
+                    },
+                ],
+                activeStep: TransactionDialogStep.APPROVE,
+                activeStepIndex: 0,
+            });
+
+        const { rerender } = render(
+            createTestComponent({
+                dialogId: 'OWN',
+                preventCloseWhileBusy: true,
+                stepper: buildStepper('pending'),
+            }),
+        );
+        const onClose = (
+            updateOptions.mock.calls[0]?.[0] as
+                | { onClose?: () => void }
+                | undefined
+        )?.onClose;
+        act(() => onClose?.());
+        expect(close).not.toHaveBeenCalled();
+
+        // A rejected request leaves the prompt, so Escape closes again.
+        rerender(
+            createTestComponent({
+                dialogId: 'OWN',
+                preventCloseWhileBusy: true,
+                stepper: buildStepper('error'),
+            }),
+        );
+        act(() => onClose?.());
+        expect(close).toHaveBeenCalledWith('OWN');
+        useDialogContextSpy.mockRestore();
+    });
+
+    it.each([
+        { preventCloseWhileBusy: true, isDisabled: true },
+        { preventCloseWhileBusy: false, isDisabled: false },
+    ])(
+        'disables cancel while the wallet prompt is open only with preventCloseWhileBusy ($preventCloseWhileBusy)',
+        ({ preventCloseWhileBusy, isDisabled }) => {
+            render(
+                createTestComponent({
+                    preventCloseWhileBusy,
+                    stepper: generateStepperResult<
+                        ITransactionDialogStepMeta,
+                        string
+                    >({
+                        steps: [
+                            {
+                                id: TransactionDialogStep.APPROVE,
+                                order: 0,
+                                meta: { label: 'approve', state: 'pending' },
+                            },
+                        ],
+                        activeStep: TransactionDialogStep.APPROVE,
+                        activeStepIndex: 0,
+                    }),
+                }),
+            );
+
+            expect(
+                screen.getByRole('button', { name: 'cancel' }),
+            ).toHaveProperty('disabled', isDisabled);
+        },
+    );
+
+    it('ignores root dismissal of a preventCloseWhileBusy managed dialog while disableCancel is set', () => {
+        const updateOptions = jest.fn();
+        const close = jest.fn();
+        const useDialogContextSpy = jest
+            .spyOn(DialogProviderModule, 'useDialogContext')
+            .mockReturnValue(generateDialogContext({ updateOptions, close }));
+
+        render(
+            createTestComponent({
+                disableCancel: true,
+                preventCloseWhileBusy: true,
+            }),
+        );
+        const onClose = (
+            updateOptions.mock.calls[0]?.[0] as
+                | { onClose?: () => void }
+                | undefined
+        )?.onClose;
+        expect(onClose).toEqual(expect.any(Function));
+        act(() => onClose?.());
+
+        expect(close).not.toHaveBeenCalled();
+        useDialogContextSpy.mockRestore();
+    });
+
+    it('leaves root dismissal of a managed dialog to the dialog root without preventCloseWhileBusy', () => {
+        const updateOptions = jest.fn();
+        const useDialogContextSpy = jest
+            .spyOn(DialogProviderModule, 'useDialogContext')
+            .mockReturnValue(generateDialogContext({ updateOptions }));
+
+        render(createTestComponent());
+
+        expect(updateOptions).toHaveBeenCalledWith({
+            disableOutsideClick: true,
+        });
         useDialogContextSpy.mockRestore();
     });
 

@@ -1,6 +1,6 @@
 /**
  * First-run state of the welcome dialog, per browser: `pending` while the dialog is owed to a user who just created
- * a workspace, `seen` once they have acknowledged it. An absent key means neither, so users who already hold a
+ * a workspace, `seen` once it has been shown. An absent key means neither, so users who already hold a
  * workspace are never greeted: only creating a workspace owes the welcome.
  *
  * Workspaces themselves live in this browser's storage (see `workspaceStorageKey`), so the first-run state is kept
@@ -10,8 +10,8 @@
 type WelcomeState = 'pending' | 'seen';
 
 /**
- * Tracks the one-off welcome owed to the user who created a workspace. Creating marks it pending; acknowledging the
- * dialog marks it seen, so a dialog closed without acknowledgement stays owed.
+ * Tracks the one-off welcome owed to the user who created a workspace. Creating marks it pending; showing the
+ * dialog marks it seen.
  */
 class WorkspaceWelcomeUtils {
     private welcomeStorageKey = 'aragon-ftue-workspace-welcome';
@@ -27,7 +27,7 @@ class WorkspaceWelcomeUtils {
     };
 
     /**
-     * Records that the user has acknowledged the welcome, so it is never shown again.
+     * Records that the welcome was shown, so it is never shown again.
      */
     markWelcomeSeen = () => this.writeState('seen');
 

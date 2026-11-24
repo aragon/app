@@ -96,7 +96,7 @@ describe('<SafeSettingsDetails /> component', () => {
                 typeof safeServiceApi.useSafeInfo
             >,
         );
-        render(createTestComponent({ network: Network.BASE_SEPOLIA }));
+        render(createTestComponent({ network: Network.POLYGON_AMOY }));
 
         expect(useSafeInfoSpy).toHaveBeenCalledWith(expect.anything(), {
             enabled: false,

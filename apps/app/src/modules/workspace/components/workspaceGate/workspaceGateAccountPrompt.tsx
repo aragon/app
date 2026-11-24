@@ -18,7 +18,7 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     defaultWorkspaceName,
     type IWorkspace,
-    useGetOrCreateDefaultWorkspace,
+    useCreateDefaultWorkspace,
     useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
@@ -109,13 +109,13 @@ export const WorkspaceGateAccountPrompt: React.FC<
         mutate: createDefaultWorkspace,
         isPending: isCreating,
         error: createError,
-    } = useGetOrCreateDefaultWorkspace({
+    } = useCreateDefaultWorkspace({
         onSuccess: handleDefaultWorkspaceCreated,
     });
 
     const handleConfirm = () => {
         if (activeId === pendingDefaultWorkspaceId) {
-            createDefaultWorkspace();
+            createDefaultWorkspace([]);
         } else if (activeId != null) {
             openInWorkspace(activeId);
         }

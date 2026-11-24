@@ -774,7 +774,6 @@
           "title": "Your team’s onchain finances, in one place"
         },
         "legal": "Legal",
-        "openingWorkspace": "Opening your workspace…",
         "privacy": "Privacy",
         "signIn": {
           "comingSoon": "coming soon",
@@ -3578,7 +3577,7 @@
             "description": "To delegate to this address, confirm the onchain transaction in your wallet.",
             "title": "Delegate"
           },
-          "info": "Delegating increases the voting power of the address above by your balance. If you delegate to someone else, you can't vote until you reclaim your voting power.",
+          "info": "Delegating increases the voting power of the address above by your balance.",
           "selection": {
             "label": "Who would you like to delegate to?",
             "option": {
@@ -3865,6 +3864,13 @@
       }
     },
     "safe": {
+      "safeDeployTransactionDialog": {
+        "addressError": "Unable to read the deployed Safe address. Try again.",
+        "title": "Deploy Safe Account",
+        "description": "To deploy the account, confirm the onchain transaction in your wallet.",
+        "submit": "Deploy Safe Account",
+        "success": "Done"
+      },
       "safeAccountPage": {
         "aside": {
           "details": {
@@ -4334,6 +4340,7 @@
         },
         "section": {
           "actions": "Authorized actions",
+          "actionsAuthorizedBy": "These actions are authorized by",
           "creationEligibility": "Proposal creation eligibility",
           "details": "Details",
           "governanceProcess": "Governance process"
@@ -4771,9 +4778,6 @@
       "layoutWizardCreateWorkspace": {
         "name": "Create workspace"
       },
-      "layoutWizardEditWorkspace": {
-        "name": "Edit workspace"
-      },
       "publishWorkspaceDialog": {
         "button": {
           "retry": "Try again",
@@ -4788,16 +4792,7 @@
           "success": "Workspace created",
           "title": "Create workspace"
         },
-        "summary": "{{accounts}} accounts · {{targets}} targets",
-        "update": {
-          "error": {
-            "description": "The changes could not be saved. Check your connection and try again.",
-            "title": "Unable to save the workspace"
-          },
-          "submit": "Save changes",
-          "success": "Workspace updated",
-          "title": "Save workspace"
-        }
+        "summary": "{{accounts}} accounts · {{targets}} targets"
       },
       "workspaceAccountAvatar": {
         "safe": "Safe"
@@ -4905,7 +4900,27 @@
         "error": {
           "description": "Something went wrong while opening your workspace. Please try again later.",
           "title": "Workspace failed to open"
-        }
+        },
+        "opening": "Opening your workspace…"
+      },
+      "workspaceGettingStarted": {
+        "name": "Getting started",
+        "title": "Add accounts",
+        "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
+        "action": {
+          "createAccount": "Create a new account",
+          "later": "Add accounts later",
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts"
+        },
+        "emptyState": {
+          "heading": "No Safes or Aragon DAOs found",
+          "description": "This wallet didn’t create and isn’t a signer or member of an account on the networks we checked.",
+          "addByAddress": "Add account by address"
+        },
+        "error": "Unable to create your workspace. Try again.",
+        "scanning": "Scanning {{count}} networks, {{found}} found so far"
       },
       "workspaceMemberList": {
         "emptyState": {
@@ -5042,26 +5057,6 @@
         "import": "Import workspace",
         "importError": "This file is not a valid workspace export."
       },
-      "workspaceEditPage": {
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Add or remove the accounts belonging to this workspace. Each one is identified by its network and address.",
-            "name": "Edit accounts",
-            "title": "Edit accounts"
-          },
-          "METADATA": {
-            "description": "Update how your workspace is described to visitors.",
-            "name": "Edit details",
-            "title": "Edit details"
-          },
-          "TARGETS": {
-            "description": "Add or remove the addresses this workspace relates to. This step is optional and can be left empty.",
-            "name": "Edit targets",
-            "title": "Edit targets"
-          }
-        },
-        "submitLabel": "Save changes"
-      },
       "workspaceSafeDashboardPage": {
         "main": {
           "assets": {
@@ -5171,36 +5166,6 @@
         "error": "The demo workspace could not be installed. Reload the page to try again.",
         "settingUp": "Setting up your Aragon demo workspace…"
       },
-      "gettingStartedPage": {
-        "name": "Getting started",
-        "steps": {
-          "ACCOUNTS": {
-            "description": "Choose the accounts you want to include in your workspace. You can add or remove them anytime.",
-            "name": "Add accounts",
-            "title": "Add accounts"
-          }
-        },
-        "submitLabel": "Add accounts",
-        "addAccountsLater": "Add accounts later"
-      },
-      "workspaceWelcomeDialog": {
-        "action": {
-          "openWorkspace": "Open workspace"
-        },
-        "description": "Your accounts are now available from one place.",
-        "feature": {
-          "track": {
-            "description": "Check your transactions to see what’s still waiting on others.",
-            "title": "Keep track after you sign"
-          },
-          "waiting": {
-            "description": "Find transactions waiting for your signature or ready for you to execute.",
-            "title": "See what’s waiting for you"
-          }
-        },
-        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
-        "title": "Your workspace is ready"
-      },
       "workspaceAdminPage": {
         "title": "Workspace admin",
         "details": {
@@ -5244,6 +5209,136 @@
           "title": "Unable to save the details",
           "description": "Your changes were not saved. Try again."
         }
+      },
+      "workspaceAccountSelect": {
+        "entity": "Accounts",
+        "incomplete": "Some of your accounts could not be loaded.",
+        "error": "Couldn’t load your accounts.",
+        "retry": "Retry",
+        "searchPlaceholder": "Search accounts...",
+        "addAddress": "Add address",
+        "emptyState": {
+          "heading": "No results for “{{search}}”",
+          "noAccounts": "No accounts found",
+          "description": "Search for another account or add it by address",
+          "addByAddress": "Add by address"
+        },
+        "note": {
+          "member": "Member",
+          "inWorkspace": "In workspace",
+          "inList": "In your list",
+          "selected": "Selected"
+        },
+        "addressView": {
+          "placeholder": "Paste 0x account address or ENS name...",
+          "back": "All accounts",
+          "notFound": {
+            "heading": "Not a Safe or Aragon DAO",
+            "description": "This address isn’t a Safe or Aragon DAO on any supported network. Double-check the address."
+          },
+          "error": {
+            "heading": "Couldn’t look up this address",
+            "description": "Something went wrong while checking the networks. Try again in a moment."
+          }
+        }
+      },
+      "workspaceAddAccountsDialog": {
+        "title": "Add accounts",
+        "description": "Safes and Aragon DAOs your wallet created or belongs to.",
+        "action": {
+          "add": "Add accounts",
+          "addOne": "Add 1 account",
+          "addMany": "Add {{count}} accounts",
+          "createAccount": "Create a new account"
+        },
+        "error": "Unable to add the accounts. Try again."
+      },
+      "workspaceCreateAccountDialog": {
+        "title": "Create account",
+        "submit": "Deploy account",
+        "steps": {
+          "NETWORK": {
+            "title": "Select chain",
+            "description": "The chain you choose is where your account will be deployed."
+          },
+          "DETAILS": {
+            "title": "Account details",
+            "description": "Describe your account so people know they’ve come to the right place. Don’t worry if these aren’t final—any of these fields can be changed later."
+          },
+          "SIGNERS": {
+            "title": "Signers and approvals",
+            "description": "Choose who can approve transactions and how many approvals are needed."
+          },
+          "TYPE": {
+            "title": "Account type",
+            "description": "Choose how the account is deployed. Both use the signers and approvals you set."
+          }
+        },
+        "network": {
+          "mainnets": "Mainnets",
+          "testnets": "Testnets",
+          "showAllTestnets": "Show all testnets",
+          "showFewer": "Show fewer",
+          "tag": {
+            "beta": "Beta",
+            "disabled": "Soon"
+          }
+        },
+        "details": {
+          "name": {
+            "label": "Name",
+            "required": "Name is required."
+          },
+          "description": {
+            "label": "Description",
+            "helpText": "This is shown on the account’s dashboard."
+          },
+          "resources": {
+            "helpText": "These are shown as links on the account dashboard. They are best suited for your website, social media, or other communication channels."
+          }
+        },
+        "signers": {
+          "label": "Signers",
+          "helpText": "Wallets that can approve the transactions of this account."
+        },
+        "approvals": {
+          "label": "Approvals",
+          "helpText": "How many signers must approve a transaction before it can be executed.",
+          "total": "{{value}} of {{total}} must approve"
+        },
+        "accountType": {
+          "SAFE": {
+            "label": "Safe",
+            "description": "A Safe multisig. Works with the Safe ecosystem.",
+            "unsupported": "Not supported"
+          },
+          "ARAGON": {
+            "label": "Aragon",
+            "description": "An Aragon OSx multisig. Governance can be extended later."
+          }
+        },
+        "deploy": {
+          "title": "Deploy Aragon Account",
+          "description": "To deploy the account, confirm the onchain transaction in your wallet.",
+          "submit": "Deploy Aragon Account",
+          "success": "Continue"
+        }
+      },
+      "workspaceWelcomeDialog": {
+        "title": "Your workspace is ready",
+        "description": "Your accounts are now available from one place.",
+        "items": {
+          "pending": {
+            "title": "See what’s waiting for you",
+            "description": "Find transactions waiting for your signature or ready for you to execute."
+          },
+          "tracking": {
+            "title": "Keep track after you sign",
+            "description": "Check your transactions to see what’s still waiting on others."
+          }
+        },
+        "note": "Saved on this device only. Teams and confidential workspace sharing is coming soon.",
+        "action": "Open workspace"
       }
     }
   }

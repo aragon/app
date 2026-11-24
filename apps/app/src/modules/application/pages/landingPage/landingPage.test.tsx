@@ -18,6 +18,7 @@ describe('<LandingPage /> component', () => {
     const push = jest.fn();
     const replace = jest.fn();
     const openWeb3Modal = jest.fn();
+    const prefetch = jest.fn();
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
     const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
     const walletConnectedSpy = jest.spyOn(
@@ -34,6 +35,7 @@ describe('<LandingPage /> component', () => {
         useRouterSpy.mockReturnValue({
             push,
             replace,
+            prefetch,
         } as unknown as AppRouterInstance);
         useAppKitSpy.mockReturnValue({
             open: openWeb3Modal,
@@ -53,6 +55,7 @@ describe('<LandingPage /> component', () => {
         push.mockReset();
         replace.mockReset();
         openWeb3Modal.mockReset();
+        prefetch.mockReset();
         useRouterSpy.mockReset();
         useAppKitSpy.mockReset();
         walletConnectedSpy.mockReset();
@@ -109,6 +112,12 @@ describe('<LandingPage /> component', () => {
         }
     });
 
+    it('prefetches /workspace on mount', () => {
+        render(createTestComponent());
+
+        expect(prefetch).toHaveBeenCalledWith('/workspace');
+    });
+
     it('opens the existing workspace when the wallet is already connected', async () => {
         walletConnectedSpy.mockReturnValue(true);
 
@@ -117,7 +126,7 @@ describe('<LandingPage /> component', () => {
         await waitFor(() => expect(replace).toHaveBeenCalledWith('/workspace'));
     });
 
-    it('shows workspace progress while restoring a connected wallet', () => {
+    it('hides the landing content without a loading message while restoring a connected wallet', () => {
         walletAccountSpy.mockReturnValue({
             address: '0x123',
             chainId: 1,
@@ -127,14 +136,29 @@ describe('<LandingPage /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByRole('status')).toHaveTextContent(
-            /landingPage\.openingWorkspace$/,
-        );
+        expect(screen.queryByRole('status')).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
                 name: /landingPage\.signIn\.walletAction$/,
             }),
         ).not.toBeInTheDocument();
+    });
+
+    it('keeps the landing content behind the wallet modal while connecting', () => {
+        walletAccountSpy.mockReturnValue({
+            address: undefined,
+            chainId: undefined,
+            isConnecting: true,
+            isReconnecting: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('button', {
+                name: /landingPage\.signIn\.walletAction$/,
+            }),
+        ).toBeInTheDocument();
     });
 
     it('opens the wallet connect modal directly', async () => {
