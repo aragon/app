@@ -1,5 +1,5 @@
-// DTCG 2025.10 plumbing shared by the token generators: loading, schema and alias validation, colour and value
-// formatting. Plain Node; the only dependency is Ajv (root devDependency) for the published DTCG schema.
+// DTCG 2025.10 plumbing of the token generator: loading, schema and alias validation, colour and value formatting.
+// Plain Node; the only dependency is Ajv (kit devDependency) for the published DTCG schema.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -43,17 +43,12 @@ export const createSchemaValidator = (schemaFile) => {
 export const isAlias = (value) => typeof value === 'string' && value.startsWith('{') && value.endsWith('}');
 export const aliasTarget = (value) => value.slice(1, -1);
 
-// Path ("color.primary.50") -> { type, value, extensions, description } in document order. A group's $type is inherited.
+// Path ("color.primary.50") -> { type, value } in document order. A group's $type is inherited.
 export const collectTokens = (group, inheritedType, prefix = '', entries = new Map()) => {
     const type = group.$type ?? inheritedType;
     if (Object.hasOwn(group, '$value')) {
         assert(type, `Missing type: ${prefix}`);
-        entries.set(prefix, {
-            type,
-            value: group.$value,
-            extensions: group.$extensions?.[EXT],
-            description: group.$description,
-        });
+        entries.set(prefix, { type, value: group.$value, extensions: group.$extensions?.[EXT] });
         return entries;
     }
     for (const [key, child] of Object.entries(group)) {
@@ -64,8 +59,8 @@ export const collectTokens = (group, inheritedType, prefix = '', entries = new M
     return entries;
 };
 
-// One resolved view: the shared sets (primitives, palette) plus one mode's semantic document. Root groups of different
-// documents must differ, so a path means one token.
+// One resolved view: shared sets plus one mode's document. Root groups of different documents must differ, so a path
+// means one token.
 export const mergeSets = (sets) => {
     const merged = new Map();
     for (const [label, entries] of Object.entries(sets)) {
@@ -118,15 +113,8 @@ const alphaOf = (value) => {
 };
 const hex2 = (byte) => byte.toString(16).padStart(2, '0');
 
-// The designer's form (palette, Next and Dark values): lower-case hex, eight digits when there is an alpha.
-export const colorToHex = (value) => {
-    const alpha = alphaOf(value);
-    return `#${srgbBytes(value).map(hex2).join('')}${alpha === 1 ? '' : hex2(Math.round(alpha * 255))}`;
-};
-
-// The primitive layer's form (and Today's literal colours): hex, `rgba(r, g, b, a)` with an alpha, `transparent` for
-// zero-alpha black.
-export const colorToCss = (value) => {
+// Hex, `rgba(r, g, b, a)` with an alpha, `transparent` for zero-alpha black.
+const colorToCss = (value) => {
     const bytes = srgbBytes(value);
     const alpha = alphaOf(value);
     if (alpha === 0 && bytes.every((byte) => byte === 0)) {
