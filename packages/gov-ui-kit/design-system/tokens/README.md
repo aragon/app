@@ -12,11 +12,6 @@ design-system/tokens/source/
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
 ```
 
-The source holds primitives only. The generator also renders a semantic colour layer (`lib/semantic.mjs`) when the
-source has one: `semantic.config.json`, which then requires `palette.tokens.json` and the mode files it names, and adds
-the output `src/theme/tokens/semantic/colors.css`. Without the config nothing semantic is read or written, and a palette
-or mode file without it fails the generator instead of being ignored.
-
 The kit owns the source: it owns the tokens and is the published package, and the app artifact is a projection of it.
 (`design-system/` itself is not in the npm package: `files` in the kit's `package.json` ships the generated CSS.)
 Do not edit the CSS the generator writes; change the source and regenerate.
@@ -27,8 +22,7 @@ From the kit (or the root as `pnpm tokens:generate` / `pnpm tokens:check`):
 
 ```sh
 pnpm tokens:generate   # validate the source, write every output
-pnpm tokens:check      # validate, fail when an output on disk is stale (CI-safe, writes nothing)
-pnpm tokens:report     # semantic layer only: which Today values are verified against code, which are fallbacks
+pnpm tokens:check      # validate, fail when an output on disk is stale (writes nothing)
 node scripts/tokens/generate.mjs --check --source <dir>   # check a scratch copy of the source against the repo
 pnpm test:tokens       # (root) generator tests + the app's consumer compile
 ```
@@ -60,8 +54,7 @@ A primitive, in `primitives.tokens.json` (colours are DTCG colour objects):
 - Every primitive token is placed in the CSS exactly once (`primitives.config.json` places each; an unplaced or
   doubly placed token fails), and every token has a CSS name.
 - The app overrides rule above; font URLs in the artifact all rebased.
-- No palette or semantic mode file without `semantic.config.json`.
-- `pnpm tokens:check` fails when any output is stale.
+- `pnpm tokens:check` fails when any output is stale; `pnpm test:tokens` runs the same comparison in CI.
 
 ## Representation boundaries
 
@@ -73,8 +66,6 @@ A primitive, in `primitives.tokens.json` (colours are DTCG colour objects):
   (`--color-*: initial`).
 - Utilities, the focus-ring behaviour, the font faces and the app's z-index and position configuration are CSS, not
   tokens: `css/` and `layoutRoot.overrides.css`.
-- The app artifact's header still carries the provenance of its first snapshot (`primitives.config.json`, `app.provenance`)
-  because the artifact is kept byte-identical; it is not the current kit version.
 
 ## Changing tokens
 

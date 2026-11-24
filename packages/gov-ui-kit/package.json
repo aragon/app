@@ -52,7 +52,6 @@
         "test:watch": "jest --watch",
         "tokens:check": "node scripts/tokens/generate.mjs --check",
         "tokens:generate": "node scripts/tokens/generate.mjs",
-        "tokens:report": "node scripts/tokens/generate.mjs --report",
         "type-check": "tsc --noemit",
         "visual-diff": "node scripts/visual-diff.mjs"
     },

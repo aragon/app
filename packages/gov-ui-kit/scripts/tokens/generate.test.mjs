@@ -3,7 +3,7 @@
 
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import test from 'node:test';
@@ -135,34 +135,6 @@ test('an unrewritable relative font URL is rejected', (context) => {
     const path = join(dir, 'css/typography.fontFaces.css');
     writeFileSync(path, readFileSync(path, 'utf8').replaceAll('../../fonts/', '../fonts/'));
     assert.throws(() => generateAll({ sourceDir: dir }), /Unresolved relative font URLs/);
-});
-
-test('a source without semantic.config.json generates the primitives only', (context) => {
-    const dir = scratch(context);
-    for (const name of readdirSync(dir).filter(
-        (file) => file === 'semantic.config.json' || file.endsWith('.tokens.json'),
-    )) {
-        if (name !== 'primitives.tokens.json') {
-            rmSync(join(dir, name));
-        }
-    }
-    const { outputs, semantic } = generateAll({ sourceDir: dir });
-    assert.equal(semantic, null);
-    assert.equal(outputs.size, 9);
-    assert.ok(![...outputs.keys()].some((file) => file.includes('/semantic/')));
-    // The primitive outputs do not depend on the semantic layer.
-    for (const [file, text] of outputs) {
-        assert.equal(text, generateAll().outputs.get(file), file);
-    }
-    // A palette or semantic mode file without the config is an error, not silently ignored.
-    writeFileSync(join(dir, 'palette.tokens.json'), '{}');
-    assert.throws(() => generateAll({ sourceDir: dir }), /palette\.tokens\.json without semantic\.config\.json/);
-    rmSync(join(dir, 'palette.tokens.json'));
-    writeFileSync(join(dir, 'semantic.today.tokens.json'), '{}');
-    assert.throws(
-        () => generateAll({ sourceDir: dir }),
-        /semantic\.today\.tokens\.json without semantic\.config\.json/,
-    );
 });
 
 const overrides = (context, css) => {
