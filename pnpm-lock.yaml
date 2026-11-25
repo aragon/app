@@ -401,9 +401,6 @@ importers:
       '@changesets/cli':
         specifier: 'catalog:'
         version: 3.0.3
-      ajv:
-        specifier: 'catalog:'
-        version: 8.20.0
       husky:
         specifier: 'catalog:'
         version: 9.1.7
@@ -1189,6 +1186,9 @@ importers:
       '@types/sanitize-html':
         specifier: ^2.16.2
         version: 2.16.2
+      ajv:
+        specifier: 'catalog:'
+        version: 8.20.0
       cross-env:
         specifier: 'catalog:'
         version: 10.1.0
