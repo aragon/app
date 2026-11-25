@@ -38,6 +38,8 @@ const balanceToAsset = (
     });
 };
 
+// TODO(APP-1514): read the Safe's assets from the workspace assets API once it covers every Safe. The Safe transaction
+// service reports no prices, so every asset shows $0.00 in the picker and the amount field until then.
 /**
  * Asset list of a Safe, read from its balances on the Safe transaction service, in the shape `useAssetListData`
  * returns for a DAO. The service returns every balance at once, so there is a single page.
