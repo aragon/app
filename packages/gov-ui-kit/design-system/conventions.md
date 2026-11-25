@@ -2,14 +2,14 @@
 
 This design system is `@aragon/gov-ui-kit`, built from `packages/gov-ui-kit` in the
 `aragon/app` repository (`packages/gov-ui-kit/design-system/SYNC.md` describes the sync).
-Previews are the kit's own Storybook stories. Font: **Manrope** (bundled). How the Aragon
+Live examples of every component are in the kit's Storybook, https://uikit.aragon.org; this system carries no previews. Font: **Manrope** (bundled). How the Aragon
 App composes these components (forms, wizards, dialogs, copy) is documented in the App, at
 `apps/app/docs/projectDocs/formsAndWizards.md`.
 
 ## Source of truth
 
 When sources disagree, trust them in this order: the component's `.d.ts` and the compiled
-bundle, then its preview (its Storybook story), then its **Usage notes**, then this guide.
+bundle, then its Storybook story, then its **Usage notes**, then this guide.
 Kit source, stories and tests live under `packages/gov-ui-kit/src/core` and
 `packages/gov-ui-kit/src/modules`.
 

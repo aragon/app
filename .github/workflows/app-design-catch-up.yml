@@ -203,7 +203,8 @@ jobs:
       # The gateway key is the step's only secret. ANTHROPIC_API_KEY stays empty: set, it wins over
       # ANTHROPIC_AUTH_TOKEN. dontAsk + no prompts: whatever the allow-list does not name is denied.
       # File writes are limited to the paths a catch-up may change; `--output` is denied because it
-      # lets git diff/log/show write any file.
+      # lets git diff/log/show write any file. The prompt repeats the limits: a session that meets
+      # a denial it was not told about takes Bash for closed and stops without doing the work.
       - name: Catch up the prototypes
         id: agent
         timeout-minutes: ${{ fromJSON(env.DESIGN_CATCH_UP_TIMEOUT_MINUTES) }}
@@ -223,6 +224,11 @@ jobs:
           Change files only under design/. Do not run --record: the job sets appCommit.
           Write what you changed and what you left out, as a markdown table for the designer, to
           design/.runtime/catch-up.md. It becomes the pull request description.
+
+          Tools: Read, Glob and Grep reach the whole checkout. Bash runs only `git diff`, `git log`,
+          `git show` and `node design/publish/affected.cjs`, one command per call from the repository
+          root: with `cd`, a pipe, `&&`, `;` or a redirect the call is denied. Edit and Write reach
+          design/canvas/, design/README.md, design/canvases/prototypes.json and design/.runtime/.
           PROMPT
 
           allowed=(Read Glob Grep)
@@ -256,6 +262,12 @@ jobs:
             echo "::error::The catch-up session failed: subtype=${subtype:-unknown}, exit=$status"
             exit 1
           fi
+          # A session that ends without its report did not do the work: no PR, appCommit stays.
+          if [ ! -s design/.runtime/catch-up.md ]; then
+            echo "reason=the session wrote no report" >> "$GITHUB_OUTPUT"
+            echo "::error::The catch-up session ended without design/.runtime/catch-up.md"
+            exit 1
+          fi
 
       - name: Summarize the session
         if: ${{ !cancelled() && steps.agent.outcome != 'skipped' }}
@@ -275,6 +287,16 @@ jobs:
             cat "$RUNNER_TEMP/stats.md"
             echo
             [ -f design/.runtime/catch-up.md ] && cat design/.runtime/catch-up.md || echo "_No catch-up.md written._"
+            # What the session said last and what it was refused: the first things to read when it did nothing.
+            echo
+            echo "<details><summary>Final message and denied tool calls</summary>"
+            echo
+            echo '~~~~text'
+            jq -r '.result // "" | tostring | .[0:4000]' "$result"
+            jq -r '(.permission_denials // [])[]
+              | "denied \(.tool_name): \(.tool_input.command // .tool_input.file_path // "" | tostring | .[0:300])"' "$result"
+            echo '~~~~'
+            echo "</details>"
           } >> "$GITHUB_STEP_SUMMARY"
 
       # Git runs here with no global or system config, no hooks and no fsmonitor, and without
@@ -301,11 +323,7 @@ jobs:
           out="$RUNNER_TEMP/result"
           mkdir -p "$out"
           git diff --cached --binary --no-ext-diff --no-textconv --no-renames > "$out/catch-up.patch"
-          if [ -f design/.runtime/catch-up.md ]; then
-            cp design/.runtime/catch-up.md "$out/catch-up.md"
-          else
-            echo "_The session wrote no report._" > "$out/catch-up.md"
-          fi
+          cp design/.runtime/catch-up.md "$out/catch-up.md"
           cp "$RUNNER_TEMP/stats.md" "$out/stats.md"
           if grep -qF -- "$AI_GATEWAY_KEY" "$out/catch-up.patch" "$out/catch-up.md"; then
             echo "reason=the gateway key appeared in the output" >> "$GITHUB_OUTPUT"
