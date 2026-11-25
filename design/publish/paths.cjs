@@ -53,20 +53,24 @@ const digestFolder = (folder) => {
     const sha256 = (data) =>
         require('node:crypto').createHash('sha256').update(data).digest('hex');
     const hashes = [];
-    for (const entry of fs.readdirSync(folder).sort()) {
-        const file = path.join(folder, entry);
-        if (entry === STAMP) {
+    // The directory listing says what each entry is, so a file is read without a separate check first.
+    const entries = fs
+        .readdirSync(folder, { withFileTypes: true })
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    for (const entry of entries) {
+        const file = path.join(folder, entry.name);
+        if (
+            entry.name === STAMP ||
+            (entry.isDirectory() && entry.name === 'ds')
+        ) {
             continue;
         }
-        if (fs.statSync(file).isDirectory()) {
-            if (entry === 'ds') {
-                continue;
-            }
+        if (!entry.isFile()) {
             die(
-                `${file} is a folder: a canvas's own files sit directly in project/`,
+                `${file} is not a file: a canvas's own files sit directly in project/`,
             );
         }
-        hashes.push([entry, sha256(fs.readFileSync(file))]);
+        hashes.push([entry.name, sha256(fs.readFileSync(file))]);
     }
     return sha256(JSON.stringify(hashes));
 };
