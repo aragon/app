@@ -65,18 +65,20 @@
 </sc-if>
 </x-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"on-pick":{"editor":null},"$preview":{"width":480,"height":400}}'>
+<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"on-pick":{"editor":null},"start":{"editor":null},"$preview":{"width":480,"height":400}}'>
 // Props: onClose() (dismiss without connecting), onPick() (a wallet was chosen: the shell sets wallet to connected).
 // Step 1 = the app's connect wallet dialog (connectWalletDialog.tsx); "Connect" opens step 2 = the wallet SDK modal
 // (Reown AppKit, third-party markup) where choosing any wallet connects. Mount only while open.
+// start="appkit" skips step 1: the landing page opens the wallet SDK modal directly.
 class Component extends DCLogic {
-  state = { step: 'dialog' };
+  state = { step: '' };
+  step = () => this.state.step || (this.props.start === 'appkit' ? 'appkit' : 'dialog');
   // The wallet SDK modal (step 2) is not a kit dialog: give it the Escape key a real modal has.
-  onKey = (e) => { if (e.key === 'Escape' && this.state.step === 'appkit' && this.props.onClose) this.props.onClose(); };
+  onKey = (e) => { if (e.key === 'Escape' && this.step() === 'appkit' && this.props.onClose) this.props.onClose(); };
   componentDidMount() { document.addEventListener('keydown', this.onKey); }
   componentWillUnmount() { document.removeEventListener('keydown', this.onKey); }
   renderVals() {
-    const step = this.state.step;
+    const step = this.step();
     const close = () => { if (this.props.onClose) this.props.onClose(); };
     const pick = () => { if (this.props.onPick) this.props.onPick(); };
     const w = (name, color, tag, tagBg, tagFg) => ({ name, color, tag, tagBg, tagFg, pick });

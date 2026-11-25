@@ -88,15 +88,15 @@ body{margin:0}
 </main>
 </sc-if>
 <sc-if value="{{dialog.connect}}" hint-placeholder-val="{{false}}">
-  <dc-import name="DaoWalletConnect" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+  <dc-import name="DaoWalletConnect" start="appkit" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
 </sc-if>
 </x-import>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
 // Landing page at / (apps/app: modules/application/pages/landingPage; app/page.tsx renders it when the `workspaces` flag is on).
 // state: connected (false | true), dialog ('' | 'connect').
-// Continue with wallet opens the same mock connect dialog as the other prototypes (DaoWalletConnect). NOTE: the app's landing opens
-// the wallet SDK modal directly, without the Aragon connect dialog; the prototype keeps the dialog's first step.
+// Continue with wallet opens the wallet SDK modal directly, as the app does (DaoWalletConnect start="appkit": no Aragon connect
+// dialog first).
 // Once connected the app swaps the page for an empty <main aria-busy> and router.replace('/workspace'), which for a wallet with a
 // workspace lands on the workspace. Here that is a real link to Workspace.dc.html, clicked once on connecting and kept visible.
 // "Explore a demo workspace" (button and both previews): the app activates the demo workspace fixture ("aragon-demo", four accounts)
