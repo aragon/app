@@ -112,7 +112,7 @@ recorded in `canvases/prototypes.json` (a second canvas has a record of its own:
 If an image has no upload yet, the script lists it; after uploading, `publish/record-assets.cjs` records the urls.
 
 The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are not in the repo. Each canvas copies
-them from the [design system artifact](https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC), which the design sync
+them from the [design system artifact](https://claude.ai/artifact/XkBmSpR3iXii2onniUDV5x), which the design sync
 builds from `packages/gov-ui-kit`. Anyone starting a canvas needs access to that artifact. `RUNBOOK.md`, "The UI kit
 on a canvas", says what to do when a canvas's copy falls behind.
 
