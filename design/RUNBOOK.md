@@ -293,6 +293,7 @@ Runs so far:
 | --- | --- | --- | --- |
 | 20 November 2026 | 16 to 19 November, 139 app files | 10 behind, 8 fixed by two agents, 2 error states left out | Under an hour, improvised; this section was written afterwards |
 | 21 November 2026 | 19 to 20 November, 150 files (mostly one pull request) | 11 behind, all fixed; new pages listed, not built; two new kit components drawn by hand | About 20 minutes, by an agent with no prior context following this section, which it then corrected |
+| 25 November 2026 | 20 to 24 November, 127 app files (the merged workspace work) | 9 behind, all fixed; switched to OCC's feature flags; new pages listed, not built; kit re-synced, so the hand-drawn kit components became the real ones | About 10 minutes of triage and 10 of fixes by agents, plus a 47-minute kit sync; `affected.cjs`, added the same day, then found nothing the triage had missed |
 
 ## Finish a ticket
 

@@ -60,28 +60,26 @@ owner for access.
 
 ## Which app the prototypes show
 
-Every prototype, and every canvas made from these files, shows **the app as it runs on a developer's machine from
-`main`**, not what users see in production.
+Every prototype, and every canvas made from these files, shows **the build being designed for: `main` with the
+feature flags of the OCC environment** (new.app.aragon.org), not what users of app.aragon.org see today.
 
-- **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026); later ones from `main`
-  as it stood up to 18 November. On 20 November they were caught up with `main` of 19 November (`51c4622`), and on
-  21 November with `main` of 20 November (`412581b`), which is what `canvases/prototypes.json` → `appCommit` records. `RUNBOOK.md`, "Catch up with main", has the procedure.
-- **Feature flags:** each flag's `local` value, the one a developer's machine uses. Checked against a snapshot of
-  the 16 flags taken in mid-November (`design/baseline-check/cms/feature-flags.json` on `docs/design-canvas`):
+- **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026). They were caught up
+  with `main` on 20, 21 and 25 November; `canvases/prototypes.json` → `appCommit` records the last. `RUNBOOK.md`,
+  "Catch up with main", has the procedure.
+- **Feature flags:** OCC's values, with one exception: `gateAdvancedGovernance` is off (OCC has it on), so the
+  governance designer's Advanced option is not gated; its tweak `advancedGated` shows the gated version. The values
+  come from `feature-flags.json` in the `aragon/app-cms` repository (`main`), where OCC takes production's value for
+  any flag it does not set. As of 25 November that means:
 
   | | Flags |
   | --- | --- |
-  | On in the prototypes, off in production | `workspaces`, `safeAccountPage`, `capitalFlowAutomation`, `existingProposalCreationCondition` (and the developer-only `debugPanel`, `useMocks`) |
-  | Off in the prototypes, on in production | `gateAdvancedGovernance` (the governance designer has a tweak that shows it) |
-  | Same in both | the other nine |
+  | On | `workspaces`, `linkedAccount`, `governanceDesigner`, `osxUpdates`, `aragonProfiles`, `supportChat`, `supportChatDocs`, `helpCenter`, `telegramSubscription` |
+  | Off | `capitalFlowAutomation` (no Automation section in DAO settings), `existingProposalCreationCondition` (no existing conditions in the governance designer), `safeAccountPage`, `domainMemberList`, `gateAdvancedGovernance` (the exception), and the developer-only `debugPanel`, `useMocks` |
 
-  `workspaces` and `safeAccountPage` are also off in the deployed development environment in that snapshot, so the
-  Workspace and Safe prototypes show something only a local build has. Since 20 November the code also turns
-  `workspaces` on for the OCC soft-launch environment (new.app.aragon.org).
+  `safeAccountPage` being off means the standalone Safe account page (`SafeFlow.dc.html`) is not reachable in that
+  build. The frame is kept because the page is real code behind a flag; the Safe inside the workspace is reachable.
+  The flag values are read when a catch-up runs, not continuously: check `app-cms` when in doubt.
 - **Data:** mock data written for this, not any real DAO.
-
-So the prototypes are a picture of what is coming, which suits design work. No prototype can be switched to
-"what production looks like", and the flag values above are a snapshot: they are not re-read when flags change.
 
 ## How they were made
 
@@ -176,18 +174,23 @@ on a canvas", says what to do when a canvas's copy falls behind.
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
-- **Not built, because open pull requests are changing them:** suggested accounts in the create workspace wizard,
-  creating a Safe, and the governance designer inside a workspace.
+- **Not built, from the 25 November catch-up** (app pages and dialogs that merged with no prototype): Getting
+  started as the `/workspace` page for a connected wallet with no workspace (it replaced the old wizard route); the
+  Add accounts dialog with its account select and suggested accounts; the four-step Create account dialog (network,
+  details, signers and approvals, Safe or Aragon account) and its Deploy Safe Account and Deploy Aragon Account
+  transaction dialogs; "Opening your workspace…" on `/workspace`. "Add account" in the account menu does nothing
+  here. The edit workspace wizard was removed from the app. The governance designer inside a workspace is still
+  only an open pull request.
 - **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the sign-in landing page at
   `/` and disconnecting back to it; the Getting started wizard for a user with no workspace; the workspace admin page
   (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
   the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
   (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
-- **Workspace navigation draws two kit components by hand.** The joined selector block (`Dropdown.Group`) and the
-  stacked avatars of "All accounts" (`AvatarStack`) are markup with `app.css` rules in `WsNav.dc.html`, like the rest
-  of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
-  design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
-  its fallback text sizes) are not on the canvas either, until the kit's design sync is run. Both are marked `data-stands-in-for`, so a session with the synced kit can find and replace them.
+- **Workspace navigation draws its selectors by hand.** The joined selector block is the kit's `Dropdown.Group`, but
+  the two selectors and their menus inside it are markup with `app.css` rules: the kit `Dropdown` takes its whole
+  trigger as one element, which would have to be built in script, where it cannot be selected or edited on the
+  canvas. The avatar stack (`AvatarStack`) and the chain badges (the avatar's `badge` prop) are the kit's own, built in
+  `renderVals()`; every mock account is on Ethereum.
 - **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
   workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
   frames is not confirmed (see "Create proposal from the workspace").
