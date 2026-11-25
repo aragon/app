@@ -208,7 +208,14 @@
 .ws-acc-item__help { margin: 0; font-size: 14px; line-height: 20px; color: var(--color-neutral-300); }
 .ws-acc-item--active { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary); }
 .ws-acc-item--disabled { border-color: var(--color-neutral-100) !important; background-color: var(--color-neutral-50); cursor: default; }
-@media (min-width: 768px) { .ws-acc-item__name { font-size: 18px; } .ws-acc-item__meta, .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
+@media (min-width: 768px) { .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
+/* Select-account rows (workspaceSelectAccountDialogItem): px-4 py-3 md:px-6 md:py-4; text lines gap-1; network and address side by side (gap-1.5) */
+.ws-acc-row { padding: 12px 16px; }
+.ws-acc-item__text { gap: 4px; }
+.ws-acc-item__meta { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.ws-acc-item__network { flex-shrink: 0; color: var(--color-neutral-800); }
+.ws-acc-item__address { overflow: hidden; text-overflow: ellipsis; color: var(--color-neutral-500); }
+@media (min-width: 768px) { .ws-acc-row { padding: 16px 24px; } }
 /* Agent Z: data-list rows of the workspace transactions page that are not accordion items (pending Safe, DAO execution), padded as the app's px-4 py-3 md:p-6 */
 .ws-dli { padding: 12px 16px; }
 @media (min-width: 768px) { .ws-dli { padding: 24px; } }

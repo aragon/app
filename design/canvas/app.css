@@ -1298,15 +1298,17 @@
 .wizard-step__errors { display: flex; flex-direction: column; gap: 24px; }
 
 /* ---- WorkspaceWelcomeDialog: modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx ---- */
-/* content: flex flex-col gap-6 px-6 pt-4 pb-6 */
-.ws-welcome { display: flex; flex-direction: column; gap: 24px; padding: 16px 24px 24px; font-family: var(--font-sans); }
+/* content: flex flex-col gap-4 pt-2 pb-4 (the description sits in the dialog header) */
+.ws-welcome { display: flex; flex-direction: column; gap: 16px; padding: 8px 16px 16px; font-family: var(--font-sans); }
 .ws-welcome p { margin: 0; }
-/* text-base leading-normal text-neutral-500 */
-.ws-welcome__description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
-.ws-welcome__features { display: flex; flex-direction: column; gap: 16px; }
-.ws-welcome__feature { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+@media (min-width: 768px) { .ws-welcome { padding-inline: 24px; } }
+/* flex items-center gap-3; icon: size-8 rounded-full bg-primary-50 with a primary-400 sm icon */
+.ws-welcome__feature { display: flex; flex-direction: row; align-items: center; gap: 12px; }
+.ws-welcome__icon { display: flex; width: 32px; height: 32px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 9999px; background: var(--color-primary-50); color: var(--color-primary-400); }
 .ws-welcome__feature-text { display: flex; flex-direction: column; gap: 2px; }
-.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 400; line-height: 1.25; }
-.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
-/* text-sm leading-normal text-neutral-500 */
-.ws-welcome__note { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+/* text-base leading-tight font-semibold text-neutral-800 */
+.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 600; line-height: 1.25; }
+/* text-sm leading-normal text-pretty text-neutral-500 */
+.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; text-wrap: pretty; }
+/* footer note: -mb-2 text-xs leading-normal text-pretty text-neutral-500 */
+.ws-welcome__note { margin-bottom: -8px !important; color: var(--color-neutral-500); font-size: 12px; line-height: 1.5; text-wrap: pretty; }

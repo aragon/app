@@ -20,30 +20,28 @@ body{margin:0}
 </helmet>
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" size="lg" dc-props="{{rootProps}}" container-class-name="dlg-container--static" hidden-title="Your workspace is ready" hidden-description="Your accounts are now available from one place.">
-  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Your workspace is ready"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Your workspace is ready" description="Your accounts are now available from one place." on-close="{{close}}"></x-import>
   <x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
     <div class="ws-welcome">
-    <p class="ws-welcome__description">Your accounts are now available from one place.</p>
-    <div class="ws-welcome__features">
       <div class="ws-welcome__feature">
-        <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="PEN" variant="primary"></x-import>
+        <span class="ws-welcome__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="PEN" size="sm"></x-import></span>
         <div class="ws-welcome__feature-text">
           <p class="ws-welcome__feature-title">See what’s waiting for you</p>
           <p class="ws-welcome__feature-description">Find transactions waiting for your signature or ready for you to execute.</p>
         </div>
       </div>
       <div class="ws-welcome__feature">
-        <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CLOCK" variant="primary"></x-import>
+        <span class="ws-welcome__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="CLOCK" size="sm"></x-import></span>
         <div class="ws-welcome__feature-text">
           <p class="ws-welcome__feature-title">Keep track after you sign</p>
           <p class="ws-welcome__feature-description">Check your transactions to see what’s still waiting on others.</p>
         </div>
       </div>
     </div>
-    <p class="ws-welcome__note">Saved on this device only. Teams and confidential workspace sharing is coming soon.</p>
-    </div>
   </x-import>
-  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}">
+    <p class="ws-welcome__note">Saved on this device only. Teams and confidential workspace sharing is coming soon.</p>
+  </x-import>
 </x-import>
 </x-import>
 </x-dc>
@@ -51,16 +49,18 @@ body{margin:0}
 // Workspace welcome dialog (apps/app: modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx, size lg).
 // Opened by Workspace.dc.html when it is entered from "View workspace" at the end of CreateWorkspaceFlow (the link carries
 // ?welcome=1), as the app greets a user entering the workspace they just created (layoutWorkspaceContent.tsx).
-// "Open workspace" is the only way out: outside clicks and Escape do nothing, as in the app.
-// Props: onClose() — called by "Open workspace".
+// Every way out dismisses it, as in the app: the header's close button, "Open workspace", Escape and a click outside.
+// Props: onClose() — called by any of them.
 class Component extends DCLogic {
   renderVals() {
     const p = this.props;
     const block = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const close = () => { if (typeof p.onClose === 'function') p.onClose(); };
     return {
       yes: true,
-      rootProps: { onOpenAutoFocus: block, onInteractOutside: block, onEscapeKeyDown: block, onOpenChange: () => undefined },
-      primary: { label: 'Open workspace', onClick: () => { if (typeof p.onClose === 'function') p.onClose(); } }
+      close,
+      rootProps: { onOpenAutoFocus: block, onOpenChange: (o) => { if (!o) close(); } },
+      primary: { label: 'Open workspace', onClick: close }
     };
   }
 }

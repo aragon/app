@@ -176,10 +176,16 @@ on a canvas", says what to do when a canvas's copy falls behind.
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
-- **Not built, because open pull requests are changing them:** suggested accounts in the create workspace wizard,
-  creating a Safe, and the governance designer inside a workspace.
+- **Not built, because open pull requests are changing them:** the governance designer inside a workspace.
+- **Not built, from the 25 November catch-up** (merged in the app with no prototype): the Add accounts dialog and its
+  searchable multi-select of accounts (suggested accounts, add by address, "In workspace" rows); the Create account
+  dialog (chain, details, signers and approvals, account type) with its Safe and Aragon deploy dialogs; the Getting
+  started wizard now rendered on `/workspace` for a connected wallet with no workspace (it replaced `/getting-started`
+  and the edit-workspace wizard, both removed from the app); the account select's loading, error and "some accounts
+  could not be loaded" states. "Add account" in the navigation, on the overview's empty state and on the admin page opens
+  the Add accounts dialog in the app and does nothing here.
 - **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the sign-in landing page at
-  `/` and disconnecting back to it; the Getting started wizard for a user with no workspace; the workspace admin page
+  `/` and disconnecting back to it; the workspace admin page
   (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
   the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
   (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
@@ -188,7 +194,9 @@ on a canvas", says what to do when a canvas's copy falls behind.
   of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
   design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
   its fallback text sizes) are not on the canvas either, until the kit's design sync is run. Both are marked `data-stands-in-for`, so a session with the synced kit can find and replace them.
-- **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
+- **Network badges on avatars** (account rows, the account menu, the select-account dialog) are drawn with the kit
+  `Avatar`'s `badge` prop and an `<img>` made in the part's script, with every mock account on Ethereum.
+- **The workspace welcome dialog** (any way out closes it) opens when the workspace is entered from "View workspace" at the end of create
   workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
   frames is not confirmed (see "Create proposal from the workspace").
 - **Governance designer at phone width:** in the stage settings dialog the value label of the approval threshold bar
