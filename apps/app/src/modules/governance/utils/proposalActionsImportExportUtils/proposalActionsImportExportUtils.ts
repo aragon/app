@@ -17,6 +17,7 @@ import {
     type Network,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { smartContractService } from '../../api/smartContractService';
 
 const erc20TransferSelector = toFunctionSelector(
@@ -435,25 +436,29 @@ class ProposalActionsImportExportUtils {
             : (inputData?.parameters?.[1]?.value as string);
 
         const tokenAddress = isNativeTransfer ? zeroAddress : to;
+        const { nativeCurrency } = networkDefinitions[network];
 
         // For imported actions, we don't have full token info yet.
         // The token details will be fetched by TransferAssetAction component.
-        // We provide minimal token structure with address and network.
+        // We provide minimal token structure with address and network; the native currency is the network's own.
         const tokenInfo = {
             address: tokenAddress,
             network,
-            symbol: isNativeTransfer ? 'ETH' : '',
-            name: isNativeTransfer ? 'Ether' : inputData?.contract || '',
+            symbol: isNativeTransfer ? nativeCurrency.symbol : '',
+            name: isNativeTransfer
+                ? nativeCurrency.name
+                : inputData?.contract || '',
             logo: '',
-            decimals: 18, // Default decimals, actual decimals will be fetched by component for ERC20
+            // Default decimals for ERC20, actual decimals will be fetched by component
+            decimals: isNativeTransfer ? nativeCurrency.decimals : 18,
             priceUsd: '0',
             totalSupply: null,
         };
 
-        // For native transfers, we can format immediately with 18 decimals
+        // For native transfers, we can format immediately with the decimals of the native currency
         // For ERC20, we need to wait for the actual decimals to be fetched
         const formattedAmount = isNativeTransfer
-            ? formatUnits(BigInt(amountValue), 18)
+            ? formatUnits(BigInt(amountValue), nativeCurrency.decimals)
             : '0';
 
         return {

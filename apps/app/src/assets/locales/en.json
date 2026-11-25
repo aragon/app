@@ -2553,7 +2553,7 @@
           },
           "helpLink": "Having issues?",
           "info_1": "You can now interact with ",
-          "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
+          "info_2": " on behalf of this account. Instead of going to your wallet, the transactions you make there will be added here as actions.",
           "progress": "Listening to dApp"
         }
       }

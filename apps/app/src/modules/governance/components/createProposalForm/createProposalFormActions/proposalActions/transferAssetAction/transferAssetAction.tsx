@@ -88,7 +88,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     // is transferActionLocked to correctly initialize the form data and disable the token selection.
     const disableTokenSelection =
         action.type === actionComposerUtils.transferActionLocked;
-    const { id: chainId } = networkDefinitions[network];
+    const { id: chainId, nativeCurrency } = networkDefinitions[network];
 
     // When action.from is empty or matches the fetched DAO, the fetched DAO *is* the source.
     // For imported actions with a different address we cannot inspect source DAO properties.
@@ -139,9 +139,10 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         defaultValue: '0',
     });
 
-    const tokenDecimals = asset?.token.decimals ?? 18;
+    // Until an asset is picked the action transfers the native currency of the network (`to` is the zero address).
+    const tokenDecimals = asset?.token.decimals ?? nativeCurrency.decimals;
     const tokenAddress = asset?.token.address ?? action.to;
-    const tokenName = asset?.token.name ?? 'Ether';
+    const tokenName = asset?.token.name ?? nativeCurrency.name;
 
     const isNativeToken = tokenAddress === zeroAddress;
 

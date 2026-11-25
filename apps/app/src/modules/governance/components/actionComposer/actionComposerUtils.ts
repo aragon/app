@@ -789,7 +789,8 @@ class ActionComposerUtils {
         to: token ?? zeroAddress,
         data: '0x',
         value: '0',
-        inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
+        // The transfer view names the asset once mounted: the picked token, or the native currency of the network.
+        inputData: { function: 'transfer', contract: '', parameters: [] },
     });
 
     private buildDefaultActionMetadata = (dao: IDao) => {

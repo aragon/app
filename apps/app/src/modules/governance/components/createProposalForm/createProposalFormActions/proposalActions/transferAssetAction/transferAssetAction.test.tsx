@@ -234,6 +234,27 @@ describe('<TransferAssetAction /> component', () => {
         });
     });
 
+    it('names a transfer without a picked asset after the native currency of the network', () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        const network = daoService.Network.POLYGON_MAINNET;
+        render(
+            createTestComponent(
+                generateNewTransferAction({
+                    from: '0x3333333333333333333333333333333333333333',
+                }),
+                networkDefinitions[network].id,
+            ),
+        );
+
+        expect(getFormValues('actions.0').inputData.contract).toEqual(
+            networkDefinitions[network].nativeCurrency.name,
+        );
+    });
+
     it('throws outside DAO context when the action has no sender', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultLoading() as ReturnType<

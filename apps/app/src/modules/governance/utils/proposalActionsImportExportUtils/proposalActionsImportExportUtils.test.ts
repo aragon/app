@@ -1,5 +1,6 @@
 import { encodeFunctionData, erc20Abi, zeroAddress } from 'viem';
 import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao } from '@/shared/testUtils';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateProposalAction } from '../../testUtils';
@@ -171,6 +172,33 @@ describe('proposalActionsImportExportUtils', () => {
                 }),
             );
             expect(other.type).toEqual('Unknown');
+        });
+
+        it('names an imported native transfer after the native currency of the network', () => {
+            const polygon = Network.POLYGON_MAINNET;
+            const { nativeCurrency } = networkDefinitions[polygon];
+
+            const [native] =
+                proposalActionsImportExportUtils.normalizeDecodedActions(
+                    [nativeTransfer],
+                    undefined,
+                    { ...account, network: polygon },
+                );
+
+            expect(native).toEqual(
+                expect.objectContaining({
+                    amount: '1.5',
+                    asset: expect.objectContaining({
+                        token: expect.objectContaining({
+                            name: nativeCurrency.name,
+                            symbol: nativeCurrency.symbol,
+                            decimals: nativeCurrency.decimals,
+                            network: polygon,
+                        }),
+                    }),
+                }),
+            );
+            expect(nativeCurrency.symbol).not.toEqual('ETH');
         });
 
         it('gives the transfers their basic view in DAO context, on the DAO network', () => {
