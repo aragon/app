@@ -1,7 +1,7 @@
 {
     "canvas": "https://claude.ai/artifact/NnpGqxhynigQPwVyKgsc5p",
     "branch": "main",
-    "canvasVersion": "1795270740-e72c",
+    "canvasVersion": "1795618432-b3e1",
     "appCommit": "381c2e6a956ec21500db376c9644ae36980aea3a",
     "kit": {
         "artifact": "https://claude.ai/artifact/XkBmSpR3iXii2onniUDV5x",
@@ -193,5 +193,6 @@
             "useMocks": false,
             "workspaces": true
         }
-    }
+    },
+    "canvasDigest": "66d378bb46a17ddbee17886511f39d1ee562e0d26831b234930cc751e0422488"
 }
