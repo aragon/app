@@ -1,5 +1,13 @@
 # @aragon/docs
 
+## 0.1.3
+
+### Patch Changes
+
+- [#1591](https://github.com/aragon/app/pull/1591) [`a3c7bc7`](https://github.com/aragon/app/commit/a3c7bc7959a37d48fe791e2c01c9e73fc93f7ab3) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Link the help center back to the app through root-relative links, so a reader stays on the app host that serves it.
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Bump Next.js to 16.4.6 (catalog floor raised from `^16.4.2`), fixing the vulnerability Next flags on dev start.
+
 ## 0.1.2
 
 ### Patch Changes
