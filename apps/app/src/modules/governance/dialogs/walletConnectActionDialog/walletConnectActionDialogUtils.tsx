@@ -13,13 +13,13 @@ export interface ISessionRequestToActionParams {
      */
     sessionRequest: ISessionRequest;
     /**
-     * Address of the DAO.
+     * Address of the account the dApp is connected to.
      */
-    daoAddress: string;
+    address: string;
     /**
-     * Network of the DAO.
+     * Network of the account.
      */
-    daoNetwork: Network;
+    network: Network;
     /**
      * Async function to decode the transaction.
      */
@@ -84,10 +84,10 @@ class WalletConnectActionDialogUtils {
         isHex(value) ? fromHex(value, 'bigint').toString() : value;
 
     private decodeRawAction = async (params: IDecodeRawActionParams) => {
-        const { daoNetwork, decodeTransactionAsync, rawAction } = params;
+        const { network, decodeTransactionAsync, rawAction } = params;
 
         const { to, ...body } = rawAction;
-        const urlParams = { network: daoNetwork, address: to };
+        const urlParams = { network, address: to };
         const decodedAction = await decodeTransactionAsync({ urlParams, body });
 
         return decodedAction;
