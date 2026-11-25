@@ -167,5 +167,30 @@
             "url": "/_blob/91d4f48af60b7fc8455152e07776b773",
             "sha256": "b34f4bc993af8abcae23cafa7751e1c807021929532996715a5770b655c2c97e"
         }
+    },
+    "flags": {
+        "source": "https://raw.githubusercontent.com/aragon/app-cms/main/feature-flags.json",
+        "environment": "occ",
+        "except": {
+            "gateAdvancedGovernance": false
+        },
+        "values": {
+            "aragonProfiles": true,
+            "capitalFlowAutomation": false,
+            "debugPanel": false,
+            "domainMemberList": false,
+            "existingProposalCreationCondition": false,
+            "gateAdvancedGovernance": false,
+            "governanceDesigner": true,
+            "helpCenter": true,
+            "linkedAccount": true,
+            "osxUpdates": true,
+            "safeAccountPage": false,
+            "supportChat": true,
+            "supportChatDocs": true,
+            "telegramSubscription": true,
+            "useMocks": false,
+            "workspaces": true
+        }
     }
 }
