@@ -56,10 +56,10 @@ export interface IActionComposerProps
      */
     hideWalletConnect?: boolean;
     /**
-     * Address of the account a WalletConnect dApp connects to, e.g. a Safe. Defaults to the DAO
-     * address; outside DAO context WalletConnect is only offered when set.
+     * Address of the account the actions are executed from outside DAO context, e.g. a Safe. Offers the transfer
+     * action from this account and connects WalletConnect dApps to it. In DAO context the DAO is that account.
      */
-    walletConnectAddress?: string;
+    accountAddress?: string;
     /**
      * Allowed actions to show instead of default actions. An empty list restricts the composer to no
      * action at all, leave it undefined to offer every action. Only read on mount, so it must be
@@ -109,7 +109,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction,
         excludeActionTypes,
         hideWalletConnect = false,
-        walletConnectAddress,
+        accountAddress,
         allowedActions,
         hasActions = false,
         onDownloadActions,
@@ -134,7 +134,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     );
 
     const resolvedNetwork = network ?? dao?.network;
-    const walletConnectAccount = walletConnectAddress ?? dao?.address;
+    const executorAddress = accountAddress ?? dao?.address;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -198,24 +198,28 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const displayWalletConnectDialog = () => {
         invariant(
-            walletConnectAccount != null && resolvedNetwork != null,
+            executorAddress != null && resolvedNetwork != null,
             'displayWalletConnectDialog: account address and network are required for WalletConnect dialog',
         );
 
         setUploadError(null);
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
-            address: walletConnectAccount,
+            address: executorAddress,
             network: resolvedNetwork,
         };
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
     const handleImportActions = (actions: IProposalAction[]) => {
+        // Outside DAO context the account runs every action, so it is their sender whatever the file says: a transfer
+        // reads its sender from `from`, and an account can only send its own assets.
+        const from = daoId == null ? accountAddress : undefined;
         const parsedActions = actions.map(
             (action) =>
                 ({
                     ...action,
+                    from: from ?? action.from,
                     value: BigInt(action.value),
                     daoId,
                     meta: undefined,
@@ -312,7 +316,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions != null && onRemoveAllActions != null;
 
     const shouldRenderWalletConnect =
-        walletConnectAccount != null &&
+        executorAddress != null &&
         resolvedNetwork != null &&
         !hideWalletConnect &&
         !onlyShowAuthorizedActions;
@@ -462,6 +466,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 )}
             </div>
             <ActionComposerInput
+                accountAddress={accountAddress}
                 allowedActions={
                     onlyShowAuthorizedActions ? allowedActions : undefined
                 }

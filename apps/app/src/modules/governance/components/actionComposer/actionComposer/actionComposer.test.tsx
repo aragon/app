@@ -11,6 +11,8 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
+import { generateProposalAction } from '../../../testUtils';
+import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { ImportedContractAbisProvider } from '../../importedContractAbisProvider';
 import type { IActionComposerProps } from './actionComposer';
 import { ActionComposer } from './actionComposer';
@@ -18,6 +20,18 @@ import { ActionComposer } from './actionComposer';
 describe('ActionComposer', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const readFileAsTextSpy = jest.spyOn(
+        proposalActionsImportExportUtils,
+        'readFileAsText',
+    );
+    const validateAndParseActionsSpy = jest.spyOn(
+        proposalActionsImportExportUtils,
+        'validateAndParseActions',
+    );
+    const decodeActionsSpy = jest.spyOn(
+        proposalActionsImportExportUtils,
+        'decodeActions',
+    );
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
@@ -29,6 +43,9 @@ describe('ActionComposer', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useDialogContextSpy.mockReset();
+        readFileAsTextSpy.mockReset();
+        validateAndParseActionsSpy.mockReset();
+        decodeActionsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IActionComposerProps>) => {
@@ -63,6 +80,43 @@ describe('ActionComposer', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('makes the account the sender of imported actions outside DAO context', async () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        const accountAddress = '0x0000000000000000000000000000000000000001';
+        const importedAction = generateProposalAction({
+            from: '0x0000000000000000000000000000000000000002',
+            value: '0',
+        });
+        readFileAsTextSpy.mockResolvedValue('[]');
+        validateAndParseActionsSpy.mockReturnValue({
+            success: true,
+            actions: [],
+        });
+        decodeActionsSpy.mockResolvedValue([importedAction]);
+        const onAddAction = jest.fn();
+        const { container } = render(
+            createTestComponent({
+                daoId: undefined,
+                network: daoService.Network.ETHEREUM_SEPOLIA,
+                accountAddress,
+                onAddAction,
+            }),
+        );
+
+        await userEvent.upload(
+            container.querySelector('input[type="file"]') as HTMLInputElement,
+            new File(['[]'], 'actions.json', { type: 'application/json' }),
+        );
+
+        expect(onAddAction).toHaveBeenCalledWith([
+            expect.objectContaining({ from: accountAddress, daoId: undefined }),
+        ]);
+    });
+
     it('offers WalletConnect outside DAO context, connected as the given account on the given network', async () => {
         const openMock = jest.fn();
         useDialogContextSpy.mockReturnValue(
@@ -73,14 +127,13 @@ describe('ActionComposer', () => {
                 typeof daoService.useDao
             >,
         );
-        const walletConnectAddress =
-            '0x0000000000000000000000000000000000000001';
+        const accountAddress = '0x0000000000000000000000000000000000000001';
         const network = daoService.Network.ETHEREUM_SEPOLIA;
         render(
             createTestComponent({
                 daoId: undefined,
                 network,
-                walletConnectAddress,
+                accountAddress,
             }),
         );
 
@@ -92,7 +145,7 @@ describe('ActionComposer', () => {
             GovernanceDialogId.WALLET_CONNECT_ACTION,
             {
                 params: expect.objectContaining({
-                    address: walletConnectAddress,
+                    address: accountAddress,
                     network,
                 }),
                 stack: true,

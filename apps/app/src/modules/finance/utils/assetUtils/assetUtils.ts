@@ -1,6 +1,16 @@
 import type { IAsset } from '../../api/financeService';
+import type { AssetListParams, ISafeAssetListParams } from '../../types';
 
 class AssetUtils {
+    /**
+     * Tells whether an asset list is read from the balances of a Safe rather than the indexed assets of a DAO.
+     * @param params - Parameters of the asset list.
+     * @returns True when the list holds the balances of a Safe.
+     */
+    isSafeAssetListParams = (
+        params: AssetListParams,
+    ): params is ISafeAssetListParams => 'safe' in params;
+
     /**
      * Normalises an asset for display: the backend may report a zero token price or an empty name/symbol, so the
      * price is derived from the amounts when possible and the labels fall back to placeholders.

@@ -2,12 +2,14 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
-import { encodeFunctionData, erc20Abi, parseUnits } from 'viem';
+import { encodeFunctionData, erc20Abi, parseUnits, zeroAddress } from 'viem';
 import * as wagmi from 'wagmi';
 import * as financeService from '@/modules/finance/api/financeService';
+import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import * as useTokenModule from '@/shared/hooks/useToken/useToken';
 import {
     generateDao,
@@ -117,12 +119,14 @@ describe('<TransferAssetAction /> component', () => {
     // live watched form value, as on the real create-proposal page.
     const WatchedAction = (props: {
         initialAction: Record<string, unknown>;
+        chainId?: number;
     }) => {
         const watched = useWatch({ name: 'actions.0' });
         const action = { ...props.initialAction, ...(watched as object) };
         return (
             <TransferAssetAction
                 action={action as unknown as IProposalActionData}
+                chainId={props.chainId}
                 index={0}
             />
         );
@@ -130,7 +134,10 @@ describe('<TransferAssetAction /> component', () => {
 
     let getFormValues: any;
 
-    const Host = (props: { initialAction: Record<string, unknown> }) => {
+    const Host = (props: {
+        initialAction: Record<string, unknown>;
+        chainId?: number;
+    }) => {
         const methods = useForm({
             defaultValues: { actions: [props.initialAction] },
         });
@@ -138,15 +145,116 @@ describe('<TransferAssetAction /> component', () => {
         return (
             <GukModulesProvider>
                 <FormProvider {...methods}>
-                    <WatchedAction initialAction={props.initialAction} />
+                    <WatchedAction
+                        chainId={props.chainId}
+                        initialAction={props.initialAction}
+                    />
                 </FormProvider>
             </GukModulesProvider>
         );
     };
 
-    const createTestComponent = (initialAction: Record<string, unknown>) => (
-        <Host initialAction={initialAction} />
-    );
+    const createTestComponent = (
+        initialAction: Record<string, unknown>,
+        chainId?: number,
+    ) => <Host chainId={chainId} initialAction={initialAction} />;
+
+    // Action shape the composer adds from its transfer item, before any asset is picked.
+    const generateNewTransferAction = (extra?: Record<string, unknown>) => ({
+        type: 'TRANSFER',
+        from: '',
+        to: zeroAddress,
+        value: BigInt(0),
+        data: '0x',
+        inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
+        meta: undefined,
+        ...extra,
+    });
+
+    const openAssetSelection = async () =>
+        userEvent.click(
+            screen.getByRole('button', {
+                name: /app.finance.assetInput.token.trigger/,
+            }),
+        );
+
+    it('lists the indexed assets of the DAO of the action in DAO context', async () => {
+        const openMock = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: openMock }),
+        );
+        render(
+            createTestComponent(
+                generateNewTransferAction({ daoId: 'dao-test' }),
+            ),
+        );
+
+        await openAssetSelection();
+
+        expect(openMock).toHaveBeenCalledWith(FinanceDialogId.ASSET_SELECTION, {
+            params: expect.objectContaining({
+                initialParams: {
+                    queryParams: { daoId: 'dao-test', onlyParent: false },
+                },
+            }),
+            stack: true,
+        });
+    });
+
+    it('sends the transfer from the Safe of the action and lists its balances outside DAO context', async () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        const openMock = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: openMock }),
+        );
+        const safeAddress = '0x3333333333333333333333333333333333333333';
+        const network = daoService.Network.ETHEREUM_SEPOLIA;
+        render(
+            createTestComponent(
+                generateNewTransferAction({ from: safeAddress }),
+                networkDefinitions[network].id,
+            ),
+        );
+
+        await openAssetSelection();
+
+        expect(useDaoSpy).toHaveBeenCalledWith(
+            { urlParams: { id: '' } },
+            { enabled: false },
+        );
+        expect(openMock).toHaveBeenCalledWith(FinanceDialogId.ASSET_SELECTION, {
+            params: expect.objectContaining({
+                initialParams: { safe: { network, address: safeAddress } },
+            }),
+            stack: true,
+        });
+    });
+
+    it('throws outside DAO context when the action has no sender', () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        const consoleErrorSpy = jest
+            .spyOn(console, 'error')
+            .mockImplementation(() => undefined);
+
+        expect(() =>
+            render(
+                createTestComponent(
+                    generateNewTransferAction(),
+                    networkDefinitions[daoService.Network.ETHEREUM_SEPOLIA].id,
+                ),
+            ),
+        ).toThrow();
+
+        consoleErrorSpy.mockRestore();
+    });
 
     it('initializes an imported action when token data is cached at mount', () => {
         useTokenSpy.mockReturnValue({
