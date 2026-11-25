@@ -73,7 +73,7 @@ describe('useSafeAssetListData hook', () => {
             },
         ]);
         expect(result.current.itemsCount).toEqual(2);
-        expect(result.current.pageSize).toEqual(2);
+        expect(result.current.pageSize).toEqual(10);
         expect(result.current.state).toEqual('idle');
     });
 
@@ -108,6 +108,8 @@ describe('useSafeAssetListData hook', () => {
 
         expect(result.current.assetList).toEqual([]);
         expect(result.current.state).toEqual('initialLoading');
+        // The list renders one loading skeleton per page item.
+        expect(result.current.pageSize).toEqual(10);
     });
 
     it('returns the error state when the balances cannot be read', () => {

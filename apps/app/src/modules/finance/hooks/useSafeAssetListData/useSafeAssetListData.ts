@@ -38,6 +38,12 @@ const balanceToAsset = (
     });
 };
 
+/**
+ * Page size of the Safe asset list, the backend default the DAO asset list gets. Fixed rather than the number of
+ * balances: the list renders one loading skeleton per page item, and pages the loaded balances on its own.
+ */
+const safeAssetListPageSize = 10;
+
 // TODO(APP-1514): read the Safe's assets from the workspace assets API once it covers every Safe. The Safe transaction
 // service reports no prices, so every asset shows $0.00 in the picker and the amount field until then.
 /**
@@ -73,7 +79,7 @@ export const useSafeAssetListData = (source: ISafeAssetListSource) => {
         onLoadMore: () => undefined,
         assetList,
         state,
-        pageSize: assetList.length,
+        pageSize: safeAssetListPageSize,
         itemsCount: assetList.length,
         emptyState,
         errorState,
