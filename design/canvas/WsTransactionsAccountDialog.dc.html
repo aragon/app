@@ -23,10 +23,7 @@
 <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.itemClass}}" on-click="{{a.pick}}">
   <div class="ws-acc-item">
     <div class="{{a.leadClass}}">
-      <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
-        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md"></x-import>
-        <span class="ws-net-badge ws-net-badge--md"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
-      </span>
+      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" badge="{{netBadge}}"></x-import>
       <div class="ws-acc-item__text">
         <span class="ws-acc-item__name">{{a.name}}</span>
         <span class="ws-acc-item__meta"><span class="ws-acc-item__net">Ethereum</span><span class="ws-acc-item__addr">{{a.address}}</span></span>
@@ -66,8 +63,10 @@ class Component extends DCLogic {
   };
   renderVals() {
     const sel = this.state.selected;
+    // The network logo is the Avatar's `badge` prop, which takes an element, so it is built here.
+    const netBadge = window.React.createElement('img', { src: 'assets/networks/ethereum.svg', alt: 'Ethereum', title: 'Ethereum', className: 'object-cover' });
     return {
-      yes: true,
+      yes: true, netBadge,
       accounts: ACCOUNTS.map((a) => ({
         ...a,
         disabled: !a.eligible,

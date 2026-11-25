@@ -21,7 +21,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.GukModulesProvider">
 <nav class="app-sidebar" aria-label="Workspace navigation">
   <div class="ws-sidebar__header">
-    <div class="ws-selector-group" data-stands-in-for="Dropdown.Group">
+    <x-import component-from-global-scope="GovUiKit.Dropdown.Group" class-name="ws-selector-group">
     <div class="ws-menu-wrap">
       <button class="ws-selector" type="button" onClick="{{toggleWs}}">
         <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
@@ -52,11 +52,7 @@ body{margin:0}
       <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
         <span class="ws-selector__avatar">
           <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
-            <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
-              <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
-              <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
-              <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
-            </span>
+            <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
           </sc-if>
           <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{current.name}}" src="{{current.avatar}}" size="md"></x-import></sc-if>
         </span>
@@ -73,17 +69,10 @@ body{margin:0}
             <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
               <span class="ws-menu__avatar">
                 <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
-                  <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
-                    <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
-                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
-                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
-                  </span>
+                  <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
                 </sc-if>
                 <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
-                  <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
-                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import>
-                    <span class="ws-net-badge ws-net-badge--sm"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
-                  </span>
+                  <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0" badge="{{netBadge}}"></x-import>
                 </sc-if>
               </span>
               <span class="ws-menu__text">
@@ -101,7 +90,7 @@ body{margin:0}
         </div>
       </sc-if>
     </div>
-  </div>
+  </x-import>
   </div>
 
   <div class="ws-nav-groups">
@@ -190,7 +179,7 @@ body{margin:0}
 <x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
 <div class="ws-nav-dialog">
   <div class="ws-nav-dialog__selectors">
-  <div class="ws-selector-group" data-stands-in-for="Dropdown.Group">
+  <x-import component-from-global-scope="GovUiKit.Dropdown.Group" class-name="ws-selector-group">
     <div class="ws-menu-wrap">
       <button class="ws-selector" type="button" onClick="{{toggleWs}}">
         <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
@@ -221,11 +210,7 @@ body{margin:0}
       <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
         <span class="ws-selector__avatar">
           <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
-            <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
-              <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
-              <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
-              <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
-            </span>
+            <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
           </sc-if>
           <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{current.name}}" src="{{current.avatar}}" size="md"></x-import></sc-if>
         </span>
@@ -242,17 +227,10 @@ body{margin:0}
             <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
               <span class="ws-menu__avatar">
                 <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
-                  <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
-                    <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
-                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
-                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
-                  </span>
+                  <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
                 </sc-if>
                 <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
-                  <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
-                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import>
-                    <span class="ws-net-badge ws-net-badge--sm"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
-                  </span>
+                  <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0" badge="{{netBadge}}"></x-import>
                 </sc-if>
               </span>
               <span class="ws-menu__text">
@@ -270,7 +248,7 @@ body{margin:0}
         </div>
       </sc-if>
     </div>
-  </div>
+  </x-import>
   </div>
   <div class="ws-nav-dialog__groups">
     <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
@@ -315,9 +293,9 @@ body{margin:0}
 // Sections by scope follow workspaceSectionScopes: all accounts = Dashboard, Proposals, Transactions, Assets, Members; a DAO account adds Permissions and
 // Settings; a Safe has no Proposals or Permissions. Choosing an account keeps the current section when that account has it, else opens its overview.
 // The workspace menu lists the one workspace, "Create workspace" (CreateWorkspaceFlow.dc.html) and "Import workspace" (a file upload: inert).
-// The two selectors are stacked in one bordered group (kit Dropdown.Group, drawn here: the kit Dropdown trigger cannot mount on the canvas).
+// The two selectors are stacked in one bordered group (kit Dropdown.Group). Each selector and its menu inside it are still drawn (class ws-menu*): the group's own `overflow-hidden` is lifted in app.css so the inline menus show, and a kit Dropdown.Container would need its whole trigger built with createElement.
 // Below lg the top bar carries a compact selector (workspace avatar, name, current account) that opens the navigation dialog.
-// The navigation dialog has no "Explore all DAOs" link (hideExplore). Menu rows carry the account's chain badge (kit Avatar `badge`, drawn here).
+// The navigation dialog has no "Explore all DAOs" link (hideExplore). Menu rows carry the account's chain badge (kit Avatar `badge`).
 // "Add account" and "Workspace admin" (Settings group) have no screen yet.
 class Component extends DCLogic {
   state = { navOpen: false, menu: '' };
@@ -345,7 +323,7 @@ class Component extends DCLogic {
     };
     const target = (id, section) => (id === 'all' ? 'all:' + section : 'account:' + id + ':' + section);
     const closeAll = () => this.setState({ menu: '', navOpen: false });
-    // All accounts: the trigger shows the accounts' avatars stacked (kit AvatarStack, drawn here) and no second line.
+    // All accounts: the trigger shows the accounts' avatars stacked (kit AvatarStack) and no second line.
     const current = scope === 'all'
       ? { name: 'All accounts', avatar: undefined, meta: '', isAll: true, isAccount: false }
       : (() => { const a = accounts.find((x) => x.id === scope) || accounts[0]; return { name: a.name, avatar: a.avatar, meta: a.address, isAll: false, isAccount: true }; })();
@@ -372,6 +350,11 @@ class Component extends DCLogic {
     Object.assign(counts, p.todos || {});
     const count = counts[scope] || 0;
     const todos = Object.assign(link('todos', 'To-dos', 'CHECKMARK'), { count: String(count), hasCount: count > 0 });
+    // Built with createElement because both are props that take elements. networkBadge: the network logo as a plain img (the kit sizes it).
+    // The stack takes the four accounts' avatars as the app's accountAvatars does (DaoAvatar each, Safe logo as the src); four, so the stack steps down to xs and shows two plus "+2".
+    const h = window.React.createElement;
+    const netBadge = h('img', { src: 'assets/networks/ethereum.svg', alt: 'Ethereum', title: 'Ethereum', className: 'object-cover' });
+    const stackAvatars = accounts.map((a) => h(GovUiKit.DaoAvatar, { key: a.id, name: a.name, src: a.avatar }));
     const userClick = (e) => { stop(e); closeAll(); if (typeof p.onUser === 'function') p.onUser(); };
     const connectClick = (e) => { stop(e); closeAll(); if (typeof p.onConnect === 'function') p.onConnect(); };
     return {
@@ -388,7 +371,7 @@ class Component extends DCLogic {
       toggleWs: (e) => { stop(e); this.setState({ menu: this.state.menu === 'ws' ? '' : 'ws' }); },
       toggleAcct: (e) => { stop(e); this.setState({ menu: this.state.menu === 'acct' ? '' : 'acct' }); },
       closeMenu: (e) => { stop(e); this.setState({ menu: '' }); },
-      current,
+      current, netBadge, stackAvatars,
       options: [option('all', 'All accounts', '', undefined)].concat(accounts.map((a) => option(a.id, a.name, a.address, a.avatar))),
       links, todos
     };

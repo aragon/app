@@ -35,7 +35,7 @@
       "y": 1700,
       "w": 1440,
       "h": 900,
-      "title": "Meridian DAO · token voting",
+      "title": "Meridian DAO \u00b7 token voting",
       "page": "prototypes",
       "expand": "fill",
       "is_interactive": true
@@ -45,7 +45,7 @@
       "y": 1700,
       "w": 1440,
       "h": 900,
-      "title": "Atlas Grants Council · multisig",
+      "title": "Atlas Grants Council \u00b7 multisig",
       "page": "prototypes",
       "expand": "fill",
       "is_interactive": true
@@ -55,7 +55,7 @@
       "y": 1700,
       "w": 1440,
       "h": 900,
-      "title": "Northstar Protocol · multi-stage",
+      "title": "Northstar Protocol \u00b7 multi-stage",
       "page": "prototypes",
       "expand": "fill",
       "is_interactive": true
@@ -65,7 +65,7 @@
       "y": 3100,
       "w": 1440,
       "h": 900,
-      "title": "Workspace · three DAOs and a Safe",
+      "title": "Workspace \u00b7 three DAOs and a Safe",
       "page": "prototypes",
       "expand": "fill",
       "is_interactive": true
@@ -1182,8 +1182,8 @@
       "title": "Aragon Governance UI Kit",
       "namespace": "aragon-gov-ui-kit",
       "artifact": "https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC",
-      "version": "1794992991-48d3",
-      "copiedAt": "2026-11-20T12:00:00Z"
+      "version": "1795613028-2aae",
+      "copiedAt": "2026-11-25T13:24:00Z"
     }
   ]
 }

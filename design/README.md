@@ -168,7 +168,7 @@ on a canvas", says what to do when a canvas's copy falls behind.
 - **Governance designer:** the import-token, lock-to-vote and external-address body variants, the inner states of
   steps 3 and 4, and "Remove stage" were carried over from an older prototype and only checked to render.
 - **Create proposal draws part of its form by script** (`CreateProposalFlowActions.dc.html`), as the vote list does.
-- **Workspace:** "Add account", "Workspace admin" and "Import workspace" do nothing. The chain badge on account avatars is drawn by hand (`data-stands-in-for="Avatar badge"`) until the kit on the canvas has the `badge` prop, and every mock account is on Ethereum. "New proposal" skips the app's pick-a-process step and always opens
+- **Workspace:** "Add account", "Workspace admin" and "Import workspace" do nothing. "New proposal" skips the app's pick-a-process step and always opens
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
@@ -184,11 +184,11 @@ on a canvas", says what to do when a canvas's copy falls behind.
   (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
   the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
   (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
-- **Workspace navigation draws two kit components by hand.** The joined selector block (`Dropdown.Group`) and the
-  stacked avatars of "All accounts" (`AvatarStack`) are markup with `app.css` rules in `WsNav.dc.html`, like the rest
-  of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
-  design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
-  its fallback text sizes) are not on the canvas either, until the kit's design sync is run. Both are marked `data-stands-in-for`, so a session with the synced kit can find and replace them.
+- **Workspace navigation draws its selectors by hand.** The joined selector block is the kit's `Dropdown.Group`, but
+  the two selectors and their menus inside it are markup with `app.css` rules: the kit `Dropdown` takes its whole
+  trigger as one element, which would have to be built in script, where it cannot be selected or edited on the
+  canvas. The avatar stack (`AvatarStack`) and the chain badges (the avatar's `badge` prop) are the kit's own, built in
+  `renderVals()`; every mock account is on Ethereum.
 - **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
   workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
   frames is not confirmed (see "Create proposal from the workspace").
