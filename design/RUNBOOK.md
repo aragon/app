@@ -19,6 +19,13 @@ Rules: create a branch, a canvas or a pull request only when the owner asked for
 `design/canvas/` (Biome and editors are configured to leave it alone). Images are written as literal paths in the
 files (`assets/networks/base.svg`); the scripts swap them for the canvas's uploads and back.
 
+Prototype files are large, so keep a session from reading more of them than its task needs:
+
+- Open the parts the task names, never `design/canvas/` as a whole. For a catch-up those are the parts
+  `affected.cjs` lists.
+- Publish to an existing canvas only the files that changed: each replaced file has to be read first.
+- Let the scripts move files. A prototype is never copied through the model.
+
 ## The record, and what touches git
 
 Every canvas has a record: which canvas it is, what it was made from, and where each image was uploaded on it. The
@@ -113,8 +120,9 @@ to save, and never as a step of something else.
    - If the branch's `design/canvas/` also changed since the canvas last got the repo's files, do not overwrite:
      merge file by file (`git merge-file`), and on a conflict show the owner both versions.
 4. New or removed frames: add a new prototype to `canvas-layout.json`, then `node design/publish/layout-canvas.cjs`
-   (it fails if a file is mounted by no prototype). A variant the designer duplicated is a new file; ask whether it
-   replaces the original or is dropped before the branch is handed over.
+   (it fails if a file is mounted by no prototype). Give a new file an entry in `sources.json` and drop a removed
+   file's entry (`node design/publish/affected.cjs --check` fails otherwise). A variant the designer duplicated is a
+   new file; ask whether it replaces the original or is dropped before the branch is handed over.
 5. Nothing changed under `design/canvas/`: there is nothing to save. Run step 6's digest command, tell the person, and
    stop without a commit. Otherwise run the load check (above) on the prototypes whose files changed.
 6. The record: set `canvasVersion` to the listing's version (a record of when, not a test) and run
@@ -124,6 +132,10 @@ to save, and never as a step of something else.
 8. Tell the person, in plain words and frame by frame, what changed on the canvas, as a designer would describe it,
    and ask whether that is what they did. They should never have to list their changes for you. Point out anything
    in the diff that does not look like a deliberate design change (reformatting, image addresses, layout churn).
+9. Once they confirm, write two fields into `canvases/<name>.json`, commit as the person and push: `intent`, one or two sentences
+   in their words on what the change is for, and `states`, a list of the states that matter, each a short name and
+   how to reach it (a tweak, or the clicks). Ask for what the canvas cannot show: the loading, empty and error cases
+   the engineer should build. Whoever implements the design reads these and does not have to guess.
 
 ## The UI kit on a canvas
 
@@ -183,6 +195,8 @@ same pull request: do not create another branch.
      components and classes; do not copy the markup.
    - `renderVals()` and everything in it is mock data and prototype wiring, not spec.
    - A tweak's default is the design (see Tweaks).
+   - `canvases/<name>.json` → `intent` and `states` say what the change is for and which states to build. If they
+     are missing, ask the designer before building.
    - The ticket's canvas (`canvases/<name>.json` → `canvas`) is there to look at when a file is ambiguous.
 3. Before writing code, tell the person: in plain words what you understand the design change to be; which app
    files you will change; anything the design implies that is more than UI (new data, sorting, an API field) and
@@ -209,7 +223,8 @@ Replaces the canvas's files with the checkout's. No commit, no push. On the tick
 2. `prepare-publish.cjs <folder> <name>` into a fresh folder; upload and record any image it lists, and run it
    again until it exits 0.
 3. Publish: `url` = the canvas, `file_path` = `<folder>/project/canvas.json`, `root` = `<folder>`, `files` = the
-   contents of `<folder>/files.json`. A file in step 1's listing that `<folder>/project/` does not have was deleted
+   entries of `<folder>/files.json` for the files that changed (`diff -rq <folder>/project <download>/project` names
+   them). A file in step 1's listing that `<folder>/project/` does not have was deleted
    in the repo: add `"project/<file>": null` to `files` for each, or it stays on the canvas.
 4. The record: set `canvasVersion` to the version the publish answered with and run
    `node design/publish/canvas-digest.cjs <folder>/project <name> --record`. A saved canvas's record is a tracked
@@ -229,11 +244,17 @@ A design ticket keeps its prototypes current by itself: design and code merge to
 of change, app code changed with no design ticket, which leaves a prototype behind without anything noticing.
 `canvases/prototypes.json` → `appCommit` is the app commit the prototypes were last brought in line with.
 
-1. Work on a branch off an up-to-date `main`.
-2. Triage, read-only. For every change in `apps/app/src` and `packages/gov-ui-kit/src` between `appCommit` and
-   `main` (and changed strings in `en.json`), read the diff and sort it: no visible effect; visible, but no prototype
-   covers it; affects a prototype. For the last kind, open the prototype and check whether it already has the change
-   or is behind. Write the behind items as a table: what changed in a designer's words, the commit, the app file and
+1. Work on a branch off an up-to-date `main`, or off the release branch when catching up a release.
+2. Triage, read-only. `node design/publish/affected.cjs` lists the parts that app changes since `appCommit` touched,
+   using the map in `design/sources.json`: the changed app files, kit files and strings, each with the parts that
+   show it. Those files are the reading list: read every one of their diffs
+   (`git diff <appCommit> <head> -- <file>`), once each, however many there are. What the report does not list is
+   what you skip. Open a part when a diff changes what it shows: markup, text, classes, or a condition that decides
+   what renders. A string the report lists for a part is in that part's own file, also when the part mounts
+   another part showing the same text. For each such part, check whether it already has the change or is behind; a
+   part that changed in the same range usually has it. The report's unmapped list is
+   changed UI code that no part covers: skim the file names for a page a prototype should have, without reading the
+   diffs. Write the behind items as a table: what changed in a designer's words, the commit, the app file and
    lines, the prototype file, a size. A kit change matters only if a prototype's own markup or props must change,
    or a prototype now needs a kit component the kit artifact lacks; otherwise give the canvas the current kit (see
    "The UI kit on a canvas"). A new page in an area a prototype covers is "no prototype covers it": list it; it is
@@ -243,11 +264,28 @@ of change, app code changed with no design ticket, which leaves a prototype behi
    prototype has no backend and must never leave a designer stuck): list them as not done unless told otherwise.
 4. Fix what is behind, following `BRIEF.md`, from the app's source. Work alone when most fixes touch the same files (often
    `app.css`); otherwise one agent per group of files, never two on the same file. Each fix is proved by clicking, not only by loading.
-5. Run the load check on every prototype touched, refresh the reference canvas, set `appCommit` to `main`'s head, add what was
-   left out to the README's known gaps, update the README's file count and prototype list if they changed, commit,
-   push.
+5. Run the load check on every prototype touched, refresh the reference canvas, set `appCommit` to the head the
+   triage ran against (`node design/publish/affected.cjs --record`), add what was left out to the README's known
+   gaps, update the README's file count and prototype list if they changed, commit, push.
 
 It finds what changed. It does not find a prototype that was wrong from the start; only someone looking does.
+
+### In CI
+
+`app-design-catch-up.yml` runs this section when the app release PR opens, or by hand for a branch. The script runs
+first, and when it lists no part nothing else runs. Otherwise a headless session follows the steps above, with these
+differences:
+
+- Nobody is there to ask. Skip the wait in step 3 and leave undone anything that needs a product decision.
+- Every listed diff is read, and every behind item is either fixed or listed as left out with its reason. "Not
+  opened" is not a reason.
+- No load check, no clicking and no canvas refresh: CI reaches neither the runtime nor the canvases. The designer
+  checks the result on a canvas before merging.
+- Change files only under `design/`. Write the table from step 2, with what was fixed and what was left out, to
+  `design/.runtime/catch-up.md`: it becomes the pull request's description.
+- The job, not the session, sets `appCommit` and opens the pull request into the release branch. The release's
+  Slack thread and a comment on the release PR get one line: a ping to check that pull request, or that nothing
+  was behind, or that the run failed. A failed run does not hold the release; the next run covers the same range again.
 
 Runs so far:
 
@@ -255,8 +293,6 @@ Runs so far:
 | --- | --- | --- | --- |
 | 20 November 2026 | 16 to 19 November, 139 app files | 10 behind, 8 fixed by two agents, 2 error states left out | Under an hour, improvised; this section was written afterwards |
 | 21 November 2026 | 19 to 20 November, 150 files (mostly one pull request) | 11 behind, all fixed; new pages listed, not built; two new kit components drawn by hand | About 20 minutes, by an agent with no prior context following this section, which it then corrected |
-
-When this runs (after each release, on demand, or per pull request) is undecided.
 
 ## Finish a ticket
 
