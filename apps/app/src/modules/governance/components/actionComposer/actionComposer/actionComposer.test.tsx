@@ -109,22 +109,26 @@ describe('ActionComposer', () => {
             return onAddAction;
         };
 
-        it('adds them for the decoded view only outside DAO context, keeping their calldata', async () => {
+        it('shapes a transfer for the transfer view outside DAO context, sent from the account', async () => {
             useDaoSpy.mockReturnValue(
                 generateReactQueryResultLoading() as ReturnType<
                     typeof daoService.useDao
                 >,
             );
+            const accountAddress = '0x0000000000000000000000000000000000000003';
 
             const onAddAction = await addThroughWalletConnect({
                 daoId: undefined,
                 network: daoService.Network.ETHEREUM_SEPOLIA,
-                accountAddress: '0x0000000000000000000000000000000000000001',
+                accountAddress,
             });
 
             expect(onAddAction).toHaveBeenCalledWith([
                 expect.objectContaining({
-                    type: 'Unknown',
+                    type: ProposalActionType.TRANSFER,
+                    from: accountAddress,
+                    receiver: { address: receiver },
+                    rawAmount,
                     data: decodedTransfer.data,
                     daoId: undefined,
                 }),

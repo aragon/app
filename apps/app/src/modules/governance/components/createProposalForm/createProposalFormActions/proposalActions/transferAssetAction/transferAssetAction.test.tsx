@@ -273,6 +273,46 @@ describe('<TransferAssetAction /> component', () => {
         expect(action.inputData.parameters[1].value).toEqual(rawAmount);
     });
 
+    it('initializes an action imported for a Safe, keeping its calldata, from the sender and chain of the action', () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        useTokenSpy.mockReturnValue({
+            data: resolvedToken,
+            isLoading: false,
+            isError: false,
+        });
+        const safeAddress = '0x3333333333333333333333333333333333333333';
+        const network = daoService.Network.ETHEREUM_SEPOLIA;
+
+        render(
+            createTestComponent(
+                {
+                    ...generateImportedAction(),
+                    daoId: undefined,
+                    from: safeAddress,
+                },
+                networkDefinitions[network].id,
+            ),
+        );
+
+        const action = getFormValues('actions.0');
+        expect(action.amount).toEqual('1234');
+        expect(action.data).toEqual(originalData);
+        expect(action.asset.token).toEqual(
+            expect.objectContaining({ decimals: 6, network }),
+        );
+        expect(action.rawAmount).toBeUndefined();
+        expect(useReadContractSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                args: [safeAddress],
+                chainId: networkDefinitions[network].id,
+            }),
+        );
+    });
+
     it('keeps the uploaded calldata untouched while token data is loading and initializes the amount once it resolves', () => {
         const { rerender } = render(
             createTestComponent(generateImportedAction()),

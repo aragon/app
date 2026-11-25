@@ -23,7 +23,10 @@ import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
-import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
+import {
+    type IDecodedActionsAccount,
+    proposalActionsImportExportUtils,
+} from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import { useImportedContractAbis } from '../../importedContractAbisProvider';
 import {
@@ -136,6 +139,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const resolvedNetwork = network ?? dao?.network;
     const executorAddress = accountAddress ?? dao?.address;
 
+    // Outside DAO context the account runs the actions, so the decoded transfers it brings in (imported or through
+    // WalletConnect) get their basic view, sent from it.
+    const decodedActionsAccount: IDecodedActionsAccount | undefined =
+        daoId == null && accountAddress != null && resolvedNetwork != null
+            ? { network: resolvedNetwork, address: accountAddress }
+            : undefined;
+
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
@@ -189,10 +199,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
         // Normalized like imported actions: the basic views expect their own shape (e.g. a transfer with a raw amount
-        // to format once its decimals are known), and outside DAO context only the decoded view is available. Added as
-        // decoded, a transfer would re-encode the dApp's calldata from the raw amount at 18 decimals.
+        // to format once its decimals are known). Added as decoded, a transfer would re-encode the dApp's calldata from
+        // the raw amount at 18 decimals.
         const parsedActions = proposalActionsImportExportUtils
-            .normalizeDecodedActions(actions, dao)
+            .normalizeDecodedActions(actions, dao, decodedActionsAccount)
             .map((action) => ({ ...action, daoId, meta: undefined }));
         onAddAction(parsedActions);
     };
@@ -255,6 +265,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         result.actions,
                         resolvedNetwork,
                         dao,
+                        decodedActionsAccount,
                     );
 
                 handleImportActions(decodedActions);
