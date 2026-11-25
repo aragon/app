@@ -234,9 +234,9 @@ Replaces the canvas's files with the checkout's. No commit, no push. On the tick
 
 When prototype files change on `main` (a ticket merged, or a catch-up). On `main`, with no uncommitted changes. It
 changes nothing in git and needs no pull request: the canvas carries its own record, `published.json` (the commit
-it was published from and the fingerprint of its files), which `prepare-publish.cjs` writes.
+it was published from and the fingerprint of its files), which `prepare-publish.cjs` writes into `project/`.
 
-1. Read the canvas as in Save steps 1 and 2, plus `published.json`, then
+1. Read the canvas as in Save steps 1 and 2 (the listing includes `project/published.json`), then
    `node design/publish/canvas-digest.cjs <download>/project prototypes`. Exit code 0: go on. Exit code 2: someone
    edited the reference canvas, or it has no `published.json`. Stop and ask before overwriting.
 2. `node design/publish/prepare-publish.cjs <folder>` into a fresh folder; upload and record any image it lists, and

@@ -6,12 +6,12 @@
 // none. With --record the fingerprint is written to the record instead.
 //
 // The reference canvas ("prototypes") keeps its fingerprint on the canvas, not in the repo: the comparison is with
-// published.json next to the project folder (read it from the canvas along with project/), and there is no --record.
+// published.json in the project folder (read it from the canvas with the other files), and there is no --record.
 //
 //   node design/publish/canvas-digest.cjs <project folder> [canvas name] [--record]
 const fs = require('node:fs');
 const path = require('node:path');
-const { REPO, die, digestFolder, pointerFile } = require('./paths.cjs');
+const { REPO, STAMP, die, digestFolder, pointerFile } = require('./paths.cjs');
 
 const args = process.argv.slice(2);
 const record = args.includes('--record');
@@ -39,7 +39,7 @@ if (name === 'prototypes') {
             'The reference canvas carries its own published.json (prepare-publish.cjs writes it): nothing to record',
         );
     }
-    const stamp = path.join(folder, '..', 'published.json');
+    const stamp = path.join(folder, STAMP);
     const published = fs.existsSync(stamp)
         ? JSON.parse(fs.readFileSync(stamp, 'utf8'))
         : undefined;
@@ -52,7 +52,7 @@ if (name === 'prototypes') {
     console.log(
         published
             ? `Differs from what was published from ${published.commit}: the canvas was edited since`
-            : `No published.json next to ${folder}: read it from the canvas too. If the canvas has none, whether it was edited is unknown`,
+            : `No ${STAMP} in ${folder}: read it from the canvas too. If the canvas has none, whether it was edited is unknown`,
     );
     process.exit(2);
 }

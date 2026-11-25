@@ -22,6 +22,7 @@ const {
     APP_ASSETS,
     CANVAS,
     REPO,
+    STAMP,
     die,
     digestFolder,
     pointerFile,
@@ -153,17 +154,17 @@ const kitFiles = Object.fromEntries(
     ]),
 );
 // The reference canvas carries its own record of what was published, so a refresh changes nothing in git:
-// published.json, next to project/, with the commit and the fingerprint canvas-digest.cjs checks the canvas against.
+// project/published.json, with the commit and the fingerprint canvas-digest.cjs checks the canvas against.
 if (POINTER === pointerFile()) {
     const commit = require('node:child_process')
         .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO })
         .toString()
         .trim();
     fs.writeFileSync(
-        path.join(out, 'published.json'),
+        path.join(out, 'project', STAMP),
         `${JSON.stringify({ commit, digest: digestFolder(path.join(out, 'project')) }, null, 1)}\n`,
     );
-    ownFiles['published.json'] = 'published.json';
+    ownFiles[`project/${STAMP}`] = `project/${STAMP}`;
 }
 fs.writeFileSync(
     path.join(out, 'files.json'),
