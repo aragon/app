@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as daoService from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -10,9 +10,10 @@ import {
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { ProposalActionType } from '../../../api/governanceService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
+import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
 import { generateProposalAction } from '../../../testUtils';
-import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { ImportedContractAbisProvider } from '../../importedContractAbisProvider';
 import type { IActionComposerProps } from './actionComposer';
 import { ActionComposer } from './actionComposer';
@@ -20,18 +21,6 @@ import { ActionComposer } from './actionComposer';
 describe('ActionComposer', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const readFileAsTextSpy = jest.spyOn(
-        proposalActionsImportExportUtils,
-        'readFileAsText',
-    );
-    const validateAndParseActionsSpy = jest.spyOn(
-        proposalActionsImportExportUtils,
-        'validateAndParseActions',
-    );
-    const decodeActionsSpy = jest.spyOn(
-        proposalActionsImportExportUtils,
-        'decodeActions',
-    );
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
@@ -43,9 +32,6 @@ describe('ActionComposer', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useDialogContextSpy.mockReset();
-        readFileAsTextSpy.mockReset();
-        validateAndParseActionsSpy.mockReset();
-        decodeActionsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IActionComposerProps>) => {
@@ -80,41 +66,86 @@ describe('ActionComposer', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('makes the account the sender of imported actions outside DAO context', async () => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultLoading() as ReturnType<
-                typeof daoService.useDao
-            >,
-        );
-        const accountAddress = '0x0000000000000000000000000000000000000001';
-        const importedAction = generateProposalAction({
-            from: '0x0000000000000000000000000000000000000002',
+    describe('actions added through WalletConnect', () => {
+        const receiver = '0x2222222222222222222222222222222222222222';
+        const token = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+        const rawAmount = '2500000';
+
+        // An ERC-20 transfer as the backend decodes a dApp request: typed as a transfer, with the raw amount.
+        const decodedTransfer = generateProposalAction({
+            type: ProposalActionType.TRANSFER,
+            from: '0x0000000000000000000000000000000000000001',
+            to: token,
             value: '0',
+            data: '0xa9059cbb',
+            inputData: {
+                function: 'transfer',
+                contract: 'USDC',
+                parameters: [
+                    { name: '_to', type: 'address', value: receiver },
+                    { name: '_value', type: 'uint256', value: rawAmount },
+                ],
+            },
         });
-        readFileAsTextSpy.mockResolvedValue('[]');
-        validateAndParseActionsSpy.mockReturnValue({
-            success: true,
-            actions: [],
-        });
-        decodeActionsSpy.mockResolvedValue([importedAction]);
-        const onAddAction = jest.fn();
-        const { container } = render(
-            createTestComponent({
+
+        const addThroughWalletConnect = async (
+            props: Partial<IActionComposerProps>,
+        ) => {
+            const openMock = jest.fn();
+            useDialogContextSpy.mockReturnValue(
+                generateDialogContext({ open: openMock }),
+            );
+            const onAddAction = jest.fn();
+            render(createTestComponent({ ...props, onAddAction }));
+
+            await userEvent.click(
+                screen.getByRole('button', { name: /walletConnect/i }),
+            );
+            const { params } = openMock.mock.calls[0][1] as {
+                params: IWalletConnectActionDialogParams;
+            };
+            act(() => params.onAddActionsClick([decodedTransfer]));
+
+            return onAddAction;
+        };
+
+        it('adds them for the decoded view only outside DAO context, keeping their calldata', async () => {
+            useDaoSpy.mockReturnValue(
+                generateReactQueryResultLoading() as ReturnType<
+                    typeof daoService.useDao
+                >,
+            );
+
+            const onAddAction = await addThroughWalletConnect({
                 daoId: undefined,
                 network: daoService.Network.ETHEREUM_SEPOLIA,
-                accountAddress,
-                onAddAction,
-            }),
-        );
+                accountAddress: '0x0000000000000000000000000000000000000001',
+            });
 
-        await userEvent.upload(
-            container.querySelector('input[type="file"]') as HTMLInputElement,
-            new File(['[]'], 'actions.json', { type: 'application/json' }),
-        );
+            expect(onAddAction).toHaveBeenCalledWith([
+                expect.objectContaining({
+                    type: 'Unknown',
+                    data: decodedTransfer.data,
+                    daoId: undefined,
+                }),
+            ]);
+        });
 
-        expect(onAddAction).toHaveBeenCalledWith([
-            expect.objectContaining({ from: accountAddress, daoId: undefined }),
-        ]);
+        it('shapes a transfer for the transfer view in DAO context, its raw amount kept to format once decimals are known', async () => {
+            const onAddAction = await addThroughWalletConnect({
+                daoId: 'dao-1',
+            });
+
+            expect(onAddAction).toHaveBeenCalledWith([
+                expect.objectContaining({
+                    type: ProposalActionType.TRANSFER,
+                    receiver: { address: receiver },
+                    rawAmount,
+                    data: decodedTransfer.data,
+                    daoId: 'dao-1',
+                }),
+            ]);
+        });
     });
 
     it('offers WalletConnect outside DAO context, connected as the given account on the given network', async () => {

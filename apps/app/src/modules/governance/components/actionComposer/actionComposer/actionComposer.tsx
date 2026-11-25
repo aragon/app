@@ -188,11 +188,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        const parsedActions = actions.map((action) => ({
-            ...action,
-            daoId,
-            meta: undefined,
-        }));
+        // Normalized like imported actions: the basic views expect their own shape (e.g. a transfer with a raw amount
+        // to format once its decimals are known), and outside DAO context only the decoded view is available. Added as
+        // decoded, a transfer would re-encode the dApp's calldata from the raw amount at 18 decimals.
+        const parsedActions = proposalActionsImportExportUtils
+            .normalizeDecodedActions(actions, dao)
+            .map((action) => ({ ...action, daoId, meta: undefined }));
         onAddAction(parsedActions);
     };
 
@@ -212,14 +213,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleImportActions = (actions: IProposalAction[]) => {
-        // Outside DAO context the account runs every action, so it is their sender whatever the file says: a transfer
-        // reads its sender from `from`, and an account can only send its own assets.
-        const from = daoId == null ? accountAddress : undefined;
         const parsedActions = actions.map(
             (action) =>
                 ({
                     ...action,
-                    from: from ?? action.from,
                     value: BigInt(action.value),
                     daoId,
                     meta: undefined,
