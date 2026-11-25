@@ -85,8 +85,11 @@
               <div class="ws-account-list">
                 <sc-for list="{{accounts}}" as="a" hint-placeholder-count="4">
                   <x-import component-from-global-scope="GovUiKit.DataList.Item" href="{{a.href}}" class-name="flex items-center gap-3 p-4 md:p-6">
-                    <sc-if value="{{a.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
-                    <sc-if value="{{a.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+                    <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
+                      <sc-if value="{{a.isDao}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import></sc-if>
+                      <sc-if value="{{a.isSafe}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" src="assets/safeWallet.png" size="md" class-name="shrink-0"></x-import></sc-if>
+                      <span class="ws-net-badge ws-net-badge--md"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
+                    </span>
                     <div class="ws-account-item__text">
                       <span class="ws-account-item__name">{{a.name}}</span>
                       <span class="ws-account-item__meta"><span class="ws-account-item__network">{{a.network}}</span><span>{{a.address}}</span></span>

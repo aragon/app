@@ -812,6 +812,16 @@
 .ws-avatar-stack__slot--overlap { margin-left: -4px; }
 .ws-avatar-stack__count { align-items: center; justify-content: center; background: var(--color-neutral-50); color: var(--color-neutral-500); font: 600 8px/1 var(--font-sans); }
 /* flex min-w-0 grow flex-col text-left leading-tight */
+/* Avatar `badge` (kit avatar.tsx, commit 5896533e3; not in the kit build yet, drawn here). Wrapper: relative flex size-fit shrink-0.
+   Badge: absolute flex items-center justify-center overflow-hidden rounded-full bg-neutral-0 ring-neutral-0 *:size-full, sized from the avatar:
+   xs size-2 -right/bottom-0.5 ring-1; sm size-3 -0.75 ring-1; md size-4 -1 ring-2. */
+.ws-avatar-badged { position: relative; display: flex; width: fit-content; height: fit-content; flex-shrink: 0; }
+.ws-net-badge { position: absolute; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 9999px; background: var(--color-neutral-0); }
+.ws-net-badge > * { width: 100%; height: 100%; object-fit: cover; }
+.ws-net-badge--xs { width: 8px; height: 8px; right: -2px; bottom: -2px; box-shadow: 0 0 0 1px var(--color-neutral-0); }
+.ws-net-badge--sm { width: 12px; height: 12px; right: -3px; bottom: -3px; box-shadow: 0 0 0 1px var(--color-neutral-0); }
+.ws-net-badge--md { width: 16px; height: 16px; right: -4px; bottom: -4px; box-shadow: 0 0 0 2px var(--color-neutral-0); }
+
 .ws-selector__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; text-align: left; line-height: 1.25; }
 .ws-selector__title { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
 .ws-selector__subtitle { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
@@ -842,8 +852,6 @@
 .ws-compact__text { display: flex; min-width: 0; flex-direction: column; text-align: left; line-height: 1.25; }
 .ws-compact__title { overflow: hidden; color: var(--color-neutral-800); font-size: 14px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
 .ws-compact__subtitle { overflow: hidden; font-size: 12px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
-.ws-compact__chevrons { display: flex; flex-shrink: 0; flex-direction: column; align-items: center; }
-.ws-compact__chevrons > * + * { margin-top: -4px; }
 @media (min-width: 48rem) {
     .ws-compact { gap: 12px; padding: 8px 12px 8px 8px; border-radius: 12px; }
     .ws-compact__title { font-size: 16px; }
@@ -1298,15 +1306,17 @@
 .wizard-step__errors { display: flex; flex-direction: column; gap: 24px; }
 
 /* ---- WorkspaceWelcomeDialog: modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx ---- */
-/* content: flex flex-col gap-6 px-6 pt-4 pb-6 */
-.ws-welcome { display: flex; flex-direction: column; gap: 24px; padding: 16px 24px 24px; font-family: var(--font-sans); }
+/* content: flex flex-col gap-4 pt-2 pb-4 (+ default px-4 md:px-6); the description sits in the header, the note in the footer */
+.ws-welcome { display: flex; flex-direction: column; gap: 16px; padding: 8px 16px 16px; font-family: var(--font-sans); }
+@media (min-width: 768px) { .ws-welcome { padding-left: 24px; padding-right: 24px; } }
 .ws-welcome p { margin: 0; }
-/* text-base leading-normal text-neutral-500 */
-.ws-welcome__description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
-.ws-welcome__features { display: flex; flex-direction: column; gap: 16px; }
-.ws-welcome__feature { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+.ws-welcome__feature { display: flex; flex-direction: row; align-items: center; gap: 12px; }
+/* flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-50, Icon text-primary-400 */
+.ws-welcome__icon { display: flex; width: 32px; height: 32px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 9999px; background: var(--color-primary-50); color: var(--color-primary-400); }
 .ws-welcome__feature-text { display: flex; flex-direction: column; gap: 2px; }
-.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 400; line-height: 1.25; }
-.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+/* text-base leading-tight font-semibold text-neutral-800 */
+.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 600; line-height: 1.25; }
 /* text-sm leading-normal text-neutral-500 */
-.ws-welcome__note { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+/* Dialog.Footer child: -mb-2 text-xs leading-normal text-neutral-500 */
+.ws-welcome__note { margin: 0 0 -8px; color: var(--color-neutral-500); font-size: 12px; line-height: 1.5; }

@@ -168,7 +168,7 @@
 .ws-menu__scrim { position: fixed; inset: 0; z-index: 60; background: transparent; }
 .ws-menu {
     position: absolute; top: calc(100% + 4px); left: 0; z-index: 61;
-    box-sizing: border-box; display: flex; width: 100%; min-width: 232px; flex-direction: column; gap: 2px;
+    box-sizing: border-box; display: flex; width: max-content; min-width: max(100%, 232px); max-width: calc(100vw - 32px); flex-direction: column; gap: 2px;
     padding: 8px; border: 1px solid var(--color-neutral-100); border-radius: 12px;
     background: var(--color-neutral-0); box-shadow: 0 8px 24px -8px rgba(50, 63, 75, 0.28);
     font-family: var(--font-sans);
@@ -179,6 +179,8 @@
     font-size: 16px; line-height: 1.25; text-decoration: none; text-align: left; cursor: pointer;
 }
 .ws-menu__item:hover, .ws-menu__item[aria-current="true"] { background: var(--color-neutral-50); color: var(--color-neutral-800); }
+/* account menu rows: avatars sit in a 44px column like the trigger (w-11 shrink-0 items-center) */
+.ws-menu__avatar { display: flex; width: 44px; flex-shrink: 0; align-items: center; }
 .ws-menu__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; line-height: 1.25; }
 .ws-menu__name { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 24px; text-overflow: ellipsis; white-space: nowrap; }
 .ws-menu__meta { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
@@ -192,8 +194,9 @@
 /* Workspace prototype (agent Y): all-accounts pages */
 /* workspaceSelectAccountDialogItem: DataList.Item with px-4 py-3 md:p-6, active: border-primary-400 shadow-primary */
 .wsy-pick-list { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+/* workspaceSelectAccountDialogItem: px-4 py-3 md:px-6 md:py-4 (a dialog sits outside the app column: viewport md, not a container query) */
 .wsy-pick { padding: 12px 16px; text-align: left; }
-@container app (min-width: 48rem) { .wsy-pick { padding: 24px; } }
+@media (min-width: 768px) { .wsy-pick { padding: 16px 24px; } }
 .wsy-pick--active, .wsy-pick--active:hover { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary) !important; }
 
 /* Agent Z: select-account dialog of the workspace transactions page (WsTransactionsAccountDialog) */
@@ -201,14 +204,19 @@
 .ws-acc-item { display: flex; flex-direction: column; gap: 12px; }
 .ws-acc-item__lead { display: flex; align-items: center; gap: 12px; }
 .ws-acc-item__lead--dimmed { opacity: .6; }
-.ws-acc-item__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; }
+.ws-acc-row { padding-top: 12px; padding-bottom: 12px; }
+@media (min-width: 768px) { .ws-acc-row { padding-top: 16px; padding-bottom: 16px; } }
+/* name + second line: flex-col gap-1; second line: flex items-baseline gap-1.5 text-sm leading-tight, network neutral-800, address neutral-500 */
+.ws-acc-item__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; gap: 4px; }
 .ws-acc-item__name, .ws-acc-item__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; line-height: 1.25; }
 .ws-acc-item__name { font-size: 16px; color: var(--color-neutral-800); }
-.ws-acc-item__meta { font-size: 14px; color: var(--color-neutral-500); }
+.ws-acc-item__meta { display: flex; min-width: 0; align-items: baseline; gap: 6px; font-size: 14px; color: var(--color-neutral-500); }
+.ws-acc-item__net { flex-shrink: 0; color: var(--color-neutral-800); }
+.ws-acc-item__addr { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .ws-acc-item__help { margin: 0; font-size: 14px; line-height: 20px; color: var(--color-neutral-300); }
 .ws-acc-item--active { border-color: var(--color-primary-400) !important; box-shadow: var(--shadow-primary); }
 .ws-acc-item--disabled { border-color: var(--color-neutral-100) !important; background-color: var(--color-neutral-50); cursor: default; }
-@media (min-width: 768px) { .ws-acc-item__name { font-size: 18px; } .ws-acc-item__meta, .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
+@media (min-width: 768px) { .ws-acc-item__help { font-size: 16px; line-height: 24px; } }
 /* Agent Z: data-list rows of the workspace transactions page that are not accordion items (pending Safe, DAO execution), padded as the app's px-4 py-3 md:p-6 */
 .ws-dli { padding: 12px 16px; }
 @media (min-width: 768px) { .ws-dli { padding: 24px; } }

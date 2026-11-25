@@ -32,20 +32,6 @@ body{margin:0}
           </sc-if>
         </x-import>
       </sc-for>
-      <sc-for list="{{conditions}}" as="c" hint-placeholder-count="1">
-        <x-import component-from-global-scope="GovUiKit.Card" class-name="border-primary-400 shadow-primary addr-item">
-          <div class="addr-item__inner">
-            <div class="addr-item__input"><x-import component-from-global-scope="GovUiKit.AddressInput" chain-id="{{one}}" value="{{c.address}}" on-change="{{c.onAddress}}" on-accept="{{c.onAccept}}" on-blur="{{c.onBlur}}" alert="{{c.alert}}"></x-import></div>
-            <div class="addr-item__remove"><x-import component-from-global-scope="GovUiKit.Button" aria-label="Remove condition" icon-left="CLOSE" size="sm" variant="secondary" on-click="{{c.onRemove}}"></x-import></div>
-          </div>
-        </x-import>
-      </sc-for>
-      <sc-if value="{{showExisting}}" hint-placeholder-val="{{no}}">
-        <div class="process-fragment__start"><x-import component-from-global-scope="GovUiKit.Button" icon-left="PLUS" size="md" variant="tertiary" on-click="{{onAddCondition}}">Existing condition</x-import></div>
-      </sc-if>
-      <sc-if value="{{showBasicNotSupported}}" hint-placeholder-val="{{no}}">
-        <p class="process-fragment__note">Adding existing conditions is only available in Advanced governance.</p>
-      </sc-if>
     </x-import>
   </sc-if>
 </div>
@@ -53,19 +39,17 @@ body{margin:0}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"vm":{"editor":null}}'>
 // Step 3 body "Set proposal creation rules" (apps/app: modules/createDao/components/createProcessForm/createProcessFormProposalCreation/
-// createProcessFormProposalCreation.tsx, proposalCreationSettingsDefault.tsx, existingConditionCard.tsx; plugins/{token,multisig}Plugin/components/
+// createProcessFormProposalCreation.tsx, proposalCreationSettingsDefault.tsx; plugins/{token,multisig}Plugin/components/
 // *ProposalCreationSettings). Two siblings in the step content: the mode RadioGroup and the "Bodies" InputContainer (hidden for "Anyone").
 // Props: vm = { mode 'LISTED_BODIES'|'ANY_WALLET', onMode(value), modeAlert / bodiesAlert ({message, variant:'critical'}),
-//   bodies: [{ label, description, checked, onChecked(checked), avatar, hasMinReq, minReq, onMinReq(value), minReqAlert }],
-//   conditions: [{ address, alert, onAddress, onAccept, onBlur, onRemove }], showExisting, onAddCondition, showBasicNotSupported }.
+//   bodies: [{ label, description, checked, onChecked(checked), avatar, hasMinReq, minReq, onMinReq(value), minReqAlert }] }.
+// existingProposalCreationCondition is off (as on new.app.aragon.org): no existing-condition cards, add button or Basic-governance note.ting conditions.
 class Component extends DCLogic {
   renderVals() {
     const vm = this.props.vm || {};
     const noop = () => undefined;
     return { yes: true, no: false, zero: 0, one: 1, mode: vm.mode || 'LISTED_BODIES', onMode: vm.onMode || noop, modeAlert: vm.modeAlert, bodiesAlert: vm.bodiesAlert,
-      showBodies: (vm.mode || 'LISTED_BODIES') !== 'ANY_WALLET', bodies: (vm.bodies || []).map((b) => ({ onChecked: noop, onMinReq: noop, ...b })),
-      conditions: (vm.conditions || []).map((c) => ({ onAddress: noop, onAccept: noop, onBlur: noop, onRemove: noop, ...c })),
-      showExisting: !!vm.showExisting, onAddCondition: vm.onAddCondition || noop, showBasicNotSupported: !!vm.showBasicNotSupported };
+      showBodies: (vm.mode || 'LISTED_BODIES') !== 'ANY_WALLET', bodies: (vm.bodies || []).map((b) => ({ onChecked: noop, onMinReq: noop, ...b })) };
   }
 }
 </script>

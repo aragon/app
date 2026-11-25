@@ -106,10 +106,13 @@
               <sc-for list="{{accounts}}" as="a" hint-placeholder-count="3">
                 <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.cls}}" on-click="{{a.choose}}">
                   <div class="flex items-center gap-3">
-                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import>
-                    <div class="ws-account-item__text">
-                      <span class="ws-account-item__name">{{a.name}}</span>
-                      <span class="ws-account-item__meta"><span class="ws-account-item__network">{{a.network}}</span><span>{{a.address}}</span></span>
+                    <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
+                      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import>
+                      <span class="ws-net-badge ws-net-badge--md"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
+                    </span>
+                    <div class="ws-acc-item__text">
+                      <span class="ws-acc-item__name">{{a.name}}</span>
+                      <span class="ws-acc-item__meta"><span class="ws-acc-item__net">{{a.network}}</span><span class="ws-acc-item__addr">{{a.address}}</span></span>
                     </div>
                     <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
                   </div>

@@ -23,10 +23,13 @@
 <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.itemClass}}" on-click="{{a.pick}}">
   <div class="ws-acc-item">
     <div class="{{a.leadClass}}">
-      <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md"></x-import>
+      <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
+        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md"></x-import>
+        <span class="ws-net-badge ws-net-badge--md"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
+      </span>
       <div class="ws-acc-item__text">
         <span class="ws-acc-item__name">{{a.name}}</span>
-        <span class="ws-acc-item__meta">{{a.meta}}</span>
+        <span class="ws-acc-item__meta"><span class="ws-acc-item__net">Ethereum</span><span class="ws-acc-item__addr">{{a.address}}</span></span>
       </div>
       <x-import component-from-global-scope="GovUiKit.Tag" label="{{a.type}}" variant="{{a.tagVariant}}" class-name="shrink-0"></x-import>
     </div>
@@ -48,10 +51,10 @@
 // owns the Northstar Council Safe and holds no execute permission on a DAO, so only the Safe can be picked. "Next" goes to
 // SafeTransactionFlow.dc.html (the app routes a Safe to create/transaction; a DAO would go to create/execute), through a hidden real link.
 const ACCOUNTS = [
-  { id: 'safe', name: 'Northstar Council Safe', avatar: 'assets/safeWallet.png', type: 'Safe', meta: 'Ethereum · 0x515f…02e2', eligible: true },
-  { id: 'meridian', name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg', type: 'DAO', meta: 'Ethereum · 0xc8c3…bcde', eligible: false },
-  { id: 'atlas', name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', type: 'DAO', meta: 'Ethereum · 0x3115…d368', eligible: false },
-  { id: 'northstar', name: 'Northstar Protocol', avatar: 'assets/mock/avatar/northstar.svg', type: 'DAO', meta: 'Ethereum · 0xa767…a063', eligible: false },
+  { id: 'safe', name: 'Northstar Council Safe', avatar: 'assets/safeWallet.png', type: 'Safe', address: '0x515f…02e2', eligible: true },
+  { id: 'meridian', name: 'Meridian DAO', avatar: 'assets/mock/avatar/meridian.svg', type: 'DAO', address: '0xc8c3…bcde', eligible: false },
+  { id: 'atlas', name: 'Atlas Grants Council', avatar: 'assets/mock/avatar/atlas.svg', type: 'DAO', address: '0x3115…d368', eligible: false },
+  { id: 'northstar', name: 'Northstar Protocol', avatar: 'assets/mock/avatar/northstar.svg', type: 'DAO', address: '0xa767…a063', eligible: false },
 ];
 class Component extends DCLogic {
   state = { selected: '' };
@@ -69,7 +72,7 @@ class Component extends DCLogic {
         ...a,
         disabled: !a.eligible,
         tagVariant: a.type === 'DAO' ? 'primary' : 'neutral',
-        itemClass: !a.eligible ? 'ws-acc-item--disabled' : sel === a.id ? 'ws-acc-item--active' : '',
+        itemClass: 'ws-acc-row ' + (!a.eligible ? 'ws-acc-item--disabled' : sel === a.id ? 'ws-acc-item--active' : ''),
         leadClass: a.eligible ? 'ws-acc-item__lead' : 'ws-acc-item__lead ws-acc-item__lead--dimmed',
         pick: () => { if (a.eligible) this.setState({ selected: a.id }); },
       })),

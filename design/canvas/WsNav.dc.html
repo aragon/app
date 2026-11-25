@@ -42,7 +42,7 @@ body{margin:0}
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Create workspace</span></span>
           </a>
           <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
-            <x-import component-from-global-scope="GovUiKit.Icon" icon="WITHDRAW" size="md" class-name="shrink-0"></x-import>
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="DEPOSIT" size="md" class-name="shrink-0"></x-import>
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Import workspace</span></span>
           </a>
         </div>
@@ -71,8 +71,21 @@ body{margin:0}
         <div class="ws-menu" role="menu">
           <sc-for list="{{options}}" as="o" hint-placeholder-count="5">
             <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
-              <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="RICHTEXT_LIST_UNORDERED" size="sm" variant="primary" class-name="shrink-0"></x-import></sc-if>
-              <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import></sc-if>
+              <span class="ws-menu__avatar">
+                <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
+                  <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
+                    <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
+                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
+                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
+                  </span>
+                </sc-if>
+                <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
+                  <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
+                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import>
+                    <span class="ws-net-badge ws-net-badge--sm"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
+                  </span>
+                </sc-if>
+              </span>
               <span class="ws-menu__text">
                 <span class="ws-menu__name">{{o.name}}</span>
                 <sc-if value="{{o.hasAddress}}" hint-placeholder-val="{{true}}"><span class="ws-menu__meta">{{o.address}}</span></sc-if>
@@ -82,7 +95,7 @@ body{margin:0}
           </sc-for>
           <div class="ws-menu__sep"></div>
           <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
-            <x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__avatar"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0 text-neutral-300"></x-import></span>
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Add account</span></span>
           </a>
         </div>
@@ -137,7 +150,6 @@ body{margin:0}
           <span class="app-account__name">{{user.name}}</span>
           <span class="app-account__address">{{user.short}}</span>
         </span>
-        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="md" class-name="shrink-0 text-neutral-400"></x-import>
       </a>
     </sc-if>
     <div class="app-sidebar__meta">
@@ -166,10 +178,6 @@ body{margin:0}
         <span class="ws-compact__text">
           <span class="ws-compact__title">Meridian Ecosystem</span>
           <span class="ws-compact__subtitle">{{current.name}}</span>
-        </span>
-        <span class="ws-compact__chevrons" aria-hidden="true">
-          <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_UP" size="sm"></x-import>
-          <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm"></x-import>
         </span>
       </button>
       <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}" on-click="{{walletClick}}"></x-import>
@@ -203,7 +211,7 @@ body{margin:0}
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Create workspace</span></span>
           </a>
           <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
-            <x-import component-from-global-scope="GovUiKit.Icon" icon="WITHDRAW" size="md" class-name="shrink-0"></x-import>
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="DEPOSIT" size="md" class-name="shrink-0"></x-import>
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Import workspace</span></span>
           </a>
         </div>
@@ -232,8 +240,21 @@ body{margin:0}
         <div class="ws-menu" role="menu">
           <sc-for list="{{options}}" as="o" hint-placeholder-count="5">
             <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
-              <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="RICHTEXT_LIST_UNORDERED" size="sm" variant="primary" class-name="shrink-0"></x-import></sc-if>
-              <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import></sc-if>
+              <span class="ws-menu__avatar">
+                <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
+                  <span class="ws-avatar-stack" aria-hidden="true" data-stands-in-for="AvatarStack">
+                    <span class="ws-avatar-stack__slot"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian DAO" src="assets/mock/avatar/meridian.svg" size="xs"></x-import></span>
+                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Atlas Grants Council" src="assets/mock/avatar/atlas.svg" size="xs"></x-import></span>
+                    <span class="ws-avatar-stack__slot ws-avatar-stack__slot--overlap ws-avatar-stack__count">+2</span>
+                  </span>
+                </sc-if>
+                <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
+                  <span class="ws-avatar-badged" data-stands-in-for="Avatar badge">
+                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0"></x-import>
+                    <span class="ws-net-badge ws-net-badge--sm"><img src="assets/networks/ethereum.svg" alt="Ethereum" title="Ethereum"></span>
+                  </span>
+                </sc-if>
+              </span>
               <span class="ws-menu__text">
                 <span class="ws-menu__name">{{o.name}}</span>
                 <sc-if value="{{o.hasAddress}}" hint-placeholder-val="{{true}}"><span class="ws-menu__meta">{{o.address}}</span></sc-if>
@@ -243,7 +264,7 @@ body{margin:0}
           </sc-for>
           <div class="ws-menu__sep"></div>
           <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
-            <x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__avatar"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0 text-neutral-300"></x-import></span>
             <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Add account</span></span>
           </a>
         </div>
@@ -278,8 +299,6 @@ body{margin:0}
         <a class="app-nav-link" href="#" onClick="{{stop}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import>Workspace admin</a>
       </div>
     </div>
-    <div style="padding:0 16px"><div style="border-top:1px solid var(--color-neutral-100)"></div></div>
-    <a class="app-nav-link" href="Explore.dc.html" style="justify-content:space-between">Explore all DAOs<x-import component-from-global-scope="GovUiKit.Icon" icon="APP_EXPLORE" class-name="text-neutral-300"></x-import></a>
   </div>
 </div>
 </x-import>
@@ -298,6 +317,7 @@ body{margin:0}
 // The workspace menu lists the one workspace, "Create workspace" (CreateWorkspaceFlow.dc.html) and "Import workspace" (a file upload: inert).
 // The two selectors are stacked in one bordered group (kit Dropdown.Group, drawn here: the kit Dropdown trigger cannot mount on the canvas).
 // Below lg the top bar carries a compact selector (workspace avatar, name, current account) that opens the navigation dialog.
+// The navigation dialog has no "Explore all DAOs" link (hideExplore). Menu rows carry the account's chain badge (kit Avatar `badge`, drawn here).
 // "Add account" and "Workspace admin" (Settings group) have no screen yet.
 class Component extends DCLogic {
   state = { navOpen: false, menu: '' };
