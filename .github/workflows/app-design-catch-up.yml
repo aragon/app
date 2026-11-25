@@ -179,6 +179,11 @@ jobs:
           set -euo pipefail
           mkdir -p design/.runtime
           cp "$RUNNER_TEMP/triage/affected.md" design/.runtime/affected.md
+          # The prototypes follow a feature-flag environment (RUNBOOK "Catch up with main", step 5b); the session
+          # cannot fetch, so the job hands it the current values. A failed fetch only warns: the report says so.
+          curl -fsSL --retry 3 https://raw.githubusercontent.com/aragon/app-cms/main/feature-flags.json \
+            -o design/.runtime/feature-flags.json \
+            || { rm -f design/.runtime/feature-flags.json; echo "::warning::Could not fetch the feature flags from app-cms"; }
 
       - name: Install Claude Code
         run: |
