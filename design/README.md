@@ -6,7 +6,8 @@ design is a diff of these files on a ticket's branch, and it merges together wit
 `RUNBOOK.md` has the steps.
 
 Two earlier ideas, static screens and exported snapshots, are kept for reference on the branches
-`docs/design-canvas` and `docs/design-snapshots`. Nothing here is built, deployed, released or run in CI.
+`docs/design-canvas` and `docs/design-snapshots`. Nothing here is built, deployed or released. The one workflow
+that touches it, `app-design-catch-up.yml`, brings the prototypes up to an app release when its PR opens.
 
 ## What is here
 
@@ -20,8 +21,10 @@ Two earlier ideas, static screens and exported snapshots, are kept for reference
 | `canvas/assets/mock/` | Mock DAO avatars and token logos |
 | `app-assets.json` | Images the prototypes show that belong to the app (chain logos), by path in the repo |
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
-| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, lay the canvas out, and load-check the prototypes (`check-canvas.cjs`; see `RUNBOOK.md`, "Load check") |
-| `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, pulling a designer's changes into a branch, publishing |
+| `canvases/<name>.json` | A ticket's canvas, on that ticket's branch from its first save: the same record, plus the branch it was cut from and, once the design is saved, its `intent` and the `states` that matter |
+| `sources.json` | Which app code each part shows, and its route. `publish/affected.cjs` reads it to list the parts a range of app changes touched |
+| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, lay the canvas out, load-check the prototypes (`check-canvas.cjs`; see `RUNBOOK.md`, "Load check") and list the parts behind the app (`affected.cjs`; "Catch up with main") |
+| `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, saving a designer's changes into a branch, updating a canvas, implementing a design, catching up with the app |
 | `../skills/shared/aragon-app-canvas*/` | The commands. `/aragon-app-canvas-create` makes a canvas from a branch and touches nothing in git. `/aragon-app-canvas-save` puts what was changed on a canvas into its branch as a commit. `/aragon-app-canvas-update` brings the repo's files onto a canvas. `/aragon-app-canvas` followed by plain words ("refresh the main canvas", "implement this design") covers those and the rest. All of them point a session at the runbook |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
 
@@ -123,8 +126,7 @@ on a canvas", says what to do when a canvas's copy falls behind.
 - **A visual check of an implementation.** The design → code loop in `RUNBOOK.md` has been run once end to end: a
   ticket canvas from these files, a designer's changes saved back as a diff, and an agent building that design in
   the app. Nothing yet puts the built app next to the canvas. The spec proposes that as the last step of
-  "Implement"; it needs the mock backend and capture scripts from `docs/design-canvas` and a map from each prototype
-  page to its app route.
+  "Implement"; it needs the mock backend and capture scripts from `docs/design-canvas`.
 
 ## Known gaps in the prototypes
 
