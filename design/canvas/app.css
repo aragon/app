@@ -1042,7 +1042,7 @@
 .pg-stack__item--cond { padding-bottom: 4px; }
 .pg-stack__cond { border-radius: 4px; padding: 0 4px; background: var(--color-neutral-0); color: var(--color-neutral-800); }
 
-/* ---- Dialogs: apps/app layoutRoot.overrides.css (z-index tokens of the kit dialogs) ---- */
+/* ---- Dialogs: apps/app layoutRoot.css (z-index tokens of the kit dialogs) ---- */
 :root {
     --guk-dialog-overlay-z-index: 20;
     --guk-dialog-alert-overlay-z-index: 20;

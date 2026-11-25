@@ -401,9 +401,6 @@ importers:
       '@changesets/cli':
         specifier: 'catalog:'
         version: 3.0.3
-      ajv:
-        specifier: 'catalog:'
-        version: 8.20.0
       husky:
         specifier: 'catalog:'
         version: 9.1.7
