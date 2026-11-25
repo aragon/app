@@ -1,6 +1,8 @@
 # Syncing the GovKit design system
 
-How to build the **Aragon Governance UI Kit** design system in Claude from this package.
+How to build the **Aragon Governance UI Kit** design system in Claude from this package. It is published to
+https://claude.ai/artifact/XkBmSpR3iXii2onniUDV5x
+(the only copy design canvases read; publish nowhere else).
 Ask Claude: "Sync the design system from aragon/app `main` following
 `packages/gov-ui-kit/design-system/SYNC.md`."
 
@@ -32,29 +34,17 @@ lives in this folder: `conventions.md` opens the README, and `selection-guide.md
 whole as `guidelines/selection-guide.md`, its `### <Name>` sections, named as in the
 manifest, copied into each component's notes. Tokens and fonts are under `src/theme/`.
 
-## Previews
+## No previews
 
-- Render each story from the manifest with the decorator in `.storybook/preview.tsx`:
-  `GukModulesProvider` around a `<div className="flex">` row.
-- Lay previews out at 1024px and scale them to fit. The kit's `md` breakpoint is 768px;
-  narrower previews show the mobile layout (Wallet hides its name).
-- Load one copy of `react-hook-form` for both stories and kit; stories pass their own form
-  context to kit fields.
-- Leave out stories that import anything the package doesn't export, and utilities with no
-  UI (`Rerender`). List them in the README under "Not synced".
-- Compare every preview with the same story in `storybook-static`
-  (`iframe.html?id=<story id>&viewMode=story`) at the same width. Fix wrapper or width
-  differences; report the rest.
-
-Expected differences:
-
-- Remote images and ENS lookups need network a preview doesn't have. Name the image link
-  and affected stories in the component's "Preview notes".
-- Dialog, DialogAlert, Dropdown and Tooltip stories open from a trigger, as in Storybook.
+The design system carries no component previews (`components/<Name>/preview.html`): browsing the
+components is what the kit's Storybook at https://uikit.aragon.org is for, and nothing that uses
+the design system reads them. Design canvases use the bundle, the tokens and the fonts; Claude
+working in a canvas uses each component's notes. Each component's `README.md` ends with a
+"Storybook" section pointing at uikit.aragon.org, in place of a preview. Do not generate or
+compare previews.
 
 ## After a sync
 
 Start the README with the commit synced and the `@aragon/gov-ui-kit` version. Report the
-component count against the manifest, skipped stories and blocked assets. Spot-check Wallet:
-its notes include "hidden below the `md` breakpoint" and its connected stories show the
-handle.
+component count against the manifest and skipped stories. Spot-check Wallet:
+its notes include "hidden below the `md` breakpoint".
