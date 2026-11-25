@@ -529,6 +529,16 @@
                 "apps/app/src/modules/application/components/aragonProfile*/**"
             ]
         },
+        "Landing": {
+            "route": "/",
+            "sources": [
+                "apps/app/src/modules/application/pages/landingPage/**",
+                "apps/app/src/app/page.tsx",
+                "apps/app/src/assets/images/net_bg.svg",
+                "apps/app/src/assets/images/google.svg",
+                "apps/app/public/landing/**"
+            ]
+        },
         "Explore": {
             "route": "/explore",
             "sources": [

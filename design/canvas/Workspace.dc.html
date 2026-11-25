@@ -206,7 +206,7 @@ const SAFE_TXS = [
 ];
 class Component extends DCLogic {
   // Opened from CreateProposalFlow.dc.html's exit: ?account=<meridian|atlas|northstar>&page=proposals lands on that account's proposals page.
-  static fromQuery() { try { const q = new URLSearchParams(window.location.search), a = q.get('account'); if (q.get('welcome') === '1') return { dialog: 'welcome' }; return ['meridian', 'atlas', 'northstar'].indexOf(a) >= 0 && q.get('page') === 'proposals' ? { scope: a, page: 'proposals' } : {}; } catch (e) { return {}; } }
+  static fromQuery() { try { const q = new URLSearchParams(window.location.search), a = q.get('account'); const w = q.get('wallet') === 'connected' ? { wallet: 'connected' } : {}; if (q.get('welcome') === '1') return { ...w, dialog: 'welcome' }; return ['meridian', 'atlas', 'northstar'].indexOf(a) >= 0 && q.get('page') === 'proposals' ? { ...w, scope: a, page: 'proposals' } : w; } catch (e) { return {}; } }
   state = { scope: 'all', page: 'overview', param: '', wallet: '', dialog: '', safeNonce: 5, safeSigners: { tx5: [1, 2], tx6: [1, 3], tx7: [1, 2, 4] }, safeDone: {}, ...Component.fromQuery() };
   poll = null;
   sig = '';
