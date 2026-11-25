@@ -20,8 +20,18 @@
     }
   ],
   "boards": {
-    "Explore.dc.html": {
+    "Landing.dc.html": {
       "x": 0,
+      "y": 300,
+      "w": 1440,
+      "h": 900,
+      "title": "Landing",
+      "page": "prototypes",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Explore.dc.html": {
+      "x": 1520,
       "y": 300,
       "w": 1440,
       "h": 900,
@@ -936,6 +946,7 @@
     }
   },
   "order": [
+    "Landing.dc.html",
     "Explore.dc.html",
     "Dao.dc.html",
     "AtlasDao.dc.html",
@@ -1054,7 +1065,7 @@
       "y": 0,
       "text": "Start here",
       "kind": "title1",
-      "maxW": 1440,
+      "maxW": 2960,
       "page": "prototypes"
     },
     "proto-a-dao-one-per-governance-type": {
@@ -1093,7 +1104,7 @@
       "x": -560,
       "y": 300,
       "w": 440,
-      "text": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Explore: it links to the DAO and the two creation wizards.",
+      "text": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Landing: it leads to the workspace and to Explore, which links to the DAO and the two creation wizards.",
       "page": "prototypes"
     },
     "parts-shared-by-several-prototypes": {

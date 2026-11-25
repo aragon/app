@@ -13,7 +13,7 @@ that touches it, `app-design-catch-up.yml`, brings the prototypes up to an app r
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (111 files) |
+| `canvas/*.dc.html` | Fourteen prototypes and the parts they are built from (112 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit. Written by `publish/layout-canvas.cjs`, not by hand |
@@ -30,8 +30,10 @@ that touches it, `app-design-catch-up.yml`, brings the prototypes up to an app r
 
 The prototypes:
 
-- `Explore.dc.html`: the explore page. The entry point; it links to the DAO and the two creation wizards. With
-  `workspaces` on (as here) the app now serves it at `/explore`, and `/` is a sign-in landing page that has no prototype.
+- `Landing.dc.html`: the sign-in landing page at `/`. The entry point. "Continue with wallet" opens the mock connect dialog
+  and, once a wallet is picked, leads to the workspace; "Explore a demo workspace" (button and previews) leads to the
+  workspace too; Email, Google and Passkey are disabled under "coming soon"; Privacy and Terms are external links.
+- `Explore.dc.html`: the explore page at `/explore`; it links to the DAO and the two creation wizards.
 - `Dao.dc.html`: one mock DAO (Meridian, token voting). Pages: dashboard, proposals, proposal detail, members, member
   detail, assets, transactions, settings, permissions, governance process detail. Connect wallet and the user menu;
   voting, simulating and executing a proposal; delegation; transaction type tabs and the transaction detail dialog.
@@ -181,8 +183,11 @@ on a canvas", says what to do when a canvas's copy falls behind.
   transaction dialogs; "Opening your workspace…" on `/workspace`. "Add account" in the account menu does nothing
   here. The edit workspace wizard was removed from the app. The governance designer inside a workspace is still
   only an open pull request.
-- **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the sign-in landing page at
-  `/` and disconnecting back to it; the Getting started wizard for a user with no workspace; the workspace admin page
+- **Landing page:** the app's page opens the wallet SDK modal directly; the prototype opens the Aragon connect dialog
+  first. The app's demo activates a demo workspace ("aragon-demo"); the prototype links to the workspace prototype.
+  Connecting leaves the landing through a real link to `Workspace.dc.html`, which opens on its own signed-out state.
+  Disconnecting back to the landing is not built.
+- **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the Getting started wizard for a user with no workspace; the workspace admin page
   (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
   the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
   (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
