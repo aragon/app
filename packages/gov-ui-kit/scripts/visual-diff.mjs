@@ -23,10 +23,12 @@
 import { execFileSync } from 'node:child_process';
 import {
     existsSync,
+    lstatSync,
     mkdirSync,
     mkdtempSync,
     readdirSync,
     readFileSync,
+    realpathSync,
     rmSync,
     symlinkSync,
     writeFileSync,
@@ -34,7 +36,7 @@ import {
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { dirname, extname, join, relative, resolve } from 'node:path';
+import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { crc32, deflateSync, inflateSync } from 'node:zlib';
 
@@ -52,6 +54,30 @@ const log = (message) => console.log(`visual-diff: ${message}`);
 const fail = (message) => {
     console.error(`visual-diff: ${message}`);
     process.exit(2);
+};
+
+const outputMarker = (dir, kind) => join(dir, `.visual-diff-${kind}`);
+
+const prepareOutput = (dir, kind, inputs = []) => {
+    mkdirSync(dir, { recursive: true });
+    if (!lstatSync(dir).isDirectory()) {
+        fail(`expected an output directory at ${dir}`);
+    }
+    const output = realpathSync(dir);
+    for (const input of [process.cwd(), kitRoot, ...inputs]) {
+        const path = realpathSync(input);
+        if (path === output || path.startsWith(join(output, sep))) {
+            fail(`output directory ${dir} contains ${input}`);
+        }
+    }
+    const entries = readdirSync(dir);
+    if (entries.length > 0 && !lstatSync(outputMarker(dir, kind), { throwIfNoEntry: false })?.isFile()) {
+        fail(`refusing to clear ${dir}: choose an empty directory or a previous visual-diff ${kind} output`);
+    }
+    for (const entry of entries) {
+        rmSync(join(dir, entry), { recursive: true, force: true });
+    }
+    writeFileSync(outputMarker(dir, kind), '', { flag: 'wx' });
 };
 
 const parseArgs = (argv) => {
@@ -201,7 +227,7 @@ const run = (command, args, cwd) =>
 
 const buildStorybook = (outDir, ref) => {
     const started = Date.now();
-    rmSync(outDir, { recursive: true, force: true });
+    prepareOutput(outDir, 'build');
     if (ref == null) {
         log(`building Storybook of the working tree -> ${outDir}`);
         run(
@@ -235,6 +261,8 @@ const buildStorybook = (outDir, ref) => {
             run('git', ['worktree', 'remove', '--force', worktree], repoRoot);
         }
     }
+    // Storybook can empty the output directory during its build.
+    writeFileSync(outputMarker(outDir, 'build'), '');
     log(`built in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 };
 
@@ -430,8 +458,7 @@ const capture = async (storybookDir, outDir, options) => {
     const stories = all.filter(
         (story) => excludedStories[story.id] == null && (filter == null || story.id.includes(filter)),
     );
-    rmSync(outDir, { recursive: true, force: true });
-    mkdirSync(outDir, { recursive: true });
+    prepareOutput(outDir, 'capture', [root]);
     const started = Date.now();
     const { server, origin } = await serve(root);
     const browser = await launchBrowser();
@@ -480,10 +507,10 @@ const capture = async (storybookDir, outDir, options) => {
 
 const compare = (baseDir, headDir, options) => {
     const diffDir = resolve(options.diff ?? join(headDir, '..', 'diff'));
-    rmSync(diffDir, { recursive: true, force: true });
     const pngs = (dir) => new Set(readdirSync(dir).filter((file) => file.endsWith('.png')));
     const base = pngs(baseDir);
     const head = pngs(headDir);
+    prepareOutput(diffDir, 'compare', [baseDir, headDir]);
     const names = [...new Set([...base, ...head])].sort();
     const rows = [];
     for (const name of names) {
@@ -501,7 +528,6 @@ const compare = (baseDir, headDir, options) => {
         const imageB = decodePng(b);
         const { count, image } = diffImages(imageA, imageB);
         if (count > options.threshold) {
-            mkdirSync(diffDir, { recursive: true });
             writeFileSync(join(diffDir, name), encodePng(image));
             const size =
                 imageA.width === imageB.width && imageA.height === imageB.height
