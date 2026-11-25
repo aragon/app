@@ -60,6 +60,27 @@ describe('asset utils', () => {
             expect(assetUtils.normalizeAsset(asset).amount).toEqual('0');
         });
 
+        it.each(['', 'not-a-number'])(
+            'defaults an invalid amount ("%s") to zero',
+            (amount) => {
+                const asset = buildAsset({ amount });
+
+                expect(assetUtils.normalizeAsset(asset).amount).toEqual('0');
+            },
+        );
+
+        // A number round-trip would turn these into 45129.41058500078 (dust left behind by a Max transfer),
+        // 8.129158174664159 (more than the balance, so the transfer reverts) and 1e-9.
+        it.each([
+            '45129.410585000784913504',
+            '8.129158174664158605',
+            '0.000000001',
+        ])('keeps the high-precision amount %s exactly', (amount) => {
+            const asset = buildAsset({ amount });
+
+            expect(assetUtils.normalizeAsset(asset).amount).toEqual(amount);
+        });
+
         it('falls back to placeholders for an unnamed token', () => {
             const asset = buildAsset({
                 token: {

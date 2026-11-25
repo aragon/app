@@ -77,6 +77,24 @@ describe('useSafeAssetListData hook', () => {
         expect(result.current.state).toEqual('idle');
     });
 
+    it('keeps the exact balance as the amount, so a Max transfer sends all of it', () => {
+        useSafeBalancesSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: [
+                    generateSafeBalance({ balance: '45129410585000784913504' }),
+                ],
+            }),
+        );
+
+        const { result } = renderHook(() =>
+            useSafeAssetListData({ network, address }),
+        );
+
+        expect(result.current.assetList[0].amount).toEqual(
+            '45129.410585000784913504',
+        );
+    });
+
     it('returns the initial loading state while the balances load', () => {
         useSafeBalancesSpy.mockReturnValue(
             generateReactQueryResultLoading() as ReturnType<

@@ -34,9 +34,13 @@ class AssetUtils {
         const priceUsd =
             derivedPrice !== price ? String(derivedPrice) : originalPriceUsd;
 
+        // A valid amount is kept as given: a JS number holds only ~16 significant digits, so the round-trip would round
+        // a high-precision balance up or down, and a Max transfer would then revert or leave dust behind.
+        const exactAmount = amount === 0 ? '0' : String(asset.amount);
+
         return {
             ...asset,
-            amount: String(amount),
+            amount: exactAmount,
             token: {
                 ...asset.token,
                 name: asset.token.name || 'Unknown',
