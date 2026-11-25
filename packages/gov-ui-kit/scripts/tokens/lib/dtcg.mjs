@@ -39,6 +39,15 @@ const resolveToken = (tokens, path, chain = []) => {
     return resolved;
 };
 
+const checkShadowLiterals = (value, path) => {
+    assert(!isAlias(value) && value?.$ref === undefined, `Unsupported shadow reference at ${path}`);
+    if (value !== null && typeof value === 'object') {
+        for (const [key, child] of Object.entries(value)) {
+            checkShadowLiterals(child, `${path}.${key}`);
+        }
+    }
+};
+
 // The tokens of a document (path -> { type, value }), validated: the document against the published schema, every
 // alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. JSON Schema
 // cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not satisfy
@@ -52,10 +61,11 @@ export const readTokens = (document, schema) => {
     for (const [path, { type }] of tokens) {
         const validateValue = ajv.getSchema(schema.$id.replace(/format\.json$/, `format/values/${type}.json`));
         assert(validateValue, `Unsupported token type: ${type} (${path})`);
-        assert(
-            validateValue(resolveToken(tokens, path).value),
-            `DTCG value ${path}: ${ajv.errorsText(validateValue.errors)}`,
-        );
+        const { value } = resolveToken(tokens, path);
+        assert(validateValue(value), `DTCG value ${path}: ${ajv.errorsText(validateValue.errors)}`);
+        if (type === 'shadow') {
+            checkShadowLiterals(value, path);
+        }
     }
     return tokens;
 };
@@ -126,8 +136,8 @@ const fontFamilyToCss = (value) =>
         .map((family) => (UNQUOTED_FONT_FAMILIES.has(family) ? family : `"${family}"`))
         .join(', ');
 
-const shadowLayer = ({ offsetX, offsetY, blur, spread, color }) =>
-    `${[offsetX, offsetY, blur, spread].map(dimensionToCss).join(' ')} ${colorToCss(color)}`;
+const shadowLayer = ({ offsetX, offsetY, blur, spread, color, inset }) =>
+    `${inset ? 'inset ' : ''}${[offsetX, offsetY, blur, spread].map(dimensionToCss).join(' ')} ${colorToCss(color)}`;
 
 const valueToCss = ({ type, value }) => {
     switch (type) {

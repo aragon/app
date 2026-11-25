@@ -21,13 +21,13 @@ const defaultSourceDir = resolve(kitRoot, 'design-system/tokens/source');
 // Every file the generator owns: absolute path -> text.
 export const generate = (sourceDir = defaultSourceDir) => {
     const sourceFile = resolve(sourceDir, 'primitives.tokens.json');
-    const document = withColorHex(readJson(sourceFile));
+    const document = readJson(sourceFile);
     const css = renderPrimitives({
         tokens: readTokens(document, readJson(resolve(sourceDir, 'schema/format.2025.10.json'))),
         config: readJson(resolve(sourceDir, 'primitives.config.json')),
     });
     return new Map([
-        [sourceFile, `${JSON.stringify(document, null, 4)}\n`],
+        [sourceFile, `${JSON.stringify(withColorHex(document), null, 4)}\n`],
         ...[...css].map(([file, text]) => [resolve(kitRoot, file), text]),
     ]);
 };
