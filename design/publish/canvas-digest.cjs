@@ -1,17 +1,17 @@
 'use strict';
-// Fingerprints a canvas's own files: a project/ folder, either prepared by prepare-publish.cjs or read from the
-// canvas. File names are part of it, so an edit, a rename and a deletion all change it. The kit (ds/) is left out,
-// and images are not in the folder at all.
+// Fingerprints a canvas's own files (digestFolder in paths.cjs).
 //
 // With a canvas name it answers "was the canvas edited since the repo last saw it?": the fingerprint is compared
 // with `canvasDigest` in the canvas's record. Exit code 0 if they are the same, 2 if they differ or the record has
 // none. With --record the fingerprint is written to the record instead.
 //
+// The reference canvas ("prototypes") keeps its fingerprint on the canvas, not in the repo: the comparison is with
+// published.json next to the project folder (read it from the canvas along with project/), and there is no --record.
+//
 //   node design/publish/canvas-digest.cjs <project folder> [canvas name] [--record]
-const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { REPO, die, pointerFile } = require('./paths.cjs');
+const { REPO, die, digestFolder, pointerFile } = require('./paths.cjs');
 
 const args = process.argv.slice(2);
 const record = args.includes('--record');
@@ -27,25 +27,34 @@ if (
     );
 }
 
-const sha256 = (data) => crypto.createHash('sha256').update(data).digest('hex');
-const hashes = [];
-for (const entry of fs.readdirSync(folder).sort()) {
-    const file = path.join(folder, entry);
-    if (fs.statSync(file).isDirectory()) {
-        if (entry === 'ds') {
-            continue;
-        }
-        die(
-            `${file} is a folder: a canvas's own files sit directly in project/`,
-        );
-    }
-    hashes.push([entry, sha256(fs.readFileSync(file))]);
-}
-const digest = sha256(JSON.stringify(hashes));
+const digest = digestFolder(folder);
 
 if (!name) {
     console.log(digest);
     process.exit(0);
+}
+if (name === 'prototypes') {
+    if (record) {
+        die(
+            'The reference canvas carries its own published.json (prepare-publish.cjs writes it): nothing to record',
+        );
+    }
+    const stamp = path.join(folder, '..', 'published.json');
+    const published = fs.existsSync(stamp)
+        ? JSON.parse(fs.readFileSync(stamp, 'utf8'))
+        : undefined;
+    if (published?.digest === digest) {
+        console.log(
+            `Same as published from ${published.commit}: the canvas was not edited since`,
+        );
+        process.exit(0);
+    }
+    console.log(
+        published
+            ? `Differs from what was published from ${published.commit}: the canvas was edited since`
+            : `No published.json next to ${folder}: read it from the canvas too. If the canvas has none, whether it was edited is unknown`,
+    );
+    process.exit(2);
 }
 const POINTER = pointerFile(name);
 const where = path.relative(REPO, POINTER);
