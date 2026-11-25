@@ -6,6 +6,7 @@
     "kit": {
         "artifact": "https://claude.ai/artifact/XkBmSpR3iXii2onniUDV5x",
         "version": "1795614300-acab",
+        "sourceCommit": "054ac8b473fedde84297ab99f088b69c4fb4f3fa",
         "folder": "aragon-gov-ui-kit",
         "files": [
             "components/bundle.css",

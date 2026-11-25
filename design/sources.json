@@ -988,7 +988,8 @@
             "sources": [
                 "apps/app/src/modules/workspace/pages/workspaceProposalsPage/**",
                 "apps/app/src/modules/workspace/components/workspaceProposalList/**",
-                "apps/app/src/modules/workspace/components/workspaceProposalsAsideCard/**"
+                "apps/app/src/modules/workspace/components/workspaceProposalsAsideCard/**",
+                "apps/app/src/modules/workspace/dialogs/workspaceSelectAccountDialog/**"
             ]
         },
         "WsTodos": {

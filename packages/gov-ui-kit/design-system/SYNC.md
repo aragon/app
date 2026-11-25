@@ -45,6 +45,8 @@ compare previews.
 
 ## After a sync
 
-Start the README with the commit synced and the `@aragon/gov-ui-kit` version. Report the
+Start the README with the commit synced and the `@aragon/gov-ui-kit` version. In the repo, set
+`kit.sourceCommit` (the commit synced) and `kit.version` (the artifact's version after publishing) in
+`design/canvases/prototypes.json`: design catch-ups read `kit.sourceCommit` to know which kit the canvases have. Report the
 component count against the manifest and skipped stories. Spot-check Wallet:
 its notes include "hidden below the `md` breakpoint".
