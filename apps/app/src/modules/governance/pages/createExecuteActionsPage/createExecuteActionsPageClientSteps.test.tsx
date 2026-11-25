@@ -105,4 +105,27 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
                 .dropdownItems,
         ).toEqual('2');
     });
+
+    it('simulates on the DAO from the connected wallet', () => {
+        render(createTestComponent());
+        expect(useSimulateActionsDropdownSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                network: 'ethereum-mainnet',
+                target: { type: 'dao', daoAddress: '0x123', from: '0xwallet' },
+            }),
+        );
+    });
+
+    it('offers no simulation target without a connected wallet', () => {
+        useWalletAccountSpy.mockReturnValue({
+            address: undefined,
+            chainId: 1,
+            isConnecting: false,
+            isReconnecting: false,
+        });
+        render(createTestComponent());
+        expect(useSimulateActionsDropdownSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ target: undefined }),
+        );
+    });
 });

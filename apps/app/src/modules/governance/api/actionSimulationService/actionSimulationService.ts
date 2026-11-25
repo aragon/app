@@ -5,6 +5,7 @@ import type {
     ISimulateDirectExecuteActionsParams,
     ISimulateProposalActionsParams,
     ISimulateProposalParams,
+    ISimulateSafeActionsParams,
     ISimulateSafeTransactionParams,
 } from './actionSimulationService.api';
 import type { ISimulationResult } from './domain';
@@ -21,6 +22,8 @@ class ActionSimulationService extends AragonBackendService {
             '/v2/simulations/:network/safe/:safeAddress/transactions/:safeTxHash',
         getLastSafeTransactionSimulation:
             '/v2/simulations/:network/safe/:safeAddress/transactions/:safeTxHash',
+        simulateSafeActions:
+            '/v2/simulations/:network/safe/:safeAddress/simulate',
     };
 
     simulateProposalActions = async (
@@ -79,6 +82,22 @@ class ActionSimulationService extends AragonBackendService {
     ): Promise<ISimulationResult> => {
         const result = await this.request<ISimulationResult>(
             this.urls.simulateSafeTransaction,
+            params,
+            { method: 'POST' },
+        );
+
+        return result;
+    };
+
+    /**
+     * Simulates a Safe transaction before it is created. The body is the transaction as it will be proposed, so the
+     * run is of what the owners sign. Nothing is stored.
+     */
+    simulateSafeActions = async (
+        params: ISimulateSafeActionsParams,
+    ): Promise<ISimulationResult> => {
+        const result = await this.request<ISimulationResult>(
+            this.urls.simulateSafeActions,
             params,
             { method: 'POST' },
         );

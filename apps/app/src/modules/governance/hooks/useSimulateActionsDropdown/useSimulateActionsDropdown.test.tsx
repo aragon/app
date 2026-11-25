@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import { Network } from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, generateFormContext } from '@/shared/testUtils';
 import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
@@ -52,8 +53,8 @@ describe('useSimulateActionsDropdown hook', () => {
     ) =>
         renderHook(() =>
             useSimulateActionsDropdown({
-                daoId: 'ethereum-mainnet-0xdao',
-                from: '0xfrom',
+                network: Network.ETHEREUM_MAINNET,
+                target: { type: 'plugin', pluginAddress: '0xplugin' },
                 formId: 'wizardId',
                 ...params,
             }),
@@ -65,13 +66,13 @@ describe('useSimulateActionsDropdown hook', () => {
         expect(result.current).toBeUndefined();
     });
 
-    it('returns undefined when the from address is missing', () => {
-        const { result } = renderTestHook({ from: undefined });
+    it('returns undefined when there is no target', () => {
+        const { result } = renderTestHook({ target: undefined });
         expect(result.current).toBeUndefined();
     });
 
     it('returns undefined when the network is not supported by Tenderly', () => {
-        const { result } = renderTestHook({ daoId: 'citrea-mainnet-0xdao' });
+        const { result } = renderTestHook({ network: Network.CITREA_MAINNET });
         expect(result.current).toBeUndefined();
     });
 
@@ -101,72 +102,44 @@ describe('useSimulateActionsDropdown hook', () => {
         expect(open).not.toHaveBeenCalled();
     });
 
-    it('opens the simulate dialog with the prepared actions and from address on a valid form', async () => {
-        const open = jest.fn();
-        const preparedActions = [
-            { to: '0xto', data: '0xdata' as const, value: '0' },
-        ];
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        useFormContextSpy.mockReturnValue(
-            generateFormContext({
-                getValues: jest.fn().mockReturnValue([action]),
-                trigger: jest.fn().mockResolvedValue(true),
-            }),
-        );
-        prepareActionsSpy.mockResolvedValue(preparedActions);
+    it.each([
+        { type: 'plugin' as const, pluginAddress: '0xplugin' },
+        { type: 'dao' as const, daoAddress: '0xdao', from: '0xwallet' },
+        { type: 'safe' as const, safeAddress: '0xsafe' },
+    ])(
+        'opens the simulate dialog with the prepared actions for the $type target on a valid form',
+        async (target) => {
+            const open = jest.fn();
+            const preparedActions = [
+                { to: '0xto', data: '0xdata' as const, value: '0' },
+            ];
+            useDialogContextSpy.mockReturnValue(
+                generateDialogContext({ open }),
+            );
+            useFormContextSpy.mockReturnValue(
+                generateFormContext({
+                    getValues: jest.fn().mockReturnValue([action]),
+                    trigger: jest.fn().mockResolvedValue(true),
+                }),
+            );
+            prepareActionsSpy.mockResolvedValue(preparedActions);
 
-        const { result } = renderTestHook({ from: '0xfrom', formId: 'execId' });
-        await result.current?.[0].onClick?.();
+            const { result } = renderTestHook({ target, formId: 'execId' });
+            await result.current?.[0].onClick?.();
 
-        await waitFor(() =>
-            expect(open).toHaveBeenCalledWith(
-                GovernanceDialogId.SIMULATE_ACTIONS,
-                {
-                    params: {
-                        network: 'ethereum-mainnet',
-                        from: '0xfrom',
-                        actions: preparedActions,
-                        formId: 'execId',
+            await waitFor(() =>
+                expect(open).toHaveBeenCalledWith(
+                    GovernanceDialogId.SIMULATE_ACTIONS,
+                    {
+                        params: {
+                            network: Network.ETHEREUM_MAINNET,
+                            target,
+                            actions: preparedActions,
+                            formId: 'execId',
+                        },
                     },
-                },
-            ),
-        );
-    });
-
-    it('opens the simulate dialog with the DAO address for direct execution', async () => {
-        const open = jest.fn();
-        const preparedActions = [
-            { to: '0xto', data: '0xdata' as const, value: '0' },
-        ];
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        useFormContextSpy.mockReturnValue(
-            generateFormContext({
-                getValues: jest.fn().mockReturnValue([action]),
-                trigger: jest.fn().mockResolvedValue(true),
-            }),
-        );
-        prepareActionsSpy.mockResolvedValue(preparedActions);
-
-        const { result } = renderTestHook({
-            from: '0xwallet',
-            isDirectExecute: true,
-            formId: 'execId',
-        });
-        await result.current?.[0].onClick?.();
-
-        await waitFor(() =>
-            expect(open).toHaveBeenCalledWith(
-                GovernanceDialogId.SIMULATE_ACTIONS,
-                {
-                    params: {
-                        network: 'ethereum-mainnet',
-                        from: '0xwallet',
-                        daoAddress: '0xdao',
-                        actions: preparedActions,
-                        formId: 'execId',
-                    },
-                },
-            ),
-        );
-    });
+                ),
+            );
+        },
+    );
 });

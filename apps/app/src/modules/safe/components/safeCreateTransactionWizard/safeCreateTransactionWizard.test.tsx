@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as proposalActionsEditor from '@/modules/governance/components/proposalActionsEditor';
+import * as useSimulateActionsDropdown from '@/modules/governance/hooks/useSimulateActionsDropdown';
 import { generateProposalAction } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -12,6 +13,7 @@ import {
     type ISafeCreateTransactionWizardProps,
     SafeCreateTransactionWizard,
 } from './safeCreateTransactionWizard';
+import { safeCreateTransactionWizardId } from './safeCreateTransactionWizardDefinitions';
 
 describe('<SafeCreateTransactionWizard /> component', () => {
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
@@ -22,6 +24,10 @@ describe('<SafeCreateTransactionWizard /> component', () => {
     const containerSpy = jest.spyOn(WizardPage, 'Container');
     const stepSpy = jest.spyOn(WizardPage, 'Step');
     const trackSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
+    const useSimulateActionsDropdownSpy = jest.spyOn(
+        useSimulateActionsDropdown,
+        'useSimulateActionsDropdown',
+    );
 
     const safeAddress = '0x0000000000000000000000000000000000000001';
     const network = Network.ETHEREUM_SEPOLIA;
@@ -53,6 +59,7 @@ describe('<SafeCreateTransactionWizard /> component', () => {
         proposalActionsEditorSpy.mockReturnValue(<div>actions editor</div>);
         stepSpy.mockImplementation((props) => <div>{props.children}</div>);
         trackSpy.mockImplementation(() => undefined);
+        useSimulateActionsDropdownSpy.mockReturnValue(undefined);
         mockContainer();
     });
 
@@ -62,6 +69,7 @@ describe('<SafeCreateTransactionWizard /> component', () => {
         containerSpy.mockReset();
         stepSpy.mockReset();
         trackSpy.mockReset();
+        useSimulateActionsDropdownSpy.mockReset();
         openMock.mockReset();
     });
 
@@ -92,15 +100,32 @@ describe('<SafeCreateTransactionWizard /> component', () => {
         );
     });
 
-    it('offers no simulation and no next step until there is an action', () => {
+    it('offers no next step until there is an action', () => {
         render(createTestComponent());
 
         expect(stepSpy).toHaveBeenLastCalledWith(
             expect.objectContaining({ disableNext: true }),
             undefined,
         );
-        expect(stepSpy.mock.lastCall?.[0]).not.toHaveProperty(
-            'nextDropdownItems',
+    });
+
+    it('offers to simulate the Safe transaction on the network of the Safe before creating it', () => {
+        const dropdownItems = [
+            { label: 'simulate', onClick: jest.fn() },
+            { label: 'skip', formId: safeCreateTransactionWizardId },
+        ];
+        useSimulateActionsDropdownSpy.mockReturnValue(dropdownItems);
+
+        render(createTestComponent(undefined, actions));
+
+        expect(useSimulateActionsDropdownSpy).toHaveBeenLastCalledWith({
+            network,
+            target: { type: 'safe', safeAddress },
+            formId: safeCreateTransactionWizardId,
+        });
+        expect(stepSpy).toHaveBeenLastCalledWith(
+            expect.objectContaining({ nextDropdownItems: dropdownItems }),
+            undefined,
         );
     });
 

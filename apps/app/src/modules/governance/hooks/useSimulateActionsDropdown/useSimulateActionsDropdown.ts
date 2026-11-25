@@ -1,32 +1,29 @@
 import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardPageStepDropdownItem } from '@/shared/components/wizards/wizardPage';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ICreateProposalFormData } from '../../components/createProposalForm';
 import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
+import type {
+    ISimulateActionsDialogParams,
+    SimulateActionsTarget,
+} from '../../dialogs/simulateActionsDialog';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 
 export interface IUseSimulateActionsDropdownParams {
     /**
-     * ID of the DAO the actions belong to.
+     * Network the actions run on.
      */
-    daoId: string;
+    network: Network;
     /**
-     * Address that calls `DAO.execute` and the actions are therefore simulated from (the `from`
-     * address): the governance plugin for proposals, the connected wallet for direct execution.
-     * When `undefined` (e.g. no connected wallet) the dropdown is not rendered.
+     * What runs the actions, which decides how they are simulated. When `undefined` (e.g. direct execution without
+     * a connected wallet) the dropdown is not rendered.
      */
-    from?: string;
-    /**
-     * Whether the actions are run through direct execution (simulated against the DAO from the
-     * connected wallet) rather than a governance plugin. Defaults to `false`.
-     */
-    isDirectExecute?: boolean;
+    target?: SimulateActionsTarget;
     /**
      * ID of the wizard form to submit when skipping simulation or continuing after it.
      */
@@ -34,22 +31,21 @@ export interface IUseSimulateActionsDropdownParams {
 }
 
 /**
- * Builds the "Simulate actions" / "Skip simulation" dropdown shared by the create-proposal and
- * direct-execute flows. Returns the dropdown items for the wizard step, or `undefined` when
- * simulation is unavailable (no actions, or the network is not supported by Tenderly), in which
- * case the step renders its plain submit button.
+ * Builds the "Simulate actions" / "Skip simulation" dropdown shared by the create-proposal, direct-execute and
+ * Safe-transaction flows. Returns the dropdown items for the wizard step, or `undefined` when simulation is
+ * unavailable (no target, no actions, or the network is not supported by Tenderly), in which case the step renders
+ * its plain submit button.
  */
 export const useSimulateActionsDropdown = (
     params: IUseSimulateActionsDropdownParams,
 ): IWizardPageStepDropdownItem[] | undefined => {
-    const { daoId, from, isDirectExecute, formId } = params;
+    const { network, target, formId } = params;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { trigger, getValues } = useFormContext();
     const { prepareActions } = useCreateProposalFormContext();
 
-    const { network, address: daoAddress } = daoUtils.parseDaoId(daoId);
     const { tenderlySupport } = networkDefinitions[network];
     const watchedActions =
         useWatch<Record<string, ICreateProposalFormData['actions']>>({
@@ -57,7 +53,7 @@ export const useSimulateActionsDropdown = (
         }) ?? [];
 
     const handleSimulate = useCallback(async () => {
-        if (from == null) {
+        if (target == null) {
             return;
         }
 
@@ -80,26 +76,15 @@ export const useSimulateActionsDropdown = (
 
         const dialogParams: ISimulateActionsDialogParams = {
             network,
-            from,
+            target,
             actions: processedActions,
             formId,
-            ...(isDirectExecute ? { daoAddress } : {}),
         };
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
-    }, [
-        from,
-        trigger,
-        getValues,
-        prepareActions,
-        network,
-        formId,
-        isDirectExecute,
-        daoAddress,
-        open,
-    ]);
+    }, [target, trigger, getValues, prepareActions, network, formId, open]);
 
     return useMemo(() => {
-        if (watchedActions.length === 0 || !tenderlySupport || from == null) {
+        if (watchedActions.length === 0 || !tenderlySupport || target == null) {
             return undefined;
         }
 
@@ -116,7 +101,7 @@ export const useSimulateActionsDropdown = (
     }, [
         watchedActions.length,
         tenderlySupport,
-        from,
+        target,
         t,
         handleSimulate,
         formId,

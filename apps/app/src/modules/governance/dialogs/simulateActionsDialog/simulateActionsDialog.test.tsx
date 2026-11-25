@@ -1,10 +1,13 @@
 import { ActionSimulation } from '@aragon/gov-ui-kit';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { generateSimulationResult } from '@/modules/governance/testUtils';
+import { safeProtocolKitUtils } from '@/modules/safe/utils/safeProtocolKitUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { Network } from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import * as translationsProvider from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateReactQueryMutationResultIdle,
     generateReactQueryMutationResultSuccess,
@@ -59,10 +62,12 @@ jest.mock('@/shared/components/dialogProvider', () => ({
 
 const mockProposalMutate = jest.fn();
 const mockDirectExecuteMutate = jest.fn();
+const mockSafeMutate = jest.fn();
 
 jest.mock('../../api/actionSimulationService', () => ({
     useSimulateProposalActions: jest.fn(),
     useSimulateDirectExecuteActions: jest.fn(),
+    useSimulateSafeActions: jest.fn(),
 }));
 
 describe('<SimulateActionsDialog /> component', () => {
@@ -75,6 +80,14 @@ describe('<SimulateActionsDialog /> component', () => {
     );
     const useDirectExecuteSimulationMock = jest.mocked(
         actionSimulationService.useSimulateDirectExecuteActions,
+    );
+    const useSafeSimulationMock = jest.mocked(
+        actionSimulationService.useSimulateSafeActions,
+    );
+    const initReadOnlySpy = jest.spyOn(safeProtocolKitUtils, 'initReadOnly');
+    const buildTransactionCallSpy = jest.spyOn(
+        safeProtocolKitUtils,
+        'buildTransactionCall',
     );
 
     beforeEach(() => {
@@ -90,6 +103,9 @@ describe('<SimulateActionsDialog /> component', () => {
                 mutate: mockDirectExecuteMutate,
             }),
         );
+        useSafeSimulationMock.mockReturnValue(
+            generateReactQueryMutationResultIdle({ mutate: mockSafeMutate }),
+        );
     });
 
     afterEach(() => {
@@ -99,6 +115,10 @@ describe('<SimulateActionsDialog /> component', () => {
         mockDirectExecuteMutate.mockClear();
         useProposalSimulationMock.mockReset();
         useDirectExecuteSimulationMock.mockReset();
+        mockSafeMutate.mockClear();
+        useSafeSimulationMock.mockReset();
+        initReadOnlySpy.mockReset();
+        buildTransactionCallSpy.mockReset();
         jest.mocked(ActionSimulation).mockClear();
     });
 
@@ -110,7 +130,7 @@ describe('<SimulateActionsDialog /> component', () => {
             params: {
                 network:
                     'ethereum' as unknown as ISimulateActionsDialogParams['network'],
-                from: '0xplugin',
+                target: { type: 'plugin', pluginAddress: '0xplugin' },
                 actions: [{ to: '0xto', data: '0xdata', value: BigInt(0) }],
                 ...params,
             },
@@ -126,6 +146,10 @@ describe('<SimulateActionsDialog /> component', () => {
     ])(
         'shows the limit text for %s when the budget is finished',
         (_mode, daoAddress) => {
+            const target: ISimulateActionsDialogParams['target'] =
+                daoAddress == null
+                    ? { type: 'plugin', pluginAddress: '0xplugin' }
+                    : { type: 'dao', daoAddress, from: '0xwallet' };
             const close = jest.fn();
             useDialogContextMock.mockReturnValue({ close });
             const simulation = {
@@ -151,7 +175,7 @@ describe('<SimulateActionsDialog /> component', () => {
                     >,
                 );
             }
-            renderComponent(createLocation({ daoAddress }));
+            renderComponent(createLocation({ target }));
 
             expect(ActionSimulation).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -216,12 +240,11 @@ describe('<SimulateActionsDialog /> component', () => {
         expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
     });
 
-    it('simulates via the direct-execute mutation with the from address in the body when daoAddress is set', () => {
+    it('simulates via the direct-execute mutation with the from address in the body for a DAO target', () => {
         useDialogContextMock.mockReturnValue({ close: jest.fn() });
 
         const location = createLocation({
-            from: '0xwallet',
-            daoAddress: '0xdao',
+            target: { type: 'dao', daoAddress: '0xdao', from: '0xwallet' },
         });
         renderComponent(location);
 
@@ -235,12 +258,11 @@ describe('<SimulateActionsDialog /> component', () => {
         expect(mockProposalMutate).not.toHaveBeenCalled();
     });
 
-    it('simulates via the proposal mutation with the from address as pluginAddress when daoAddress is not set', () => {
+    it('simulates via the proposal mutation for a plugin target', () => {
         useDialogContextMock.mockReturnValue({ close: jest.fn() });
 
         const location = createLocation({
-            from: '0xplugin',
-            daoAddress: undefined,
+            target: { type: 'plugin', pluginAddress: '0xplugin' },
         });
         renderComponent(location);
 
@@ -251,6 +273,78 @@ describe('<SimulateActionsDialog /> component', () => {
             },
         });
         expect(mockDirectExecuteMutate).not.toHaveBeenCalled();
+    });
+
+    it('builds the Safe transaction with a read-only protocol kit and simulates it for a Safe target', async () => {
+        const protocolKit = { kit: true };
+        const transactionCall = {
+            to: '0xmultisend',
+            value: '0',
+            data: '0x8d80ff0a',
+            operation: 1 as const,
+        };
+        initReadOnlySpy.mockResolvedValue(protocolKit as never);
+        buildTransactionCallSpy.mockResolvedValue(transactionCall);
+        const actions = [
+            { to: '0xto', data: '0xdata', value: BigInt(1) },
+            { to: '0xother', data: '0x', value: BigInt(0) },
+        ];
+
+        renderComponent(
+            createLocation({
+                network: Network.ETHEREUM_SEPOLIA,
+                target: { type: 'safe', safeAddress: '0xsafe' },
+                actions: actions as ISimulateActionsDialogParams['actions'],
+            }),
+        );
+
+        expect(ActionSimulation).toHaveBeenLastCalledWith(
+            expect.objectContaining({ isLoading: true }),
+            undefined,
+        );
+        await waitFor(() =>
+            expect(mockSafeMutate).toHaveBeenCalledWith({
+                urlParams: {
+                    network: Network.ETHEREUM_SEPOLIA,
+                    safeAddress: '0xsafe',
+                },
+                body: transactionCall,
+            }),
+        );
+        expect(initReadOnlySpy).toHaveBeenCalledWith({
+            chainId: networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+            safeAddress: '0xsafe',
+        });
+        expect(buildTransactionCallSpy).toHaveBeenCalledWith({
+            protocolKit,
+            calls: actions,
+        });
+        expect(mockProposalMutate).not.toHaveBeenCalled();
+        expect(mockDirectExecuteMutate).not.toHaveBeenCalled();
+    });
+
+    it('shows simulation as unavailable and lets the user continue when the Safe transaction cannot be built', async () => {
+        initReadOnlySpy.mockRejectedValue(new Error('no client'));
+
+        renderComponent(
+            createLocation({ target: { type: 'safe', safeAddress: '0xsafe' } }),
+        );
+
+        await waitFor(() =>
+            expect(ActionSimulation).toHaveBeenLastCalledWith(
+                expect.objectContaining({
+                    error: 'app.governance.simulateActionsDialog.unavailable',
+                    isLoading: false,
+                }),
+                undefined,
+            ),
+        );
+        expect(mockSafeMutate).not.toHaveBeenCalled();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.governance.simulateActionsDialog.action.error',
+            }),
+        ).toBeInTheDocument();
     });
 
     it('closes only itself after requesting wizard form submit (does not call close() without id)', () => {

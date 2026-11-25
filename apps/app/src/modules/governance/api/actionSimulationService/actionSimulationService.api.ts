@@ -108,6 +108,42 @@ export interface ISafeTransactionSimulationUrlParams {
     safeTxHash: string;
 }
 
+export interface ISimulateSafeActionsUrlParams {
+    /**
+     * Network the Safe is deployed on.
+     */
+    network: Network;
+    /**
+     * Address of the Safe the transaction is created on.
+     */
+    safeAddress: string;
+}
+
+export interface ISimulateSafeActionsBody {
+    /**
+     * Target of the Safe transaction: the single call's target, or MultiSendCallOnly for a batch.
+     */
+    to: string;
+    /**
+     * Native value the Safe sends, in wei.
+     */
+    value: string;
+    /**
+     * Calldata of the Safe transaction.
+     */
+    data: string;
+    /**
+     * 0 for a call, 1 for a delegate call (a MultiSend batch).
+     */
+    operation: 0 | 1;
+}
+
+export interface ISimulateSafeActionsParams
+    extends IRequestUrlBodyParams<
+        ISimulateSafeActionsUrlParams,
+        ISimulateSafeActionsBody
+    > {}
+
 export interface ISimulateSafeTransactionParams
     extends IRequestUrlParams<ISafeTransactionSimulationUrlParams> {}
 

@@ -243,6 +243,107 @@ describe('safeProtocolKit utils', () => {
         });
     });
 
+    describe('buildTransactionCall', () => {
+        const target = '0x9642F9b4480F6e134742922d8e0C7D3503F95b0e';
+        const multiSend = '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D';
+
+        /**
+         * Stands in for the protocol kit: one call is the transaction itself, several become a delegate call to
+         * MultiSend whose calldata encodes them, and the nonce is kept on the transaction only.
+         */
+        const buildKit = () => ({
+            createTransaction: jest.fn(
+                ({
+                    transactions,
+                    options,
+                }: {
+                    transactions: Array<{
+                        to: string;
+                        value: string;
+                        data: string;
+                    }>;
+                    options: { nonce: number };
+                }) =>
+                    Promise.resolve({
+                        data:
+                            transactions.length === 1
+                                ? {
+                                      ...transactions[0],
+                                      operation: 0,
+                                      nonce: options.nonce,
+                                  }
+                                : {
+                                      to: multiSend,
+                                      value: '0',
+                                      data: `0x8d80ff0a${JSON.stringify(transactions)}`,
+                                      operation: 1,
+                                      nonce: options.nonce,
+                                  },
+                    }),
+            ),
+            getTransactionHash: jest.fn().mockResolvedValue('0xhash'),
+        });
+
+        it('builds the calls like buildTransaction, at nonce 0', async () => {
+            const protocolKit = buildKit();
+
+            await safeProtocolKitUtils.buildTransactionCall({
+                protocolKit: protocolKit as never,
+                calls: [
+                    {
+                        to: target.toLowerCase(),
+                        value: BigInt(7),
+                        data: '0x12',
+                    },
+                ],
+            });
+
+            expect(protocolKit.createTransaction).toHaveBeenCalledWith({
+                transactions: [{ to: target, value: '7', data: '0x12' }],
+                onlyCalls: true,
+                options: { nonce: 0 },
+            });
+        });
+
+        it.each([
+            [
+                'one action as a plain call',
+                [{ to: target, value: '7', data: '0x12' }],
+            ],
+            [
+                'several actions as a MultiSend batch',
+                [
+                    { to: target, value: '7', data: '0x12' },
+                    { to: safeAddress, value: '0', data: '0x' },
+                ],
+            ],
+        ])(
+            'returns the to, value, data and operation of the transaction created for %s',
+            async (_, calls) => {
+                const protocolKit = buildKit();
+
+                const call = await safeProtocolKitUtils.buildTransactionCall({
+                    protocolKit: protocolKit as never,
+                    calls,
+                });
+                const created = await safeProtocolKitUtils.buildTransaction({
+                    protocolKit: protocolKit as never,
+                    calls,
+                    nonce: 12,
+                    threshold: 2,
+                });
+
+                expect(call).toEqual({
+                    to: created.to,
+                    value: created.value,
+                    data: created.data,
+                    operation: created.operation,
+                });
+                expect(call.operation).toEqual(calls.length > 1 ? 1 : 0);
+            },
+        );
+    });
+
     describe('buildRejectionTransaction', () => {
         const safeTxHash = `0x${'2'.repeat(64)}`;
 

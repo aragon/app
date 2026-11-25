@@ -11,6 +11,8 @@ import type {
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '@/modules/governance/dialogs/publishProposalDialog';
+import type { SimulateActionsTarget } from '@/modules/governance/dialogs/simulateActionsDialog';
+import { useSimulateActionsDropdown } from '@/modules/governance/hooks/useSimulateActionsDropdown';
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -69,12 +71,24 @@ const SafeCreateTransactionWizardActionsStep: React.FC<
     >({ name: 'actions' });
     const [actionsStep] = safeCreateTransactionWizardSteps;
 
+    // The Safe runs the actions from one of its owners, so the simulation needs no connected wallet.
+    const simulationTarget = useMemo<SimulateActionsTarget>(
+        () => ({ type: 'safe', safeAddress }),
+        [safeAddress],
+    );
+    const simulateDropdownItems = useSimulateActionsDropdown({
+        network,
+        target: simulationTarget,
+        formId: safeCreateTransactionWizardId,
+    });
+
     return (
         <WizardPage.Step
             description={t(
                 `${translationKey}.steps.${SafeCreateTransactionWizardStep.ACTIONS}.description`,
             )}
             disableNext={actions?.length ? undefined : true}
+            nextDropdownItems={simulateDropdownItems}
             title={t(
                 `${translationKey}.steps.${SafeCreateTransactionWizardStep.ACTIONS}.title`,
             )}
@@ -92,8 +106,8 @@ const SafeCreateTransactionWizardActionsStep: React.FC<
 
 /**
  * Full-page wizard creating a transaction directly on a Safe, with no DAO involved: the owner composes actions, then
- * reviews, signs and proposes the Safe transaction they make up. Simulation is not offered before creation; the
- * created transaction is simulated from the transactions list.
+ * reviews, signs and proposes the Safe transaction they make up. The actions step offers to simulate that transaction
+ * before it is created.
  */
 export const SafeCreateTransactionWizard: React.FC<
     ISafeCreateTransactionWizardProps

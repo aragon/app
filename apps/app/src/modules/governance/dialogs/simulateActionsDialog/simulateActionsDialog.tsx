@@ -1,5 +1,9 @@
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import {
+    type ISafeTransactionCallData,
+    safeProtocolKitUtils,
+} from '@/modules/safe/utils/safeProtocolKitUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import {
@@ -7,32 +11,37 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     useSimulateDirectExecuteActions,
     useSimulateProposalActions,
+    useSimulateSafeActions,
 } from '../../api/actionSimulationService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
+/**
+ * What runs the actions, which decides how they are simulated:
+ * - `plugin`: a governance plugin calls `DAO.execute`, for a proposal;
+ * - `dao`: the connected wallet calls `DAO.execute` directly (`from`), for direct execution;
+ * - `safe`: the Safe runs them as one transaction, from one of its owners, before the transaction is created.
+ */
+export type SimulateActionsTarget =
+    | { type: 'plugin'; pluginAddress: string }
+    | { type: 'dao'; daoAddress: string; from: string }
+    | { type: 'safe'; safeAddress: string };
+
 export interface ISimulateActionsDialogParams {
     /**
-     * Network of the DAO.
+     * Network the actions run on.
      */
     network: Network;
     /**
-     * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
-     * `from` address): the governance plugin for proposals, the connected wallet for direct
-     * execution.
+     * What runs the actions.
      */
-    from: string;
+    target: SimulateActionsTarget;
     /**
-     * Address of the DAO the actions are executed on. Set only for direct execution, in which case
-     * the actions are simulated against the DAO from the connected wallet (`from`) instead of a
-     * governance plugin.
-     */
-    daoAddress?: string;
-    /**
-     * List of actions to simulate.
+     * List of actions to simulate, already prepared.
      */
     actions: IProposalCreateAction[];
     /**
@@ -44,6 +53,25 @@ export interface ISimulateActionsDialogParams {
 export interface ISimulateActionsDialogProps
     extends IDialogComponentProps<ISimulateActionsDialogParams> {}
 
+/**
+ * Builds the Safe transaction the actions make up, as the create dialog does, with a protocol kit that only reads.
+ */
+const buildSafeTransactionCall = async (
+    network: Network,
+    safeAddress: string,
+    actions: IProposalCreateAction[],
+): Promise<ISafeTransactionCallData> => {
+    const protocolKit = await safeProtocolKitUtils.initReadOnly({
+        chainId: networkDefinitions[network].id,
+        safeAddress,
+    });
+
+    return safeProtocolKitUtils.buildTransactionCall({
+        protocolKit,
+        calls: actions,
+    });
+};
+
 export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
     props,
 ) => {
@@ -53,30 +81,60 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         location.params != null,
         'SimulateActionsDialog: params must be set for the dialog to work correctly',
     );
-    const { actions, network, from, daoAddress, formId } = location.params;
+    const { actions, network, target, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const proposalSimulation = useSimulateProposalActions();
     const directExecuteSimulation = useSimulateDirectExecuteActions();
+    const safeSimulation = useSimulateSafeActions();
 
-    const isDirectExecute = daoAddress != null;
-    const activeSimulation = isDirectExecute
-        ? directExecuteSimulation
-        : proposalSimulation;
+    // Building the Safe transaction happens before the mutation, so its failure is kept apart.
+    const [safeBuildError, setSafeBuildError] = useState<unknown>();
 
+    const simulations = {
+        plugin: proposalSimulation,
+        dao: directExecuteSimulation,
+        safe: safeSimulation,
+    };
     const {
-        isError,
-        isPending,
+        isError: isSimulationError,
+        isPending: isSimulationPending,
         status,
         data,
         error: simulationError,
-    } = activeSimulation;
+    } = simulations[target.type];
 
     useEffect(() => {
-        if (status !== 'idle') {
+        if (status !== 'idle' || safeBuildError != null) {
             return;
+        }
+
+        if (target.type === 'safe') {
+            let isCancelled = false;
+
+            buildSafeTransactionCall(network, target.safeAddress, actions)
+                .then((body) => {
+                    if (!isCancelled) {
+                        safeSimulation.mutate({
+                            urlParams: {
+                                network,
+                                safeAddress: target.safeAddress,
+                            },
+                            body,
+                        });
+                    }
+                })
+                .catch((error: unknown) => {
+                    if (!isCancelled) {
+                        setSafeBuildError(error);
+                    }
+                });
+
+            return () => {
+                isCancelled = true;
+            };
         }
 
         const processedActions = actions.map(({ to, data, value }) => ({
@@ -85,37 +143,44 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
             value: value.toString(),
         }));
 
-        if (isDirectExecute) {
+        if (target.type === 'dao') {
             directExecuteSimulation.mutate({
-                urlParams: { network, daoAddress },
-                body: { from, actions: processedActions },
+                urlParams: { network, daoAddress: target.daoAddress },
+                body: { from: target.from, actions: processedActions },
             });
         } else {
             proposalSimulation.mutate({
-                urlParams: { network, pluginAddress: from },
+                urlParams: { network, pluginAddress: target.pluginAddress },
                 body: { actions: processedActions },
             });
         }
     }, [
         actions,
         network,
-        from,
-        isDirectExecute,
+        target,
         status,
+        safeBuildError,
         directExecuteSimulation.mutate,
         proposalSimulation.mutate,
-        daoAddress,
+        safeSimulation.mutate,
     ]);
+
+    const isError = isSimulationError || safeBuildError != null;
+    // A Safe transaction that cannot be built failed on a chain read, so it reads as unavailable like a network error.
+    const failure = safeBuildError ?? simulationError;
+    const isBuildingSafeTransaction =
+        target.type === 'safe' && status === 'idle' && safeBuildError == null;
+    const isPending = isSimulationPending || isBuildingSafeTransaction;
 
     const hasSimulationFailed = isError || data?.status === 'failed';
     const lastSimulation =
         data != null ? { ...data, timestamp: data.runAt } : undefined;
 
     let errorContext = 'error';
-    if (AragonBackendServiceError.isSimulationBudgetError(simulationError)) {
+    if (AragonBackendServiceError.isSimulationBudgetError(failure)) {
         errorContext = 'limitReached';
     } else if (
-        AragonBackendServiceError.isSimulationUnavailableError(simulationError)
+        AragonBackendServiceError.isSimulationUnavailableError(failure)
     ) {
         errorContext = 'unavailable';
     }

@@ -1,11 +1,14 @@
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { WizardPage } from '../../../../shared/components/wizards/wizardPage';
 import {
     CreateExecuteActionsForm,
     type IExecuteActionsFormData,
 } from '../../components/createExecuteActionsForm';
+import type { SimulateActionsTarget } from '../../dialogs/simulateActionsDialog';
 import { useSimulateActionsDropdown } from '../../hooks/useSimulateActionsDropdown';
 import {
     CreateExecuteActionsWizardStep,
@@ -32,10 +35,19 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
     >({ name: 'actions' });
     const [actionsStep] = createExecuteActionsWizardSteps;
 
+    const { network, address: daoAddress } = daoUtils.parseDaoId(daoId);
+    // Direct execution runs from the connected wallet, so there is nothing to simulate without one.
+    const simulationTarget = useMemo<SimulateActionsTarget | undefined>(
+        () =>
+            address == null
+                ? undefined
+                : { type: 'dao', daoAddress, from: address },
+        [address, daoAddress],
+    );
+
     const simulateDropdownItems = useSimulateActionsDropdown({
-        daoId,
-        from: address,
-        isDirectExecute: true,
+        network,
+        target: simulationTarget,
         formId: createExecuteActionsWizardId,
     });
 

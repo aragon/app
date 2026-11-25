@@ -98,6 +98,31 @@ export interface IBuildTransactionParams {
     proposer?: string;
 }
 
+export interface IBuildTransactionCallParams
+    extends Pick<IBuildTransactionParams, 'protocolKit' | 'calls'> {}
+
+/**
+ * Fields of a Safe transaction that decide what it runs.
+ */
+export interface ISafeTransactionCallData {
+    /**
+     * Target of the transaction: the single call's target, or MultiSendCallOnly for a batch.
+     */
+    to: string;
+    /**
+     * Native value the Safe sends, in wei.
+     */
+    value: string;
+    /**
+     * Calldata of the transaction.
+     */
+    data: string;
+    /**
+     * 0 for a call, 1 for a delegate call (a MultiSend batch).
+     */
+    operation: 0 | 1;
+}
+
 export interface IBuildRejectionTransactionParams
     extends Pick<IBuildTransactionParams, 'protocolKit' | 'threshold'> {
     /**
@@ -194,16 +219,11 @@ class SafeProtocolKitUtils {
     ): Promise<ISafeMultisigTransaction> => {
         const { protocolKit, calls, nonce, threshold, proposer } = params;
 
-        // Several calls become one delegate call to MultiSendCallOnly, which cannot delegate any further.
-        const safeTransaction = await protocolKit.createTransaction({
-            transactions: calls.map(({ to, value, data }) => ({
-                to: getAddress(to),
-                value: value.toString(),
-                data,
-            })),
-            onlyCalls: true,
-            options: { nonce },
-        });
+        const safeTransaction = await this.createTransaction(
+            protocolKit,
+            calls,
+            nonce,
+        );
 
         return this.toQueuedTransaction(
             protocolKit,
@@ -211,6 +231,26 @@ class SafeProtocolKitUtils {
             threshold,
             proposer,
         );
+    };
+
+    /**
+     * Builds the call a Safe transaction makes from calls, the way `buildTransaction` does, without a nonce: the fields
+     * that decide what it runs, for simulating it before it is created. The nonce does not change them, so the
+     * transaction is built at nonce 0 rather than reading the Safe's.
+     */
+    buildTransactionCall = async (
+        params: IBuildTransactionCallParams,
+    ): Promise<ISafeTransactionCallData> => {
+        const { protocolKit, calls } = params;
+
+        const { data } = await this.createTransaction(protocolKit, calls, 0);
+
+        return {
+            to: data.to,
+            value: data.value,
+            data: data.data,
+            operation: data.operation === 1 ? 1 : 0,
+        };
     };
 
     /**
@@ -232,6 +272,25 @@ class SafeProtocolKitUtils {
             threshold,
         );
     };
+
+    /**
+     * Turns calls into one Safe transaction: one call is the transaction itself, several become one delegate call to
+     * MultiSendCallOnly, which cannot delegate any further.
+     */
+    private createTransaction = (
+        protocolKit: SafeProtocolKit,
+        calls: ISafeTransactionCall[],
+        nonce: number,
+    ): Promise<SafeTransaction> =>
+        protocolKit.createTransaction({
+            transactions: calls.map(({ to, value, data }) => ({
+                to: getAddress(to),
+                value: value.toString(),
+                data,
+            })),
+            onlyCalls: true,
+            options: { nonce },
+        });
 
     private toQueuedTransaction = async (
         protocolKit: SafeProtocolKit,
