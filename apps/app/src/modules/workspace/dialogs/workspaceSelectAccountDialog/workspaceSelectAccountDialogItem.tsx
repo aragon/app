@@ -1,13 +1,18 @@
 import {
+    AddressOutput,
     addressUtils,
+    Checkbox,
     DataList,
     type IDataListItemProps,
+    StateSkeletonBar,
+    StateSkeletonCircular,
     Tag,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { IWorkspaceAccountInfo } from '../../api/workspaceQueryService';
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
@@ -25,13 +30,33 @@ export type IWorkspaceSelectAccountDialogItemProps = IDataListItemProps & {
      */
     dao?: IDao;
     /**
+     * Account as resolved by the accounts API, used to name accounts that are not DAOs.
+     */
+    accountInfo?: IWorkspaceAccountInfo;
+    /**
+     * Renders a checkbox, for selecting several accounts, in place of the account type.
+     */
+    isMultiSelect?: boolean;
+    /**
+     * Short note displayed before the checkbox in multi-select mode, e.g. "Member".
+     */
+    note?: string;
+    /**
+     * Hides the checkbox in multi-select mode, leaving the note, e.g. for an account listed elsewhere.
+     */
+    hideCheckbox?: boolean;
+    /**
      * Renders the account as selected when set to true.
      */
     isActive?: boolean;
     /**
-     * Renders the account as not selectable when set to true.
+     * Renders the account as not selectable, dimmed, when set to true.
      */
     isDisabled?: boolean;
+    /**
+     * Renders the account as already in the workspace: checked, not selectable and not dimmed.
+     */
+    isInWorkspace?: boolean;
     /**
      * Displays a help text that the connected user cannot act on this account.
      */
@@ -54,8 +79,13 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
     const {
         account,
         dao,
+        accountInfo,
+        isMultiSelect,
+        note,
+        hideCheckbox,
         isActive,
         isDisabled,
+        isInWorkspace,
         showNotEligibleHelpText,
         ...otherProps
     } = props;
@@ -70,18 +100,28 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
 
     // The DAOs resolved by `useWorkspaceDaos` already have the workspace metadata applied, so the indexed name is
     // only read when the workspace owner did not name the account themselves.
-    const name = dao?.name ?? workspaceUtils.getAccountName(account);
+    // An empty name, which the backend returns for unnamed DAOs, falls back to the address like a missing one.
+    const name =
+        dao?.name ||
+        workspaceUtils.getAccountName(account, accountInfo) ||
+        undefined;
     const avatar = dao?.avatar ?? metadata?.avatar;
+
+    // Its reveal trigger is a button, which the row lifts above its click overlay so it can be hovered.
+    const addressOutput = <AddressOutput address={address} copy={false} />;
 
     return (
         <DataList.Item
-            className={classNames('px-4 py-3 md:p-6', {
+            className={classNames('px-4 py-3 md:px-6 md:py-4', {
+                // Checked but not highlighted: the user did not pick it.
                 'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
-                    isActive,
+                    isActive && !isInWorkspace,
                 'border-neutral-100 bg-neutral-50': isDisabled,
+                // The kit drops the hover without a click handler; kept so these rows read like the others.
+                'hover:border-neutral-200 hover:shadow-neutral': isInWorkspace,
             })}
             {...otherProps}
-            {...(isDisabled ? { onClick: undefined } : {})}
+            {...(isDisabled || isInWorkspace ? { onClick: undefined } : {})}
         >
             <div className="flex flex-col gap-3">
                 <div
@@ -92,25 +132,58 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     <WorkspaceAccountAvatar
                         avatar={avatar}
                         name={name}
+                        network={network}
                         type={type}
                     />
-                    <div className="flex min-w-0 grow flex-col">
+                    <div className="flex min-w-0 grow flex-col gap-1">
                         <span className="truncate text-base leading-tight text-neutral-800">
-                            {name ?? truncatedAddress}
+                            {name ?? addressOutput}
                         </span>
-                        <span className="truncate text-sm leading-tight text-neutral-500">
-                            {name != null
-                                ? `${networkName} · ${truncatedAddress}`
-                                : networkName}
+                        {/* An unnamed account is titled by its address, so only the network shows here. */}
+                        <span className="flex min-w-0 items-baseline gap-1.5 text-sm leading-tight">
+                            <span className="shrink-0 text-neutral-800">
+                                {networkName}
+                            </span>
+                            {name != null && (
+                                <span className="truncate text-neutral-500">
+                                    {addressOutput}
+                                </span>
+                            )}
                         </span>
                     </div>
-                    <Tag
-                        className="shrink-0"
-                        label={t(
-                            `app.workspace.workspaceSelectAccountDialogItem.type.${isDao ? 'dao' : 'safe'}`,
-                        )}
-                        variant={isDao ? 'primary' : 'neutral'}
-                    />
+                    {isMultiSelect ? (
+                        <div className="flex shrink-0 items-center gap-3">
+                            {note != null && (
+                                <span className="text-sm leading-tight text-neutral-500">
+                                    {note}
+                                </span>
+                            )}
+                            {/* Sits beside the row's overlay button, not inside it, so both toggle the selection. */}
+                            {!hideCheckbox && (
+                                <Checkbox
+                                    aria-label={`${name ?? truncatedAddress}, ${networkName}, ${truncatedAddress}`}
+                                    checked={isActive ?? false}
+                                    disabled={isDisabled || isInWorkspace}
+                                    label=""
+                                    onCheckedChange={() =>
+                                        (
+                                            otherProps.onClick as
+                                                | (() => void)
+                                                | undefined
+                                        )?.()
+                                    }
+                                />
+                            )}
+                        </div>
+                    ) : (
+                        <Tag
+                            className="shrink-0"
+                            label={t(
+                                `app.workspace.workspaceSelectAccountDialogItem.type.${isDao ? 'dao' : 'safe'}`,
+                            )}
+                            variant={isDao ? 'primary' : 'neutral'}
+                        />
+                    )}
                 </div>
                 {showNotEligibleHelpText && (
                     <div className="text-sm text-neutral-300 md:text-base">
@@ -123,3 +196,20 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
         </DataList.Item>
     );
 };
+
+/**
+ * Loading placeholder of a `WorkspaceSelectAccountDialogItem`: the avatar and the two text lines.
+ */
+export const WorkspaceSelectAccountDialogItemSkeleton: React.FC = () => (
+    <div
+        aria-busy="true"
+        className="flex items-center gap-3 px-4 py-3 md:px-6 md:py-4"
+        role="status"
+    >
+        <StateSkeletonCircular size="md" />
+        <div className="flex grow flex-col gap-2">
+            <StateSkeletonBar size="lg" width="45%" />
+            <StateSkeletonBar width="30%" />
+        </div>
+    </div>
+);

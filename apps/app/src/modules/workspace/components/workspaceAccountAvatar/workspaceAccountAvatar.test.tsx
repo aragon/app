@@ -1,4 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import {
     type IWorkspaceAccountAvatarProps,
@@ -32,5 +34,27 @@ describe('<WorkspaceAccountAvatar /> component', () => {
         );
 
         expect(screen.queryByText('TS')).not.toBeInTheDocument();
+    });
+
+    it.each([WorkspaceAccountType.DAO, WorkspaceAccountType.SAFE])(
+        'badges a %s avatar with its network',
+        (type) => {
+            render(
+                createTestComponent({
+                    type,
+                    network: Network.ETHEREUM_SEPOLIA,
+                }),
+            );
+
+            const { name } = networkDefinitions[Network.ETHEREUM_SEPOLIA];
+            expect(screen.getByRole('img', { name })).toBeInTheDocument();
+        },
+    );
+
+    it('renders no network badge without a network', () => {
+        render(createTestComponent({ name: 'Demo DAO' }));
+
+        // A DAO without an avatar shows its initials, so any image would be a badge.
+        expect(screen.queryAllByRole('img')).toHaveLength(0);
     });
 });

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO prototype navigation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<nav class="app-sidebar" aria-label="DAO navigation">
+  <div class="app-sidebar__header">
+    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="xl"></x-import>
+    <div class="app-sidebar__dao">
+      <p class="app-sidebar__dao-name">{{daoName}}</p>
+      <x-import component-from-global-scope="GovUiKit.AddressOutput" address="{{daoAddress}}" href="{{explorerUrl}}" is-external="{{yes}}" copy="{{no}}" class-name="w-full text-sm text-neutral-500 sm:text-base"></x-import>
+    </div>
+  </div>
+
+  <div class="app-nav-links">
+    <sc-for list="{{links}}" as="l" hint-placeholder-count="7">
+      <a class="app-nav-link" href="#" onClick="{{l.go}}" aria-current="{{l.current}}">
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>
+        {{l.label}}
+      </a>
+    </sc-for>
+  </div>
+
+  <div class="app-sidebar__footer">
+    <sc-if value="{{disconnected}}">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full" href="#" on-click="{{connectClick}}">Connect</x-import>
+    </sc-if>
+    <sc-if value="{{connected}}">
+      <a class="app-account" href="#" onClick="{{userClick}}">
+        <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
+        <span class="app-account__text">
+          <span class="app-account__name">{{user.name}}</span>
+          <span class="app-account__address">{{user.short}}</span>
+        </span>
+      </a>
+    </sc-if>
+    <div class="app-sidebar__meta">
+      <a class="app-sidebar__governed" href="Explore.dc.html">
+        <span style="white-space: nowrap;">Governed on</span>
+        <dc-import name="AragonLogo" size="sm" hint-size="97px,24px"></dc-import>
+      </a>
+      <div class="app-sidebar__links">
+        <a href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+        <a href="https://aragon.org/privacy-policy">Privacy</a>
+        <a href="https://aragon.org/terms-and-conditions">Terms of Service</a>
+      </div>
+      <div class="app-sidebar__copyright">
+        <p>© 2026 Aragon</p>
+        <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary" class-name="shrink-0"></x-import>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="app-topbar app-topbar--with-sidebar" aria-label="DAO navigation">
+  <div class="app-container app-topbar__inner">
+    <div class="app-topbar__row">
+      <a class="app-topbar__home" href="#" onClick="{{openNav}}" aria-label="Open DAO navigation">
+        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="lg"></x-import>
+        <p class="app-topbar__home-name">{{daoName}}</p>
+      </a>
+      <div class="app-topbar__actions">
+        <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}" on-click="{{walletClick}}"></x-import>
+        <a class="app-topbar__trigger" href="#" onClick="{{openNav}}" aria-label="Open menu">
+          <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="MENU" size="lg"></x-import>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+<sc-if value="{{navOpen}}" hint-placeholder-val="{{false}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="DAO navigation menu" hidden-description="This dialog provides key DAO details and links to governance, treasury, and community pages">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div style="display:flex;flex-direction:column;gap:16px;padding:32px 0 16px">
+<div style="display:flex;flex-direction:column;gap:12px;padding:0 32px">
+<x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="lg"></x-import>
+<div class="app-sidebar__dao">
+<p class="app-sidebar__dao-name" style="font-size:18px;line-height:28px;margin:0">{{daoName}}</p>
+<x-import component-from-global-scope="GovUiKit.AddressOutput" address="{{daoAddress}}" href="{{explorerUrl}}" is-external="{{yes}}" copy="{{no}}" class-name="w-full text-sm text-neutral-500 sm:text-base"></x-import>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px;padding:0 16px">
+<div class="app-nav-links">
+<sc-for list="{{links}}" as="l" hint-placeholder-count="7">
+<a class="app-nav-link" href="#" onClick="{{l.go}}" aria-current="{{l.current}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>{{l.label}}</a>
+</sc-for>
+</div>
+<div style="padding:0 16px"><div style="border-top:1px solid var(--color-neutral-100)"></div></div>
+<a class="app-nav-link" href="Explore.dc.html" style="justify-content:space-between">Explore all DAOs<x-import component-from-global-scope="GovUiKit.Icon" icon="APP_EXPLORE" class-name="text-neutral-300"></x-import></a>
+</div>
+</div>
+</x-import>
+</x-import>
+
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"daoName":{"editor":null},"daoAvatar":{"editor":null},"daoAddress":{"editor":null},"active":{"editor":"enum","options":["dashboard","proposals","transactions","assets","members","permissions","settings"],"default":"dashboard"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
+// Props: active (highlighted item), onNav(target), wallet ('connected' | ''), onConnect() opens the connect dialog, onUser() opens the user dialog. Sidebar from lg, top bar + navigation dialog below lg (state navOpen is local).
+// Mirrors navigationDao.tsx, navigationSidebar.tsx, navigationDialog in apps/app. Props dao-name, dao-avatar, dao-address pick the DAO (default: Meridian DAO); the visitor is nadia.eth when wallet is connected.
+class Component extends DCLogic {
+  state = { navOpen: false };
+  renderVals() {
+    const active = this.props.active ?? 'dashboard';
+    const address = this.props.daoAddress || '0xc8c322384903ee8f11f511b71d0504237886bcde';
+    const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const link = (id, label, icon) => ({
+      label, icon,
+      current: id === active ? 'page' : undefined,
+      iconClass: id === active ? 'text-neutral-800' : 'text-neutral-300',
+      go: (e) => {
+        stop(e);
+        this.setState({ navOpen: false });
+        if (this.props.onNav) this.props.onNav(id);
+      }
+    });
+    const connected = this.props.wallet === 'connected';
+    const connectClick = (e) => { stop(e); this.setState({ navOpen: false }); if (this.props.onConnect) this.props.onConnect(); };
+    const userClick = (e) => { stop(e); this.setState({ navOpen: false }); if (this.props.onUser) this.props.onUser(); };
+    const open = (e) => { stop(e); this.setState({ navOpen: true }); };
+    return {
+      user: connected ? { address: '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', name: 'nadia.eth', short: '0x9CB2…D98A' } : undefined,
+      connected, disconnected: !connected,
+      connectClick, userClick, walletClick: (e) => { if (connected) userClick(e); else connectClick(e); },
+      yes: true, no: false, stop, openNav: open,
+      navOpen: this.state.navOpen,
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) this.setState({ navOpen: false }); } },
+      daoName: this.props.daoName || 'Meridian DAO',
+      daoAddress: address,
+      daoAvatar: this.props.daoAvatar || 'assets/mock/avatar/meridian.svg',
+      explorerUrl: 'https://etherscan.io/address/' + address,
+      links: [
+        link('dashboard', 'Dashboard', 'APP_DASHBOARD'),
+        link('proposals', 'Proposals', 'APP_PROPOSALS'),
+        link('transactions', 'Transactions', 'APP_TRANSACTIONS'),
+        link('assets', 'Assets', 'APP_ASSETS'),
+        link('members', 'Members', 'APP_MEMBERS'),
+        link('permissions', 'Permissions', 'APP_PERMISSIONS'),
+        link('settings', 'Settings', 'SETTINGS')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

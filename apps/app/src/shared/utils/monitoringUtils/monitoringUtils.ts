@@ -540,9 +540,9 @@ class MonitoringUtils {
         return typeof message === 'string' ? message : '';
     };
 
-    // Only enable error tracking for development, staging and production environments
+    // Error tracking runs on the deployed environments only: not locally, not on PR previews.
     private isEnabled = () =>
-        ['development', 'staging', 'production'].includes(
+        ['development', 'staging', 'production', 'occ'].includes(
             process.env.NEXT_PUBLIC_ENV!,
         );
 }

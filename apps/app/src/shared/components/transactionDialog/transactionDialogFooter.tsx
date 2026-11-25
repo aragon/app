@@ -15,6 +15,7 @@ import {
     TransactionDialogStep,
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
+import { transactionDialogUtils } from './transactionDialogUtils';
 
 export interface ITransactionDialogFooterProps<
     TCustomStepId extends string = string,
@@ -27,6 +28,14 @@ export interface ITransactionDialogFooterProps<
      * Link displayed when the managed transaction has been sent successfully.
      */
     successLink: ITransactionDialogProps['successLink'];
+    /**
+     * Id of the dialog to close on cancel and success, closes all dialogs when omitted.
+     */
+    dialogId?: string;
+    /**
+     * Replaces the fallback navigation of "Proceed anyway"; called with the receipt after closing.
+     */
+    onProceedAnyway?: ITransactionDialogProps['onProceedAnyway'];
     /**
      * Receipt of the transaction used for building the managed success link.
      */
@@ -116,6 +125,8 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const {
         submitLabel,
         successLink,
+        dialogId,
+        onProceedAnyway,
         txReceipt,
         activeStep,
         onError,
@@ -196,9 +207,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const isCancelDisabled =
         disableCancel ||
         (!isCustom &&
-            (stepId === TransactionDialogStep.CONFIRM ||
-                stepId === TransactionDialogStep.INDEXING) &&
-            (isSuccessState || isPendingState));
+            transactionDialogUtils.isTransactionInFlight(stepId, state));
 
     const customSubmitLabel =
         !isCustom && stepId != null && state != null
@@ -222,7 +231,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         }
 
         if (displaySuccessLink) {
-            close();
+            close(dialogId);
             successOnClick?.(txReceipt!);
             return;
         }
@@ -241,7 +250,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             setIsBlocked(false);
         }
         if (!isCustom) {
-            close();
+            close(dialogId);
+            if (showProceedAnyway && onProceedAnyway) {
+                onProceedAnyway(txReceipt!);
+                return;
+            }
             if (!showProceedAnyway) {
                 onCancelClick?.();
             }
@@ -284,7 +297,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             secondaryAction={{
                 label: cancelButtonLabel,
                 onClick: handleCancelClick,
-                href: showProceedAnyway ? fallbackUrl : undefined,
+                href:
+                    showProceedAnyway && !onProceedAnyway
+                        ? fallbackUrl
+                        : undefined,
                 disabled: isCustom
                     ? isCancelDisabled
                     : showProceedAnyway

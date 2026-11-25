@@ -5,47 +5,9 @@
 //
 // Spec: skills/shared/rules/README.md
 
-import {
-    appendFileSync,
-    existsSync,
-    mkdirSync,
-    readdirSync,
-    readFileSync,
-    realpathSync,
-} from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-
-const BUFFER_RELATIVE = '.agents/local/metrics/.buffer.jsonl';
-
-export const logEvents = (match, { tool, adapter, elapsed_ms, repoRoot }) => {
-    try {
-        const path = join(repoRoot, BUFFER_RELATIVE);
-        if (!existsSync(dirname(path))) {
-            mkdirSync(dirname(path), { recursive: true });
-        }
-        const ts = new Date().toISOString();
-        const lines = match.matchedRules
-            .map(
-                (rule) =>
-                    `${JSON.stringify({
-                        ts,
-                        tool,
-                        file: match.relPath,
-                        rule: rule.name,
-                        bytes: rule.body.trim().length,
-                        elapsed_ms,
-                        adapter,
-                    })}\n`,
-            )
-            .join('');
-        if (lines) {
-            appendFileSync(path, lines);
-        }
-    } catch {
-        // Swallow — telemetry must never block an edit.
-    }
-};
 
 export const canonicalize = (path) => {
     try {
@@ -317,22 +279,13 @@ export const main = async ({ defaultAdapter = 'generic' } = {}) => {
         }
 
         const adapter = cli.adapter || defaultAdapter;
-        const repoRoot = canonicalize(cli.repoRoot ?? DEFAULT_REPO_ROOT);
-        const start = Date.now();
         const result = buildHookOutput(payload, {
             adapter,
             repoRoot: cli.repoRoot,
             ruleRoots: cli.ruleRoots.length > 0 ? cli.ruleRoots : undefined,
         });
-        const elapsed_ms = Date.now() - start;
 
         if (result) {
-            logEvents(result, {
-                tool: payload.tool_name,
-                adapter,
-                elapsed_ms,
-                repoRoot,
-            });
             process.stdout.write(JSON.stringify(result.output));
         }
     } catch (err) {

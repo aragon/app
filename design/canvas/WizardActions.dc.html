@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wizard actions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="wizard-actions">
+  <div class="wizard-actions__buttons">
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" dc-props="{{backProps}}" class-name="{{backClass}}">Back</x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="{{variant}}" size="lg" icon-right="CHEVRON_RIGHT" type="submit" dc-props="{{nextProps}}" class-name="{{submitClass}}">{{label}}</x-import>
+  </div>
+  <sc-if value="{{hasHelp}}" hint-placeholder-val="{{no}}">
+    <p class="wizard-actions__help">{{helpText}}</p>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"hasBack":{"editor":"boolean","default":false},"isLast":{"editor":"boolean","default":false},"submitLabel":{"editor":null},"helpText":{"editor":null},"backHref":{"editor":null},"nextHref":{"editor":null},"onNext":{"editor":null},"onBack":{"editor":null},"hover":{"editor":"boolean","default":false},"$preview":{"width":800,"height":48}}'>
+// Back / Next buttons at the bottom of a full-page wizard step (apps/app: shared/components/wizards/wizardPage/
+// wizardPageStep/wizardPageStep.tsx footer, labels and variant from wizard/useWizardFooter.ts). Last child of
+// `.wizard-step`:
+//   <dc-import name="WizardActions" has-back="{{yes}}" is-last="{{yes}}" submit-label="Publish DAO" hint-size="100%,48px"></dc-import>
+// Props:
+//   hasBack      shows "Back" (any step but the first; on the first it keeps its place, invisible).
+//   isLast       last step: the button is primary and reads submitLabel; otherwise secondary "Next".
+//   submitLabel  the wizard's submitLabel (e.g. "Publish DAO", "Create workspace").
+//   helpText     the wizard's submitHelpText, printed under the buttons on the last step only.
+//   backHref     screen the Back button opens (the previous step, or where the wizard was opened from).
+//   nextHref     screen the Next / submit button opens (the next step, or the dialog the last step opens).
+//   onNext       a function from the screen's script, called on Next / submit instead of following nextHref: an
+//                interactive flow in one artboard validates its step there (as the app does on submit) and moves on.
+//   onBack       the same for Back.
+//   hover        draws the submit button hovered (the screenshot's pointer rests on it after clicking "Next").
+// The dropdown variant (nextDropdownItems, e.g. the create-proposal "Next" menu) is not covered: mount a kit
+// Dropdown.Container in the screen instead.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const isLast = !!p.isLast;
+    const variant = isLast ? 'primary' : 'secondary';
+    return {
+      no: false,
+      // href only when given: an <a> without a target renders differently from the <button>.
+      backProps: p.onBack ? { onClick: p.onBack } : p.backHref ? { href: p.backHref } : {},
+      nextProps: p.onNext ? { onClick: p.onNext } : p.nextHref ? { href: p.nextHref } : {},
+      backClass: p.hasBack ? '' : 'invisible',
+      variant,
+      label: isLast ? (p.submitLabel ?? 'Submit') : 'Next',
+      submitClass: p.hover ? 'wizard-actions__submit--hover-' + variant : '',
+      hasHelp: isLast && p.helpText != null && p.helpText !== '',
+      helpText: p.helpText
+    };
+  }
+}
+</script>
+</body>
+</html>

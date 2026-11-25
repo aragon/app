@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { SafeCreateTransactionDialog } from '../dialogs/safeCreateTransactionDialog';
+import { SafeDeployTransactionDialog } from '../dialogs/safeDeployTransactionDialog';
 import { SafeProposalTransactionDialog } from '../dialogs/safeProposalTransactionDialog';
 import { SafeTransactionDialog } from '../dialogs/safeTransactionDialog';
 import { SafeTransactionReviewDialog } from '../dialogs/safeTransactionReviewDialog';
@@ -29,5 +30,9 @@ export const safeDialogsDefinitions: Record<
     // disconnection, and signing guards on the connected owner and chain itself.
     [SafeDialogId.CREATE_TRANSACTION]: {
         Component: SafeCreateTransactionDialog,
+    },
+    [SafeDialogId.DEPLOY_TRANSACTION]: {
+        Component: SafeDeployTransactionDialog,
+        requiresWallet: true,
     },
 };

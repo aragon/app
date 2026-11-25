@@ -17,7 +17,8 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { WorkspaceTodoPreview } from '../../components/workspaceTodoPreview';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
+import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -50,6 +51,7 @@ export const WorkspaceDetailsPageClient: React.FC<
     const { workspaceId } = props;
 
     const { t } = useTranslations();
+    const handleAddAccounts = useWorkspaceAddAccountsDialog(workspaceId);
     const { open } = useDialogContext();
 
     const { data: workspace } = useWorkspace({
@@ -57,6 +59,9 @@ export const WorkspaceDetailsPageClient: React.FC<
     });
 
     const accounts = workspace?.accounts ?? [];
+
+    // For the avatar and indexed name; the workspace metadata goes over them.
+    const { daos } = useWorkspaceDaos(accounts);
 
     // Resolved once for the whole list to display the DAO names, which the registry does not store.
     const { data: accountInfos } = useWorkspaceAccounts(
@@ -147,10 +152,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         label: t(
                                             'app.workspace.workspaceDetailsPage.emptyAccounts.action',
                                         ),
-                                        href: workspaceUtils.getWorkspaceEditUrl(
-                                            workspaceId,
-                                            WorkspaceWizardStep.ACCOUNTS,
-                                        ),
+                                        onClick: handleAddAccounts,
                                     }}
                                     secondaryButton={{
                                         label: t(
@@ -172,6 +174,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         accountInfos,
                                         account,
                                     )}
+                                    dao={daos[account.id]}
                                     key={account.id}
                                     workspaceId={workspaceId}
                                 />

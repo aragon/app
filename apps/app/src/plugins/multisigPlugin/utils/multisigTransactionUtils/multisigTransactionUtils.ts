@@ -2,9 +2,14 @@ import {
     encodeAbiParameters,
     encodeFunctionData,
     type Hex,
+    zeroAddress,
     zeroHash,
 } from 'viem';
-import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
+import type {
+    IBuildCreateDaoPluginSettingsParams,
+    IBuildPreparePluginInstallDataParams,
+    ICreateDaoPluginSettings,
+} from '@/modules/createDao/types';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
 import type {
     IBuildCreateProposalDataParams,
@@ -116,6 +121,27 @@ class MultisigTransactionUtils {
             );
 
         return transactionData;
+    };
+
+    buildCreateDaoPluginSettings = (
+        params: IBuildCreateDaoPluginSettingsParams,
+    ): ICreateDaoPluginSettings => {
+        const { network, signers, minApprovals } = params;
+
+        const data = encodeAbiParameters(multisigPluginSetupAbi, [
+            signers,
+            { onlyListed: true, minApprovals },
+            { target: zeroAddress, operation: 0 },
+            '0x',
+        ]);
+
+        return {
+            pluginSetupRef: {
+                pluginSetupRepo: multisigPlugin.repositoryAddresses[network],
+                versionTag: multisigPlugin.installVersion,
+            },
+            data,
+        };
     };
 
     buildPrepareUpdateData = (

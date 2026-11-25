@@ -577,29 +577,29 @@ No split of the chains brings an indexer under 10 000 addresses, because Sepolia
 
 | Subscription | Plan | State | Use |
 |---|---|---|---|
-| App, organisation `aragon`, indexer `aragon-indexer` | Production Medium | production, 2 chains | production through M3; one of the two production indexers from M4 |
-| Solutions | Production Medium, annual | being retired by Solutions, offered to the migration (2026-10-27) | the measurement stand now; the second production indexer from M4 |
-| Solutions | Production Small, annual | same | spare; the four small testnets if QA needs them after M5 |
+| App, organisation `aragon`, indexer `aragon-indexer` | Production Medium | production, 2 chains | production and its release candidates |
+| Solutions | Production Medium, annual | given to the migration (2026-11-16) | the dev indexer `aragon-indexer-dev`: a deployment per PR labelled `envio-preview`, and the measurement stand |
+| Solutions | Production Small, annual | being retired by Solutions, offered to the migration (2026-10-27) | spare; the four small testnets if QA needs them after M5 |
 
-Three questions to Jota decide whether the Solutions plans can be used at all: the renewal date, the organisation they live in, and whether an indexer there can be pointed at `aragon-indexer` or the plan moved to a new indexer in `aragon`.
+[SREDO-788](https://linear.app/aragon/issue/SREDO-788) attaches the Medium to `aragon-indexer` as the dev indexer. Still open with Jota: the renewal date of both plans and the organisation they live in.
 
-The Solutions Medium cannot hold release candidates. A candidate has to sync on the indexer whose endpoint it will take, because promote works inside one indexer. Candidates stay deployments of the production indexer, as the release flow builds them.
+The dev indexer cannot hold release candidates. A candidate has to sync on the indexer whose endpoint it will take, because promote works inside one indexer. Candidates stay deployments of the production indexer, as the release flow builds them.
 
 ### Plan by milestone
 
-1. **Before the call.** Ask Jota the three questions. The dashboard is read ([the current deployment](#the-current-deployment)).
+1. **Before the call.** Ask Jota the open questions. The dashboard is read ([the current deployment](#the-current-deployment)).
 2. **M1–M3, two chains.** Production stays on the app's Medium. M1 lands at 21 900 addresses; its sync is the check that an indexer on Medium carries that many.
-3. **Measurement stand, during M1–M2.** Throwaway deployments on the Solutions Medium from a `stand/*` branch with its own config, deleted after each run:
+3. **Measurement stand, during M1–M2.** Throwaway deployments on the dev indexer: a PR with its own config and the `envio-preview` label, closed after each run:
    - the built modules on the ten largest chains (36 900 addresses): sync time and events per chain;
    - wildcard `Transfer` filtered by DAO addresses on Sepolia and Polygon: whether a filter of 6 400 addresses syncs, and the transfer volume the treasury slice brings;
    - `DelegateVotesChanged` and `DelegateChanged` of ARB and OP over a bounded block range: the size of what the skip list keeps out;
    - the query rate limit: what Envio answers above it, whether it counts per indexer or per API key, and whether a document with several root fields counts once.
-4. **M4, all chains.** Two production indexers from the same repository, one config each, on the two Mediums. Sepolia with seven of the ten small chains on one, Polygon, Base, Ethereum and Arbitrum with the other three on the other: 21 000 to 24 000 addresses each, 15 of 20 chain slots used. A release then has two candidates and two promotes, and the readiness gate and the parity run cover both endpoints. A breaking schema change is promoted on both before the matching domain ships.
-5. **Fallback.** One Production Large for production if any of these holds at the start of M4: Envio starts to enforce the contracts figure; one indexer's share of events passes 10 M; the query rate stays above 70 % of an endpoint's limit with the budget and the cache in place; the Solutions plans cannot be used or end before M4.
+4. **M4, all chains.** The production plan is chosen closer to M4, from the stand runs and the load by then: a second Medium, one Large, or more. The dev indexer stays for PRs. With two Mediums there are two production indexers from the same repository, one config each: Sepolia with seven of the ten small chains on one, Polygon, Base, Ethereum and Arbitrum with the other three on the other: 21 000 to 24 000 addresses each, 15 of 20 chain slots used. A release then has two candidates and two promotes, and the readiness gate and the scorecard cover both endpoints. A breaking schema change is promoted on both before the matching domain ships.
+5. **What points to Large.** Any of these at the start of M4: Envio starts to enforce the contracts figure; one indexer's share of events passes 10 M; the query rate stays above 70 % of an endpoint's limit with the budget and the cache in place.
 
 | | Two Mediums | One Large |
 |---|---|---|
-| Cost per month | $600; the second Medium is paid until the Solutions renewal | $800 |
+| Cost per month | $600, next to the dev indexer | $800, next to the dev indexer |
 | Chain slots | 20, 15 used | 15, 15 used; the next network needs a second indexer |
 | Contracts listed (not metered) | 2 × ~10 000 against 45 000 | ~50 000 against 45 000 |
 | A deployment left running for a month | $146 | $365 |
@@ -607,7 +607,7 @@ The Solutions Medium cannot hold release candidates. A candidate has to sync on 
 | Query rate | 1 000 a minute per endpoint, so a network's reads have the limit of the endpoint that holds it | 2 000 a minute |
 | Endpoints | 2: a workspace that spans both reads one query per endpoint per page; two candidates and two promotes per release | 1: a workspace's DAO accounts are one query |
 
-Workspaces make reads across networks the common case, which speaks for one endpoint. Two things keep two Mediums the plan. The merge exists on any plan, because a workspace with a Safe already reads a second source. And Large has no free chain slot, so the 16th network brings a second indexer there too. One Large buys single-query workspace lists for $200 a month until that network arrives.
+Workspaces make reads across networks the common case, which speaks for one endpoint. Two things speak for two Mediums. The merge exists on any plan, because a workspace with a Safe already reads a second source. And Large has no free chain slot, so the 16th network brings a second indexer there too. One Large buys single-query workspace lists for $200 a month until that network arrives.
 
 ### Measurements
 
@@ -638,7 +638,7 @@ Dependencies, without dates. The indexer track is one person wide (Cecir), so it
 
 Before M3 starts: the transfer spike is done, Redis and Postgres are provisioned, the worker runs, the paging contract of the workspace lists is decided, and product has accepted the 5 000-row end of filtered lists and decided on ERC721.
 
-Before M4 starts: every route is marked migrated, dropped or deferred in the fork's route table (the ADR's M3 exit), the stand runs are done, and the choice between two Mediums and one Large is made. The routes that span networks (explore, DAOs by member, the workspace queries) turn on in M4, with the last chains.
+Before M4 starts: every route is marked migrated, dropped or deferred in the fork's route table (the ADR's M3 exit), the stand runs are done, and the production plan for all chains is chosen. The routes that span networks (explore, DAOs by member, the workspace queries) turn on in M4, with the last chains.
 
 ## Risks to settle before M5
 
@@ -647,7 +647,7 @@ Before M4 starts: every route is marked migrated, dropped or deferred in the for
 
 ## Open for the call
 
-1. Two Mediums at M4 with Large as the fallback, and the answers on the Solutions plans.
+1. The production plan for all chains, chosen closer to M4: a second Medium, one Large, or more.
 2. The cuts: the ARB and OP skip list, Safes read from the Safe source, no settings history, policies deferred, small testnets out, ERC721 with product.
 3. Lock history as `VELockEvent` rows in APP-1101.
 4. The store on Neon through the Marketplace with Upstash as the cache, or a Postgres DevOps runs; vault names.

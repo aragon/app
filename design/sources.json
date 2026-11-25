@@ -1,0 +1,1023 @@
+{
+    "parts": {
+        "AragonLogo": {
+            "sources": [
+                "apps/app/src/shared/components/aragonLogo/**"
+            ]
+        },
+        "AtlasDao": {
+            "sources": [
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**",
+                "apps/app/src/app/dao/**",
+                "apps/app/src/modules/application/pages/daoPluginPage/**",
+                "apps/app/src/modules/application/components/daoOnboardingWatchers/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoAssets": {
+            "route": "/dao/[network]/[addressOrEns]/assets",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoAssetsPage/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/modules/finance/components/daoInfoAside/**",
+                "apps/app/src/modules/finance/components/allAssetsStats/**",
+                "apps/app/src/modules/finance/components/financeDetailsList/**",
+                "apps/app/src/modules/finance/components/linkedAccountInfo/**",
+                "apps/app/src/shared/components/statCard/**"
+            ]
+        },
+        "AtlasDaoDashboard": {
+            "route": "/dao/[network]/[addressOrEns]/dashboard",
+            "sources": [
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoMember": {
+            "route": "/dao/[network]/[addressOrEns]/members/[address]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMemberDetailsPage/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoMembers": {
+            "route": "/dao/[network]/[addressOrEns]/members",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoPermissions": {
+            "route": "/dao/[network]/[addressOrEns]/permissions",
+            "sources": [
+                "apps/app/src/modules/permissions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**"
+            ]
+        },
+        "AtlasDaoProcess": {
+            "route": "/dao/[network]/[addressOrEns]/settings/[slug]",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoProcessDetailsPage/**",
+                "apps/app/src/modules/settings/components/daoProcessDetailsInfo/**",
+                "apps/app/src/modules/settings/components/daoProccessAllowedActions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/settings/components/*ConditionSlot/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoProposal": {
+            "route": "/dao/[network]/[addressOrEns]/proposals/[proposalSlug]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoProposals": {
+            "route": "/dao/[network]/[addressOrEns]/proposals",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalsPage/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/proposalListStats/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoSettings": {
+            "route": "/dao/[network]/[addressOrEns]/settings",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoSettingsPage/**",
+                "apps/app/src/modules/settings/components/dao*/**",
+                "apps/app/src/modules/settings/components/updateDaoContracts/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/shared/components/processDataListItem/**",
+                "apps/app/src/shared/components/policyDataListItem/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/multisigPlugin/**"
+            ]
+        },
+        "AtlasDaoTransactions": {
+            "route": "/dao/[network]/[addressOrEns]/transactions",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoTransactionsPage/**",
+                "apps/app/src/modules/finance/components/transactionList/**",
+                "apps/app/src/modules/finance/components/transactionExecution*/**",
+                "apps/app/src/modules/finance/dialogs/transactionDetailDialog/**"
+            ]
+        },
+        "CreateDaoFlow": {
+            "route": "/create/dao",
+            "sources": [
+                "apps/app/src/modules/createDao/pages/createDaoPage/**",
+                "apps/app/src/modules/createDao/components/createDaoForm/**",
+                "apps/app/src/modules/createDao/dialogs/createDaoDetailsDialog/**",
+                "apps/app/src/modules/createDao/dialogs/publishDaoDialog/**",
+                "apps/app/src/modules/governance/components/layoutWizardCreateDao/**",
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "CreateDaoFlowMetadata": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createDaoForm/**",
+                "apps/app/src/shared/components/forms/avatarInput/**",
+                "apps/app/src/shared/components/forms/resourcesInput/**"
+            ]
+        },
+        "CreateDaoFlowNetwork": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createDaoForm/**",
+                "apps/app/src/shared/components/forms/networkInput/**"
+            ]
+        },
+        "CreateProcessFlow": {
+            "route": "/dao/[network]/[addressOrEns]/create/[pluginAddress]/process",
+            "sources": [
+                "apps/app/src/modules/createDao/pages/createProcessPage/**",
+                "apps/app/src/modules/createDao/components/createProcessForm/**",
+                "apps/app/src/modules/createDao/components/layoutWizardCreateProcess/**",
+                "apps/app/src/modules/createDao/dialogs/**",
+                "apps/app/src/plugins/*/components/*Setup*/**",
+                "apps/app/src/plugins/*/components/*ProcessBodyField/**",
+                "apps/app/src/plugins/*/components/*ProposalCreationSettings/**",
+                "apps/app/src/shared/components/forms/advancedDateInput/**",
+                "apps/app/src/shared/components/forms/numberProgressInput/**",
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "CreateProcessFlowBodyCard": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createProcessForm/**",
+                "apps/app/src/plugins/*/components/*Setup*/**",
+                "apps/app/src/plugins/*/components/*ProcessBodyField/**",
+                "apps/app/src/plugins/*/components/*ProposalCreationSettings/**"
+            ]
+        },
+        "CreateProcessFlowBodyDialog": {
+            "sources": [
+                "apps/app/src/modules/createDao/dialogs/setupBodyDialog/**",
+                "apps/app/src/plugins/*/components/*Setup*/**",
+                "apps/app/src/plugins/*/components/*ProcessBodyField/**",
+                "apps/app/src/plugins/*/components/*ProposalCreationSettings/**"
+            ]
+        },
+        "CreateProcessFlowDesigner": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createProcessForm/**"
+            ]
+        },
+        "CreateProcessFlowDuration": {
+            "sources": [
+                "apps/app/src/shared/components/forms/advancedDateInput/**"
+            ]
+        },
+        "CreateProcessFlowMetadata": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createProcessForm/**"
+            ]
+        },
+        "CreateProcessFlowNumberInput": {
+            "sources": [
+                "apps/app/src/shared/components/forms/numberProgressInput/**"
+            ]
+        },
+        "CreateProcessFlowPermissions": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createProcessForm/**",
+                "apps/app/src/modules/settings/components/permission*/**"
+            ]
+        },
+        "CreateProcessFlowProposalCreation": {
+            "sources": [
+                "apps/app/src/modules/createDao/components/createProcessForm/**",
+                "apps/app/src/plugins/*/components/*ProposalCreationSettings/**"
+            ]
+        },
+        "CreateProcessFlowStageDialog": {
+            "sources": [
+                "apps/app/src/modules/createDao/dialogs/setupStageSettingsDialog/**",
+                "apps/app/src/shared/components/forms/advancedDateInput/**"
+            ]
+        },
+        "CreateProposalFlow": {
+            "route": "/dao/[network]/[addressOrEns]/create/[pluginAddress]/proposal",
+            "sources": [
+                "apps/app/src/modules/governance/pages/createProposalPage/**",
+                "apps/app/src/modules/governance/components/createProposalForm/**",
+                "apps/app/src/modules/governance/components/layoutWizardCreateProposal/**",
+                "apps/app/src/modules/governance/dialogs/publishProposalDialog/**",
+                "apps/app/src/plugins/*/components/*CreateProposalSettingsForm/**",
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "CreateProposalFlowActions": {
+            "sources": [
+                "apps/app/src/modules/governance/components/actionComposer/**",
+                "apps/app/src/modules/governance/components/proposalActions*/**",
+                "apps/app/src/modules/finance/components/transferAssetForm/**",
+                "apps/app/src/modules/finance/components/assetInput/**"
+            ]
+        },
+        "CreateProposalFlowAssetDialog": {
+            "sources": [
+                "apps/app/src/modules/finance/dialogs/assetSelectionDialog/**",
+                "apps/app/src/modules/finance/components/assetAddressSelect/**",
+                "apps/app/src/modules/finance/components/assetInput/**"
+            ]
+        },
+        "CreateProposalFlowMetadata": {
+            "sources": [
+                "apps/app/src/modules/governance/components/createProposalForm/**"
+            ]
+        },
+        "CreateProposalFlowNext": {
+            "sources": [
+                "apps/app/src/modules/governance/components/createProposalForm/**",
+                "apps/app/src/shared/components/wizards/**"
+            ]
+        },
+        "CreateProposalFlowSettings": {
+            "sources": [
+                "apps/app/src/modules/governance/components/createProposalForm/**",
+                "apps/app/src/plugins/*/components/*CreateProposalSettingsForm/**"
+            ]
+        },
+        "CreateProposalFlowSimulateDialog": {
+            "sources": [
+                "apps/app/src/modules/governance/dialogs/simulateActionsDialog/**",
+                "apps/app/src/modules/governance/components/actionComposer/**"
+            ]
+        },
+        "CreateWorkspaceFlow": {
+            "route": "/create/workspace",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/createWorkspacePage/**",
+                "apps/app/src/modules/workspace/components/createWorkspaceForm/**",
+                "apps/app/src/modules/workspace/components/layoutWizardCreateWorkspace/**",
+                "apps/app/src/modules/workspace/components/workspaceWizard/**",
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "CreateWorkspaceFlowAccounts": {
+            "sources": [
+                "apps/app/src/modules/workspace/components/createWorkspaceForm/**",
+                "apps/app/src/modules/workspace/components/workspaceAccount*/**"
+            ]
+        },
+        "CreateWorkspaceFlowAddressFields": {
+            "sources": [
+                "apps/app/src/modules/workspace/components/createWorkspaceForm/**",
+                "apps/app/src/shared/components/forms/addressesInput/**"
+            ]
+        },
+        "CreateWorkspaceFlowMetadata": {
+            "sources": [
+                "apps/app/src/modules/workspace/components/createWorkspaceForm/**",
+                "apps/app/src/shared/components/forms/avatarInput/**"
+            ]
+        },
+        "CreateWorkspaceFlowPublishDialog": {
+            "sources": [
+                "apps/app/src/modules/workspace/dialogs/publishWorkspaceDialog/**"
+            ]
+        },
+        "CreateWorkspaceFlowTargets": {
+            "sources": [
+                "apps/app/src/modules/workspace/components/createWorkspaceForm/**",
+                "apps/app/src/shared/components/daoTargetIndicator/**"
+            ]
+        },
+        "Dao": {
+            "sources": [
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**",
+                "apps/app/src/app/dao/**",
+                "apps/app/src/modules/application/pages/daoPluginPage/**",
+                "apps/app/src/modules/application/components/daoOnboardingWatchers/**",
+                "apps/app/src/plugins/tokenPlugin/**",
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/modules/governance/pages/daoProposalsPage/**",
+                "apps/app/src/modules/governance/components/proposalListStats/**",
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**",
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**",
+                "apps/app/src/modules/finance/pages/daoAssetsPage/**",
+                "apps/app/src/modules/finance/components/daoInfoAside/**",
+                "apps/app/src/modules/finance/components/allAssetsStats/**",
+                "apps/app/src/modules/finance/components/financeDetailsList/**",
+                "apps/app/src/modules/finance/components/linkedAccountInfo/**",
+                "apps/app/src/shared/components/statCard/**",
+                "apps/app/src/modules/finance/pages/daoTransactionsPage/**",
+                "apps/app/src/modules/finance/components/transactionList/**",
+                "apps/app/src/modules/finance/components/transactionExecution*/**",
+                "apps/app/src/modules/finance/dialogs/transactionDetailDialog/**",
+                "apps/app/src/modules/settings/pages/daoSettingsPage/**",
+                "apps/app/src/modules/settings/components/dao*/**",
+                "apps/app/src/modules/settings/components/updateDaoContracts/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/shared/components/processDataListItem/**",
+                "apps/app/src/shared/components/policyDataListItem/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/modules/settings/pages/daoProcessDetailsPage/**",
+                "apps/app/src/modules/settings/components/daoProcessDetailsInfo/**",
+                "apps/app/src/modules/settings/components/daoProccessAllowedActions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/settings/components/*ConditionSlot/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**",
+                "apps/app/src/modules/permissions/**"
+            ]
+        },
+        "DaoAssets": {
+            "route": "/dao/[network]/[addressOrEns]/assets",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoAssetsPage/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/modules/finance/components/daoInfoAside/**",
+                "apps/app/src/modules/finance/components/allAssetsStats/**",
+                "apps/app/src/modules/finance/components/financeDetailsList/**",
+                "apps/app/src/modules/finance/components/linkedAccountInfo/**",
+                "apps/app/src/shared/components/statCard/**"
+            ]
+        },
+        "DaoDashboard": {
+            "route": "/dao/[network]/[addressOrEns]/dashboard",
+            "sources": [
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoDelegateDialog": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenDelegation*/**",
+                "apps/app/src/modules/governance/dialogs/delegate*/**"
+            ]
+        },
+        "DaoDelegateForm": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenDelegation*/**",
+                "apps/app/src/plugins/tokenPlugin/components/tokenMember*/**",
+                "apps/app/src/modules/governance/components/delegation*/**"
+            ]
+        },
+        "DaoMember": {
+            "route": "/dao/[network]/[addressOrEns]/members/[address]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMemberDetailsPage/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoMembers": {
+            "route": "/dao/[network]/[addressOrEns]/members",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoNav": {
+            "sources": [
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**"
+            ]
+        },
+        "DaoPermissions": {
+            "route": "/dao/[network]/[addressOrEns]/permissions",
+            "sources": [
+                "apps/app/src/modules/permissions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**"
+            ]
+        },
+        "DaoProcess": {
+            "route": "/dao/[network]/[addressOrEns]/settings/[slug]",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoProcessDetailsPage/**",
+                "apps/app/src/modules/settings/components/daoProcessDetailsInfo/**",
+                "apps/app/src/modules/settings/components/daoProccessAllowedActions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/settings/components/*ConditionSlot/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoProposal": {
+            "route": "/dao/[network]/[addressOrEns]/proposals/[proposalSlug]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoProposalVote": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/components/tokenSubmitVote/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**"
+            ]
+        },
+        "DaoProposals": {
+            "route": "/dao/[network]/[addressOrEns]/proposals",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalsPage/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/proposalListStats/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoSettings": {
+            "route": "/dao/[network]/[addressOrEns]/settings",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoSettingsPage/**",
+                "apps/app/src/modules/settings/components/dao*/**",
+                "apps/app/src/modules/settings/components/updateDaoContracts/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/shared/components/processDataListItem/**",
+                "apps/app/src/shared/components/policyDataListItem/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/tokenPlugin/**"
+            ]
+        },
+        "DaoTransactionDetailDialog": {
+            "sources": [
+                "apps/app/src/modules/finance/dialogs/transactionDetailDialog/**",
+                "apps/app/src/modules/finance/components/transactionExecution*/**"
+            ]
+        },
+        "DaoTransactions": {
+            "route": "/dao/[network]/[addressOrEns]/transactions",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoTransactionsPage/**",
+                "apps/app/src/modules/finance/components/transactionList/**",
+                "apps/app/src/modules/finance/components/transactionExecution*/**",
+                "apps/app/src/modules/finance/dialogs/transactionDetailDialog/**"
+            ]
+        },
+        "DaoWalletConnect": {
+            "sources": [
+                "apps/app/src/modules/application/dialogs/connectWalletDialog/**"
+            ]
+        },
+        "DaoWalletUser": {
+            "sources": [
+                "apps/app/src/modules/application/dialogs/userDialog/**",
+                "apps/app/src/modules/application/dialogs/aragonProfile*/**",
+                "apps/app/src/modules/application/components/aragonProfile*/**"
+            ]
+        },
+        "Explore": {
+            "route": "/explore",
+            "sources": [
+                "apps/app/src/modules/explore/**",
+                "apps/app/src/shared/components/ctaCard/**",
+                "apps/app/src/shared/components/carousel/**",
+                "apps/app/src/shared/components/daoFilterComponent/**",
+                "apps/app/src/shared/components/pluginFilterComponent/**",
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**"
+            ]
+        },
+        "Footer": {
+            "sources": [
+                "apps/app/src/modules/application/components/footer/**",
+                "apps/app/src/shared/components/footerInfo/**"
+            ]
+        },
+        "LockFlow": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/**",
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**",
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**"
+            ]
+        },
+        "LockFlowAmountField": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/**"
+            ]
+        },
+        "LockFlowBlockedDialog": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/dialogs/unlockBlockedInfoDialog/**"
+            ]
+        },
+        "LockFlowFeedbackDialog": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/dialogs/lockToVoteSubmitVoteFeedbackDialog/**"
+            ]
+        },
+        "LockFlowLockDialog": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/dialogs/**",
+                "apps/app/src/plugins/lockToVotePlugin/components/lockToVoteLock*/**"
+            ]
+        },
+        "LockFlowLockForm": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/**"
+            ]
+        },
+        "LockFlowMembers": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/**",
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**"
+            ]
+        },
+        "LockFlowProposal": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/**",
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**"
+            ]
+        },
+        "LockFlowTxDialog": {
+            "sources": [
+                "apps/app/src/plugins/lockToVotePlugin/dialogs/**",
+                "apps/app/src/shared/components/transactionDialog/**"
+            ]
+        },
+        "NorthstarDao": {
+            "sources": [
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**",
+                "apps/app/src/app/dao/**",
+                "apps/app/src/modules/application/pages/daoPluginPage/**",
+                "apps/app/src/modules/application/components/daoOnboardingWatchers/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoAssets": {
+            "route": "/dao/[network]/[addressOrEns]/assets",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoAssetsPage/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/modules/finance/components/daoInfoAside/**",
+                "apps/app/src/modules/finance/components/allAssetsStats/**",
+                "apps/app/src/modules/finance/components/financeDetailsList/**",
+                "apps/app/src/modules/finance/components/linkedAccountInfo/**",
+                "apps/app/src/shared/components/statCard/**"
+            ]
+        },
+        "NorthstarDaoDashboard": {
+            "route": "/dao/[network]/[addressOrEns]/dashboard",
+            "sources": [
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoMember": {
+            "route": "/dao/[network]/[addressOrEns]/members/[address]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMemberDetailsPage/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoMembers": {
+            "route": "/dao/[network]/[addressOrEns]/members",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoPermissions": {
+            "route": "/dao/[network]/[addressOrEns]/permissions",
+            "sources": [
+                "apps/app/src/modules/permissions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**"
+            ]
+        },
+        "NorthstarDaoProcess": {
+            "route": "/dao/[network]/[addressOrEns]/settings/[slug]",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoProcessDetailsPage/**",
+                "apps/app/src/modules/settings/components/daoProcessDetailsInfo/**",
+                "apps/app/src/modules/settings/components/daoProccessAllowedActions/**",
+                "apps/app/src/modules/settings/components/permission*/**",
+                "apps/app/src/modules/settings/components/*ConditionSlot/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/modules/governance/components/permissionsDefinitionList/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**",
+                "apps/app/src/modules/settings/components/permissionsGraph/**"
+            ]
+        },
+        "NorthstarDaoProposal": {
+            "route": "/dao/[network]/[addressOrEns]/proposals/[proposalSlug]",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalDetailsPage/**",
+                "apps/app/src/modules/governance/components/proposal*/**",
+                "apps/app/src/modules/governance/components/nestedActionsList/**",
+                "apps/app/src/modules/governance/components/voteList/**",
+                "apps/app/src/modules/governance/dialogs/voteDialog/**",
+                "apps/app/src/modules/governance/dialogs/executeDialog/**",
+                "apps/app/src/modules/governance/dialogs/nestedActionsDialog/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoProposals": {
+            "route": "/dao/[network]/[addressOrEns]/proposals",
+            "sources": [
+                "apps/app/src/modules/governance/pages/daoProposalsPage/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/proposalListStats/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoSettings": {
+            "route": "/dao/[network]/[addressOrEns]/settings",
+            "sources": [
+                "apps/app/src/modules/settings/pages/daoSettingsPage/**",
+                "apps/app/src/modules/settings/components/dao*/**",
+                "apps/app/src/modules/settings/components/updateDaoContracts/**",
+                "apps/app/src/modules/settings/dialogs/**",
+                "apps/app/src/shared/components/processDataListItem/**",
+                "apps/app/src/shared/components/policyDataListItem/**",
+                "apps/app/src/shared/components/governanceBodyInfo/**",
+                "apps/app/src/plugins/sppPlugin/**",
+                "apps/app/src/plugins/safeMultisigPlugin/**"
+            ]
+        },
+        "NorthstarDaoTransactions": {
+            "route": "/dao/[network]/[addressOrEns]/transactions",
+            "sources": [
+                "apps/app/src/modules/finance/pages/daoTransactionsPage/**",
+                "apps/app/src/modules/finance/components/transactionList/**",
+                "apps/app/src/modules/finance/components/transactionExecution*/**",
+                "apps/app/src/modules/finance/dialogs/transactionDetailDialog/**"
+            ]
+        },
+        "ResourcesInput": {
+            "sources": [
+                "apps/app/src/shared/components/forms/resourcesInput/**"
+            ]
+        },
+        "SafeFlow": {
+            "route": "/safe/[network]/[address]",
+            "sources": [
+                "apps/app/src/modules/safe/**",
+                "apps/app/src/modules/workspace/pages/workspaceAccountOverviewPage/**",
+                "apps/app/src/modules/workspace/pages/workspaceAccountSettingsPage/**"
+            ]
+        },
+        "SafeFlowPage": {
+            "route": "/safe/[network]/[address]",
+            "sources": [
+                "apps/app/src/modules/safe/**",
+                "apps/app/src/modules/workspace/pages/workspaceAccountOverviewPage/**",
+                "apps/app/src/modules/workspace/pages/workspaceAccountSettingsPage/**"
+            ]
+        },
+        "SafeFlowReviewContent": {
+            "sources": [
+                "apps/app/src/modules/safe/components/safeTransactionReviewContent/**",
+                "apps/app/src/modules/safe/components/safeTransactionSimulation/**"
+            ]
+        },
+        "SafeFlowReviewDialog": {
+            "sources": [
+                "apps/app/src/modules/safe/dialogs/safeTransactionReviewDialog/**",
+                "apps/app/src/modules/safe/components/safeTransactionReviewContent/**"
+            ]
+        },
+        "SafeFlowTxDialog": {
+            "sources": [
+                "apps/app/src/modules/safe/dialogs/safeTransactionDialog/**",
+                "apps/app/src/modules/safe/dialogs/safeProposalTransactionDialog/**",
+                "apps/app/src/modules/safe/components/safeExecutionDetails/**"
+            ]
+        },
+        "SafeTransactionFlow": {
+            "route": "/workspace/[workspaceId]/[accountId]/create/transaction",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceCreateTransactionPage/**",
+                "apps/app/src/modules/workspace/components/layoutWizardCreateWorkspaceTransaction/**",
+                "apps/app/src/modules/safe/components/safeCreateTransactionWizard/**",
+                "apps/app/src/modules/safe/dialogs/safeCreateTransactionDialog/**",
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "SafeTransactionFlowActions": {
+            "sources": [
+                "apps/app/src/modules/safe/components/safeCreateTransactionWizard/**",
+                "apps/app/src/modules/governance/components/actionComposer/**",
+                "apps/app/src/modules/governance/components/proposalActions*/**"
+            ]
+        },
+        "SafeTransactionFlowContractDialog": {
+            "sources": [
+                "apps/app/src/modules/governance/components/actionComposer/**",
+                "apps/app/src/modules/governance/dialogs/verifySmartContractDialog/**",
+                "apps/app/src/modules/safe/components/safeCreateTransactionWizard/**"
+            ]
+        },
+        "SafeTransactionFlowDialog": {
+            "sources": [
+                "apps/app/src/modules/safe/dialogs/safeCreateTransactionDialog/**"
+            ]
+        },
+        "TransactionStatus": {
+            "sources": [
+                "apps/app/src/shared/components/transactionStatus/**"
+            ]
+        },
+        "TxFlowDialog": {
+            "sources": [
+                "apps/app/src/shared/components/transactionDialog/**"
+            ]
+        },
+        "WizardActions": {
+            "sources": [
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "WizardNav": {
+            "sources": [
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "WizardProgress": {
+            "sources": [
+                "apps/app/src/shared/components/wizards/**",
+                "apps/app/src/modules/application/components/navigations/**"
+            ]
+        },
+        "Workspace": {
+            "sources": [
+                "apps/app/src/modules/workspace/components/**",
+                "apps/app/src/app/workspace/**",
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**",
+                "apps/app/src/modules/workspace/pages/**",
+                "apps/app/src/modules/workspace/dialogs/**",
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**"
+            ]
+        },
+        "WrapFlow": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/components/tokenMemberPanel/**",
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenWrap*/**",
+                "apps/app/src/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher/**",
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**"
+            ]
+        },
+        "WrapFlowForm": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/components/tokenMemberPanel/**",
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenWrap*/**",
+                "apps/app/src/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher/**"
+            ]
+        },
+        "WrapFlowMembers": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/components/tokenMemberPanel/**",
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenWrap*/**",
+                "apps/app/src/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher/**",
+                "apps/app/src/modules/governance/pages/daoMembersPage/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/governance/components/delegation*/**",
+                "apps/app/src/modules/governance/components/memberDelegateButton/**",
+                "apps/app/src/modules/governance/components/memberLinksCard/**",
+                "apps/app/src/modules/governance/components/efpCard/**",
+                "apps/app/src/shared/components/footerInfo/**"
+            ]
+        },
+        "WrapFlowOnboardDialog": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenWrapOnboarding*/**"
+            ]
+        },
+        "WrapFlowTxDialog": {
+            "sources": [
+                "apps/app/src/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog/**",
+                "apps/app/src/shared/components/transactionDialog/**"
+            ]
+        },
+        "WsAccountOverview": {
+            "route": "/workspace/[workspaceId]/[accountId]/overview",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceAccountOverviewPage/**",
+                "apps/app/src/modules/dashboard/**",
+                "apps/app/src/modules/governance/components/daoProposalList/**",
+                "apps/app/src/modules/governance/components/daoMemberList/**",
+                "apps/app/src/modules/finance/components/assetList/**"
+            ]
+        },
+        "WsAccountSafe": {
+            "route": "/workspace/[workspaceId]/[accountId]/settings",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceAccountSettingsPage/**",
+                "apps/app/src/modules/safe/components/safeSettingsDetails/**",
+                "apps/app/src/modules/safe/components/safeOwnerList/**"
+            ]
+        },
+        "WsAccountTodos": {
+            "route": "/workspace/[workspaceId]/[accountId]/todos",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceTodosPage/**",
+                "apps/app/src/modules/workspace/components/workspaceTodoList/**",
+                "apps/app/src/modules/workspace/components/workspaceTodoPreview/**"
+            ]
+        },
+        "WsAssets": {
+            "route": "/workspace/[workspaceId]/all/assets",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceAssetsPage/**",
+                "apps/app/src/modules/workspace/components/workspaceAssetList/**",
+                "apps/app/src/modules/workspace/components/workspaceAssetsAsideCard/**"
+            ]
+        },
+        "WsMembers": {
+            "route": "/workspace/[workspaceId]/all/members",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceMembersPage/**",
+                "apps/app/src/modules/workspace/components/workspaceMemberList/**",
+                "apps/app/src/modules/workspace/components/workspaceMembersAsideCard/**"
+            ]
+        },
+        "WsNav": {
+            "sources": [
+                "apps/app/src/shared/components/navigation/**",
+                "apps/app/src/shared/components/page/**",
+                "apps/app/src/modules/application/components/navigations/**",
+                "apps/app/src/modules/application/components/layouts/**",
+                "apps/app/src/modules/application/components/bannerDao/**",
+                "apps/app/src/modules/workspace/components/workspaceSelector/**",
+                "apps/app/src/modules/workspace/components/workspaceAccount*/**",
+                "apps/app/src/modules/workspace/components/workspaceSectionGuard/**"
+            ]
+        },
+        "WsOverview": {
+            "route": "/workspace/[workspaceId]/all/overview",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceDetailsPage/**",
+                "apps/app/src/modules/workspace/components/workspace*AsideCard/**",
+                "apps/app/src/modules/workspace/components/workspaceTodoPreview/**",
+                "apps/app/src/modules/workspace/components/workspaceListItemSummary/**"
+            ]
+        },
+        "WsProposals": {
+            "route": "/workspace/[workspaceId]/all/proposals",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceProposalsPage/**",
+                "apps/app/src/modules/workspace/components/workspaceProposalList/**",
+                "apps/app/src/modules/workspace/components/workspaceProposalsAsideCard/**",
+                "apps/app/src/modules/workspace/dialogs/workspaceSelectAccountDialog/**"
+            ]
+        },
+        "WsTodos": {
+            "route": "/workspace/[workspaceId]/all/todos",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceTodosPage/**",
+                "apps/app/src/modules/workspace/components/workspaceTodoList/**",
+                "apps/app/src/modules/workspace/components/workspaceTodoPreview/**"
+            ]
+        },
+        "WsTransactions": {
+            "route": "/workspace/[workspaceId]/all/transactions",
+            "sources": [
+                "apps/app/src/modules/workspace/pages/workspaceTransactionsPage/**",
+                "apps/app/src/modules/workspace/components/workspaceTransactionList/**",
+                "apps/app/src/modules/workspace/components/workspaceTransactionsAsideCard/**",
+                "apps/app/src/modules/workspace/components/workspaceListItemSummary/**"
+            ]
+        },
+        "WsTransactionsAccountDialog": {
+            "sources": [
+                "apps/app/src/modules/workspace/dialogs/workspaceSelectAccountDialog/**"
+            ]
+        },
+        "WsWelcomeDialog": {
+            "sources": [
+                "apps/app/src/modules/workspace/dialogs/workspaceWelcomeDialog/**"
+            ]
+        }
+    }
+}

@@ -1,6 +1,12 @@
 'use client';
 
-import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import {
+    AddressOutput,
+    Card,
+    ChainEntityType,
+    DateFormat,
+    formatterUtils,
+} from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { ICreateDaoFormData } from '@/modules/createDao/components/createDaoForm';
@@ -20,6 +26,7 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { proposalCreationEligibilityAnchor } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -157,6 +164,26 @@ export const DaoProcessDetailsPageClient: React.FC<
             ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, [hasProposalCreationEligibility]);
 
+    // Only processes limited by an execute selector condition name the contract authorizing their actions.
+    const { conditionAddress } = plugin;
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const actionsDescription = conditionAddress != null && (
+        <>
+            {t(
+                'app.settings.daoProcessDetailsPage.section.actionsAuthorizedBy',
+            )}{' '}
+            <AddressOutput
+                address={conditionAddress}
+                copy={false}
+                href={buildEntityUrl({
+                    type: ChainEntityType.ADDRESS,
+                    id: conditionAddress,
+                })}
+            />
+            .
+        </>
+    );
+
     return (
         <>
             <Page.Header
@@ -207,6 +234,7 @@ export const DaoProcessDetailsPageClient: React.FC<
                         </Page.MainSection>
                     )}
                     <Page.MainSection
+                        description={actionsDescription}
                         title={t(
                             'app.settings.daoProcessDetailsPage.section.actions',
                         )}

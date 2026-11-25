@@ -128,6 +128,21 @@ export interface ITransactionDialogProps<
      */
     successLink?: ITransactionDialogSuccessLink;
     /**
+     * Id of this dialog: closes only this dialog of the stack on cancel and success; omitted closes all.
+     */
+    dialogId?: string;
+    /**
+     * Replaces the fallback navigation of "Proceed anyway" during indexing; called with the receipt.
+     */
+    onProceedAnyway?: (receipt: TransactionReceipt) => void;
+    /**
+     * Disables Cancel while the wallet prompt is open, and ignores Escape then, while Cancel is disabled and from
+     * confirmation until the success action ("Proceed anyway" included), so e.g. a deployment can't be dropped;
+     * otherwise Escape closes by `dialogId`.
+     * @default false
+     */
+    preventCloseWhileBusy?: boolean;
+    /**
      * Custom steps needed for the transaction.
      */
     customSteps?: ITransactionDialogStep<TCustomStepId>[];

@@ -136,31 +136,6 @@ describe('<WorkspaceSelector /> component', () => {
         );
     });
 
-    it('reads the workspace list again when the workspace changes', async () => {
-        const { rerender } = render(createTestComponent());
-        await openDropdown();
-        expect(
-            await screen.findByRole('menuitem', { name: /Second Workspace/ }),
-        ).toBeInTheDocument();
-        await userEvent.keyboard('{Escape}');
-
-        getWorkspaceListSpy.mockResolvedValue([
-            buildWorkspace({ id: 'imported', name: 'Imported Workspace' }),
-        ]);
-        rerender(
-            <GukModulesProvider>
-                <ReactQueryWrapper client={queryClient}>
-                    <WorkspaceSelector workspaceId="imported" />
-                </ReactQueryWrapper>
-            </GukModulesProvider>,
-        );
-        await openDropdown();
-
-        expect(
-            await screen.findByRole('menuitem', { name: /Imported Workspace/ }),
-        ).toBeInTheDocument();
-    });
-
     describe('workspace import', () => {
         const getFileInput = () =>
             screen.getByLabelText('app.workspace.workspaceSelector.import');
@@ -207,6 +182,37 @@ describe('<WorkspaceSelector /> component', () => {
                     '/workspace/imported/all/overview',
                 ),
             );
+        });
+
+        it('lists the imported workspace', async () => {
+            const imported = buildWorkspace({
+                id: 'imported',
+                name: 'Imported Workspace',
+            });
+            importWorkspaceSpy.mockResolvedValue(imported);
+            render(createTestComponent());
+            await openDropdown();
+            expect(
+                await screen.findByRole('menuitem', {
+                    name: /Second Workspace/,
+                }),
+            ).toBeInTheDocument();
+            await userEvent.keyboard('{Escape}');
+
+            getWorkspaceListSpy.mockResolvedValue([
+                firstWorkspace,
+                secondWorkspace,
+                imported,
+            ]);
+            await userEvent.upload(getFileInput(), buildFile('{"version":1}'));
+            await waitFor(() => expect(pushMock).toHaveBeenCalled());
+            await openDropdown();
+
+            expect(
+                await screen.findByRole('menuitem', {
+                    name: /Imported Workspace/,
+                }),
+            ).toBeInTheDocument();
         });
 
         it('alerts and stays on the page when the file cannot be imported', async () => {
