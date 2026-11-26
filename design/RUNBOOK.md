@@ -232,11 +232,17 @@ Replaces the canvas's files with the checkout's. No commit, no push. On the tick
 
 ## Refresh the reference canvas
 
-When prototype files change on `main` (a ticket merged, or a catch-up): Update with no name in
-`prepare-publish.cjs`, and `prototypes` as the name in `canvas-digest.cjs` (the record is `canvases/prototypes.json`).
-Nobody designs on the reference canvas, so exit code 2 in step 1 means someone edited it, or that its record is
-older than the check: stop and ask before overwriting. Its record lives on `main`: the change to it goes in the pull
-request the refresh belongs to (a catch-up's, or the one that finishes a ticket).
+When prototype files change on `main` (a ticket merged, or a catch-up). On `main`, with no uncommitted changes. It
+changes nothing in git and needs no pull request: the canvas carries its own record, `published.json` (the commit
+it was published from and the fingerprint of its files), which `prepare-publish.cjs` writes into `project/`.
+
+1. Read the canvas as in Save steps 1 and 2 (the listing includes `project/published.json`), then
+   `node design/publish/canvas-digest.cjs <download>/project prototypes`. Exit code 0: go on. Exit code 2: someone
+   edited the reference canvas, or it has no `published.json`. Stop and ask before overwriting.
+2. `node design/publish/prepare-publish.cjs <folder>` into a fresh folder; upload and record any image it lists, and
+   run it again until it exits 0. A new image changes `canvases/prototypes.json` → `assets`: that belongs in the pull
+   request that added the image, so upload it there, before the merge.
+3. Publish as in Update step 3. `files.json` already lists `published.json`.
 
 ## Catch up with main
 
