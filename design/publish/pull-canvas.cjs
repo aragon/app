@@ -33,7 +33,9 @@ const pathOfUrl = Object.fromEntries(
     ).map(([canvasPath, record]) => [record.url, canvasPath]),
 );
 
-const isText = (file) => /\.(dc\.html|css|json)$/.test(file);
+// published.json is the reference canvas's record of its last publish, not a prototype file.
+const isText = (file) =>
+    /\.(dc\.html|css|json)$/.test(file) && file !== 'published.json';
 const pulled = fs
     .readdirSync(root)
     .filter(
