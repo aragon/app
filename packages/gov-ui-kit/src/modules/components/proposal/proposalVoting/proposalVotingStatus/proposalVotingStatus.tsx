@@ -55,23 +55,23 @@ const statusToSecondaryText = (copy: ModulesCopy): Partial<Record<ProposalStatus
 
 const statusToText = (copy: ModulesCopy): Partial<Record<ProposalStatus, { className: string; label: string }>> => ({
     [ProposalStatus.ACCEPTED]: {
-        className: 'text-success-800',
+        className: 'text-success-primary',
         label: copy.proposalVotingStatus.status.accepted,
     },
     [ProposalStatus.EXECUTABLE]: {
-        className: 'text-success-800',
+        className: 'text-success-primary',
         label: copy.proposalVotingStatus.status.executable,
     },
     [ProposalStatus.EXECUTED]: {
-        className: 'text-success-800',
+        className: 'text-success-primary',
         label: copy.proposalVotingStatus.status.executed,
     },
     [ProposalStatus.REJECTED]: {
-        className: 'text-critical-800',
+        className: 'text-critical-primary',
         label: copy.proposalVotingStatus.status.rejected,
     },
     [ProposalStatus.VETOED]: {
-        className: 'text-critical-800',
+        className: 'text-critical-primary',
         label: copy.proposalVotingStatus.status.vetoed,
     },
 });
@@ -108,14 +108,14 @@ export const ProposalVotingStatus: React.FC<IProposalVotingStatusProps> = (props
         <div className={classNames('flex flex-row items-center gap-2', className)} {...otherProps}>
             <div className="flex flex-row gap-0.5">
                 {status === ProposalStatus.ACTIVE && (
-                    <span className="text-primary-400">
+                    <span className="text-accent-primary">
                         <Rerender>
                             {() => formatterUtils.formatDate(endDate, { format: DateFormat.DURATION }) ?? '-'}
                         </Rerender>
                     </span>
                 )}
-                {status !== ProposalStatus.ACTIVE && <span className="text-neutral-800">{mainText}</span>}
-                <span className="text-neutral-500">{secondaryText}</span>
+                {status !== ProposalStatus.ACTIVE && <span className="text-surface-primary">{mainText}</span>}
+                <span className="text-surface-secondary">{secondaryText}</span>
                 {statusText && <span className={statusText.className}>{statusText.label}</span>}
             </div>
             {status === ProposalStatus.ACTIVE && <StatePingAnimation variant="primary" />}

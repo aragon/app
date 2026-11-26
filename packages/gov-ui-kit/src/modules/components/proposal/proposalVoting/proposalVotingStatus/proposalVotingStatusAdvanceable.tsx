@@ -59,13 +59,13 @@ export const ProposalVotingStatusAdvanceable: React.FC<IProposalVotingStatusAdva
         <div className={classNames('flex flex-row items-center gap-2', className)} {...otherProps}>
             <div className="flex flex-row gap-0.5">
                 {(!isAdvanceableNow || isShortWindow) && (
-                    <span className={isShortWindow ? 'text-primary-400' : 'text-neutral-800'}>
+                    <span className={isShortWindow ? 'text-accent-primary' : 'text-surface-primary'}>
                         {formatterUtils.formatDate(nextAdvanceDate, { format: DateFormat.DURATION }) ?? '-'}
                     </span>
                 )}
-                {isLongWindow && <span className="text-neutral-800">{mainText}</span>}
-                <span className="text-neutral-500">{secondaryText}</span>
-                {isLongWindow && <span className="text-primary-400">{statusText}</span>}
+                {isLongWindow && <span className="text-surface-primary">{mainText}</span>}
+                <span className="text-surface-secondary">{secondaryText}</span>
+                {isLongWindow && <span className="text-accent-primary">{statusText}</span>}
             </div>
             {isAdvanceableNow && <StatePingAnimation variant="primary" />}
         </div>

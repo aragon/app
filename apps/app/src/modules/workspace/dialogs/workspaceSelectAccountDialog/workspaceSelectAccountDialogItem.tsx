@@ -114,11 +114,12 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
         <DataList.Item
             className={classNames('px-4 py-3 md:px-6 md:py-4', {
                 // Checked but not highlighted: the user did not pick it.
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive && !isInWorkspace,
-                'border-neutral-100 bg-neutral-50': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
                 // The kit drops the hover without a click handler; kept so these rows read like the others.
-                'hover:border-neutral-200 hover:shadow-neutral': isInWorkspace,
+                'hover:border-surface-hover hover:shadow-surface-default':
+                    isInWorkspace,
             })}
             {...otherProps}
             {...(isDisabled || isInWorkspace ? { onClick: undefined } : {})}
@@ -136,16 +137,16 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col gap-1">
-                        <span className="truncate text-base leading-tight text-neutral-800">
+                        <span className="truncate text-base leading-tight text-surface-primary">
                             {name ?? addressOutput}
                         </span>
                         {/* An unnamed account is titled by its address, so only the network shows here. */}
                         <span className="flex min-w-0 items-baseline gap-1.5 text-sm leading-tight">
-                            <span className="shrink-0 text-neutral-800">
+                            <span className="shrink-0 text-surface-primary">
                                 {networkName}
                             </span>
                             {name != null && (
-                                <span className="truncate text-neutral-500">
+                                <span className="truncate text-surface-secondary">
                                     {addressOutput}
                                 </span>
                             )}
@@ -154,7 +155,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     {isMultiSelect ? (
                         <div className="flex shrink-0 items-center gap-3">
                             {note != null && (
-                                <span className="text-sm leading-tight text-neutral-500">
+                                <span className="text-sm leading-tight text-surface-secondary">
                                     {note}
                                 </span>
                             )}
@@ -186,7 +187,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     )}
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-neutral-300 md:text-base">
+                    <div className="text-sm text-surface-tertiary-hint md:text-base">
                         {t(
                             'app.workspace.workspaceSelectAccountDialogItem.notEligible',
                         )}

@@ -43,7 +43,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                 <DefinitionList.Item
                     term={t('app.finance.financeDetailsList.chain')}
                 >
-                    <p className="text-neutral-500">
+                    <p className="text-surface-secondary">
                         {networkDefinitions[network].name}
                     </p>
                 </DefinitionList.Item>
@@ -74,7 +74,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                 >
                     {t('app.finance.financeDetailsList.octavLabel')}
                 </Button>
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-surface-secondary">
                     {t('app.finance.financeDetailsList.octavDescription')}
                 </p>
             </div>

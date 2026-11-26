@@ -151,8 +151,12 @@ export const AutocompleteInput = forwardRef<
 
     const inputWrapperClassName = classNames(
         {
-            'border-primary-400 shadow-primary-lg hover:border-primary-400':
-                isOpen,
+            'border-surface-selected hover:border-surface-selected': isOpen,
+        },
+        {
+            // `[&]:` sorts after the input's resting shadow at equal specificity; hover and focus shadows still win.
+            // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
+            '[&]:shadow-primary-lg': isOpen && otherProps.variant !== 'warning',
         },
         { 'rounded-b-none border-b-0': isOpen && isBottomPlacement },
         { 'z-10 rounded-t-none border-t-0': isOpen && !isBottomPlacement },

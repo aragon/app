@@ -22,10 +22,10 @@ export const DropdownGroup: React.FC<IDropdownGroupProps> = (props) => {
     return (
         <div
             className={classNames(
-                'flex flex-col gap-0 overflow-hidden rounded-xl border border-neutral-100 bg-neutral-0',
+                'flex flex-col gap-0 overflow-hidden rounded-xl border border-surface-secondary bg-surface-primary',
                 // Important so neither the trigger reset below nor a trigger's own hover/active border colour
                 // overrides the divider (`divide-y` has zero specificity and always lost).
-                '[&>*+*]:border-t! [&>*+*]:border-t-neutral-100!',
+                '[&>*+*]:border-t! [&>*+*]:border-t-surface-secondary!',
                 '[&_[data-guk-dropdown-trigger]]:rounded-none',
                 '[&_[data-guk-dropdown-trigger]]:border-0',
                 '[&_[data-guk-dropdown-trigger]]:shadow-none',

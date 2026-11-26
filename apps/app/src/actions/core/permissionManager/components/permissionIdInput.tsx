@@ -177,10 +177,12 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
         >
             <div className="flex min-w-0 grow flex-col gap-0.5 px-4 py-3">
                 {displayName != null && (
-                    <p className="truncate text-neutral-800">{displayName}</p>
+                    <p className="truncate text-surface-primary">
+                        {displayName}
+                    </p>
                 )}
                 <p
-                    className={`truncate font-mono text-sm ${displayName != null ? 'text-neutral-500' : 'text-neutral-800'}`}
+                    className={`truncate font-mono text-sm ${displayName != null ? 'text-surface-secondary' : 'text-surface-primary'}`}
                     title={value}
                 >
                     {value}

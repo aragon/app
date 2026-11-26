@@ -278,7 +278,7 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                                 </Dropdown.Container>
                             )}
                             {showMovementControls && (
-                                <div className="flex items-center gap-3 text-neutral-500">
+                                <div className="flex items-center gap-3 text-surface-secondary">
                                     <Tooltip content={arrayControls.moveDown.label} triggerAsChild={true}>
                                         <Button
                                             aria-label={arrayControls.moveDown.label}
@@ -289,7 +289,7 @@ export const ProposalActionsItem = <TAction extends IProposalAction = IProposalA
                                             variant="tertiary"
                                         />
                                     </Tooltip>
-                                    <p className="text-sm text-neutral-500">
+                                    <p className="text-sm text-surface-secondary">
                                         {index + 1} {copy.proposalActionsItem.of} {actionCount}
                                     </p>
                                     <Tooltip content={arrayControls.moveUp.label} triggerAsChild={true}>

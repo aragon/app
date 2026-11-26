@@ -1,0 +1,135 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Tokens only the app uses (DTCG 2025.10), default theme: component aliases of the semantic roles that no kit component takes. app.config.json writes them to design-system/tokens/app/, which the app imports and the npm package does not ship.",
+    "semantic": {
+        "$type": "color",
+        "bg": {
+            "surface": {
+                "secondary-skeleton": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Skeleton bars and circles of the app (the kit skeletons take bg-surface-secondary). Component alias of bg-surface-secondary."
+                },
+                "hover-icon-button": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Assistant-chat ghost icon button, hover fill. Component alias of bg-surface-hover."
+                }
+            },
+            "body-sidebar": {
+                "$value": "{color.neutral.25}",
+                "$description": "Page background of the sidebar layout. Component alias of bg-body."
+            }
+        },
+        "border": {
+            "surface": {
+                "disabled-item": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Border of a disabled list item: workspace account item, process item. Component alias of border-surface-disabled."
+                },
+                "hover-graph-node": {
+                    "$value": "{color.primary.300}",
+                    "$description": "Permissions-graph node, hover border. Component alias of border-surface-hover."
+                },
+                "default-graph-node": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Permissions graph: unselected node border, idle edge. Component alias of border-surface-default."
+                },
+                "default-composer": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Assistant-chat composer border. Component alias of border-surface-default."
+                }
+            },
+            "accent": {
+                "primary-terminal": {
+                    "$value": "{color.primary.100}",
+                    "$description": "Gauge voting terminal border while voting. Component alias of border-accent-primary."
+                },
+                "primary-cta": {
+                    "$value": "{color.primary.200}",
+                    "$description": "Primary CTA card border. Component alias of border-accent-primary."
+                }
+            },
+            "success": {
+                "active-control": {
+                    "$value": "{color.success.500}",
+                    "$description": "Active border of a status control: pressed vote option (yes). Component alias of border-success-active."
+                }
+            },
+            "critical": {
+                "primary-dispatch": {
+                    "$value": "{color.critical.200}",
+                    "$description": "Border of the failed dispatch-simulation card. Component alias of border-critical-primary."
+                },
+                "primary-chat-error": {
+                    "$value": "{color.critical.300}",
+                    "$description": "Border of the assistant chat error box. Component alias of border-critical-primary."
+                }
+            }
+        },
+        "text": {
+            "surface": {
+                "default-wizard": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Wizard navigation step label. Component alias of text-surface-default."
+                },
+                "tertiary-hint": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Faint hint text and list markers: onboarding hint, account and process item meta, chat list markers and composer hint. Component alias of text-surface-tertiary."
+                },
+                "primary-detail": {
+                    "$value": "{color.neutral.700}",
+                    "$description": "Detail text one step lighter than primary: permissions summary, Safe proposal transaction details, permission chip. Component alias of text-surface-primary."
+                },
+                "primary-panel-title": {
+                    "$value": "{color.neutral.900}",
+                    "$description": "Titles of the permissions-graph detail panels. Component alias of text-surface-primary."
+                },
+                "selected-label": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Selected label kept neutral today: vote option toggle \"on\", navigation link of the current page. Component alias of text-surface-selected."
+                },
+                "default-attachment": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Chat attachment remove button. Component alias of text-surface-default."
+                },
+                "secondary-ticket": {
+                    "$value": "{color.neutral.600}",
+                    "$description": "Assistant-chat ticket card body text. Component alias of text-surface-secondary."
+                }
+            },
+            "critical": {
+                "primary-message": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Critical message text: file-download dialog errors, dispatch simulation detail, chat character counter at its limit. Component alias of text-critical-primary."
+                },
+                "primary-tx-error": {
+                    "$value": "{color.critical.700}",
+                    "$description": "Error text of transaction dialogs: dispatch simulation title, Safe transaction errors. Component alias of text-critical-primary."
+                },
+                "hover-attachment": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Chat attachment remove button, hover. Component alias of text-critical-hover."
+                }
+            }
+        },
+        "icon": {
+            "accent": {
+                "selected-nav": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Navigation link icon, current page. Component alias of icon-accent-selected."
+                }
+            },
+            "success": {
+                "primary-chat": {
+                    "$value": "{color.success.600}",
+                    "$description": "Success status icon of the assistant-chat ticket card. Component alias of icon-success-primary."
+                }
+            },
+            "critical": {
+                "primary-chat": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Critical status icon of assistant-chat cards (attachment error, ticket failed). Component alias of icon-critical-primary."
+                }
+            }
+        }
+    }
+}

@@ -12,6 +12,7 @@ refactor (such as a token or class change that should keep every colour) changes
 pnpm visual-diff ref main                  # main vs the working tree
 pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
+pnpm visual-diff ref main --theme next     # under a token preview (a row of .storybook/tokenPreviews.json)
 ```
 
 `ref` builds a static Storybook of the ref in a temporary git worktree (dependencies come from
@@ -38,7 +39,8 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 
 ## Token generator (`tokens/generate.mjs`)
 
-Writes the primitive token CSS (`src/theme/tokens/primitives/`) from the DTCG source in
-`design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when the CSS is stale.
+Writes the token CSS (`src/theme/tokens/<layer>/`, the app-only tokens to `design-system/tokens/app/`) and the preview CSS (`design-system/tokens/preview/`) from the
+DTCG source in `design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when the CSS
+is stale.
 Tests: `scripts/tokens/generate.test.mjs` (`pnpm test:tokens`, part of `pnpm test`). Details:
 `design-system/tokens/README.md`.

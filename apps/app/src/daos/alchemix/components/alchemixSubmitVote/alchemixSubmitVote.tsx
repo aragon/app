@@ -292,7 +292,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             />
             <div className="flex min-w-0 grow flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                    <p className="truncate text-base leading-tight font-semibold text-neutral-800">
+                    <p className="truncate text-base leading-tight font-semibold text-surface-primary">
                         {delegatee != null && (
                             <AddressOutput
                                 address={delegatee}
@@ -308,7 +308,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                         variant="primary"
                     />
                 </div>
-                <p className="text-sm leading-tight text-neutral-500">
+                <p className="text-sm leading-tight text-surface-secondary">
                     {t(
                         `app.daos.alchemix.alchemixSubmitVote.${delegateeStatusKey}`,
                         {
@@ -328,10 +328,10 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     );
 
     return (
-        <Card className="flex flex-col gap-4 p-4 shadow-neutral-sm md:p-6">
+        <Card className="flex flex-col gap-4 p-4 shadow-surface-sm md:p-6">
             {delegateeInfo}
             {hasPosition && !showOptions && (
-                <div className="flex items-center gap-3 border-t border-neutral-100 pt-4">
+                <div className="flex items-center gap-3 border-t border-surface-secondary pt-4">
                     <MemberAvatar
                         address={address}
                         avatarSrc={userEnsAvatar ?? undefined}
@@ -339,7 +339,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     />
                     <div className="flex min-w-0 grow flex-col gap-0.5">
                         <div className="flex items-center gap-2">
-                            <p className="truncate text-base leading-tight font-semibold text-neutral-800">
+                            <p className="truncate text-base leading-tight font-semibold text-surface-primary">
                                 {address != null && (
                                     <AddressOutput
                                         address={address}
@@ -355,7 +355,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                                 variant="neutral"
                             />
                         </div>
-                        <p className="text-sm leading-tight text-neutral-500">
+                        <p className="text-sm leading-tight text-surface-secondary">
                             {positionInfo}
                         </p>
                     </div>

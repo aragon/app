@@ -44,8 +44,8 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
     const contentId = useId();
 
     const buttonClassName = classNames(
-        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all md:rounded-xl',
-        'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 disabled:cursor-default',
+        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all md:rounded-xl',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active disabled:cursor-default',
         { 'px-4 py-2.5': user == null },
         { 'p-1 md:pl-4': user != null },
         className,
@@ -56,7 +56,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
             <button
                 {...otherProps}
                 aria-labelledby={contentId}
-                className="absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 focus-ring-primary disabled:cursor-default md:rounded-xl"
+                className="absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 ring-accent-focus focus-ring disabled:cursor-default md:rounded-xl"
             />
             <InteractiveAncestorContext.Provider value={true}>
                 <div

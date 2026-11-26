@@ -7,8 +7,11 @@ import { useDebugContext } from '@/shared/components/debugProvider/debugProvider
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
+import { useTokenPreview } from '../../hooks/useTokenPreview';
 import { DebugPanelControl } from './debugPanelControl';
 import { WorkspaceRegistryControls } from './workspaceRegistryControls';
+// The kit's preview value sets (Next, Dark): loaded with the panel only, so they never reach other users.
+import '../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/preview/index.css';
 
 const groupOrder: Record<string, number> = {
     Global: 0,
@@ -21,6 +24,7 @@ export const DebugPanel: React.FC = () => {
 
     const { controls, registerControl } = useDebugContext();
     useAddressImpersonation();
+    useTokenPreview();
     const { t } = useTranslations();
     const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 
@@ -90,7 +94,7 @@ export const DebugPanel: React.FC = () => {
             />
             <div
                 className={classNames(
-                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-neutral-100 bg-neutral-0 px-4 py-2 screen-sm:w-[480px]',
+                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-surface-secondary bg-surface-primary px-4 py-2 screen-sm:w-[480px]',
                     { hidden: !isOpen },
                 )}
                 ref={panelRef}

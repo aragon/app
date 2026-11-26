@@ -70,9 +70,12 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **Styling:** Tailwind CSS v4, CSS-first. There is no `tailwind.config.js`. Root `index.css`
   imports `./src/index.css` and `tailwindcss`, scanning only `src` for class names;
   `src/index.css` pulls in core + theme CSS.
-  Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
-  under `src/theme/tokens/primitives/` (via `@theme`) that exposes the `--color-*` scale used
-  as utilities such as `bg-primary-500` and `text-neutral-800`.
+  Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the
+  `@theme` CSS under `src/theme/tokens/primitives/` (the `--color-*` ramps, shadows, radius, type) and
+  `src/theme/tokens/semantic/` (the `--guk-<family>-*` colour roles), and the aliases only the app uses under
+  `design-system/tokens/app/` (not published; the app imports it). Components use role classes such as
+  `bg-surface-primary`, `text-surface-secondary` and `icon-accent-primary`, the functional utilities of
+  `src/theme/tokens/colorRoles.css`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).
@@ -86,13 +89,18 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 
 - **No raw hex/rgb** in components or CSS. Use token-backed utilities; colors must work in
   light and dark themes.
+- **Role classes, not primitive colour classes.** Outside `src/theme`, colours come from role classes
+  (`bg-surface-primary`, not `bg-neutral-0`); `lint:check` fails on a primitive one unless a
+  `biome-ignore lint/plugin/noPrimitiveColors: <reason>` above it says why. A colour class passed through
+  `className` that sets a property the component already sets needs the important modifier (`bg-surface-hover!`):
+  utilities of one property are emitted in alphabetical order, so source order decides nothing.
 - **No Tailwind arbitrary spacing/values** (`p-[17px]`, `w-[42%]`). Use the token/scale.
 - **No component without a co-located `*.stories.tsx`.** Storybook is the docs source of truth.
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.
 - **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
-  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/primitives/` by hand
-  (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
+  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/{primitives,semantic}/`
+  or `design-system/tokens/{app,preview}/` by hand (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
   `src/modules` must keep labeling, focus order, and keyboard interaction intact, and rely on
@@ -128,7 +136,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
 - `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
-  `src/theme/tokens/primitives/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
+  `src/theme/tokens/{primitives,semantic}/` and `design-system/tokens/app/` — the CSS generated from it; all CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules

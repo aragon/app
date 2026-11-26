@@ -6,17 +6,17 @@ import { InputContainer, type InputVariant } from '../inputContainer';
 import type { IInputTextProps } from './inputText.api';
 
 const variantToAddonClassNames: Record<InputVariant | 'disabled', string> = {
-    default: 'bg-neutral-50 border-neutral-100 text-neutral-500',
-    warning: 'bg-warning-100 border-warning-600 text-warning-600',
-    critical: 'bg-critical-100 border-critical-600 text-critical-600',
-    disabled: 'bg-neutral-50 border-neutral-200 text-neutral-500',
+    default: 'bg-surface-secondary border-surface-primary text-surface-secondary',
+    warning: 'bg-warning-subtle border-warning-primary-input text-warning-primary-input',
+    critical: 'bg-critical-subtle border-critical-primary-input text-critical-primary-input',
+    disabled: 'bg-surface-secondary border-surface-disabled text-surface-secondary',
 };
 
 const variantToIconClassNames: Record<InputVariant | 'disabled', string> = {
-    default: 'text-neutral-400',
-    warning: 'text-warning-600',
-    critical: 'text-critical-600',
-    disabled: 'text-neutral-300',
+    default: 'icon-surface-primary',
+    warning: 'icon-warning-primary-input',
+    critical: 'icon-critical-primary-input',
+    disabled: 'icon-surface-disabled',
 };
 
 /**

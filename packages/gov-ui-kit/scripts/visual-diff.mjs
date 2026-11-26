@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Screenshot comparison of every kit story: catches unintended visual changes, e.g. while components move from
-// primitive palette classes to the semantic colour layer. Two capture sets are always produced on the same machine
+// Screenshot comparison of every kit story: catches unintended visual changes, e.g. of a token or class change that
+// should keep every colour. Two capture sets are always produced on the same machine
 // in the same run; no baseline is committed (screenshots are large and depend on the platform's font rendering).
 //
 //   node scripts/visual-diff.mjs ref <git-ref> [--head <git-ref>] [options]
@@ -13,8 +13,9 @@
 //   node scripts/visual-diff.mjs compare <base-dir> <head-dir> [--diff <dir>]
 //       Pixel comparison of two capture sets; writes a diff image per differing story. Exits 1 on any difference.
 //
-// Options: --filter <text contained in the story id> · --workers <n> (default 4)
-//          --work-dir <dir> (default node_modules/.cache/visual-diff) · --threshold <pixels> (default 0)
+// Options: --filter <text contained in the story id> · --workers <n> (default 4) · --threshold <pixels> (default 0)
+//          --work-dir <dir> (default node_modules/.cache/visual-diff)
+//          --<attribute> <mode> for each token preview of .storybook/tokenPreviews.json, e.g. --theme next
 //
 // Playwright: uses `playwright-core` from the kit if present, else from another workspace (apps/app, apps/docs), or
 // PLAYWRIGHT_CORE_PATH. Chromium: Playwright's own, else the newest one under PLAYWRIGHT_BROWSERS_PATH, or
@@ -49,6 +50,7 @@ const excludedStories = {};
 
 const fixedTime = new Date('2025-01-15T12:00:00Z');
 const viewport = { width: 1280, height: 800 };
+const tokenPreviews = JSON.parse(readFileSync(resolve(kitRoot, '.storybook/tokenPreviews.json'), 'utf8'));
 
 const log = (message) => console.log(`visual-diff: ${message}`);
 const fail = (message) => {
@@ -94,6 +96,14 @@ const parseArgs = (argv) => {
     }
     options.workers = Number(options.workers);
     options.threshold = Number(options.threshold);
+    // Storybook globals of the requested token previews, as the iframe URL takes them: `theme:next;…`.
+    const requested = tokenPreviews.filter(({ attribute }) => options[attribute] != null);
+    for (const { attribute, modes } of requested) {
+        if (!modes.includes(options[attribute])) {
+            fail(`unknown ${attribute} "${options[attribute]}" (${modes.join(' | ')})`);
+        }
+    }
+    options.globals = requested.map(({ attribute }) => `${attribute}:${options[attribute]}`).join(';');
     return { positional, options };
 };
 
@@ -383,7 +393,7 @@ const freezeCss = `*, *::before, *::after {
     scroll-behavior: auto !important;
 }`;
 
-const captureStory = async (browser, origin, story, outDir) => {
+const captureStory = async (browser, origin, story, globals, outDir) => {
     const context = await browser.newContext({
         viewport,
         deviceScaleFactor: 1,
@@ -401,7 +411,7 @@ const captureStory = async (browser, origin, story, outDir) => {
         await context.addInitScript(seedRandom);
         const page = await context.newPage();
         await page.clock.setFixedTime(fixedTime);
-        await page.goto(`${origin}/iframe.html?id=${story.id}&viewMode=story`);
+        await page.goto(`${origin}/iframe.html?id=${story.id}&viewMode=story&globals=${globals}`);
         const status = await page
             .waitForFunction(
                 () => {
@@ -469,7 +479,7 @@ const capture = async (storybookDir, outDir, options) => {
             while (next < stories.length) {
                 const story = stories[next++];
                 try {
-                    results[story.id] = await captureStory(browser, origin, story, outDir);
+                    results[story.id] = await captureStory(browser, origin, story, options.globals, outDir);
                 } catch (error) {
                     results[story.id] = { status: 'failed', error: String(error).split('\n')[0] };
                 }
@@ -485,10 +495,10 @@ const capture = async (storybookDir, outDir, options) => {
     const unstable = Object.entries(results).filter(([, result]) => result.unstable);
     writeFileSync(
         join(outDir, 'manifest.json'),
-        `${JSON.stringify({ viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
+        `${JSON.stringify({ globals: options.globals, viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
     );
     log(
-        `captured ${stories.length - failed.length}/${stories.length} stories (` +
+        `captured ${stories.length - failed.length}/${stories.length} stories (${options.globals || 'default tokens'}, ` +
             `${Object.keys(excludedStories).length} excluded, ${all.length - stories.length - Object.keys(excludedStories).length} filtered) ` +
             `in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${outDir}`,
     );
@@ -580,7 +590,9 @@ switch (command) {
         await capture(join(workDir, 'base-storybook'), join(workDir, 'base'), options);
         await capture(join(workDir, 'head-storybook'), join(workDir, 'head'), options);
         const same = compare(join(workDir, 'base'), join(workDir, 'head'), { ...options, diff: join(workDir, 'diff') });
-        log(`${args[0]} vs ${options.head ?? 'working tree'} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+        log(
+            `${args[0]} vs ${options.head ?? 'working tree'} (${options.globals || 'default tokens'}) in ${((Date.now() - started) / 1000).toFixed(1)}s`,
+        );
         process.exitCode = same ? 0 : 1;
         break;
     }

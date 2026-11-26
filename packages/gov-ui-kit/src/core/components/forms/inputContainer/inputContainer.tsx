@@ -7,24 +7,24 @@ import type { IInputContainerProps, InputVariant } from './inputContainer.api';
 
 const variantToClassNames: Record<InputVariant | 'disabled', string[]> = {
     default: [
-        'border-neutral-100 bg-neutral-0 shadow-neutral-sm', // Default state
-        'hover:border-neutral-200 hover:shadow-neutral', // Hover state
-        'focus-within:border-primary-400 focus-within:shadow-primary', // Focus state
-        'focus-within:hover:border-primary-400 focus-within:hover:shadow-primary', // Focus + Hover state
+        'border-surface-default bg-surface-default shadow-surface-sm', // Default state
+        'hover:border-surface-hover hover:shadow-surface-default', // Hover state
+        'focus-within:border-accent-active focus-within:shadow-accent-default', // Focus state
+        'focus-within:hover:border-accent-active focus-within:hover:shadow-accent-default', // Focus + Hover state
     ],
     warning: [
-        'border-warning-500 bg-neutral-0 shadow-warning-sm', // Default state
-        'hover:border-warning-600 hover:shadow-warning', // Hover state
-        'focus-within:border-warning-600 focus-within:shadow-warning', // Focus state
-        'focus-within:hover:border-warning-500 focus-within:hover:shadow-warning', // Focus + Hover state
+        'border-warning-default-input bg-surface-default shadow-warning-sm', // Default state
+        'hover:border-warning-hover-input hover:shadow-warning-default', // Hover state
+        'focus-within:border-warning-active focus-within:shadow-warning-default', // Focus state
+        'focus-within:hover:border-warning-active-control focus-within:hover:shadow-warning-default', // Focus + Hover state
     ],
     critical: [
-        'border-critical-500 bg-neutral-0 shadow-critical-sm', // Default state
-        'hover:border-critical-600 hover:shadow-critical', // Hover state
-        'focus-within:border-critical-600 focus-within:shadow-critical', // Focus state
-        'focus-within:hover:border-critical-500 focus-within:hover:shadow-critical', // Focus + Hover state
+        'border-critical-default-input bg-surface-default shadow-critical-sm', // Default state
+        'hover:border-critical-hover-input hover:shadow-critical-default', // Hover state
+        'focus-within:border-critical-active focus-within:shadow-critical-default', // Focus state
+        'focus-within:hover:border-critical-active-control focus-within:hover:shadow-critical-default', // Focus + Hover state
     ],
-    disabled: ['border-neutral-200 bg-neutral-100'],
+    disabled: ['border-surface-disabled bg-surface-disabled'],
 };
 
 /**
@@ -54,13 +54,13 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
     const processedVariant = disabled ? 'disabled' : variant;
     const containerClasses = classNames(
         'flex min-h-12 w-full flex-row items-center', // Layout
-        'rounded-xl border text-neutral-500 transition-all', // Styling
+        'rounded-xl border text-surface-secondary transition-all', // Styling
         'text-base leading-tight font-normal', // Typography
         variantToClassNames[processedVariant],
         wrapperClassName,
     );
 
-    const counterClasses = classNames('text-xs leading-tight font-normal text-neutral-500 md:text-sm', {
+    const counterClasses = classNames('text-xs leading-tight font-normal text-surface-secondary md:text-sm', {
         'animate-shake': inputLength === maxLength,
     });
 
@@ -73,12 +73,16 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
                 <label className="flex flex-col gap-0.5 md:gap-1" htmlFor={id}>
                     {label && (
                         <div className="flex flex-row items-center gap-3">
-                            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">{label}</p>
+                            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+                                {label}
+                            </p>
                             {isOptional && <Tag label={copy.inputContainer.optionalLabel} variant="neutral" />}
                         </div>
                     )}
                     {helpText && (
-                        <p className="text-sm leading-normal font-normal text-neutral-500 md:text-base">{helpText}</p>
+                        <p className="text-sm leading-normal font-normal text-surface-secondary md:text-base">
+                            {helpText}
+                        </p>
                     )}
                 </label>
             )}

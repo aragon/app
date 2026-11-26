@@ -24,7 +24,7 @@ export const WorkspaceAccountSelectStatusAlert: React.FC = () => {
         <div
             className={classNames(
                 'flex items-center justify-between gap-3 rounded-xl py-2.5 pr-3 pl-4',
-                isError ? 'bg-critical-100' : 'bg-warning-100',
+                isError ? 'bg-critical-subtle' : 'bg-warning-subtle',
             )}
         >
             <AlertInline

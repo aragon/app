@@ -93,11 +93,11 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
             <div
                 className={classNames(
                     'flex flex-row items-center rounded-xl border p-3 pr-2 transition-all md:pr-3 md:pl-6',
-                    'border-neutral-100 bg-neutral-0 text-neutral-500 shadow-neutral-sm',
+                    'border-surface-default bg-surface-primary text-surface-secondary shadow-surface-sm',
                     'text-base leading-tight font-normal',
-                    'hover:border-neutral-200 hover:shadow-neutral',
-                    'focus-within:border-primary-400 focus-within:shadow-primary',
-                    'focus-within:hover:border-primary-400 focus-within:hover:shadow-primary',
+                    'hover:border-surface-hover hover:shadow-surface-default',
+                    'focus-within:border-accent-active focus-within:shadow-accent-default',
+                    'focus-within:hover:border-accent-active focus-within:hover:shadow-accent-default',
                 )}
             >
                 {state !== 'loading' && (
@@ -113,8 +113,8 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 )}
                 <input
                     className={classNames(
-                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-neutral-500 outline-hidden',
-                        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-(--guk-text-surface-secondary) outline-hidden',
+                        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-surface-placeholder',
                     )}
                     onBlur={handleInputBlur}
                     onChange={handleSearchValueChange}
@@ -125,7 +125,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                 />
                 {displayClearIcon && (
                     <button className="mr-2 cursor-pointer p-2.5 md:mr-4" onClick={handleClear} type="button">
-                        <Icon className="text-neutral-300" icon={IconType.CLOSE} size="sm" />
+                        <Icon className="icon-surface-default" icon={IconType.CLOSE} size="sm" />
                     </button>
                 )}
                 <div className="flex flex-row gap-2 md:gap-3">

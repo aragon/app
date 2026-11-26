@@ -5,3 +5,11 @@
 @utility gradient-neutral-50-transparent-to-t {
     @apply bg-linear-to-t from-neutral-50/100 to-neutral-50/0;
 }
+
+@utility gradient-surface-primary-to-b {
+    @apply bg-linear-to-b from-(--guk-gradient-surface-primary) to-(--guk-gradient-surface-primary-transparent);
+}
+
+@utility gradient-surface-primary-to-t {
+    @apply bg-linear-to-t from-(--guk-gradient-surface-primary) to-(--guk-gradient-surface-primary-transparent);
+}

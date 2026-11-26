@@ -72,7 +72,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     {secondaryLinks != null && (
                         <>
                             <div className="w-full px-4">
-                                <div className="border-t border-neutral-100" />
+                                <div className="border-t border-surface-secondary" />
                             </div>
                             <NavigationLinks
                                 links={secondaryLinks}
@@ -84,7 +84,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     {!hideExplore && (
                         <>
                             <div className="w-full px-4">
-                                <div className="border-t border-neutral-100" />
+                                <div className="border-t border-surface-secondary" />
                             </div>
                             <NavigationLinksItem
                                 href={exploreHref}

@@ -137,7 +137,7 @@ const WorkspaceCreateAccountDialogSteps: React.FC = () => {
                 <Heading size="h3">
                     {t(`${i18nBase}.steps.${step.id}.title`)}
                 </Heading>
-                <p className="text-base leading-normal text-neutral-500">
+                <p className="text-base leading-normal text-surface-secondary">
                     {t(`${i18nBase}.steps.${step.id}.description`)}
                 </p>
             </div>

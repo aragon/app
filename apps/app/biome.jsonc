@@ -51,6 +51,31 @@
     },
     "overrides": [
         {
+            // Token lint, the kit's plugins (see packages/gov-ui-kit/biome.jsonc): the app takes role classes, not
+            // primitive ones. Per-DAO page headers are brand art drawn over the DAO's own artwork and are never
+            // themed, so they stay on primitives.
+            "includes": [
+                "src/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!src/test/**",
+                "!src/__mocks__/**",
+                "!src/shared/testUtils/**",
+                "!src/daos/*/components/*PageHeader/**"
+            ],
+            "plugins": [
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                }
+            ]
+        },
+        {
             // Biome reads tsconfig path aliases shaped like package names (@e2e/*, @aragon/gov-ui-kit-original) as packages.
             "includes": [
                 "e2e/**",

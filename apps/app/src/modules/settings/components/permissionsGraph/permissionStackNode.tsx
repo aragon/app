@@ -24,13 +24,16 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-surface-sm transition-colors',
                             permission.conditionLabel != null && 'pb-1',
                             isSelected
-                                ? 'border-primary-500 bg-primary-500 text-neutral-0'
+                                ? // biome-ignore lint/plugin/noPrimitiveColors: no border role has primary-500
+                                  'border-primary-500 bg-primary-500 text-accent-inverse'
                                 : dimmed
-                                  ? 'border-neutral-200 bg-neutral-200 text-neutral-500'
-                                  : 'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
+                                  ? // biome-ignore lint/plugin/noPrimitiveColors: no role for a dimmed chip at neutral-200 (bg/surface/disabled is neutral-100)
+                                    'border-neutral-200 bg-neutral-200 text-surface-secondary'
+                                  : // biome-ignore lint/plugin/noPrimitiveColors: no border or bg role has neutral-700
+                                    'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
                         )}
                         key={permission.edgeId}
                         onClick={(event) => {
@@ -46,12 +49,13 @@ export const PermissionStackNode: React.FC<
                         {permission.conditionLabel != null && (
                             <span
                                 className={classNames(
-                                    'rounded bg-neutral-0 px-1',
+                                    'rounded bg-surface-primary px-1',
                                     isSelected
-                                        ? 'text-primary-700'
+                                        ? // biome-ignore lint/plugin/noPrimitiveColors: no text/accent role at primary-700
+                                          'text-primary-700'
                                         : dimmed
-                                          ? 'text-neutral-500'
-                                          : 'text-neutral-800',
+                                          ? 'text-surface-secondary'
+                                          : 'text-surface-primary',
                                 )}
                             >
                                 {t(

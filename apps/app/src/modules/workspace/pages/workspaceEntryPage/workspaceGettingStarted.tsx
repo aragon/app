@@ -200,7 +200,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                         'app.workspace.workspaceGettingStarted.title',
                                     )}
                                 </Heading>
-                                <p className="text-base leading-normal font-normal text-neutral-500 md:text-lg">
+                                <p className="text-base leading-normal font-normal text-surface-secondary md:text-lg">
                                     {t(
                                         'app.workspace.workspaceGettingStarted.description',
                                     )}
@@ -208,7 +208,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                             </div>
                             {isScanning && (
                                 <div
-                                    className="flex items-center gap-2 text-sm text-neutral-500"
+                                    className="flex items-center gap-2 text-sm text-surface-secondary"
                                     role="status"
                                 >
                                     <Spinner size="sm" variant="neutral" />
@@ -251,7 +251,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                 />
                             ) : (
                                 <>
-                                    <Card className="p-4 shadow-neutral-sm md:p-6">
+                                    <Card className="p-4 shadow-surface-sm md:p-6">
                                         <WorkspaceAccountSelect
                                             initialMode={
                                                 isAddressViewOpen
@@ -289,7 +289,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                         </div>
                         {!showEmptyCard && (
                             // Below `md`, a full-width bar stuck to the bottom; negative margins cancel `Page.Main`'s padding.
-                            <div className="sticky bottom-0 z-5 -mx-4 -mb-10 flex flex-col gap-6 border-t border-neutral-100 bg-neutral-0 px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] md:static md:z-auto md:mx-0 md:mb-0 md:border-t-0 md:bg-transparent md:p-0">
+                            <div className="sticky bottom-0 z-5 -mx-4 -mb-10 flex flex-col gap-6 border-t border-surface-secondary bg-surface-primary px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] md:static md:z-auto md:mx-0 md:mb-0 md:border-t-0 md:bg-transparent md:p-0">
                                 {isError && (
                                     <AlertInline
                                         message={t(

@@ -172,11 +172,11 @@ export const MemberLinksCard: React.FC<IMemberLinksCardProps> = (props) => {
                             {t(link.labelKey)}
                         </Link>
                     ) : (
-                        <p className="font-normal text-neutral-800">
+                        <p className="font-normal text-surface-primary">
                             {t(link.labelKey)}
                         </p>
                     )}
-                    <p className="truncate text-sm text-neutral-400">
+                    <p className="truncate text-sm text-surface-tertiary">
                         {link.display}
                     </p>
                 </div>
