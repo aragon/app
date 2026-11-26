@@ -179,7 +179,7 @@ export const GaugeVoterLockFormChart: React.FC<
         <div className="w-full py-2">
             <div className="mb-3">
                 <p>
-                    <span className="type-strong">
+                    <span className="type-strong text-surface-primary">
                         {formatterUtils.formatNumber(activePoint.y, {
                             format: NumberFormat.TOKEN_AMOUNT_SHORT,
                         })}{' '}

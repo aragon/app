@@ -23,7 +23,7 @@ interface IPageProps {
 
 // The page actions as small tertiary buttons of the gov-ui-kit.
 const pageActionClassName =
-    'h-8 gap-1 rounded-lg border border-surface-default bg-surface-default px-2 font-normal text-surface-default text-sm shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:text-surface-hover hover:shadow-surface-default [&_svg]:size-4 [&_svg]:icon-surface-default';
+    'h-8 gap-1 rounded-lg border border-surface-default bg-surface-default px-2 font-normal text-surface-default text-sm shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:text-surface-hover hover:shadow-surface-default [&_svg]:size-4 [&_svg]:icon-surface-default!';
 
 export default async function Page({ params }: IPageProps) {
     const { slug } = await params;

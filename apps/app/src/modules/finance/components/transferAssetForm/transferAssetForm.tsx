@@ -11,6 +11,7 @@ import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
+import type { AssetListParams } from '../../types';
 import type { ITransferAssetFormData } from './transferAssetFormDefinitions';
 
 export interface ITransferAssetFormProps
@@ -20,23 +21,17 @@ export interface ITransferAssetFormProps
      */
     sender: string;
     /**
-     * DAO ID to fetch the asset list for.
+     * Parameters for fetching the assets the sender can transfer: the assets of a DAO, or the balances of a Safe.
      */
-    daoId: string;
+    assetListParams: AssetListParams;
     /**
      * Network of the asset to be transferred.
      */
     network: Network;
-    /**
-     * When true, returns only the parent DAO's assets (excludes linked accounts).
-     * Used when transferring from parent DAO to show only parent's assets.
-     */
-    onlyParentAssets?: boolean;
 }
 
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
-    const { daoId, network, fieldPrefix, disableAssetField, onlyParentAssets } =
-        props;
+    const { assetListParams, network, fieldPrefix, disableAssetField } = props;
 
     const { t } = useTranslations();
 
@@ -63,9 +58,6 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         value?.address,
     );
 
-    const fetchAssetsParams = {
-        queryParams: { daoId, onlyParent: onlyParentAssets },
-    };
     const { id: chainId } = networkDefinitions[network];
 
     return (
@@ -77,7 +69,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
             <AssetInput
                 disableAssetField={disableAssetField}
                 disableMaxValidation={true}
-                fetchAssetsParams={fetchAssetsParams}
+                fetchAssetsParams={assetListParams}
                 fieldPrefix={fieldPrefix}
             />
             <AddressInput

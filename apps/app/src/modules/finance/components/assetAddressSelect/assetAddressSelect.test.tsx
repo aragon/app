@@ -6,7 +6,9 @@ import {
     type IAssetAddressSelectProps,
 } from '@/modules/finance/components/assetAddressSelect';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
+import * as useSafeAssetListData from '@/modules/finance/hooks/useSafeAssetListData/useSafeAssetListData';
 import { generateToken } from '@/modules/finance/testUtils';
+import { Network } from '@/shared/api/daoService';
 import * as useTokenModule from '@/shared/hooks/useToken/useToken';
 
 describe('<AssetAddressSelect /> component', () => {
@@ -15,6 +17,10 @@ describe('<AssetAddressSelect /> component', () => {
         'useAssetListData',
     );
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
+    const useSafeAssetListDataSpy = jest.spyOn(
+        useSafeAssetListData,
+        'useSafeAssetListData',
+    );
 
     beforeEach(() => {
         useAssetListDataSpy.mockReturnValue({
@@ -36,6 +42,7 @@ describe('<AssetAddressSelect /> component', () => {
     afterEach(() => {
         useAssetListDataSpy.mockReset();
         useTokenSpy.mockReset();
+        useSafeAssetListDataSpy.mockReset();
     });
 
     const mockAssetList = (
@@ -69,6 +76,33 @@ describe('<AssetAddressSelect /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    it('lists the balances of a Safe when the params name a Safe, without reading the DAO assets', () => {
+        const safe = {
+            network: Network.ETHEREUM_SEPOLIA,
+            address: '0x3333333333333333333333333333333333333333',
+        };
+        useSafeAssetListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            assetList: [
+                {
+                    token: generateToken({ address: '0x123', symbol: 'SAFE' }),
+                    amount: '2',
+                },
+            ],
+            state: 'idle',
+            pageSize: 1,
+            itemsCount: 1,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent({ initialParams: { safe } }));
+
+        expect(useSafeAssetListDataSpy).toHaveBeenCalledWith(safe);
+        expect(useAssetListDataSpy).not.toHaveBeenCalled();
+        expect(screen.getByText('2 SAFE')).toBeInTheDocument();
+    });
 
     it('renders the asset list with multiple items when data is available', () => {
         mockAssetList([
