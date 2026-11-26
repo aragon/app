@@ -28,6 +28,24 @@ export const coreCopy = {
     clipboard: {
         copy: 'Copy',
     },
+    addressOutput: {
+        looksLikeAddress: 'This name starts with 0x. Check the address below.',
+        invalidLabel: 'The name saved for this address is not shown because it is not safe.',
+        sameNameAsYours: 'You saved this name for a different address or network. Check the address below.',
+        warning: 'Warning',
+        nameFrom: 'Name from:',
+        sourceWorkspace: 'Your workspace',
+        sourceOtherWorkspace: (name: string) => `Workspace “${name}”`,
+        sourceKnownAccount: 'Known account',
+        sourceEns: 'ENS',
+        savedForAllNetworks: 'Saved for all networks',
+        savedForNetwork: (network: string) => `Saved for ${network}`,
+        showAddress: (parts: string[]) => `${parts.join(', ')}, show address`,
+        nameThisAddress: (address: string) => `Name this address ${address}`,
+        noNameSaved: 'No name saved',
+        nameNotShown: 'Name not shown',
+        copied: 'Copied',
+    },
 };
 
 export type CoreCopy = typeof coreCopy;

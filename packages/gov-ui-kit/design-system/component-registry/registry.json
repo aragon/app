@@ -6,8 +6,18 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "f9ca4c5900d0c963f44b1fe24867a2297c5c8ba4",
-            "dirty": [],
+            "commit": "72259930b0ae4b269fafb4dcac667193bdaff16c",
+            "dirty": [
+                "packages/gov-ui-kit/src/core/assets/copy/coreCopy.ts",
+                "packages/gov-ui-kit/src/core/components/addressOutput/addressDisplayBoundary.tsx",
+                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutputSafety.test.tsx",
+                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutput.tsx",
+                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutputResolution.test.tsx",
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressLabelUtils.test.ts",
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressLabelUtils.ts",
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolution.mdx",
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolutionProvider.tsx"
+            ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
                 "js": [
@@ -774,6 +784,207 @@
             }
         },
         {
+            "id": "govkit:ADDRESS_TEXT_SEPARATOR",
+            "name": "ADDRESS_TEXT_SEPARATOR",
+            "kind": "non-component",
+            "exportNames": [
+                "ADDRESS_TEXT_SEPARATOR"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "ADDRESS_TEXT_SEPARATOR",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 7,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressDisplayBoundary",
+            "name": "AddressDisplayBoundary",
+            "kind": "component",
+            "exportNames": [
+                "AddressDisplayBoundary"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressDisplayBoundary",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressOutput/addressDisplayBoundary.tsx",
+                "line": 13,
+                "sha256": "2e8982084f1df487b5571b4a3aee4d54ca9eb62b58582f63d2fdfd5f801acad3"
+            },
+            "props": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressDisplayBoundary.tsx",
+                    "line": 5,
+                    "sha256": "2e8982084f1df487b5571b4a3aee4d54ca9eb62b58582f63d2fdfd5f801acad3"
+                }
+            ],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressEditHandler",
+            "name": "AddressEditHandler",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressEditHandler"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressEditHandler",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressResolutionProvider.tsx",
+                "line": 12,
+                "sha256": "e9ef759bcc53f3a77193bc1288dc92fb611ad28d8acd6091baef9080bb327412"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:addressEntryKey",
+            "name": "addressEntryKey",
+            "kind": "non-component",
+            "exportNames": [
+                "addressEntryKey"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "addressEntryKey",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 83,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:AddressInput",
             "name": "AddressInput",
             "kind": "component",
@@ -1088,6 +1299,172 @@
             }
         },
         {
+            "id": "govkit:AddressNameError",
+            "name": "AddressNameError",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressNameError"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressNameError",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 46,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "values": [
+                "'empty'",
+                "'too-long'",
+                "'invalid-characters'",
+                "'extra-spaces'",
+                "'contains-separator'",
+                "'looks-like-address'",
+                "'looks-like-ens'",
+                "'confusing-word'"
+            ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressNameResult",
+            "name": "AddressNameResult",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressNameResult"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressNameResult",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 56,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressNetworkProvider",
+            "name": "AddressNetworkProvider",
+            "kind": "component",
+            "exportNames": [
+                "AddressNetworkProvider"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressNetworkProvider",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressNetworkProvider.tsx",
+                "line": 13,
+                "sha256": "ad57782639e624cc541eb9dd71ce13a2d752c168d6e996eaff278e0bb6013e24"
+            },
+            "props": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressNetworkProvider.tsx",
+                    "line": 5,
+                    "sha256": "ad57782639e624cc541eb9dd71ce13a2d752c168d6e996eaff278e0bb6013e24"
+                }
+            ],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:AddressOutput",
             "name": "AddressOutput",
             "kind": "component",
@@ -1105,15 +1482,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/addressOutput/addressOutput.tsx",
-                "line": 61,
-                "sha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                "line": 505,
+                "sha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.tsx",
-                    "line": 9,
-                    "sha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                    "line": 30,
+                    "sha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
                 }
             ],
             "stories": [
@@ -1121,15 +1498,27 @@
                     "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.stories.tsx",
                     "line": 1,
-                    "sha256": "77ba7d4967284a3ff6b8834f1f081f326687a11fc5f6aad76c1d88793a3c48ba"
+                    "sha256": "b40e95dfa34ee0318944f7e8e42be82c5c0cdd6603f2bab2e235b2948f2d7bd2"
                 }
             ],
             "tests": [
                 {
                     "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
+                    "line": 1,
+                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
+                },
+                {
+                    "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.test.tsx",
                     "line": 1,
                     "sha256": "a37e3f005a12d0ba8895260b7711bf1a394dda42fbbd9f08c050dbb478c9127f"
+                },
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputResolution.test.tsx",
+                    "line": 1,
+                    "sha256": "2901ff4d32788facec4c1b0280b85daf7d3897b51af955a055bd57234c2a37b2"
                 }
             ],
             "docs": [],
@@ -1209,35 +1598,35 @@
                         "path": "src/core/components/addressOutput/addressOutput.tsx",
                         "status": "changed",
                         "expectedSha256": "e6b91617ac322569d2718dcead23de52bf304716a857194a323612e5977d2f03",
-                        "actualSha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                        "actualSha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/addressOutput/addressOutput.tsx",
                         "status": "changed",
                         "expectedSha256": "e6b91617ac322569d2718dcead23de52bf304716a857194a323612e5977d2f03",
-                        "actualSha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                        "actualSha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/addressOutput/addressOutput.tsx",
                         "status": "changed",
                         "expectedSha256": "e6b91617ac322569d2718dcead23de52bf304716a857194a323612e5977d2f03",
-                        "actualSha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                        "actualSha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/addressOutput/addressOutput.tsx",
                         "status": "changed",
                         "expectedSha256": "e6b91617ac322569d2718dcead23de52bf304716a857194a323612e5977d2f03",
-                        "actualSha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                        "actualSha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/core/components/addressOutput/addressOutput.stories.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "77ba7d4967284a3ff6b8834f1f081f326687a11fc5f6aad76c1d88793a3c48ba",
-                        "actualSha256": "77ba7d4967284a3ff6b8834f1f081f326687a11fc5f6aad76c1d88793a3c48ba"
+                        "actualSha256": "b40e95dfa34ee0318944f7e8e42be82c5c0cdd6603f2bab2e235b2948f2d7bd2"
                     },
                     {
                         "repository": "kit",
@@ -1270,6 +1659,161 @@
                         "contract": "Builds the explorer link for the displayed address."
                     }
                 ]
+            }
+        },
+        {
+            "id": "govkit:AddressResolutionProvider",
+            "name": "AddressResolutionProvider",
+            "kind": "component",
+            "exportNames": [
+                "AddressResolutionProvider"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressResolutionProvider",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressResolutionProvider.tsx",
+                "line": 39,
+                "sha256": "e9ef759bcc53f3a77193bc1288dc92fb611ad28d8acd6091baef9080bb327412"
+            },
+            "props": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressResolutionProvider.tsx",
+                    "line": 16,
+                    "sha256": "e9ef759bcc53f3a77193bc1288dc92fb611ad28d8acd6091baef9080bb327412"
+                }
+            ],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressResolver",
+            "name": "AddressResolver",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressResolver"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressResolver",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressResolutionStore.ts",
+                "line": 10,
+                "sha256": "30c39a0cc8ff709f8e2827a6def2559286b6deac01f06d753efb3077001ccb8c"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:AddressSource",
+            "name": "AddressSource",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressSource"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressSource",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 12,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "values": [
+                "'workspace'",
+                "'other-workspace'",
+                "'known-account'",
+                "'ens'"
+            ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
             }
         },
         {
@@ -1430,6 +1974,63 @@
                         "contract": "Returns true only when both valid addresses match case-insensitively."
                     }
                 ]
+            }
+        },
+        {
+            "id": "govkit:AddressWarning",
+            "name": "AddressWarning",
+            "kind": "non-component",
+            "exportNames": [
+                "AddressWarning"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "AddressWarning",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 38,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "values": [
+                "'looks-like-address'",
+                "'invalid-label'",
+                "'same-name-as-yours'"
+            ],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
             }
         },
         {
@@ -3077,7 +3678,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "59904829c3bc62a837f2a46c1c60cda539b039e2628db41881505b1d77bdb617"
+                "sha256": "9723f123021131140900ea46b7fba2982edf8a7e2e2b426b4edd5c6022ae7b9b"
             },
             "props": [],
             "stories": [],
@@ -4450,6 +5051,110 @@
             }
         },
         {
+            "id": "govkit:checkLabel",
+            "name": "checkLabel",
+            "kind": "non-component",
+            "exportNames": [
+                "checkLabel"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "checkLabel",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 126,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:classifyAddressLike",
+            "name": "classifyAddressLike",
+            "kind": "non-component",
+            "exportNames": [
+                "classifyAddressLike"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "classifyAddressLike",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 90,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:Clipboard",
             "name": "Clipboard",
             "kind": "component",
@@ -4930,7 +5635,7 @@
                 "repository": "kit",
                 "path": "src/core/assets/copy/coreCopy.ts",
                 "line": 6,
-                "sha256": "ba44b3bff51da49d3501ccdde77d33cf7bdce8dd179d72f419dc65d2105766d2"
+                "sha256": "e3d70e75b3f403427cbaa784740ffc7b36dd201445ac6eb2e36da48501cd7aa9"
             },
             "props": [],
             "stories": [],
@@ -4974,8 +5679,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/assets/copy/coreCopy.ts",
-                "line": 33,
-                "sha256": "ba44b3bff51da49d3501ccdde77d33cf7bdce8dd179d72f419dc65d2105766d2"
+                "line": 51,
+                "sha256": "e3d70e75b3f403427cbaa784740ffc7b36dd201445ac6eb2e36da48501cd7aa9"
             },
             "props": [],
             "stories": [],
@@ -5201,14 +5906,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "line": 45,
-                        "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "sha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                             "line": 14,
-                            "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                            "sha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                         }
                     ],
                     "stories": [
@@ -5289,21 +5994,21 @@
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                     },
                     {
                         "repository": "kit",
@@ -5429,14 +6134,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                 "line": 45,
-                "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                "sha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                     "line": 14,
-                    "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                    "sha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                 }
             ],
             "stories": [
@@ -5485,7 +6190,7 @@
                         "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "c33616cf9bdb832b65b3dcb08fe334aa047a071e53d9a090275b2fd4c3c81d1f",
-                        "actualSha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                        "actualSha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
                     }
                 ],
                 "review": {
@@ -9310,6 +10015,58 @@
             }
         },
         {
+            "id": "govkit:formatAddressText",
+            "name": "formatAddressText",
+            "kind": "non-component",
+            "exportNames": [
+                "formatAddressText"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "formatAddressText",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 154,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:formatterUtils",
             "name": "formatterUtils",
             "kind": "utility",
@@ -10364,6 +11121,103 @@
             }
         },
         {
+            "id": "govkit:IAddressDisplayBoundaryProps",
+            "name": "IAddressDisplayBoundaryProps",
+            "kind": "non-component",
+            "exportNames": [
+                "IAddressDisplayBoundaryProps"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IAddressDisplayBoundaryProps",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressOutput/addressDisplayBoundary.tsx",
+                "line": 5,
+                "sha256": "2e8982084f1df487b5571b4a3aee4d54ca9eb62b58582f63d2fdfd5f801acad3"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:IAddressEntry",
+            "name": "IAddressEntry",
+            "kind": "non-component",
+            "exportNames": [
+                "IAddressEntry"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IAddressEntry",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 19,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:IAddressInputProps",
             "name": "IAddressInputProps",
             "kind": "non-component",
@@ -10482,6 +11336,51 @@
             }
         },
         {
+            "id": "govkit:IAddressNetworkProviderProps",
+            "name": "IAddressNetworkProviderProps",
+            "kind": "non-component",
+            "exportNames": [
+                "IAddressNetworkProviderProps"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IAddressNetworkProviderProps",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressNetworkProvider.tsx",
+                "line": 5,
+                "sha256": "ad57782639e624cc541eb9dd71ce13a2d752c168d6e996eaff278e0bb6013e24"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:IAddressOutputProps",
             "name": "IAddressOutputProps",
             "kind": "non-component",
@@ -10499,8 +11398,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/addressOutput/addressOutput.tsx",
-                "line": 9,
-                "sha256": "15b424e1ba3d1206bdf46f6d0fe420c94f7bbb537fe6476b157fbf873785dabd"
+                "line": 30,
+                "sha256": "4902e27ee44db75288acdec97eafb309134b4c4c4f9e04a81fe9705a9141c00a"
             },
             "props": [],
             "stories": [
@@ -10508,17 +11407,74 @@
                     "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.stories.tsx",
                     "line": 1,
-                    "sha256": "77ba7d4967284a3ff6b8834f1f081f326687a11fc5f6aad76c1d88793a3c48ba"
+                    "sha256": "b40e95dfa34ee0318944f7e8e42be82c5c0cdd6603f2bab2e235b2948f2d7bd2"
                 }
             ],
             "tests": [
                 {
                     "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
+                    "line": 1,
+                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
+                },
+                {
+                    "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.test.tsx",
                     "line": 1,
                     "sha256": "a37e3f005a12d0ba8895260b7711bf1a394dda42fbbd9f08c050dbb478c9127f"
+                },
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputResolution.test.tsx",
+                    "line": 1,
+                    "sha256": "2901ff4d32788facec4c1b0280b85daf7d3897b51af955a055bd57234c2a37b2"
                 }
             ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:IAddressResolutionProviderProps",
+            "name": "IAddressResolutionProviderProps",
+            "kind": "non-component",
+            "exportNames": [
+                "IAddressResolutionProviderProps"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IAddressResolutionProviderProps",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressResolutionProvider.tsx",
+                "line": 16,
+                "sha256": "e9ef759bcc53f3a77193bc1288dc92fb611ad28d8acd6091baef9080bb327412"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
             "docs": [],
             "intent": {
                 "description": null,
@@ -12539,7 +13495,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/dao/daoDataListItem/daoDataListItemStructure/daoDataListItemStructure.tsx",
                 "line": 14,
-                "sha256": "8a07ff372f059c5b097cf6059d390ba1c77e0e384ad2cd71fcbf206e10c0fa93"
+                "sha256": "c18016228e7a70a079ca0b594c0ecd72825919ba295c9820b847cfe649c1498d"
             },
             "props": [],
             "stories": [
@@ -16327,7 +17283,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                 "line": 11,
-                "sha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                "sha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
             },
             "props": [],
             "stories": [
@@ -16386,7 +17342,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                 "line": 17,
-                "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                "sha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
             },
             "props": [],
             "stories": [
@@ -19688,6 +20644,51 @@
             }
         },
         {
+            "id": "govkit:IResolvedAddress",
+            "name": "IResolvedAddress",
+            "kind": "non-component",
+            "exportNames": [
+                "IResolvedAddress"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IResolvedAddress",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressResolutionStore.ts",
+                "line": 12,
+                "sha256": "30c39a0cc8ff709f8e2827a6def2559286b6deac01f06d753efb3077001ccb8c"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:ISmartContractFunctionDataListItemProps",
             "name": "ISmartContractFunctionDataListItemProps",
             "kind": "non-component",
@@ -19841,6 +20842,58 @@
                     "path": "src/core/components/spinner/spinner.test.tsx",
                     "line": 1,
                     "sha256": "d00c4e6911d9c3c695d52f0472a05b9cf2dbb8a437cfbd9e1eeb8d9f60200c22"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:isSafeToDisplay",
+            "name": "isSafeToDisplay",
+            "kind": "non-component",
+            "exportNames": [
+                "isSafeToDisplay"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "isSafeToDisplay",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 120,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
                 }
             ],
             "docs": [],
@@ -21460,7 +22513,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                 "line": 18,
-                "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                "sha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
             },
             "props": [],
             "stories": [
@@ -21637,7 +22690,7 @@
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
                 "line": 10,
-                "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
             },
             "props": [],
             "stories": [
@@ -22040,15 +23093,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
-                "line": 35,
-                "sha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                "line": 36,
+                "sha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                     "line": 11,
-                    "sha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                    "sha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
                 }
             ],
             "stories": [
@@ -22138,21 +23191,21 @@
                         "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                         "status": "changed",
                         "expectedSha256": "bf40533eddf988842b122086c57bc7bd572e5bc7e0d5c6b00fbcde6270fe0202",
-                        "actualSha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                        "actualSha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                         "status": "changed",
                         "expectedSha256": "bf40533eddf988842b122086c57bc7bd572e5bc7e0d5c6b00fbcde6270fe0202",
-                        "actualSha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                        "actualSha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                         "status": "changed",
                         "expectedSha256": "bf40533eddf988842b122086c57bc7bd572e5bc7e0d5c6b00fbcde6270fe0202",
-                        "actualSha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                        "actualSha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
                     },
                     {
                         "repository": "kit",
@@ -22166,7 +23219,7 @@
                         "path": "src/modules/components/member/memberAvatar/memberAvatar.tsx",
                         "status": "changed",
                         "expectedSha256": "bf40533eddf988842b122086c57bc7bd572e5bc7e0d5c6b00fbcde6270fe0202",
-                        "actualSha256": "6a91c7601cb2c5e837ba39bd0308b13ef64b20768b708e96311114f70f3be225"
+                        "actualSha256": "b62ac156e79dca68752b03225d4ee56016c886d1633553ae28ba703a5dc6ce09"
                     }
                 ],
                 "review": {
@@ -22255,15 +23308,15 @@
                     "source": {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                        "line": 52,
-                        "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "line": 53,
+                        "sha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                             "line": 17,
-                            "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                            "sha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                         }
                     ],
                     "stories": [
@@ -22342,23 +23395,23 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "actualSha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "actualSha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "actualSha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                     },
                     {
                         "repository": "kit",
@@ -22373,7 +23426,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": false,
+                "stale": true,
                 "composition": [
                     "Compound export with members: MemberDataListItem.Skeleton, MemberDataListItem.Structure."
                 ]
@@ -22483,15 +23536,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                "line": 52,
-                "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                "line": 53,
+                "sha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
                     "line": 17,
-                    "sha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                    "sha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                 }
             ],
             "stories": [
@@ -22538,9 +23591,9 @@
                     {
                         "repository": "kit",
                         "path": "src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c",
-                        "actualSha256": "3e282f88fc90c307673a536e6ab1c3c19d6de82b132c909c9b048461f56ca56c"
+                        "actualSha256": "1916e6741e44b9ce96bc06b9751e9f21b32b9d2a7c8a1b853397186029b8745a"
                     }
                 ],
                 "review": {
@@ -22548,7 +23601,7 @@
                     "by": null,
                     "at": null
                 },
-                "stale": false
+                "stale": true
             }
         },
         {
@@ -30918,6 +31971,58 @@
             }
         },
         {
+            "id": "govkit:truncateSourceLabel",
+            "name": "truncateSourceLabel",
+            "kind": "non-component",
+            "exportNames": [
+                "truncateSourceLabel"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "truncateSourceLabel",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 142,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:urlUtils",
             "name": "urlUtils",
             "kind": "utility",
@@ -31552,6 +32657,148 @@
             }
         },
         {
+            "id": "govkit:useResolveAddress",
+            "name": "useResolveAddress",
+            "kind": "non-component",
+            "exportNames": [
+                "useResolveAddress"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "useResolveAddress",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/useResolveAddress.ts",
+                "line": 16,
+                "sha256": "a04bc329b59bf39cbb41c9859374e9ed2155546e49372c57369ce30dcb1cd54b"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:useResolveAddressText",
+            "name": "useResolveAddressText",
+            "kind": "non-component",
+            "exportNames": [
+                "useResolveAddressText"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "useResolveAddressText",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/useResolveAddressText.ts",
+                "line": 9,
+                "sha256": "4970b6360cfc77ce529c9301d799fff8c6400eb1d9c9f97001c60186b2c4766b"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
+            "id": "govkit:validateName",
+            "name": "validateName",
+            "kind": "non-component",
+            "exportNames": [
+                "validateName"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "validateName",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/addressLabelUtils.ts",
+                "line": 185,
+                "sha256": "23d6e05f4575babe810661caae131f5ff80b5017d4c7349cb3ee6e94fb6fb2e5"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressResolution/addressLabelUtils.test.ts",
+                    "line": 1,
+                    "sha256": "9657b2e22787ade469dd4417ecfa4e0b4580fac8aa69871ad62c0384111392f8"
+                }
+            ],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:VoteDataListItem",
             "name": "VoteDataListItem",
             "kind": "compound",
@@ -31616,14 +32863,14 @@
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "line": 50,
-                        "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "sha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                     },
                     "props": [
                         {
                             "repository": "kit",
                             "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                             "line": 18,
-                            "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                            "sha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                         }
                     ],
                     "stories": [
@@ -31708,21 +32955,21 @@
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                     },
                     {
                         "repository": "kit",
@@ -31848,14 +33095,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                 "line": 50,
-                "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                "sha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                     "line": 18,
-                    "sha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                    "sha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                 }
             ],
             "stories": [
@@ -31904,7 +33151,7 @@
                         "path": "src/modules/components/vote/voteDataListItem/voteDataListItemStructure/voteDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "babafe765586f24a6843adfe52215ea4c48cb84ddb9498ad5f08aea0431fe749",
-                        "actualSha256": "b739b72ea9a021cda02d81e1f5746b28e50b8bf935d435f32020d140a88b790c"
+                        "actualSha256": "a58940efddcbd34a04cfdc98c9c5e8aed86e925808baf700d07bb23e23ea48ca"
                     }
                 ],
                 "review": {
@@ -32350,14 +33597,14 @@
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
                 "line": 30,
-                "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.tsx",
                     "line": 10,
-                    "sha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                    "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
                 }
             ],
             "stories": [
@@ -32444,21 +33691,21 @@
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "6ec378e65a062becd5d789694c298eabf137dec3ecc4bb6d4550422b545b6e0a"
+                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
                     },
                     {
                         "repository": "kit",

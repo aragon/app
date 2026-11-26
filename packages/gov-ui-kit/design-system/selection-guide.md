@@ -68,6 +68,16 @@ Renders a proposal-action simulation summary (status, total actions, last-simula
 - `kit:src/modules/components/action/actionSimulation/actionSimulation.tsx:16`
 - `kit:src/modules/components/action/actionSimulation/actionSimulation.stories.tsx:1`
 
+### AddressDisplayBoundary
+
+`import { AddressDisplayBoundary } from '@aragon/gov-ui-kit';`
+
+
+
+**References**
+
+- `kit:src/core/components/addressOutput/addressDisplayBoundary.tsx:13`
+
 ### AddressInput
 
 `import { AddressInput } from '@aragon/gov-ui-kit';`
@@ -118,6 +128,16 @@ Text input that resolves wallet or contract addresses and ENS names.
 - `kit:src/modules/components/addressInput/addressInput.tsx:82`
 - `kit:src/modules/components/addressInput/addressInput.stories.tsx:1`
 
+### AddressNetworkProvider
+
+`import { AddressNetworkProvider } from '@aragon/gov-ui-kit';`
+
+
+
+**References**
+
+- `kit:src/core/components/addressResolution/addressNetworkProvider.tsx:13`
+
 ### AddressOutput
 
 `import { AddressOutput } from '@aragon/gov-ui-kit';`
@@ -142,8 +162,18 @@ Displays an address or hash with an optional caller-supplied label or link, copy
 
 **References**
 
-- `kit:src/core/components/addressOutput/addressOutput.tsx:61`
+- `kit:src/core/components/addressOutput/addressOutput.tsx:505`
 - `kit:src/core/components/addressOutput/addressOutput.stories.tsx:1`
+
+### AddressResolutionProvider
+
+`import { AddressResolutionProvider } from '@aragon/gov-ui-kit';`
+
+
+
+**References**
+
+- `kit:src/core/components/addressResolution/addressResolutionProvider.tsx:39`
 
 ### AlertCard
 
@@ -1122,7 +1152,7 @@ Avatar for a member/address that resolves the ENS avatar via web3.
 
 **References**
 
-- `kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35`
+- `kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:36`
 - `kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1`
 
 ### MemberDataListItem.Skeleton
@@ -1144,7 +1174,7 @@ MemberDataListItemStructure: presentational item structure driven by props of th
 
 **References**
 
-- `kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:52`
+- `kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:53`
 - `kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx:1`
 
 ### Progress
@@ -2448,6 +2478,18 @@ External URL normalization helper that adds a safe default protocol for host-lik
 ## Allowed values
 
 Enum props take a member (`icon={IconType.PLUS}`); string-union props take the quoted value (`object="ACTION"`).
+
+### AddressNameError
+
+`'empty'`, `'too-long'`, `'invalid-characters'`, `'extra-spaces'`, `'contains-separator'`, `'looks-like-address'`, `'looks-like-ens'`, `'confusing-word'`
+
+### AddressSource
+
+`'workspace'`, `'other-workspace'`, `'known-account'`, `'ens'`
+
+### AddressWarning
+
+`'looks-like-address'`, `'invalid-label'`, `'same-name-as-yours'`
 
 ### AlertVariant
 

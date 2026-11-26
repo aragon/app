@@ -5,10 +5,10 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "fb47cd97f0a7c07d3839e78ca2d0a6d36fc7f1796aebd6dffc57f90ea883a3b1",
-            "totalRecords": 398,
-            "entryCount": 147,
-            "uiEntryCount": 140,
+            "sha256": "ddd2af4485061bf38b0cbb51221bafab95f8607b369b0867aeeefc184eaf8181",
+            "totalRecords": 422,
+            "entryCount": 150,
+            "uiEntryCount": 143,
             "utilityEntryCount": 7,
             "sourceDerivedStatus": "All eligible UI and utility exports are included from the source registry; no human approval is inferred."
         },
@@ -155,6 +155,26 @@
             }
         },
         {
+            "id": "govkit:AddressDisplayBoundary",
+            "kind": "component",
+            "name": "AddressDisplayBoundary",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AddressDisplayBoundary"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/addressOutput/addressDisplayBoundary.tsx:13",
+                "stories": []
+            }
+        },
+        {
             "id": "govkit:AddressInput",
             "kind": "component",
             "name": "AddressInput",
@@ -228,6 +248,26 @@
             }
         },
         {
+            "id": "govkit:AddressNetworkProvider",
+            "kind": "component",
+            "name": "AddressNetworkProvider",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AddressNetworkProvider"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/addressResolution/addressNetworkProvider.tsx:13",
+                "stories": []
+            }
+        },
+        {
             "id": "govkit:AddressOutput",
             "kind": "component",
             "name": "AddressOutput",
@@ -259,10 +299,30 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/addressOutput/addressOutput.tsx:61",
+                "source": "kit:src/core/components/addressOutput/addressOutput.tsx:505",
                 "stories": [
                     "kit:src/core/components/addressOutput/addressOutput.stories.tsx:1"
                 ]
+            }
+        },
+        {
+            "id": "govkit:AddressResolutionProvider",
+            "kind": "component",
+            "name": "AddressResolutionProvider",
+            "import": {
+                "package": "@aragon/gov-ui-kit",
+                "name": "AddressResolutionProvider"
+            },
+            "description": null,
+            "useWhen": [],
+            "alternatives": [],
+            "keyProps": [],
+            "usageNotes": [],
+            "constraints": [],
+            "composition": [],
+            "references": {
+                "source": "kit:src/core/components/addressResolution/addressResolutionProvider.tsx:39",
+                "stories": []
             }
         },
         {
@@ -2184,7 +2244,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:35",
+                "source": "kit:src/modules/components/member/memberAvatar/memberAvatar.tsx:36",
                 "stories": [
                     "kit:src/modules/components/member/memberAvatar/memberAvatar.stories.tsx:1"
                 ]
@@ -2252,7 +2312,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:52",
+                "source": "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.tsx:53",
                 "stories": [
                     "kit:src/modules/components/member/memberDataListItem/memberDataListItemStructure/memberDataListItemStructure.stories.tsx:1"
                 ]
@@ -3812,6 +3872,39 @@
         }
     ],
     "allowedValues": [
+        {
+            "name": "AddressNameError",
+            "values": [
+                "'empty'",
+                "'too-long'",
+                "'invalid-characters'",
+                "'extra-spaces'",
+                "'contains-separator'",
+                "'looks-like-address'",
+                "'looks-like-ens'",
+                "'confusing-word'"
+            ],
+            "source": "kit:src/core/components/addressResolution/addressLabelUtils.ts:46"
+        },
+        {
+            "name": "AddressSource",
+            "values": [
+                "'workspace'",
+                "'other-workspace'",
+                "'known-account'",
+                "'ens'"
+            ],
+            "source": "kit:src/core/components/addressResolution/addressLabelUtils.ts:12"
+        },
+        {
+            "name": "AddressWarning",
+            "values": [
+                "'looks-like-address'",
+                "'invalid-label'",
+                "'same-name-as-yours'"
+            ],
+            "source": "kit:src/core/components/addressResolution/addressLabelUtils.ts:38"
+        },
         {
             "name": "AlertVariant",
             "values": [

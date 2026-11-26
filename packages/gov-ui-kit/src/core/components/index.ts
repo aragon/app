@@ -1,5 +1,6 @@
 export * from './accordion';
 export * from './addressOutput';
+export * from './addressResolution';
 export * from './alerts';
 export * from './avatars';
 export * from './breadcrumbs';

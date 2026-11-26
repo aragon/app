@@ -1,0 +1,39 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/AddressResolution" />
+
+<Title>Address resolution</Title>
+
+The kit renders names, the app owns the data. Components never receive a name from the app: they read it from the
+nearest `<AddressResolutionProvider />`, so any widget that shows an address gets the name for free.
+
+```tsx
+import { AddressNetworkProvider, AddressResolutionProvider, addressEntryKey } from '@aragon/gov-ui-kit';
+
+const entries = new Map([[addressEntryKey(address, 0), { label: 'Treasury', source: 'workspace' }]]);
+
+<AddressResolutionProvider entries={entries} resolve={resolve} onEdit={openNameDialog}>
+    <AddressNetworkProvider chainId={8453}>
+        <App />
+    </AddressNetworkProvider>
+</AddressResolutionProvider>;
+```
+
+- **`entries`**: the known addresses, keyed by `addressEntryKey(address, chainId)`, which is the lowercase address, a
+  colon and the chain id (`0xabc…:8453`). Chain id `0` means all networks; any other id binds the name to that network.
+  One entry per key: the app picks the winner when two names share a key. A name with no label is ignored.
+- **`resolve`**: called once for each unknown address, with a 10 second limit. Keep the function stable: a new one clears
+  what was resolved. A `null`, an error or a timeout leaves the address unresolved.
+- **`onEdit`**: turns on the edit button beside copy for addresses that show no name.
+- **`<AddressNetworkProvider chainId />`**: the network of the addresses below. With no network known, only names for
+  all networks (`0`) are used.
+- **`useResolveAddress(address, chainId?)`**: `{ label, source, sourceLabel, chainId, networkLabel, warnings, isLoading,
+  isResolved }`.
+- **`useResolveAddressText(address, chainId?)`**: the same name as a string, for places that cannot draw a component
+  (native select options, chart text, the page title). A name from another workspace reads `workspace › name`.
+- **`<AddressDisplayBoundary />`**: for screens where the user approves or signs. Below it every `AddressOutput` shows
+  the name and the full address together, with no popover and no edit button.
+
+Every name, whatever its source, is checked before it is shown: names that look like an address or hold hidden
+characters are dropped (`invalid-label`). Names that start with `0x`, or that equal one of your own names for another
+address or network, are shown with a warning.

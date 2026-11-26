@@ -11,6 +11,7 @@ import { ensUtils } from '../../../utils';
 export interface IMemberAvatarProps extends Omit<IAvatarProps, 'fallback'>, IWeb3ComponentProps {
     /**
      * ENS name of the user to lookup avatar src.
+     * @deprecated The avatar is looked up from the address. Removed in the next major version.
      */
     ensName?: string;
     /**

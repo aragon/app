@@ -70,8 +70,8 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
 
     const isCurrentUser = hasMounted && isConnected && addressUtils.isAddressEqual(currentUserAddress, voter.address);
 
-    const resolvedUserHandle =
-        voter.name != null && voter.name.length > 0 ? voter.name : addressUtils.truncateAddress(voter.address);
+    // Without an ENS name the address resolves its own name.
+    const label = voter.name != null && voter.name.length > 0 ? voter.name : undefined;
 
     const formattedTokenNumber = formatterUtils.formatNumber(votingPower, { format: NumberFormat.TOKEN_AMOUNT_SHORT });
     const formattedTokenVote =
@@ -96,7 +96,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
             />
             <div className={centerInfoClassNames}>
                 <span className="flex items-center gap-x-1 text-base text-neutral-800 md:gap-x-1.5 md:text-lg">
-                    <AddressOutput address={voter.address} className="truncate" label={resolvedUserHandle} />
+                    <AddressOutput address={voter.address} className="truncate" label={label} />
                     {isDelegate && !isCurrentUser && (
                         <Tag label={copy.voteDataListItemStructure.yourDelegate} variant="primary" />
                     )}

@@ -60,7 +60,7 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
                             {address == null ? (
                                 addressLine
                             ) : (
-                                <AddressOutput address={address} className="truncate" label={addressLine} />
+                                <AddressOutput address={address} className="truncate" label={ens} />
                             )}
                         </Heading>
                     )}

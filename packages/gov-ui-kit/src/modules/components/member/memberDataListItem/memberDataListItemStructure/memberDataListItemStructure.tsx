@@ -29,6 +29,7 @@ export type IMemberDataListItemProps = IDataListItemProps & {
     tokenAmount?: number | string;
     /**
      * ENS name of the user.
+     * @deprecated Names come from the `AddressResolutionProvider`. Removed in the next major version.
      */
     ensName?: string;
     /**
@@ -75,7 +76,8 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
     const isCurrentUser =
         hasMounted && isConnected && address && addressUtils.isAddressEqual(currentUserAddress, address);
 
-    const resolvedUserHandle = ensName != null && ensName.length > 0 ? ensName : addressUtils.truncateAddress(address);
+    // Without an ENS name the address resolves its own name.
+    const label = ensName != null && ensName.length > 0 ? ensName : undefined;
 
     const showDelegationOrTokenInformation = delegationCount != null || tokenAmount != null;
 
@@ -106,7 +108,7 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                 {isCurrentUser && <Tag label={copy.memberDataListItemStructure.you} variant="neutral" />}
             </div>
             <Heading as="h2" className="inline-block w-full truncate" size="h3">
-                <AddressOutput address={address} className="truncate" label={resolvedUserHandle} />
+                <AddressOutput address={address} className="truncate" label={label} />
             </Heading>
             {showDelegationOrTokenInformation && (
                 <div className="flex flex-col gap-y-2">

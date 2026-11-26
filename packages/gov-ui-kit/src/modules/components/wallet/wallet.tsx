@@ -39,7 +39,8 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
         config: wagmiConfig,
     });
 
-    const resolvedUserHandle = user?.name ?? ensName ?? addressUtils.truncateAddress(user?.address);
+    // Without an ENS name the address resolves its own name.
+    const label = user?.name ?? ensName ?? undefined;
     const contentId = useId();
 
     const buttonClassName = classNames(
@@ -65,11 +66,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
                     {!user && copy.wallet.connect}
                     {user && isEnsLoading && <StateSkeletonBar className="block max-md:hidden" size="lg" width={56} />}
                     {user && !isEnsLoading && (
-                        <AddressOutput
-                            address={user.address}
-                            className="truncate max-md:hidden"
-                            label={resolvedUserHandle}
-                        />
+                        <AddressOutput address={user.address} className="truncate max-md:hidden" label={label} />
                     )}
                     {user && (
                         <MemberAvatar

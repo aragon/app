@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { useId } from 'react';
-import { AddressOutput, addressUtils, Icon, IconType, LinkBase } from '../../../../../core';
+import { AddressOutput, Icon, IconType, LinkBase } from '../../../../../core';
 import type { ICompositeAddress } from '../../../../types';
 import { MemberAvatar } from '../../../member';
 
@@ -24,10 +24,8 @@ export interface IAssetTransferAddressProps {
 export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props) => {
     const { participant, addressUrl, txRole } = props;
 
-    const resolvedUserHandle =
-        participant.name != null && participant.name.length > 0
-            ? participant.name
-            : addressUtils.truncateAddress(participant.address);
+    // Without an ENS name the address resolves its own name.
+    const label = participant.name != null && participant.name.length > 0 ? participant.name : undefined;
     const contentId = useId();
 
     return (
@@ -79,7 +77,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                         <AddressOutput
                             address={participant.address}
                             className="truncate text-sm leading-tight font-normal text-neutral-800 md:text-base"
-                            label={resolvedUserHandle}
+                            label={label}
                         />
                         <Icon
                             className="float-right text-neutral-300 group-hover:text-primary-300 group-active:text-primary-400"
