@@ -44,14 +44,14 @@ export const DefinitionListItem: React.FC<IDefinitionListItemProps> = (props) =>
     return (
         <div
             className={classNames(
-                'flex flex-col gap-y-2 border-b border-neutral-100 py-3 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-6 md:py-4',
+                'flex flex-col gap-y-2 border-b border-surface-secondary py-3 last:border-none md:grid md:grid-cols-[1fr_2fr] md:gap-x-6 md:py-4',
                 className,
             )}
             {...otherProps}
         >
-            <dt className="line-clamp-1 type-supporting--body-size text-neutral-800 md:line-clamp-none">{term}</dt>
+            <dt className="line-clamp-1 type-supporting--body-size text-surface-primary md:line-clamp-none">{term}</dt>
             <dd
-                className={classNames('min-w-0 type-body--unstepped text-neutral-500', {
+                className={classNames('min-w-0 type-body--unstepped text-surface-secondary', {
                     'flex flex-col gap-y-0.5 md:gap-y-1': description != null,
                 })}
             >
@@ -61,7 +61,7 @@ export const DefinitionListItem: React.FC<IDefinitionListItemProps> = (props) =>
                     <Clipboard copyValue={copyValue}>{definitionContent}</Clipboard>
                 )}
                 {description != null && (
-                    <p className={'truncate type-caption--definition-description text-neutral-400'}>{description}</p>
+                    <p className="truncate type-caption--definition-description text-surface-tertiary">{description}</p>
                 )}
             </dd>
         </div>

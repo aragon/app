@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create DAO: select chain</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-step__content">
+  <div class="wizard-step__header">
+    <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Select chain</x-import>
+    <p class="wizard-step__description">The chain you choose is where your DAO and tokens will be deployed. If you already have a token, select the chain your token is on.</p>
+  </div>
+  <x-import component-from-global-scope="GovUiKit.RadioGroup" value="{{value}}" on-value-change="{{change}}">
+    <div class="cdf-sections">
+      <div class="cdf-section">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Mainnets</x-import>
+        <div class="cdf-list">
+          <sc-for list="{{mainnets}}" as="n" hint-placeholder-count="14">
+            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="{{n.logo}}" label="{{n.name}}" value="{{n.key}}"></x-import>
+          </sc-for>
+        </div>
+      </div>
+      <div class="cdf-section">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h4">Testnets</x-import>
+        <div class="cdf-list">
+          <sc-for list="{{testnets}}" as="n" hint-placeholder-count="1">
+            <x-import component-from-global-scope="GovUiKit.RadioCard" avatar="{{n.logo}}" label="{{n.name}}" value="{{n.key}}"></x-import>
+          </sc-for>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="sm" icon-right="{{toggleIcon}}" class-name="cdf-self-start" on-click="{{toggle}}">{{toggleLabel}}</x-import>
+      </div>
+    </div>
+  </x-import>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"value":{"editor":null},"showAll":{"editor":null},"onChange":{"editor":null},"onToggle":{"editor":null},"$preview":{"width":800,"height":1600}}'>
+// Step 1 body of the create-DAO wizard, "Select chain" (apps/app: modules/createDao/components/createDaoForm/createDaoFormNetwork,
+// shared/constants/networkDefinitions.ts). The .wizard-step__content block: heading, description, radio cards.
+//   <dc-import name="CreateDaoFlowNetwork" value="{{network}}" show-all="{{showAll}}" on-change="{{pick}}" on-toggle="{{toggle}}" hint-size="100%,1600px"></dc-import>
+// Props: value = selected chain key (default sepolia); showAll = all testnets shown; onChange(key); onToggle().
+// Chains sorted by the app's `order`; a selected testnet always shows.
+// Literal paths, so the publish step can swap each for its canvas upload.
+const NETWORK_LOGOS = { 'arbitrum': 'assets/networks/arbitrum.svg', 'avalanche': 'assets/networks/avalanche.svg', 'base': 'assets/networks/base.svg', 'base_sepolia': 'assets/networks/base_sepolia.svg', 'bnb': 'assets/networks/bnb.svg', 'bnb_testnet': 'assets/networks/bnb_testnet.svg', 'chiliz': 'assets/networks/chiliz.svg', 'citrea': 'assets/networks/citrea.svg', 'ethereum': 'assets/networks/ethereum.svg', 'hemi': 'assets/networks/hemi.svg', 'hoodi': 'assets/networks/hoodi.svg', 'katana': 'assets/networks/katana.svg', 'monad': 'assets/networks/monad.svg', 'optimism': 'assets/networks/optimism.svg', 'polygon': 'assets/networks/polygon.svg', 'polygon_amoy': 'assets/networks/polygon_amoy.svg', 'robinhood': 'assets/networks/robinhood.svg', 'sepolia': 'assets/networks/sepolia.svg', 'zksync': 'assets/networks/zksync.svg' };
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const value = p.value || 'sepolia';
+    const all = [
+      ['ethereum', 'Ethereum', 1], ['base', 'Base', 2], ['bnb', 'BNB Smart Chain', 3], ['monad', 'Monad', 4],
+      ['robinhood', 'Robinhood Chain', 5], ['arbitrum', 'Arbitrum', 6], ['polygon', 'Polygon', 7], ['avalanche', 'Avalanche', 8],
+      ['optimism', 'Optimism', 9], ['katana', 'Katana', 10], ['zksync', 'zkSync', 11], ['citrea', 'Citrea', 12],
+      ['chiliz', 'Chiliz', 13], ['hemi', 'Hemi', 14],
+      ['sepolia', 'Ethereum Sepolia', 0], ['hoodi', 'Ethereum Hoodi', 15], ['base_sepolia', 'Base Sepolia', 16],
+      ['bnb_testnet', 'BNB Smart Chain Testnet', 17], ['polygon_amoy', 'Polygon Amoy', 18]
+    ].map(([key, name, order]) => ({ key, name, order, logo: NETWORK_LOGOS[key] }));
+    const mainnets = all.filter((n) => n.order >= 1 && n.order <= 14).sort((a, b) => a.order - b.order);
+    const testnets = all.filter((n) => n.order === 0 || n.order >= 15).sort((a, b) => a.order - b.order)
+      .filter((n, i) => p.showAll || i < 1 || n.key === value);
+    return {
+      value, mainnets, testnets,
+      toggleLabel: p.showAll ? 'Show fewer' : 'Show all testnets',
+      toggleIcon: p.showAll ? 'CHEVRON_UP' : 'CHEVRON_DOWN',
+      change: (v) => { if (p.onChange) p.onChange(v); },
+      toggle: () => { if (p.onToggle) p.onToggle(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

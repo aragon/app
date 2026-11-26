@@ -2,4 +2,4 @@
 "@aragon/docs": patch
 ---
 
-Use the GovKit typography roles in the help center header and footer, with no visible change.
+The help site's header and footer use the Governance UI Kit's typography roles. Nothing looks different.

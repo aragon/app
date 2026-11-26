@@ -51,12 +51,12 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
     return (
         <DataList.Item className="grid gap-y-3 py-4 md:gap-y-4 md:py-6" {...otherProps}>
             <div className="flex w-full justify-between gap-2">
-                <div className="grid shrink items-center gap-y-1.5 text-neutral-800">
-                    <Heading as="h2" className="truncate" typeRole="title-item--entity-list">
+                <div className="grid shrink items-center gap-y-1.5 text-surface-primary">
+                    <Heading as="h2" className="truncate" typeClassName="type-title-item--entity-list">
                         {name}
                     </Heading>
                     {!!addressLine && (
-                        <Heading as="h3" className="truncate" typeRole="supporting">
+                        <Heading as="h3" className="truncate" typeClassName="type-supporting">
                             {address == null ? (
                                 addressLine
                             ) : (
@@ -67,9 +67,9 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
                 </div>
                 <DaoAvatar name={name} responsiveSize={{ md: 'lg' }} size="md" src={logoSrc} />
             </div>
-            <p className="line-clamp-2 type-body text-neutral-500">{description}</p>
+            <p className="line-clamp-2 type-body text-surface-secondary">{description}</p>
             <div className="flex flex-row justify-between">
-                <div className="mt-1 flex items-center gap-x-1 text-neutral-400 md:mt-0 md:gap-x-2">
+                <div className="mt-1 flex items-center gap-x-1 text-surface-tertiary md:mt-0 md:gap-x-2">
                     <span className="type-supporting capitalize">{network}</span>
                     <Icon icon={IconType.BLOCKCHAIN_BLOCKCHAIN} responsiveSize={{ md: 'md' }} size="sm" />
                 </div>

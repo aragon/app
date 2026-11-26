@@ -22,56 +22,6 @@
             "!src/assets/locales/**"
         ]
     },
-    // Primitive type classes (text-sm, md:text-lg, leading-*, font-semibold, font-medium, tracking-*, text-[…px]):
-    // text takes a GovKit typography role. The .grit files are the kit's (`pnpm --filter @aragon/gov-ui-kit
-    // lint:typography:generate`). Production code is at zero findings: an error everywhere, stories only warn. The
-    // allowlisted files (component-owned glyph sizes and the landing hero's fluid size, see the kit's
-    // scripts/primitive-typography.mjs) are left out of both scopes; `lint:typography:check` keeps them honest.
-    "plugins": [
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-typography.js.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.stories.tsx",
-                "!src/modules/settings/components/permissionsGraph/permissionStackNode.tsx",
-                "!src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-typography.js.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.ts",
-                "src/**/*.tsx",
-                "!**/*.test.ts",
-                "!**/*.test.tsx",
-                "!src/**/*.stories.tsx",
-                "!src/modules/settings/components/permissionsGraph/permissionStackNode.tsx",
-                "!src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-typography.css.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "!src/modules/settings/components/permissionsGraph/permissionStackNode.tsx",
-                "!src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-typography.css.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.css",
-                "!src/modules/settings/components/permissionsGraph/permissionStackNode.tsx",
-                "!src/modules/settings/components/permissionInfoTooltip/permissionInfoTooltip.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx"
-            ]
-        }
-    ],
     "linter": {
         "rules": {
             "style": {
@@ -100,6 +50,39 @@
         }
     },
     "overrides": [
+        {
+            // Token lint, the kit's plugins (see packages/gov-ui-kit/biome.jsonc): the app takes role classes, not
+            // primitive ones. Per-DAO page headers are brand art drawn over the DAO's own artwork and are never
+            // themed, so they stay on primitives.
+            "includes": [
+                "src/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!src/test/**",
+                "!src/__mocks__/**",
+                "!src/shared/testUtils/**",
+                "!src/daos/*/components/*PageHeader/**"
+            ],
+            "plugins": [
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                }
+            ]
+        },
         {
             // Biome reads tsconfig path aliases shaped like package names (@e2e/*, @aragon/gov-ui-kit-original) as packages.
             "includes": [

@@ -7,7 +7,11 @@ import * as useWalletAccountModule from '@/modules/application/hooks/useWalletAc
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { Network } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
-import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDialogContext,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import {
     WorkspaceAccountInfoStatus,
     WorkspaceAccountInfoType,
@@ -18,6 +22,8 @@ import {
     WorkspaceAccountType,
     workspaceService,
 } from '../../api/workspaceService';
+import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
+import * as useWorkspaceDaosModule from '../../hooks/useWorkspaceDaos';
 import * as useWorkspaceTodoDataModule from '../../hooks/useWorkspaceTodoData';
 import {
     type IWorkspaceDetailsPageClientProps,
@@ -155,6 +161,32 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         );
     });
 
+    it('displays the DAO accounts with their indexed name and avatar', async () => {
+        const useWorkspaceDaosSpy = jest
+            .spyOn(useWorkspaceDaosModule, 'useWorkspaceDaos')
+            .mockReturnValue({
+                daos: {
+                    [`${Network.ETHEREUM_SEPOLIA}-${address}`]: generateDao({
+                        name: 'Indexed DAO',
+                        avatar: 'ipfs://avatar',
+                    }),
+                },
+                isPending: false,
+            });
+        const workspace = buildWorkspace();
+
+        try {
+            renderWorkspace(workspace);
+
+            expect(await screen.findByText('Indexed DAO')).toBeInTheDocument();
+            expect(useWorkspaceDaosSpy).toHaveBeenCalledWith(
+                workspace.accounts,
+            );
+        } finally {
+            useWorkspaceDaosSpy.mockRestore();
+        }
+    });
+
     it('displays the to-do section above the accounts for a connected wallet', async () => {
         mockWallet(walletAddress);
         renderWorkspace(buildWorkspace());
@@ -213,7 +245,12 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('links a workspace with no account to its edit wizard to add some', async () => {
+    it('opens the add accounts dialog from a workspace with no account', async () => {
+        const openAddAccounts = jest.fn();
+        jest.spyOn(
+            useWorkspaceAddAccountsDialogModule,
+            'useWorkspaceAddAccountsDialog',
+        ).mockReturnValue(openAddAccounts);
         const workspace = buildWorkspace({ accounts: [] });
         renderWorkspace(workspace);
 
@@ -222,14 +259,12 @@ describe('<WorkspaceDetailsPageClient /> component', () => {
                 /workspaceDetailsPage\.emptyAccounts\.heading$/,
             ),
         ).toBeInTheDocument();
-        expect(
-            screen.getByRole('link', {
+        await userEvent.click(
+            screen.getByRole('button', {
                 name: /workspaceDetailsPage\.emptyAccounts\.action$/,
             }),
-        ).toHaveAttribute(
-            'href',
-            `/workspace/${workspace.id}/edit?step=ACCOUNTS`,
         );
+        expect(openAddAccounts).toHaveBeenCalled();
     });
 
     it('opens DAO creation from a workspace with no account', async () => {

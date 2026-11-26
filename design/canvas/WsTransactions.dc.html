@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace transactions</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Transactions</x-import>
+            <sc-if value="{{createLink}}" hint-placeholder-val="{{false}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" href="SafeTransactionFlow.dc.html">New transaction</x-import>
+            </sc-if>
+            <sc-if value="{{createDialog}}" hint-placeholder-val="{{false}}">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" on-click="{{openDialog}}">New transaction</x-import>
+            </sc-if>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <sc-if value="{{showToggles}}" hint-placeholder-val="{{true}}">
+            <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{filter}}" on-change="{{setFilter}}">
+              <x-import component-from-global-scope="GovUiKit.Toggle" value="all" label="All transactions"></x-import>
+              <sc-if value="{{hasExecutions}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="executions" label="Executions"></x-import></sc-if>
+              <sc-if value="{{hasReceived}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="received" label="Deposits"></x-import></sc-if>
+              <sc-if value="{{hasSent}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Toggle" value="sent" label="Withdrawals"></x-import></sc-if>
+            </x-import>
+            </sc-if>
+            <x-import component-from-global-scope="GovUiKit.Accordion.Container" is-multi="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{show.t0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-0"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{s0.identifier}}</span></div><p class="ws-summary__description">{{s0.date}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{s0.statusLabel}}" variant="{{s0.statusVariant}}" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<sc-if value="{{s0.pending}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{s0.progressDescription}}" show-status="{{s0.showStatus}}" threshold-indicator="{{s0.threshold}}" value="{{s0.progress}}" variant="neutral"></x-import></x-import>
+<sc-if value="{{s0.waiting}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="{{s0.waitingTitle}}" variant="warning"><p>{{s0.waitingText}}</p></x-import></div></sc-if>
+<sc-if value="{{s0.rejQueued}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="A rejection of this transaction is queued." variant="warning"><p>{{s0.rejQueuedText}}</p></x-import></div></sc-if>
+<div class="ws-sv-actions">
+<sc-if value="{{s0.canApprove}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{s0.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{s0.isApproved}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+<sc-if value="{{s0.canExecute}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" disabled="{{s0.executeDisabled}}" on-click="{{s0.execute}}">Execute Safe transaction</x-import></sc-if>
+<sc-if value="{{s0.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{s0.canReject}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="critical" size="md" class-name="ws-sv-btn" on-click="{{s0.reject}}">Reject transaction</x-import></sc-if>
+<sc-if value="{{s0.rejected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Rejection signed</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{s0.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{s0.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s0.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s0.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s0.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s0.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s0.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s0.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s0.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s0.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s0.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{s0.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{one}}" is-enabled="{{s0.simEnabled}}" is-loading="{{s0.simulating}}" last-simulation="{{s0.lastSimulation}}" on-simulate="{{s0.simulate}}"></x-import>
+</sc-if>
+<sc-if value="{{s0.executed}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{chainId}}" date="{{s0.execDate}}" executed-by="{{s0.execBy}}" total-actions="{{one}}" transaction-hash="{{s0.execHash}}"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}"><x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""><x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{s0.action}}" action-function-selector="{{s0.selector}}" chain-id="{{chainId}}" index="{{zero}}" read-only="{{yes}}"></x-import></x-import><x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.r0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="rej-0"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CLOSE" variant="critical" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{j0.identifier}}</span></div><p class="ws-summary__description">{{j0.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{j0.statusLabel}}" variant="info" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{j0.progressDescription}}" show-status="{{j0.showStatus}}" threshold-indicator="{{j0.threshold}}" value="{{j0.progress}}" variant="neutral"></x-import></x-import>
+<div class="ws-sv-actions">
+<sc-if value="{{j0.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{j0.canApprove}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{j0.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{j0.isApproved}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{j0.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{j0.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j0.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j0.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j0.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j0.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j0.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j0.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j0.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j0.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j0.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{j0.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="Onchain rejection" description="This transaction performs no action. Executing it uses up its Safe nonce, so any other transaction queued on that nonce can no longer be executed." is-stacked="{{no}}" object-illustration="{{rejIllustration}}"></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.t1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-1"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{s1.identifier}}</span></div><p class="ws-summary__description">{{s1.date}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{s1.statusLabel}}" variant="{{s1.statusVariant}}" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<sc-if value="{{s1.pending}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{s1.progressDescription}}" show-status="{{s1.showStatus}}" threshold-indicator="{{s1.threshold}}" value="{{s1.progress}}" variant="neutral"></x-import></x-import>
+<sc-if value="{{s1.waiting}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="{{s1.waitingTitle}}" variant="warning"><p>{{s1.waitingText}}</p></x-import></div></sc-if>
+<sc-if value="{{s1.rejQueued}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="A rejection of this transaction is queued." variant="warning"><p>{{s1.rejQueuedText}}</p></x-import></div></sc-if>
+<div class="ws-sv-actions">
+<sc-if value="{{s1.canApprove}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{s1.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{s1.isApproved}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+<sc-if value="{{s1.canExecute}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" disabled="{{s1.executeDisabled}}" on-click="{{s1.execute}}">Execute Safe transaction</x-import></sc-if>
+<sc-if value="{{s1.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{s1.canReject}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="critical" size="md" class-name="ws-sv-btn" on-click="{{s1.reject}}">Reject transaction</x-import></sc-if>
+<sc-if value="{{s1.rejected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Rejection signed</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{s1.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{s1.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s1.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s1.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s1.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s1.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s1.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s1.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s1.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s1.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s1.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{s1.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{one}}" is-enabled="{{s1.simEnabled}}" is-loading="{{s1.simulating}}" last-simulation="{{s1.lastSimulation}}" on-simulate="{{s1.simulate}}"></x-import>
+</sc-if>
+<sc-if value="{{s1.executed}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{chainId}}" date="{{s1.execDate}}" executed-by="{{s1.execBy}}" total-actions="{{one}}" transaction-hash="{{s1.execHash}}"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}"><x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""><x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{s1.action}}" action-function-selector="{{s1.selector}}" chain-id="{{chainId}}" index="{{zero}}" read-only="{{yes}}"></x-import></x-import><x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.r1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="rej-1"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CLOSE" variant="critical" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{j1.identifier}}</span></div><p class="ws-summary__description">{{j1.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{j1.statusLabel}}" variant="info" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{j1.progressDescription}}" show-status="{{j1.showStatus}}" threshold-indicator="{{j1.threshold}}" value="{{j1.progress}}" variant="neutral"></x-import></x-import>
+<div class="ws-sv-actions">
+<sc-if value="{{j1.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{j1.canApprove}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{j1.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{j1.isApproved}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{j1.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{j1.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j1.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j1.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j1.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j1.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j1.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j1.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j1.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j1.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j1.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{j1.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="Onchain rejection" description="This transaction performs no action. Executing it uses up its Safe nonce, so any other transaction queued on that nonce can no longer be executed." is-stacked="{{no}}" object-illustration="{{rejIllustration}}"></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.t2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-2"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{s2.identifier}}</span></div><p class="ws-summary__description">{{s2.date}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{s2.statusLabel}}" variant="{{s2.statusVariant}}" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<sc-if value="{{s2.pending}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{s2.progressDescription}}" show-status="{{s2.showStatus}}" threshold-indicator="{{s2.threshold}}" value="{{s2.progress}}" variant="neutral"></x-import></x-import>
+<sc-if value="{{s2.waiting}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="{{s2.waitingTitle}}" variant="warning"><p>{{s2.waitingText}}</p></x-import></div></sc-if>
+<sc-if value="{{s2.rejQueued}}" hint-placeholder-val="{{false}}"><div class="ws-sv-pt"><x-import component-from-global-scope="GovUiKit.AlertCard" message="A rejection of this transaction is queued." variant="warning"><p>{{s2.rejQueuedText}}</p></x-import></div></sc-if>
+<div class="ws-sv-actions">
+<sc-if value="{{s2.canApprove}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{s2.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{s2.isApproved}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+<sc-if value="{{s2.canExecute}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" disabled="{{s2.executeDisabled}}" on-click="{{s2.execute}}">Execute Safe transaction</x-import></sc-if>
+<sc-if value="{{s2.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{s2.canReject}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="critical" size="md" class-name="ws-sv-btn" on-click="{{s2.reject}}">Reject transaction</x-import></sc-if>
+<sc-if value="{{s2.rejected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Rejection signed</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{s2.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{s2.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s2.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s2.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s2.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s2.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s2.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s2.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s2.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{s2.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{s2.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{s2.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ActionSimulation" total-actions="{{one}}" is-enabled="{{s2.simEnabled}}" is-loading="{{s2.simulating}}" last-simulation="{{s2.lastSimulation}}" on-simulate="{{s2.simulate}}"></x-import>
+</sc-if>
+<sc-if value="{{s2.executed}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{chainId}}" date="{{s2.execDate}}" executed-by="{{s2.execBy}}" total-actions="{{one}}" transaction-hash="{{s2.execHash}}"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}"><x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""><x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{s2.action}}" action-function-selector="{{s2.selector}}" chain-id="{{chainId}}" index="{{zero}}" read-only="{{yes}}"></x-import></x-import><x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.r2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="rej-2"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CLOSE" variant="critical" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">{{j2.identifier}}</span></div><p class="ws-summary__description">{{j2.description}}</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="{{j2.statusLabel}}" variant="info" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx">
+<x-import component-from-global-scope="GovUiKit.Card" class-name="flex w-full flex-col border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
+<x-import component-from-global-scope="GovUiKit.Tabs.Root" class-name="flex w-full flex-col gap-4 md:gap-6" default-value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.Tabs.List"><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Breakdown" value="BREAKDOWN"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Votes" value="VOTES"></x-import><x-import component-from-global-scope="GovUiKit.Tabs.Trigger" label="Settings" value="DETAILS"></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.Tabs.Content" value="BREAKDOWN">
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Container"><x-import component-from-global-scope="GovUiKit.ProposalVoting.Progress.Item" name="Approval" description="{{j2.progressDescription}}" show-status="{{j2.showStatus}}" threshold-indicator="{{j2.threshold}}" value="{{j2.progress}}" variant="neutral"></x-import></x-import>
+<div class="ws-sv-actions">
+<sc-if value="{{j2.superseded}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.AlertInline" message="Another transaction already used this Safe nonce, so this one can no longer be executed." variant="warning"></x-import></sc-if>
+<sc-if value="{{j2.canApprove}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="ws-sv-btn" on-click="{{j2.approve}}">Approve transaction</x-import></sc-if>
+<sc-if value="{{j2.isApproved}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" class-name="ws-sv-btn" disabled="{{yes}}">Approved</x-import></sc-if>
+</div>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Votes"><x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Confirmations" items-count="{{j2.voteCount}}" page-size="{{six}}" state="idle">
+<x-import component-from-global-scope="GovUiKit.DataList.Container" empty-state="{{emptyVotes}}">
+<sc-if value="{{j2.a0}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j2.v0}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j2.a1}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j2.v1}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j2.a2}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j2.v2}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j2.a3}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j2.v3}}" vote-indicator="approve"></x-import></sc-if>
+<sc-if value="{{j2.a4}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.VoteDataListItem.Structure" voter="{{j2.v4}}" vote-indicator="approve"></x-import></sc-if>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import></x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalVoting.Details" settings="{{j2.settings}}"></x-import>
+</x-import></x-import>
+<x-import component-from-global-scope="GovUiKit.CardEmptyState" class-name="border border-neutral-100" heading="Onchain rejection" description="This transaction performs no action. Executing it uses up its Safe nonce, so any other transaction queued on that nonce can no longer be executed." is-stacked="{{no}}" object-illustration="{{rejIllustration}}"></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.t3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-3"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 14, 2026 at 18:18</p></div><span class="ws-summary__value">250K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="250000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-4"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">November 12, 2026 at 18:18</p></div><span class="ws-summary__value">500K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="500000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.atl}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.TransactionDataListItem.Structure" type="EXECUTION" label="Northstar Staged Governance" action-count="{{one}}" chain-id="{{chainId}}" date="2026-10-30T18:00:00" hash="0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" hide-value="{{yes}}" status="SUCCESS" href="https://etherscan.io/tx/0x789bc2888d67ac3671da02a8da4eeff9e903aec65e9d146a5a4d1d6012fdbb83" target="_blank"></x-import></sc-if>
+<sc-if value="{{show.t6}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-6"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 30, 2026 at 18:00</p></div><span class="ws-summary__value">240K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="240000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.nor}}" recipient="{{a.x2}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t7}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-7"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Northstar Council Safe</span><span class="ws-summary__identifier">NCS-4</span></div><p class="ws-summary__description">October 28, 2026 at 11:40</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><div class="ws-safe-tx"><x-import component-from-global-scope="GovUiKit.TransactionDetailSummary" chain-id="{{chainId}}" date="{{n4.execDate}}" executed-by="{{n4.execBy}}" total-actions="{{one}}" transaction-hash="{{n4.execHash}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.ProposalActions.Root" actions-count="{{one}}"><x-import component-from-global-scope="GovUiKit.ProposalActions.Container" empty-state-description=""><x-import component-from-global-scope="GovUiKit.ProposalActions.Item" action="{{n4.action}}" action-function-selector="{{n4.selector}}" chain-id="{{chainId}}" index="{{zero}}" read-only="{{yes}}"></x-import></x-import><x-import component-from-global-scope="GovUiKit.ProposalActions.Footer" dropdown-items="{{dropdownItems}}"></x-import></x-import>
+</div></x-import></x-import></sc-if>
+<sc-if value="{{show.t8}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-8"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 24, 2026 at 18:00</p></div><span class="ws-summary__value">400K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="400000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.nor}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t9}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" on-click="{{open.mgp3}}"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Meridian Token Voting</span><span class="ws-summary__identifier">MGP-3</span></div><p class="ws-summary__description">October 21, 2026 at 18:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t10}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-10"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 20, 2026 at 10:30</p></div><span class="ws-summary__value">42.5 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="42.5" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x2}}" recipient="{{a.saf}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t11}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-11"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 15, 2026 at 18:18</p></div><span class="ws-summary__value">40K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="40000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.atl}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t12}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-12"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">October 9, 2026 at 18:18</p></div><span class="ws-summary__value">180K USDC</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="USD Coin" asset-symbol="USDC" asset-address="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" asset-amount="180000" asset-fiat-price="1" asset-icon-src="assets/mock/token/usdc.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t13}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="ws-dli" on-click="{{open.mgp2}}"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="BLOCKCHAIN_SMARTCONTRACT" variant="neutral" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Meridian Token Voting</span><span class="ws-summary__identifier">MGP-2</span></div><p class="ws-summary__description">October 9, 2026 at 06:18</p></div><x-import component-from-global-scope="GovUiKit.Tag" label="Executed" variant="success" class-name="shrink-0"></x-import></div></x-import></sc-if>
+<sc-if value="{{show.t14}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-14"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 6, 2026 at 18:00</p></div><span class="ws-summary__value">85 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="85" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.nor}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t15}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-15"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">October 2, 2026 at 18:18</p></div><span class="ws-summary__value">75 ETH</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Ether" asset-symbol="ETH" asset-address="0x0000000000000000000000000000000000000000" asset-amount="75" asset-fiat-price="3148.62" asset-icon-src="assets/mock/token/eth.svg" chain-id="{{chainId}}" sender="{{a.x2}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t16}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-16"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 17, 2026 at 18:18</p></div><span class="ws-summary__value">1.1M MRD</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Meridian" asset-symbol="MRD" asset-address="0xc6cf3058f8fd5eb7074109b3b531364a4af59dae" asset-amount="1100000" asset-fiat-price="0.84" asset-icon-src="assets/mock/token/mrd.svg" chain-id="{{chainId}}" sender="{{a.x1}}" recipient="{{a.mer}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t17}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-17"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="DEPOSIT" variant="success" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Received</span></div><p class="ws-summary__description">September 7, 2026 at 18:18</p></div><span class="ws-summary__value">120K DAI</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Dai Stablecoin" asset-symbol="DAI" asset-address="0x6b175474e89094c44da98b954eedeac495271d0f" asset-amount="120000" asset-fiat-price="0.9998" asset-icon-src="assets/mock/token/dai.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.atl}}"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{show.t18}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Accordion.Item" value="tx-18"><x-import component-from-global-scope="GovUiKit.Accordion.ItemHeader"><div class="ws-summary"><x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="WITHDRAW" variant="warning" responsive-size="{{mdSize}}"></x-import><div class="ws-summary__text"><div class="ws-summary__title"><span>Sent</span></div><p class="ws-summary__description">September 5, 2026 at 18:18</p></div><span class="ws-summary__value">42K DAI</span></div></x-import><x-import component-from-global-scope="GovUiKit.Accordion.ItemContent"><x-import component-from-global-scope="GovUiKit.AssetTransfer" asset-name="Dai Stablecoin" asset-symbol="DAI" asset-address="0x6b175474e89094c44da98b954eedeac495271d0f" asset-amount="42000" asset-fiat-price="0.9998" asset-icon-src="assets/mock/token/dai.svg" chain-id="{{chainId}}" sender="{{a.mer}}" recipient="{{a.x3}}"></x-import></x-import></x-import></sc-if>
+</x-import>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <sc-if value="{{isAll}}" hint-placeholder-val="{{true}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All transactions</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isDao}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <sc-for list="{{aside.links}}" as="l" hint-placeholder-count="3">
+              <x-import component-from-global-scope="GovUiKit.Link" href="{{l.href}}" is-external="{{yes}}" show-url="{{yes}}" children="{{l.label}}"></x-import>
+              </sc-for>
+            </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isSafe}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.count}}</x-import>
+                <p class="stat-card__label">Transactions</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.last}}</x-import>
+                <p class="stat-card__label">Last activity</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="{{aside.address}}" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+        </aside>
+      </div>
+      <sc-if value="{{dialogOpen}}" hint-placeholder-val="{{false}}">
+        <dc-import name="DaoTransactionDetailDialog" tx="{{openTx}}" on-close="{{closeTx}}" on-nav="{{navMeridian}}" hint-size="0px,0px"></dc-import>
+      </sc-if>
+      <dc-import name="SafeFlowTxDialog" open="{{signOpen}}" tx="{{signTx}}" mode="{{signMode}}" on-cancel="{{signClose}}" on-applied="{{signApplied}}" on-done="{{signClose}}" hint-size="0px,0px"></dc-import>
+      <sc-if value="{{rejOpen}}" hint-placeholder-val="{{false}}">
+        <dc-import name="SafeTransactionFlowDialog" tx="{{rejTx}}" rejection="{{rejInfo}}" on-cancel="{{rejClose}}" on-done="{{rejDone}}" hint-size="0px,0px"></dc-import>
+      </sc-if>
+      <sc-if value="{{accountDialogOpen}}" hint-placeholder-val="{{false}}">
+        <dc-import name="WsTransactionsAccountDialog" on-close="{{closeDialog}}" hint-size="0px,0px"></dc-import>
+      </sc-if>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":"text","default":"all"},"safe":{"editor":null},"onSafe":{"editor":null},"todoRows":{"editor":null},"$preview":{"width":1440,"height":1900}}'>
+// Workspace transactions (apps/app: modules/workspace/pages/workspaceTransactionsPage, components workspaceTransactionList +
+// workspaceTransactionListItem (accordion rows headed by workspaceListItemSummary), workspaceTransactionsAsideCard (All / DAO / Safe),
+// utils/workspaceTransactionUtils). PART of the workspace prototype. Props: onNav(target), wallet, onConnect, scope ('all' or an account id:
+// meridian | atlas | northstar | safe). The app has no account filter on the page itself: the account is the one the workspace's account
+// selector set, so the list, the count, the toggles and the aside card follow `scope`.
+// Rows (newest first, pending Safe transactions first as the app lists them): the type toggle (All / Executions / Deposits / Withdrawals)
+// and the account decide which rows render. Each row is written out at the start of the line in its own <sc-if> (a false <sc-if>
+// renders nothing, a true one is one child): the kit's pagination counts the list's direct children, so "x of y" follows the filters.
+// The toggles that would lead to an empty list are hidden, as the app does (and the whole group with fewer than two types).
+// Rows: a transfer is an accordion item that expands to the transferred asset; a DAO execution of Meridian opens the transaction detail
+// dialog (DaoTransactionDetailDialog); the Northstar execution is the block-explorer row the app draws when it has no DAO to decode it
+// with; a pending transaction of the Northstar Council Safe (NCS-5..7, from the shell's `safe` prop) is an accordion row that expands to its voting card
+// (SafeTransactionVoting: a Card with the Breakdown / Votes / Settings tabs, Breakdown = approval progress + the queued-behind-nonce alert + Approve / Approved /
+// Execute Safe transaction / Reject transaction, Votes = one VoteDataListItem per confirming owner, Settings = Safe address, required confirmations, current nonce),
+// then SafeTransactionSimulation (ActionSimulation, re-enabled 10 minutes after the last run), then SafeExecutionDetails (the decoded call as ProposalActions, plus
+// TransactionDetailSummary once executed), each its own block of the column (Approve / Execute open SafeFlowTxDialog and, on success, call onSafe(id, mode); the row,
+// the badge and the to-dos follow); once executed the row keeps an Executed tag, the summary and the actions. The executed Safe transaction of the history (NCS-4) expands to
+// its execution summary and its decoded action, as every Safe row does.
+// Rejections (safeTransactionVoting + workspaceTransactionListItem): "Reject transaction" is shown while the transaction can still run (nonce not below the Safe's
+// current one), never on a rejection; it asks a viewer without a wallet to connect, else opens the rejection dialog (SafeTransactionFlowDialog with its `rejection`
+// prop = the app's SafeCreateTransactionDialog with rejectedNonce). Once signed the button reads "Rejection signed" (disabled), the Breakdown tab says "A rejection of
+// this transaction is queued." with its approvals, and the rejection is its own row (red X icon, same identifier, "Onchain rejection · date", voting card without Reject
+// nor simulation, then the "Onchain rejection" empty-state card). Rejections are kept in window.__wsSafeRej (the shell owns the approve / execute state but has no
+// rejection state), so they survive leaving the page. A transaction whose nonce the Safe already used (an executed transaction's rejection) shows the superseded text
+// in place of the buttons. Not drawn: the loading skeleton, the load-error card, executing a rejection (the one connected owner is the only signer the prototype
+// has, so a rejection never reaches the Safe's threshold of 3), a second owner approving an existing rejection. Mock data: data.cjs, data-spp.cjs, SafeFlow.dc.html (queue nonce 5-7).
+// "New transaction" (Page.Main action) is shown as the app shows it: only when the connected wallet can execute on an account. The mock
+// wallet (nadia.eth) owns the Safe and holds no execute permission on a DAO, so: all accounts -> opens the select-account dialog
+// (WsTransactionsAccountDialog, only the Safe is eligible); the Safe's own scope -> a link to SafeTransactionFlow.dc.html; a DAO's scope or
+// no wallet -> no button.
+const ROWS = [
+  // id, account, kind (exec | received | sent), days ago (for "Last activity")
+  ['t0', 'safe', 'exec', 4], ['t1', 'safe', 'exec', 2], ['t2', 'safe', 'exec', 1],
+  ['t3', 'meridian', 'received', 2], ['t4', 'atlas', 'received', 4], ['t5', 'northstar', 'exec', 17], ['t6', 'northstar', 'sent', 17],
+  ['t7', 'safe', 'exec', 19], ['t8', 'northstar', 'received', 23], ['t9', 'meridian', 'exec', 26], ['t10', 'safe', 'received', 27],
+  ['t11', 'atlas', 'sent', 32], ['t12', 'meridian', 'sent', 38], ['t13', 'meridian', 'exec', 38], ['t14', 'northstar', 'received', 41],
+  ['t15', 'meridian', 'received', 45], ['t16', 'meridian', 'received', 60], ['t17', 'atlas', 'received', 70], ['t18', 'meridian', 'sent', 72],
+];
+const ACCOUNTS = {
+  meridian: {
+    name: 'Meridian DAO', address: '0xc8c322384903ee8f11f511b71d0504237886bcde',
+    desc: 'Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance.',
+    links: [{ label: 'Website', href: 'https://meridian.xyz' }, { label: 'Forum', href: 'https://forum.meridian.xyz' }, { label: 'X', href: 'https://x.com/meridianproto' }, { label: 'Discord', href: 'https://discord.gg/meridian' }],
+  },
+  atlas: {
+    name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368',
+    desc: 'The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council.',
+    links: [{ label: 'Website', href: 'https://atlasgrants.org' }, { label: 'Apply for a grant', href: 'https://atlasgrants.org/apply' }],
+  },
+  northstar: {
+    name: 'Northstar Protocol', address: '0xa767846912853e30403f3efb946a5250e8e6a063',
+    desc: 'Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.',
+    links: [{ label: 'Website', href: 'https://northstar.fi' }, { label: 'Forum', href: 'https://forum.northstar.fi' }, { label: 'Docs', href: 'https://docs.northstar.fi' }, { label: 'X', href: 'https://x.com/northstar_fi' }],
+  },
+  safe: {
+    name: 'Northstar Council Safe', address: '0x515feC2E8F6553948b1D57C14c1243a1405C02e2',
+    desc: 'The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.',
+    links: [],
+  },
+};
+const addr = (a) => ({ address: a });
+const SAFE_ADDRESS = '0x515feC2E8F6553948b1D57C14c1243a1405C02e2';
+const SAFE_OWNERS_0 = '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A';
+const OWNER_NAMES = { '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a': 'nadia.eth', '0xac6399087027f972e6d2ab830dc9b33cda035642': 'kofi-mensah.eth', '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05': 'lenaweber.eth', '0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81': 'ines-alvarez.eth', '0x7331c334835fd8c5d6a351f67a517e6b0f452f63': 'dmitri.eth' };
+// rejections signed in this session, by the id of the transaction they reject: { tx5: { signers: [owner index], at: ms } }
+const rejStore = () => (window.__wsSafeRej = window.__wsSafeRej || {});
+// A rejection of nonce n is the empty call from the Safe to itself (safeProtocolKitUtils.buildRejectionTransaction); the hashes are mock values
+const REJ_HASHES = {
+  5: ['0x7c2f0ab61d5e9a3844b0c1e7f6d2a9358be41c07a3d96f20e58b1c4d7a09e3f5', '0x2e9d41b7c06a85f3d1e47b92a0c5836fd4b19e7a52c8036d1fa4e97b30c8d256'],
+  6: ['0x91a4e3d70b6c2f58a1d94e0c73b5f2860de1a49c37b08f5e62d1c9a4073be8f1', '0x4b07d9e25a1c63f8e0b92d47a6c1f3508d2e7b94c0a53f16e8d97b2a4c61f0e3'],
+  7: ['0xd35b80e1f94a27c6b0e3d58a1f72c94e06b8a3d15c7e2f90a4b61d38e5c0f7a2', '0x68f1c2a9e0d47b35a8c1f6e29d03b74a5e8c1d90f2b63a74c0e5d18b9f2a3c64'],
+};
+class Component extends DCLogic {
+  state = { filter: 'all', openTx: '', accountDialog: false, signId: '', signMode: 'approve', signOpen: false, simulating: {}, simAt: {}, rejId: '', rejOpen: false };
+  timers = [];
+  componentWillUnmount() { this.timers.forEach((t) => clearTimeout(t)); }
+  // The pending Safe transactions' voting cards (SafeTransactionVoting): Approve / Execute open the sign dialog (SafeFlowTxDialog = safeTransactionDialog) once a wallet is
+  // connected; the shell applies the signature or the execution (onSafe) when the dialog reports success, so the row, the to-dos and the Safe's pages all follow.
+  openSign = (id, mode) => () => {
+    if (this.props.wallet !== 'connected') { if (typeof this.props.onConnect === 'function') this.props.onConnect(); return; }
+    this.setState({ signId: id, signMode: mode, signOpen: true });
+  };
+  signClose = () => this.setState({ signOpen: false });
+  signApplied = () => { if (typeof this.props.onSafe === 'function') this.props.onSafe(this.state.signId, this.state.signMode); };
+  simulate = (id) => () => {
+    this.setState((st) => ({ simulating: Object.assign({}, st.simulating, { [id]: true }) }));
+    this.timers.push(setTimeout(() => this.setState((st) => ({ simulating: Object.assign({}, st.simulating, { [id]: false }), simAt: Object.assign({}, st.simAt, { [id]: Date.now() }) })), 1200));
+  };
+  safeRow(t, i) {
+    if (!t) return {};
+    const kit = window.GovUiKit;
+    const day = 24 * 3600000;
+    const owners = 5;
+    const pending = !t.executed;
+    // the Safe used this nonce already (an executed transaction or a rejection of it): it can no longer run (safeTransactionUtils.getApprovalReadiness: SUPERSEDED)
+    const superseded = pending && Number(t.nonce) < Number(t.currentNonce);
+    const rej = rejStore()[t.id];
+    // the owner (or a viewer without a wallet) can reject a live transaction; the mock wallet is an owner of the Safe
+    const canReject = pending && !superseded;
+    const rejected = canReject && !!rej && this.props.wallet === 'connected' && rej.signers.includes(0);
+    const canApprove = pending && !superseded && !t.confirmed && t.count < t.required;
+    // Votes tab (SafeMultisigVoteListView): one VoteDataListItem per confirming owner, the connected owner first
+    const signers = (t.ownerRows || []).filter((o) => o.label === 'Approved').map((o) => ({ address: o.address, name: OWNER_NAMES[o.address.toLowerCase()] }));
+    const voteRows = {};
+    for (let k = 0; k < 5; k += 1) { voteRows['a' + k] = k < signers.length; voteRows['v' + k] = signers[k] || {}; }
+    // Settings tab (safeMultisigSettingsUtils.parseSettings): Safe address, required confirmations, current nonce
+    const settings = [
+      { term: 'Safe address', definition: '0x515f…02e2', description: 'Safe 1.4.1', copyValue: SAFE_ADDRESS, link: { href: 'https://etherscan.io/address/' + SAFE_ADDRESS, isExternal: true, isOnchainEntity: true } },
+      { term: 'Required confirmations', definition: t.required + ' of ' + owners },
+      { term: 'Current Safe nonce', definition: String(t.currentNonce) },
+    ];
+    // Actions block (SafeExecutionDetails -> TransactionExecutionActions): the call decoded from its calldata
+    const d = t.data || '0x';
+    const word = (n) => BigInt('0x' + d.slice(10 + 64 * n, 74 + 64 * n)).toString();
+    const action = t.fn === 'transfer'
+      ? { type: 'Transfer', from: SAFE_ADDRESS, to: t.to, data: d, value: t.value, inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: 'to', type: 'address', value: '0x' + d.slice(34, 74) }, { name: 'value', type: 'uint256', value: word(1) }] } }
+      : { type: 'Unknown', from: SAFE_ADDRESS, to: t.to, data: d, value: t.value, inputData: { function: t.fn, contract: 'Northstar Staged Governance', parameters: [{ name: '_proposalId', type: 'uint256', value: word(0) }, { name: '_stageId', type: 'uint16', value: word(1) }, { name: '_resultType', type: 'uint8', value: word(2) }, { name: '_tryAdvance', type: 'bool', value: word(3) === '0' ? 'false' : 'true' }] } };
+    const lastRun = this.state.simAt[t.id] || (Date.now() - 20 * 60000);
+    return Object.assign({}, t, voteRows, {
+      identifier: 'NCS-' + t.nonce,
+      date: kit.formatterUtils.formatDate(Date.now() - t.queuedDays * day, { format: kit.DateFormat.YEAR_MONTH_DAY_TIME }),
+      pending,
+      statusLabel: t.executed ? 'Executed' : t.ready ? 'Executable' : 'Active', statusVariant: t.executed ? 'success' : 'info',
+      progress: (t.count / owners) * 100, threshold: (t.required / owners) * 100, showStatus: t.count < t.required,
+      progressDescription: { value: t.count, text: 'of ' + owners + ' members' },
+      waitingTitle: 'This transaction is queued behind nonce ' + t.currentNonce + '.',
+      waitingText: 'It can be executed once the Safe reaches nonce ' + t.nonceText + '.',
+      superseded, canReject: canReject && !rejected, rejected,
+      rejQueued: canReject && !!rej,
+      rejQueuedText: rej ? 'It has ' + rej.signers.length + ' of ' + t.required + ' approvals. Nonce ' + t.nonce + ' can be used once, so this transaction can no longer be executed after the rejection is.' : '',
+      canApprove, isApproved: pending && !superseded && t.confirmed && t.count < t.required,
+      canExecute: pending && !superseded && t.count >= t.required, executeDisabled: !t.ready,
+      approve: this.openSign(t.id, 'approve'), execute: this.openSign(t.id, 'execute'), reject: this.reject(t.id),
+      voteCount: signers.length, settings, action, selector: d.slice(0, 10),
+      // a transaction cannot be simulated again within 10 minutes of its last run
+      simEnabled: Date.now() - lastRun > 10 * 60000,
+      simulating: !!this.state.simulating[t.id], simulate: this.simulate(t.id),
+      lastSimulation: { status: 'success', timestamp: lastRun, url: 'https://dashboard.tenderly.co/' },
+      // once executed the row shows the execution summary (the onchain hash exists only then)
+      execDate: Date.now(), execBy: { address: SAFE_OWNERS_0 }, execHash: '0x' + String(t.safeTxHash || '').slice(2).split('').reverse().join(''),
+      toShort: t.to ? t.to.slice(0, 6) + '…' + t.to.slice(-4) : ''
+    });
+  }
+  // "Reject transaction": a viewer without a wallet is asked to connect first, else the rejection dialog opens on the nonce of the transaction
+  reject = (id) => () => {
+    if (this.props.wallet !== 'connected') { if (typeof this.props.onConnect === 'function') this.props.onConnect(); return; }
+    this.setState({ rejId: id, rejOpen: true });
+  };
+  rejClose = () => this.setState({ rejOpen: false });
+  // the signed rejection is queued on the Safe once the dialog is dismissed after its success (onCreated); the connected owner (index 0) is its first signer
+  rejDone = () => {
+    const id = this.state.rejId;
+    const store = rejStore();
+    if (id && !store[id]) store[id] = { signers: [0], at: Date.now() };
+    this.setState({ rejOpen: false });
+  };
+  // a rejection row: its own voting card (approval progress, Approve / Approved, Votes, Settings) and no Reject, no simulation
+  rejRow(t) {
+    const rej = t ? rejStore()[t.id] : null;
+    if (!rej) return {};
+    const kit = window.GovUiKit;
+    const owners = 5;
+    const count = rej.signers.length;
+    const superseded = Number(t.nonce) < Number(t.currentNonce);
+    const signers = rej.signers.map((k) => { const a = t.ownerRows[k].address; return { address: a, name: OWNER_NAMES[a.toLowerCase()] }; });
+    const voteRows = {};
+    for (let k = 0; k < 5; k += 1) { voteRows['a' + k] = k < signers.length; voteRows['v' + k] = signers[k] || {}; }
+    const connected = this.props.wallet === 'connected';
+    const hasConfirmed = connected && rej.signers.includes(0);
+    const row = this.safeRow(t, 0);
+    return Object.assign({}, voteRows, {
+      identifier: 'NCS-' + t.nonce,
+      description: 'Onchain rejection · ' + kit.formatterUtils.formatDate(rej.at, { format: kit.DateFormat.YEAR_MONTH_DAY_TIME }),
+      statusLabel: count >= t.required ? 'Executable' : 'Active',
+      progress: (count / owners) * 100, threshold: (t.required / owners) * 100, showStatus: count < t.required,
+      progressDescription: { value: count, text: 'of ' + owners + ' members' },
+      superseded, canApprove: !superseded && !hasConfirmed && count < t.required, isApproved: !superseded && hasConfirmed && count < t.required,
+      approve: () => { if (!connected && typeof this.props.onConnect === 'function') this.props.onConnect(); },
+      voteCount: signers.length, settings: row.settings
+    });
+  }
+  // NCS-4, the executed Safe transaction of the history: execution summary + the call decoded from its calldata (SafeExecutionDetails)
+  n4Row() {
+    const to = '0xdce3a01d0357efb601efac0fdd836d2e1b3bc242';
+    const data = '0xa9059cbb' + to.slice(2).padStart(64, '0') + (100000 * 1e6).toString(16).padStart(64, '0');
+    return {
+      execDate: new Date('2026-10-28T11:40:00').getTime(), execBy: { address: '0xAC6399087027F972e6D2AB830dC9b33CDa035642' },
+      execHash: '0x5e1a9c47d2b038f6a4c71e90d3b85f2a61c0e49b7d3a82f5c16e0b94a7d23c8f',
+      selector: '0xa9059cbb',
+      action: { type: 'Transfer', from: SAFE_ADDRESS, to: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', data, value: '0', inputData: { function: 'transfer', contract: 'USD Coin', parameters: [{ name: 'to', type: 'address', value: to }, { name: 'value', type: 'uint256', value: String(100000 * 1e6) }] } },
+    };
+  }
+  // Links to other pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (this.props.onNav) this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  setFilter = (v) => { if (typeof v === 'string' && v) this.setState({ filter: v }); };
+  openDialog = () => this.setState({ accountDialog: true });
+  closeDialog = () => this.setState({ accountDialog: false });
+  closeTx = () => this.setState({ openTx: '' });
+  openTxFn = (id) => (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ openTx: id }); };
+  renderVals() {
+    const kit = window.GovUiKit;
+    const scope = ACCOUNTS[this.props.scope] ? this.props.scope : 'all';
+    const inScope = ROWS.filter((r) => scope === 'all' || r[1] === scope);
+    const has = (k) => inScope.some((r) => r[2] === k);
+    const available = ['exec', 'received', 'sent'].filter(has);
+    const showToggles = available.length > 1;
+    const map = { all: null, executions: 'exec', received: 'received', sent: 'sent' };
+    let filter = this.state.filter;
+    if (filter !== 'all' && !available.includes(map[filter])) filter = 'all';
+    const show = {};
+    let count = 0;
+    const safeTxs = this.props.safe && Array.isArray(this.props.safe.txs) ? this.props.safe.txs : [];
+    const rejSrc = safeTxs.find((t) => t.id === this.state.rejId) || safeTxs[0] || {};
+    const rejNonce = Number(rejSrc.nonce || 5);
+    const rejHashes = REJ_HASHES[rejNonce] || REJ_HASHES[5];
+    const rejTx = { nonceText: String(rejNonce), fn: 'Unknown action', to: SAFE_ADDRESS, value: '0', data: '0x', domainHash: '0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510', messageHash: rejHashes[0], safeTxHash: rejHashes[1] };
+    ROWS.forEach((r) => {
+      let on = (scope === 'all' || r[1] === scope) && (filter === 'all' || r[2] === map[filter]);
+      if (/^t[012]$/.test(r[0]) && !safeTxs[Number(r[0].slice(1))]) on = false;
+      show[r[0]] = on;
+      if (on) count++;
+    });
+    // each signed rejection is its own row of the Safe's transactions, right after the transaction it rejects
+    const rejOn = (scope === 'all' || scope === 'safe') && (filter === 'all' || filter === 'executions');
+    const rejIn = (scope === 'all' || scope === 'safe');
+    let rejCount = 0;
+    [0, 1, 2].forEach((i) => {
+      const has = !!(safeTxs[i] && rejStore()[safeTxs[i].id]);
+      show['r' + i] = has && rejOn;
+      if (has && rejOn) count++;
+      if (has && rejIn) rejCount++;
+    });
+    const wallet = this.props.wallet === 'connected';
+    const acc = ACCOUNTS[scope];
+    const first = inScope[0];
+    const aside = {
+      count: String(inScope.length + rejCount),
+      // The pending Safe rows (t0-t2) print dates derived from now; every other row prints a fixed date of the mock data (reference clock 2026-11-16 18:00 UTC), so the
+      // "Last activity" of a scope whose newest row is one of those is counted from the same reference: the stat never contradicts the row dates, whatever the clock.
+      last: rejCount > 0 ? kit.formatterUtils.formatDate(Date.now() - 60000, { format: kit.DateFormat.RELATIVE }) ?? '-' : first ? kit.formatterUtils.formatDate((/^t[012]$/.test(first[0]) ? Date.now() : Date.parse('2026-11-16T18:00:00Z')) - first[3] * 86400000, { format: kit.DateFormat.RELATIVE }) ?? '-' : '-',
+      name: acc ? acc.name : 'All transactions',
+      desc: acc ? acc.desc : '',
+      address: acc ? acc.address : '',
+      links: acc ? acc.links : [],
+      octav: acc ? 'https://pro.octav.fi/?addresses=' + acc.address : '',
+      addressLink: acc ? { href: scope === 'safe' ? 'https://app.safe.global/home?safe=eth:' + acc.address : 'https://etherscan.io/address/' + acc.address, isExternal: true, isOnchainEntity: true } : undefined,
+    };
+    return {
+      yes: true, no: false, zero: 0, one: 1, two: 2, six: 6, chainId: 1, pageSize: 20, click: this.click,
+      mdSize: { md: 'md' },
+      emptyVotes: { heading: 'No confirmations yet', description: 'Owner confirmations appear here as they are collected.', objectIllustration: { object: 'USERS' } },
+      dropdownItems: [{ label: 'Download as JSON', onClick: () => undefined }],
+      count, show, filter, setFilter: this.setFilter,
+      s0: this.safeRow(safeTxs[0], 0), s1: this.safeRow(safeTxs[1], 1), s2: this.safeRow(safeTxs[2], 2),
+      j0: this.rejRow(safeTxs[0]), j1: this.rejRow(safeTxs[1]), j2: this.rejRow(safeTxs[2]),
+      n4: this.n4Row(),
+      rejIllustration: { object: 'SMART_CONTRACT' },
+      rejOpen: this.state.rejOpen, rejClose: this.rejClose, rejDone: this.rejDone,
+      rejInfo: { nonce: rejNonce },
+      rejTx: rejTx,
+      signOpen: this.state.signOpen, signMode: this.state.signMode, signClose: this.signClose, signApplied: this.signApplied,
+      signTx: safeTxs.find((t) => t.id === this.state.signId) || safeTxs[0] || {},
+      showToggles, hasExecutions: has('exec'), hasReceived: has('received'), hasSent: has('sent'),
+      createLink: wallet && scope === 'safe',
+      createDialog: wallet && scope === 'all',
+      openDialog: this.openDialog, closeDialog: this.closeDialog,
+      accountDialogOpen: this.state.accountDialog,
+      isAll: scope === 'all', isDao: !!acc && scope !== 'safe', isSafe: scope === 'safe',
+      aside,
+      a: {
+        mer: addr('0xc8c322384903ee8f11f511b71d0504237886bcde'), atl: addr('0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368'),
+        nor: addr('0xa767846912853e30403f3efb946a5250e8e6a063'), saf: addr('0x515feC2E8F6553948b1D57C14c1243a1405C02e2'),
+        x1: addr('0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05'), x2: addr('0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81'), x3: addr('0xdce3a01d0357efb601efac0fdd836d2e1b3bc242'),
+      },
+      open: { mgp3: this.openTxFn('mgp3'), mgp2: this.openTxFn('mgp2') },
+      dialogOpen: !!this.state.openTx, openTx: this.state.openTx, closeTx: this.closeTx,
+      // the proposal link of the detail dialog is a bare target of the DAO that owns it (Meridian)
+      navMeridian: (t) => { this.closeTx(); if (this.props.onNav) this.props.onNav('account:meridian:' + t); },
+    };
+  }
+}
+</script>
+</body>
+</html>

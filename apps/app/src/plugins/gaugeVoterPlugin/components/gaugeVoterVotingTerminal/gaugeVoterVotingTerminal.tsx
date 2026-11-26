@@ -87,17 +87,18 @@ export const GaugeVoterVotingTerminal: React.FC<
     const wrapperClassName = classNames(
         'flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6',
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
-        'rounded-xl border border-b-0 bg-neutral-0 p-3 md:h-[64px] md:px-4 md:py-0',
+        'rounded-xl border border-b-0 bg-surface-primary p-3 md:h-[64px] md:px-4 md:py-0',
         {
-            'border-neutral-100 shadow-neutral-md': !showVoteButton,
-            'border-primary-100 shadow-primary-xl': showVoteButton,
+            'border-surface-secondary shadow-surface-md': !showVoteButton,
+            // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the xl size
+            'border-accent-primary-terminal shadow-primary-xl': showVoteButton,
         },
     );
 
     return (
         <div className={wrapperClassName}>
             <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
-                <p className="type-caption--framework-leading type-strong text-neutral-800 uppercase">
+                <p className="type-caption--framework-leading type-strong text-surface-primary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes',
                     )}
@@ -106,19 +107,19 @@ export const GaugeVoterVotingTerminal: React.FC<
                     <div className="flex items-center gap-2">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="type-stat--voting-terminal text-neutral-800">
+                            <span className="type-stat--voting-terminal text-surface-primary">
                                 {displayVotingPower}
                             </span>
-                            <span className="type-caption--voting-terminal text-neutral-500">
+                            <span className="type-caption--voting-terminal text-surface-secondary">
                                 {tokenSymbol}
                             </span>
                         </div>
                     </div>
                     <div className="flex items-baseline gap-0.5">
-                        <span className="type-stat--voting-terminal text-neutral-800">
+                        <span className="type-stat--voting-terminal text-surface-primary">
                             {formattedUsagePercentage}
                         </span>
-                        <span className="type-caption--voting-terminal text-neutral-500">
+                        <span className="type-caption--voting-terminal text-surface-secondary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.used',
                             )}
@@ -170,7 +171,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                 )}
                 {!showVoteButton && isVotingPeriod && (
                     <>
-                        <span className="type-supporting--compact-detail text-neutral-500">
+                        <span className="type-supporting--compact-detail text-surface-secondary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft',
                                 { count: daysLeftToVote },

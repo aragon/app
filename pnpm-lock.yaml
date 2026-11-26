@@ -407,9 +407,6 @@ importers:
       '@changesets/cli':
         specifier: 'catalog:'
         version: 3.0.3
-      ajv:
-        specifier: 'catalog:'
-        version: 8.20.0
       husky:
         specifier: 'catalog:'
         version: 9.1.7
@@ -458,9 +455,6 @@ importers:
       '@floating-ui/react':
         specifier: ^0.27.20
         version: 0.27.20(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@fontsource/sora':
-        specifier: 'catalog:'
-        version: 5.3.0
       '@number-flow/react':
         specifier: ^0.6.2
         version: 0.6.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -533,9 +527,6 @@ importers:
       import-in-the-middle:
         specifier: ^3.6.0
         version: 3.6.0
-      inter-ui:
-        specifier: 'catalog:'
-        version: 4.1.1
       isomorphic-dompurify:
         specifier: ^4.7.0
         version: 4.7.0(supports-color@8.1.1)

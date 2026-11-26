@@ -58,9 +58,10 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
-                'border-neutral-100 bg-neutral-50': isDisabled,
+                'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}
             key={address}
             {...otherProps}
@@ -74,15 +75,15 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                 >
                     <div className="flex flex-col gap-y-1">
                         <div className="flex gap-2 type-title-item">
-                            <p className="truncate text-neutral-800">
+                            <p className="truncate text-surface-primary">
                                 {daoUtils.getPluginName(process)}
                             </p>
-                            <p className="text-right text-neutral-500 uppercase">
+                            <p className="text-right text-surface-secondary uppercase">
                                 {slug}
                             </p>
                         </div>
                         {processDescription && (
-                            <p className="line-clamp-2 type-body-compact text-neutral-500">
+                            <p className="line-clamp-2 type-body-compact text-surface-secondary">
                                 {processDescription}
                             </p>
                         )}
@@ -90,7 +91,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="type-supporting--framework-leading text-neutral-300">
+                    <div className="type-supporting--framework-leading text-surface-tertiary-hint">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link
                             href={daoUtils.getDaoUrl(

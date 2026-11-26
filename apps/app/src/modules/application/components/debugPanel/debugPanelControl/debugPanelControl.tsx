@@ -10,7 +10,7 @@ import type { IDebugPanelControlProps } from './debugPanelControl.api';
 export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     const { control } = props;
 
-    const { type, name, label, description, options, onChange } = control;
+    const { type, name, label, options, onChange } = control;
 
     const { values, updateValue } = useDebugContext();
 
@@ -38,7 +38,6 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     if (type === 'select') {
         return (
             <RadioGroup
-                helpText={description}
                 label={label}
                 onValueChange={(value) =>
                     handleValueChange(name, value, onChange)

@@ -70,11 +70,11 @@ export const WalletConnectActionDialogListener: React.FC<
             <Dialog.Content className="flex flex-col gap-4 py-4 md:gap-6 md:pt-6">
                 <div className="flex flex-col gap-2 md:gap-3">
                     <Avatar size="md" src={icons[0]} />
-                    <Heading as="h3" typeRole="title-group">
+                    <Heading as="h3" typeClassName="type-title-group">
                         {name}
                     </Heading>
                     <div className="flex flex-row gap-3">
-                        <p className="type-supporting--detail-value text-primary-400">
+                        <p className="type-supporting--detail-value text-accent-primary">
                             {t(
                                 'app.governance.walletConnectActionDialog.listener.progress',
                             )}
@@ -82,15 +82,15 @@ export const WalletConnectActionDialogListener: React.FC<
                         <Spinner size="md" variant="primary" />
                     </div>
                 </div>
-                <div className="h-[1px] w-full bg-neutral-100" />
+                <div className="h-[1px] w-full bg-surface-tertiary" />
                 <div className="flex flex-col gap-3 md:gap-4">
-                    <p className="type-body--unstepped text-balance text-neutral-500">
+                    <p className="type-body--unstepped text-balance text-surface-secondary">
                         <span>
                             {t(
                                 'app.governance.walletConnectActionDialog.listener.info_1',
                             )}
                         </span>
-                        <span className="text-primary-400">{name} </span>
+                        <span className="text-accent-primary">{name} </span>
                         <span>
                             {t(
                                 'app.governance.walletConnectActionDialog.listener.info_2',

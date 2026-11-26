@@ -57,7 +57,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b from-neutral-0 to-neutral-50 pt-6 group-has-[[data-app-sidebar]]/app:bg-none md:pt-10',
+                'bg-gradient-to-b from-(--guk-gradient-surface-secondary) to-(--guk-gradient-surface-primary) pt-6 group-has-[[data-app-sidebar]]/app:bg-none md:pt-10',
                 className,
             )}
             {...otherProps}
@@ -69,7 +69,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col gap-6">
                         <div className="flex flex-col gap-y-2 md:gap-y-3">
-                            <Heading as="h1" typeRole="title-page">
+                            <Heading as="h1" typeClassName="type-title-page">
                                 {title != null &&
                                 addressUtils.isAddress(title) ? (
                                     <AddressOutput
@@ -88,7 +88,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     buttonLabelOpened={t(
                                         'app.shared.page.header.readLess',
                                     )}
-                                    className="type-body--framework-leading text-neutral-500"
+                                    className="type-body--framework-leading text-surface-secondary"
                                     collapsedLines={2}
                                 >
                                     {description}

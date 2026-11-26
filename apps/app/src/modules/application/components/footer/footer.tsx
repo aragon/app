@@ -14,7 +14,7 @@ import { footerLinks } from './footerLinks';
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
 const linkClassNames =
-    'truncate border-neutral-100 border-b py-4 type-control text-neutral-500 last:border-none md:border-none md:py-0';
+    'truncate border-b py-4 type-control last:border-none md:border-none md:py-0 border-surface-secondary text-surface-secondary';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
@@ -36,7 +36,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     return (
         <footer
             className={classNames(
-                'border-t border-neutral-100 bg-neutral-0 py-5',
+                'border-t border-surface-secondary bg-surface-primary py-5',
                 className,
             )}
             {...otherProps}
@@ -49,7 +49,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
             >
                 <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <div className="flex items-center gap-2.5">
-                        <p className="type-supporting text-nowrap text-neutral-800">
+                        <p className="type-supporting text-nowrap text-surface-primary">
                             {t('app.application.footer.governed')}
                         </p>
                         <AragonLogo size="sm" />
@@ -72,7 +72,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         </Link>
                     ))}
                 </div>
-                <p className="truncate pt-6 pb-3 type-caption--footnote text-neutral-500 [grid-area:copyright] md:py-0 lg:justify-self-end">
+                <p className="truncate pt-6 pb-3 type-caption--footnote text-surface-secondary [grid-area:copyright] md:py-0 lg:justify-self-end">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

@@ -2,8 +2,8 @@
 
 /*
  * The prose container for authored markdown: each part takes the typography role of its purpose (h1 title-page ... h4
- * title-item, h5 supporting, h6 caption, paragraphs body-compact), through markdown exceptions that keep today's
- * rendering (the typography plugin's heading weights, Tailwind's default line heights) until the Next preview.
+ * title-item, h5 supporting, h6 caption, paragraphs body-compact), through markdown exceptions that keep the
+ * typography plugin's heading weights and Tailwind's default line heights.
  */
 
 @utility prose {
@@ -39,12 +39,17 @@
         @apply text-primary-400 hover:text-primary-600 active:text-primary-800 no-underline;
     }
 
-    strong {
-        @apply type-body-compact--markdown type-strong text-neutral-500;
-    }
-
+    /* Inline emphasis takes the paragraph's size and line height only: its weight stays the plugin's or the parent's. */
+    strong,
     em {
-        @apply type-body-compact--markdown text-neutral-500;
+        @apply text-neutral-500;
+        font-size: var(--guk-type-font-size-body-compact--markdown);
+        line-height: var(--guk-type-line-height-body-compact--markdown);
+
+        @variant md {
+            font-size: var(--guk-type-md-font-size-body-compact--markdown);
+            line-height: var(--guk-type-md-line-height-body-compact--markdown);
+        }
     }
 
     blockquote p {

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace assets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+      <div class="app-container page-content">
+        <main class="page-main page-main--titled">
+          <header class="page-main__header">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Assets</x-import>
+          </header>
+          <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+            <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{s0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s0.name}}" symbol="{{s0.symbol}}" amount="{{s0.amount}}" fiat-price="{{s0.price}}" hide-value="{{no}}" logo-src="{{s0.logo}}" href="{{s0.href}}" target="_blank"></x-import></sc-if>
+<sc-if value="{{s1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s1.name}}" symbol="{{s1.symbol}}" amount="{{s1.amount}}" fiat-price="{{s1.price}}" hide-value="{{no}}" logo-src="{{s1.logo}}" href="{{s1.href}}" target="_blank"></x-import></sc-if>
+<sc-if value="{{s2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s2.name}}" symbol="{{s2.symbol}}" amount="{{s2.amount}}" fiat-price="{{s2.price}}" hide-value="{{no}}" logo-src="{{s2.logo}}" href="{{s2.href}}" target="_blank"></x-import></sc-if>
+<sc-if value="{{s3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s3.name}}" symbol="{{s3.symbol}}" amount="{{s3.amount}}" fiat-price="{{s3.price}}" hide-value="{{no}}" logo-src="{{s3.logo}}" href="{{s3.href}}" target="_blank"></x-import></sc-if>
+<sc-if value="{{s4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s4.name}}" symbol="{{s4.symbol}}" amount="{{s4.amount}}" fiat-price="{{s4.price}}" hide-value="{{no}}" logo-src="{{s4.logo}}" href="{{s4.href}}" target="_blank"></x-import></sc-if>
+<sc-if value="{{s5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{s5.name}}" symbol="{{s5.symbol}}" amount="{{s5.amount}}" fiat-price="{{s5.price}}" hide-value="{{no}}" logo-src="{{s5.logo}}" href="{{s5.href}}" target="_blank"></x-import></sc-if>
+</x-import>
+            <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+          </x-import>
+        </main>
+
+        <aside class="page-aside">
+          <sc-if value="{{isAll}}" hint-placeholder-val="{{true}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All assets</x-import>
+            </div>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.value}}</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.tokens}}</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isDao}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.value}}</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.tokens}}</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-links">
+              <sc-for list="{{aside.links}}" as="l" hint-placeholder-count="3">
+              <x-import component-from-global-scope="GovUiKit.Link" href="{{l.href}}" is-external="{{yes}}" show-url="{{yes}}" children="{{l.label}}"></x-import>
+              </sc-for>
+            </div>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+          <sc-if value="{{isSafe}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+            <div class="aside-card__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.name}}</x-import>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">{{aside.desc}}</x-import>
+            <div class="stat-grid">
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.value}}</x-import>
+                <p class="stat-card__label">Total value (USD)</p>
+              </div>
+              <div class="stat-card">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{aside.tokens}}</x-import>
+                <p class="stat-card__label">Unique tokens</p>
+              </div>
+            </div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+              <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain" children="Ethereum"></x-import></div>
+              <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="{{aside.address}}" link="{{aside.addressLink}}" children="{{aside.address}}"></x-import>
+            </x-import>
+            <div class="aside-octav">
+              <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="{{aside.octav}}" target="_blank" class-name="w-full">View on Octav</x-import>
+              <p class="aside-octav__text">Octav provides advanced treasury analytics.</p>
+            </div>
+          </x-import>
+          </sc-if>
+        </aside>
+      </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":"text","default":"all"},"$preview":{"width":1440,"height":900}}'>
+// Workspace assets (apps/app: modules/workspace/pages/workspaceAssetsPage, components workspaceAssetList, workspaceAssetsAsideCard
+// (All / DAO / Safe cards) and workspaceSafeAsideCard). PART of the workspace prototype. Props: onNav(target), wallet, onConnect (not needed
+// here), scope: 'all' or an account id (meridian | atlas | northstar | safe). The app has no filter on this page itself: the account
+// is the one the workspace's account selector set, so the list, the totals and the aside card follow `scope`.
+// Balances are the sums over the four accounts of design/baseline-check/data.cjs (Meridian DAO, Atlas Grants Council), data-spp.cjs
+// (Northstar Protocol) and the Northstar Council Safe of SafeFlowPage (42.5 ETH, 185K USDC, 750K NSP), same prices. The list is sorted by
+// value, as the app's list is. The rows are six fixed slots (one per token), each in its own <sc-if> at the start of the line: a false
+// <sc-if> renders nothing, so the kit's pagination counts only the rows shown.
+const TOKENS = {
+  USDC: { name: 'USD Coin', price: 1, logo: 'assets/mock/token/usdc.svg', addr: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48' },
+  ETH: { name: 'Ether', price: 3148.62, logo: 'assets/mock/token/eth.svg', addr: '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' },
+  MRD: { name: 'Meridian', price: 0.84, logo: 'assets/mock/token/mrd.svg', addr: '0xc6cf3058f8fd5eb7074109b3b531364a4af59dae' },
+  WETH: { name: 'Wrapped Ether', price: 3148.62, logo: 'assets/mock/token/weth.svg', addr: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2' },
+  DAI: { name: 'Dai Stablecoin', price: 0.9998, logo: 'assets/mock/token/dai.svg', addr: '0x6b175474e89094c44da98b954eedeac495271d0f' },
+  NSP: { name: 'Northstar', price: 0.42, logo: 'assets/mock/token/nsp.svg', addr: '0x384915d45e1807d6d3875540263d2801b9309e70' },
+};
+const BALANCES = {
+  meridian: { USDC: 1852340.55, ETH: 418.274, MRD: 1100000, WETH: 152.5, DAI: 231420.18 },
+  atlas: { USDC: 412880.15, DAI: 120000, ETH: 25.32 },
+  northstar: { USDC: 2415380.42, NSP: 8500000, ETH: 612.48, DAI: 384210.07 },
+  safe: { ETH: 42.5, USDC: 185000, NSP: 750000 },
+};
+const ACCOUNTS = {
+  meridian: {
+    name: 'Meridian DAO', address: '0xc8c322384903ee8f11f511b71d0504237886bcde',
+    desc: 'Meridian is a community-owned protocol for cross-chain liquidity routing. MRD holders steer the treasury, fund public goods across the ecosystem and set the protocol roadmap through open, on-chain governance.',
+    links: [{ label: 'Website', href: 'https://meridian.xyz' }, { label: 'Forum', href: 'https://forum.meridian.xyz' }, { label: 'X', href: 'https://x.com/meridianproto' }, { label: 'Discord', href: 'https://discord.gg/meridian' }],
+  },
+  atlas: {
+    name: 'Atlas Grants Council', address: '0x31154ff59ea91264c4fd75aba7d8a2fc5a69d368',
+    desc: 'The Atlas Grants Council reviews and funds open-source tooling, research and community initiatives. Grants are approved by a 3-of-5 elected council.',
+    links: [{ label: 'Website', href: 'https://atlasgrants.org' }, { label: 'Apply for a grant', href: 'https://atlasgrants.org/apply' }],
+  },
+  northstar: {
+    name: 'Northstar Protocol', address: '0xa767846912853e30403f3efb946a5250e8e6a063',
+    desc: 'Northstar is an intent-based settlement layer for cross-rollup swaps. NSP holders, an elected council and the core team govern upgrades, the fee switch and the ecosystem treasury through a two-stage process with a community veto.',
+    links: [{ label: 'Website', href: 'https://northstar.fi' }, { label: 'Forum', href: 'https://forum.northstar.fi' }, { label: 'Docs', href: 'https://docs.northstar.fi' }, { label: 'X', href: 'https://x.com/northstar_fi' }],
+  },
+  safe: {
+    name: 'Northstar Council Safe', address: '0x515feC2E8F6553948b1D57C14c1243a1405C02e2',
+    desc: 'The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.',
+    links: [],
+  },
+};
+class Component extends DCLogic {
+  // Links to other pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (this.props.onNav) this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const kit = window.GovUiKit;
+    const scope = BALANCES[this.props.scope] ? this.props.scope : 'all';
+    const ids = scope === 'all' ? Object.keys(BALANCES) : [scope];
+    const sum = {};
+    ids.forEach((id) => Object.keys(BALANCES[id]).forEach((sym) => { sum[sym] = (sum[sym] || 0) + BALANCES[id][sym]; }));
+    const rows = Object.keys(sum)
+      .map((sym) => ({ sym, usd: sum[sym] * TOKENS[sym].price }))
+      .sort((a, b) => b.usd - a.usd)
+      .map((r) => ({ name: TOKENS[r.sym].name, symbol: r.sym, amount: sum[r.sym], price: TOKENS[r.sym].price, logo: TOKENS[r.sym].logo, href: 'https://etherscan.io/token/' + TOKENS[r.sym].addr }));
+    const total = rows.reduce((s, r) => s + r.amount * r.price, 0);
+    const acc = ACCOUNTS[scope];
+    const aside = {
+      value: kit.formatterUtils.formatNumber(total, { format: kit.NumberFormat.FIAT_TOTAL_SHORT }) ?? '-',
+      tokens: String(rows.length),
+      name: acc ? acc.name : 'All assets',
+      desc: acc ? acc.desc : '',
+      address: acc ? acc.address : '',
+      links: acc ? acc.links : [],
+      octav: acc ? 'https://pro.octav.fi/?addresses=' + acc.address : '',
+      addressLink: acc ? { href: scope === 'safe' ? 'https://app.safe.global/home?safe=eth:' + acc.address : 'https://etherscan.io/address/' + acc.address, isExternal: true, isOnchainEntity: true } : undefined,
+    };
+    return {
+      yes: true, no: false, two: 2, click: this.click,
+      count: rows.length, pageSize: 20,
+      s0: rows[0], s1: rows[1], s2: rows[2], s3: rows[3], s4: rows[4], s5: rows[5],
+      isAll: scope === 'all', isDao: !!acc && scope !== 'safe', isSafe: scope === 'safe',
+      aside,
+    };
+  }
+}
+</script>
+</body>
+</html>

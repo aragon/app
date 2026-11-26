@@ -18,7 +18,7 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import {
     defaultWorkspaceName,
     type IWorkspace,
-    useGetOrCreateDefaultWorkspace,
+    useCreateDefaultWorkspace,
     useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
@@ -109,13 +109,13 @@ export const WorkspaceGateAccountPrompt: React.FC<
         mutate: createDefaultWorkspace,
         isPending: isCreating,
         error: createError,
-    } = useGetOrCreateDefaultWorkspace({
+    } = useCreateDefaultWorkspace({
         onSuccess: handleDefaultWorkspaceCreated,
     });
 
     const handleConfirm = () => {
         if (activeId === pendingDefaultWorkspaceId) {
-            createDefaultWorkspace();
+            createDefaultWorkspace([]);
         } else if (activeId != null) {
             openInWorkspace(activeId);
         }
@@ -135,10 +135,13 @@ export const WorkspaceGateAccountPrompt: React.FC<
         <div className="flex grow items-center justify-center px-4 py-10">
             <Card className="flex w-full max-w-[480px] flex-col gap-6 p-6 md:p-8">
                 <div className="flex flex-col gap-1 md:gap-2">
-                    <Heading as="h1" typeRole="title-page--gate-prompt">
+                    <Heading
+                        as="h1"
+                        typeClassName="type-title-page--gate-prompt"
+                    >
                         {t('app.workspace.workspaceGateAccountPrompt.heading')}
                     </Heading>
-                    <p className="type-supporting text-neutral-500">
+                    <p className="type-supporting text-surface-secondary">
                         {t(
                             'app.workspace.workspaceGateAccountPrompt.description',
                             { account: accountLabel },

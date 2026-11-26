@@ -5,6 +5,10 @@ export type {
     IWorkspaceAccountRef,
 } from './workspaceAccountInfo';
 export type {
+    IWorkspaceAccountSuggestion,
+    IWorkspaceAccountSuggestionListResponse,
+} from './workspaceAccountSuggestion';
+export type {
     IWorkspaceAsset,
     IWorkspaceAssetAllocation,
 } from './workspaceAsset';

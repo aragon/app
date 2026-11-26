@@ -48,7 +48,7 @@ export const StateSkeletonBar = forwardRef<HTMLDivElement, IStateSkeletonBarProp
     const { className, responsiveSize, size = 'md', style, width = 160, ...otherProps } = props;
 
     const classes = classNames(
-        'animate-pulse rounded-full bg-neutral-50',
+        'animate-pulse rounded-full bg-surface-secondary',
         responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
         className,
     );

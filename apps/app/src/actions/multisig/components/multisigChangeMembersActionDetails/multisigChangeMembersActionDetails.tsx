@@ -53,7 +53,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                 ))}
             </div>
             <div>
-                <Heading as="h3" typeRole="title-group">
+                <Heading as="h3" typeClassName="type-title-group">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.summary',
                     )}
@@ -70,7 +70,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                                   )
                         }
                     >
-                        <p className="text-neutral-500">
+                        <p className="text-surface-secondary">
                             {t(
                                 isAddMembers
                                     ? 'app.actions.multisig.multisigChangeMembersActionDetails.addedCount'
@@ -84,7 +84,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                             'app.actions.multisig.multisigChangeMembersActionDetails.existingMembers',
                         )}
                     >
-                        <p className="text-neutral-500">
+                        <p className="text-surface-secondary">
                             {t(
                                 'app.actions.multisig.multisigChangeMembersActionDetails.existingCount',
                                 {
@@ -94,7 +94,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                         </p>
                     </DefinitionList.Item>
                 </DefinitionList.Container>
-                <p className="type-supporting--compact-detail text-neutral-500">
+                <p className="type-supporting--compact-detail text-surface-secondary">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.blockNote',
                     )}

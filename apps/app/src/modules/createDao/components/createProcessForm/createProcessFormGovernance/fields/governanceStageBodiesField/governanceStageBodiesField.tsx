@@ -112,7 +112,7 @@ export const GovernanceStageBodiesField: React.FC<
         >
             {bodiesMerged.length === 0 && (
                 <CardEmptyState
-                    className="border border-neutral-100"
+                    className="border border-surface-secondary"
                     description={t(
                         'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description',
                     )}

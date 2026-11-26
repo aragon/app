@@ -37,7 +37,7 @@ export const DialogFooter: React.FC<IDialogFooterProps> = (props) => {
     const { label: secondaryLabel, ...secondaryButtonProps } = secondaryAction ?? {};
 
     const footerClassNames = classNames(
-        'flex flex-col rounded-b-xl px-4 pt-3 pb-4 backdrop-blur-md gradient-neutral-50-transparent-to-t md:px-6 md:pb-6',
+        'flex flex-col rounded-b-xl px-4 pt-3 pb-4 backdrop-blur-md gradient-surface-primary-to-t md:px-6 md:pb-6',
     );
 
     const actionsClassNames = classNames(

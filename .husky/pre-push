@@ -1,5 +1,17 @@
 #!/bin/sh
 
+set -e
+
+kit_changed=false
+if ! git diff --quiet origin/main...HEAD -- packages/gov-ui-kit; then
+    kit_changed=true
+fi
+
 # Stage 2: Full parallel checks with caching
 echo "⚡ Running full checks with Turbo (parallel + cached)..."
 pnpm turbo lint type-check test:changed
+
+if [ "$kit_changed" = true ]; then
+    node packages/gov-ui-kit/design-system/component-registry/registry.mjs check
+    node packages/gov-ui-kit/design-system/component-registry/selection-guide.mjs check
+fi

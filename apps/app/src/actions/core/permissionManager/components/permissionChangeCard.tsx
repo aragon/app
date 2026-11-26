@@ -42,8 +42,8 @@ export const PermissionChangeCard: React.FC<IPermissionChangeCardProps> = (
     const isKnownOperation = isKnownPermissionOperation(operation);
 
     return (
-        <li className="flex flex-col gap-3 rounded-xl border border-neutral-100 px-4 pt-4 pb-1 md:px-6 md:pt-6 md:pb-2">
-            <Heading as="h4" typeRole="title-item">
+        <li className="flex flex-col gap-3 rounded-xl border border-surface-secondary px-4 pt-4 pb-1 md:px-6 md:pt-6 md:pb-2">
+            <Heading as="h4" typeClassName="type-title-item">
                 {isKnownOperation
                     ? t(
                           `app.actions.core.permissionManager.operation.${permissionOperationLabelKeys[operation]}`,

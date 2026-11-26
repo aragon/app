@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wizard progress</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div class="wizard-progress">
+  <div class="wizard-progress__row">
+    <div class="wizard-progress__label">
+      <span class="wizard-progress__step">Step {{step}}</span>
+      <span class="wizard-progress__muted">of {{total}}</span>
+    </div>
+    <sc-if value="{{hasNext}}" hint-placeholder-val="{{yes}}">
+      <div class="wizard-progress__label">
+        <span class="wizard-progress__muted">Next:</span>
+        <span class="wizard-progress__next">{{nextStep}}</span>
+      </div>
+    </sc-if>
+  </div>
+  <x-import component-from-global-scope="GovUiKit.Progress" size="sm" value="{{value}}" variant="primary"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"step":{"editor":"int","default":1,"min":1},"total":{"editor":"int","default":2,"min":1},"nextStep":{"editor":null},"$preview":{"width":800,"height":36}}'>
+// Progress head of a full-page wizard (apps/app: shared/components/wizards/wizardPage/wizardPageContainer/
+// wizardPageContainerProgress.tsx). First child of `.wizard-form`, followed by the `.wizard-step`:
+//   <dc-import name="WizardProgress" step="{{one}}" total="{{two}}" next-step="Describe your DAO" hint-size="100%,36px"></dc-import>
+// Props:
+//   step      number of the active step, 1-based (a number: pass it through a hole).
+//   total     number of steps (a number).
+//   nextStep  name of the next step; on the last step the wizard's `finalStep` (e.g. "Publish DAO"). Leave it unset
+//             to hide the "Next:" label (a wizard without finalStep, on its last step).
+class Component extends DCLogic {
+  renderVals() {
+    const step = Number(this.props.step ?? 1);
+    const total = Number(this.props.total ?? 2);
+    return {
+      yes: true,
+      step,
+      total,
+      hasNext: this.props.nextStep != null && this.props.nextStep !== '',
+      nextStep: this.props.nextStep,
+      value: (step * 100) / total
+    };
+  }
+}
+</script>
+</body>
+</html>

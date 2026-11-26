@@ -290,7 +290,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                         >
                             {metadataStatus ===
                                 ProposalMetadataStatus.NON_STANDARD && (
-                                <code className="mt-2 block rounded-lg bg-neutral-50 px-4 py-3 type-body-compact--component-note type-mono break-all text-neutral-800">
+                                <code className="mt-2 block rounded-lg bg-surface-secondary px-4 py-3 type-body-compact--component-note type-mono break-all text-surface-primary">
                                     {proposal.metadataUri}
                                 </code>
                             )}
@@ -396,7 +396,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                     'app.governance.daoProposalDetailsPage.aside.details.onChainId',
                                 )}
                             >
-                                <p className="truncate text-neutral-500">
+                                <p className="truncate text-surface-secondary">
                                     {proposal.proposalIndex}
                                 </p>
                             </DefinitionList.Item>
@@ -405,7 +405,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                     'app.governance.daoProposalDetailsPage.aside.details.id',
                                 )}
                             >
-                                <p className="truncate text-neutral-500">
+                                <p className="truncate text-surface-secondary">
                                     {proposalSlug.toUpperCase()}
                                 </p>
                             </DefinitionList.Item>

@@ -1,5 +1,5 @@
 import { IconType } from '@aragon/gov-ui-kit';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { TransactionReceipt } from 'viem';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -63,6 +63,56 @@ describe('<TransactionDialogFooter /> component', () => {
         );
         expect(close).toHaveBeenCalled();
         expect(onCancelClick).toHaveBeenCalled();
+    });
+
+    it('closes only its own dialog when given a dialog id', async () => {
+        const close = jest.fn();
+        const onClick = jest.fn();
+        const txReceipt = { from: '0x123' } as unknown as TransactionReceipt;
+        const activeStep = {
+            id: TransactionDialogStep.CONFIRM,
+            meta: { state: 'success' },
+        } as unknown as ITransactionDialogStep;
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+        const { rerender } = render(
+            createTestComponent({
+                dialogId: 'DIALOG',
+                txReceipt,
+                activeStep,
+                successLink: { label: 'Continue', onClick },
+            }),
+        );
+        await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
+        expect(close).toHaveBeenCalledWith('DIALOG');
+        expect(onClick).toHaveBeenCalledWith(txReceipt);
+
+        close.mockClear();
+        rerender(createTestComponent({ dialogId: 'DIALOG' }));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            }),
+        );
+        expect(close).toHaveBeenCalledWith('DIALOG');
+    });
+
+    it('closes all dialogs on success when no dialog id is given', async () => {
+        const close = jest.fn();
+        const activeStep = {
+            id: TransactionDialogStep.CONFIRM,
+            meta: { state: 'success' },
+        } as unknown as ITransactionDialogStep;
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+
+        render(
+            createTestComponent({
+                activeStep,
+                successLink: { label: 'Continue', onClick: jest.fn() },
+            }),
+        );
+        await userEvent.click(screen.getByRole('button', { name: 'Continue' }));
+        expect(close).toHaveBeenCalledWith(undefined);
     });
 
     it('uses receipt-free custom completion without closing the dialog', async () => {
@@ -419,6 +469,41 @@ describe('<TransactionDialogFooter /> component', () => {
                 name: /transactionDialog.footer.proceedAnyway/,
             });
             expect(proceedButton).toHaveAttribute('href', indexingFallbackUrl);
+        });
+
+        it('runs the proceed-anyway callback with the receipt instead of navigating', () => {
+            const close = jest.fn();
+            const onProceedAnyway = jest.fn();
+            const txReceipt = {
+                from: '0x123',
+            } as unknown as TransactionReceipt;
+            useDialogContextSpy.mockReturnValue(
+                generateDialogContext({ close }),
+            );
+            const activeStep = {
+                id: TransactionDialogStep.INDEXING,
+                meta: { state: 'pending' },
+            } as ITransactionDialogStep;
+
+            render(
+                createTestComponent({
+                    activeStep,
+                    dialogId: 'DIALOG',
+                    txReceipt,
+                    onProceedAnyway,
+                    indexingFallbackUrl: '/proposals',
+                }),
+            );
+            act(() => jest.advanceTimersByTime(14_000));
+
+            const proceed = screen.getByRole('button', {
+                name: /transactionDialog.footer.proceedAnyway/,
+            });
+            expect(proceed).not.toHaveAttribute('href');
+            fireEvent.click(proceed);
+
+            expect(close).toHaveBeenCalledWith('DIALOG');
+            expect(onProceedAnyway).toHaveBeenCalledWith(txReceipt);
         });
     });
 });

@@ -40,11 +40,11 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
         >
             <div className="flex flex-col gap-y-3">
                 <Title asChild={true}>
-                    <Heading as="h3" typeRole="title-group">
+                    <Heading as="h3" typeClassName="type-title-group">
                         {title}
                     </Heading>
                 </Title>
-                <Description className="type-body--unstepped text-neutral-500">
+                <Description className="type-body--unstepped text-surface-secondary">
                     {description}
                 </Description>
                 {infoLink && (
@@ -58,13 +58,13 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                     // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
                     <div className="flex items-center gap-x-6 py-4" key={index}>
                         <IllustrationObject
-                            className="size-16 rounded-full border border-neutral-100"
+                            className="size-16 rounded-full border border-surface-secondary"
                             object={step.icon}
                         />
-                        <p className="grow py-4 type-body--unstepped text-neutral-800">
+                        <p className="grow py-4 type-body--unstepped text-surface-primary">
                             {step.label}
                         </p>
-                        <p className="type-body--unstepped text-neutral-500">
+                        <p className="type-body--unstepped text-surface-secondary">
                             {t('app.shared.wizardDetailsDialog.step', {
                                 number: index + 1,
                             })}

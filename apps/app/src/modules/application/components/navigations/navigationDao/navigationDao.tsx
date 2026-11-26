@@ -131,13 +131,13 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             />
             <div className="flex min-w-0 flex-col gap-1.5">
                 <Tooltip content={daoDisplayName} triggerAsChild={true}>
-                    <p className="truncate type-control--dao-name text-neutral-800 sm:type-control--dao-name-wide">
+                    <p className="truncate type-control--dao-name text-surface-primary sm:type-control--dao-name-wide">
                         {daoDisplayName}
                     </p>
                 </Tooltip>
                 <AddressOutput
                     address={dao.address}
-                    className="w-full type-supporting--sm-step-label text-neutral-500 sm:type-supporting--sm-step-label-wide"
+                    className="w-full type-supporting--sm-step-label text-surface-secondary sm:type-supporting--sm-step-label-wide"
                     copy={false}
                     href={addressLink}
                     isExternal={true}

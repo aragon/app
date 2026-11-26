@@ -2,7 +2,8 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IDao, Network } from '@/shared/api/daoService';
-import { ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import { generateDialogContext, ReactQueryWrapper } from '@/shared/testUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
     type IWorkspace,
@@ -10,9 +11,8 @@ import {
     workspaceService,
 } from '../../api/workspaceService';
 import { WorkspaceAccountAvatar } from '../../components/workspaceAccountAvatar';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
 import * as useWorkspaceDaosModule from '../../hooks/useWorkspaceDaos';
-import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspaceAdminAccountsProps,
     WorkspaceAdminAccounts,
@@ -60,13 +60,17 @@ describe('<WorkspaceAdminAccounts /> component', () => {
         targets: [],
     };
 
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         getAccountsSpy.mockResolvedValue([]);
         removeWorkspaceAccountSpy.mockResolvedValue(workspace);
         useWorkspaceDaosSpy.mockReturnValue({ daos: {}, isPending: false });
     });
 
     afterEach(() => {
+        useDialogContextSpy.mockReset();
         getAccountsSpy.mockReset();
         removeWorkspaceAccountSpy.mockReset();
         useWorkspaceDaosSpy.mockReset();
@@ -94,20 +98,24 @@ describe('<WorkspaceAdminAccounts /> component', () => {
         expect(getMenuButtons()).toHaveLength(2);
     });
 
-    it('links the add account action to the accounts step of the edit wizard', () => {
+    it('opens the add accounts dialog for the workspace', async () => {
+        const openAddAccounts = jest.fn();
+        jest.spyOn(
+            useWorkspaceAddAccountsDialogModule,
+            'useWorkspaceAddAccountsDialog',
+        ).mockReturnValue(openAddAccounts);
         render(createTestComponent());
 
-        expect(
-            screen.getByRole('link', {
+        await userEvent.click(
+            screen.getByRole('button', {
                 name: /workspaceAdminPage.accounts.add/,
             }),
-        ).toHaveAttribute(
-            'href',
-            workspaceUtils.getWorkspaceEditUrl(
-                'demo',
-                WorkspaceWizardStep.ACCOUNTS,
-            ),
         );
+
+        expect(
+            useWorkspaceAddAccountsDialogModule.useWorkspaceAddAccountsDialog,
+        ).toHaveBeenCalledWith('demo');
+        expect(openAddAccounts).toHaveBeenCalled();
     });
 
     it('displays an empty state for a workspace without accounts', () => {

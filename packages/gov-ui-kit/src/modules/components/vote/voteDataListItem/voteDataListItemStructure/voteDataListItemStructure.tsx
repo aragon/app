@@ -95,7 +95,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                 size="sm"
             />
             <div className={centerInfoClassNames}>
-                <span className="flex items-center gap-x-1 type-title-item--framework-leading text-neutral-800 md:gap-x-1.5">
+                <span className="flex items-center gap-x-1 type-title-item--framework-leading text-surface-primary md:gap-x-1.5">
                     <AddressOutput address={voter.address} className="truncate" label={resolvedUserHandle} />
                     {isDelegate && !isCurrentUser && (
                         <Tag label={copy.voteDataListItemStructure.yourDelegate} variant="primary" />
@@ -103,13 +103,13 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                     {isCurrentUser && <Tag label={copy.voteDataListItemStructure.you} variant="neutral" />}
                 </span>
                 {isTokenVoting && (
-                    <span className="truncate type-supporting--framework-leading text-neutral-500">
+                    <span className="truncate type-supporting--framework-leading text-surface-secondary">
                         {formattedTokenVote}
                     </span>
                 )}
             </div>
 
-            <div className="flex items-center gap-x-1 type-supporting text-neutral-500 md:gap-x-2">
+            <div className="flex items-center gap-x-1 type-supporting text-surface-secondary md:gap-x-2">
                 <Tag
                     className="capitalize"
                     data-testid="tag"

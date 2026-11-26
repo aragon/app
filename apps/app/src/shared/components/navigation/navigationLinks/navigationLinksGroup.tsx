@@ -31,7 +31,7 @@ export const NavigationLinksGroup: React.FC<INavigationLinksGroupProps> = (
     return (
         <div className="flex flex-col gap-1" {...otherProps}>
             {label != null && (
-                <p className="truncate px-4 py-1 type-supporting--compact-meta text-neutral-500">
+                <p className="truncate px-4 py-1 type-supporting--compact-meta text-surface-secondary">
                     {label}
                 </p>
             )}

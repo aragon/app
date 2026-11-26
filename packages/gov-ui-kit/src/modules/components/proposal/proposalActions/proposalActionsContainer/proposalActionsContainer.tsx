@@ -39,7 +39,7 @@ export const ProposalActionsContainer: React.FC<IProposalActionsContainerProps> 
         >
             {actionsCount === 0 && (
                 <CardEmptyState
-                    className="border border-neutral-100"
+                    className="border border-surface-secondary"
                     description={emptyStateDescription}
                     heading={copy.proposalActionsContainer.emptyHeader}
                     isStacked={false}

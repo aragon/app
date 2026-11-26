@@ -1,6 +1,6 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
-
+import { addressUtils, ensUtils } from '@aragon/gov-ui-kit';
 import { getAddress } from 'viem';
+import { normalize } from 'viem/ens';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -13,9 +13,9 @@ import {
 import {
     type IWorkspaceAccount,
     WorkspaceAccountType,
+    WorkspaceRegistryScope,
 } from '../../api/workspaceService';
 import { WorkspaceAccountState } from '../../constants/workspaceAccountState';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
 import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 
 /**
@@ -154,11 +154,6 @@ export interface IWorkspaceSectionScope {
     subsection?: WorkspaceAccountSubsection;
 }
 
-/**
- * Query parameter opening the edit wizard of a workspace on a given step, e.g. `?step=ACCOUNTS`.
- */
-export const workspaceEditStepParam = 'step';
-
 class WorkspaceUtils {
     /**
      * Builds the ID of a workspace account, matching the backend `daoId` format for DAO accounts. The address is
@@ -203,6 +198,28 @@ class WorkspaceUtils {
     };
 
     /**
+     * Normalizes an ENS name (e.g. `Vitalik.ETH` to `vitalik.eth`).
+     * @returns The normalized name, or undefined when the value is not an ENS name.
+     */
+    normalizeEnsName = (value: string): string | undefined => {
+        try {
+            const name = normalize(value.trim());
+
+            return ensUtils.isEnsName(name) ? name : undefined;
+        } catch {
+            return undefined;
+        }
+    };
+
+    /**
+     * Prefixes `https://` to a URL typed without a protocol (e.g. `aragon.org`), which the resources input accepts
+     * but the workspace import validation rejects.
+     * @returns The URL with a protocol, unchanged when it already has one.
+     */
+    ensureUrlProtocol = (url: string): string =>
+        /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
+    /**
      * URL of a workspace.
      *
      * Takes the ID rather than the workspace itself so that callers holding only a route parameter — which is most
@@ -224,33 +241,6 @@ class WorkspaceUtils {
      */
     getWorkspaceAdminUrl = (workspaceId: string): string =>
         this.getWorkspaceUrl(workspaceId, 'admin');
-
-    /**
-     * URL of the edit wizard of a workspace.
-     * @param workspaceId - ID of the workspace.
-     * @param step - Optional step to open the wizard on, read back by `parseWorkspaceEditStep`.
-     * @returns The edit wizard URL.
-     */
-    getWorkspaceEditUrl = (
-        workspaceId: string,
-        step?: WorkspaceWizardStep,
-    ): string => {
-        const editUrl = this.getWorkspaceUrl(workspaceId, 'edit');
-
-        return step != null
-            ? `${editUrl}?${workspaceEditStepParam}=${step}`
-            : editUrl;
-    };
-
-    /**
-     * Step the edit wizard opens on, read from the step query parameter written by `getWorkspaceEditUrl`.
-     * @param stepParam - Value of the step query parameter, if any.
-     * @returns The step, or undefined to open the first step when the parameter names none.
-     */
-    parseWorkspaceEditStep = (
-        stepParam?: string | string[],
-    ): WorkspaceWizardStep | undefined =>
-        Object.values(WorkspaceWizardStep).find((step) => step === stepParam);
 
     /**
      * URL of a section of a workspace, scoped to one account.
@@ -445,6 +435,17 @@ class WorkspaceUtils {
 
         return `${slug}-${suffix.toString()}`;
     };
+
+    /**
+     * Returns the registry a workspace lives in. Demo IDs are never handed out to other workspaces, so the ID alone
+     * decides it.
+     * @param workspaceId - ID of the workspace, undefined outside a workspace route.
+     * @returns The demo registry for a demo workspace, the persistent one otherwise.
+     */
+    getRegistryScope = (workspaceId?: string): WorkspaceRegistryScope =>
+        workspaceId != null && Object.hasOwn(workspaceDemoFixture, workspaceId)
+            ? WorkspaceRegistryScope.DEMO
+            : WorkspaceRegistryScope.PERSISTENT;
 
     /**
      * Checks if two entries point to the same address on the same network.

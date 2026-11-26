@@ -1,147 +1,160 @@
-// DTCG 2025.10 plumbing of the token generator: loading, schema and alias validation, colour and value formatting.
-// Plain Node; the only dependency is Ajv (kit devDependency) for the published DTCG schema.
+// DTCG 2025.10 plumbing of the token generator: reading and validating token documents, formatting values as CSS.
+// Plain Node; the only dependency is Ajv, for the published DTCG schema.
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import Ajv from 'ajv';
 
-export const EXT = 'org.aragon.gov-ui-kit';
-
 export const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
 
-// ---------------------------------------------------------------------------------------------------------------
-// Schema validation
-// ---------------------------------------------------------------------------------------------------------------
+const isAlias = (value) => typeof value === 'string' && value.startsWith('{') && value.endsWith('}');
+const aliasTarget = (value) => value.slice(1, -1);
 
-// `schema/format.2025.10.json` is the unmodified published bundled schema (see ../../../design-system/tokens/README.md).
-// It uses conditional properties that do not satisfy Ajv's strict lint rules, and its only `format` keywords describe
-// schema URIs, which are asserted directly instead.
-export const createSchemaValidator = (schemaFile) => {
-    const schema = readJson(schemaFile);
-    const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
-    const validateFormat = ajv.compile(schema);
-    const valueSchemaId = (type) => `${schema.$id.replace(/format\.json$/, 'format/values/')}${type}.json`;
-    return {
-        id: schema.$id,
-        validateDocument(document, label) {
-            assert.equal(document.$schema, schema.$id, `${label}: DTCG schema version changed`);
-            assert(validateFormat(document), `${label}: ${ajv.errorsText(validateFormat.errors)}`);
-        },
-        // JSON Schema cannot inherit a group's $type, so every token's resolved value is validated against its own.
-        validateValue(type, value, label) {
-            const validate = ajv.getSchema(valueSchemaId(type));
-            assert(validate, `Unsupported token type: ${type} (${label})`);
-            assert(validate(value), `DTCG value ${label}: ${ajv.errorsText(validate.errors)}`);
-        },
-    };
-};
-
-// ---------------------------------------------------------------------------------------------------------------
-// Token collection and alias resolution
-// ---------------------------------------------------------------------------------------------------------------
-
-export const isAlias = (value) => typeof value === 'string' && value.startsWith('{') && value.endsWith('}');
-export const aliasTarget = (value) => value.slice(1, -1);
-
-// Path ("color.primary.50") -> { type, value } in document order. A group's $type is inherited.
-export const collectTokens = (group, inheritedType, prefix = '', entries = new Map()) => {
+// Path ("color.primary.50") -> { type, value, extensions } in document order. A group's $type is inherited.
+const collectTokens = (group, inheritedType, prefix = '', tokens = new Map()) => {
     const type = group.$type ?? inheritedType;
     if (Object.hasOwn(group, '$value')) {
         assert(type, `Missing type: ${prefix}`);
-        entries.set(prefix, { type, value: group.$value, extensions: group.$extensions?.[EXT] });
-        return entries;
+        tokens.set(prefix, { type, value: group.$value, extensions: group.$extensions?.['org.aragon.gov-ui-kit'] });
+        return tokens;
     }
     for (const [key, child] of Object.entries(group)) {
         if (!key.startsWith('$')) {
-            collectTokens(child, type, prefix ? `${prefix}.${key}` : key, entries);
+            collectTokens(child, type, prefix ? `${prefix}.${key}` : key, tokens);
         }
     }
-    return entries;
+    return tokens;
 };
 
-// One resolved view: shared sets plus one mode's document. Root groups of different documents must differ, so a path
-// means one token.
-export const mergeSets = (sets) => {
-    const merged = new Map();
-    for (const [label, entries] of Object.entries(sets)) {
-        for (const [path, entry] of entries) {
-            assert(!merged.has(path), `Token ${path} is defined twice (again in ${label})`);
-            merged.set(path, entry);
-        }
-    }
-    return merged;
-};
-
-export const resolveToken = (entries, path, chain = []) => {
+// Follows aliases to the token that holds a value.
+const resolveToken = (tokens, path, chain = []) => {
     assert(!chain.includes(path), `Alias cycle: ${[...chain, path].join(' -> ')}`);
-    const entry = entries.get(path);
-    assert(entry, `Missing alias target: ${path}`);
-    if (!isAlias(entry.value)) {
-        return entry;
+    const token = tokens.get(path);
+    assert(token, `Missing alias target: ${path} (from ${chain.at(-1)})`);
+    if (!isAlias(token.value)) {
+        return token;
     }
-    const targetPath = aliasTarget(entry.value);
-    const target = entries.get(targetPath);
-    assert(target, `Missing alias target: ${targetPath} (from ${path})`);
-    assert.equal(target.type, entry.type, `Alias type mismatch: ${path}`);
-    return resolveToken(entries, targetPath, [...chain, path]);
+    const resolved = resolveToken(tokens, aliasTarget(token.value), [...chain, path]);
+    assert.equal(resolved.type, token.type, `Alias type mismatch: ${path}`);
+    return resolved;
 };
 
-// ---------------------------------------------------------------------------------------------------------------
-// Value formatting
-// ---------------------------------------------------------------------------------------------------------------
-
-const formatNumber = (value) => {
-    assert(Number.isFinite(value), `Non-finite token number: ${value}`);
-    return String(value);
+const checkShadowLiterals = (value, path) => {
+    assert(!isAlias(value) && value?.$ref === undefined, `Unsupported shadow reference at ${path}`);
+    if (value !== null && typeof value === 'object') {
+        for (const [key, child] of Object.entries(value)) {
+            checkShadowLiterals(child, `${path}.${key}`);
+        }
+    }
 };
 
-const srgbBytes = (value) => {
-    assert.equal(value.colorSpace, 'srgb', 'Only sRGB colours are supported');
-    assert.equal(value.components.length, 3, 'sRGB colours require three components');
-    return value.components.map((component) => {
-        assert(
-            typeof component === 'number' && component >= 0 && component <= 1,
-            `Invalid sRGB component: ${component}`,
+// The type of each part of a typography value.
+const TYPOGRAPHY_PARTS = {
+    fontFamily: 'fontFamily',
+    fontSize: 'dimension',
+    fontWeight: 'fontWeight',
+    letterSpacing: 'dimension',
+    lineHeight: 'number',
+};
+
+// A typography token becomes one token per part (`<path>.fontSize`, …), so each part is aliased, validated, named and
+// placed like any other token. A whole-value alias becomes an alias of each part of its target.
+const expandComposites = (tokens) =>
+    new Map(
+        [...tokens].flatMap(([path, token]) =>
+            token.type === 'typography'
+                ? Object.entries(TYPOGRAPHY_PARTS).map(([part, type]) => [
+                      `${path}.${part}`,
+                      {
+                          type,
+                          value: isAlias(token.value) ? `{${aliasTarget(token.value)}.${part}}` : token.value[part],
+                      },
+                  ])
+                : [[path, token]],
+        ),
+    );
+
+// The tokens of a set of documents (path -> { type, value }), validated: each document against the published schema,
+// every alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. The
+// `documents` define each token once; the `overrides` are merged over them in order and may redefine any token. JSON
+// Schema cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not
+// satisfy Ajv's strict mode, and its only `format` keywords describe schema URIs.
+export const readTokens = (schema, documents, overrides = []) => {
+    const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
+    const validateDocument = ajv.compile(schema);
+    const merged = new Map();
+    for (const document of [...documents, ...overrides]) {
+        assert.equal(document.$schema, schema.$id, 'DTCG schema version changed');
+        assert(validateDocument(document), ajv.errorsText(validateDocument.errors));
+        for (const [path, token] of collectTokens(document)) {
+            assert(overrides.includes(document) || !merged.has(path), `Token defined twice: ${path}`);
+            merged.set(path, token);
+        }
+    }
+    const tokens = expandComposites(merged);
+    for (const [path, { type }] of tokens) {
+        const validateValue = ajv.getSchema(schema.$id.replace(/format\.json$/, `format/values/${type}.json`));
+        assert(validateValue, `Unsupported token type: ${type} (${path})`);
+        const { value } = resolveToken(tokens, path);
+        assert(validateValue(value), `DTCG value ${path}: ${ajv.errorsText(validateValue.errors)}`);
+        if (type === 'shadow') {
+            checkShadowLiterals(value, path);
+        }
+    }
+    return tokens;
+};
+
+// The 8-bit channels of a colour. sRGB with numeric components only.
+const srgbBytes = ({ colorSpace, components }) => {
+    assert.equal(colorSpace, 'srgb', 'Only sRGB colours are supported');
+    assert(
+        components.every((component) => typeof component === 'number'),
+        `Unsupported colour: ${components}`,
+    );
+    return components.map((component) => Math.round(component * 255));
+};
+const toHex = (bytes) => `#${bytes.map((byte) => byte.toString(16).padStart(2, '0')).join('')}`;
+const hexToComponents = (hex) => hex.match(/[0-9a-f]{2}/gi).map((pair) => Number.parseInt(pair, 16) / 255);
+
+// The document with every colour's `hex` written from its components. The hex is DTCG's optional readable form of
+// a colour; this source always carries it, so a colour can be read in the JSON and in a diff. A hex that disagrees
+// with its components is an ambiguous edit and fails.
+export const withColorHex = (node) => {
+    if (Array.isArray(node)) {
+        return node.map(withColorHex);
+    }
+    if (node === null || typeof node !== 'object') {
+        return node;
+    }
+    if (!Object.hasOwn(node, 'colorSpace')) {
+        return Object.fromEntries(Object.entries(node).map(([key, value]) => [key, withColorHex(value)]));
+    }
+    const { colorSpace, components, hex, ...rest } = node;
+    const expected = toHex(srgbBytes(node));
+    if (hex !== undefined && hex !== expected) {
+        throw new Error(
+            `Colour hex ${hex} does not match its components (${expected}): remove the hex to have it rewritten, or set the components to ${JSON.stringify(hexToComponents(hex))}`,
         );
-        return Math.round(component * 255);
-    });
+    }
+    return { colorSpace, components, hex: expected, ...rest };
 };
-const alphaOf = (value) => {
-    const alpha = value.alpha ?? 1;
-    assert(typeof alpha === 'number' && alpha >= 0 && alpha <= 1, `Invalid colour alpha: ${alpha}`);
-    return alpha;
-};
-const hex2 = (byte) => byte.toString(16).padStart(2, '0');
 
 // Hex, `rgba(r, g, b, a)` with an alpha, `transparent` for zero-alpha black.
-const colorToCss = (value) => {
-    const bytes = srgbBytes(value);
-    const alpha = alphaOf(value);
+const colorToCss = (color) => {
+    const bytes = srgbBytes(color);
+    const { alpha = 1 } = color;
     if (alpha === 0 && bytes.every((byte) => byte === 0)) {
         return 'transparent';
     }
-    if (alpha === 1) {
-        return `#${bytes.map(hex2).join('')}`;
-    }
-    return `rgba(${bytes.join(', ')}, ${formatNumber(alpha)})`;
+    return alpha === 1 ? toHex(bytes) : `rgba(${bytes.join(', ')}, ${alpha})`;
 };
 
-export const dimensionToCss = (value) => {
-    assert(
-        value && typeof value.value === 'number' && typeof value.unit === 'string',
-        `Invalid DTCG dimension: ${JSON.stringify(value)}`,
-    );
-    return `${formatNumber(value.value)}${value.unit}`;
-};
+const dimensionToCss = ({ value, unit }) => `${value}${unit}`;
 
-// CSS generic and system family names stay unquoted; any other family is a quoted name.
+// Generic and system families, and the two names the kit's stack has always left bare; any other family is quoted.
 const UNQUOTED_FONT_FAMILIES = new Set([
     'ui-sans-serif',
     'ui-monospace',
-    'SFMono-Regular',
-    'Menlo',
-    'Monaco',
-    'Consolas',
     'system-ui',
     '-apple-system',
     'BlinkMacSystemFont',
@@ -150,89 +163,49 @@ const UNQUOTED_FONT_FAMILIES = new Set([
     'sans-serif',
     'serif',
     'monospace',
-    'cursive',
-    'fantasy',
 ]);
-// Width of the existing font stack's lines (Biome does not reflow values; the first line is 124 columns), measured
-// without the 4 columns of the enclosing block.
-const FONT_WRAP = 120;
 
-// A font stack starts on its own line after the property and is wrapped greedily at that width; the app
-// artifact (`flat`) keeps the same break after the property but writes the stack on one line.
-const fontFamilyToCss = (value, name, flat) => {
-    assert(Array.isArray(value), `Invalid DTCG font family: ${JSON.stringify(value)}`);
-    const families = value.map((family) => {
-        assert.equal(typeof family, 'string', 'Font family names must be strings');
-        return UNQUOTED_FONT_FAMILIES.has(family) ? family : `"${family}"`;
-    });
-    if (flat) {
-        return `${name}:\n    ${families.join(', ')};`;
+const fontFamilyToCss = (value) =>
+    [value]
+        .flat()
+        .map((family) => (UNQUOTED_FONT_FAMILIES.has(family) ? family : `"${family}"`))
+        .join(', ');
+
+const shadowLayer = ({ offsetX, offsetY, blur, spread, color, inset }) =>
+    `${inset ? 'inset ' : ''}${[offsetX, offsetY, blur, spread].map(dimensionToCss).join(' ')} ${colorToCss(color)}`;
+
+// A number with a `ratio` extension is written as that division, the exact `calc()` Tailwind writes for its own line
+// heights: the rounded decimal renders a fraction of a pixel off.
+const numberToCss = (value, ratio) => {
+    if (ratio === undefined) {
+        return String(value);
     }
-    const lines = [];
-    let line = '';
-    families.forEach((family, index) => {
-        const piece = `${family}${index === families.length - 1 ? ';' : ','}`;
-        if (line !== '' && 4 + line.length + 1 + piece.length > FONT_WRAP) {
-            lines.push(line);
-            line = piece;
-        } else {
-            line = line === '' ? piece : `${line} ${piece}`;
-        }
-    });
-    lines.push(line);
-    return `${name}:\n${lines.map((l) => `    ${l}`).join('\n')}`;
+    assert.equal(ratio[0] / ratio[1], value, `The ratio ${ratio.join(' / ')} is not ${value}`);
+    return `calc(${ratio[0]} / ${ratio[1]})`;
 };
 
-const shadowLayer = (layer) =>
-    `${[layer.offsetX, layer.offsetY, layer.blur, layer.spread].map(dimensionToCss).join(' ')} ${colorToCss(layer.color)}`;
-
-// One declaration (`--name: value;`, possibly over several lines) of a primitive token.
-export const declaration = (name, entry, varOf, flat = false) => {
-    const { type, value } = entry;
-    if (isAlias(value)) {
-        return `${name}: var(${varOf(aliasTarget(value))});`;
-    }
+const valueToCss = ({ type, value, extensions }) => {
     switch (type) {
         case 'color':
-            return `${name}: ${colorToCss(value)};`;
+            return colorToCss(value);
         case 'dimension':
-            return `${name}: ${dimensionToCss(value)};`;
+            return dimensionToCss(value);
         case 'fontFamily':
-            return fontFamilyToCss(value, name, flat);
+            return fontFamilyToCss(value);
         case 'fontWeight':
-            return `${name}: ${formatNumber(value)};`;
-        case 'number': {
-            // A number DTCG can only hold rounded (a ratio such as Tailwind's 1.75 / 1.125) is written as the ratio,
-            // so CSS computes it exactly as Tailwind's own calc() does; the stored value must equal the ratio.
-            const ratio = entry.extensions?.ratio;
-            if (ratio != null) {
-                assert(
-                    Array.isArray(ratio) && ratio.length === 2 && ratio[0] / ratio[1] === value,
-                    `Token ratio ${JSON.stringify(ratio)} does not equal its value ${value}`,
-                );
-                return `${name}: calc(${formatNumber(ratio[0])} / ${formatNumber(ratio[1])});`;
-            }
-            return `${name}: ${formatNumber(value)};`;
-        }
-        case 'shadow': {
-            assert(Array.isArray(value), `Invalid DTCG shadow: ${JSON.stringify(value)}`);
-            const transparentNothing =
-                value.length === 1 &&
-                [value[0].offsetX, value[0].offsetY, value[0].blur, value[0].spread].every((d) => d.value === 0) &&
-                alphaOf(value[0].color) === 0 &&
-                value[0].color.components.every((component) => component === 0);
-            if (transparentNothing) {
-                return `${name}: 0px 0px #0000;`;
-            }
-            const layers = value.map(shadowLayer);
-            if (layers.length === 1) {
-                return `${name}: ${layers[0]};`;
-            }
-            return flat
-                ? `${name}:\n    ${layers.join(', ')};`
-                : `${name}:\n${layers.map((l, i) => `    ${l}${i === layers.length - 1 ? ';' : ','}`).join('\n')}`;
-        }
+            return String(value);
+        case 'number':
+            return numberToCss(value, extensions?.ratio);
+        case 'shadow':
+            return [value].flat().map(shadowLayer).join(', ');
         default:
             throw new Error(`Unsupported DTCG token type: ${type}`);
     }
 };
+
+// One declaration (`--name: value;`) of a token; an alias becomes a `var()` of its target (`varOf`: path -> name).
+export const declaration = (name, token, varOf) =>
+    `${name}: ${isAlias(token.value) ? `var(${varOf(aliasTarget(token.value))})` : valueToCss(token)};`;
+
+// The CSS value of a token with its aliases followed to the literal.
+export const literal = (tokens, path) => valueToCss(resolveToken(tokens, path));

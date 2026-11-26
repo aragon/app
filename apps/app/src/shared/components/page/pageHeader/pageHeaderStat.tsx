@@ -31,16 +31,16 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
             {...otherProps}
         >
             <div className="flex flex-row items-baseline gap-1">
-                <p className="type-stat text-neutral-800 type-numeric">
+                <p className="type-stat text-surface-primary type-numeric">
                     {parsedValue}
                 </p>
                 {suffix && (
-                    <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-neutral-500">
+                    <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-surface-secondary">
                         {suffix}
                     </p>
                 )}
             </div>
-            <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-neutral-500">
+            <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-surface-secondary">
                 {label}
             </p>
         </div>

@@ -6,7 +6,10 @@ import type {
     ISearchedRequest,
 } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestBodyParams } from '@/shared/api/httpService';
+import type {
+    IRequestBodyParams,
+    IRequestUrlQueryParams,
+} from '@/shared/api/httpService';
 import type {
     IWorkspaceAccountRef,
     IWorkspaceCoverage,
@@ -70,6 +73,19 @@ export interface IGetWorkspaceAccountsBody {
 
 export interface IGetWorkspaceAccountsParams
     extends IRequestBodyParams<IGetWorkspaceAccountsBody> {}
+
+export interface IGetWorkspaceAccountSuggestionsUrlParams {
+    /**
+     * Wallet to suggest the accounts of.
+     */
+    address: string;
+}
+
+export interface IGetWorkspaceAccountSuggestionsParams
+    extends IRequestUrlQueryParams<
+        IGetWorkspaceAccountSuggestionsUrlParams,
+        IPaginatedRequest
+    > {}
 
 /**
  * Includes the rows of tokens flagged as spam, which are hidden by default.

@@ -54,32 +54,32 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
-            <div className="flex flex-col gap-6 rounded-xl border border-neutral-100 bg-neutral-0 p-4 shadow-neutral-sm md:p-12">
+            <div className="flex flex-col gap-6 rounded-xl border border-surface-secondary bg-surface-primary p-4 shadow-surface-sm md:p-12">
                 <div className="flex items-start justify-between gap-6">
                     <div className="flex flex-col gap-2">
-                        <p className="type-title-group--wizard-intro text-neutral-800">
+                        <p className="type-title-group--wizard-intro text-surface-primary">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.heading',
                                 { daoName: dao?.name ?? daoId },
                             )}
                         </p>
-                        <p className="type-body-compact text-neutral-500">
+                        <p className="type-body-compact text-surface-secondary">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.description',
                             )}
                         </p>
                     </div>
-                    <div className="flex size-24 shrink-0 items-center justify-center rounded-full bg-neutral-50">
+                    <div className="flex size-24 shrink-0 items-center justify-center rounded-full bg-surface-secondary">
                         <IllustrationObject
                             className="size-[5.25rem]"
                             object="SECURITY"
                         />
                     </div>
                 </div>
-                <ol className="flex flex-col gap-3 type-body-compact text-neutral-500">
+                <ol className="flex flex-col gap-3 type-body-compact text-surface-secondary">
                     {gatedFeatureKeys.map((key) => (
                         <li className="flex items-baseline gap-3" key={key}>
-                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-50 type-caption--compact-label text-neutral-500">
+                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-secondary type-caption--compact-label text-surface-secondary">
                                 {key}
                             </span>
                             <span>
@@ -110,7 +110,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
     if (stages.length === 0 && !readOnly) {
         return (
             <CardEmptyState
-                className="border border-neutral-100"
+                className="border border-surface-secondary"
                 description={t(
                     'app.createDao.createProcessForm.governance.advancedEmptyState.available.description',
                 )}

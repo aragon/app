@@ -38,7 +38,7 @@ export const TokenProposalVotingSummary: React.FC<
     const { t } = useTranslations();
 
     if (!proposal) {
-        return <p className="type-title-item text-neutral-800">{name}</p>;
+        return <p className="type-title-item text-surface-primary">{name}</p>;
     }
 
     const { supportThreshold } = proposal.settings;
@@ -78,13 +78,13 @@ export const TokenProposalVotingSummary: React.FC<
 
         const statusClass =
             isApprovalReached && isVeto
-                ? 'text-critical-800'
+                ? 'text-critical-primary'
                 : isApprovalReached
-                  ? 'text-success-800'
-                  : 'text-neutral-500';
+                  ? 'text-success-primary'
+                  : 'text-surface-secondary';
 
         return (
-            <p className="type-title-item text-neutral-800">
+            <p className="type-title-item text-surface-primary">
                 {name}{' '}
                 <span className={statusClass}>
                     {t(
@@ -97,9 +97,9 @@ export const TokenProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="type-title-item text-neutral-800">
+            <p className="type-title-item text-surface-primary">
                 {name}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {isVeto
                         ? t(
                               'app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel',
@@ -114,9 +114,9 @@ export const TokenProposalVotingSummary: React.FC<
                 value={supportPercentage}
                 variant={isSupportReached ? 'primary' : 'neutral'}
             />
-            <p className="type-supporting text-neutral-800">
+            <p className="type-supporting text-surface-primary">
                 {formattedYesVotes}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(
                         'app.plugins.token.tokenProposalVotingSummary.votesDescription',
                         {

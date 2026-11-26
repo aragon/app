@@ -1,0 +1,46 @@
+/*
+ * Typography roles: `type-<role>` and `type-<role>--<pattern>` set the five parts of a style from the
+ * `--guk-type-<property>-<style>` variables (src/theme/tokens/typography/), and the `--guk-type-md-…` ones through the
+ * `md` variant of the build that compiles them (a container query on the app column in the app). A role sets
+ * `--tw-leading` too, so a raw `text-*` on the same element keeps the role's line height. Raw `text-*`, `leading-*`,
+ * `font-*` and `tracking-*` classes and the modifiers sort after the role and win over it.
+ */
+@utility type-* {
+    font-family: --value(--guk-type-font-family-*);
+    font-size: --value(--guk-type-font-size-*);
+    --tw-leading: --value(--guk-type-line-height-*);
+    line-height: --value(--guk-type-line-height-*);
+    font-weight: --value(--guk-type-font-weight-*);
+    letter-spacing: --value(--guk-type-letter-spacing-*);
+
+    @variant md {
+        font-family: --value(--guk-type-md-font-family-*);
+        font-size: --value(--guk-type-md-font-size-*);
+        --tw-leading: --value(--guk-type-md-line-height-*);
+        line-height: --value(--guk-type-md-line-height-*);
+        font-weight: --value(--guk-type-md-font-weight-*);
+        letter-spacing: --value(--guk-type-md-letter-spacing-*);
+    }
+}
+
+@utility type-strong {
+    font-weight: var(--guk-type-strong);
+}
+
+@utility type-mono {
+    font-family: var(--guk-type-mono);
+}
+
+/* Tabular figures in the Next preview only (design-system/tokens/preview); inherited otherwise. */
+@utility type-numeric {
+    font-variant-numeric: var(--guk-type-numeric);
+}
+
+/*
+ * Tailwind registers `--tw-leading` only for its own `leading-*` utilities; set by a role, it must not inherit either.
+ * biome-ignore lint/suspicious/useBaseline: the same registration Tailwind emits; without @property it inherits
+ */
+@property --tw-leading {
+    syntax: "*";
+    inherits: false;
+}

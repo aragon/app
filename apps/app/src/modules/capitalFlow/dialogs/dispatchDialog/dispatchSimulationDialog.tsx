@@ -172,7 +172,7 @@ export const DispatchSimulationDialog: React.FC<
                     {isLoading && (
                         <Card className="flex flex-col items-center justify-center gap-4 p-8">
                             <Spinner size="lg" variant="primary" />
-                            <p className="text-neutral-500">
+                            <p className="text-surface-secondary">
                                 {t(
                                     'app.capitalFlow.dispatchSimulationDialog.loading',
                                 )}
@@ -183,24 +183,25 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="bg-critical-50 flex flex-col gap-3 border-critical-200! p-4"
+                            // biome-ignore lint/plugin/noPrimitiveColors: critical-50 is not a colour, the class resolves to nothing
+                            className="bg-critical-50 flex flex-col gap-3 border-critical-primary-dispatch! p-4"
                             role="alert"
                         >
                             <div className="flex items-start gap-3">
                                 <Icon
-                                    className="mt-0.5 shrink-0 text-critical-500"
+                                    className="mt-0.5 shrink-0 icon-critical-primary"
                                     icon={IconType.WARNING}
                                     size="md"
                                 />
                                 <div className="min-w-0 flex-1">
-                                    <p className="type-title-group--compact type-strong text-critical-700">
+                                    <p className="type-title-group--compact type-strong text-critical-primary-tx-error">
                                         {t(
                                             isReverted
                                                 ? 'app.capitalFlow.dispatchSimulationDialog.reverted'
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-1 type-body-compact--dialog-note break-words text-critical-600">
+                                    <p className="mt-1 type-body-compact--dialog-note break-words text-critical-primary-message">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>

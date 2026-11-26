@@ -64,21 +64,22 @@ const responsiveSizeClassNames: ResponsiveAttributeClassMap<SpinnerSize> = {
 };
 
 const variantToClassNames: Record<SpinnerVariant, string> = {
-    neutral: 'border-neutral-100',
-    primary: 'border-primary-100',
-    primaryInverted: 'border-primary-300',
-    success: 'border-success-300',
-    warning: 'border-warning-300',
-    critical: 'border-critical-300',
+    neutral: 'border-surface-default',
+    primary: 'border-accent-default',
+    primaryInverted: 'border-accent-primary-inverse',
+    success: 'border-success-default',
+    warning: 'border-warning-primary-spinner',
+    critical: 'border-critical-primary-spinner',
 };
 
 const variantToLoadingClassNames: Record<SpinnerVariant, string> = {
+    // biome-ignore lint/plugin/noPrimitiveColors: no border role has neutral-500
     neutral: 'border-t-neutral-500',
-    primary: 'border-t-primary-400',
-    primaryInverted: 'border-t-neutral-0',
-    success: 'border-t-success-800',
-    warning: 'border-t-warning-800',
-    critical: 'border-t-critical-800',
+    primary: 'border-t-accent-secondary',
+    primaryInverted: 'border-t-accent-secondary-inverse',
+    success: 'border-t-success-secondary',
+    warning: 'border-t-warning-secondary',
+    critical: 'border-t-critical-secondary',
 };
 
 /**

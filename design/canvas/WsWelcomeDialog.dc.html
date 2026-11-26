@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace welcome dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" size="lg" dc-props="{{rootProps}}" container-class-name="dlg-container--static">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Your workspace is ready" description="Your accounts are now available from one place." on-close="{{close}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+    <div class="ws-welcome">
+      <div class="ws-welcome__feature">
+        <span class="ws-welcome__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="PEN" size="sm"></x-import></span>
+        <div class="ws-welcome__feature-text">
+          <p class="ws-welcome__feature-title">See what’s waiting for you</p>
+          <p class="ws-welcome__feature-description">Find transactions waiting for your signature or ready for you to execute.</p>
+        </div>
+      </div>
+      <div class="ws-welcome__feature">
+        <span class="ws-welcome__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="CLOCK" size="sm"></x-import></span>
+        <div class="ws-welcome__feature-text">
+          <p class="ws-welcome__feature-title">Keep track after you sign</p>
+          <p class="ws-welcome__feature-description">Check your transactions to see what’s still waiting on others.</p>
+        </div>
+      </div>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}"><p class="ws-welcome__note">Saved on this device only. Teams and confidential workspace sharing is coming soon.</p></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-close":{"editor":null},"$preview":{"width":1024,"height":760}}'>
+// Workspace welcome dialog (apps/app: modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx, size lg).
+// Opened by Workspace.dc.html when it is entered from "View workspace" at the end of CreateWorkspaceFlow (the link carries
+// ?welcome=1), as the app greets a user entering the workspace they just created (layoutWorkspaceContent.tsx).
+// Dismissible as in the app: the X, Escape, an outside click and "Open workspace" all close it.
+// Props: onClose() — called on every way out.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const block = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const close = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    return {
+      yes: true, close,
+      rootProps: { onOpenAutoFocus: block, onOpenChange: (o) => { if (!o) close(); } },
+      primary: { label: 'Open workspace', onClick: close }
+    };
+  }
+}
+</script>
+</body>
+</html>

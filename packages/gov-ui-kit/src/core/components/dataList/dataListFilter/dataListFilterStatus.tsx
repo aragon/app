@@ -29,14 +29,17 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
         <div className="flex items-center justify-between">
             <p
                 className={classNames(
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     'px-3 py-2.5 type-supporting text-neutral-500',
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     { 'text-primary-400': isLoading || isInitialLoading },
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     { 'text-neutral-500': displayItemsCount },
                 )}
             >
                 {displayItemsCount && (
                     <>
-                        <span className="text-neutral-800">{itemsCount} </span>
+                        <span className="text-surface-primary">{itemsCount} </span>
                         <span>{entityLabel}</span>
                     </>
                 )}
@@ -45,7 +48,7 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
                 {isFiltered && (
                     <>
                         <span>{copy.dataListFilterStatus.found} </span>
-                        <span className="text-primary-400">{itemsCount} </span>
+                        <span className="text-accent-primary">{itemsCount} </span>
                         <span>{entityLabel}</span>
                     </>
                 )}

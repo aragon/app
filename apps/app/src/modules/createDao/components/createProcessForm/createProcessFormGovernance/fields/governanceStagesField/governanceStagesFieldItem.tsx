@@ -95,10 +95,10 @@ export const GovernanceStagesFieldItem: React.FC<
         <Card className="flex flex-col gap-y-10 p-6">
             <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between">
-                    <p className="type-title-item--stage-card text-neutral-800">
+                    <p className="type-title-item--stage-card text-surface-primary">
                         {stageNameText}
                     </p>
-                    <p className="text-neutral-400">{stageNumberText}</p>
+                    <p className="text-surface-tertiary">{stageNumberText}</p>
                 </div>
                 {!readOnly && (
                     <InputText

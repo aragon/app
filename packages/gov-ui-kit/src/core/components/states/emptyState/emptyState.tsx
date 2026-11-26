@@ -36,7 +36,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                 (isStacked ? (
                     <IllustrationHuman className="mb-4 h-auto w-full max-w-[400px] md:mb-6" {...humanIllustration} />
                 ) : (
-                    <div className="order-last flex aspect-square w-full max-w-20 items-center justify-center justify-self-end overflow-hidden rounded-full bg-neutral-50">
+                    <div className="order-last flex aspect-square w-full max-w-20 items-center justify-center justify-self-end overflow-hidden rounded-full bg-surface-secondary">
                         <IllustrationHuman className="w-full scale-[1.25]" {...humanIllustration} />
                     </div>
                 ))}
@@ -44,7 +44,8 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                 <IllustrationObject
                     className={classNames({
                         'h-auto w-full max-w-40': isStacked,
-                        'order-last h-auto w-full max-w-20 justify-self-end rounded-full bg-neutral-50': !isStacked,
+                        'order-last h-auto w-full max-w-20 justify-self-end rounded-full bg-surface-secondary':
+                            !isStacked,
                     })}
                     {...objectIllustration}
                 />
@@ -64,7 +65,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                     })}
                 >
                     <p
-                        className={classNames('text-neutral-800', {
+                        className={classNames('text-surface-primary', {
                             'type-title-section': isStacked,
                             'type-title-section--inline-empty-state': !isStacked,
                         })}
@@ -72,7 +73,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                         {heading}
                     </p>
                     <p
-                        className={classNames('text-neutral-500', {
+                        className={classNames('text-surface-secondary', {
                             'type-supporting': isStacked,
                             'type-supporting--inline-empty-state': !isStacked,
                         })}

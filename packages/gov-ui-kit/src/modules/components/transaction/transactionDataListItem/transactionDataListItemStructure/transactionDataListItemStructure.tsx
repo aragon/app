@@ -102,25 +102,27 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
                 </div>
             )}
             <div className="flex w-full flex-col items-start gap-y-0.5 self-center md:gap-y-1">
-                <span className="type-title-item text-neutral-800">
+                <span className="type-title-item text-surface-primary">
                     {typeToHeading[type]}
                     {isExecution && processedLabel != null && (
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             {' '}
                             {addressLabel == null ? processedLabel : <AddressOutput address={addressLabel} />}
                         </span>
                     )}
                 </span>
                 {date && (
-                    <p className="type-caption--list-date text-neutral-500">
+                    <p className="type-caption--list-date text-surface-secondary">
                         {formatterUtils.formatDate(date, { format: DateFormat.YEAR_MONTH_DAY_TIME })}
                     </p>
                 )}
             </div>
 
             <div className="flex h-full shrink-0 flex-col items-end gap-y-0.5 truncate md:gap-y-1">
-                <span className="type-supporting--row-value text-neutral-800">{processedValue}</span>
-                {showValue && <span className="type-supporting text-neutral-500">{formattedTransactionValue}</span>}
+                <span className="type-supporting--row-value text-surface-primary">{processedValue}</span>
+                {showValue && (
+                    <span className="type-supporting text-surface-secondary">{formattedTransactionValue}</span>
+                )}
             </div>
         </DataList.Item>
     );

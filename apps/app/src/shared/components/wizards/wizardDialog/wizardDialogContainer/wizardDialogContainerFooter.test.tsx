@@ -70,7 +70,22 @@ describe('<WizardDialogContainerFooter /> component', () => {
         });
         expect(closeButton).toBeInTheDocument();
         await userEvent.click(closeButton);
-        expect(close).toHaveBeenCalled();
+        expect(close).toHaveBeenCalledWith(undefined);
+    });
+
+    it('closes only its own dialog when given a dialog id', async () => {
+        const close = jest.fn();
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasPrevious: false }),
+        );
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+        render(createTestComponent({ dialogId: 'DIALOG' }));
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /wizardDialog.container.close/,
+            }),
+        );
+        expect(close).toHaveBeenCalledWith('DIALOG');
     });
 
     it('renders a back button when step is not the first step', async () => {

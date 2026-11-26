@@ -11,7 +11,7 @@ export const ProposalActionsDecoderTextField: React.FC<IProposalActionsDecoderTe
 
     const label = (
         <>
-            {name} <span className="text-neutral-500">({type})</span>
+            {name} <span className="text-surface-secondary">({type})</span>
         </>
     );
     const inputLabels = hideLabels ? undefined : { label, helpText: notice };

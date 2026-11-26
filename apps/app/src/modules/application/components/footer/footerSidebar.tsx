@@ -22,9 +22,9 @@ export const FooterSidebar: React.FC = () => {
     const year = new Date().getFullYear();
 
     return (
-        <div className="flex flex-col gap-2 border-t border-neutral-100 px-1 pt-4 text-neutral-500">
+        <div className="flex flex-col gap-2 border-t border-surface-secondary px-1 pt-4 text-surface-secondary">
             <Link
-                className="flex items-center gap-2 self-start type-control-sm--framework-leading text-neutral-500 hover:text-neutral-800"
+                className="flex items-center gap-2 self-start type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
                 href={isWalletConnected ? '/explore' : '/'}
             >
                 <span className="text-nowrap">
@@ -35,7 +35,7 @@ export const FooterSidebar: React.FC = () => {
             <div className="flex flex-wrap items-center gap-x-2">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
-                        className="type-control-sm--framework-leading text-neutral-500 hover:text-neutral-800"
+                        className="type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
                         href={link}
                         key={label}
                         target={target}
