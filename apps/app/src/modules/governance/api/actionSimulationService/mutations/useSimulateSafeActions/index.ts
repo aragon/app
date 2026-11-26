@@ -1,1 +1,4 @@
-export { useSimulateSafeActions } from './useSimulateSafeActions';
+export {
+    type IUseSimulateSafeActionsParams,
+    useSimulateSafeActions,
+} from './useSimulateSafeActions';

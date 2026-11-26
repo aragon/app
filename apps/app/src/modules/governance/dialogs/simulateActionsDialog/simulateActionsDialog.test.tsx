@@ -1,13 +1,11 @@
 import { ActionSimulation } from '@aragon/gov-ui-kit';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { generateSimulationResult } from '@/modules/governance/testUtils';
-import { safeProtocolKitUtils } from '@/modules/safe/utils/safeProtocolKitUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import * as translationsProvider from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateReactQueryMutationResultIdle,
     generateReactQueryMutationResultSuccess,
@@ -84,11 +82,6 @@ describe('<SimulateActionsDialog /> component', () => {
     const useSafeSimulationMock = jest.mocked(
         actionSimulationService.useSimulateSafeActions,
     );
-    const initReadOnlySpy = jest.spyOn(safeProtocolKitUtils, 'initReadOnly');
-    const buildTransactionCallSpy = jest.spyOn(
-        safeProtocolKitUtils,
-        'buildTransactionCall',
-    );
 
     beforeEach(() => {
         useTranslationsMock.mockReturnValue({ t: (key: string) => key });
@@ -117,8 +110,6 @@ describe('<SimulateActionsDialog /> component', () => {
         useDirectExecuteSimulationMock.mockReset();
         mockSafeMutate.mockClear();
         useSafeSimulationMock.mockReset();
-        initReadOnlySpy.mockReset();
-        buildTransactionCallSpy.mockReset();
         jest.mocked(ActionSimulation).mockClear();
     });
 
@@ -275,16 +266,7 @@ describe('<SimulateActionsDialog /> component', () => {
         expect(mockDirectExecuteMutate).not.toHaveBeenCalled();
     });
 
-    it('builds the Safe transaction with a read-only protocol kit and simulates it for a Safe target', async () => {
-        const protocolKit = { kit: true };
-        const transactionCall = {
-            to: '0xmultisend',
-            value: '0',
-            data: '0x8d80ff0a',
-            operation: 1 as const,
-        };
-        initReadOnlySpy.mockResolvedValue(protocolKit as never);
-        buildTransactionCallSpy.mockResolvedValue(transactionCall);
+    it('simulates the actions as a Safe transaction for a Safe target', () => {
         const actions = [
             { to: '0xto', data: '0xdata', value: BigInt(1) },
             { to: '0xother', data: '0x', value: BigInt(0) },
@@ -298,53 +280,40 @@ describe('<SimulateActionsDialog /> component', () => {
             }),
         );
 
-        expect(ActionSimulation).toHaveBeenLastCalledWith(
-            expect.objectContaining({ isLoading: true }),
-            undefined,
-        );
-        await waitFor(() =>
-            expect(mockSafeMutate).toHaveBeenCalledWith({
-                urlParams: {
-                    network: Network.ETHEREUM_SEPOLIA,
-                    safeAddress: '0xsafe',
-                },
-                body: transactionCall,
-            }),
-        );
-        expect(initReadOnlySpy).toHaveBeenCalledWith({
-            chainId: networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+        expect(mockSafeMutate).toHaveBeenCalledWith({
+            network: Network.ETHEREUM_SEPOLIA,
             safeAddress: '0xsafe',
-        });
-        expect(buildTransactionCallSpy).toHaveBeenCalledWith({
-            protocolKit,
-            calls: actions,
+            actions,
         });
         expect(mockProposalMutate).not.toHaveBeenCalled();
         expect(mockDirectExecuteMutate).not.toHaveBeenCalled();
     });
 
-    it('shows simulation as unavailable and lets the user continue when the Safe transaction cannot be built', async () => {
-        initReadOnlySpy.mockRejectedValue(new Error('no client'));
+    it('shows simulation as unavailable and lets the user continue when the Safe transaction cannot be built', () => {
+        useSafeSimulationMock.mockReturnValue({
+            isError: true,
+            isPending: false,
+            status: 'error',
+            error: new Error('no client'),
+        } as ReturnType<typeof actionSimulationService.useSimulateSafeActions>);
 
         renderComponent(
             createLocation({ target: { type: 'safe', safeAddress: '0xsafe' } }),
         );
 
-        await waitFor(() =>
-            expect(ActionSimulation).toHaveBeenLastCalledWith(
-                expect.objectContaining({
-                    error: 'app.governance.simulateActionsDialog.unavailable',
-                    isLoading: false,
-                }),
-                undefined,
-            ),
+        expect(ActionSimulation).toHaveBeenLastCalledWith(
+            expect.objectContaining({
+                error: 'app.governance.simulateActionsDialog.unavailable',
+                isLoading: false,
+            }),
+            undefined,
         );
         expect(mockSafeMutate).not.toHaveBeenCalled();
         expect(
             screen.getByRole('button', {
                 name: 'app.governance.simulateActionsDialog.action.error',
             }),
-        ).toBeInTheDocument();
+        ).toBeEnabled();
     });
 
     it('closes only itself after requesting wizard form submit (does not call close() without id)', () => {

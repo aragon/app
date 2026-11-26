@@ -1,9 +1,5 @@
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import {
-    type ISafeTransactionCallData,
-    safeProtocolKitUtils,
-} from '@/modules/safe/utils/safeProtocolKitUtils';
+import { useEffect } from 'react';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import {
@@ -11,7 +7,6 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     useSimulateDirectExecuteActions,
     useSimulateProposalActions,
@@ -53,25 +48,6 @@ export interface ISimulateActionsDialogParams {
 export interface ISimulateActionsDialogProps
     extends IDialogComponentProps<ISimulateActionsDialogParams> {}
 
-/**
- * Builds the Safe transaction the actions make up, as the create dialog does, with a protocol kit that only reads.
- */
-const buildSafeTransactionCall = async (
-    network: Network,
-    safeAddress: string,
-    actions: IProposalCreateAction[],
-): Promise<ISafeTransactionCallData> => {
-    const protocolKit = await safeProtocolKitUtils.initReadOnly({
-        chainId: networkDefinitions[network].id,
-        safeAddress,
-    });
-
-    return safeProtocolKitUtils.buildTransactionCall({
-        protocolKit,
-        calls: actions,
-    });
-};
-
 export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
     props,
 ) => {
@@ -90,51 +66,31 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
     const directExecuteSimulation = useSimulateDirectExecuteActions();
     const safeSimulation = useSimulateSafeActions();
 
-    // Building the Safe transaction happens before the mutation, so its failure is kept apart.
-    const [safeBuildError, setSafeBuildError] = useState<unknown>();
-
     const simulations = {
         plugin: proposalSimulation,
         dao: directExecuteSimulation,
         safe: safeSimulation,
     };
     const {
-        isError: isSimulationError,
-        isPending: isSimulationPending,
+        isError,
+        isPending,
         status,
         data,
-        error: simulationError,
+        error: failure,
     } = simulations[target.type];
 
     useEffect(() => {
-        if (status !== 'idle' || safeBuildError != null) {
+        if (status !== 'idle') {
             return;
         }
 
         if (target.type === 'safe') {
-            let isCancelled = false;
-
-            buildSafeTransactionCall(network, target.safeAddress, actions)
-                .then((body) => {
-                    if (!isCancelled) {
-                        safeSimulation.mutate({
-                            urlParams: {
-                                network,
-                                safeAddress: target.safeAddress,
-                            },
-                            body,
-                        });
-                    }
-                })
-                .catch((error: unknown) => {
-                    if (!isCancelled) {
-                        setSafeBuildError(error);
-                    }
-                });
-
-            return () => {
-                isCancelled = true;
-            };
+            safeSimulation.mutate({
+                network,
+                safeAddress: target.safeAddress,
+                actions,
+            });
+            return;
         }
 
         const processedActions = actions.map(({ to, data, value }) => ({
@@ -159,23 +115,16 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         network,
         target,
         status,
-        safeBuildError,
         directExecuteSimulation.mutate,
         proposalSimulation.mutate,
         safeSimulation.mutate,
     ]);
 
-    const isError = isSimulationError || safeBuildError != null;
-    // A Safe transaction that cannot be built failed on a chain read, so it reads as unavailable like a network error.
-    const failure = safeBuildError ?? simulationError;
-    const isBuildingSafeTransaction =
-        target.type === 'safe' && status === 'idle' && safeBuildError == null;
-    const isPending = isSimulationPending || isBuildingSafeTransaction;
-
     const hasSimulationFailed = isError || data?.status === 'failed';
     const lastSimulation =
         data != null ? { ...data, timestamp: data.runAt } : undefined;
 
+    // A Safe transaction that cannot be built failed on a chain read, so it reads as unavailable like a network error.
     let errorContext = 'error';
     if (AragonBackendServiceError.isSimulationBudgetError(failure)) {
         errorContext = 'limitReached';
