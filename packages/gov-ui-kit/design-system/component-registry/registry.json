@@ -6,25 +6,14 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "16d37b6d214b4ec3c1090e7e0e47989c931de534",
+            "commit": "892d99b5d925c93057b012adfcd90775fafb58db",
             "dirty": [
-                "packages/gov-ui-kit/AGENTS.md",
-                "packages/gov-ui-kit/scripts/README.md",
-                "packages/gov-ui-kit/scripts/tokens/generate.mjs",
+                "packages/gov-ui-kit/biome-plugins/css/noPrimitiveColors.grit",
+                "packages/gov-ui-kit/biome-plugins/js/noPrimitiveColors.grit",
                 "packages/gov-ui-kit/scripts/tokens/generate.test.mjs",
-                "packages/gov-ui-kit/scripts/tokens/lib/css.mjs",
-                "packages/gov-ui-kit/scripts/tokens/lib/dtcg.mjs",
-                "packages/gov-ui-kit/src/core/components/breadcrumbs/breadcrumbs.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListFilter/dataListFilterStatus.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListItem/dataListItem.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/switch/switch.tsx",
-                "packages/gov-ui-kit/src/core/components/illustrations/index.css",
-                "packages/gov-ui-kit/src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/theme/tokens/semantic/colors.css"
+                "packages/gov-ui-kit/src/theme/tokens/primitives/shadows.css",
+                "packages/gov-ui-kit/src/theme/tokens/primitives/shadows.mdx",
+                "packages/gov-ui-kit/src/theme/tokens/semantic/shadows.css"
             ],
             "sourceVersion": "3.1.0",
             "entrypoints": {
@@ -3095,7 +3084,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "f0156aa95e112edc30f55cf1c5f07b44adc22d1cf61d33be89099beb5319b69d"
+                "sha256": "6c7bdffc366b3562f4a07fac98ebc47c8a9fea63cef0d445ddde3d90e58b5dcb"
             },
             "props": [],
             "stories": [],

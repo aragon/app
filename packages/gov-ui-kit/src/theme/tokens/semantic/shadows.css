@@ -12,8 +12,16 @@
     --shadow-accent-sm: var(--shadow-primary-sm);
     --shadow-accent-2xl: var(--shadow-primary-2xl);
     --shadow-accent-md: var(--shadow-primary-md);
-    --shadow-success-default: var(--shadow-success);
-    --shadow-warning-default: var(--shadow-warning);
-    --shadow-critical-default: var(--shadow-critical);
-    --shadow-info-default: var(--shadow-info);
+    --shadow-success-default: var(--guk-shadow-success);
+    --shadow-success-sm: var(--guk-shadow-success-sm);
+    --shadow-success-md: var(--guk-shadow-success-md);
+    --shadow-warning-default: var(--guk-shadow-warning);
+    --shadow-warning-sm: var(--guk-shadow-warning-sm);
+    --shadow-warning-md: var(--guk-shadow-warning-md);
+    --shadow-critical-default: var(--guk-shadow-critical);
+    --shadow-critical-sm: var(--guk-shadow-critical-sm);
+    --shadow-critical-md: var(--guk-shadow-critical-md);
+    --shadow-info-default: var(--guk-shadow-info);
+    --shadow-info-sm: var(--guk-shadow-info-sm);
+    --shadow-info-md: var(--guk-shadow-info-md);
 }
