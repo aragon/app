@@ -49,6 +49,10 @@ interface ISafeCreateTransactionWizardActionsStepProps {
      * Network the actions are composed for.
      */
     network: Network;
+    /**
+     * Address of the Safe, exposed to WalletConnect dApps as the connected account.
+     */
+    safeAddress: string;
 }
 
 /**
@@ -57,7 +61,7 @@ interface ISafeCreateTransactionWizardActionsStepProps {
 const SafeCreateTransactionWizardActionsStep: React.FC<
     ISafeCreateTransactionWizardActionsStepProps
 > = (props) => {
-    const { network } = props;
+    const { network, safeAddress } = props;
 
     const { t } = useTranslations();
     const actions = useWatch<
@@ -76,8 +80,12 @@ const SafeCreateTransactionWizardActionsStep: React.FC<
             )}
             {...actionsStep}
         >
-            {/* Without a DAO the composer offers the actions any account can run: contract calls and raw calldata. */}
-            <ProposalActionsEditor network={network} />
+            {/* Without a DAO the composer offers the actions any account can run: contract calls, raw calldata and
+            WalletConnect requests made as the Safe. */}
+            <ProposalActionsEditor
+                network={network}
+                walletConnectAddress={safeAddress}
+            />
         </WizardPage.Step>
     );
 };
@@ -147,7 +155,10 @@ export const SafeCreateTransactionWizard: React.FC<
                 submitLabel={t(`${translationKey}.submitLabel`)}
             >
                 <CreateExecuteActionsForm.Provider value={contextValues}>
-                    <SafeCreateTransactionWizardActionsStep network={network} />
+                    <SafeCreateTransactionWizardActionsStep
+                        network={network}
+                        safeAddress={safeAddress}
+                    />
                 </CreateExecuteActionsForm.Provider>
             </WizardPage.Container>
         </Page.Main>

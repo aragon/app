@@ -2,26 +2,33 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as daoService from '@/shared/api/daoService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import {
     generateDao,
+    generateDialogContext,
+    generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import { ImportedContractAbisProvider } from '../../importedContractAbisProvider';
 import type { IActionComposerProps } from './actionComposer';
 import { ActionComposer } from './actionComposer';
 
 describe('ActionComposer', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IActionComposerProps>) => {
@@ -56,10 +63,65 @@ describe('ActionComposer', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('leaves the authorized-actions switch off when no allowlist restricts the actions', () => {
+    it('offers WalletConnect outside DAO context, connected as the given account on the given network', async () => {
+        const openMock = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: openMock }),
+        );
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        const walletConnectAddress =
+            '0x0000000000000000000000000000000000000001';
+        const network = daoService.Network.ETHEREUM_SEPOLIA;
+        render(
+            createTestComponent({
+                daoId: undefined,
+                network,
+                walletConnectAddress,
+            }),
+        );
+
+        await userEvent.click(
+            screen.getByRole('button', { name: /walletConnect/i }),
+        );
+
+        expect(openMock).toHaveBeenCalledWith(
+            GovernanceDialogId.WALLET_CONNECT_ACTION,
+            {
+                params: expect.objectContaining({
+                    address: walletConnectAddress,
+                    network,
+                }),
+                stack: true,
+            },
+        );
+    });
+
+    it('does not offer WalletConnect outside DAO context without an account to connect as', () => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof daoService.useDao
+            >,
+        );
+        render(
+            createTestComponent({
+                daoId: undefined,
+                network: daoService.Network.ETHEREUM_SEPOLIA,
+            }),
+        );
+
+        expect(
+            screen.queryByRole('button', { name: /walletConnect/i }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('does not render the authorized-actions switch when no allowlist restricts the actions', () => {
         render(createTestComponent());
 
-        expect(screen.getByRole('switch')).not.toBeChecked();
+        expect(screen.queryByRole('switch')).not.toBeInTheDocument();
     });
 
     it('turns the authorized-actions switch on when an allowlist is given', () => {

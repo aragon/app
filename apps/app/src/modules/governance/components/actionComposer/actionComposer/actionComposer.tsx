@@ -56,9 +56,14 @@ export interface IActionComposerProps
      */
     hideWalletConnect?: boolean;
     /**
+     * Address of the account a WalletConnect dApp connects to, e.g. a Safe. Defaults to the DAO
+     * address; outside DAO context WalletConnect is only offered when set.
+     */
+    walletConnectAddress?: string;
+    /**
      * Allowed actions to show instead of default actions. An empty list restricts the composer to no
      * action at all, leave it undefined to offer every action. Only read on mount, so it must be
-     * resolved before the composer is rendered.
+     * resolved before the composer is rendered. The authorized-actions switch is only shown when set.
      */
     allowedActions?: IAllowedAction[];
     /**
@@ -104,6 +109,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction,
         excludeActionTypes,
         hideWalletConnect = false,
+        walletConnectAddress,
         allowedActions,
         hasActions = false,
         onDownloadActions,
@@ -128,6 +134,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     );
 
     const resolvedNetwork = network ?? dao?.network;
+    const walletConnectAccount = walletConnectAddress ?? dao?.address;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -181,11 +188,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        invariant(
-            daoId != null,
-            'handleAddWalletConnectActions: daoId is required for WalletConnect imports',
-        );
-
         const parsedActions = actions.map((action) => ({
             ...action,
             daoId,
@@ -196,15 +198,15 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const displayWalletConnectDialog = () => {
         invariant(
-            dao != null,
-            'displayWalletConnectDialog: `dao` is required for WalletConnect dialog',
+            walletConnectAccount != null && resolvedNetwork != null,
+            'displayWalletConnectDialog: account address and network are required for WalletConnect dialog',
         );
 
         setUploadError(null);
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
-            daoAddress: dao.address,
-            daoNetwork: dao.network,
+            address: walletConnectAccount,
+            network: resolvedNetwork,
         };
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
@@ -309,13 +311,16 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const shouldRenderDropdown =
         onDownloadActions != null && onRemoveAllActions != null;
 
-    const shouldRenderWalletConnect = !(
-        daoId == null ||
-        hideWalletConnect ||
-        onlyShowAuthorizedActions
-    );
+    const shouldRenderWalletConnect =
+        walletConnectAccount != null &&
+        resolvedNetwork != null &&
+        !hideWalletConnect &&
+        !onlyShowAuthorizedActions;
 
     const shouldRenderUpload = !onlyShowAuthorizedActions;
+
+    // Without an allowlist there is nothing to restrict the offering to, so the switch would be a no-op.
+    const shouldRenderAuthorizedSwitch = allowedActions != null;
 
     return (
         <>
@@ -374,13 +379,15 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         )}
                     </div>
                     <div className="flex w-full shrink-0 flex-row items-center justify-end gap-3 md:w-auto">
-                        <Switch
-                            checked={onlyShowAuthorizedActions}
-                            inlineLabel={t(
-                                'app.governance.actionComposer.authorizedSwitchLabel',
-                            )}
-                            onCheckedChanged={setOnlyShowAuthorizedActions}
-                        />
+                        {shouldRenderAuthorizedSwitch && (
+                            <Switch
+                                checked={onlyShowAuthorizedActions}
+                                inlineLabel={t(
+                                    'app.governance.actionComposer.authorizedSwitchLabel',
+                                )}
+                                onCheckedChanged={setOnlyShowAuthorizedActions}
+                            />
+                        )}
                         {shouldRenderDropdown && hasActions && (
                             <Dropdown.Container
                                 constrainContentWidth={false}
