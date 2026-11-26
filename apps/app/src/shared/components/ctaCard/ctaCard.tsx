@@ -92,7 +92,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
             className={classNames(
                 'relative flex flex-col gap-4 p-4 md:gap-6 md:p-6',
                 {
-                    'border-accent-primary-cta! !shadow-accent-default':
+                    'border-accent-primary-cta! shadow-accent-default!':
                         isPrimary,
                 },
                 className,

@@ -28,8 +28,7 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
 
     const actionItemClasses = classNames(
         'w-full rounded-xl px-4 text-left transition-all', // Default all
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-        { 'border border-surface-default bg-surface-default shadow-neutral-sm': variant === 'primary' }, // Default primary
+        { 'border border-surface-default bg-surface-default shadow-surface-sm': variant === 'primary' }, // Default primary
         { 'bg-transparent': variant === 'select' }, // Default select
         { 'cursor-pointer ring-accent-focus focus-ring': isInteractiveElement }, // Interactive default state
         {

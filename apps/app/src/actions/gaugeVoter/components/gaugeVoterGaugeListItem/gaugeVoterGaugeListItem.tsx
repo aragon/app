@@ -40,8 +40,7 @@ export const GaugeVoterGaugeListItem: React.FC<
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', className, {
-                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
+                'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive,
             })}
             {...otherProps}

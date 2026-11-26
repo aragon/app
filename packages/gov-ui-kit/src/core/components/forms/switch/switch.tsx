@@ -65,8 +65,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     const thumbClassNames = classNames(
         'block size-4 rounded-full bg-(--guk-icon-surface-secondary) transition-transform duration-100 will-change-transform', // Default
         'data-[state=checked]:translate-x-[14px] data-[state=checked]:bg-(--guk-icon-accent-primary)', // Checked
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-        'group-disabled:bg-neutral-200 data-[state=checked]:group-disabled:bg-(--guk-icon-surface-secondary)', // Disabled
+        'group-disabled:bg-(--guk-icon-surface-disabled-control) data-[state=checked]:group-disabled:bg-(--guk-icon-surface-secondary)', // Disabled
     );
 
     const labelClassNames = classNames(

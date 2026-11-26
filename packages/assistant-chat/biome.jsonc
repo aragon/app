@@ -1,0 +1,9 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "root": false,
+    "extends": "//",
+    // The app compiles the chat's classes, with the token aliases only the app imports.
+    "tailwind": {
+        "stylesheet": "../../apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css"
+    }
+}

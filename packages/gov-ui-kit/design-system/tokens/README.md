@@ -6,9 +6,11 @@ One DTCG 2025.10 token source, one generator. The token values live in JSON; the
 design-system/tokens/source/
   primitives.tokens.json        the primitives: colours, shadows, radius, breakpoints, spacing, type, focus ring colours
   semantic.tokens.json          the semantic colour roles of the default theme, as aliases of the primitives
+  app.tokens.json               the tokens only the app uses (component aliases no kit component takes)
   <layer>.config.json           not tokens: the CSS name of each token, the layout of the generated files, the previews
   modes/                        the preview modes (Next, Dark): documents merged over the default theme
   schema/format.2025.10.json    the published DTCG schema, unmodified
+design-system/tokens/app/       the generated CSS of app.tokens.json (do not edit)
 design-system/tokens/preview/   the generated preview CSS (do not edit)
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
 src/theme/tokens/<layer>/       the generated CSS (do not edit)
@@ -17,7 +19,8 @@ src/theme/fonts/                the font files and their @font-face rules
 ```
 
 `design-system/` is not in the npm package; `files` in the kit's `package.json` ships the generated CSS. The app and
-the docs site import the kit's CSS by path, so a regenerated file reaches them without another step.
+the docs site import the kit's CSS by path, so a regenerated file reaches them without another step. The app also
+imports `design-system/tokens/app/index.css` from its `layoutRoot.css`; the docs site does not.
 
 ## Changing a token
 
@@ -47,10 +50,11 @@ edit the hex and run the generator: it stops on the mismatch and prints the comp
 
 ## Layout config
 
-Each `<layer>.config.json` maps each generated file to its blocks, and each block (`@theme`, `:root`) to its lines. A
-line ending in `;` is CSS with no DTCG form, such as a namespace reset (`--color-*: initial;`) or
-`--radius-none: none;`. Any other line is a token path: it places that token, or every token under that group, in
-document order. `preview` maps each preview file to its mode selectors, and each selector to the mode documents
+Each `<layer>.config.json` lays out the tokens of `<layer>.tokens.json`: it maps each generated file to its blocks, and
+each block (`@theme`, `:root`) to its lines. A line ending in `;` is CSS with no DTCG form, such as a namespace reset
+(`--color-*: initial;`) or `--radius-none: none;`. Any other line is a token path: it places that token, or every
+token under that group, in document order. The files go to `src/theme/tokens/<layer>/`, or to the kit-relative `dir`
+of the config (`app.config.json`: `design-system/tokens/app/`). `cssNames` rules apply across layers. `preview` maps each preview file to its mode selectors, and each selector to the mode documents
 merged over the default theme, in order.
 
 ## Semantic colours
@@ -64,7 +68,8 @@ Components take colours from roles, not from the primitive ramps. Three tiers:
   (`default`, `hover`, `active`, `selected`, `disabled`, `focus`), alone or combined (`hover-inverse`).
 - **Component aliases**: a role with a component suffix (`bg-surface-tertiary-avatar`, `border-surface-default-switch`)
   where one component needs a value no role has. Its `$description` names the component. Reuse a role before adding
-  one.
+  one. An alias that no kit component uses (only the app or the assistant chat) goes in `app.tokens.json`, so the
+  published kit CSS does not carry it.
 
 The variables are `--guk-<family>-<group>-<role>` theme variables; shadows are `--shadow-<group>-<size>` on Tailwind's
 own namespace. Tailwind emits only the variables a class or a `var()` in the scanned source uses.
@@ -82,7 +87,9 @@ needs a `cssNames` rule in `semantic.config.json`; a new family also needs its u
 Modes: `semantic.config.json` `preview` defines Next and Dark as documents merged over the default theme (`modes/`
 holds the designer's palette, its primitives, shadows and roles). The generator writes, per mode selector, every token
 whose value differs from the default as a literal to `design-system/tokens/preview/`. The file is not in the npm
-package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel.
+package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel. Tailwind
+inlines a literal shadow into its utility, so a primitive shadow class (`shadow-success-sm`) keeps its default colour
+in every mode; the alias shadows (`shadow-surface-*`, `shadow-accent-*`, `shadow-<status>-default`) read the variable.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveColors.grit` flag primitive colour classes and variables in kit and app
 source outside the theme. A class kept on purpose takes `biome-ignore lint/plugin/noPrimitiveColors: <reason>` on the
