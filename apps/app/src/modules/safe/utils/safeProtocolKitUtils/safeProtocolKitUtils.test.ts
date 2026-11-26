@@ -171,7 +171,7 @@ describe('safeProtocolKit utils', () => {
             getTransactionHash: jest.fn().mockResolvedValue(safeTxHash),
         });
 
-        it('builds the calls at the nonce, checksumming every target', async () => {
+        it('builds the calls at the nonce, checksumming every target and leaving safeTxGas to the protocol kit', async () => {
             const protocolKit = buildKit({ to: target, operation: 0 });
 
             await safeProtocolKitUtils.buildTransaction({
@@ -284,7 +284,7 @@ describe('safeProtocolKit utils', () => {
             getTransactionHash: jest.fn().mockResolvedValue('0xhash'),
         });
 
-        it('builds the calls like buildTransaction, at nonce 0', async () => {
+        it('builds the calls like buildTransaction, at nonce 0 and without estimating safeTxGas', async () => {
             const protocolKit = buildKit();
 
             await safeProtocolKitUtils.buildTransactionCall({
@@ -301,7 +301,7 @@ describe('safeProtocolKit utils', () => {
             expect(protocolKit.createTransaction).toHaveBeenCalledWith({
                 transactions: [{ to: target, value: '7', data: '0x12' }],
                 onlyCalls: true,
-                options: { nonce: 0 },
+                options: { nonce: 0, safeTxGas: '0' },
             });
         });
 

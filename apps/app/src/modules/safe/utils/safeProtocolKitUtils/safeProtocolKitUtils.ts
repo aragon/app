@@ -137,6 +137,13 @@ export interface IBuildRejectionTransactionParams
 type SafeTransaction = Awaited<ReturnType<Safe['createTransaction']>>;
 
 /**
+ * Fields of a transaction the protocol kit takes as given instead of filling in or estimating.
+ */
+type SafeTransactionOptions = NonNullable<
+    Parameters<Safe['createTransaction']>[0]['options']
+>;
+
+/**
  * Minimal EIP-1193 provider, the only shape the protocol kit needs.
  */
 interface IRequestProvider {
@@ -222,7 +229,7 @@ class SafeProtocolKitUtils {
         const safeTransaction = await this.createTransaction(
             protocolKit,
             calls,
-            nonce,
+            { nonce },
         );
 
         return this.toQueuedTransaction(
@@ -237,13 +244,20 @@ class SafeProtocolKitUtils {
      * Builds the call a Safe transaction makes from calls, the way `buildTransaction` does, without a nonce: the fields
      * that decide what it runs, for simulating it before it is created. The nonce does not change them, so the
      * transaction is built at nonce 0 rather than reading the Safe's.
+     *
+     * `safeTxGas` is not one of those fields either, so it is set to 0 rather than estimated: below Safe 1.3.0 the
+     * protocol kit estimates it with an `eth_estimateGas` of a single call, which throws when that call reverts, while
+     * a reverting call is exactly what the simulation has to report.
      */
     buildTransactionCall = async (
         params: IBuildTransactionCallParams,
     ): Promise<ISafeTransactionCallData> => {
         const { protocolKit, calls } = params;
 
-        const { data } = await this.createTransaction(protocolKit, calls, 0);
+        const { data } = await this.createTransaction(protocolKit, calls, {
+            nonce: 0,
+            safeTxGas: '0',
+        });
 
         return {
             to: data.to,
@@ -275,12 +289,13 @@ class SafeProtocolKitUtils {
 
     /**
      * Turns calls into one Safe transaction: one call is the transaction itself, several become one delegate call to
-     * MultiSendCallOnly, which cannot delegate any further.
+     * MultiSendCallOnly, which cannot delegate any further. The protocol kit estimates `safeTxGas` unless the options
+     * set it.
      */
     private createTransaction = (
         protocolKit: SafeProtocolKit,
         calls: ISafeTransactionCall[],
-        nonce: number,
+        options: SafeTransactionOptions,
     ): Promise<SafeTransaction> =>
         protocolKit.createTransaction({
             transactions: calls.map(({ to, value, data }) => ({
@@ -289,7 +304,7 @@ class SafeProtocolKitUtils {
                 data,
             })),
             onlyCalls: true,
-            options: { nonce },
+            options,
         });
 
     private toQueuedTransaction = async (
