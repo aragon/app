@@ -1,9 +1,13 @@
 {
-    "note": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Explore: it links to the DAO and the two creation wizards.",
+    "note": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Landing: it leads to the workspace and to Explore, which links to the DAO and the two creation wizards.",
     "rows": [
         {
             "title": "Start here",
             "artboards": [
+                {
+                    "file": "Landing.dc.html",
+                    "title": "Landing"
+                },
                 {
                     "file": "Explore.dc.html",
                     "title": "Explore"

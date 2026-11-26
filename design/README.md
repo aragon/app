@@ -6,13 +6,14 @@ design is a diff of these files on a ticket's branch, and it merges together wit
 `RUNBOOK.md` has the steps.
 
 Two earlier ideas, static screens and exported snapshots, are kept for reference on the branches
-`docs/design-canvas` and `docs/design-snapshots`. Nothing here is built, deployed, released or run in CI.
+`docs/design-canvas` and `docs/design-snapshots`. Nothing here is built, deployed or released. The one workflow
+that touches it, `app-design-catch-up.yml`, brings the prototypes up to an app release when its PR opens.
 
 ## What is here
 
 | Path | What it is |
 | --- | --- |
-| `canvas/*.dc.html` | Thirteen prototypes and the parts they are built from (111 files) |
+| `canvas/*.dc.html` | Fourteen prototypes and the parts they are built from (112 files) |
 | `canvas/app.css` | The app's page layout, transcribed by hand. It came from idea 1 and also holds rules for pages that have no prototype yet |
 | `canvas/proto.css` | The few rules only the prototypes need |
 | `canvas/canvas.json` | The canvas layout: which frames exist and where they sit. Written by `publish/layout-canvas.cjs`, not by hand |
@@ -20,15 +21,19 @@ Two earlier ideas, static screens and exported snapshots, are kept for reference
 | `canvas/assets/mock/` | Mock DAO avatars and token logos |
 | `app-assets.json` | Images the prototypes show that belong to the app (chain logos), by path in the repo |
 | `canvases/prototypes.json` | Which canvas these files are published to, each image's upload on it, the kit version, and the app commit the prototypes were built from |
-| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, lay the canvas out, and load-check the prototypes (`check-canvas.cjs`; see `RUNBOOK.md`, "Load check") |
-| `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, pulling a designer's changes into a branch, publishing |
+| `canvases/<name>.json` | A ticket's canvas, on that ticket's branch from its first save: the same record, plus the branch it was cut from and, once the design is saved, its `intent` and the `states` that matter |
+| `sources.json` | Which app code each part shows, and its route. `publish/affected.cjs` reads it to list the parts a range of app changes touched |
+| `publish/` | Scripts that prepare the files for a canvas, pull a canvas's files back, lay the canvas out, load-check the prototypes (`check-canvas.cjs`; see `RUNBOOK.md`, "Load check") and list the parts behind the app (`affected.cjs`; "Catch up with main") |
+| `RUNBOOK.md` | Steps for a Claude Code session: a new canvas for a ticket, saving a designer's changes into a branch, updating a canvas, implementing a design, catching up with the app |
 | `../skills/shared/aragon-app-canvas*/` | The commands. `/aragon-app-canvas-create` makes a canvas from a branch and touches nothing in git. `/aragon-app-canvas-save` puts what was changed on a canvas into its branch as a commit. `/aragon-app-canvas-update` brings the repo's files onto a canvas. `/aragon-app-canvas` followed by plain words ("refresh the main canvas", "implement this design") covers those and the rest. All of them point a session at the runbook |
 | `BRIEF.md` | What a Claude agent is given to build or update a prototype, including the canvas pitfalls |
 
 The prototypes:
 
-- `Explore.dc.html`: the explore page. The entry point; it links to the DAO and the two creation wizards. With
-  `workspaces` on (as here) the app now serves it at `/explore`, and `/` is a sign-in landing page that has no prototype.
+- `Landing.dc.html`: the sign-in landing page at `/`. The entry point. "Continue with wallet" opens the mock connect dialog
+  and, once a wallet is picked, leads to the workspace; "Explore a demo workspace" (button and previews) leads to the
+  workspace too; Email, Google and Passkey are disabled under "coming soon"; Privacy and Terms are external links.
+- `Explore.dc.html`: the explore page at `/explore`; it links to the DAO and the two creation wizards.
 - `Dao.dc.html`: one mock DAO (Meridian, token voting). Pages: dashboard, proposals, proposal detail, members, member
   detail, assets, transactions, settings, permissions, governance process detail. Connect wallet and the user menu;
   voting, simulating and executing a proposal; delegation; transaction type tabs and the transaction detail dialog.
@@ -57,28 +62,26 @@ owner for access.
 
 ## Which app the prototypes show
 
-Every prototype, and every canvas made from these files, shows **the app as it runs on a developer's machine from
-`main`**, not what users see in production.
+Every prototype, and every canvas made from these files, shows **the build being designed for: `main` with the
+feature flags of the OCC environment** (new.app.aragon.org), not what users of app.aragon.org see today.
 
-- **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026); later ones from `main`
-  as it stood up to 18 November. On 20 November they were caught up with `main` of 19 November (`51c4622`), and on
-  21 November with `main` of 20 November (`412581b`), which is what `canvases/prototypes.json` → `appCommit` records. `RUNBOOK.md`, "Catch up with main", has the procedure.
-- **Feature flags:** each flag's `local` value, the one a developer's machine uses. Checked against a snapshot of
-  the 16 flags taken in mid-November (`design/baseline-check/cms/feature-flags.json` on `docs/design-canvas`):
+- **Code:** `main`. The first prototypes were built from commit `041dc08` (16 November 2026). They were caught up
+  with `main` on 20, 21 and 25 November; `canvases/prototypes.json` → `appCommit` records the last. `RUNBOOK.md`,
+  "Catch up with main", has the procedure.
+- **Feature flags:** OCC's values, with one exception: `gateAdvancedGovernance` is off (OCC has it on), so the
+  governance designer's Advanced option is not gated; its tweak `advancedGated` shows the gated version. The values
+  come from `feature-flags.json` in the `aragon/app-cms` repository (`main`), where OCC takes production's value for
+  any flag it does not set. As of 25 November that means:
 
   | | Flags |
   | --- | --- |
-  | On in the prototypes, off in production | `workspaces`, `safeAccountPage`, `capitalFlowAutomation`, `existingProposalCreationCondition` (and the developer-only `debugPanel`, `useMocks`) |
-  | Off in the prototypes, on in production | `gateAdvancedGovernance` (the governance designer has a tweak that shows it) |
-  | Same in both | the other nine |
+  | On | `workspaces`, `linkedAccount`, `governanceDesigner`, `osxUpdates`, `aragonProfiles`, `supportChat`, `supportChatDocs`, `helpCenter`, `telegramSubscription` |
+  | Off | `capitalFlowAutomation` (no Automation section in DAO settings), `existingProposalCreationCondition` (no existing conditions in the governance designer), `safeAccountPage`, `domainMemberList`, `gateAdvancedGovernance` (the exception), and the developer-only `debugPanel`, `useMocks` |
 
-  `workspaces` and `safeAccountPage` are also off in the deployed development environment in that snapshot, so the
-  Workspace and Safe prototypes show something only a local build has. Since 20 November the code also turns
-  `workspaces` on for the OCC soft-launch environment (new.app.aragon.org).
+  `safeAccountPage` being off means the standalone Safe account page (`SafeFlow.dc.html`) is not reachable in that
+  build. The frame is kept because the page is real code behind a flag; the Safe inside the workspace is reachable.
+  The flag values are read when a catch-up runs, not continuously: check `app-cms` when in doubt.
 - **Data:** mock data written for this, not any real DAO.
-
-So the prototypes are a picture of what is coming, which suits design work. No prototype can be switched to
-"what production looks like", and the flag values above are a snapshot: they are not re-read when flags change.
 
 ## How they were made
 
@@ -114,7 +117,7 @@ recorded in `canvases/prototypes.json` (a second canvas has a record of its own:
 If an image has no upload yet, the script lists it; after uploading, `publish/record-assets.cjs` records the urls.
 
 The Governance UI Kit files the prototypes load (`ds/aragon-gov-ui-kit/…`) are not in the repo. Each canvas copies
-them from the [design system artifact](https://claude.ai/artifact/BMrtaZwNQzvBsTyH9KvHMC), which the design sync
+them from the [design system artifact](https://claude.ai/artifact/XkBmSpR3iXii2onniUDV5x), which the design sync
 builds from `packages/gov-ui-kit`. Anyone starting a canvas needs access to that artifact. `RUNBOOK.md`, "The UI kit
 on a canvas", says what to do when a canvas's copy falls behind.
 
@@ -125,8 +128,7 @@ on a canvas", says what to do when a canvas's copy falls behind.
 - **A visual check of an implementation.** The design → code loop in `RUNBOOK.md` has been run once end to end: a
   ticket canvas from these files, a designer's changes saved back as a diff, and an agent building that design in
   the app. Nothing yet puts the built app next to the canvas. The spec proposes that as the last step of
-  "Implement"; it needs the mock backend and capture scripts from `docs/design-canvas` and a map from each prototype
-  page to its app route.
+  "Implement"; it needs the mock backend and capture scripts from `docs/design-canvas`.
 
 ## Known gaps in the prototypes
 
@@ -174,18 +176,26 @@ on a canvas", says what to do when a canvas's copy falls behind.
   the token-voting wizard. A member's "other DAOs" rows leave the workspace for the standalone DAO prototype.
 - **Create a Safe transaction** was built from the app's source alone (it merged days before and has no screenshot).
   Only a token `transfer` on one sample contract can be added.
-- **Not built, because open pull requests are changing them:** suggested accounts in the create workspace wizard,
-  creating a Safe, and the governance designer inside a workspace.
-- **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the sign-in landing page at
-  `/` and disconnecting back to it; the Getting started wizard for a user with no workspace; the workspace admin page
+- **Not built, from the 25 November catch-up** (app pages and dialogs that merged with no prototype): Getting
+  started as the `/workspace` page for a connected wallet with no workspace (it replaced the old wizard route); the
+  Add accounts dialog with its account select and suggested accounts; the four-step Create account dialog (network,
+  details, signers and approvals, Safe or Aragon account) and its Deploy Safe Account and Deploy Aragon Account
+  transaction dialogs; "Opening your workspace…" on `/workspace`. "Add account" in the account menu does nothing
+  here. The edit workspace wizard was removed from the app. The governance designer inside a workspace is still
+  only an open pull request.
+- **Landing page:** the app's page opens the wallet SDK modal directly; the prototype opens the Aragon connect dialog
+  first. The app's demo activates a demo workspace ("aragon-demo"); the prototype links to the workspace prototype.
+  Connecting leaves the landing through a real link to `Workspace.dc.html`, which opens on its own signed-out state.
+  Disconnecting back to the landing is not built.
+- **Not built, from the 21 November catch-up** (app pages that merged with no prototype): the Getting started wizard for a user with no workspace; the workspace admin page
   (details, accounts with "Remove from workspace", storage, export) and its Edit details dialog; the demo workspace;
   the empty state of a workspace with no accounts; "These actions are authorized by …" on a process's details page
   (no mock process has an execute-selector condition); the logo input's invalid-file-type error.
-- **Workspace navigation draws two kit components by hand.** The joined selector block (`Dropdown.Group`) and the
-  stacked avatars of "All accounts" (`AvatarStack`) are markup with `app.css` rules in `WsNav.dc.html`, like the rest
-  of the selectors: the kit `Dropdown` trigger cannot mount on the canvas, and neither component is in the kit's
-  design system artifact yet (synced from `0cce3df`, 18 November). Kit-only changes since then (the `Avatar` badge and
-  its fallback text sizes) are not on the canvas either, until the kit's design sync is run. Both are marked `data-stands-in-for`, so a session with the synced kit can find and replace them.
+- **Workspace navigation draws its selectors by hand.** The joined selector block is the kit's `Dropdown.Group`, but
+  the two selectors and their menus inside it are markup with `app.css` rules: the kit `Dropdown` takes its whole
+  trigger as one element, which would have to be built in script, where it cannot be selected or edited on the
+  canvas. The avatar stack (`AvatarStack`) and the chain badges (the avatar's `badge` prop) are the kit's own, built in
+  `renderVals()`; every mock account is on Ethereum.
 - **The workspace welcome dialog** opens when the workspace is entered from "View workspace" at the end of create
   workspace, by carrying `?welcome=1` on the link; whether the canvas keeps the query when following a link between
   frames is not confirmed (see "Create proposal from the workspace").

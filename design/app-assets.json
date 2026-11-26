@@ -1,4 +1,7 @@
 {
+    "assets/google.svg": "apps/app/src/assets/images/google.svg",
+    "assets/landing/workspace-preview-desktop.jpg": "apps/app/public/landing/workspace-preview-desktop.jpg",
+    "assets/landing/workspace-preview-mobile.jpg": "apps/app/public/landing/workspace-preview-mobile.jpg",
     "assets/net_bg.svg": "apps/app/src/assets/images/net_bg.svg",
     "assets/networks/arbitrum.svg": "apps/app/public/networks/arbitrum.svg",
     "assets/networks/avalanche.svg": "apps/app/public/networks/avalanche.svg",

@@ -1,0 +1,65 @@
+{
+    "$description": "How primitives.tokens.json becomes CSS. cssNames: the custom property of each token path (`*` captures one path segment, `$1`.. reinsert it; first match wins). files: the generated files of src/theme/tokens/primitives/, in the order their barrel imports them; each maps a selector or at-rule to its lines. A line ending in `;` is CSS that has no DTCG form (a namespace reset, `--radius-none: none`); any other line is a token path and places that token, or every token under that group, in document order.",
+    "cssNames": {
+        "color.transparent": "--color-transparent",
+        "color.*.*": "--color-$1-$2",
+        "radius.*": "--radius-$1",
+        "breakpoint.css.*": "--breakpoint-$1",
+        "breakpoint.px.*": "--breakpoint-$1-px",
+        "spacing.base": "--spacing",
+        "font.family.*": "--font-$1",
+        "font.weight.*": "--font-weight-$1",
+        "font.size.*": "--text-$1",
+        "font.leading.*": "--leading-$1",
+        "shadow.*": "--shadow-$1",
+        "ring.color.*": "--ring-color-$1"
+    },
+    "files": {
+        "borderRadius.css": {
+            "@theme": [
+                "--radius-*: initial;",
+                "radius",
+                "--radius-none: none;"
+            ]
+        },
+        "breakpoints.css": {
+            ":root": [
+                "breakpoint.px"
+            ],
+            "@theme": [
+                "--breakpoint-*: initial;",
+                "breakpoint.css"
+            ]
+        },
+        "colors.css": {
+            "@theme": [
+                "--color-*: initial;",
+                "color"
+            ]
+        },
+        "focusRing.css": {
+            "@theme": [
+                "--ring-color-*: initial;",
+                "ring.color"
+            ]
+        },
+        "shadows.css": {
+            "@theme": [
+                "--shadow-*: initial;",
+                "shadow",
+                "--shadow-none: 0px 0px #0000;"
+            ]
+        },
+        "spacing.css": {
+            "@theme": [
+                "spacing"
+            ]
+        },
+        "typography.css": {
+            "@theme": [
+                "--font-*: initial;",
+                "font"
+            ]
+        }
+    }
+}
