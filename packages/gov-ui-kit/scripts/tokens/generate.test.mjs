@@ -60,13 +60,24 @@ test('a typography composite becomes one theme variable per part, a part alias a
                 '--guk-type-font-weight-display: var(--font-weight-normal);',
                 '--guk-type-letter-spacing-display: 0px;',
                 '--guk-type-line-height-display: var(--leading-tight);',
-                '--guk-type-md-font-family-display: var(--font-sans);',
                 '--guk-type-md-font-size-display: var(--text-5xl);',
+                '--guk-type-md-line-height-display: var(--leading-tight);',
+                '--guk-type-md-letter-spacing-display: 0px;',
             ].join('\n    '),
         ),
     );
-    assert.match(css, /--guk-type-line-height-supporting--column-heading: var\(--leading-default-sm\);/);
+    assert.match(css, /--guk-type-line-height-supporting--framework-leading: var\(--leading-default-sm\);/);
     assert.match(css, /--guk-type-strong: var\(--font-weight-semibold\);/);
+    assert.doesNotMatch(css, /--guk-type-md-font-(family|weight)-/);
+});
+
+test('a layer lays out the tokens of its own document, in its own dir', () => {
+    const files = generate();
+    const css = (path) => files.get(resolve(kitRoot, path));
+    assert.match(css('design-system/tokens/app/colors.css'), /--guk-bg-body-sidebar: var\(--color-neutral-25\);/);
+    assert.doesNotMatch(css('src/theme/tokens/semantic/colors.css'), /--guk-bg-body-sidebar:/);
+    assert.match(css('design-system/tokens/app/typography.css'), /--guk-type-font-size-body--xmaquina-header:/);
+    assert.doesNotMatch(css('src/theme/tokens/typography/roles.css'), /xmaquina/);
 });
 
 test('a changed token makes its file stale', (context) => {
@@ -245,12 +256,15 @@ test('in a mode, an exception follows its role by the rule, and a CSS line is wr
     const dir = mutated(context, 'modes/typography.next.tokens.json', ({ type }) => {
         type.role.caption.base.$value.fontSize = '{font.size.5xl}';
     });
-    const { type } = JSON.parse(readFileSync(join(sourceDir, 'typography.tokens.json'), 'utf8'));
-    const captions = ['caption', ...Object.keys(type.exception).filter((name) => name.startsWith('caption--'))];
+    // The kit's exceptions and the app's alike.
+    const exceptions = ['typography', 'app'].flatMap((layer) =>
+        Object.keys(JSON.parse(readFileSync(join(sourceDir, `${layer}.tokens.json`), 'utf8')).type.exception),
+    );
+    const captions = ['caption', ...exceptions.filter((name) => name.startsWith('caption--'))];
     const lines = previewModes(dir, 'typography')[NEXT_TYPOGRAPHY];
     assert.deepEqual(
-        lines.filter((line) => /^--guk-type-font-size-caption(--|:)/.test(line)),
-        captions.map((name) => `--guk-type-font-size-${name}: 3rem;`),
+        lines.filter((line) => /^--guk-type-font-size-caption(--|:)/.test(line)).sort(),
+        captions.map((name) => `--guk-type-font-size-${name}: 3rem;`).sort(),
     );
     assert.equal(lines.at(-1), '--guk-type-numeric: tabular-nums;');
 });
@@ -351,32 +365,34 @@ test('type roles compile with variants and @apply, before raw type classes and t
         'tracking-wide',
         'type-strong',
         'type-mono',
+        'type-numeric',
         'type-nonexistent',
     ]);
     const role = css.slice(css.indexOf('.type-supporting {'), css.indexOf('.type-title-item--entity-list {'));
     assert.match(role, /^\.type-supporting \{\n\s+font-family: var\(--guk-type-font-family-supporting\);/);
-    assert.match(role, /--tw-leading: var\(--guk-type-line-height-supporting\);/);
-    assert.match(role, /@media \(width >= 48rem\) \{\n\s+font-family: var\(--guk-type-md-font-family-supporting\);/);
+    // The md step sets the parts that may step, not the family and the weight.
+    assert.match(
+        role,
+        /@media \(width >= 48rem\) \{\n\s+font-size: var\(--guk-type-md-font-size-supporting\);\n\s+line-height: var\(--guk-type-md-line-height-supporting\);\n\s+letter-spacing: var\(--guk-type-md-letter-spacing-supporting\);\n\s+\}/,
+    );
     assert.match(css, /\.placeholder\\:type-caption::placeholder \{/);
     assert.match(css, /@media \(width >= 48rem\) \{\n\s+\.md\\:type-control \{/);
     assert.match(css, /\.probe \{[\s\S]*\n {2}\}\n {2}font-weight: var\(--guk-type-strong\);\n\}/);
     for (const later of ['.text-lg {', '.leading-normal {', '.font-semibold {', '.tracking-wide {', '.type-strong {']) {
         assert(css.indexOf('.type-title-item--entity-list {') < css.indexOf(later), `the roles before ${later}`);
     }
-    // A raw size keeps the role's line height; the role's line height does not inherit.
-    assert.match(css, /\.text-lg \{\n\s+font-size: var\(--text-lg\);\n\s+line-height: var\(--tw-leading, /);
-    assert.match(css, /@property --tw-leading \{\n\s+syntax: "\*";\n\s+inherits: false;/);
-    assert.doesNotMatch(css, /--guk-type-font-size-display:|type-nonexistent/);
+    // The modifiers' variables are emitted with their classes; numeric falls back to the parent's figures.
+    assert.match(css, /--guk-type-strong: var\(--font-weight-semibold\);/);
+    assert.match(css, /--guk-type-mono: var\(--font-mono\);/);
+    assert.match(css, /\.type-numeric \{\n\s+font-variant-numeric: var\(--guk-type-numeric, inherit\);/);
+    assert.doesNotMatch(css, /--tw-leading: var\(--guk|--guk-type-font-size-display:|type-nonexistent/);
 });
 
 test('a type role steps with the md variant of the build that compiles it', async () => {
     const css = await compileTokens('@custom-variant md { @container app (width >= 48rem) { @slot; } }', [
         'type-supporting',
     ]);
-    assert.match(
-        css,
-        /@container app \(width >= 48rem\) \{\n\s+font-family: var\(--guk-type-md-font-family-supporting\);/,
-    );
+    assert.match(css, /@container app \(width >= 48rem\) \{\n\s+font-size: var\(--guk-type-md-font-size-supporting\);/);
 });
 
 for (const rule of ['noPrimitiveColors', 'noPrimitiveTypography']) {

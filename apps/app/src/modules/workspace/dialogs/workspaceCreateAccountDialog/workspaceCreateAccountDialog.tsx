@@ -137,7 +137,10 @@ const WorkspaceCreateAccountDialogSteps: React.FC = () => {
                 <Heading size="h3">
                     {t(`${i18nBase}.steps.${step.id}.title`)}
                 </Heading>
-                <p className="type-body--unstepped text-surface-secondary">
+                <p
+                    // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
+                    className="text-base leading-normal text-surface-secondary"
+                >
                     {t(`${i18nBase}.steps.${step.id}.description`)}
                 </p>
             </div>

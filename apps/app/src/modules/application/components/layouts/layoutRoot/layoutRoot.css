@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "../../../../../../node_modules/@aragon/gov-ui-kit/src/index.css";
+/* The kit's token aliases that only the app uses: generated next to the kit's tokens, not in its npm package. */
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/app/index.css";
 /* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
 @import "tailwindcss";
 @import "./breakpoints.css";

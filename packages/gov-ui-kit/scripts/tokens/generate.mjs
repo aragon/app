@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 // The token generator. It reads the DTCG 2025.10 token source in design-system/tokens/source/ and writes:
 //
-// - src/theme/tokens/<layer>/*.css      the kit's token CSS (Tailwind `@theme` blocks) and a barrel, per layer
+// - src/theme/tokens/<layer>/*.css      the kit's token CSS (Tailwind `@theme` blocks) and a barrel, per layer; a
+//                                       layer's `dir` puts them elsewhere (design-system/tokens/app/: app-only tokens)
 // - design-system/tokens/preview/*.css  the preview modes: the tokens each mode changes (not in the npm package)
 // - the token source itself, normalised: every colour carries the `hex` of its components
 //
-// The default theme is every `*.tokens.json` directly in the source folder; every `*.config.json` there is a layer.
+// The default theme is every `*.tokens.json` directly in the source folder; every `*.config.json` there is a layer,
+// which lays out the tokens of the `*.tokens.json` of the same name.
 //
 // Usage: `node scripts/tokens/generate.mjs [--check]`
 //   (none)    validate the source, write the files
@@ -16,7 +18,7 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderCss } from './lib/css.mjs';
-import { readJson, readTokens, withColorHex } from './lib/dtcg.mjs';
+import { readJson, readTokens, tokenPaths, withColorHex } from './lib/dtcg.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const defaultSourceDir = resolve(kitRoot, 'design-system/tokens/source');
@@ -40,6 +42,7 @@ export const generate = (sourceDir = defaultSourceDir) => {
         layers: Object.fromEntries(
             suffixed('.config.json').map(([layer, name]) => [layer, readJson(resolve(sourceDir, name))]),
         ),
+        layerPaths: (layer) => tokenPaths(document(`${layer}.tokens.json`)),
         modeTokens: (names) => readTokens(schema, defaults, names.map(document)),
     });
     return new Map([

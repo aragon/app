@@ -27,6 +27,7 @@
             "!.changeset/**",
             "!.zed/**",
             "!packages/gov-ui-kit/design-system/tokens/source/schema/**",
+            "!packages/gov-ui-kit/design-system/tokens/app/*.css",
             "!packages/gov-ui-kit/design-system/tokens/preview/*.css",
             "!packages/gov-ui-kit/src/theme/tokens/*/*.css"
         ]

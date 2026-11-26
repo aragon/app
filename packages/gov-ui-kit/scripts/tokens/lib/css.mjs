@@ -1,5 +1,6 @@
-// The generated CSS. Every `<layer>.config.json` lays tokens out as `src/theme/tokens/<layer>/*.css` plus a barrel,
-// and may describe preview files: the tokens a mode changes, under the mode's selector.
+// The generated CSS. Every `<layer>.config.json` lays the tokens of `<layer>.tokens.json` out as `*.css` files plus a
+// barrel in `src/theme/tokens/<layer>/` (or its `dir`), and may describe preview files: the tokens a mode changes,
+// under the mode's selector.
 
 import assert from 'node:assert/strict';
 import { declaration, literal } from './dtcg.mjs';
@@ -41,11 +42,11 @@ const createNameOf = (cssNames) => {
 
 const block = ([selector, lines]) => `${selector} {\n${lines.map((line) => `    ${line}`).join('\n')}\n}`;
 
-// Kit-relative path -> generated text. `layers`: layer name -> its config. `modeTokens`: the documents of a mode ->
-// the tokens with those documents merged over `tokens`. Fails unless every token has one CSS name of its own and is
-// placed exactly once.
-export const renderCss = ({ tokens, layers, modeTokens }) => {
-    const nameOf = createNameOf(Object.values(layers).flatMap(({ cssNames }) => Object.entries(cssNames)));
+// Kit-relative path -> generated text. `layers`: layer name -> its config. `layerPaths`: layer name -> the token paths
+// of its own document. `modeTokens`: the documents of a mode -> the tokens with those documents merged over `tokens`.
+// Fails unless every token has one CSS name of its own and is placed exactly once.
+export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
+    const nameOf = createNameOf(Object.values(layers).flatMap(({ cssNames = {} }) => Object.entries(cssNames)));
     const varOf = (path) => {
         const name = nameOf(path);
         assert(name, `No CSS name for token ${path} (cssNames)`);
@@ -62,12 +63,14 @@ export const renderCss = ({ tokens, layers, modeTokens }) => {
     };
 
     for (const [layer, config] of Object.entries(layers)) {
-        // A line ending in `;` is CSS; any other line is a token path: that token, or every token under that group.
+        const own = layerPaths(layer);
+        // A line ending in `;` is CSS; any other line is a token path of the layer's document: that token, or every
+        // token under that group.
         const renderLine = (line) => {
             if (line.endsWith(';')) {
                 return [line];
             }
-            const paths = [...tokens.keys()].filter((path) => path === line || path.startsWith(`${line}.`));
+            const paths = own.filter((path) => path === line || path.startsWith(`${line}.`));
             assert(paths.length > 0, `${layer}.config.json: no token at or under ${line}`);
             return paths.map((path) => {
                 const name = varOf(path);
@@ -83,7 +86,7 @@ export const renderCss = ({ tokens, layers, modeTokens }) => {
                 .map(([selector, lines]) => block([selector, lines.flatMap(renderLine)]))
                 .join('\n\n'),
         ]);
-        writeDir(`${THEME_DIR}/${layer}`, texts, [`${layer}.tokens.json`, `${layer}.config.json`]);
+        writeDir(config.dir ?? `${THEME_DIR}/${layer}`, texts, [`${layer}.tokens.json`, `${layer}.config.json`]);
     }
     const paths = new Set(placed.values());
     const missing = [...tokens.keys()].filter((path) => !paths.has(path));
