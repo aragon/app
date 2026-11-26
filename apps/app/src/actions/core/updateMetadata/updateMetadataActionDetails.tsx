@@ -117,7 +117,7 @@ export const UpdateMetadataActionDetails: React.FC<
                         'app.actions.core.updateMetadataActionDetails.nameTerm',
                     )}
                 >
-                    <p className="type-supporting--detail-value text-neutral-800">
+                    <p className="type-supporting--detail-value text-surface-primary">
                         {metadataToDisplay.name}
                     </p>
                 </DefinitionList.Item>
@@ -127,7 +127,7 @@ export const UpdateMetadataActionDetails: React.FC<
                             'app.actions.core.updateMetadataActionDetails.processKeyTerm',
                         )}
                     >
-                        <p className="type-supporting--detail-value text-neutral-800">
+                        <p className="type-supporting--detail-value text-surface-primary">
                             {processKey}
                         </p>
                     </DefinitionList.Item>
@@ -137,7 +137,7 @@ export const UpdateMetadataActionDetails: React.FC<
                         `app.actions.core.updateMetadataActionDetails.${descriptionTerm}`,
                     )}
                 >
-                    <p className="type-supporting--detail-value text-neutral-800">
+                    <p className="type-supporting--detail-value text-surface-primary">
                         {metadataToDisplay.description}
                     </p>
                 </DefinitionList.Item>

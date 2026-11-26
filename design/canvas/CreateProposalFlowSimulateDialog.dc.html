@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal simulate dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><style>body{margin:0}</style></helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{open}}" on-open-change="{{openChange}}" dc-props="{{rootProps}}" hidden-title="Simulate actions" hidden-description="Simulate the actions">
+<x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Simulate actions" on-close="{{close}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="pt-2 pb-3">
+<x-import component-from-global-scope="GovUiKit.ActionSimulation" error="{{error}}" is-enabled="{{no}}" is-loading="{{loading}}" last-simulation="{{last}}" total-actions="{{total}}"></x-import>
+</x-import>
+<x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"status":{"editor":"text","default":"success"},"totalActions":{"editor":"int","default":1},"onClose":{"editor":null},"timestamp":{"editor":null},"onContinue":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Simulate actions dialog (apps/app: modules/governance/dialogs/simulateActionsDialog), kit Dialog.Root with ActionSimulation.
+//   <dc-import name="CreateProposalFlowSimulateDialog" open="{{yes}}" status="loading" total-actions="{{one}}" on-close="{{fn}}" on-continue="{{fn}}">
+// Props: open (default true); status 'loading' (skeleton, "Continue" disabled) | 'error' (generic error, "Continue anyway") |
+//   (the kit formats the timestamp itself: it takes epoch ms, never a Date object, which crashes it)
+//   'limitReached' | 'unavailable' (their error strings) | 'success' | 'failed' (a run result); totalActions; timestamp (epoch ms of the run shown for success / failed, default now); onClose(); onContinue().
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, call = (fn, ...a) => (fn ? fn(...a) : undefined), st = p.status ?? 'error';
+    const errors = {
+      error: 'There was an error simulating the actions. Please try again later.',
+      limitReached: 'Simulation limit reached for now. Try again later or continue without it.',
+      unavailable: 'Simulation is not available right now. Try again later or continue without it.',
+    };
+    const failed = st === 'failed' || st in errors;
+    const run = st === 'success' || st === 'failed' ? { status: st, timestamp: Number(p.timestamp) || Date.now() } : undefined;
+    return {
+      no: false, open: p.open !== false, total: Number(p.totalActions ?? 1),
+      error: errors[st], loading: st === 'loading', last: run,
+      primary: { label: failed ? 'Continue anyway' : 'Continue', disabled: st === 'loading', onClick: () => call(p.onContinue) },
+      secondary: { label: 'Cancel', onClick: () => call(p.onClose) },
+      close: () => call(p.onClose), openChange: (o) => { if (!o) call(p.onClose); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault() },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -46,7 +46,7 @@ export interface ITextAreaRichTextProps
 // (see https://tiptap.dev/docs/editor/api/extensions/placeholder#additional-setup)
 const placeholderClasses = classNames(
     'first:before:pointer-events-none first:before:absolute first:before:top-5', // General
-    'first:before:type-control first:before:text-neutral-300', // Typography
+    'first:before:type-control first:before:text-surface-placeholder', // Typography
     'first:before:content-[attr(data-placeholder)]', // Content
 );
 

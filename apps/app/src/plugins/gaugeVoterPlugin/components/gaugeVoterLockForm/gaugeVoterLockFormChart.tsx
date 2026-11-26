@@ -179,7 +179,7 @@ export const GaugeVoterLockFormChart: React.FC<
         <div className="w-full py-2">
             <div className="mb-3">
                 <p>
-                    <span className="type-strong!">
+                    <span className="type-strong">
                         {formatterUtils.formatNumber(activePoint.y, {
                             format: NumberFormat.TOKEN_AMOUNT_SHORT,
                         })}{' '}
@@ -190,7 +190,7 @@ export const GaugeVoterLockFormChart: React.FC<
                         )}
                     </span>
                 </p>
-                <span className="type-supporting--framework-leading text-neutral-500">
+                <span className="type-supporting--framework-leading text-surface-secondary">
                     {activePoint.x}
                 </span>
             </div>
@@ -205,12 +205,12 @@ export const GaugeVoterLockFormChart: React.FC<
                         <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
                             <stop
                                 offset="5%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0.4}
                             />
                             <stop
                                 offset="95%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0}
                             />
                         </linearGradient>
@@ -241,14 +241,14 @@ export const GaugeVoterLockFormChart: React.FC<
                         dataKey="y"
                         fill="url(#colorY)"
                         fillOpacity={1}
-                        stroke="var(--color-primary-400)"
+                        stroke="var(--guk-border-accent-secondary)"
                         strokeWidth={1}
                         type="monotone"
                     />
                     <ReferenceDot
-                        fill="var(--color-primary-400)"
+                        fill="var(--guk-bg-accent-solid)"
                         r={4}
-                        stroke="var(--color-neutral-0)"
+                        stroke="var(--guk-bg-surface-primary)"
                         strokeWidth={1}
                         x={activePoint.x}
                         y={activePoint.y}

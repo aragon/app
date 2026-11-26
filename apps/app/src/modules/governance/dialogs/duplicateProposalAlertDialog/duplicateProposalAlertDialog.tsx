@@ -40,7 +40,7 @@ export const DuplicateProposalAlertDialog: React.FC<
         <>
             <DialogAlert.Header title={t(`${namespace}.title`)} />
             <DialogAlert.Content>
-                <div className="flex flex-col gap-y-4 pb-4 type-body--unstepped text-neutral-500">
+                <div className="flex flex-col gap-y-4 pb-4 type-body--unstepped text-surface-secondary">
                     <p>{t(`${namespace}.description.1`)}</p>
                     <p>{t(`${namespace}.description.2`)}</p>
                 </div>

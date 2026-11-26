@@ -33,9 +33,9 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
     return (
         <div
             className={classNames(
-                'group relative h-20 border-neutral-100', // default
-                'hover:border-neutral-200 hover:shadow-neutral-md', // hover
-                'active:border-neutral-300 active:shadow-none', // active
+                'group relative h-20 border-surface-default', // default
+                'hover:border-surface-hover hover:shadow-surface-md', // hover
+                'active:border-surface-active-card active:shadow-none', // active
                 'md:w-1/2', // responsive
                 {
                     'rounded-t-xl md:rounded-l-xl md:rounded-r-none': txRole === 'sender', // sender base
@@ -67,20 +67,20 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                 <MemberAvatar
                     address={participant.address}
                     avatarSrc={participant.avatarSrc}
-                    className="group-hover:shadow-neutral-md group-active:shadow-none"
+                    className="group-hover:shadow-surface-md group-active:shadow-none"
                     ensName={participant.name}
                     responsiveSize={{ md: 'md' }}
                 />
                 <div className="flex min-w-0 flex-col">
-                    <span className="type-caption text-neutral-500">{txRole === 'sender' ? 'From' : 'To'}</span>
+                    <span className="type-caption text-surface-secondary">{txRole === 'sender' ? 'From' : 'To'}</span>
                     <div className="flex items-center space-x-1">
                         <AddressOutput
                             address={participant.address}
-                            className="truncate type-title-item--compact-list text-neutral-800"
+                            className="truncate type-title-item--compact-list text-surface-primary"
                             label={resolvedUserHandle}
                         />
                         <Icon
-                            className="float-right text-neutral-300 group-hover:text-primary-300 group-active:text-primary-400"
+                            className="float-right icon-surface-default group-hover:icon-surface-default-asset-transfer group-active:icon-accent-active"
                             icon={IconType.LINK_EXTERNAL}
                             size="sm"
                         />

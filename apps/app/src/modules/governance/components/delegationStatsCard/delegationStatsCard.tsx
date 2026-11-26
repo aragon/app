@@ -69,7 +69,7 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                         {pluginStats.map((stat, index) => (
                             <Fragment key={stat.label}>
                                 {index > 0 && (
-                                    <div className="h-11 w-px shrink-0 bg-neutral-100" />
+                                    <div className="h-11 w-px shrink-0 bg-surface-tertiary" />
                                 )}
                                 <PageHeaderStat {...stat} />
                             </Fragment>
@@ -88,9 +88,9 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                 {displayDisclaimer && (
                     <>
                         <div className="hidden py-2 md:block">
-                            <div className="h-px w-full bg-neutral-100" />
+                            <div className="h-px w-full bg-surface-tertiary" />
                         </div>
-                        <p className="text-center type-caption--definition-description text-neutral-400 md:text-left">
+                        <p className="text-center type-caption--definition-description text-surface-tertiary md:text-left">
                             {t('app.governance.delegationStatsCard.disclaimer')}
                         </p>
                     </>

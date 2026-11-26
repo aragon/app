@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Safe review dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Review transaction" hidden-description="Review the Safe transaction">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Review transaction" on-close="{{close}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <div class="sf-dialog-body">
+      <dc-import name="SafeFlowReviewContent" tx="{{tx}}" hint-size="100%,300px"></dc-import>
+    </div>
+  </x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"tx":{"editor":null},"onClose":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// Review dialog of a pending Safe transaction. Source: modules/safe/dialogs/safeTransactionReviewDialog: header "Review transaction" +
+// SafeTransactionReviewContent, and nothing else: it is read-only, with no footer, no simulation and no approve / execute buttons. Those live on
+// the voting card and the simulation card of the transaction's row in the workspace Transactions list (WsTransactions), which opens the
+// sign dialog (SafeFlowTxDialog = safeTransactionDialog).
+// Props: open, tx (entry derived by the flow: nonceText, fn, to, value, data, domainHash, messageHash, safeTxHash), onClose() (X, Escape, outside click).
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const onClose = () => { if (typeof p.onClose === 'function') p.onClose(); };
+    return {
+      tx: p.tx || {},
+      isOpen: p.open === undefined ? true : !!p.open,
+      close: onClose,
+      openChange: (o) => { if (!o) onClose(); },
+      noFocus: (e) => e.preventDefault()
+    };
+  }
+}
+</script>
+</body>
+</html>

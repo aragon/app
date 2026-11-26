@@ -22,12 +22,12 @@ import { appendRequestToHistory } from '../../requests';
 // The vertical margins separate the card from the assistant text around it in the same message —
 // the model narrates both into a draft and past a result, so text can sit on either side.
 const cardClassName =
-    'my-3 flex w-full flex-col gap-3.5 rounded-xl border border-neutral-100 bg-neutral-0 p-5 shadow-neutral-md first:mt-0 last:mb-0';
+    'my-3 flex w-full flex-col gap-3.5 rounded-xl border border-surface-secondary bg-surface-primary p-5 shadow-surface-md first:mt-0 last:mb-0';
 
 // A draft nobody acted on is not an event worth a card: it collapses into a quiet line so the
 // transcript stays readable while still reading honestly.
 const spentNoteClassName =
-    'my-3 text-center text-neutral-400 type-caption--chat-note first:mt-0 last:mb-0';
+    'my-3 text-center type-caption--chat-note first:mt-0 last:mb-0 text-surface-tertiary';
 
 // The ticket draft the model assembled, rendered as an approval card in the transcript. It walks
 // four states: the draft streaming in, the draft awaiting the user's Create/Dismiss decision, the
@@ -65,23 +65,23 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
             <div className={cardClassName}>
                 <div className="flex items-center gap-2">
                     <Icon
-                        className="text-success-600"
+                        className="icon-success-primary-chat"
                         icon={IconType.SUCCESS}
                         size="md"
                     />
-                    <Heading as="h3" typeRole="supporting">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.successTitle}
                     </Heading>
                 </div>
                 <div className="flex items-center gap-2">
                     <Tag label={result.identifier} variant="primary" />
                     {args.title != null && (
-                        <span className="min-w-0 truncate type-supporting--compact-detail text-neutral-500">
+                        <span className="min-w-0 truncate type-supporting--compact-detail text-surface-secondary">
                             {args.title}
                         </span>
                     )}
                 </div>
-                <p className="type-body-compact--unstepped text-neutral-500">
+                <p className="type-body-compact--unstepped text-surface-secondary">
                     {chatCopy.ticketCard.contactUpdates}
                 </p>
             </div>
@@ -106,15 +106,15 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
             <div className={cardClassName}>
                 <div className="flex items-center gap-2">
                     <Icon
-                        className="text-critical-600"
+                        className="icon-critical-primary-chat"
                         icon={IconType.WARNING}
                         size="md"
                     />
-                    <Heading as="h3" typeRole="supporting">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.errorTitle}
                     </Heading>
                 </div>
-                <p className="type-body-compact--unstepped text-neutral-500">
+                <p className="type-body-compact--unstepped text-surface-secondary">
                     {chatCopy.ticketCard.errorFallback}
                 </p>
                 <Button
@@ -153,7 +153,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         return (
             <div className={cardClassName}>
                 <div
-                    className="flex items-center gap-2 type-supporting--compact-detail text-neutral-500"
+                    className="flex items-center gap-2 type-supporting--compact-detail text-surface-secondary"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />
@@ -176,21 +176,21 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         <div className={cardClassName}>
             {/* The ticket leads with itself: its title is the card's heading. */}
             {args.title != null && (
-                <Heading as="h3" typeRole="title-item">
+                <Heading as="h3" typeClassName="type-title-item">
                     {args.title}
                 </Heading>
             )}
             {args.description != null && (
-                <p className="type-body-compact--unstepped whitespace-pre-wrap text-neutral-600">
+                <p className="type-body-compact--unstepped whitespace-pre-wrap text-surface-secondary-ticket">
                     {args.description}
                 </p>
             )}
             {steps.length > 0 && (
                 <div className="flex flex-col gap-1">
-                    <p className="type-body-compact--unstepped type-strong text-neutral-800">
+                    <p className="type-body-compact--unstepped type-strong text-surface-primary">
                         {chatCopy.ticketCard.stepsLabel}
                     </p>
-                    <ol className="list-decimal pl-5 type-body-compact--unstepped text-neutral-600">
+                    <ol className="list-decimal pl-5 type-body-compact--unstepped text-surface-secondary-ticket">
                         {steps.map((step, index) => (
                             // biome-ignore lint/suspicious/noArrayIndexKey: steps are positional and may repeat verbatim
                             <li key={`step-${index}`}>{step}</li>
@@ -202,15 +202,15 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 <>
                     {/* Deterministic invite to enrich the request: the model does not reliably
                         narrate around its tool call, so the card itself carries the nudge. */}
-                    <p className="type-caption--chat-note text-neutral-400">
+                    <p className="type-caption--chat-note text-surface-tertiary">
                         {chatCopy.ticketCard.addMore}
                     </p>
                     {args.contact != null && args.contact.length > 0 && (
-                        <p className="type-caption--chat-note text-neutral-400">
+                        <p className="type-caption--chat-note text-surface-tertiary">
                             {`${chatCopy.ticketCard.contactPrefix} ${args.contact}`}
                         </p>
                     )}
-                    <div className="flex items-center gap-3 border-t border-neutral-100 pt-3.5">
+                    <div className="flex items-center gap-3 border-t border-surface-secondary pt-3.5">
                         <Button
                             onClick={() =>
                                 respondToApproval({ approved: true })
@@ -238,7 +238,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 </>
             ) : (
                 <div
-                    className="flex items-center gap-2 type-caption--unstepped text-neutral-400"
+                    className="flex items-center gap-2 type-caption--unstepped text-surface-tertiary"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />

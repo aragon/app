@@ -1,46 +1,34 @@
 {
-    "$description": "Non-token configuration of the semantic typography layer (the tokens are typography.today.tokens.json and typography.next.tokens.json). output / typesOutput: the generated CSS and the TypeScript union of the style names. modes: one value set per mode, Today first (the default rendering) and the preview modes on their own attribute. todayInherits: composite properties Today does not set (the variable is left undeclared, so the declaration falls back to inheritance); todayDefaults: the values the Today tokens must state for them. desktopVariant: the Tailwind variant a utility switches to its md values with. modifiers: utilities applied on top of a role; `token` modifiers read type.modifier.<name> of each mode, the others carry per-mode CSS values because DTCG has no type for them (font-variant-numeric).",
-    "prefix": "type",
-    "output": "src/theme/tokens/typography.css",
-    "typesOutput": "src/core/types/typographyStyles.ts",
-    "modes": {
-        "today": {
-            "file": "typography.today.tokens.json",
-            "selector": ":root"
-        },
-        "next": {
-            "file": "typography.next.tokens.json",
-            "selector": "[data-typography=\"next\"]",
-            "description": "Next typography preview: the plain role bundles in Sora / Inter Display; exceptions follow their role."
+    "$description": "How typography.tokens.json becomes CSS; cssNames, files and preview read as in semantic.config.json, the files go to src/theme/tokens/typography/. Each part of a style's composite is a `--guk-type-<property>-<style>` theme variable (`--guk-type-md-…` from the md breakpoint), read by the `type-*` utility of src/theme/tokens/typeRoles.css; the modifiers are `--guk-type-<modifier>`.",
+    "cssNames": {
+        "type.*.*.base.fontFamily": "--guk-type-font-family-$2",
+        "type.*.*.base.fontSize": "--guk-type-font-size-$2",
+        "type.*.*.base.fontWeight": "--guk-type-font-weight-$2",
+        "type.*.*.base.letterSpacing": "--guk-type-letter-spacing-$2",
+        "type.*.*.base.lineHeight": "--guk-type-line-height-$2",
+        "type.*.*.md.fontFamily": "--guk-type-md-font-family-$2",
+        "type.*.*.md.fontSize": "--guk-type-md-font-size-$2",
+        "type.*.*.md.fontWeight": "--guk-type-md-font-weight-$2",
+        "type.*.*.md.letterSpacing": "--guk-type-md-letter-spacing-$2",
+        "type.*.*.md.lineHeight": "--guk-type-md-line-height-$2",
+        "type.modifier.*": "--guk-type-$1"
+    },
+    "files": {
+        "roles.css": {
+            "@theme": [
+                "type"
+            ]
         }
     },
-    "desktopVariant": "md",
-    "todayInherits": [
-        "fontFamily",
-        "letterSpacing"
-    ],
-    "todayDefaults": {
-        "fontFamily": "{font.family.sans}",
-        "letterSpacing": {
-            "value": 0,
-            "unit": "px"
-        }
-    },
-    "modifiers": {
-        "strong": {
-            "type": "token",
-            "property": "font-weight"
-        },
-        "mono": {
-            "type": "token",
-            "property": "font-family"
-        },
-        "numeric": {
-            "type": "css",
-            "property": "font-variant-numeric",
-            "values": {
-                "next": "tabular-nums"
-            }
+    "preview": {
+        "typography.css": {
+            ":root[data-typography=\"next\"], [data-typography=\"next\"]": [
+                "modes/typography.next.tokens.json",
+                {
+                    "type.exception.*--*": "type.role.$1"
+                },
+                "--guk-type-numeric: tabular-nums;"
+            ]
         }
     }
 }

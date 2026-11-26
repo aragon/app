@@ -39,10 +39,11 @@ export const Breadcrumbs: React.FC<IBreadcrumbsProps> = (props) => {
                 {pathLinks.map((link) => (
                     <li className="flex items-center gap-x-1 whitespace-nowrap" key={link.href}>
                         <Link href={link.href}>{link.label}</Link>
+                        {/* biome-ignore lint/plugin/noPrimitiveColors: not converted yet */}
                         <Icon className="text-neutral-200" icon={IconType.SLASH} responsiveSize={{ md: 'lg' }} />
                     </li>
                 ))}
-                <li aria-current="page" className="truncate type-control--stepped-nav text-neutral-500">
+                <li aria-current="page" className="truncate type-control--stepped-nav text-surface-secondary">
                     {currentPage?.label}
                 </li>
             </ol>

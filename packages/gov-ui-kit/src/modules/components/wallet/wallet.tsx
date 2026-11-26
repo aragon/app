@@ -22,7 +22,8 @@ export interface IWalletProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
  * Usage notes:
  *
  * - The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the
- *   avatar.
+ *   avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states
+ *   use rounded rectangular buttons from `md` upward.
  * - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always
  *   mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only
  *   for a connected `user` without `name`.
@@ -43,8 +44,8 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
     const contentId = useId();
 
     const buttonClassName = classNames(
-        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-neutral-100 bg-neutral-0 text-neutral-500 transition-all',
-        'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800 disabled:cursor-default',
+        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all md:rounded-xl',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active disabled:cursor-default',
         { 'px-4 py-2.5': user == null },
         { 'p-1 md:pl-4': user != null },
         className,
@@ -55,7 +56,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
             <button
                 {...otherProps}
                 aria-labelledby={contentId}
-                className="absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 focus-ring-primary disabled:cursor-default"
+                className="absolute inset-0 z-0 cursor-pointer rounded-full border-0 bg-transparent p-0 ring-accent-focus focus-ring disabled:cursor-default md:rounded-xl"
             />
             <InteractiveAncestorContext.Provider value={true}>
                 <div

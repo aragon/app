@@ -49,7 +49,9 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     // zero approvals: name the body and say no more.
     if (stageStatus === ProposalStatus.PENDING || safeInfo == null) {
         return (
-            <p className="type-title-item text-neutral-800">{displayName}</p>
+            <p className="type-title-item text-surface-primary">
+                {displayName}
+            </p>
         );
     }
 
@@ -76,13 +78,13 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
         const statusClass =
             reached && isVeto
-                ? 'text-critical-800'
+                ? 'text-critical-primary'
                 : reached
-                  ? 'text-success-800'
-                  : 'text-neutral-500';
+                  ? 'text-success-primary'
+                  : 'text-surface-secondary';
 
         return (
-            <p className="type-title-item text-neutral-800">
+            <p className="type-title-item text-surface-primary">
                 {displayName}{' '}
                 <span className={statusClass}>
                     {t(`${translationKey}.${statusKey}`)}
@@ -102,9 +104,9 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="type-title-item text-neutral-800">
+            <p className="type-title-item text-surface-primary">
                 {displayName}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(
                         `${translationKey}.${isVeto ? 'vetoLabel' : 'approvalLabel'}`,
                     )}
@@ -118,11 +120,11 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                 value={approvalsPercentage}
                 variant="neutral"
             />
-            <p className="type-supporting text-neutral-800">
+            <p className="type-supporting text-surface-primary">
                 {formatterUtils.formatNumber(approvalsAmount, {
                     format: NumberFormat.GENERIC_SHORT,
                 })}{' '}
-                <span className="text-neutral-500">
+                <span className="text-surface-secondary">
                     {t(`${translationKey}.ownerCount`, {
                         count: formatterUtils.formatNumber(membersCount, {
                             format: NumberFormat.GENERIC_SHORT,

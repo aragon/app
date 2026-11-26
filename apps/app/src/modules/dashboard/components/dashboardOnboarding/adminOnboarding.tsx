@@ -30,15 +30,17 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
     return (
         <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-4">
-                <Heading as="h1" typeRole="title-page--onboarding">
+                <Heading as="h1" typeClassName="type-title-page--onboarding">
                     {t('app.dashboard.dashboardOnboarding.admin.welcome')}{' '}
                     {displayName != null && (
-                        <span className="text-primary-400">{displayName}</span>
+                        <span className="text-accent-primary">
+                            {displayName}
+                        </span>
                     )}
                     <br />
                     {t('app.dashboard.dashboardOnboarding.admin.subtitle')}
                 </Heading>
-                <p className="type-body--framework-leading text-neutral-500">
+                <p className="type-body--framework-leading text-surface-secondary">
                     {t('app.dashboard.dashboardOnboarding.admin.description')}
                 </p>
             </div>
@@ -63,11 +65,11 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     )}
                 />
                 <div className="flex items-center gap-4">
-                    <div className="h-px flex-1 bg-neutral-100" />
-                    <span className="type-supporting--compact-detail text-neutral-300">
+                    <div className="h-px flex-1 bg-surface-tertiary" />
+                    <span className="type-supporting--compact-detail text-surface-tertiary-hint">
                         {t('app.dashboard.dashboardOnboarding.admin.divider')}
                     </span>
-                    <div className="h-px flex-1 bg-neutral-100" />
+                    <div className="h-px flex-1 bg-surface-tertiary" />
                 </div>
                 <CtaCard
                     description={t(

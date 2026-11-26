@@ -172,9 +172,11 @@ export const MemberLinksCard: React.FC<IMemberLinksCardProps> = (props) => {
                             {t(link.labelKey)}
                         </Link>
                     ) : (
-                        <p className="text-neutral-800">{t(link.labelKey)}</p>
+                        <p className="text-surface-primary">
+                            {t(link.labelKey)}
+                        </p>
                     )}
-                    <p className="truncate type-supporting--compact-detail text-neutral-400">
+                    <p className="truncate type-supporting--compact-detail text-surface-tertiary">
                         {link.display}
                     </p>
                 </div>

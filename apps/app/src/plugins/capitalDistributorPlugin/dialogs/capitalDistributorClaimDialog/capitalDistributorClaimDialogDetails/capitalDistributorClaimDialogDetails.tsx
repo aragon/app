@@ -125,14 +125,17 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                             ))}
                         </div>
                         {index !== completeDetails.length - 1 && (
-                            <div className="h-[1px] w-full bg-neutral-100" />
+                            <div className="h-[1px] w-full bg-surface-tertiary" />
                         )}
                     </React.Fragment>
                 ))}
             </Card>
             {resources != null && resources.length > 0 && (
                 <Card className="flex flex-col gap-3 p-6">
-                    <Heading as="h4" typeRole="title-group--small-panel">
+                    <Heading
+                        as="h4"
+                        typeClassName="type-title-group--small-panel"
+                    >
                         {t(
                             'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources',
                         )}

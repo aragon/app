@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Heading } from '@aragon/gov-ui-kit';
+import { useDisconnect } from '@reown/appkit/react';
 import { type ChangeEvent, useRef, useState } from 'react';
 import { workspaceService } from '@/modules/workspace/api/workspaceService';
 
@@ -10,6 +11,7 @@ const buildExportFilename = () =>
 export const WorkspaceRegistryControls: React.FC = () => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [error, setError] = useState<string>();
+    const { disconnect } = useDisconnect();
 
     const handleExport = async () => {
         const registry = await workspaceService.exportWorkspaceRegistry();
@@ -44,13 +46,33 @@ export const WorkspaceRegistryControls: React.FC = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (
+            !window.confirm('Delete every local workspace from this browser?')
+        ) {
+            return;
+        }
+
+        try {
+            await workspaceService.deleteWorkspaceRegistry();
+        } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : String(error));
+            return;
+        }
+
+        // Disconnects, or the landing page sends the wallet straight back to `/workspace`; leaves even if that fails.
+        await disconnect().catch(() => undefined);
+        window.location.assign('/');
+    };
+
     return (
         <section className="flex flex-col gap-2">
-            <Heading as="h3" typeRole="title-group">
+            <Heading as="h3" typeClassName="type-title-group">
                 Workspace registry
             </Heading>
-            <p className="type-body-compact--unstepped text-neutral-500">
-                Save or restore the local workspace JSON for this environment.
+            <p className="type-body-compact--unstepped text-surface-secondary">
+                Save, restore or delete the local workspace JSON for this
+                environment.
             </p>
             <div className="flex flex-wrap gap-2">
                 <Button onClick={handleExport} size="sm" variant="secondary">
@@ -63,6 +85,9 @@ export const WorkspaceRegistryControls: React.FC = () => {
                 >
                     Import JSON
                 </Button>
+                <Button onClick={handleDelete} size="sm" variant="critical">
+                    Delete workspaces
+                </Button>
             </div>
             <input
                 accept="application/json,.json"
@@ -73,6 +98,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
             />
             {error != null && (
                 <p
+                    // biome-ignore lint/plugin/noPrimitiveColors: no text role has critical-500
                     className="type-body-compact--component-note text-critical-500"
                     role="alert"
                 >

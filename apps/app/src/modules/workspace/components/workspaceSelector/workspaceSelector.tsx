@@ -3,7 +3,7 @@
 import { DaoAvatar, Dropdown, Icon, IconType } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ChangeEvent, useEffect, useRef } from 'react';
+import { type ChangeEvent, useRef } from 'react';
 import { wizardReturnToParam } from '@/modules/application/components/navigations/navigationWizard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -45,19 +45,6 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
     const { mutateAsync: importWorkspace } = useImportWorkspace();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // The list key does not name its registry (demo or local), so another workspace reads it again.
-    const listWorkspaceIdRef = useRef(workspaceId);
-    useEffect(() => {
-        if (listWorkspaceIdRef.current === workspaceId) {
-            return;
-        }
-
-        listWorkspaceIdRef.current = workspaceId;
-        void queryClient.invalidateQueries({
-            queryKey: workspaceServiceKeys.workspaceList(),
-        });
-    }, [queryClient, workspaceId]);
-
     // The account scope belongs to the previous workspace, so the new one opens on its aggregated overview.
     const handleSelectWorkspace = (id: string) =>
         router.push(
@@ -86,6 +73,9 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
 
         try {
             const workspace = await importWorkspace(await file.text());
+            await queryClient.invalidateQueries({
+                queryKey: workspaceServiceKeys.workspaceList(),
+            });
             handleSelectWorkspace(workspace.id);
         } catch {
             window.alert(t('app.workspace.workspaceSelector.importError'));
@@ -99,7 +89,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                 constrainContentWidth={false}
                 customTrigger={
                     <button
-                        className="group flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-2 pr-3 text-neutral-500 shadow-neutral-sm transition-all focus-ring-primary hover:border-neutral-200 hover:bg-neutral-50 hover:shadow-neutral active:border-neutral-400 active:bg-neutral-0 active:text-neutral-800"
+                        className="group flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 pr-3 text-surface-default shadow-surface-sm ring-accent-focus focus-ring transition-all hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active"
                         type="button"
                     >
                         <span className="flex w-11 shrink-0 items-center">
@@ -109,7 +99,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                                 src={ipfsUtils.cidToSrc(workspace?.avatar)}
                             />
                         </span>
-                        <span className="grow truncate text-left type-control text-neutral-800">
+                        <span className="grow truncate text-left type-control text-surface-primary">
                             {workspace?.name}
                         </span>
                         <Icon
@@ -146,7 +136,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                     {t('app.workspace.workspaceSelector.create')}
                 </Dropdown.Item>
                 <Dropdown.Item
-                    icon={IconType.WITHDRAW}
+                    icon={IconType.DEPOSIT}
                     iconPosition="left"
                     onSelect={() => fileInputRef.current?.click()}
                 >

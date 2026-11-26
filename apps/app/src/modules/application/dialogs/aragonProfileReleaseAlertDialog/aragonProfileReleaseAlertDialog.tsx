@@ -43,7 +43,7 @@ export const AragonProfileReleaseAlertDialog: React.FC<
                 )}
             />
             <DialogAlert.Content>
-                <p className="pb-4 type-body--unstepped text-neutral-500">
+                <p className="pb-4 type-body--unstepped text-surface-secondary">
                     {t(
                         'app.application.aragonProfileReleaseAlertDialog.description',
                         { ensName },

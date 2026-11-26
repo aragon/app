@@ -1,7 +1,9 @@
 :root {
     /* Accent color for the illustrations */
+    /* biome-ignore lint/plugin/noPrimitiveColors: not converted yet */
     --guk-illustration-accent-color: var(--color-primary-400);
 
     /* Primary color for the illustrations */
+    /* biome-ignore lint/plugin/noPrimitiveColors: not converted yet */
     --guk-illustration-primary-color: var(--color-primary-900);
 }

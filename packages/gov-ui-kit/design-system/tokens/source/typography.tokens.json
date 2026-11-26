@@ -1,0 +1,3101 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Semantic typography of the default theme: the roles, their exceptions (places that keep their own bundle) and the modifiers. Each style is a `base` composite and an `md` composite (from the md breakpoint).",
+    "type": {
+        "$type": "typography",
+        "role": {
+            "display": {
+                "$description": "The one statement a landing screen leads with; never more than one per screen.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.5xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-page": {
+                "$description": "Names the whole screen the person is on (one per page; the h1).",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-section": {
+                "$description": "Names a region of a page that groups several cards, lists or blocks.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group": {
+                "$description": "Names one self-contained block: a card, a side panel, a dialog, a wizard step's field group.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-item": {
+                "$description": "Names one item among peers in a list, table or grid.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body": {
+                "$description": "Running text a person reads in full on a page.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "body-compact": {
+                "$description": "Running text inside a component that has little room: alert and dialog descriptions, help under a field.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "supporting": {
+                "$description": "A short secondary line that qualifies a title or a value.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "caption": {
+                "$description": "Small print nobody reads first: footnotes, counters, units, URLs under a link name, legal lines.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "label": {
+                "$description": "Names a field the person fills in (form label, legend).",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "label-option": {
+                "$description": "Names one choice the person can pick (checkbox, radio, switch, toggle).",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control": {
+                "$description": "Text inside an interactive control of the default size: buttons, tabs, menu and navigation items, typed text. Fixed.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control-sm": {
+                "$description": "The small step of control, for small controls (the step follows the control size, not the width). Fixed.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "stat": {
+                "$description": "A headline figure in a summary, read at a glance and compared with its neighbours.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "tooltip": {
+                "$description": "A short transient explanation that appears on hover or focus. Fixed.",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.semibold}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.semibold}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            }
+        },
+        "exception": {
+            "supporting--inline-alert": {
+                "$description": "Inline alert message: the one-line message of an inline alert (validation and status under a field)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--alert": {
+                "$description": "Alert card headline: the message line of an alert card (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "label-option--radio": {
+                "$description": "Radio label, fixed at the desktop size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-item--compact-list": {
+                "$description": "Item titles in the asset transfer card (the asset and the two participants), one step down from the item title",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "supporting--row-value": {
+                "$description": "A row's value or status set as large as the row's title (asset amounts, transaction values, voting progress status, workspace and lock list values, governance body info)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "stat--summary-card": {
+                "$description": "Summary card figure: CardSummary's value at page-title size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "supporting--detail-value": {
+                "$description": "Secondary lines and values at 16/20 that keep one size: summary card description, wizard progress, fee rows, action detail values, transaction step labels, status messages",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "caption--footnote": {
+                "$description": "Footnotes set at the body size: data list counters and footer copyright lines",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control--list-action": {
+                "$description": "Data list action row (\"add\" rows) that steps up on desktop like a list item",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control--stepped-nav": {
+                "$description": "Breadcrumb text, which steps up on desktop where controls keep one size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control--tall-line": {
+                "$description": "Controls whose line box is the body line height (16 px / 1.5): multi-line fields, account and workspace picker rows, the landing link, the help center brand",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "supporting--body-size": {
+                "$description": "Secondary lines and values at the document default (16 px, line height 1.5) at every width (allowed-action contracts, profile address, dispatch panel values, vote dialog totals)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "body--unstepped": {
+                "$description": "Body text that keeps the phone size (16 px, line height 1.5) on desktop: dialog and panel bodies, page and section descriptions, definition list values, the rich text editor, the landing page",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "caption--definition-description": {
+                "$description": "Secondary line under a definition list value",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "body-compact--unstepped": {
+                "$description": "Explanations in dialogs, panels and cards that keep the phone size on desktop",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "label-option--card": {
+                "$description": "Option card label (checkbox and radio cards), desktop line height left to the size default",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--compact-meta": {
+                "$description": "Secondary lines at 14/17.5 that keep one size: option card descriptions, voting stage labels, navigation group labels, picker and dialog details",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "label-option--toggle": {
+                "$description": "Toggle label at the body line height",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "caption--framework-leading": {
+                "$description": "Captions left at the sizes' default line heights (link URLs and descriptions, page header stat labels, the workspace switcher, voting terminal headings)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "title-item--entity-list": {
+                "$description": "Main entity lists: the proposal, DAO and member list items name their entity at the group-title size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-item--framework-leading": {
+                "$description": "Item titles left at the sizes' default line heights (voter rows, gauge rows, contract cards, policy details)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "supporting--framework-leading": {
+                "$description": "Secondary and status lines left at the sizes' default line heights (vote amounts, simulation status, voting body brand, Safe review terms, lock list labels)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "caption--compact-label": {
+                "$description": "Labels, counters and badges at 14 px that keep one size (stat card labels, step badges, the action position counter, chat markdown h6)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "title-item--unstepped": {
+                "$description": "Item titles that keep the desktop size at every width (voting stages, DAO hierarchy, permission rows, strategy items)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--voting-body": {
+                "$description": "Voting body name heading the body's panel, with default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "title-item--picker-row": {
+                "$description": "Item names in picker and function rows at a fixed size with the default line height (gauge and campaign pickers, dispatch routers, smart contract functions)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "body-compact--component-note": {
+                "$description": "Short notes, errors and messages inside components at 14 px with the default line height (simulation and download errors, file notes, chat messages and tables, code blocks)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "caption--list-date": {
+                "$description": "Dates in list rows, set at the supporting size (transaction rows)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-section--inline-empty-state": {
+                "$description": "Empty-state title in the inline (not stacked) layout, one title step down",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "supporting--inline-empty-state": {
+                "$description": "Empty-state description in the inline layout, at caption size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-page--markdown": {
+                "$description": "Markdown h1 inside the prose container: plugin weight 800, the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": 800,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.2xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": 800,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.3xl}"
+                    }
+                }
+            },
+            "title-section--markdown": {
+                "$description": "Markdown h2 inside the prose container: plugin weight 700, default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": 700,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": 700,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.2xl}"
+                    }
+                }
+            },
+            "title-group--markdown": {
+                "$description": "Markdown h3 inside the prose container: plugin weight 600, default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": 600,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": 600,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "title-item--markdown": {
+                "$description": "Markdown h4 inside the prose container: plugin weight 600, default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": 600,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": 600,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "supporting--markdown": {
+                "$description": "Markdown h5 inside the prose container, default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "caption--markdown": {
+                "$description": "Markdown h6 inside the prose container, default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "body-compact--markdown": {
+                "$description": "Markdown paragraphs, bold and italic runs inside the prose container (prose.css), default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--compact-detail": {
+                "$description": "Secondary lines at 14 px with the default line height that keep one size (picker rows, file notes, permission details, sidebar account address)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "control--compact-value": {
+                "$description": "Value shown inside a compact input (permission id input), fixed at 14 px",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "title-item--compact-card": {
+                "$description": "Item titles at 16/20 that keep one size (vote option cards, account and workspace items, welcome dialog items, simulation nodes)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body--demo-header": {
+                "$description": "Lead paragraph of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "stat--dao-header": {
+                "$description": "Stat figures of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.2xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.4xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.4xl}"
+                    }
+                }
+            },
+            "caption--dao-header-stat": {
+                "$description": "Stat labels and units of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "title-group--dao-header-action-compact": {
+                "$description": "Compact action titles of the partner DAO headers (Boundless, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--dao-header-action": {
+                "$description": "Action titles of the partner DAO headers (Cryptex, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body--partner-header": {
+                "$description": "Partner DAO header lead paragraph (Boundless, Cryptex), at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "supporting--dao-header-action": {
+                "$description": "Action descriptions of the xMaquina DAO header",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "supporting--dao-header-action-compact": {
+                "$description": "Compact action descriptions of the partner DAO headers (Boundless, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body--xmaquina-header": {
+                "$description": "Lead paragraph of the xMaquina DAO page header",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.2xl}"
+                    }
+                }
+            },
+            "title-group--profile-card": {
+                "$description": "Name on profile cards and dialogs (Aragon profile, user dialog, simulation summary), fixed at the desktop size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control-sm--framework-leading": {
+                "$description": "Small controls at 14 px with the default line height (sidebar footer links, chat input and suggestions)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "caption--unstepped": {
+                "$description": "Small print that keeps the phone size on desktop, with the default line height (chart axes, badges, graph and column labels, raw data, chat metadata, the sidebar footer)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                }
+            },
+            "title-page--wizard-nav": {
+                "$description": "Wizard name in the wizard navigation bar (names the flow the person is in)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "control--workspace-switcher": {
+                "$description": "Workspace name in the workspace switcher, at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "body-compact--dialog-lead": {
+                "$description": "Lead sentence of the connect-wallet dialog, at the group-title size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body-compact--dialog-note": {
+                "$description": "Notes inside dialogs at one size with the tight line height (connect wallet, dispatch simulation errors)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--profile-card-address": {
+                "$description": "Address standing in for the name on the user dialog, with the default line height",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "label--router": {
+                "$description": "Router address field label in Capital Flow, fixed at the desktop size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "supporting--cryptex-header": {
+                "$description": "Cryptex DAO header action description (snug line height)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.snug}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.snug}"
+                    }
+                }
+            },
+            "control--dao-name": {
+                "$description": "DAO name in the DAO switcher, stepping at the sm breakpoint (with control--dao-name-wide)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "control--dao-name-wide": {
+                "$description": "DAO name in the DAO switcher from the sm breakpoint",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "supporting--sm-step-label": {
+                "$description": "Labels that step up at the sm breakpoint, not md (DAO address in the DAO switcher, campaign stat labels); with supporting--sm-step-label-wide",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "supporting--sm-step-label-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-label",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "title-group--compact": {
+                "$description": "Group titles at 16/20 that keep one size (autocomplete menu groups, alert cards in dialogs)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--wizard-intro": {
+                "$description": "Intro heading of the governance stages step in Create DAO",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-item--stage-card": {
+                "$description": "Stage names on the governance stage cards of Create DAO",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "body--framework-leading": {
+                "$description": "Body text left at the sizes' default line heights (page header descriptions, onboarding text)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "body--explore-hero": {
+                "$description": "Lead line of the Explore hero, under the display statement",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "body-compact--transaction-review": {
+                "$description": "Text of the Safe transaction review and the transaction status container, left at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--framework-leading-large": {
+                "$description": "Secondary values at the item-title size left at the default line heights (gauge rows, contract cards, policy details)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "title-item--document-default": {
+                "$description": "Item titles at 16 px with line height 1.5 that keep one size (allowed actions, vote dialog items)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "supporting--column-heading": {
+                "$description": "Column headings of the gauge list, semibold through type-strong, with letter spacing",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.7,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.7,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "caption--column-heading": {
+                "$description": "Uppercase inline column labels of gauge list rows on phones, semibold through type-strong, with tracking",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.6,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.6,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                }
+            },
+            "stat--chart": {
+                "$description": "Figure in a chart tooltip (exit queue fee chart), semibold through type-strong",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "stat--voting-terminal": {
+                "$description": "Figures of the gauge voting terminal",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "caption--voting-terminal": {
+                "$description": "Labels of the gauge voting terminal figures",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--sm-step-value": {
+                "$description": "Values that step up at the sm breakpoint, not md (campaign stat values); with supporting--sm-step-value-wide",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--sm-step-value-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-value",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "supporting--indicator-xs": {
+                "$description": "The extra-small size of the DAO target indicator",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                }
+            },
+            "caption--input-hint": {
+                "$description": "Hints attached to inputs at 12 px with the tight line height (keyboard shortcut chip, number input limit)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-item--chat": {
+                "$description": "Request titles in the assistant chat history",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "caption--chat-note": {
+                "$description": "Notes and disclaimers at 12 px with the body line height: the assistant chat, the workspace welcome dialog footer",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                }
+            },
+            "title-page--chat-markdown": {
+                "$description": "Markdown h1 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                }
+            },
+            "title-section--chat-markdown": {
+                "$description": "Markdown h2 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                }
+            },
+            "title-group--chat-markdown": {
+                "$description": "Markdown h3 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "title-item--chat-markdown": {
+                "$description": "Markdown h4 in the assistant chat",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            },
+            "supporting--chat-markdown": {
+                "$description": "Markdown h5 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                }
+            },
+            "control-sm--chat": {
+                "$description": "Small text buttons in the assistant chat at 12 px",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                }
+            },
+            "body-compact--chat-message": {
+                "$description": "Assistant chat message text and its markdown paragraphs and list items (relaxed line height)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.relaxed}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.relaxed}"
+                    }
+                }
+            },
+            "title-section--network-groups": {
+                "$description": "Network group headings in the Create-DAO network step, at the item-title (h4) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-page--gate-prompt": {
+                "$description": "Workspace gate prompt heading (the page's h1) at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-section--explore": {
+                "$description": "Section titles on the Explore page at the page-title (h1) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-page--onboarding": {
+                "$description": "Dashboard onboarding greeting, two sizes above the page title",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.4xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "stat--stat-card": {
+                "$description": "Stat card figure at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--cta-card": {
+                "$description": "Call-to-action card title at the page-title (h1) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--cta-card-compact": {
+                "$description": "Compact call-to-action card title at the section-title (h2) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-group--small-panel": {
+                "$description": "Panel and card titles at the item-title size (assistant chat header, cards inside dialogs)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "title-section--chat-empty-state": {
+                "$description": "Assistant chat welcome title (the chat's empty state) at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                }
+            },
+            "body-compact--markdown-quote": {
+                "$description": "Paragraphs inside a markdown blockquote, which keep the typography plugin's quote weight (500)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": 500,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": 500,
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                }
+            }
+        },
+        "modifier": {
+            "strong": {
+                "$type": "fontWeight",
+                "$description": "Emphasis on top of any role (600).",
+                "$value": "{font.weight.semibold}"
+            },
+            "mono": {
+                "$type": "fontFamily",
+                "$description": "Machine text on top of any role: identifiers, selectors, calldata, code.",
+                "$value": "{font.family.mono}"
+            }
+        }
+    }
+}

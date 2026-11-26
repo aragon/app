@@ -6,7 +6,13 @@ import * as NextNavigation from 'next/navigation';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { queryClientConfig } from '@/modules/application/constants/reactQuery';
 import { daoService, Network } from '@/shared/api/daoService';
-import { generateDao, ReactQueryWrapper } from '@/shared/testUtils';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import {
+    generateDao,
+    generateDialogContext,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { workspaceQueryService } from '../../api/workspaceQueryService';
 import {
@@ -16,6 +22,7 @@ import {
     workspaceService,
 } from '../../api/workspaceService';
 import * as useWorkspaceAccountOptionsHook from '../../hooks/useWorkspaceAccountOptions';
+import * as useWorkspaceAddAccountsDialogModule from '../../hooks/useWorkspaceAddAccountsDialog';
 import {
     type IWorkspaceAccountSelectorProps,
     WorkspaceAccountSelector,
@@ -116,7 +123,10 @@ describe('<WorkspaceAccountSelector /> component', () => {
             ...result,
         });
 
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
         getWorkspaceSpy.mockResolvedValue(workspace);
         getDaoSpy.mockResolvedValue(
             generateDao({ id: daoAccount.id, avatar: 'dao-cid' }),
@@ -132,6 +142,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
 
     afterEach(() => {
         imageSpies.splice(0).forEach((spy) => spy.mockRestore());
+        useDialogContextSpy.mockReset();
         getWorkspaceSpy.mockReset();
         getDaoSpy.mockReset();
         getMemberListSpy.mockReset();
@@ -204,7 +215,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
     });
 
-    it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
+    it('lists every option with its avatar, using the account avatars for the aggregated option, then the add account item', async () => {
+        stubImageLoading();
+        mockAccountOptions({
+            options: [allAccountsOption, daoOption, safeOption],
+        });
         render(createTestComponent());
 
         await waitFor(() =>
@@ -213,30 +228,63 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(screen.getByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items).toHaveLength(3);
+        expect(items).toHaveLength(4);
         expect(items[0]).toHaveTextContent('All accounts');
         expect(items[1]).toHaveTextContent('Demo DAO');
-        expect(items[2]).toHaveTextContent(
+        expect(items[2]).toHaveTextContent('Treasury Safe');
+        expect(items[3]).toHaveTextContent(
             /workspaceAccountSelector\.addAccount$/,
         );
-        expect(
-            within(items[0]).getByTestId('RICHTEXT_LIST_UNORDERED'),
-        ).toBeInTheDocument();
+        await waitFor(() =>
+            expect(
+                within(items[0])
+                    .getAllByRole('img', { hidden: true })
+                    .map((avatar) => avatar.getAttribute('src')),
+            ).toEqual(['https://ipfs/dao-cid', safeWallet.src]),
+        );
     });
 
-    it('opens the accounts step of the edit wizard from the add account item, returning to the current page', async () => {
+    it('sizes a single-account stack like the account rows in the menu, keeping md on the trigger', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, daoOption] });
+        render(createTestComponent());
+
+        const trigger = screen.getByRole('button');
+        await userEvent.click(trigger);
+
+        const allAccountsItem = await screen.findByRole('menuitem', {
+            name: 'All accounts',
+        });
+        const menuAvatar = await within(allAccountsItem).findByRole('img', {
+            hidden: true,
+        });
+        const triggerAvatar = within(trigger).getByRole('img', {
+            hidden: true,
+        });
+        // Avatar slots: `size-6` is sm, `size-8` is md.
+        expect(menuAvatar.closest('.size-6')).not.toBeNull();
+        expect(triggerAvatar.closest('.size-8')).not.toBeNull();
+    });
+
+    it('opens the add accounts dialog from the add account item', async () => {
+        const openAddAccounts = jest.fn();
+        jest.spyOn(
+            useWorkspaceAddAccountsDialogModule,
+            'useWorkspaceAddAccountsDialog',
+        ).mockReturnValue(openAddAccounts);
         render(createTestComponent());
 
         await userEvent.click(screen.getByRole('button'));
-
-        expect(
+        await userEvent.click(
             await screen.findByRole('menuitem', {
                 name: /workspaceAccountSelector\.addAccount$/,
             }),
-        ).toHaveAttribute(
-            'href',
-            '/workspace/test-workspace/edit?step=ACCOUNTS&returnTo=%2Fworkspace%2Ftest-workspace%2Fall%2Fproposals',
         );
+
+        expect(
+            useWorkspaceAddAccountsDialogModule.useWorkspaceAddAccountsDialog,
+        ).toHaveBeenCalledWith('test-workspace');
+        expect(openAddAccounts).toHaveBeenCalled();
     });
 
     it.each([
@@ -402,6 +450,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     });
 
     it('offers to add an account to a workspace holding none', async () => {
+        stubImageLoading();
         getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
         mockAccountOptions({ options: [allAccountsOption] });
         render(createTestComponent());
@@ -409,10 +458,35 @@ describe('<WorkspaceAccountSelector /> component', () => {
         await userEvent.click(await screen.findByRole('button'));
 
         const items = await screen.findAllByRole('menuitem');
-        expect(items.map((item) => item.textContent)).toEqual([
-            'All accounts',
-            expect.stringMatching(/workspaceAccountSelector\.addAccount$/),
-        ]);
+        expect(items).toHaveLength(2);
+        expect(within(items[0]).getByText('All accounts')).toBeInTheDocument();
+        expect(
+            await within(items[0]).findByRole('img', { hidden: true }),
+        ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
+        expect(items[1]).toHaveTextContent(
+            /workspaceAccountSelector\.addAccount$/,
+        );
+    });
+
+    it('badges each account option with its network, not the aggregated one', async () => {
+        stubImageLoading();
+        mockAccountOptions({ options: [allAccountsOption, safeOption] });
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('button'));
+
+        const { name, logo } = networkDefinitions[Network.ETHEREUM_SEPOLIA];
+        const item = await screen.findByRole('menuitem', {
+            name: /Treasury Safe/,
+        });
+        expect(await within(item).findByRole('img', { name })).toHaveAttribute(
+            'src',
+            logo,
+        );
+        const allItem = screen.getByRole('menuitem', { name: /All accounts/ });
+        expect(
+            within(allItem).queryByRole('img', { name }),
+        ).not.toBeInTheDocument();
     });
 
     it('renders a Safe option with the Safe wallet avatar', async () => {
@@ -425,10 +499,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         const item = await screen.findByRole('menuitem', {
             name: /Treasury Safe/,
         });
-        expect(await within(item).findByRole('img')).toHaveAttribute(
-            'src',
-            safeWallet.src,
-        );
+        expect(
+            await within(item).findByRole('img', {
+                name: /workspaceAccountAvatar\.safe/,
+            }),
+        ).toHaveAttribute('src', safeWallet.src);
     });
 
     it('prefers the stored avatar of a Safe option', async () => {
@@ -448,10 +523,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
         const item = await screen.findByRole('menuitem', {
             name: /Treasury Safe/,
         });
-        expect(await within(item).findByRole('img')).toHaveAttribute(
-            'src',
-            'https://ipfs/safe-cid',
-        );
+        expect(
+            await within(item).findByRole('img', {
+                name: /workspaceAccountAvatar\.safe/,
+            }),
+        ).toHaveAttribute('src', 'https://ipfs/safe-cid');
     });
 
     it('renders the selector for a workspace holding one Safe, with the Safe avatar on the trigger', async () => {
@@ -469,6 +545,8 @@ describe('<WorkspaceAccountSelector /> component', () => {
             'src',
             safeWallet.src,
         );
+        // No network badge.
+        expect(within(trigger).getAllByRole('img')).toHaveLength(1);
     });
 
     describe('external option', () => {
@@ -497,6 +575,24 @@ describe('<WorkspaceAccountSelector /> component', () => {
                 activeOption: externalOption,
                 isAllAccounts: false,
             });
+        });
+
+        it('shows the initials of an external option not resolved yet', async () => {
+            const unplacedOption = { ...externalOption, account: undefined };
+            mockAccountOptions({
+                options: [allAccountsOption, daoOption, unplacedOption],
+                accountId: unplacedOption.id,
+                activeOption: unplacedOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const externalItem = await screen.findByRole('menuitem', {
+                name: /External DAO/,
+            });
+            expect(within(externalItem).getByText('ED')).toBeInTheDocument();
         });
 
         it('marks only the external option as not part of the workspace', async () => {
@@ -542,8 +638,51 @@ describe('<WorkspaceAccountSelector /> component', () => {
                 name: /External DAO/,
             });
             expect(
-                await within(externalItem).findByRole('img'),
+                await within(externalItem).findByRole('img', {
+                    name: 'avatar',
+                }),
             ).toHaveAttribute('src', 'https://ipfs/external-cid');
+        });
+
+        it('excludes the external account avatar from All accounts', async () => {
+            stubImageLoading();
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            await waitFor(() =>
+                expect(
+                    within(allAccountsItem)
+                        .getAllByRole('img', { hidden: true })
+                        .map((avatar) => avatar.getAttribute('src')),
+                ).toEqual(['https://ipfs/dao-cid']),
+            );
+        });
+
+        it('uses the workspace avatar for All accounts when only an external account exists', async () => {
+            stubImageLoading();
+            getWorkspaceSpy.mockResolvedValue({ ...workspace, accounts: [] });
+            mockAccountOptions({
+                options: [allAccountsOption, externalOption],
+                accountId: externalOption.id,
+                activeOption: externalOption,
+                isAllAccounts: false,
+            });
+            render(createTestComponent());
+
+            await userEvent.click(screen.getByRole('button'));
+
+            const allAccountsItem = await screen.findByRole('menuitem', {
+                name: 'All accounts',
+            });
+            expect(
+                await within(allAccountsItem).findByRole('img', {
+                    hidden: true,
+                }),
+            ).toHaveAttribute('src', 'https://ipfs/workspace-cid');
         });
     });
 });

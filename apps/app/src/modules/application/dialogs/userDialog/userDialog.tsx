@@ -149,7 +149,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 </div>
                 {hasAragonProfile ? (
                     <div className="flex flex-col gap-1">
-                        <p className="type-title-group--profile-card text-neutral-800">
+                        <p className="type-title-group--profile-card text-surface-primary">
                             {displayName}
                         </p>
                         <AddressOutput
@@ -162,7 +162,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 ) : (
                     <AddressOutput
                         address={address}
-                        className="type-title-group--profile-card-address text-neutral-800"
+                        className="type-title-group--profile-card-address text-surface-primary"
                     />
                 )}
             </div>
@@ -190,7 +190,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     )}
                 </div>
                 {!hasAragonProfile && isAragonProfileEnabled && (
-                    <p className="text-center type-body-compact--unstepped text-neutral-500">
+                    <p className="text-center type-body-compact--unstepped text-surface-secondary">
                         {t('app.application.userDialog.description')}
                     </p>
                 )}

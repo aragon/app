@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock tokens form</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isBefore}}" hint-placeholder-val="{{no}}">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content" class-name="flex flex-col gap-4 pt-4 pb-6">
+    <dc-import name="LockFlowAmountField" amount="{{amount}}" percent="{{percent}}" symbol="{{symbol}}" alert="{{alert}}" variant="{{variant}}" price="{{price}}" on-amount="{{onAmount}}" on-percent="{{onPercent}}" hint-size="100%,150px"></dc-import>
+    <p class="l2v-info-sm">Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.</p>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" dc-props="{{footerProps}}"></x-import>
+</sc-if>
+<sc-if value="{{isNotBefore}}" hint-placeholder-val="{{yes}}">
+<form class="l2v-form" onSubmit="{{submit}}">
+  <p class="l2v-info">Lock {{symbol}} to participate in governance.</p>
+  <dc-import name="LockFlowAmountField" amount="{{amount}}" percent="{{percent}}" symbol="{{symbol}}" alert="{{alert}}" variant="{{variant}}" price="{{price}}" on-amount="{{onAmount}}" on-percent="{{onPercent}}" hint-size="100%,150px"></dc-import>
+  <sc-if value="{{isDialog}}" hint-placeholder-val="{{no}}">
+    <div class="l2v-form__col l2v-form__col--tall">
+      <p class="l2v-footer-info l2v-footer-info--left">Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.</p>
+      <div class="l2v-form__row">
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{cancel}}">Cancel</x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-right="CHEVRON_RIGHT" disabled="{{disabled}}" on-click="{{press}}">{{submitLabel}}</x-import>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{isPanel}}" hint-placeholder-val="{{yes}}">
+    <div class="l2v-form__col">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" disabled="{{disabled}}" on-click="{{press}}">{{submitLabel}}</x-import>
+      <sc-if value="{{hasLocked}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="lg" on-click="{{unlock}}">{{unlockLabel}}</x-import>
+      </sc-if>
+      <p class="l2v-footer-info l2v-footer-info--center">Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.</p>
+    </div>
+  </sc-if>
+</form>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["panel","dialog","before"],"default":"panel"},"wallet":{"editor":"text","default":"connected"},"symbol":{"editor":"text","default":"ORB"},"balance":{"editor":"float","default":25000},"locked":{"editor":"float","default":0},"allowance":{"editor":"float","default":0},"on-submit":{"editor":null},"on-unlock":{"editor":null},"on-cancel":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":400,"height":420}}'>
+// Lock form of the lock-to-vote plugin (apps/app: plugins/lockToVotePlugin/components/lockToVoteMemberPanel/lockToVoteLockForm).
+// mode panel: the members page aside (info, amount, "Lock ORB" / "Approve ORB", "Unlock x ORB", footer info).
+// mode dialog: the same form in the onboarding dialog ("Join token holders"): Cancel + primary with chevron.
+// mode before: body + footer of the "Lock tokens" lock-before-vote dialog (rendered as Dialog.Content + Dialog.Footer, mount it inside Dialog.Root).
+// Props: wallet ('connected' | ''), symbol, balance (available ORB, number), locked, allowance (number), on-submit(amount number),
+// on-unlock(), on-cancel(), on-connect(). Validation as the app's amount field: required, > 0, <= balance (shown on submit, then live).
+// The amount starts at 100% of the balance and follows the balance when it changes, as the app does. Source: the amount field
+// has the percentage toggles (None / 25% / 50% / 75% / 100%) and hides the "Max" link (hideMax), so "Max" is the 100% toggle.
+// Simulated, source-only: no screenshot exists of this form.
+const fmt = (v) => GovUiKit.formatterUtils.formatNumber(v, { format: GovUiKit.NumberFormat.TOKEN_AMOUNT_SHORT });
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { amount: String(Number(props.balance) || 0), percent: '100', submitted: false };
+  }
+  componentDidUpdate(prev) {
+    if (prev.balance !== this.props.balance) this.setState({ amount: String(Number(this.props.balance) || 0), percent: '100', submitted: false });
+  }
+  error(amount) {
+    const bal = Number(this.props.balance) || 0;
+    if (amount === '' || amount == null) return 'Amount is mandatory.';
+    const n = Number(amount);
+    if (n > bal) return 'Amount must be less than ' + bal + '.';
+    if (!(n > 0)) return 'Amount is invalid.';
+    return '';
+  }
+  renderVals() {
+    const p = this.props;
+    const connected = p.wallet === 'connected';
+    const symbol = p.symbol || 'ORB';
+    const balance = Number(p.balance) || 0;
+    const locked = Number(p.locked) || 0;
+    const allowance = Number(p.allowance) || 0;
+    const st = this.state;
+    const mode = p.mode || 'panel';
+    const err = st.submitted ? this.error(st.amount) : '';
+    const amountNum = Number(st.amount) || 0;
+    const needsApproval = connected && amountNum > allowance;
+    const submitLabel = mode === 'before' ? 'Lock now' : (needsApproval ? 'Approve ' : 'Lock ') + symbol;
+    const go = () => {
+      if (!connected) { if (typeof p.onConnect === 'function') p.onConnect(); return; }
+      const e = this.error(st.amount);
+      if (e) { this.setState({ submitted: true }); return; }
+      if (typeof p.onSubmit === 'function') p.onSubmit(Number(st.amount));
+    };
+    const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const cancel = () => { if (typeof p.onCancel === 'function') p.onCancel(); };
+    return {
+      yes: true, no: false, symbol, price: 0.42,
+      isBefore: mode === 'before', isNotBefore: mode !== 'before', isDialog: mode === 'dialog', isPanel: mode === 'panel',
+      amount: st.amount, percent: st.percent,
+      alert: err ? { message: err, variant: 'critical' } : undefined,
+      variant: err ? 'critical' : 'default',
+      onAmount: (v) => this.setState({ amount: v, percent: '' }),
+      onPercent: (v) => { if (!v) return; this.setState({ amount: String(balance * Number(v) / 100), percent: v }); },
+      submitLabel, disabled: connected && balance === 0,
+      hasLocked: locked > 0, unlockLabel: 'Unlock ' + fmt(locked) + ' ' + symbol,
+      submit: (e) => { stop(e); go(); },
+      press: (e) => { stop(e); go(); },
+      cancel: (e) => { stop(e); cancel(); },
+      unlock: (e) => { stop(e); if (typeof p.onUnlock === 'function') p.onUnlock(); },
+      footerProps: {
+        primaryAction: { label: 'Lock now', onClick: go },
+        secondaryAction: { label: 'Cancel', onClick: cancel }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

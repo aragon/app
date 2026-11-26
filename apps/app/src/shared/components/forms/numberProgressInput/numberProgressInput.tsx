@@ -29,6 +29,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         suffix,
         thresholdIndicator,
         tags,
+        hideInputLabel = false,
         ...otherProps
     } = props;
 
@@ -43,6 +44,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         value = 0,
         onChange,
         alert,
+        label: inputLabel,
         ...numberField
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(
         fieldName,
@@ -84,6 +86,9 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                         prefix={prefix}
                         suffix={suffix}
                         value={value}
+                        {...(hideInputLabel
+                            ? { id: containerId }
+                            : { label: inputLabel })}
                         {...numberField}
                         {...otherProps}
                     />
@@ -100,7 +105,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                             <div className="relative flex grow">
                                 {valueLabel && (
                                     <p
-                                        className="absolute -top-5 type-caption--unstepped whitespace-nowrap text-primary-400 transition-all duration-500 ease-in-out"
+                                        className="absolute -top-5 type-caption--unstepped whitespace-nowrap text-accent-primary transition-all duration-500 ease-in-out"
                                         style={valueLabelStyle}
                                     >
                                         {valueLabel}
@@ -115,7 +120,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                         </div>
 
                         {totalLabel && (
-                            <p className="self-end type-caption--input-hint text-neutral-500">
+                            <p className="self-end type-caption--input-hint text-surface-secondary">
                                 {totalLabel}
                             </p>
                         )}

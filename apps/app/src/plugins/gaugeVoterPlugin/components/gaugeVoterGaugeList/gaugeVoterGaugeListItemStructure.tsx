@@ -120,7 +120,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
 
     const gaugeName = gauge.name ?? addressUtils.truncateAddress(gauge.address);
     const avatarFallback = (
-        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        <span className="flex size-full items-center justify-center bg-accent-solid text-accent-inverse">
             {gaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
@@ -134,7 +134,11 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
     const itemClassName = classNames(
         'flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6',
         {
-            'border-primary-300 hover:border-primary-300': isSelected,
+            // Per-axis border colours: they are emitted after the item's own `border-surface-*` classes, so they
+            // replace its default and hover borders, while its pressed border still wins as it did before.
+            // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+            'border-x-primary-300 border-y-primary-300 hover:border-x-primary-300 hover:border-y-primary-300':
+                isSelected,
         },
     );
     // Avatar created through the app should always be in ipfs://cid format, but there might be a case where avatar is set
@@ -150,7 +154,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             onClick={() => onViewDetails?.(gauge)}
         >
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+            <div className="flex min-w-0 grow items-center gap-3 border-b border-surface-secondary pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
                 <Avatar
                     alt="Gauge icon"
                     fallback={avatarFallback}
@@ -159,14 +163,14 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     src={avatarSrc}
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate type-title-item--framework-leading text-neutral-800">
+                    <p className="truncate type-title-item--framework-leading text-surface-primary">
                         <AddressOutput
                             address={gauge.address}
                             copy={false}
                             label={gauge.name ?? undefined}
                         />
                     </p>
-                    <p className="truncate type-supporting--compact-detail text-neutral-500">
+                    <p className="truncate type-supporting--compact-detail text-surface-secondary">
                         <AddressOutput address={gauge.address} />
                     </p>
                 </div>
@@ -175,18 +179,18 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
             {/* Middle section on mobile - Total votes and Your votes side by side */}
             <div className="flex items-start justify-between gap-4 md:contents">
                 <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
-                    <p className="type-caption--column-heading type-strong text-neutral-500 uppercase md:hidden">
+                    <p className="type-caption--column-heading type-strong text-surface-secondary uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
                         )}
                     </p>
-                    <p className="type-supporting--framework-leading-large text-neutral-800">
+                    <p className="type-supporting--framework-leading-large text-surface-primary">
                         {formattedTotalVotes}{' '}
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes',
                         )}
                     </p>
-                    <p className="type-supporting--compact-detail text-neutral-500">
+                    <p className="type-supporting--compact-detail text-surface-secondary">
                         {formattedPercentage
                             ? `${formattedPercentage} of total`
                             : '-- of total'}
@@ -194,7 +198,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                 </div>
 
                 <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
-                    <p className="type-caption--column-heading type-strong text-neutral-500 uppercase md:hidden">
+                    <p className="type-caption--column-heading type-strong text-surface-secondary uppercase md:hidden">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
                         )}
@@ -206,15 +210,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                                 t(
                                     'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes',
                                 ) ? (
-                                <p className="text-right type-supporting--framework-leading-large text-neutral-500">
+                                <p className="text-right type-supporting--framework-leading-large text-surface-secondary">
                                     {displayUserVotes}
                                 </p>
                             ) : (
                                 <>
-                                    <span className="type-supporting--framework-leading-large text-neutral-800">
+                                    <span className="type-supporting--framework-leading-large text-surface-primary">
                                         {displayUserVotes}
                                     </span>
-                                    <span className="type-supporting--framework-leading text-neutral-500">
+                                    <span className="type-supporting--framework-leading text-surface-secondary">
                                         {tokenSymbol}
                                     </span>
                                 </>

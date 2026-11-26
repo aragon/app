@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create DAO flow</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="app-page">
+  <dc-import name="WizardNav" exit-href="Explore.dc.html" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
+  <main class="wizard-main">
+    <form class="wizard-form" onSubmit="{{submit}}" noValidate="{{yes}}">
+      <dc-import name="WizardProgress" step="{{step}}" total="{{two}}" next-step="{{nextStep}}" hint-size="100%,36px"></dc-import>
+      <div class="wizard-step">
+        <sc-if value="{{isNetwork}}" hint-placeholder-val="{{yes}}">
+          <dc-import name="CreateDaoFlowNetwork" value="{{network}}" show-all="{{showAll}}" on-change="{{pickNetwork}}" on-toggle="{{toggleAll}}" hint-size="100%,1600px"></dc-import>
+        </sc-if>
+        <sc-if value="{{isMetadata}}" hint-placeholder-val="{{no}}">
+          <dc-import name="CreateDaoFlowMetadata" vm="{{metaVm}}" hint-size="100%,1500px"></dc-import>
+        </sc-if>
+        <div class="{{footerClass}}">
+          <sc-if value="{{showAlert}}" hint-placeholder-val="{{no}}">
+            <x-import component-from-global-scope="GovUiKit.AlertCard" message="{{alertTitle}}" variant="critical">{{alertText}}</x-import>
+          </sc-if>
+          <dc-import name="WizardActions" has-back="{{hasBack}}" is-last="{{isMetadata}}" submit-label="Publish DAO" on-back="{{back}}" hint-size="100%,48px"></dc-import>
+        </div>
+      </div>
+    </form>
+  </main>
+  <dc-import name="Footer" hint-size="100%,65px"></dc-import>
+  <a id="cdf-dao-link" class="cdf-hidden-link" href="Dao.dc.html" tabindex="-1" aria-hidden="true">View DAO</a>
+</div>
+<dc-import name="TxFlowDialog" open="{{txOpen}}" title="Publish DAO" description="To publish the DAO, confirm the onchain transaction in your wallet." steps="{{txSteps}}" submit-label="Create DAO" success-label="View DAO" summary="{{txSummary}}" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1900}}'>
+// Create DAO wizard, live prototype (apps/app: modules/createDao/pages/createDaoPage/createDaoPageClient.tsx + createDaoPageDefinitions.ts,
+// components/createDaoForm/{createDaoFormNetwork,createDaoFormMetadata}, dialogs/publishDaoDialog; shared/components/wizards/wizardPage).
+// One artboard: state = step (1 Select chain, 2 Describe your DAO), form values, txOpen. Step bodies are the parts
+// CreateDaoFlowNetwork / CreateDaoFlowMetadata; the publish dialog is TxFlowDialog (simulated signing). Close -> Explore.dc.html,
+// "View DAO" on success -> Dao.dc.html (the app links /dao/<network>/<ens or address>).
+// Validation (messages from en.json app.shared.formField.error / createDao.createDaoForm.metadata.ens.error / wizardPage.step.error):
+// name required "DAO name is mandatory."; ENS (only on Ethereum mainnet) [a-z0-9-] else "ENS subdomain is invalid.";
+// each resource URL required / pattern "Invalid URL format."; footer AlertCard Missing data / Invalid data / Missing and invalid data.
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { step: 1, network: 'sepolia', showAll: false, name: '', nameTouched: false, ens: '', avatar: undefined,
+      description: '', resources: [], attempted: false, txOpen: false };
+  }
+  renderVals() {
+    const s = this.state;
+    const names = { ethereum: 'Ethereum', base: 'Base', bnb: 'BNB Smart Chain', monad: 'Monad', robinhood: 'Robinhood Chain', arbitrum: 'Arbitrum',
+      polygon: 'Polygon', avalanche: 'Avalanche', optimism: 'Optimism', katana: 'Katana', zksync: 'zkSync', citrea: 'Citrea', chiliz: 'Chiliz',
+      hemi: 'Hemi', sepolia: 'Ethereum Sepolia', hoodi: 'Ethereum Hoodi', base_sepolia: 'Base Sepolia', bnb_testnet: 'BNB Smart Chain Testnet', polygon_amoy: 'Polygon Amoy' };
+    const urlRe = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+    const alert = (message) => ({ message, variant: 'critical' });
+    const showEns = s.network === 'ethereum';
+    const nameMissing = s.name.trim() === '';
+    const ensInvalid = showEns && s.ens !== '' && !/^[a-z0-9-]+$/.test(s.ens);
+    const resErr = s.resources.map((r) => {
+      const u = r.url.trim();
+      return u === '' ? 'required' : urlRe.test(u) ? null : 'pattern';
+    });
+    const missing = nameMissing || resErr.includes('required');
+    const invalid = ensInvalid || resErr.includes('pattern');
+    const avatarErr = s.avatar && s.avatar.error;
+    const avatarMsgs = { 'file-invalid-type': 'The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).',
+      'file-too-large': 'The file size exceeds the maximum allowed limit of 1 MB.', 'square-only': 'The image must be square. Upload a square image.',
+      'too-many-files': 'Only one file can be uploaded at a time.', 'unknown-file-error': 'Unable to upload image',
+      'wrong-dimension': 'The image dimensions exceed the maximum allowed size of 1024x1024 pixels.' };
+    const set = (o) => this.setState(o);
+    const upd = (i, patch) => set({ resources: this.state.resources.map((r, j) => (j === i ? { ...r, ...patch } : r)) });
+
+    const metaVm = {
+      name: s.name, nameAlert: (s.attempted || s.nameTouched) && nameMissing ? alert('DAO name is mandatory.') : undefined,
+      ens: s.ens, ensAlert: ensInvalid ? alert('ENS subdomain is invalid.') : undefined, showEns,
+      avatar: s.avatar, avatarAlert: avatarErr ? alert(avatarMsgs[avatarErr] || avatarMsgs['unknown-file-error']) : undefined,
+      description: s.description,
+      resources: s.resources.map((r, i) => ({ url: r.url, name: r.name,
+        urlAlert: (s.attempted || r.touched) && resErr[i] === 'required' ? alert('URL is mandatory.') : (s.attempted || r.touched) && resErr[i] === 'pattern' ? alert('Invalid URL format.') : undefined })),
+      onName: (v) => set({ name: v }), onNameBlur: () => set({ nameTouched: true, name: this.state.name.trim() }),
+      onEns: (v) => set({ ens: v.replace(/[<>]/g, '').toLowerCase() }),
+      onAvatar: (v) => set({ avatar: v }), onDescription: (v) => set({ description: v }),
+      onAddResource: () => set({ resources: this.state.resources.concat([{ url: '', name: '', touched: false }]) }),
+      onResourceUrl: (i, v) => upd(i, { url: v }), onResourceUrlBlur: (i) => upd(i, { touched: true }),
+      onResourceName: (i, v) => upd(i, { name: v }),
+      onRemoveResource: (i) => set({ resources: this.state.resources.filter((_, j) => j !== i) }),
+    };
+
+    const alertKey = missing && invalid ? 'invalid-required' : missing ? 'required' : 'invalid';
+    const alertCopy = { required: ['Missing data', 'Some inputs are missing. Fill out all mandatory fields to proceed.'],
+      invalid: ['Invalid data', 'Some values are invalid. Review and fix them to proceed.'],
+      'invalid-required': ['Missing and invalid data', 'Some inputs are missing or invalid. Fix them to proceed.'] }[alertKey];
+    const showAlert = s.step === 2 && s.attempted && (missing || invalid);
+
+    return {
+      yes: true, no: false, two: 2,
+      step: s.step, isNetwork: s.step === 1, isMetadata: s.step === 2, hasBack: s.step > 1,
+      nextStep: s.step === 1 ? 'Describe your DAO' : 'Publish DAO',
+      network: s.network, showAll: s.showAll, metaVm,
+      pickNetwork: (v) => set({ network: v }), toggleAll: () => set({ showAll: !this.state.showAll }),
+      showAlert, alertTitle: alertCopy[0], alertText: alertCopy[1],
+      footerClass: 'wizard-step__footer' + (showAlert ? ' flowdao-critical' : ''),
+      back: () => set({ step: 1, attempted: false }),
+      submit: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (this.state.step === 1) { set({ step: 2 }); window.scrollTo && window.scrollTo(0, 0); return; }
+        if (missing || invalid) { set({ attempted: true }); return; }
+        set({ attempted: true, txOpen: true });
+      },
+      txOpen: s.txOpen, txSteps: ['Pin data on IPFS'],
+      txSummary: { type: 'dao', name: s.name.trim(), description: s.description, network: names[s.network] },
+      closeTx: () => set({ txOpen: false }),
+      txDone: () => {
+        set({ txOpen: false });
+        const a = document.getElementById('cdf-dao-link');
+        if (a) a.click();
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>App footer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<footer class="{{footerClass}}">
+  <div class="app-container app-footer__inner">
+    <div class="app-footer__metadata">
+      <div class="app-footer__governed">
+        <p>Governed on</p>
+        <dc-import name="AragonLogo" size="sm" hint-size="97px,24px"></dc-import>
+      </div>
+      <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary" class-name="shrink-0"></x-import>
+    </div>
+    <nav class="app-footer__links" aria-label="Footer">
+      <a href="Explore.dc.html">Explore</a>
+      <a href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+      <a href="https://aragon.org/privacy-policy">Privacy</a>
+      <a href="https://aragon.org/terms-and-conditions">Terms of Service</a>
+    </nav>
+    <p class="app-footer__copyright">© 2026 Aragon</p>
+  </div>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"withSidebar":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":65}}'>
+// The app footer (footer.tsx in apps/app). withSidebar: hidden from the lg breakpoint, where the sidebar carries the
+// same links.
+class Component extends DCLogic {
+  renderVals() {
+    return { footerClass: 'app-footer' + (this.props.withSidebar ? ' app-footer--with-sidebar' : '') };
+  }
+}
+</script>
+</body>
+</html>

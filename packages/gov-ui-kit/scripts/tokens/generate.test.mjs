@@ -1,92 +1,134 @@
-// Regression tests of the token generator: `node --test scripts/tokens/generate.test.mjs` (root `pnpm test:tokens`).
-// Each mutation runs against a scratch copy of the token source; the repository files are never touched.
+// Tests of the token generator (`pnpm test:tokens`). Mutations run against a scratch copy of the token source; the
+// repository files are never touched.
 
 import assert from 'node:assert/strict';
-import { execFileSync, spawnSync } from 'node:child_process';
-import { cpSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { generateAll } from './generate.mjs';
-import { readAppOverrides } from './lib/app.mjs';
+import { compile } from 'tailwindcss';
+import { generate, staleFiles } from './generate.mjs';
 
-const here = dirname(fileURLToPath(import.meta.url));
-const kitRoot = resolve(here, '../..');
-const repoRoot = resolve(kitRoot, '../..');
+const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const sourceDir = resolve(kitRoot, 'design-system/tokens/source');
+const cssFile = (name, layer = 'primitives') => resolve(kitRoot, `src/theme/tokens/${layer}/${name}.css`);
+const previewFile = (name) => resolve(kitRoot, `design-system/tokens/preview/${name}.css`);
 
-const scratch = (context) => {
+// A scratch copy of the source with one JSON file changed.
+const mutated = (context, file, change) => {
     const dir = mkdtempSync(join(tmpdir(), 'govkit-tokens-'));
     context.after(() => rmSync(dir, { recursive: true, force: true }));
     cpSync(sourceDir, dir, { recursive: true });
+    const json = JSON.parse(readFileSync(join(dir, file), 'utf8'));
+    change(json);
+    writeFileSync(join(dir, file), `${JSON.stringify(json, null, 4)}\n`);
     return dir;
 };
-const edit = (dir, file, change) => {
-    const path = join(dir, file);
-    const json = JSON.parse(readFileSync(path, 'utf8'));
-    change(json);
-    writeFileSync(path, JSON.stringify(json, null, 4));
-};
 
-test('every output on disk is what the source generates, and generation is deterministic', () => {
-    const first = generateAll().outputs;
-    const second = generateAll().outputs;
-    assert.deepEqual([...first], [...second]);
-    assert.equal(first.size, 11);
-    for (const [file, text] of first) {
-        assert.equal(readFileSync(resolve(repoRoot, file), 'utf8'), text, `${file} is stale`);
-        assert.match(text, /GENERATED/);
-    }
+test('the files on disk are what the source generates, and generation is deterministic', () => {
+    const files = generate();
+    assert.deepEqual(staleFiles(files), []);
+    assert.deepEqual([...generate()], [...files]);
 });
 
-test('the kit and the app artifact keep their CSS constructs', () => {
-    const { outputs } = generateAll();
-    const kit = (name) => outputs.get(`packages/gov-ui-kit/src/theme/tokens/primitives/${name}.css`);
-    const app = outputs.get('.design-sync/generated/govkit-primitives.css');
-    assert.match(kit('colors'), /--color-\*: initial;/);
-    assert.match(kit('colors'), /--color-primary-500: #003bf5;/);
-    assert.match(kit('colors'), /@utility gradient-neutral-50-transparent-to-b/);
-    assert.match(kit('borderRadius'), /--radius-none: none;/);
-    assert.match(kit('focusRing'), /--ring-color-primary: var\(--color-primary-200\);/);
-    assert.match(kit('focusRing'), /@utility focus-ring-primary/);
-    assert.match(kit('typography'), /url\("\.\.\/\.\.\/fonts\/Manrope-Regular\.ttf"\)/);
+test('the generated CSS keeps its constructs', () => {
+    const files = generate();
+    const css = (name) => files.get(cssFile(name));
+    assert.match(css('colors'), /GENERATED/);
+    assert.match(css('colors'), /@theme \{\n {4}--color-\*: initial;\n {4}--color-primary-50: #f5f8ff;/);
+    assert.match(css('colors'), /--color-primary-500: #003bf5;/);
+    assert.match(css('colors'), /--color-transparent: transparent;/);
+    assert.match(css('borderRadius'), /--radius-none: none;/);
+    assert.match(css('focusRing'), /--ring-color-primary: var\(--color-primary-200\);/);
+    assert.match(css('shadows'), /--shadow-neutral: 0px 1px 3px 0px rgba\(97, 110, 124, 0\.1\), 0px 1px 2px -1px rgba/);
+    assert.match(css('typography'), /--font-sans: "Manrope", ui-sans-serif, /);
+    assert.match(css('typography'), /--leading-default-lg: calc\(1\.75 \/ 1\.125\);/);
     // Pixel breakpoints stay in a plain :root rule, rem breakpoints in @theme.
-    assert.match(kit('breakpoints'), /:root \{\n {4}--breakpoint-sm-px: 640;/);
-    assert.match(kit('breakpoints'), /@theme \{\n {4}--breakpoint-\*: initial;\n {4}--breakpoint-sm: 40rem;/);
-    // The app artifact is flat, rebases the font URLs and ends with the seven app overrides.
-    assert.match(
-        app,
-        /url\("\.\.\/\.\.\/apps\/app\/node_modules\/@aragon\/gov-ui-kit\/src\/theme\/fonts\/Manrope-Regular\.ttf"\)/,
+    assert.match(css('breakpoints'), /:root \{\n {4}--breakpoint-sm-px: 640;/);
+    assert.match(css('breakpoints'), /@theme \{\n {4}--breakpoint-\*: initial;\n {4}--breakpoint-sm: 40rem;/);
+    assert.match(css('index'), /@import "\.\/borderRadius\.css";\n@import "\.\/breakpoints\.css";/);
+});
+
+test('a typography composite becomes one theme variable per part, a part alias a var()', () => {
+    const css = generate().get(cssFile('roles', 'typography'));
+    assert(
+        css.includes(
+            [
+                '--guk-type-font-family-display: var(--font-sans);',
+                '--guk-type-font-size-display: var(--text-3xl);',
+                '--guk-type-font-weight-display: var(--font-weight-normal);',
+                '--guk-type-letter-spacing-display: 0px;',
+                '--guk-type-line-height-display: var(--leading-tight);',
+                '--guk-type-md-font-family-display: var(--font-sans);',
+                '--guk-type-md-font-size-display: var(--text-5xl);',
+            ].join('\n    '),
+        ),
     );
-    assert.match(app, /--guk-dialog-overlay-z-index: 20;/);
-    assert.equal([...app.matchAll(/--guk-[a-z-]+: [a-z0-9]+;/g)].length, 7);
-    assert.doesNotMatch(app, /@import ["']tailwindcss["']/);
+    assert.match(css, /--guk-type-line-height-supporting--column-heading: var\(--leading-default-sm\);/);
+    assert.match(css, /--guk-type-strong: var\(--font-weight-semibold\);/);
 });
 
-test('the check fails when a generated file is stale', (context) => {
-    const dir = scratch(context);
-    edit(dir, 'primitives.tokens.json', (json) => {
-        json.color.primary['500'].$value.components = [0, 0, 0];
+test('a changed token makes its file stale', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', (json) => {
+        json.radius.md.$value.value = 5;
     });
-    const result = spawnSync('node', [join(here, 'generate.mjs'), '--check', '--source', dir], { encoding: 'utf8' });
-    assert.equal(result.status, 1);
-    assert.match(result.stderr, /stale generated files: .*primitives\/colors\.css/);
-    assert.match(result.stderr, /govkit-primitives\.css/);
-    // The untouched source passes.
-    execFileSync('node', [join(here, 'generate.mjs'), '--check'], { stdio: 'ignore' });
+    assert.deepEqual(staleFiles(generate(dir)), [cssFile('borderRadius')]);
 });
 
-for (const [name, change, expected] of [
+test('a shadow preserves inset per layer and supports a whole-token alias', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+        shadow.neutral.$value[0].inset = true;
+        shadow.neutral.$value[1].inset = false;
+        shadow['neutral-sm'].$value = '{shadow.neutral}';
+    });
+    const css = generate(dir).get(cssFile('shadows'));
+    assert.match(css, /--shadow-neutral-sm: var\(--shadow-neutral\);/);
+    assert.match(css, /--shadow-neutral: inset 0px 1px 3px 0px rgba\([^)]+\), 0px 1px 2px -1px rgba/);
+});
+
+for (const [field, reference] of [
+    ['offsetX', '{spacing.base}'],
+    ['color', '{color.primary.500}'],
+    ['inset', { $ref: '#/shadow/neutral/$value/0/inset' }],
+]) {
+    test(`a shadow reference in ${field} identifies the unsupported field`, (context) => {
+        const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+            shadow['neutral-sm'].$value[0][field] = reference;
+        });
+        assert.throws(() => generate(dir), { message: `Unsupported shadow reference at shadow.neutral-sm.0.${field}` });
+    });
+}
+
+test('a reference used as a shadow layer identifies the unsupported layer', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+        shadow['neutral-sm'].$value.push('{shadow.primary}');
+    });
+    assert.throws(() => generate(dir), { message: 'Unsupported shadow reference at shadow.neutral-sm.1' });
+});
+
+test('a colour without a hex gets it written into the source', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', (json) => {
+        delete json.color.primary['500'].$value.hex;
+    });
+    const files = generate(dir);
+    const source = join(dir, 'primitives.tokens.json');
+    assert.deepEqual(staleFiles(files), [source]);
+    assert.equal(files.get(source), readFileSync(join(sourceDir, 'primitives.tokens.json'), 'utf8'));
+});
+
+for (const [name, file, change, expected] of [
     [
         'a dangling alias',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{color.missing.100}';
         },
-        /Missing alias target/,
+        /Missing alias target: color\.missing\.100 \(from ring\.color\.primary\)/,
     ],
     [
         'an alias cycle',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{ring.color.success}';
             json.ring.color.success.$value = '{ring.color.primary}';
@@ -95,175 +137,284 @@ for (const [name, change, expected] of [
     ],
     [
         'an alias of another type',
+        'primitives.tokens.json',
         (json) => {
             json.ring.color.primary.$value = '{spacing.base}';
         },
-        /Alias type mismatch/,
+        /Alias type mismatch: ring\.color\.primary/,
+    ],
+    [
+        'a typography part alias of another type',
+        'typography.tokens.json',
+        ({ type }) => {
+            type.role.display.base.$value.fontSize = '{color.primary.500}';
+        },
+        /Alias type mismatch: type\.role\.display\.base\.fontSize/,
+    ],
+    [
+        'a ratio that is not its number',
+        'primitives.tokens.json',
+        ({ font }) => {
+            font.leadingDefault.lg.$extensions['org.aragon.gov-ui-kit'].ratio = [1.75, 1.25];
+        },
+        /The ratio 1\.75 \/ 1\.25 is not 1\.5555555555555556/,
     ],
     [
         'a value of another type',
+        'primitives.tokens.json',
         (json) => {
             json.color.transparent.$value = structuredClone(json.spacing.base.$value);
         },
-        /DTCG value .*color\.transparent/,
+        /DTCG value color\.transparent/,
+    ],
+    [
+        'a hex that disagrees with its components',
+        'primitives.tokens.json',
+        (json) => {
+            json.color.primary['500'].$value.hex = '#112233';
+        },
+        /Colour hex #112233 does not match its components \(#003bf5\).*set the components to \[0\.0666/,
     ],
     [
         'a changed schema version',
+        'primitives.tokens.json',
         (json) => {
             json.$schema = 'https://example.com/other.json';
         },
         /DTCG schema version changed/,
     ],
+    [
+        'a token the layout does not place',
+        'primitives.tokens.json',
+        (json) => {
+            json.zindex = { $type: 'number', modal: { $value: 30 } };
+        },
+        /places no CSS for: zindex\.modal/,
+    ],
+    [
+        'a token the layout places twice',
+        'primitives.config.json',
+        (json) => {
+            json.files['colors.css']['@theme'].push('color.primary');
+        },
+        /token color\.primary\.50 is placed twice/,
+    ],
+    [
+        'a layout line that matches no token',
+        'primitives.config.json',
+        (json) => {
+            json.files['colors.css']['@theme'].push('colour');
+        },
+        /no token at or under colour/,
+    ],
+    [
+        'two tokens with one CSS name',
+        'semantic.config.json',
+        (json) => {
+            json.cssNames['semantic.text.*.*'] = '--guk-bg-$1-$2';
+        },
+        /semantic\.text\.\S+ and semantic\.bg\.\S+ share the CSS name --guk-bg-/,
+    ],
+    [
+        'a dangling alias in a mode',
+        'modes/semantic.next.tokens.json',
+        ({ semantic }) => {
+            semantic.bg.surface.primary.$value = '{palette.missing.0}';
+        },
+        /Missing alias target: palette\.missing\.0 \(from semantic\.bg\.surface\.primary\)/,
+    ],
 ]) {
-    test(`the source rejects ${name}`, (context) => {
-        const dir = scratch(context);
-        edit(dir, 'primitives.tokens.json', change);
-        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+    test(`the generator rejects ${name}`, (context) => {
+        assert.throws(() => generate(mutated(context, file, change)), expected);
     });
 }
 
-test('a primitive token the layout does not place is rejected', (context) => {
-    const dir = scratch(context);
-    edit(dir, 'primitives.tokens.json', (json) => {
-        json.zindex = { $type: 'number', modal: { $value: 30 } };
+// A preview file's declarations per mode selector, for a scratch source (or the repository's).
+const previewModes = (dir, file = 'colors') =>
+    Object.fromEntries(
+        [
+            ...generate(dir)
+                .get(previewFile(file))
+                .matchAll(/\n(\S[^{\n]*) \{\n([^}]*)\}/g),
+        ].map(([, selector, body]) => [selector, body.trim().split(/\n\s*/)]),
+    );
+const NEXT = ':root[data-theme="next"], [data-theme="next"]';
+const NEXT_TYPOGRAPHY = ':root[data-typography="next"], [data-typography="next"]';
+
+test('in a mode, an exception follows its role by the rule, and a CSS line is written as is', (context) => {
+    const dir = mutated(context, 'modes/typography.next.tokens.json', ({ type }) => {
+        type.role.caption.base.$value.fontSize = '{font.size.5xl}';
     });
-    assert.throws(() => generateAll({ sourceDir: dir }), /places no CSS for: zindex\.modal/);
+    const { type } = JSON.parse(readFileSync(join(sourceDir, 'typography.tokens.json'), 'utf8'));
+    const captions = ['caption', ...Object.keys(type.exception).filter((name) => name.startsWith('caption--'))];
+    const lines = previewModes(dir, 'typography')[NEXT_TYPOGRAPHY];
+    assert.deepEqual(
+        lines.filter((line) => /^--guk-type-font-size-caption(--|:)/.test(line)),
+        captions.map((name) => `--guk-type-font-size-${name}: 3rem;`),
+    );
+    assert.equal(lines.at(-1), '--guk-type-numeric: tabular-nums;');
 });
 
-test('an unrewritable relative font URL is rejected', (context) => {
-    const dir = scratch(context);
-    const path = join(dir, 'css/typography.fontFaces.css');
-    writeFileSync(path, readFileSync(path, 'utf8').replaceAll('../../fonts/', '../fonts/'));
-    assert.throws(() => generateAll({ sourceDir: dir }), /Unresolved relative font URLs/);
-});
-
-test('a source without typography.config.json generates the primitives only', (context) => {
-    const dir = scratch(context);
-    for (const name of readdirSync(dir).filter(
-        (file) => file === 'typography.config.json' || file.endsWith('.tokens.json'),
-    )) {
-        if (name !== 'primitives.tokens.json') {
-            rmSync(join(dir, name));
-        }
-    }
-    const { outputs, typography } = generateAll({ sourceDir: dir });
-    assert.equal(typography, null);
-    assert.equal(outputs.size, 9);
-    assert.ok(![...outputs.keys()].some((file) => file.endsWith('tokens/typography.css')));
-    // The primitive outputs do not depend on the typography layer.
-    for (const [file, text] of outputs) {
-        assert.equal(text, generateAll().outputs.get(file), file);
-    }
-});
-
-test('the typography layer keeps Today inherited and swaps families in Next only', () => {
-    const { outputs, typography } = generateAll();
-    const css = outputs.get('packages/gov-ui-kit/src/theme/tokens/typography.css');
-    const [today, next] = css.split('[data-typography="next"] {');
-    // Today: sizes, line heights and weights are set; family and letter spacing are left to inheritance.
-    assert.match(today, /--type-supporting-font-size: var\(--text-sm\);/);
-    assert.doesNotMatch(today, /--type-supporting-font-family/);
-    assert.doesNotMatch(today, /--type-title-item-letter-spacing/);
-    // Next: the designer's faces, and every exception follows its role.
-    assert.match(next, /--type-display-font-family: var\(--font-sora\);/);
-    assert.match(next, /--type-body-font-family: var\(--font-inter-display\);/);
-    const exception = typography.exceptionNames[0];
-    const role = typography.styles.get(exception).role;
-    assert.match(next, new RegExp(`--type-${exception}-font-size: var\\(\\s*--type-${role}-font-size\\s*\\);`));
-    // One utility per role and exception, switching through the md variant; the modifiers.
-    assert.match(css, /@utility type-supporting \{[^}]*@variant md \{/s);
-    for (const modifier of ['strong', 'mono', 'numeric']) {
-        assert.match(css, new RegExp(`@utility type-${modifier} \\{`));
-    }
-    assert.equal([...css.matchAll(/@utility type-/g)].length, typography.styles.size + 3);
-});
-
-for (const [name, file, change, expected] of [
-    [
-        'a Next mode that misses a Today token',
-        'typography.next.tokens.json',
-        (json) => {
-            const [first] = Object.keys(json.type.exception);
-            delete json.type.exception[first];
-        },
-        /typography mode next differs from today: missing type\.exception\./,
-    ],
-    [
-        'an exception not named after a role',
-        'typography.today.tokens.json',
-        (json) => {
-            const [first] = Object.keys(json.type.exception);
-            json.type.exception[`nonexistent--${first.split('--')[1]}`] = json.type.exception[first];
-            delete json.type.exception[first];
-        },
-        /must be named <role>--<pattern>|differs from today/,
-    ],
-    [
-        'an exception that follows another role in Next',
-        'typography.next.tokens.json',
-        (json) => {
-            const [first] = Object.keys(json.type.exception);
-            const role = first.split('--')[0] === 'caption' ? 'body' : 'caption';
-            json.type.exception[first].base.$value = `{type.role.${role}.base}`;
-        },
-        /may only alias type\.role\./,
-    ],
-]) {
-    test(`the typography layer rejects ${name}`, (context) => {
-        const dir = scratch(context);
-        edit(dir, file, change);
-        assert.throws(() => generateAll({ sourceDir: dir }), expected);
+test('a mode override adds exactly its declaration to its mode in the preview', (context) => {
+    const dir = mutated(context, 'modes/semantic.next.tokens.json', ({ semantic }) => {
+        semantic.bg.surface.primary.$value = { colorSpace: 'srgb', components: [0x11 / 255, 0x22 / 255, 0x33 / 255] };
     });
-}
+    const before = previewModes();
+    const after = previewModes(dir);
+    assert.deepEqual(
+        after[NEXT].filter((line) => !before[NEXT].includes(line)),
+        ['--guk-bg-surface-primary: #112233;'],
+    );
+    assert.equal(after[NEXT].length, before[NEXT].length + 1);
+    assert.deepEqual({ ...after, [NEXT]: [] }, { ...before, [NEXT]: [] });
+});
 
-test('typography mode files without typography.config.json are rejected', (context) => {
-    const dir = scratch(context);
-    rmSync(join(dir, 'typography.config.json'));
-    assert.throws(
-        () => generateAll({ sourceDir: dir }),
-        /typography\..+\.tokens\.json without typography\.config\.json/,
+test('a token a mode leaves at its default value is not written', (context) => {
+    const { color } = JSON.parse(readFileSync(join(sourceDir, 'primitives.tokens.json'), 'utf8'));
+    const dir = mutated(context, 'modes/semantic.next.tokens.json', ({ semantic }) => {
+        semantic.text.surface.placeholder.$value = color.neutral['300'].$value;
+    });
+    const before = previewModes()[NEXT];
+    const after = previewModes(dir)[NEXT];
+    assert.deepEqual(
+        before.filter((line) => !after.includes(line)),
+        before.filter((line) => line.startsWith('--guk-text-surface-placeholder:')),
+    );
+    assert.equal(after.length, before.length - 1);
+});
+
+// The kit's token CSS and Tailwind compiled with `extra` CSS after them, for the given class candidates.
+const compileTokens = async (extra, candidates) => {
+    const loadStylesheet = async (id, base) => {
+        const path =
+            id === 'tailwindcss' ? fileURLToPath(import.meta.resolve('tailwindcss/index.css')) : resolve(base, id);
+        return { path, base: dirname(path), content: readFileSync(path, 'utf8') };
+    };
+    const entry = ['@import "./src/theme/tokens/index.css";', '@import "tailwindcss";', extra].join('\n');
+    const { build } = await compile(entry, { base: kitRoot, loadStylesheet });
+    return build(candidates);
+};
+
+test('role classes compile once, after their primitive siblings, and keep variants and @apply', async () => {
+    const css = await compileTokens('.probe { @apply bg-surface-primary; }', [
+        'bg-surface-primary',
+        'bg-neutral-0',
+        'text-surface-primary',
+        'icon-surface-primary',
+        'text-sm',
+        'border-2',
+        'border-surface-primary',
+        'border-t-surface-primary',
+        'ring-accent-focus',
+        'hover:bg-surface-hover',
+        'aria-disabled:text-surface-disabled',
+        'md:border-x-accent-default',
+    ]);
+    const rule = (selector) => {
+        const rules = css.match(
+            new RegExp(`\\n\\s*${selector.replace(/[\\.:[\]()"=]/g, '\\$&')} \\{\\n([^}]*)\\}`, 'g'),
+        );
+        assert.equal(rules?.length, 1, `one rule for ${selector}`);
+        return rules[0].split('{')[1].trim().replace(/\s+/g, ' ');
+    };
+    assert.equal(rule('.bg-surface-primary'), 'background-color: var(--guk-bg-surface-primary); }');
+    assert.equal(rule('.text-surface-primary'), 'color: var(--guk-text-surface-primary); }');
+    assert.equal(rule('.icon-surface-primary'), 'color: var(--guk-icon-surface-primary); }');
+    assert.equal(rule('.border-surface-primary'), 'border-color: var(--guk-border-surface-primary); }');
+    assert.equal(rule('.border-t-surface-primary'), 'border-top-color: var(--guk-border-surface-primary); }');
+    assert.equal(rule('.ring-accent-focus'), '--tw-ring-color: var(--guk-ring-accent-focus); }');
+    assert.equal(rule('.bg-neutral-0'), 'background-color: var(--color-neutral-0); }');
+    assert.match(rule('.text-sm'), /^font-size: var\(--text-sm\);/);
+    assert.match(rule('.border-2'), /border-width: 2px;/);
+    assert.equal(rule('.hover\\:bg-surface-hover:hover'), 'background-color: var(--guk-bg-surface-hover); }');
+    assert.equal(
+        rule('.aria-disabled\\:text-surface-disabled[aria-disabled="true"]'),
+        'color: var(--guk-text-surface-disabled); }',
+    );
+    assert.equal(rule('.md\\:border-x-accent-default'), 'border-inline-color: var(--guk-border-accent-default); }');
+    assert.equal(rule('.probe'), 'background-color: var(--guk-bg-surface-primary); }');
+    assert(css.indexOf('.bg-neutral-0 {') < css.indexOf('.bg-surface-primary {'));
+    assert(css.indexOf('.icon-surface-primary {') < css.indexOf('.text-surface-primary {'));
+    assert.match(css, /--guk-bg-surface-primary: var\(--color-neutral-0\);/);
+    assert.doesNotMatch(css, /--guk-bg-surface-tertiary:/);
+});
+
+test('type roles compile with variants and @apply, before raw type classes and the modifiers', async () => {
+    const css = await compileTokens('.probe { @apply type-supporting type-strong; }', [
+        'type-supporting',
+        'type-title-item--entity-list',
+        'md:type-control',
+        'placeholder:type-caption',
+        'text-lg',
+        'leading-normal',
+        'font-semibold',
+        'tracking-wide',
+        'type-strong',
+        'type-mono',
+        'type-nonexistent',
+    ]);
+    const role = css.slice(css.indexOf('.type-supporting {'), css.indexOf('.type-title-item--entity-list {'));
+    assert.match(role, /^\.type-supporting \{\n\s+font-family: var\(--guk-type-font-family-supporting\);/);
+    assert.match(role, /--tw-leading: var\(--guk-type-line-height-supporting\);/);
+    assert.match(role, /@media \(width >= 48rem\) \{\n\s+font-family: var\(--guk-type-md-font-family-supporting\);/);
+    assert.match(css, /\.placeholder\\:type-caption::placeholder \{/);
+    assert.match(css, /@media \(width >= 48rem\) \{\n\s+\.md\\:type-control \{/);
+    assert.match(css, /\.probe \{[\s\S]*\n {2}\}\n {2}font-weight: var\(--guk-type-strong\);\n\}/);
+    for (const later of ['.text-lg {', '.leading-normal {', '.font-semibold {', '.tracking-wide {', '.type-strong {']) {
+        assert(css.indexOf('.type-title-item--entity-list {') < css.indexOf(later), `the roles before ${later}`);
+    }
+    // A raw size keeps the role's line height; the role's line height does not inherit.
+    assert.match(css, /\.text-lg \{\n\s+font-size: var\(--text-lg\);\n\s+line-height: var\(--tw-leading, /);
+    assert.match(css, /@property --tw-leading \{\n\s+syntax: "\*";\n\s+inherits: false;/);
+    assert.doesNotMatch(css, /--guk-type-font-size-display:|type-nonexistent/);
+});
+
+test('a type role steps with the md variant of the build that compiles it', async () => {
+    const css = await compileTokens('@custom-variant md { @container app (width >= 48rem) { @slot; } }', [
+        'type-supporting',
+    ]);
+    assert.match(
+        css,
+        /@container app \(width >= 48rem\) \{\n\s+font-family: var\(--guk-type-md-font-family-supporting\);/,
     );
 });
 
-test('a number ratio must equal the stored value', (context) => {
-    const dir = scratch(context);
-    edit(dir, 'primitives.tokens.json', (json) => {
-        const [key] = Object.keys(json.font.leadingDefault).filter((k) => !k.startsWith('$'));
-        json.font.leadingDefault[key].$extensions = { 'org.aragon.gov-ui-kit': { ratio: [1, 3] } };
+for (const rule of ['noPrimitiveColors', 'noPrimitiveTypography']) {
+    test(`the js and css plugins of ${rule} match the same classes`, () => {
+        const patterns = (language) =>
+            readFileSync(resolve(kitRoot, `biome-plugins/${language}/${rule}.grit`), 'utf8').match(/r"[^"]*"/g);
+        assert.equal(patterns('js').length, 2);
+        assert.deepEqual(patterns('css'), patterns('js'));
     });
-    assert.throws(() => generateAll({ sourceDir: dir }), /does not equal its value/);
-});
+}
 
-const overrides = (context, css) => {
-    const dir = mkdtempSync(join(tmpdir(), 'govkit-overrides-'));
-    context.after(() => rmSync(dir, { recursive: true, force: true }));
-    const file = join(dir, 'overrides.css');
-    writeFileSync(file, css);
-    return () => readAppOverrides(file, relative(dir, file));
-};
-const base = ':root {\n    --guk-dialog-overlay-z-index: 20;\n}\n';
-
-test('the app overrides must be direct custom properties of one top-level :root', (context) => {
-    assert.match(overrides(context, `/* note */\n@import "x.css";\n${base}`)(), /--guk-dialog-overlay-z-index: 20;/);
-    for (const [css, expected] of [
-        [`${base}html.dark { --guk-dialog-overlay-z-index: 99; }`, /Unsupported scoped or conditional construct/],
-        [`${base}.dark { --guk-dialog-overlay-z-index: 99; }`, /Unsupported scoped or conditional construct/],
-        [base.replace(':root', 'html'), /Unsupported scoped or conditional construct/],
-        [`${base}:root, .dark { --color-primary-500: #000; }`, /Unsupported scoped or conditional construct/],
-        [`@media (min-width: 99999px) { ${base} }`, /Unsupported scoped or conditional construct/],
-        [base.replace('--guk', 'color: red;\n--guk'), /Unsupported non-custom property declaration/],
-        [
-            base.replace('--guk-dialog-overlay-z-index: 20;', '@media (min-width: 1px) { --a: 1; }'),
-            /Unsupported nested or conditional scope/,
-        ],
-        [
-            base.replace('--guk-dialog-overlay-z-index: 20;', '&:hover { --a: 1; }'),
-            /Unsupported nested or conditional scope/,
-        ],
-        [base.replace('20;', '20 !important;'), /Unsupported !important/],
-        ['/* nothing */\n', /Expected one top-level :root/],
-        [`${base}${base}`, /Expected one top-level :root/],
+test('the typography lint flags primitive type classes and nothing that merely starts like one', () => {
+    const patterns = readFileSync(resolve(kitRoot, 'biome-plugins/js/noPrimitiveTypography.grit'), 'utf8')
+        .match(/r"[^"]*"/g)
+        // Grit matches a regex against the whole node text.
+        .map((pattern) => new RegExp(`^(?:${pattern.slice(2, -1).replace('(?s)', '')})$`, 's'));
+    const flagged = (text) => patterns.some((pattern) => pattern.test(text));
+    for (const text of [
+        'p-2 text-sm',
+        'md:text-lg/6',
+        'leading-6',
+        'font-semibold!',
+        '-tracking-wide',
+        'text-[13px]',
     ]) {
-        assert.throws(overrides(context, css), expected, css);
+        assert(flagged(text), text);
+    }
+    for (const text of ['text-(length:--x)', 'leading-(--x)', 'leading-[1.2]', 'font-[550]', '[font-size:12px]']) {
+        assert(flagged(text), text);
+    }
+    for (const text of [
+        'tracking-id',
+        'leading-zero',
+        'text-surface-primary',
+        'font-mono',
+        'type-supporting',
+        'context-sm',
+    ]) {
+        assert(!flagged(text), text);
     }
 });

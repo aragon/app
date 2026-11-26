@@ -224,17 +224,17 @@ export const MultiBody: Story = {
                     <ProposalVoting.BodySummaryList>
                         <ProposalVoting.BodySummaryListItem id="token">
                             <div className="flex grow flex-col gap-3">
-                                <p className="text-neutral-800">Token Holders</p>
+                                <p className="text-surface-primary">Token Holders</p>
                                 <Progress thresholdIndicator={60} value={30} variant="neutral" />
-                                <p className="text-neutral-800">30 of 60 ARA</p>
+                                <p className="text-surface-primary">30 of 60 ARA</p>
                             </div>
                         </ProposalVoting.BodySummaryListItem>
                         <ProposalVoting.BodySummaryListItem bodyBrand={safeBrand} id="safe">
                             Founders Approval
                         </ProposalVoting.BodySummaryListItem>
                     </ProposalVoting.BodySummaryList>
-                    <p className="text-center text-neutral-500 md:text-right">
-                        <span className="text-neutral-800">1 body</span> required to approve
+                    <p className="text-center text-surface-secondary md:text-right">
+                        <span className="text-surface-primary">1 body</span> required to approve
                     </p>
                 </ProposalVoting.BodySummary>
                 <ProposalVoting.BodyContent bodyId="token" name="Token Holders" status={ProposalStatus.ACTIVE}>

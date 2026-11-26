@@ -1,6 +1,6 @@
 {
     "name": "@aragon/gov-ui-kit",
-    "version": "3.0.1",
+    "version": "3.1.0",
     "description": "Implementation of the Aragon's Governance UI Kit",
     "keywords": [
         "aragon",
@@ -45,17 +45,14 @@
         "css:check": "node scripts/check-build-css.mjs",
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
-        "lint:typography:check": "node scripts/primitive-typography.mjs check",
-        "lint:typography:generate": "node scripts/primitive-typography.mjs generate",
-        "lint:typography:report": "node scripts/primitive-typography.mjs report",
         "sb": "pnpm storybook",
         "storybook": "storybook dev -p 6006",
-        "test": "jest",
-        "test:coverage": "jest --coverage",
+        "test": "pnpm test:tokens && jest",
+        "test:coverage": "pnpm test:tokens && jest --coverage",
+        "test:tokens": "node --test scripts/tokens/*.test.mjs",
         "test:watch": "jest --watch",
         "tokens:check": "node scripts/tokens/generate.mjs --check",
         "tokens:generate": "node scripts/tokens/generate.mjs",
-        "tokens:report": "node scripts/tokens/generate.mjs --report",
         "type-check": "tsc --noemit",
         "visual-diff": "node scripts/visual-diff.mjs"
     },

@@ -297,12 +297,12 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                             >
                                 <stop
                                     offset="5%"
-                                    stopColor="var(--color-primary-400)"
+                                    stopColor="var(--guk-bg-accent-solid)"
                                     stopOpacity={0.4}
                                 />
                                 <stop
                                     offset="95%"
-                                    stopColor="var(--color-primary-400)"
+                                    stopColor="var(--guk-bg-accent-solid)"
                                     stopOpacity={0}
                                 />
                             </linearGradient>
@@ -343,7 +343,7 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                             dataKey="feePercent"
                             fill="url(#colorFee)"
                             fillOpacity={1}
-                            stroke="var(--color-primary-400)"
+                            stroke="var(--guk-border-accent-secondary)"
                             strokeWidth={1}
                             type={
                                 mode === GaugeVoterExitQueueFeeMode.TIERED
@@ -352,9 +352,9 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                             }
                         />
                         <ReferenceDot
-                            fill="var(--color-primary-400)"
+                            fill="var(--guk-bg-accent-solid)"
                             r={4}
-                            stroke="var(--color-neutral-0)"
+                            stroke="var(--guk-bg-surface-primary)"
                             strokeWidth={1}
                             x={indicatorX}
                             y={indicatorY}
@@ -362,10 +362,10 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                     </AreaChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute top-3 right-3 text-right">
-                    <span className="block type-stat--chart type-strong text-neutral-800">
+                    <span className="block type-stat--chart type-strong text-surface-primary">
                         {activeFeeDisplay}
                     </span>
-                    <span className="block type-supporting--compact-detail text-neutral-500">
+                    <span className="block type-supporting--compact-detail text-surface-secondary">
                         {activeLabel}
                     </span>
                 </div>

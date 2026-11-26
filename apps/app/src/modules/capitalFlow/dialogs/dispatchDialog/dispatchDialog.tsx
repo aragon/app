@@ -159,17 +159,17 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                     <Card className="flex flex-col gap-4 p-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
-                                <span className="type-title-item--picker-row text-neutral-800">
+                                <span className="type-title-item--picker-row text-surface-primary">
                                     {policy.name}
                                 </span>
                                 {policy.policyKey && (
-                                    <span className="type-title-item--picker-row text-neutral-500">
+                                    <span className="type-title-item--picker-row text-surface-secondary">
                                         {policy.policyKey}
                                     </span>
                                 )}
                             </div>
                             {policy.description && (
-                                <p className="type-body--unstepped text-neutral-500">
+                                <p className="type-body--unstepped text-surface-secondary">
                                     {policy.description}
                                 </p>
                             )}
@@ -199,23 +199,23 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                     key={subRouter.address}
                                 >
                                     <div className="flex flex-1 gap-2 type-title-item--picker-row">
-                                        <span className="text-neutral-800">
+                                        <span className="text-surface-primary">
                                             {subRouter.name ??
                                                 t(
                                                     'app.capitalFlow.dispatchDialog.unnamedSubRouter',
                                                 )}
                                         </span>
                                         {subRouter.policyKey && (
-                                            <span className="text-neutral-500">
+                                            <span className="text-surface-secondary">
                                                 {subRouter.policyKey}
                                             </span>
                                         )}
                                     </div>
                                     <span className="flex gap-0.5 type-supporting--body-size">
-                                        <span className="text-neutral-800">
+                                        <span className="text-surface-primary">
                                             {index + 1}
                                         </span>
-                                        <span className="text-neutral-500">
+                                        <span className="text-surface-secondary">
                                             {t(
                                                 'app.capitalFlow.dispatchDialog.subRouterOf',
                                                 {

@@ -51,10 +51,10 @@ export interface IProposalVotingProgressItemProps extends Omit<IProgressProps, '
 }
 
 const variantToNameClassNames: Record<ProgressVariant, string> = {
-    critical: 'text-critical-800',
-    primary: 'text-primary-400',
-    neutral: 'text-neutral-800',
-    success: 'text-success-800',
+    critical: 'text-critical-primary',
+    primary: 'text-accent-primary',
+    neutral: 'text-surface-primary',
+    success: 'text-success-primary',
 };
 
 export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemProps> = (props) => {
@@ -87,15 +87,15 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
                 <div className={classNames('flex flex-row gap-1')}>
                     <p className={classNames('type-title-item', variantToNameClassNames[processedVariant])}>
                         {name}
-                        {nameDescription && <span className="text-neutral-500">{nameDescription}</span>}
+                        {nameDescription && <span className="text-surface-secondary">{nameDescription}</span>}
                     </p>
                     {showStatus && isThresholdReached && (
-                        <p className="type-supporting--row-value text-primary-400">
+                        <p className="type-supporting--row-value text-accent-primary">
                             {copy.proposalVotingProgressItem.reached}
                         </p>
                     )}
                     {showStatus && !isThresholdReached && (
-                        <p className="type-supporting--row-value text-neutral-500">
+                        <p className="type-supporting--row-value text-surface-secondary">
                             {copy.proposalVotingProgressItem.unreached}
                         </p>
                     )}
@@ -111,10 +111,10 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
             />
             <div className="flex flex-row justify-between type-supporting">
                 <div className="flex flex-row gap-0.5">
-                    <p className="text-neutral-800">{description.value}</p>
-                    <p className="text-neutral-500">{description.text}</p>
+                    <p className="text-surface-primary">{description.value}</p>
+                    <p className="text-surface-secondary">{description.text}</p>
                 </div>
-                {showPercentage && <p className="text-neutral-500">{formattedPercentage}</p>}
+                {showPercentage && <p className="text-surface-secondary">{formattedPercentage}</p>}
             </div>
         </div>
     );

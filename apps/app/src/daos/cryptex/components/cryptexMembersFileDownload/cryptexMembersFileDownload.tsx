@@ -53,8 +53,8 @@ export const CryptexMembersFileDownload: React.FC<
             useCustomWrapper={true}
         >
             {downloadedFileName && (
-                <Card className="px-6 py-2 shadow-neutral-sm">
-                    <p className="type-body-compact--component-note text-neutral-400">
+                <Card className="px-6 py-2 shadow-surface-sm">
+                    <p className="type-body-compact--component-note text-surface-tertiary">
                         {t(
                             'app.daos.cryptex.cryptexMembersFileDownload.downloadedFile',
                             { fileName: downloadedFileName },

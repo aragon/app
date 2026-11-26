@@ -27,10 +27,10 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
 
     return (
         <div className="flex flex-col gap-8">
-            <Heading as="h1" typeRole="title-page--onboarding">
+            <Heading as="h1" typeClassName="type-title-page--onboarding">
                 {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
                 {displayName != null && (
-                    <span className="text-primary-400">{displayName}</span>
+                    <span className="text-accent-primary">{displayName}</span>
                 )}
             </Heading>
             <CardEmptyState

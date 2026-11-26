@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Create proposal next menu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="wizard-actions">
+  <div class="wizard-actions__buttons">
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="lg" icon-left="CHEVRON_LEFT" dc-props="{{backProps}}">Back</x-import>
+    <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="Next" size="lg" variant="{{variant}}" open="{{open}}">
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" dc-props="{{simulateProps}}">Simulate actions</x-import>
+      <x-import component-from-global-scope="GovUiKit.Dropdown.Item" dc-props="{{skipProps}}">Skip simulation</x-import>
+    </x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":false},"variant":{"editor":null},"onBack":{"editor":null},"onSimulate":{"editor":null},"onSkip":{"editor":null},"$preview":{"width":800,"height":48}}'>
+// Back button and dropdown "Next" of the create-proposal actions step once it holds actions
+// (apps/app: shared/components/wizards/wizardPage/wizardPageStep/wizardPageStep.tsx, nextDropdownItems from
+// modules/governance/hooks/useSimulateActionsDropdown). Same slot as the WizardActions part: last child of `.wizard-step`.
+// Props: open  draws the menu open (the kit Dropdown.Container's own `open` prop).
+//   variant 'secondary' (default) | 'critical' (the wizard's invalid-step state); onBack / onSimulate / onSkip: callbacks of an interactive flow
+//   (without them the buttons do nothing).
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    return {
+      open: p.open == null ? undefined : (p.open === true || p.open === 'true'),
+      variant: p.variant ?? 'secondary',
+      backProps: p.onBack ? { onClick: p.onBack } : {},
+      simulateProps: p.onSimulate ? { onClick: p.onSimulate } : {},
+      skipProps: p.onSkip ? { onClick: p.onSkip } : {},
+    };
+  }
+}
+</script>
+</body>
+</html>

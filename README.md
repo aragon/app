@@ -17,8 +17,14 @@ pnpm workspaces + Turborepo. Node >=24.22.3 (see `.nvmrc`), pnpm (see `packageMa
 
 ```sh
 pnpm install
-pnpm dev          # runs the app dev server (turbo)
+pnpm prepare                      # husky git hooks (pnpm does not run `prepare` on install)
+cp apps/app/.env.example apps/app/.env   # then fill in the secrets, see apps/app/README.md
+pnpm dev --filter=@aragon/app     # the app only, on http://localhost:3000
 ```
+
+The `--filter` goes to turbo, which first builds the workspace libraries the app imports from `dist/` (`@aragon/gov-ui-kit`, `@aragon/aragon-domain`, …). `pnpm --filter @aragon/app dev` (or `pnpm dev` inside `apps/app`) skips that step and fails on a fresh clone with `Export … doesn't exist in target module`.
+
+A root `pnpm dev` without the filter starts **every** app (`apps/app`, `apps/assistant` on :4000, `apps/docs` on :3001). The assistant needs its own secrets (`apps/assistant/.env.example`), and both the assistant and docs fetch the private `aragon/platform-doc` repository at startup, so it fails on a machine without that access. Use the filtered command above unless you work on those apps.
 
 The root only carries workspace-wide tasks, fanned out through turbo: `pnpm dev`, `pnpm build`, `pnpm test`, `pnpm type-check`, `pnpm lint`. Anything app-specific (e2e, env setup, codegen, watch modes) runs inside the workspace that owns it: `cd apps/app` (or `pnpm --filter @aragon/app <script>`).
 

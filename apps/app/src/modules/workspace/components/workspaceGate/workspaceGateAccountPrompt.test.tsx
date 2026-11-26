@@ -27,9 +27,9 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
         workspaceService,
         'getWorkspaceList',
     );
-    const getOrCreateDefaultWorkspaceSpy = jest.spyOn(
+    const createDefaultWorkspaceSpy = jest.spyOn(
         workspaceService,
-        'getOrCreateDefaultWorkspace',
+        'createDefaultWorkspace',
     );
     const getAccountsSpy = jest.spyOn(workspaceQueryService, 'getAccounts');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
@@ -77,7 +77,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
 
     afterEach(() => {
         getWorkspaceListSpy.mockReset();
-        getOrCreateDefaultWorkspaceSpy.mockReset();
+        createDefaultWorkspaceSpy.mockReset();
         getAccountsSpy.mockReset();
         useRouterSpy.mockReset();
         usePathnameSpy.mockReset();
@@ -164,7 +164,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
         expect(replaceMock).toHaveBeenCalledWith(
             `/workspace/${firstWorkspace.id}/${accountId}/proposals?status=active`,
         );
-        expect(getOrCreateDefaultWorkspaceSpy).not.toHaveBeenCalled();
+        expect(createDefaultWorkspaceSpy).not.toHaveBeenCalled();
     });
 
     it('opens the same page in the selected workspace', async () => {
@@ -191,7 +191,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
             'invalidateQueries',
         );
         getWorkspaceListSpy.mockResolvedValue([]);
-        getOrCreateDefaultWorkspaceSpy.mockResolvedValue(defaultWorkspace);
+        createDefaultWorkspaceSpy.mockResolvedValue(defaultWorkspace);
         render(createTestComponent(undefined, queryClient));
 
         expect(
@@ -199,7 +199,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
                 name: `app.workspace.workspaceGateAccountPrompt.newWorkspace (name=${defaultWorkspaceName})`,
             }),
         ).toBeChecked();
-        expect(getOrCreateDefaultWorkspaceSpy).not.toHaveBeenCalled();
+        expect(createDefaultWorkspaceSpy).not.toHaveBeenCalled();
 
         await userEvent.click(getConfirmButton());
 
@@ -208,7 +208,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
                 `/workspace/${defaultWorkspace.id}/${accountId}/proposals`,
             ),
         );
-        expect(getOrCreateDefaultWorkspaceSpy).toHaveBeenCalledTimes(1);
+        expect(createDefaultWorkspaceSpy).toHaveBeenCalledWith([]);
         expect(invalidateQueriesSpy).toHaveBeenCalledWith({
             queryKey: workspaceServiceKeys.workspaceList(),
         });
@@ -216,7 +216,7 @@ describe('<WorkspaceGateAccountPrompt /> component', () => {
 
     it('renders an error when the default workspace cannot be seeded', async () => {
         getWorkspaceListSpy.mockResolvedValue([]);
-        getOrCreateDefaultWorkspaceSpy.mockRejectedValue(new Error('failed'));
+        createDefaultWorkspaceSpy.mockRejectedValue(new Error('failed'));
         render(createTestComponent());
 
         await screen.findByRole('radio');

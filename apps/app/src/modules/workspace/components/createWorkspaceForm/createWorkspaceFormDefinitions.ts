@@ -76,10 +76,6 @@ export const createWorkspaceFormEmptyNetworkAddress: ICreateWorkspaceFormNetwork
 /**
  * Default values of the create-workspace form. Optional field arrays start empty;
  * their controls append the first row when the user chooses to add one.
- *
- * Every metadata field is defaulted, not only the field arrays: the wizard may render a subset of its steps (the
- * getting-started flow renders the accounts step alone), so a field the skipped step would have filled must still
- * have a value when the form is submitted.
  */
 export const createWorkspaceFormDefaultValues: Pick<
     ICreateWorkspaceFormData,

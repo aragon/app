@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lock transaction dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" on-interact-outside="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Transaction" hidden-description="Transaction dialog">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="{{title}}" description="{{description}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <div class="tx-dialog__body">
+      <sc-if value="{{isAsset}}" hint-placeholder-val="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" amount="{{amount}}" hide-value="{{yes}}" logo-src="{{logo}}" name="{{assetName}}" symbol="{{assetSymbol}}"></x-import>
+      </sc-if>
+      <sc-if value="{{isVote}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.VoteProposalDataListItem.Structure" proposal-id="ORB-4" proposal-title="Fund the Orbit Community Grants round 2" vote-indicator="{{voteIndicator}}" vote-indicator-description="{{voteDescription}}"></x-import>
+      </sc-if>
+      <ul class="tx-steps">
+        <sc-if value="{{showInfo}}" hint-placeholder-val="{{yes}}">
+          <div class="tx-steps__info">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h4">{{infoTitle}}</x-import>
+            <div class="tx-info__step"><span class="tx-info__current">Step {{infoCurrent}}</span><span class="tx-info__total">of 2</span></div>
+          </div>
+        </sc-if>
+        <sc-for list="{{rows}}" as="row" hint-placeholder-count="4">
+          <li class="tx-step">
+            <div class="tx-step__main">
+              <sc-if value="{{row.spinner}}" hint-placeholder-val="{{no}}">
+                <div class="tx-step__spinner"><x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="{{row.spinnerVariant}}" is-loading="{{row.loading}}"></x-import></div>
+              </sc-if>
+              <sc-if value="{{row.isSuccess}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CHECKMARK" size="sm" variant="success"></x-import>
+              </sc-if>
+              <sc-if value="{{row.isError}}" hint-placeholder-val="{{no}}">
+                <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="CRITICAL" size="sm" variant="critical"></x-import>
+              </sc-if>
+              <p class="tx-step__label {{row.labelClass}}">{{row.label}}</p>
+            </div>
+            <sc-if value="{{row.wallet}}" hint-placeholder-val="{{no}}">
+              <div class="tx-step__addon">
+                <p class="tx-step__addon-label">Wallet</p>
+                <x-import component-from-global-scope="GovUiKit.Icon" icon="BLOCKCHAIN_WALLET" size="md" class-name="text-neutral-300"></x-import>
+              </div>
+            </sc-if>
+            <sc-if value="{{row.details}}" hint-placeholder-val="{{no}}">
+              <x-import component-from-global-scope="GovUiKit.Link" href="{{explorerHref}}" is-external="{{yes}}">Details</x-import>
+            </sc-if>
+          </li>
+        </sc-for>
+      </ul>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"kind":{"editor":"enum","options":["approve","lock","unlock","vote"],"default":"approve"},"amount":{"editor":"float","default":25000},"showInfo":{"editor":"boolean","default":true},"option":{"editor":"enum","options":["yes","abstain","no"],"default":"yes"},"simulateRejection":{"editor":"boolean","default":false},"onClose":{"editor":null},"onSuccess":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// The lock-to-vote transaction dialogs, all the shared TransactionDialog with a simulated wallet (same as WrapFlowTxDialog / TxFlowDialog):
+//  approve (plugins/tokenPlugin/dialogs/tokenApproveTokensDialog, namespace LOCK) "Approve locking", always "Approve ORB / Step 1 of 2";
+//  lock / unlock (lockToVotePlugin/dialogs/lockToVoteLockUnlockDialog) with the asset row; "Lock ORB / Step 2 of 2" only after an approval;
+//  vote (modules/governance/dialogs/voteDialog) with the vote row and NO step header; it is the only one with a transactionType, so it
+//  alone has the "Index onchain data" step. The lock dialogs have three steps.
+// Props: open; kind; amount (ORB, approve/lock/unlock); showInfo (step header of lock); option (yes|abstain|no, vote); onClose (Close, Escape,
+// overlay, success button); onSuccess (called ONCE when the transaction is confirmed, for vote when it is indexed; after "approve" the host
+// opens the next dialog at once, as the app does: a two step transaction has no success button); simulateRejection (tweak).
+// Clicking outside does not close it (the app sets disableOutsideClick on every transaction dialog); Escape does.
+// The dialog resets to idle whenever `open` or `kind` changes. Source-only: no screenshot exists.
+const COPY = {
+  approve: { title: 'Approve locking', description: 'To lock your tokens, confirm the two onchain transactions in your wallet.', submit: 'Approve tokens', success: 'Continue', infoTitle: 'Approve ORB', current: 1 },
+  lock: { title: 'Lock tokens', description: 'To lock your tokens, confirm the onchain transaction in your wallet.', submit: 'Lock tokens', success: 'View members', infoTitle: 'Lock ORB', current: 2 },
+  unlock: { title: 'Unlock tokens', description: 'To unlock your tokens, confirm the onchain transaction in your wallet.', submit: 'Unlock tokens', success: 'View members', infoTitle: 'Unlock ORB', current: 2 },
+  vote: { title: 'Submit vote', description: 'To submit your vote, confirm the onchain transaction in your wallet.', submit: 'Submit vote', success: 'View proposal', infoTitle: '', current: 0 }
+};
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { phase: 'idle' };
+    this.timers = [];
+  }
+  componentDidUpdate(prev) {
+    if (prev.open !== this.props.open || prev.kind !== this.props.kind) this.reset();
+  }
+  componentWillUnmount() { this.clear(); }
+  clear() { this.timers.forEach((t) => clearTimeout(t)); this.timers = []; }
+  reset() { this.clear(); this.setState({ phase: 'idle' }); }
+  later(phase, ms) { this.timers.push(setTimeout(() => this.setState({ phase }), ms)); }
+  sign() {
+    this.clear();
+    this.setState({ phase: 'awaiting' });
+    if (this.props.simulateRejection) { this.later('rejected', 1500); return; }
+    const vote = this.props.kind === 'vote';
+    this.later('confirming', 1500);
+    if (vote) this.later('indexing', 2700);
+    this.timers.push(setTimeout(() => this.setState({ phase: 'success' }, () => { if (typeof this.props.onSuccess === 'function') this.props.onSuccess(); }), vote ? 3500 : 2700));
+  }
+  close() {
+    if (typeof this.props.onClose === 'function') this.props.onClose();
+    else this.reset();
+  }
+  renderVals() {
+    const p = this.props;
+    const kind = COPY[p.kind] ? p.kind : 'approve';
+    const c = COPY[kind];
+    const vote = kind === 'vote';
+    const phase = this.state.phase;
+    const sign = { idle: 'idle', awaiting: 'pending', rejected: 'error' }[phase] || 'success';
+    const confirm = { confirming: 'pending', indexing: 'success', success: 'success' }[phase] || 'idle';
+    const index = { indexing: 'pending', success: 'success' }[phase] || 'idle';
+    const row = (label, state, extra) => Object.assign({
+      label, spinner: state === 'idle' || state === 'pending', loading: state === 'pending',
+      spinnerVariant: state === 'pending' ? 'primary' : 'neutral',
+      isSuccess: state === 'success', isError: state === 'error',
+      labelClass: 'tx-step__label--' + state, wallet: false, details: false
+    }, extra);
+    const rows = [
+      row('Prepare transaction', 'success'),
+      row(sign === 'error' ? 'Rejected by wallet' : 'Sign transaction', sign, { wallet: true }),
+      row('Confirm transaction', confirm, { details: phase === 'confirming' || phase === 'indexing' || phase === 'success' })
+    ];
+    if (vote) rows.push(row('Index onchain data', index));
+    let primary;
+    if (phase === 'idle') primary = { label: 'Sign transaction', onClick: () => this.sign() };
+    else if (phase === 'awaiting') primary = { label: 'Awaiting signature', isLoading: true };
+    else if (phase === 'rejected') primary = { label: 'Resend to wallet', iconLeft: 'RELOAD', onClick: () => this.sign() };
+    else if (phase === 'success') primary = { label: c.success, onClick: () => this.close() };
+    else primary = { label: c.submit, isLoading: true };
+    const secondary = { label: 'Close', onClick: () => this.close(), disabled: phase === 'confirming' || phase === 'indexing' || phase === 'success' };
+    const opt = p.option || 'yes';
+    return {
+      yes: true, no: false, isOpen: p.open === undefined ? true : !!p.open,
+      title: c.title, description: c.description, rows, primary, secondary,
+      isAsset: !vote, isVote: vote,
+      voteIndicator: opt, voteDescription: opt === 'abstain' ? undefined : 'to approve',
+      amount: String(p.amount == null ? 0 : p.amount), logo: '', assetName: 'Orbit Token', assetSymbol: 'ORB',
+      showInfo: kind === 'approve' || (kind === 'lock' && p.showInfo !== false), infoTitle: c.infoTitle, infoCurrent: c.current,
+      explorerHref: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c',
+      noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) this.close(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

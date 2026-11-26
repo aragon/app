@@ -14,6 +14,7 @@ import {
     transactionUtils,
 } from '@/shared/utils/transactionUtils';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
+import type { ICreateDaoPluginSettings } from '../../types';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
 import { daoRegistryAbi } from './daoRegistryAbi';
@@ -31,6 +32,10 @@ export interface IBuildTransactionParams {
      * Connected user to be used as admin.
      */
     connectedAddress: string;
+    /**
+     * Plugins to install on the DAO, defaults to the admin plugin.
+     */
+    pluginSettings?: ICreateDaoPluginSettings[];
 }
 
 class PublishDaoDialogUtils {
@@ -49,22 +54,22 @@ class PublishDaoDialogUtils {
     buildTransaction = (
         params: IBuildTransactionParams,
     ): Promise<ITransactionRequest> => {
-        const { values, metadataCid, connectedAddress } = params;
+        const { values, metadataCid, connectedAddress, pluginSettings } =
+            params;
         const { network, ens } = values;
 
         const { daoFactory } = networkDefinitions[network].addresses;
         const adminPluginRepo = adminPlugin.repositoryAddresses[network];
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid, ens);
-        const pluginSettings = this.buildPluginSettingsParams(
-            adminPluginRepo,
-            connectedAddress,
-        );
+        const installSettings =
+            pluginSettings ??
+            this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
 
         const transactionData = encodeFunctionData({
             abi: daoFactoryAbi,
             functionName: 'createDao',
-            args: [daoSettings, pluginSettings],
+            args: [daoSettings, installSettings],
         });
 
         const transaction = {

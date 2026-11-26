@@ -20,6 +20,7 @@ export interface IDaoAvatarProps extends Omit<IAvatarProps, 'fallback'> {
     size?: AvatarSize;
 }
 
+// biome-ignore-start lint/plugin/noPrimitiveTypography: the initials follow the avatar size, not a type role
 const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     xs: {
         default: 'text-xs',
@@ -70,6 +71,7 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
         '2xl': '2xl:text-2xl',
     },
 };
+// biome-ignore-end lint/plugin/noPrimitiveTypography: the initials follow the avatar size, not a type role
 
 /**
  * Usage notes:
@@ -87,7 +89,8 @@ export const DaoAvatar: React.FC<IDaoAvatarProps> = (props) => {
             fallback={
                 <span
                     className={classNames(
-                        'flex size-full items-center justify-center rounded-full bg-primary-400 leading-tight text-neutral-0',
+                        // biome-ignore lint/plugin/noPrimitiveTypography: the initials box is one glyph line, not a type role
+                        'flex size-full items-center justify-center rounded-full bg-accent-solid leading-tight text-accent-inverse',
                         responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
                         className,
                     )}

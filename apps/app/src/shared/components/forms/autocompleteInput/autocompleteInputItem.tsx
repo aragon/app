@@ -24,9 +24,8 @@ export const AutocompleteInputItem = forwardRef<
 
     const itemClassName = classNames(
         'flex flex-row items-center justify-between gap-4 rounded-lg px-3 py-2 hover:cursor-pointer',
-        '',
-        { 'bg-neutral-50 text-neutral-800': isActive },
-        { 'text-neutral-500': !isActive },
+        { 'bg-surface-hover text-surface-hover-label': isActive },
+        { 'text-surface-default': !isActive },
         className,
     );
 
@@ -41,7 +40,9 @@ export const AutocompleteInputItem = forwardRef<
         >
             <span className="flex min-w-0 flex-row items-center gap-4">
                 <Icon
-                    className={classNames({ 'text-neutral-300': !isActive })}
+                    className={classNames({
+                        'icon-surface-default': !isActive,
+                    })}
                     icon={icon}
                 />
                 <p className="type-control--tall-line">{name}</p>

@@ -50,6 +50,7 @@ export const financeDialogsDefinitions: Record<FinanceDialogId, IDialogComponent
 - Keys come from the module's `*DialogId` enum — no inline string ids.
 - A new module's definitions must be merged into `providersDialogs.ts`, or the id won't resolve at runtime.
 - **A dialog that renders `TransactionDialog`, or otherwise needs the connected address to be meaningful, must set `requiresWallet: true`.** `DialogRoot` unmounts and closes flagged dialogs on wallet disconnect; without the flag, a dialog reading the address re-renders without one and throws — `DialogRoot` catches it in a per-dialog `ErrorBoundary`, so the user is left with an error inside the dialog instead of the flow they were in. Dialogs stacked on a flagged dialog need the flag too, or the child is orphaned on the stack when its parent closes.
+- **A stacked dialog rendering `TransactionDialog` or `WizardDialog.Container` passes `dialogId={location.id}`**, so their footer actions close only that dialog and not the whole stack.
 
 ## Non-obvious
 

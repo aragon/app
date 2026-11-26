@@ -7,16 +7,16 @@ import type { ILinkProps, LinkVariant } from './link.api';
 
 const variantToLabelClassNames: Record<LinkVariant | 'disabled', string[]> = {
     primary: [
-        'text-primary-400 cursor-pointer', // Default
-        'hover:text-primary-500', // Hover state
-        'active:text-primary-700', // Active state
+        'text-link-default cursor-pointer', // Default
+        'hover:text-link-hover', // Hover state
+        'active:text-link-active', // Active state
     ],
     neutral: [
-        'text-neutral-500 cursor-pointer', // Default
-        'hover:text-neutral-600', // Hover state
-        'active:text-neutral-800', // Active state
+        'text-link-secondary-default cursor-pointer', // Default
+        'hover:text-link-secondary-hover', // Hover state
+        'active:text-link-secondary-active', // Active state
     ],
-    disabled: ['truncate text-neutral-300'],
+    disabled: ['truncate text-surface-disabled'],
 };
 
 export const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref) => {
@@ -39,7 +39,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref)
 
     const processedVariant = disabled ? 'disabled' : variant;
     const linkClassName = classNames(
-        'inline-flex max-w-fit flex-col gap-y-0.5 truncate rounded-md type-supporting focus-ring-primary',
+        'inline-flex max-w-fit flex-col gap-y-0.5 truncate rounded-md type-supporting ring-accent-focus focus-ring',
         'md:gap-y-1',
         variantToLabelClassNames[processedVariant],
         className,
@@ -69,7 +69,7 @@ export const Link = React.forwardRef<HTMLAnchorElement, ILinkProps>((props, ref)
                 <p
                     className={classNames(
                         'truncate type-caption--framework-leading',
-                        disabled ? 'text-neutral-300' : 'text-neutral-400',
+                        disabled ? 'text-surface-disabled' : 'text-surface-tertiary',
                     )}
                 >
                     {processedHref}

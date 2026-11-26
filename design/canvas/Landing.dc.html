@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Landing</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{opening}}" hint-placeholder-val="{{false}}">
+  <main class="ld-opening" aria-busy="true">
+    <a id="open-workspace" href="Workspace.dc.html?wallet=connected">Opening your workspace…</a>
+  </main>
+</sc-if>
+<sc-if value="{{landing}}" hint-placeholder-val="{{true}}">
+<main class="ld">
+  <section class="ld-left">
+    <div class="ld-logo" style="display: block; height: 32px;">
+      <dc-import name="AragonLogo" size="sm" hint-size="130px,32px"></dc-import>
+    </div>
+
+    <div class="ld-body">
+      <div class="ld-copy">
+        <h1 class="ld-title">Your team’s onchain finances, in one place</h1>
+        <p class="ld-desc">Bring your existing Safes and Aragon DAOs into one shared workspace. Review and sign transactions, track pending approvals, and see what needs your team’s attention. Free to use.</p>
+      </div>
+
+      <div class="ld-signin">
+        <x-import component-from-global-scope="GovUiKit.Button" class-name="ld-full" icon-left="BLOCKCHAIN_WALLET" size="lg" type="button" on-click="{{connect}}">Continue with wallet</x-import>
+        <div class="ld-soon">
+          <span class="ld-soon__rule"></span>
+          coming soon
+          <span class="ld-soon__rule"></span>
+        </div>
+        <div class="ld-options">
+          <button class="ld-option" type="button" disabled>
+            <span class="ld-option__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="SOCIAL_EMAIL" size="md"></x-import></span>
+            Email
+          </button>
+          <button class="ld-option" type="button" disabled>
+            <span class="ld-option__icon"><img src="assets/google.svg" alt=""></span>
+            Google
+          </button>
+          <button class="ld-option" type="button" disabled>
+            <span class="ld-option__icon"><x-import component-from-global-scope="GovUiKit.Icon" icon="PERSON" size="md"></x-import></span>
+            Passkey
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="ld-legal">
+      <nav aria-label="Legal">
+        <span>© {{year}} Aragon</span>
+        <a href="https://aragon.org/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy</a>
+        <a href="https://aragon.org/terms-and-conditions" target="_blank" rel="noopener noreferrer">Terms</a>
+      </nav>
+    </footer>
+  </section>
+
+  <section class="ld-right">
+    <img class="ld-net" src="assets/net_bg.svg" alt="" aria-hidden="true">
+    <a class="ld-preview ld-preview--desktop" href="Workspace.dc.html" aria-label="Explore the demo workspace">
+      <img src="assets/landing/workspace-preview-desktop.jpg" alt="My Workspace dashboard with four accounts and open to-dos">
+    </a>
+    <a class="ld-preview ld-preview--mobile" href="Workspace.dc.html" aria-label="Explore the demo workspace">
+      <img src="assets/landing/workspace-preview-mobile.jpg" alt="My Workspace dashboard on a phone, with open to-dos" width="780" height="1540">
+    </a>
+    <div class="ld-demo">
+      <a class="ld-demo-link" href="Workspace.dc.html">
+        Explore a demo workspace
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_RIGHT" size="sm"></x-import>
+      </a>
+    </div>
+  </section>
+</main>
+</sc-if>
+<sc-if value="{{dialog.connect}}" hint-placeholder-val="{{false}}">
+  <dc-import name="DaoWalletConnect" start="appkit" on-close="{{closeDialog}}" on-pick="{{pickWallet}}" hint-size="1px,1px"></dc-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+// Landing page at / (apps/app: modules/application/pages/landingPage; app/page.tsx renders it when the `workspaces` flag is on).
+// state: connected (false | true), dialog ('' | 'connect').
+// Continue with wallet opens the wallet SDK modal directly, as the app does (DaoWalletConnect start="appkit": no Aragon connect
+// dialog first).
+// Once connected the app swaps the page for an empty <main aria-busy> and router.replace('/workspace'), which for a wallet with a
+// workspace lands on the workspace. Here that is a real link to Workspace.dc.html, clicked once on connecting and kept visible.
+// "Explore a demo workspace" (button and both previews): the app activates the demo workspace fixture ("aragon-demo", four accounts)
+// and goes to its overview; the prototype links to Workspace.dc.html, whose mock workspace has the same four-account shape.
+// Email, Google and Passkey are disabled under "coming soon", as in the app. Privacy and Terms are external links.
+// The md and xl rules are window breakpoints (proto.css .ld-*), as in the app: the page has no app column.
+class Component extends DCLogic {
+  state = { connected: false, dialog: '' };
+  connect = () => this.setState({ dialog: 'connect' });
+  closeDialog = () => this.setState({ dialog: '' });
+  pickWallet = () => this.setState({ connected: true, dialog: '' });
+  componentDidUpdate(_p, prev) {
+    if (this.state.connected && !(prev && prev.connected)) {
+      setTimeout(() => { const a = document.getElementById('open-workspace'); if (a) a.click(); }, 0);
+    }
+  }
+  renderVals() {
+    return {
+      landing: !this.state.connected, opening: this.state.connected,
+      year: new Date().getFullYear(),
+      dialog: { connect: this.state.dialog === 'connect' },
+      connect: this.connect, closeDialog: this.closeDialog, pickWallet: this.pickWallet
+    };
+  }
+}
+</script>
+</body>
+</html>

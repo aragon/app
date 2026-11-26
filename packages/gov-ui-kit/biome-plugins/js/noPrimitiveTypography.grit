@@ -1,0 +1,22 @@
+// Primitive type classes in string literals, JSX strings, template chunks and object keys. Source outside the theme
+// takes a typography role instead (type-supporting, type-title-item--entity-list) and the modifiers type-strong,
+// type-mono, type-numeric. Both regexes equal the ones in ../css/noPrimitiveTypography.grit (scripts/tokens/
+// generate.test.mjs checks).
+language js
+
+or {
+    JsStringLiteralExpression(),
+    JsTemplateChunkElement(),
+    JsxString(),
+    JsLiteralMemberName()
+} as $node where {
+    $node <: or {
+        // A named size, line height, weight or letter spacing under any variant: text-sm, md:text-lg/6, leading-6,
+        // font-semibold!, -tracking-wide.
+        r"(?s)(?:.*[^\w-])?!?-?(?:text-(?:xs|sm|base|lg|xl|[2-9]xl)|leading-(?:none|tight|snug|normal|relaxed|loose|px|\d+(?:\.\d+)?)|font-(?:thin|extralight|light|normal|medium|semibold|bold|extrabold|black)|tracking-(?:tighter|tight|normal|wide|wider|widest))(?:[^\w-].*|$)",
+        // An arbitrary or variable value: text-[13px], text-[clamp(…)], text-(length:--x), leading-[1.2],
+        // leading-(--x), font-[550], tracking-[-0.01em], [font-size:…].
+        r"(?s)(?:.*[^\w-])?!?-?(?:text-[\[(](?:\.?\d|clamp\(|calc\(|length:)|(?:leading|tracking)-[\[(]|font-[\[(](?:\d|weight:)|\[(?:font-size|line-height|font-weight|letter-spacing):).*"
+    },
+    register_diagnostic(span=$node, message="Primitive type class: use a typography role (type-supporting, type-title-item--entity-list) and the modifiers type-strong, type-mono, type-numeric. To keep it on purpose, put `biome-ignore lint/plugin/noPrimitiveTypography: <reason>` on the line above.", severity="error")
+}

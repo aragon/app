@@ -35,6 +35,9 @@ describe('resolveServerSafeUrl', () => {
         { network: Network.HEMI_MAINNET, shortName: 'hemi' },
         { network: Network.KATANA_MAINNET, shortName: 'katana' },
         { network: Network.MONAD_MAINNET, shortName: 'monad' },
+        { network: Network.ROBINHOOD_MAINNET, shortName: 'robinhood' },
+        { network: Network.BNB_MAINNET, shortName: 'bnb' },
+        { network: Network.BASE_SEPOLIA, shortName: 'basesep' },
     ])(
         'resolves the $shortName endpoint for the $network network',
         ({ network, shortName }) => {
@@ -48,6 +51,9 @@ describe('resolveServerSafeUrl', () => {
     it.each([
         { network: Network.CITREA_MAINNET },
         { network: Network.CHILIZ_MAINNET },
+        { network: Network.BNB_TESTNET },
+        { network: Network.ETHEREUM_HOODI },
+        { network: Network.POLYGON_AMOY },
     ])('returns undefined for the unserved $network network', ({ network }) => {
         expect(resolveServerSafeUrl(network)).toBeUndefined();
     });

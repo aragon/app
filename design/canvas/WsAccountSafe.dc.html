@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace Safe settings</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="page-container" onClick="{{click}}">
+  <div class="app-container page-content">
+    <main class="page-main page-main--titled">
+      <header class="page-main__header">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Settings</x-import>
+      </header>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <div class="page-section__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Account</x-import>
+          </div>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Blockchain">
+              <div class="settings-info__value">
+                <p class="text-neutral-500">Ethereum</p>
+                <p class="settings-info__note">Not changeable</p>
+              </div>
+            </x-import></div>
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Not changeable" link="{{safeLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import></div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Summary">
+              <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{four}}"><p class="text-neutral-500">The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.</p></x-import>
+            </x-import>
+          </x-import>
+        </x-import>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <div class="page-section__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Governance</x-import>
+          </div>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.Card" class-name="p-6">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+            <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Required confirmations" link="{{membersLink}}" children="3 of 5"></x-import></div>
+            <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Current Safe nonce"><p class="text-neutral-500">{{nonceText}}</p></x-import>
+          </x-import>
+        </x-import>
+      </div>
+    </main>
+
+    <aside class="page-aside">
+      <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+        <div class="aside-card__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Contracts</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Safe address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" description="Safe 1.4.1" link="{{safeLink}}" children="0x515f…02e2"></x-import>
+        </x-import>
+      </x-import>
+    </aside>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":null},"on-connect":{"editor":null},"scope":{"editor":null},"safe":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// Settings of the Safe account of the workspace (apps/app: modules/workspace/pages/workspaceAccountSettingsPage/workspaceSafeSettingsPageClient.tsx; strings
+// app.workspace.workspaceSafeSettingsPage, app.safe.safeSettings). PART of the workspace prototype: the Safe's Settings section. Props: onNav(target), wallet, onConnect
+// (unused), scope (unused), safe (the shell's Safe state: the current nonce).
+// Main: "Account" card (Blockchain, Address linked to the Safe app, Summary = the account's description) and "Governance" card (Required confirmations, linking to the
+// members page, and the current nonce). Aside "Contracts": the Safe address with its version. A Safe with no guard or modules has no further rows.
+// Source-only: the unavailable-network and failed-read states are not drawn.
+class Component extends DCLogic {
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const safe = this.props.safe;
+    return {
+      yes: true, four: 4, click: this.click,
+      nonceText: safe && safe.nonceText ? safe.nonceText : '5',
+      safeLink: { href: 'https://app.safe.global/home?safe=eth:0x515feC2E8F6553948b1D57C14c1243a1405C02e2', isExternal: true, isOnchainEntity: true },
+      membersLink: { href: '#nav:members', isExternal: false }
+    };
+  }
+}
+</script>
+</body>
+</html>

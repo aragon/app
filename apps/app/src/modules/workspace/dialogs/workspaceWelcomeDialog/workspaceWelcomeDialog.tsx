@@ -1,88 +1,73 @@
 'use client';
 
-import { AvatarIcon, Dialog, IconType } from '@aragon/gov-ui-kit';
+import { Dialog, Icon, IconType } from '@aragon/gov-ui-kit';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { workspaceWelcomeUtils } from '../../utils/workspaceWelcomeUtils';
 
 export interface IWorkspaceWelcomeDialogProps extends IDialogComponentProps {}
 
-const features: { icon: IconType; titleKey: string; descriptionKey: string }[] =
-    [
-        {
-            icon: IconType.PEN,
-            titleKey:
-                'app.workspace.workspaceWelcomeDialog.feature.waiting.title',
-            descriptionKey:
-                'app.workspace.workspaceWelcomeDialog.feature.waiting.description',
-        },
-        {
-            icon: IconType.CLOCK,
-            titleKey:
-                'app.workspace.workspaceWelcomeDialog.feature.track.title',
-            descriptionKey:
-                'app.workspace.workspaceWelcomeDialog.feature.track.description',
-        },
-    ];
+const items = [
+    { key: 'pending', icon: IconType.PEN },
+    { key: 'tracking', icon: IconType.CLOCK },
+] as const;
 
-/**
- * Greets the user as they enter the workspace they just created, once per creation (see `workspaceWelcomeUtils`),
- * never for a workspace they return to.
- */
 export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
     props,
 ) => {
     const { location } = props;
 
-    const { close } = useDialogContext();
     const { t } = useTranslations();
+    const { close } = useDialogContext();
+
+    const handleClose = () => close(location.id);
 
     return (
         <>
             <Dialog.Header
+                description={t(
+                    'app.workspace.workspaceWelcomeDialog.description',
+                )}
+                onClose={handleClose}
                 title={t('app.workspace.workspaceWelcomeDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <p className="type-body--unstepped text-neutral-500">
-                    {t('app.workspace.workspaceWelcomeDialog.description')}
-                </p>
-                <div className="flex flex-col gap-4">
-                    {features.map(({ icon, titleKey, descriptionKey }) => (
-                        <div
-                            className="flex flex-row items-start gap-3"
-                            key={titleKey}
-                        >
-                            <AvatarIcon icon={icon} variant="primary" />
-                            <div className="flex flex-col gap-0.5">
-                                <p className="type-title-item--compact-card text-neutral-800">
-                                    {t(titleKey)}
-                                </p>
-                                <p className="type-body--unstepped text-neutral-500">
-                                    {t(descriptionKey)}
-                                </p>
-                            </div>
+            <Dialog.Content className="flex flex-col gap-4 pt-2 pb-4">
+                {items.map(({ key, icon }) => (
+                    <div className="flex items-center gap-3" key={key}>
+                        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-subtle">
+                            <Icon
+                                className="icon-accent-primary"
+                                icon={icon}
+                                size="sm"
+                            />
                         </div>
-                    ))}
-                </div>
-                <p className="type-body-compact--unstepped text-neutral-500">
-                    {t('app.workspace.workspaceWelcomeDialog.note')}
-                </p>
+                        <div className="flex flex-col gap-0.5">
+                            <p className="type-title-item--compact-card type-strong text-surface-primary">
+                                {t(
+                                    `app.workspace.workspaceWelcomeDialog.items.${key}.title`,
+                                )}
+                            </p>
+                            <p className="type-body-compact--unstepped text-pretty text-surface-secondary">
+                                {t(
+                                    `app.workspace.workspaceWelcomeDialog.items.${key}.description`,
+                                )}
+                            </p>
+                        </div>
+                    </div>
+                ))}
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t(
-                        'app.workspace.workspaceWelcomeDialog.action.openWorkspace',
-                    ),
-                    onClick: () => {
-                        // The only way out of the dialog, and the moment the first run is recorded as done.
-                        workspaceWelcomeUtils.markWelcomeSeen();
-                        close(location.id);
-                    },
+                    label: t('app.workspace.workspaceWelcomeDialog.action'),
+                    onClick: handleClose,
                 }}
-            />
+            >
+                <p className="-mb-2 type-caption--chat-note text-pretty text-surface-secondary">
+                    {t('app.workspace.workspaceWelcomeDialog.note')}
+                </p>
+            </Dialog.Footer>
         </>
     );
 };

@@ -70,7 +70,9 @@ export const ensureAppKit = () => {
         },
         themeVariables: {
             '--w3m-font-family': 'var(--font-sans)',
+            // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
             '--w3m-accent': 'var(--color-primary-400)',
+            // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
             '--w3m-color-mix': 'var(--color-neutral-100)',
             '--w3m-border-radius-master': '1.3px',
         },

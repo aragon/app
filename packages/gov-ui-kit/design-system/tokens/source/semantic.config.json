@@ -1,0 +1,49 @@
+{
+    "$description": "How semantic.tokens.json becomes CSS; cssNames and files read as in primitives.config.json, the files go to src/theme/tokens/semantic/. Colour roles are the kit's own `--guk-<family>-*` theme variables, read by the functional utilities of src/theme/tokens/colorRoles.css (`bg-*`, `text-*`, `border-*`, `icon-*`, `ring-*`) and gradients.css; shadows are Tailwind's `--shadow-*`, so its own `shadow-*` utility resolves them. preview: the files of design-system/tokens/preview/; each maps the selector of a mode to the token documents merged over the default theme, in order. `:root[data-theme]` outranks Tailwind's `:root` theme rule where that rule is not in a cascade layer.",
+    "cssNames": {
+        "semantic.bg.*": "--guk-bg-$1",
+        "semantic.bg.*.*": "--guk-bg-$1-$2",
+        "semantic.border.*.*": "--guk-border-$1-$2",
+        "semantic.text.*.*": "--guk-text-$1-$2",
+        "semantic.icon.*.*": "--guk-icon-$1-$2",
+        "semantic.gradient.*.*": "--guk-gradient-$1-$2",
+        "semantic.ring.*.*": "--guk-ring-$1-$2",
+        "semantic.shadow.*.*": "--shadow-$1-$2"
+    },
+    "files": {
+        "colors.css": {
+            "@theme": [
+                "semantic.bg",
+                "semantic.border",
+                "semantic.text",
+                "semantic.icon",
+                "semantic.gradient"
+            ]
+        },
+        "focusRing.css": {
+            "@theme": [
+                "semantic.ring"
+            ]
+        },
+        "shadows.css": {
+            "@theme": [
+                "semantic.shadow"
+            ]
+        }
+    },
+    "preview": {
+        "colors.css": {
+            ":root[data-theme=\"next\"], [data-theme=\"next\"]": [
+                "modes/palette.tokens.json",
+                "modes/primitives.next.tokens.json",
+                "modes/shadows.tokens.json",
+                "modes/semantic.next.tokens.json"
+            ],
+            ":root[data-theme=\"dark\"], [data-theme=\"dark\"]": [
+                "modes/palette.tokens.json",
+                "modes/shadows.tokens.json",
+                "modes/semantic.dark.tokens.json"
+            ]
+        }
+    }
+}

@@ -19,7 +19,9 @@ export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (
 
     return (
         <div className="flex flex-col gap-y-6">
-            {description && <p className="text-neutral-500">{description}</p>}
+            {description && (
+                <p className="text-surface-secondary">{description}</p>
+            )}
             {links?.map((resource: IResource) => (
                 <div className="flex flex-col gap-y-3" key={resource.url}>
                     <ResourceLink

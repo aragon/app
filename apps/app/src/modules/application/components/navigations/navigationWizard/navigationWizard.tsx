@@ -48,6 +48,10 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      * `wizardReturnToParam`).
      */
     exitPath: Route;
+    /**
+     * Called on a click of the close link; `preventDefault` cancels the exit navigation.
+     */
+    onExit?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 /**
@@ -96,7 +100,7 @@ const resolveDisplayDao = (
 };
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, dao, targetDaoAddress, exitPath } = props;
+    const { name, dao, targetDaoAddress, exitPath, onExit } = props;
 
     const returnTo = useSearchParams().get(wizardReturnToParam);
     const exitHref = isAppPath(returnTo) ? returnTo : exitPath;
@@ -128,8 +132,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
-        'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
-        'focus-ring-primary hover:border-neutral-200 active:bg-neutral-50 active:text-neutral-800',
+        'items-center gap-3 rounded-full border border-surface-default p-4 text-surface-default-wizard transition-all',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
     );
 
     const wizardName = typeof name === 'string' ? t(name) : t(...name);
@@ -140,18 +144,22 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
             trailing={<SupportChatTrigger />}
         >
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
-                <Link className={linkClassName} href={exitHref}>
+                <Link
+                    className={linkClassName}
+                    href={exitHref}
+                    onClick={onExit}
+                >
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-0.5">
-                    <p className="type-title-page--wizard-nav text-nowrap text-neutral-800">
+                    <p className="type-title-page--wizard-nav text-nowrap text-surface-primary">
                         {wizardName}
                     </p>
                     {displayDao != null && (
                         <div className="flex items-center gap-x-2">
                             <AddressOutput
                                 address={displayDao.address}
-                                className="type-supporting--compact-meta text-nowrap text-neutral-500"
+                                className="type-supporting--compact-meta text-nowrap text-surface-secondary"
                                 copy={false}
                                 label={displayDao.name?.trim() || undefined}
                             />

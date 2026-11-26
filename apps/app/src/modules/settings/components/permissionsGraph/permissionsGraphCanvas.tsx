@@ -238,6 +238,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
                             <circle
                                 cx="4"
                                 cy="4"
+                                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                                 fill="var(--color-neutral-300)"
                                 r="3.5"
                             />
@@ -254,7 +255,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
                             <circle
                                 cx="4"
                                 cy="4"
-                                fill="var(--color-primary-400)"
+                                fill="var(--guk-border-surface-selected)"
                                 r="3.5"
                             />
                         </marker>

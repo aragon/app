@@ -151,7 +151,7 @@ export const GovernanceStageSettingsField: React.FC<
             )}
             useCustomWrapper={true}
         >
-            <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
+            <DefinitionList.Container className="rounded-xl border border-surface-secondary px-6 py-4">
                 {approvingBodyCount > 0 && (
                     <DefinitionList.Item
                         term={t(

@@ -1,0 +1,19 @@
+[
+    {
+        "attribute": "theme",
+        "title": "Colour theme",
+        "icon": "paintbrush",
+        "modes": [
+            "next",
+            "dark"
+        ]
+    },
+    {
+        "attribute": "typography",
+        "title": "Typography",
+        "icon": "paragraph",
+        "modes": [
+            "next"
+        ]
+    }
+]

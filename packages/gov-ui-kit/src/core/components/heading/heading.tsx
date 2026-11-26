@@ -1,42 +1,41 @@
 import classNames from 'classnames';
 import { forwardRef } from 'react';
-import { type TypographyStyle, typographyClassNames } from '../../types/typographyStyles';
 
 export type HeadingSize = 'h1' | 'h2' | 'h3' | 'h4' | 'h5';
 
 export interface IHeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
     /**
-     * Semantic level of the heading. Without `as`, it is the rendered HTML element; without `typeRole`, it also picks
-     * the typography role (h1 title-page, h2 title-section, h3 title-group, h4 title-item, h5 supporting).
-     * @deprecated as a way to style the heading: set the element with `as` and the typography with `typeRole`.
+     * Specifies the semantic level of the heading, affecting both the HTML element used (e.g., <h1>, <h2>) and its
+     * default typography role (h1 title-page, h2 title-section, h3 title-group, h4 title-item, h5 supporting).
+     * If the 'as' prop is not provided, this value determines the HTML element rendered in the DOM.
      * @default h1
      */
     size?: HeadingSize;
     /**
-     * Overrides the HTML element type that is rendered in the DOM, independent of the typography.
+     * Optionally overrides the HTML element type that is rendered in the DOM, independent of the heading's semantic level determined by the 'size' prop.
+     * This allows for styling and semantic adjustments where necessary.
      */
     as?: HeadingSize;
     /**
-     * Typography role (or documented exception) of the heading, rendered by its `type-<role>` utility. Defaults to the
-     * role of `size`.
+     * Typography role class that replaces the default role of `size`, e.g. `type-title-group`.
      */
-    typeRole?: TypographyStyle;
+    typeClassName?: string;
 }
 
-const headingSizeToTypeRole: Record<HeadingSize, TypographyStyle> = {
-    h1: 'title-page',
-    h2: 'title-section',
-    h3: 'title-group',
-    h4: 'title-item',
-    h5: 'supporting',
+const headingToTypeClassNames: Record<HeadingSize, string> = {
+    h1: 'type-title-page',
+    h2: 'type-title-section',
+    h3: 'type-title-group',
+    h4: 'type-title-item',
+    h5: 'type-supporting',
 };
 
 export const Heading = forwardRef<HTMLHeadingElement, IHeadingProps>((props, ref) => {
-    const { size = 'h1', as, typeRole, className, ...otherProps } = props;
+    const { size = 'h1', as, typeClassName, className, ...otherProps } = props;
     const Tag = as ?? size;
     const headingClassName = classNames(
-        typographyClassNames[typeRole ?? headingSizeToTypeRole[size]],
-        'text-neutral-800',
+        typeClassName ?? headingToTypeClassNames[size],
+        'text-surface-primary',
         className,
     );
 

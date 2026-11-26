@@ -52,7 +52,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
     return (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
-                <p className="flex items-center gap-2 type-title-item text-neutral-800">
+                <p className="flex items-center gap-2 type-title-item text-surface-primary">
                     {address != null ? (
                         <AddressOutput address={address} label={bodyName} />
                     ) : (
@@ -61,12 +61,12 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
                 </p>
                 {address && name != null && name !== '' && (
-                    <p className="type-supporting--row-value text-neutral-500">
+                    <p className="type-supporting--row-value text-surface-secondary">
                         <AddressOutput address={address} />
                     </p>
                 )}
             </div>
-            <p className="type-supporting text-neutral-500">{subtitle}</p>
+            <p className="type-supporting text-surface-secondary">{subtitle}</p>
         </div>
     );
 };

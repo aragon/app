@@ -324,8 +324,8 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 useCustomWrapper={true}
             >
                 {hasNestedActions ? (
-                    <Card className="flex flex-col gap-4 rounded-xl bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between md:p-6">
-                        <p className="text-neutral-800">
+                    <Card className="flex flex-col gap-4 rounded-xl bg-surface-primary p-4 md:flex-row md:items-center md:justify-between md:p-6">
+                        <p className="text-surface-primary">
                             {t(
                                 nestedActions.length === 1
                                     ? 'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.selected'
@@ -347,7 +347,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     </Card>
                 ) : (
                     <CardEmptyState
-                        className="border border-neutral-100"
+                        className="border border-surface-secondary"
                         heading={t(
                             'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.emptyHeading',
                         )}

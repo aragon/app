@@ -18,26 +18,26 @@ export interface IAlertCardProps extends HTMLAttributes<HTMLDivElement> {
 
 // Maps alert variants to container class names.
 const alertVariantToContainerClassNames: Record<AlertVariant, string> = {
-    critical: 'border-critical-400 shadow-critical',
-    info: 'border-info-400 shadow-info',
-    success: 'border-success-400 shadow-success',
-    warning: 'border-warning-400 shadow-warning',
+    critical: 'border-critical-primary shadow-critical-default',
+    info: 'border-info-primary shadow-info-default',
+    success: 'border-success-primary shadow-success-default',
+    warning: 'border-warning-primary shadow-warning-default',
 };
 
 // Maps alert variants to icon class names.
 const alertVariantToIconClassNames: Record<AlertVariant, string> = {
-    critical: 'text-critical-500',
-    info: 'text-info-500',
-    success: 'text-success-500',
-    warning: 'text-warning-500',
+    critical: 'icon-critical-primary',
+    info: 'icon-info-primary',
+    success: 'icon-success-primary',
+    warning: 'icon-warning-primary',
 };
 
 // Maps alert variants to message class names.
 const alertVariantToMessageClassNames: Record<AlertVariant, string> = {
-    critical: 'text-critical-800',
-    info: 'text-info-800',
-    success: 'text-success-800',
-    warning: 'text-warning-800',
+    critical: 'text-critical-primary',
+    info: 'text-info-primary',
+    success: 'text-success-primary',
+    warning: 'text-warning-primary',
 };
 
 export const AlertCard: React.FC<IAlertCardProps> = (props) => {
@@ -46,7 +46,7 @@ export const AlertCard: React.FC<IAlertCardProps> = (props) => {
     return (
         <div
             className={classNames(
-                'w-full rounded-xl border bg-neutral-0 px-4 py-3 md:px-6 md:py-5',
+                'w-full rounded-xl border bg-surface-primary px-4 py-3 md:px-6 md:py-5',
                 alertVariantToContainerClassNames[variant],
                 className,
             )}
@@ -64,7 +64,7 @@ export const AlertCard: React.FC<IAlertCardProps> = (props) => {
                     {message}
                 </p>
             </div>
-            {children && <div className="ml-6 type-body-compact text-neutral-500 md:ml-7">{children}</div>}
+            {children && <div className="ml-6 type-body-compact text-surface-secondary md:ml-7">{children}</div>}
         </div>
     );
 };
