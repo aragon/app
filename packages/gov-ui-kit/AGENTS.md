@@ -72,7 +72,8 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the
   `@theme` CSS under `src/theme/tokens/primitives/` (the `--color-*` ramps, shadows, radius, type) and
-  `src/theme/tokens/semantic/` (the `--guk-<family>-*` colour roles). Components use role classes such as
+  `src/theme/tokens/semantic/` (the `--guk-<family>-*` colour roles), and the aliases only the app uses under
+  `design-system/tokens/app/` (not published; the app imports it). Components use role classes such as
   `bg-surface-primary`, `text-surface-secondary` and `icon-accent-primary`, the functional utilities of
   `src/theme/tokens/colorRoles.css`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
@@ -99,7 +100,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   Radix-based primitives in `src/core/components`.
 - **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
   `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/{primitives,semantic}/`
-  or `design-system/tokens/preview/` by hand (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
+  or `design-system/tokens/{app,preview}/` by hand (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
   `src/modules` must keep labeling, focus order, and keyboard interaction intact, and rely on
@@ -135,7 +136,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
 - `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
-  `src/theme/tokens/{primitives,semantic}/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
+  `src/theme/tokens/{primitives,semantic}/` and `design-system/tokens/app/` — the CSS generated from it; all CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules

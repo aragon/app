@@ -49,6 +49,13 @@ test('the generated CSS keeps its constructs', () => {
     assert.match(css('index'), /@import "\.\/borderRadius\.css";\n@import "\.\/breakpoints\.css";/);
 });
 
+test('a layer lays out the tokens of its own document, in its own dir', () => {
+    const files = generate();
+    const css = (path) => files.get(resolve(kitRoot, path));
+    assert.match(css('design-system/tokens/app/colors.css'), /--guk-bg-body-sidebar: var\(--color-neutral-25\);/);
+    assert.doesNotMatch(css('src/theme/tokens/semantic/colors.css'), /--guk-bg-body-sidebar:/);
+});
+
 test('a changed token makes its file stale', (context) => {
     const dir = mutated(context, 'primitives.tokens.json', (json) => {
         json.radius.md.$value.value = 5;

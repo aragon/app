@@ -38,12 +38,11 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
     );
 
     const iconClassNames = classNames(
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+        // biome-ignore lint/plugin/noPrimitiveColors: no icon/surface role for the selected tab icon (neutral-800)
         'group-data-[state=active]:text-neutral-800', // Base
         { 'icon-surface-disabled-control': disabled }, // Disabled state
         { 'icon-surface-default-tab group-hover:icon-surface-hover-tab': !disabled }, // Enabled state
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-        { 'group-focus:text-neutral-500 group-active:icon-surface-active-control': !disabled }, // Enabled & Active/Focus states
+        { 'group-focus:icon-surface-default-tab group-active:icon-surface-active-control': !disabled }, // Enabled & Active/Focus states
     );
 
     return (

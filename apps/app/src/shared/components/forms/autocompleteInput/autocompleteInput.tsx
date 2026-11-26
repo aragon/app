@@ -154,9 +154,7 @@ export const AutocompleteInput = forwardRef<
             'border-surface-selected hover:border-surface-selected': isOpen,
         },
         {
-            // `[&]:` keeps the shadow at plain-class specificity but emits it after the input's own
-            // `shadow-surface-sm`, so it replaces that one while the hover and focus shadows still win.
-            // The warning shadow is kept, as it always was.
+            // `[&]:` sorts after the input's resting shadow at equal specificity; hover and focus shadows still win.
             // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
             '[&]:shadow-primary-lg': isOpen && otherProps.variant !== 'warning',
         },

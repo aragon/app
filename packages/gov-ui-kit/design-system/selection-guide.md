@@ -751,7 +751,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:76`
+- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:75`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
 
 ### Dropdown.Group
