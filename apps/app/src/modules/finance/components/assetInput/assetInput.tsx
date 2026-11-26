@@ -229,8 +229,8 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const inputClassName = classNames(
-        'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg caret-neutral-500 outline-none', // base styles
-        'placeholder:text-base placeholder:leading-tight placeholder:font-normal placeholder:text-neutral-300', // placeholder styles
+        'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg caret-(--guk-bg-surface-secondary-inverse) outline-none', // base styles
+        'placeholder:type-control placeholder:text-surface-placeholder', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
 
@@ -313,12 +313,12 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center self-end pr-control-lg">
                     <button
-                        className="flex cursor-pointer flex-wrap gap-x-phrase text-primary-400 hover:text-primary-600"
+                        className="flex cursor-pointer gap-x-phrase text-link-default hover:text-link-hover-action"
                         onClick={handleMaxAmount}
                         type="button"
                     >
                         {t('app.finance.assetInput.maxButtonLabel')}
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             {formatterUtils.formatNumber(
                                 assetField.value.amount,
                                 {

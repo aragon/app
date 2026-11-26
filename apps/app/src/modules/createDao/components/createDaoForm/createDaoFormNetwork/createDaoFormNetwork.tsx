@@ -80,7 +80,10 @@ export const CreateDaoFormNetwork: React.FC<
         <RadioGroup onValueChange={onNetworkChange} {...networkField}>
             <div className="flex flex-col gap-section-wide">
                 <div className="flex flex-col gap-group">
-                    <Heading size="h4">
+                    <Heading
+                        as="h4"
+                        typeClassName="type-title-section--network-groups"
+                    >
                         {t(
                             'app.createDao.createDaoForm.network.section.mainnets',
                         )}
@@ -90,7 +93,10 @@ export const CreateDaoFormNetwork: React.FC<
                     </div>
                 </div>
                 <div className="flex flex-col gap-group">
-                    <Heading size="h4">
+                    <Heading
+                        as="h4"
+                        typeClassName="type-title-section--network-groups"
+                    >
                         {t(
                             'app.createDao.createDaoForm.network.section.testnets',
                         )}

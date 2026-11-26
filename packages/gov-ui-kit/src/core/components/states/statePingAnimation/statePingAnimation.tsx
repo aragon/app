@@ -13,11 +13,11 @@ export interface IStatePingAnimationProps extends ComponentPropsWithoutRef<'span
 }
 
 const variantToBgClassName: Record<StatePingAnimationVariant, string> = {
-    info: 'bg-info-500',
-    primary: 'bg-primary-500',
-    success: 'bg-success-500',
-    warning: 'bg-warning-500',
-    critical: 'bg-critical-500',
+    info: 'bg-info-solid',
+    primary: 'bg-accent-solid-ping',
+    success: 'bg-success-solid',
+    warning: 'bg-warning-solid',
+    critical: 'bg-critical-solid',
 };
 
 export const StatePingAnimation: React.FC<IStatePingAnimationProps> = (props) => {

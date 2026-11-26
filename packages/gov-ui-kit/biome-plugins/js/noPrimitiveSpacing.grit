@@ -1,0 +1,17 @@
+// Raw spacing classes in string literals, JSX strings, template chunks and object keys. Source outside the theme takes
+// a spacing role instead (px-inset-item, gap-group, mt-related, h-control-md) or an exception (gap-related--8-12). The
+// regex equals the one in ../css/noPrimitiveSpacing.grit (scripts/tokens/generate.test.mjs checks).
+language js
+
+or {
+    JsStringLiteralExpression(),
+    JsTemplateChunkElement(),
+    JsxString(),
+    JsLiteralMemberName()
+} as $node where {
+    // A number, px, arbitrary or variable value of a padding, margin, gap or space utility under any variant, with
+    // the negative sign or the important modifier: p-4, md:gap-x-2.5, -ml-1, mt-px, pt-[72px], mt-(--offset), py-2!.
+    // Zero and auto are not flagged.
+    $node <: r"(?s)(?:.*[^\w-])?!?-?(?:p[xytrblse]?|m[xytrblse]?|gap-[xy]|gap|space-[xy])-(?:0\.\d+|[1-9]\d*(?:\.\d+)?|px|\[[^\]\s]*\]|\([^)\s]*\))!?(?:[^\w-].*|$)",
+    register_diagnostic(span=$node, message="Raw spacing class: use a spacing role (px-inset-item, gap-group, mt-related, h-control-md) or an exception (gap-related--8-12). To keep it on purpose, put `biome-ignore lint/plugin/noPrimitiveSpacing: <reason>` on the line above.", severity="error")
+}

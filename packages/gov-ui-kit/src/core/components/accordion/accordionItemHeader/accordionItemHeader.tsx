@@ -16,14 +16,14 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
     return (
         <RadixAccordionHeader
             className={classNames(
-                'group relative flex overflow-hidden data-[state=open]:gradient-neutral-50-transparent-to-b',
-                'data-[disabled=true]:bg-neutral-100', // disabled
+                'group relative flex overflow-hidden data-[state=open]:gradient-surface-primary-to-b',
+                'data-[disabled=true]:bg-surface-disabled', // disabled
             )}
         >
             <div
                 aria-hidden="true"
                 className={classNames(
-                    'absolute inset-0 bg-neutral-0 transition-opacity duration-300',
+                    'absolute inset-0 bg-surface-default transition-opacity duration-300',
                     'group-data-[state=closed]:opacity-100 group-data-[state=open]:opacity-0',
                 )}
             />
@@ -31,7 +31,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                 asChild={removeControl != null && index != null}
                 className={classNames(
                     'relative flex flex-1 items-baseline justify-between gap-x-group-stepped--16-24 px-inset-item py-control-item outline-hidden',
-                    'focus-ring-primary group-data-disabled:cursor-default group-data-disabled:bg-neutral-100',
+                    'ring-accent-focus focus-ring group-data-disabled:cursor-default group-data-disabled:bg-surface-disabled',
                     {
                         'cursor-default': removeControl != null,
                         'cursor-pointer': removeControl == null,
@@ -61,7 +61,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                     <>
                         {children}
                         <AvatarIcon
-                            className="transition-transform group-data-disabled:bg-neutral-100 group-data-disabled:text-neutral-100 group-data-[state=open]:rotate-180"
+                            className="transition-transform group-data-disabled:bg-surface-disabled group-data-disabled:icon-surface-disabled-accordion group-data-[state=open]:rotate-180"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </>

@@ -221,7 +221,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                 className="flex flex-col gap-group"
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
-                <p className="text-base leading-normal font-normal text-neutral-500">
+                <p className="type-body--unstepped text-surface-secondary">
                     {t('app.plugins.token.tokenWrapForm.info', {
                         underlyingSymbol: underlyingToken.symbol,
                     })}

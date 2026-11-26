@@ -32,7 +32,7 @@ export const TransactionStatusContainer = <
     return (
         <ul
             className={classNames(
-                'flex flex-col gap-related--8-12 rounded-xl border border-neutral-100 bg-neutral-0 p-inset-surface text-sm shadow-neutral md:text-base',
+                'flex flex-col gap-related--8-12 rounded-xl border border-surface-secondary bg-surface-primary p-inset-surface type-body-compact--transaction-review shadow-surface-default',
                 className,
             )}
             {...otherProps}

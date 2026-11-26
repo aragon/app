@@ -130,7 +130,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     />
                     <p
                         className={classNames(
-                            'text-3xl leading-tight transition-colors duration-[1200ms] ease-in-out md:text-5xl',
+                            'type-display transition-colors duration-[1200ms] ease-in-out',
                             isLightMode ? 'text-[#171335]' : 'text-white',
                         )}
                     >
@@ -151,7 +151,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     </p>
                     <p
                         className={classNames(
-                            'text-lg transition-colors duration-[1200ms] ease-in-out md:text-xl',
+                            'type-body--partner-header transition-colors duration-[1200ms] ease-in-out',
                             isLightMode ? 'text-[#252041]/72' : 'text-white/60',
                         )}
                     >

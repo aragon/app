@@ -91,7 +91,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
             />
             <Dialog.Content>
                 {shouldShowTabs && (
-                    <div className="mt-tight--fixed-8 mb-related flex flex-col gap-related">
+                    <div className="flex flex-col gap-related pt-tight--fixed-8 pb-related">
                         <ToggleGroup
                             isMultiSelect={false}
                             onChange={handleTabChange}
@@ -112,33 +112,33 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                         </ToggleGroup>
                     </div>
                 )}
-                <div className="mb-section flex flex-col gap-related">
+                <div className="flex flex-col gap-related pb-section">
                     {displayedPolicies.map((policy) => (
                         <DataList.Item
-                            className="flex cursor-pointer items-center gap-section p-inset-surface-wide"
+                            className="flex cursor-pointer items-center gap-section px-inset-surface-wide! py-inset-surface-wide"
                             key={policy.address}
                             onClick={() => handleSelectPolicy(policy)}
                         >
-                            <div className="flex flex-1 gap-related--fixed-8 text-lg">
-                                <span className="text-neutral-800">
+                            <div className="flex flex-1 gap-related--fixed-8 type-title-item--picker-row">
+                                <span className="text-surface-primary">
                                     {policy.name ??
                                         t(
                                             'app.capitalFlow.routerSelectorDialog.unnamedPolicy',
                                         )}
                                 </span>
                                 {policy.policyKey && (
-                                    <span className="text-neutral-500">
+                                    <span className="text-surface-secondary">
                                         {policy.policyKey}
                                     </span>
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
-                                <span className="flex flex-wrap gap-phrase--fixed-2 text-base">
-                                    <span className="text-neutral-800">
+                                <span className="flex gap-phrase--fixed-2 type-supporting--body-size">
+                                    <span className="text-surface-primary">
                                         {policy.strategy?.subRouters?.length ??
                                             0}
                                     </span>
-                                    <span className="text-neutral-500">
+                                    <span className="text-surface-secondary">
                                         {t(
                                             'app.capitalFlow.routerSelectorDialog.routers',
                                         )}

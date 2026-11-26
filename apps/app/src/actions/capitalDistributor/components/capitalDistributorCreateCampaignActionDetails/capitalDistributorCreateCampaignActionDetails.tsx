@@ -168,7 +168,7 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                             {formattedAmount} {token.symbol}
                         </span>
                         {formattedFiatValue && (
-                            <span className="text-neutral-500">
+                            <span className="text-surface-secondary">
                                 {formattedFiatValue}
                             </span>
                         )}

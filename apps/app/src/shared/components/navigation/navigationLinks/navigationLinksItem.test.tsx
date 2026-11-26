@@ -59,7 +59,9 @@ describe('<NavigationLinksItem /> component', () => {
         expect(screen.getByRole('link').getAttribute('aria-current')).toEqual(
             'page',
         );
-        expect(screen.getByRole('link').className).toContain('bg-neutral-50');
+        expect(screen.getByRole('link').className).toContain(
+            'bg-surface-selected',
+        );
     });
 
     it('correctly renders the link as active in column variant', () => {
@@ -69,7 +71,9 @@ describe('<NavigationLinksItem /> component', () => {
 
         const link = screen.getByRole('link');
         expect(link).toHaveAttribute('aria-current', 'page');
-        expect(link).toHaveClass('bg-neutral-50 text-neutral-800');
+        expect(link).toHaveClass(
+            'bg-surface-selected text-surface-selected-label',
+        );
     });
 
     it('correctly renders the link as active in row variant', () => {
@@ -79,12 +83,12 @@ describe('<NavigationLinksItem /> component', () => {
         render(createTestComponent({ icon, variant: 'row', href }));
 
         const linkIcon = screen.getByTestId(icon);
-        expect(linkIcon).toHaveClass('text-primary-400');
+        expect(linkIcon).toHaveClass('icon-accent-selected');
 
         const link = screen.getByRole('link');
         expect(link).toHaveAttribute('aria-current', 'page');
-        expect(link).toHaveClass('text-neutral-800');
-        expect(link).not.toHaveClass('bg-neutral-50');
+        expect(link).toHaveClass('text-surface-selected-label');
+        expect(link).not.toHaveClass('bg-surface-selected');
     });
 
     it('renders a link as active when pathname is a subpath of href', () => {
@@ -95,6 +99,6 @@ describe('<NavigationLinksItem /> component', () => {
 
         const link = screen.getByRole('link');
         expect(link).toHaveAttribute('aria-current', 'page');
-        expect(link.className).toContain('text-neutral-800');
+        expect(link.className).toContain('text-surface-selected-label');
     });
 });

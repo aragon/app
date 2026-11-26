@@ -46,8 +46,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
             />
 
             <Container className="relative flex w-full grow flex-col">
-                <div className="top-6 my-section flex w-fit max-w-180 flex-col gap-related--6-12 md:absolute md:top-8 md:w-180">
-                    <p className="text-3xl leading-tight text-neutral-0 md:text-5xl">
+                <div className="top-6 flex w-fit max-w-180 flex-col gap-related--6-12 py-section md:absolute md:top-8 md:w-180">
+                    <p className="type-display text-neutral-0">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
                         {ensName && (
                             <span className="text-[#1ED612]">{ensName}</span>
@@ -55,7 +55,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                         <br />
                         {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
                     </p>
-                    <p className="text-base text-neutral-300 md:text-2xl">
+                    <p className="type-body--xmaquina-header text-neutral-300">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
                     </p>
                 </div>

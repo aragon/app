@@ -115,7 +115,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-section">
+                <div className="flex flex-col gap-section py-tight--fixed-8">
                     <InputDate
                         label={t(
                             'app.daos.cryptex.cryptexMembersFileDownloadDialog.lookbackDateLabel',
@@ -137,7 +137,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (
-                        <p className="text-sm text-critical-600">
+                        <p className="type-body-compact--component-note text-critical-primary-message">
                             {errorCode
                                 ? t(
                                       'app.daos.cryptex.cryptexMembersFileDownloadDialog.error.withCode',

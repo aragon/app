@@ -19,7 +19,7 @@ export type NetworkInputBaseForm = Record<string, Network>;
  * inside paragraphs (see `Dropdown.Item`), where only phrasing content is valid.
  */
 const networkTagClassName =
-    'flex h-tag shrink-0 items-center rounded-full bg-neutral-100 px-tag text-neutral-500 text-sm leading-tight md:text-base';
+    'flex h-tag shrink-0 items-center rounded-full px-tag type-supporting bg-surface-tertiary text-surface-secondary';
 
 /**
  * Networks selectable in the input, i.e. every supported network that is not disabled, ordered as defined on the
@@ -84,7 +84,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                 customTrigger={
                     <button
                         aria-label={label ?? t('app.shared.networkInput.label')}
-                        className="flex w-full cursor-pointer items-center gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-control-lg py-control-lg text-left focus-ring-primary hover:border-neutral-200 focus:outline-hidden"
+                        className="flex w-full cursor-pointer items-center gap-related rounded-xl border border-surface-default bg-surface-primary px-control-lg py-control-lg text-left ring-accent-focus focus-ring hover:border-surface-hover focus:outline-hidden"
                         type="button"
                     >
                         <Avatar
@@ -95,11 +95,11 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                         />
                         {/* The testnet/beta tag is only rendered on the dropdown items: on the trigger it competes
                          * with the network name for the little width the field has, and truncates it. */}
-                        <span className="grow truncate text-base leading-tight text-neutral-800">
+                        <span className="grow truncate type-control text-surface-primary">
                             {selectedName}
                         </span>
                         <Icon
-                            className="shrink-0 text-neutral-300"
+                            className="shrink-0 icon-surface-secondary"
                             icon={IconType.CHEVRON_DOWN}
                         />
                     </button>

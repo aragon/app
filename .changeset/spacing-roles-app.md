@@ -1,5 +1,6 @@
 ---
 "@aragon/app": minor
+"@aragon/assistant-chat": patch
 ---
 
-Add a "Spacing (GovKit preview)" select to the developer debug panel that previews the GovKit spacing roles (New, New looser, New compact) independently of the colour theme and the typography; a stored choice is ignored unless the debug panel flag is on. Seven call sites that passed spacing classes to converted kit components now render exactly as before.
+The app and the assistant chat set padding, margins, gaps and control heights through the Governance UI Kit's spacing roles instead of number classes; pages look the same. A lint rule rejects number spacing classes in the app outside a few marked places. The spacing roles and exceptions only the app and the chat use come from the kit's app-only token CSS, not from the published package. The debug panel gets a Spacing switch next to the colour theme and the typography that previews the New, looser and compact densities; like them, it only reaches developers with the panel enabled.

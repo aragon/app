@@ -8,12 +8,16 @@ export interface IWizardDialogContainerFooterProps {
      * ID of the form to link the submit button to the form element.
      */
     formId: string;
+    /**
+     * Id of this dialog: closes only this dialog of the stack; omitted closes all.
+     */
+    dialogId?: string;
 }
 
 export const WizardDialogContainerFooter: React.FC<
     IWizardDialogContainerFooterProps
 > = (props) => {
-    const { formId } = props;
+    const { formId, dialogId } = props;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -24,7 +28,7 @@ export const WizardDialogContainerFooter: React.FC<
     const secondaryActionLabel = hasPrevious ? 'back' : 'close';
     const secondaryAction = {
         label: t(`app.shared.wizardDialog.container.${secondaryActionLabel}`),
-        onClick: hasPrevious ? onPreviousClick : () => close(),
+        onClick: hasPrevious ? onPreviousClick : () => close(dialogId),
     };
 
     return (

@@ -7,7 +7,7 @@ export const PermissionsListHeader: React.FC = () => {
 
     return (
         <div className="sticky top-[90px] z-20 hidden md:block">
-            <div className="flex items-baseline justify-between gap-x-group-stepped bg-gradient-to-b from-neutral-50 from-90% to-transparent px-inset-item pt-inset-tight--fixed-4 pb-inset-item-flat--fixed-16 text-sm text-neutral-500">
+            <div className="flex items-baseline justify-between gap-x-group-stepped bg-gradient-to-b from-(--guk-gradient-surface-primary) from-90% to-transparent px-inset-item pt-inset-tight--fixed-4 pb-inset-item-flat--fixed-16 type-supporting--compact-detail text-surface-secondary">
                 <div className="grid w-full grid-cols-4 gap-group">
                     <PermissionsListHeaderLabel
                         labelKey="app.settings.permissionsList.header.who"

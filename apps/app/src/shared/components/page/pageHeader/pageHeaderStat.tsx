@@ -27,23 +27,20 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
 
     return (
         <div
-            className={classNames(
-                'flex flex-col gap-tight leading-tight font-normal',
-                className,
-            )}
+            className={classNames('flex flex-col gap-tight', className)}
             {...otherProps}
         >
             <div className="flex flex-row items-baseline gap-phrase">
-                <p className="text-lg text-neutral-800 md:text-xl">
+                <p className="type-stat text-surface-primary type-numeric">
                     {parsedValue}
                 </p>
                 {suffix && (
-                    <p className="overflow-hidden text-xs text-ellipsis text-neutral-500 md:text-sm">
+                    <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-surface-secondary">
                         {suffix}
                     </p>
                 )}
             </div>
-            <p className="overflow-hidden text-xs text-ellipsis text-neutral-500 md:text-sm">
+            <p className="overflow-hidden type-caption--framework-leading text-ellipsis text-surface-secondary">
                 {label}
             </p>
         </div>

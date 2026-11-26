@@ -54,10 +54,8 @@ const CodeHeader: React.FC<CodeHeaderProps> = ({ language, code }) => {
     };
 
     return (
-        <div className="mt-related flex items-center justify-between rounded-t-xl border border-b-0 border-neutral-100 bg-neutral-50 px-inset-surface-flat--fixed-14 py-inset-tight--fixed-6 text-xs">
-            <span className="font-medium text-neutral-500 lowercase">
-                {language}
-            </span>
+        <div className="mt-related flex items-center justify-between rounded-t-xl border border-b-0 border-surface-secondary bg-surface-secondary px-inset-surface-flat--fixed-14 py-inset-tight--fixed-6 type-caption--unstepped">
+            <span className="text-surface-secondary lowercase">{language}</span>
             <TooltipIconButton
                 onClick={onCopy}
                 tooltip={chatCopy.markdown.copyCode}
@@ -80,7 +78,7 @@ const Code: React.FC<React.ComponentProps<'code'>> = ({
         <code
             className={classNames(
                 !isCodeBlock &&
-                    'rounded-md bg-neutral-100 px-inset-tight--fixed-6 py-inset-tight font-mono text-[0.85em]',
+                    'rounded-md bg-surface-tertiary px-inset-tight--fixed-6 py-inset-tight type-mono text-[0.85em]',
                 className,
             )}
             {...props}
@@ -92,7 +90,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h1: ({ className, ...props }) => (
         <h1
             className={classNames(
-                'mt-group--fixed-20 mb-related--fixed-8 text-xl font-semibold first:mt-0 last:mb-0',
+                'mt-group--fixed-20 mb-related--fixed-8 type-title-page--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -101,7 +99,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h2: ({ className, ...props }) => (
         <h2
             className={classNames(
-                'mt-group--fixed-20 mb-related--fixed-8 text-lg font-semibold first:mt-0 last:mb-0',
+                'mt-group--fixed-20 mb-related--fixed-8 type-title-section--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -110,7 +108,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h3: ({ className, ...props }) => (
         <h3
             className={classNames(
-                'mt-group mb-tight--fixed-6 text-base font-semibold first:mt-0 last:mb-0',
+                'mt-group mb-tight--fixed-6 type-title-group--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -119,7 +117,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h4: ({ className, ...props }) => (
         <h4
             className={classNames(
-                'mt-group--fixed-14 mb-tight text-base font-medium first:mt-0 last:mb-0',
+                'mt-group--fixed-14 mb-tight type-title-item--chat-markdown first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -128,7 +126,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h5: ({ className, ...props }) => (
         <h5
             className={classNames(
-                'mt-related mb-tight text-sm font-semibold first:mt-0 last:mb-0',
+                'mt-related mb-tight type-supporting--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -137,7 +135,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h6: ({ className, ...props }) => (
         <h6
             className={classNames(
-                'mt-related mb-tight text-sm font-medium first:mt-0 last:mb-0',
+                'mt-related mb-tight type-caption--compact-label first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -146,7 +144,7 @@ const defaultComponents = memoizeMarkdownComponents({
     p: ({ className, ...props }) => (
         <p
             className={classNames(
-                'my-related leading-relaxed first:mt-0 last:mb-0',
+                'my-related type-body-compact--chat-message first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -155,7 +153,7 @@ const defaultComponents = memoizeMarkdownComponents({
     a: ({ className, href, ...props }) => (
         <a
             className={classNames(
-                'text-primary-400 underline underline-offset-2 hover:text-primary-500',
+                'text-link-default underline underline-offset-2 hover:text-link-hover',
                 className,
             )}
             href={resolveAppLink(href, globalThis.location?.origin)}
@@ -167,7 +165,7 @@ const defaultComponents = memoizeMarkdownComponents({
     blockquote: ({ className, ...props }) => (
         <blockquote
             className={classNames(
-                'my-related border-s-2 border-neutral-200 ps-inset-item-flat text-neutral-500',
+                'my-related border-s-2 border-surface-secondary-panel ps-inset-item-flat text-surface-secondary',
                 className,
             )}
             {...props}
@@ -176,7 +174,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ul: ({ className, ...props }) => (
         <ul
             className={classNames(
-                'my-related ms-5 list-disc marker:text-neutral-300 [&>li]:mt-tight',
+                'my-related ms-5 list-disc marker:text-surface-tertiary-hint [&>li]:mt-tight',
                 className,
             )}
             {...props}
@@ -185,7 +183,7 @@ const defaultComponents = memoizeMarkdownComponents({
     ol: ({ className, ...props }) => (
         <ol
             className={classNames(
-                'my-related ms-5 list-decimal marker:text-neutral-300 [&>li]:mt-tight',
+                'my-related ms-5 list-decimal marker:text-surface-tertiary-hint [&>li]:mt-tight',
                 className,
             )}
             {...props}
@@ -193,20 +191,26 @@ const defaultComponents = memoizeMarkdownComponents({
     ),
     hr: ({ className, ...props }) => (
         <hr
-            className={classNames('my-related border-neutral-100', className)}
+            className={classNames(
+                'my-related border-surface-secondary',
+                className,
+            )}
             {...props}
         />
     ),
     li: ({ className, ...props }) => (
-        <li className={classNames('leading-relaxed', className)} {...props} />
+        <li
+            className={classNames('type-body-compact--chat-message', className)}
+            {...props}
+        />
     ),
     strong: ({ className, ...props }) => (
-        <strong className={classNames('font-semibold', className)} {...props} />
+        <strong className={classNames('type-strong', className)} {...props} />
     ),
     sup: ({ className, ...props }) => (
         <sup
             className={classNames(
-                '[&>a]:text-xs [&>a]:no-underline',
+                '[&>a]:type-caption--unstepped [&>a]:no-underline',
                 className,
             )}
             {...props}
@@ -215,7 +219,7 @@ const defaultComponents = memoizeMarkdownComponents({
     pre: ({ className, ...props }) => (
         <pre
             className={classNames(
-                'overflow-x-auto rounded-t-none rounded-b-xl border border-t-0 border-neutral-100 bg-neutral-50 p-inset-surface-flat--fixed-14 text-[13px] leading-relaxed',
+                'overflow-x-auto rounded-t-none rounded-b-xl border border-t-0 border-surface-secondary bg-surface-secondary p-inset-surface-flat--fixed-14 text-[13px] leading-relaxed',
                 className,
             )}
             {...props}
@@ -225,7 +229,7 @@ const defaultComponents = memoizeMarkdownComponents({
         <div className="my-related overflow-x-auto">
             <table
                 className={classNames(
-                    'w-full border-collapse text-sm',
+                    'w-full border-collapse type-body-compact--component-note',
                     className,
                 )}
                 {...props}
@@ -235,7 +239,7 @@ const defaultComponents = memoizeMarkdownComponents({
     th: ({ className, ...props }) => (
         <th
             className={classNames(
-                'border border-neutral-100 bg-neutral-50 px-inset-tight--fixed-8 py-inset-tight--fixed-4 text-left font-semibold',
+                'border border-surface-secondary bg-surface-secondary px-inset-tight--fixed-8 py-inset-tight--fixed-4 text-left type-strong',
                 className,
             )}
             {...props}
@@ -244,7 +248,7 @@ const defaultComponents = memoizeMarkdownComponents({
     td: ({ className, ...props }) => (
         <td
             className={classNames(
-                'border border-neutral-100 px-inset-tight--fixed-8 py-inset-tight--fixed-4 align-top',
+                'border border-surface-secondary px-inset-tight--fixed-8 py-inset-tight--fixed-4 align-top',
                 className,
             )}
             {...props}

@@ -78,25 +78,31 @@ export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContract
     const displayWarningFeedback = displayWarning || !hasVerifiedNames;
 
     const containerClassName = asChild
-        ? '!p-0 border-none shadow-none'
+        ? 'border-none p-0! shadow-none!'
         : 'flex items-center justify-between gap-x-related--12-16 py-inset-item';
 
-    const functionLabelStyle = displayWarningFeedback ? 'text-warning-800' : 'text-neutral-800';
+    const functionLabelStyle = displayWarningFeedback ? 'text-warning-primary' : 'text-surface-primary';
 
     return (
         <DataList.Item className={classNames(containerClassName, className)} {...otherProps}>
             <div className="flex flex-col gap-tight--fixed-6">
                 <div className="flex items-center gap-related">
-                    <p className={classNames('text-lg text-neutral-800', functionLabelStyle)}>{functionLabel}</p>
-                    {functionSelector && <p className="text-lg text-neutral-500">{functionSelector}</p>}
-                    {displayWarningFeedback && <Icon className="text-warning-500" icon={IconType.WARNING} size="md" />}
+                    <p className={classNames('type-title-item--picker-row text-surface-primary', functionLabelStyle)}>
+                        {functionLabel}
+                    </p>
+                    {functionSelector && (
+                        <p className="type-title-item--picker-row text-surface-secondary">{functionSelector}</p>
+                    )}
+                    {displayWarningFeedback && (
+                        <Icon className="icon-warning-primary" icon={IconType.WARNING} size="md" />
+                    )}
                 </div>
                 <LinkBase
                     className="flex w-fit items-center gap-related--fixed-12"
                     href={blockExplorerHref}
                     target="_blank"
                 >
-                    <p className="text-neutral-500">{contractLabel}</p>
+                    <p className="text-surface-secondary">{contractLabel}</p>
                     {/* Using solution from https://kizu.dev/nested-links/ to nest anchor tags */}
                     <object type="unknown">
                         <AddressOutput address={contractAddress} href={blockExplorerHref} reveal={true} />

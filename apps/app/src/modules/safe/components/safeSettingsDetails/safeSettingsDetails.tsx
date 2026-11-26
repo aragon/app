@@ -73,7 +73,9 @@ export const SafeSettingsDetails: React.FC<ISafeSettingsDetailsProps> = (
                     term={row.term}
                 >
                     {row.link == null ? (
-                        <p className="text-neutral-500">{row.definition}</p>
+                        <p className="text-surface-secondary">
+                            {row.definition}
+                        </p>
                     ) : (
                         row.definition
                     )}

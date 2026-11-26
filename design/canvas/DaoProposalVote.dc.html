@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO Proposal Vote</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{showStart}}" hint-placeholder-val="{{yes}}">
+  <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" class-name="w-fit" on-click="{{onOpen}}">Vote on proposal</x-import>
+</sc-if>
+<sc-if value="{{showVoted}}" hint-placeholder-val="{{no}}">
+  <div class="flex w-full items-center gap-4" style="flex-wrap: wrap;">
+    <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="CHECKMARK" href="{{voteTxHref}}" target="_blank">Vote submitted</x-import>
+    <x-import component-from-global-scope="GovUiKit.Tag" label="{{votedLabel}}" variant="{{votedVariant}}"></x-import>
+  </div>
+</sc-if>
+<sc-if value="{{showOptions}}" hint-placeholder-val="{{no}}">
+<div class="flex flex-col gap-4">
+  <x-import component-from-global-scope="GovUiKit.Card" class-name="shadow-neutral-sm p-6">
+    <x-import component-from-global-scope="GovUiKit.InputContainer" id="vote-options" label="Do you want to approve this proposal?" use-custom-wrapper="{{yes}}">
+      <div class="vote-options" role="radiogroup">
+      <sc-for list="{{toggles}}" as="t" hint-placeholder-count="3">
+      <button type="button" role="radio" aria-checked="{{t.checked}}" class="vote-toggle {{t.shadow}} {{t.on}}" onClick="{{t.pick}}">
+        <p>{{t.label}}<sc-if value="{{t.desc}}" hint-placeholder-val="{{no}}"><span>{{t.desc}}</span></sc-if></p>
+        <x-import component-from-global-scope="GovUiKit.AvatarIcon" icon="{{t.icon}}" size="sm" variant="{{t.iconVariant}}"></x-import>
+      </button>
+      </sc-for>
+      </div>
+    </x-import>
+  </x-import>
+  <div class="flex w-full items-center gap-4">
+    <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" disabled="{{noSelection}}" on-click="{{onSubmit}}">Submit vote</x-import>
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{onCancel}}">Cancel</x-import>
+  </div>
+</div>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["start","options","voted"],"default":"start"},"selected":{"editor":"enum","options":["","yes","abstain","no"],"default":""},"votedAs":{"editor":"enum","options":["yes","abstain","no"],"default":"yes"},"onOpen":{"editor":null},"onSelect":{"editor":null},"onSubmit":{"editor":null},"onCancel":{"editor":null}}'>
+// DaoProposalVote: the vote area of the token voting terminal (apps/app: plugins/tokenPlugin/components/tokenSubmitVote/
+// components/tokenSubmitVoteDefault.tsx + tokenVotingOptions.tsx). Own copy of the older FlowVoteOptions part, with the
+// "You voted ..." tag next to "Vote submitted". Place inside the BreakdownToken children (after a 32px padding-top wrapper).
+// Props: mode 'start' | 'options' | 'voted'; selected '' | 'yes' | 'abstain' | 'no'; votedAs (mode voted) yes | abstain | no;
+// onOpen(), onSelect(key) (the selected key again passes ''), onSubmit(), onCancel().
+// "Change vote" is not drawn: the app offers it only for proposals in vote-replacement mode, Meridian uses early execution.
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const mode = p.mode || 'start';
+    const selected = p.selected || '';
+    const cfg = {
+      yes: { label: 'Yes', desc: ', I approve', icon: 'CHECKMARK', variant: 'success', on: 'vote-toggle--on', shadow: 'shadow-success-sm' },
+      abstain: { label: 'Abstain', desc: '', icon: 'RADIO', variant: 'primary', on: 'vote-toggle--on-neutral', shadow: 'shadow-primary-sm' },
+      no: { label: 'No', desc: ', I don’t approve', icon: 'CLOSE', variant: 'critical', on: 'vote-toggle--on-critical', shadow: 'shadow-critical-sm' }
+    };
+    const call = (f, a) => () => { if (typeof f === 'function') f(a); };
+    const as = p.votedAs || 'yes';
+    return {
+      yes: true, no: false,
+      showStart: mode === 'start', showOptions: mode === 'options', showVoted: mode === 'voted',
+      noSelection: !selected,
+      votedLabel: 'You voted ' + cfg[as].label,
+      votedVariant: { yes: 'success', no: 'critical', abstain: 'neutral' }[as],
+      toggles: ['yes', 'abstain', 'no'].map((k) => {
+        const c = cfg[k]; const on = selected === k;
+        return { label: c.label, desc: c.desc, checked: on, icon: c.icon, iconVariant: on ? c.variant : 'neutral',
+          on: on ? c.on : '', shadow: on ? c.shadow : 'shadow-neutral-sm', pick: call(p.onSelect, on ? '' : k) };
+      }),
+      onOpen: call(p.onOpen), onSubmit: call(p.onSubmit), onCancel: call(p.onCancel),
+      voteTxHref: 'https://etherscan.io/tx/0xa0c1147dd6933d0a6f52039c00d3e23f96110a8b39350d57821f6d76450dee0c'
+    };
+  }
+}
+</script>
+</body>
+</html>

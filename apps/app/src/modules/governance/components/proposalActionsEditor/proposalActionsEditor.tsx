@@ -29,6 +29,11 @@ export interface IProposalActionsEditorProps {
      */
     excludeActionTypes?: string[];
     /**
+     * Address of the account the actions are executed from outside DAO context, e.g. a Safe. Offers the transfer
+     * action from this account and connects WalletConnect dApps to it. In DAO context the DAO is that account.
+     */
+    accountAddress?: string;
+    /**
      * Actions the composer restricts its offering to. Leave undefined to offer every action.
      */
     allowedActions?: IAllowedAction[];
@@ -52,6 +57,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         daoId,
         network,
         excludeActionTypes,
+        accountAddress,
         allowedActions,
         initialOnlyShowAuthorizedActions,
     } = props;
@@ -122,6 +128,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
             />
             {showActionComposer ? (
                 <ActionComposer
+                    accountAddress={accountAddress}
                     allowedActions={allowedActions}
                     daoId={daoId}
                     daoPermissions={daoPermissions}
@@ -138,7 +145,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
                     onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (
-                <p className="text-primary-400">
+                <p className="text-accent-primary">
                     {t('app.governance.createProposalForm.actions.loading')}
                 </p>
             )}

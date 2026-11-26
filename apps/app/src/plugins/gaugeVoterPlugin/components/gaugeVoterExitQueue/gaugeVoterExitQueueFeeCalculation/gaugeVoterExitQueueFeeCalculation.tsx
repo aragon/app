@@ -28,9 +28,9 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
     const formattedReceiveAmount = formatAmount(receiveAmount);
 
     return (
-        <div className="flex flex-col gap-related rounded-xl border border-neutral-100 p-inset-surface">
+        <div className="flex flex-col gap-related rounded-xl border border-surface-secondary p-inset-surface">
             {/* Locked tokens row */}
-            <div className="flex items-baseline justify-between text-base leading-tight font-normal text-neutral-500">
+            <div className="flex items-baseline justify-between type-supporting--detail-value text-surface-secondary">
                 <span>
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.lockedTokens',
@@ -42,7 +42,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             </div>
 
             {/* Withdraw fee row */}
-            <div className="flex items-baseline justify-between text-base leading-tight font-normal text-primary-400">
+            <div className="flex items-baseline justify-between type-supporting--detail-value text-accent-primary">
                 <span>
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.withdrawFee',
@@ -54,10 +54,10 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             </div>
 
             {/* Divider */}
-            <div className="h-px w-full bg-neutral-100" />
+            <div className="h-px w-full bg-surface-tertiary" />
 
             {/* Receive now row */}
-            <div className="flex items-baseline justify-between text-base leading-tight font-normal text-neutral-800">
+            <div className="flex items-baseline justify-between type-supporting--detail-value text-surface-primary">
                 <span>
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.receiveNow',
@@ -70,7 +70,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
 
             {/* Help text */}
             {helpText && (
-                <p className="mt-tight text-sm leading-normal font-normal text-neutral-500">
+                <p className="pt-tight type-body-compact--unstepped text-surface-secondary">
                     {helpText}
                 </p>
             )}

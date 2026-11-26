@@ -32,15 +32,18 @@ export interface ITokenVotingOptionToggleProps
 
 const variantToClassNames: Record<TokenVotingOptionToggleVariant, string[]> = {
     success: [
-        'active:border-success-500',
+        'active:border-success-active-control',
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected roles in the success group
         'data-[state=on]:enabled:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
     ],
     neutral: [
-        'active:border-primary-400',
-        'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-neutral-800 data-[state=on]:shadow-primary-sm',
+        'active:border-accent-active',
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected border role at primary-300 (border/surface/selected is primary-400)
+        'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-surface-selected-label data-[state=on]:shadow-accent-sm',
     ],
     critical: [
-        'active:border-critical-500',
+        'active:border-critical-active-control',
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected roles in the critical group
         'data-[state=on]:enabled:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
     ],
 };
@@ -76,11 +79,11 @@ export const TokenVotingOptionToggle: React.FC<
 
     const toggleClasses = classNames(
         'flex h-[50px] items-center justify-between gap-related rounded-xl border py-control-lg--fixed-8 pr-control-md pl-control-lg',
-        'cursor-pointer bg-neutral-0 transition-all',
-        'border-neutral-100 text-neutral-500 shadow-neutral-sm focus-ring-primary',
+        'cursor-pointer bg-surface-default transition-all',
+        'border-surface-default text-surface-default shadow-surface-sm ring-accent-focus focus-ring',
         'active:shadow-none',
-        'hover:border-neutral-200 hover:shadow-neutral',
-        'disabled:cursor-default disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300',
+        'hover:border-surface-hover hover:shadow-surface-default',
+        'disabled:cursor-default disabled:border-surface-disabled-toggle disabled:bg-surface-disabled disabled:text-surface-disabled',
         variantToClassNames[variant],
         className,
     );
@@ -92,10 +95,12 @@ export const TokenVotingOptionToggle: React.FC<
             value={value}
             {...otherProps}
         >
-            <p className="text-sm leading-tight font-normal md:text-base">
+            <p className="type-label-option">
                 {label}
                 {description && (
-                    <span className="text-neutral-500">{description}</span>
+                    <span className="text-surface-secondary">
+                        {description}
+                    </span>
                 )}
             </p>
             <AvatarIcon

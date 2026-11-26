@@ -30,12 +30,12 @@ export const GaugeVoterVoteDialogFooter: React.FC<
     return (
         <div className="flex flex-col gap-group md:flex-row md:items-center md:justify-between md:gap-x-section">
             <div className="flex flex-col gap-related md:grow md:flex-row md:items-center md:gap-x-section">
-                <span className="text-sm font-semibold text-neutral-800 uppercase">
+                <span className="type-supporting--compact-detail type-strong text-surface-primary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.footer.totalVotingPower',
                     )}
                 </span>
-                <span className="text-base font-semibold text-neutral-800">
+                <span className="type-supporting--body-size type-strong text-surface-primary">
                     {totalVotingPower} {tokenSymbol}
                 </span>
             </div>

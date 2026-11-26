@@ -188,7 +188,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                         }
                         stage={stage}
                     >
-                        <div className="mt-section--24-32 flex flex-col gap-y-group">
+                        <div className="flex flex-col gap-y-group pt-section--24-32">
                             {isHistoryMissing && (
                                 <AlertInline
                                     message={t(

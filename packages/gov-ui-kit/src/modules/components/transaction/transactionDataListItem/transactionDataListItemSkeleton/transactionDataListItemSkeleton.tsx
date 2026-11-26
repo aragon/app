@@ -11,6 +11,7 @@ export const TransactionDataListItemSkeleton: React.FC<ITransactionDataListItemS
             aria-busy="true"
             aria-label="loading"
             className={classNames(
+                // biome-ignore lint/plugin/noPrimitiveColors: no border role at neutral-0; DataList.Item's primary border wins over it
                 'flex min-h-[67.5px] w-full items-center justify-between gap-x-related border border-neutral-0 py-inset-item-flat--fixed-16 md:min-h-[88.5px]',
                 className,
             )}

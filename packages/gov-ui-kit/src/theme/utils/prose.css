@@ -1,44 +1,59 @@
 @plugin "@tailwindcss/typography";
 
+/*
+ * The prose container for authored markdown: each part takes the typography role of its purpose (h1 title-page ... h4
+ * title-item, h5 supporting, h6 caption, paragraphs body-compact), through markdown exceptions that keep the
+ * typography plugin's heading weights and Tailwind's default line heights.
+ */
+
 @utility prose {
     h1 {
-        @apply mt-related--fixed-8 mb-section-wide text-2xl md:text-3xl;
+        @apply mt-related--fixed-8 mb-section-wide type-title-page--markdown;
     }
 
     h2 {
-        @apply mt-related--fixed-8 mb-section--fixed-32 text-xl md:text-2xl;
+        @apply mt-related--fixed-8 mb-section--fixed-32 type-title-section--markdown;
     }
 
     h3 {
-        @apply mt-related--fixed-8 mb-section text-lg md:text-xl;
+        @apply mt-related--fixed-8 mb-section type-title-group--markdown;
     }
 
     h4 {
-        @apply mt-0 mb-group text-base md:text-lg;
+        @apply mt-0 mb-group type-title-item--markdown;
     }
 
     h5 {
-        @apply mt-0 mb-related--fixed-8 text-sm md:text-base;
+        @apply mt-0 mb-related--fixed-8 type-supporting--markdown;
     }
 
     h6 {
-        @apply mt-0 mb-tight text-xs md:text-sm;
+        @apply mt-0 mb-tight type-caption--markdown;
     }
 
     p {
-        @apply mt-0 mb-0 text-sm md:text-base;
+        @apply mt-0 mb-0 type-body-compact--markdown;
     }
 
     a {
         @apply text-primary-400 hover:text-primary-600 active:text-primary-800 no-underline;
     }
 
-    strong {
-        @apply text-sm text-neutral-500 md:text-base;
+    /* Inline emphasis takes the paragraph's size and line height only: its weight stays the plugin's or the parent's. */
+    strong,
+    em {
+        @apply text-neutral-500;
+        font-size: var(--guk-type-font-size-body-compact--markdown);
+        line-height: var(--guk-type-line-height-body-compact--markdown);
+
+        @variant md {
+            font-size: var(--guk-type-md-font-size-body-compact--markdown);
+            line-height: var(--guk-type-md-line-height-body-compact--markdown);
+        }
     }
 
-    em {
-        @apply text-sm text-neutral-500 md:text-base;
+    blockquote p {
+        @apply type-body-compact--markdown-quote;
     }
 
     blockquote {

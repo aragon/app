@@ -65,18 +65,18 @@ export const ProposalDataListItemStructure: React.FC<IProposalDataListItemStruct
         >
             <ProposalDataListItemStatus date={date} status={status} statusContext={statusContext} voted={voted} />
             <div className="flex flex-col gap-y-tight">
-                <Heading as="h2" className="flex gap-x-related--8-12" size="h3">
-                    {id && <span className="shrink-0 text-neutral-500">{id}</span>}
-                    <span className="line-clamp-1 text-neutral-800">{title}</span>
+                <Heading as="h2" className="flex gap-x-related--8-12" typeClassName="type-title-item--entity-list">
+                    {id && <span className="shrink-0 text-surface-secondary">{id}</span>}
+                    <span className="line-clamp-1 text-surface-primary">{title}</span>
                 </Heading>
-                <p className="line-clamp-2 leading-normal text-neutral-500 md:text-lg">{summary}</p>
+                <p className="line-clamp-2 type-body text-surface-secondary">{summary}</p>
             </div>
             {children}
             <div className="flex items-center justify-between gap-x-group-stepped">
                 <div
                     className={classNames(
                         'inline-grid auto-cols-auto grid-flow-col content-center',
-                        'min-h-5 gap-x-tight--2-4 text-sm leading-tight text-neutral-500 md:min-h-6 md:text-base',
+                        'min-h-5 gap-x-tight--2-4 type-supporting text-surface-secondary md:min-h-6',
                     )}
                 >
                     {copy.proposalDataListItemStructure.by}

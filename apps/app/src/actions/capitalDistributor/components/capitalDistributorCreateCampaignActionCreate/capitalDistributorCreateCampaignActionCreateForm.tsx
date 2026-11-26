@@ -269,7 +269,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
             >
                 <div className="flex flex-col gap-related">
                     {merkleTreeInfo != null && (
-                        <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-neutral-sm">
+                        <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-surface-sm">
                             <DefinitionList.Container>
                                 <DefinitionList.Item
                                     term={t(

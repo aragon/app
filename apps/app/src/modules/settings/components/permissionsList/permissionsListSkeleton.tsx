@@ -16,7 +16,7 @@ export const PermissionsListSkeleton: React.FC = () => (
         <PermissionsListHeader />
         {SKELETON_ROW_KEYS.map((rowKey) => (
             <div
-                className="flex items-center justify-between gap-x-group-stepped rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-inset-item"
+                className="flex items-center justify-between gap-x-group-stepped rounded-xl border border-surface-secondary bg-surface-primary px-inset-item py-inset-item"
                 key={rowKey}
             >
                 <div className="grid w-full grid-cols-2 items-center gap-related--8-16 md:grid-cols-4">

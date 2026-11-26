@@ -1693,7 +1693,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     title={t('app.safe.safeProposalTransactionDialog.title')}
                 />
                 <Dialog.Content>
-                    <div className="mb-group--12-16 flex flex-col gap-group">
+                    <div className="flex flex-col gap-group pb-group--12-16">
                         {isPreparing ? (
                             <>
                                 <StateSkeletonBar size="lg" width="60%" />
@@ -1777,7 +1777,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     transaction={prepared.transaction}
                 />
                 {isComplete && (!executionSucceeded || indexingComplete) && (
-                    <div className="text-sm text-neutral-700">
+                    <div className="type-supporting--compact-detail text-surface-primary-detail">
                         {t(
                             `${dialogTranslationKey}.${
                                 executionSucceeded

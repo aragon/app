@@ -72,10 +72,9 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (
     return (
         <Card
             className={classNames(
-                'flex flex-col gap-group shadow-neutral-sm',
+                'flex flex-col gap-group p-inset-surface-wide shadow-surface-sm',
                 className,
             )}
-            inset="surface-wide"
             {...otherProps}
         >
             <div className="flex flex-col justify-between gap-group md:flex-row">

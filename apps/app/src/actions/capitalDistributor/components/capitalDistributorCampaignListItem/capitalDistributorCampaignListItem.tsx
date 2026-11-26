@@ -33,21 +33,21 @@ export const CapitalDistributorCampaignListItem: React.FC<
                 'px-inset-item py-inset-item--12-24',
                 className,
                 {
-                    'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                    'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                         isActive,
                 },
             )}
             {...otherProps}
         >
             <div className="flex items-center justify-between gap-section-wide--fixed-48">
-                <div className="flex flex-col gap-tight leading-tight font-normal">
-                    <p className="text-lg text-neutral-800">
+                <div className="flex flex-col gap-tight">
+                    <p className="type-title-item--picker-row text-surface-primary">
                         {campaign.title}{' '}
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             #{campaign.campaignId}
                         </span>
                     </p>
-                    <p className="line-clamp-1 text-sm text-neutral-500">
+                    <p className="line-clamp-1 type-supporting--compact-detail text-surface-secondary">
                         {campaign.description}
                     </p>
                 </div>

@@ -52,18 +52,18 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-related rounded-xl border border-neutral-100 bg-neutral-0 px-inset-item py-control-item--12-16 focus-ring-primary', // default
-        'cursor-pointer shadow-neutral-sm outline-hidden transition-all md:rounded-2xl', // default
-        'data-[state=checked]:border-primary-400 data-[state=checked]:shadow-primary', // checked
-        'hover:border-neutral-200 hover:shadow-neutral hover:data-[state=checked]:shadow-primary-md', // hover
-        'disabled:cursor-default disabled:border-neutral-200 disabled:bg-neutral-100 disabled:shadow-none', // disabled
-        'disabled:data-[state=checked]:border-neutral-300 disabled:data-[state=checked]:shadow-none', // disabled & checked
+        'group flex w-full flex-col gap-related rounded-xl border border-surface-default bg-surface-primary px-inset-item py-control-item--12-16 ring-accent-focus focus-ring', // default
+        'cursor-pointer shadow-surface-sm outline-hidden transition-all md:rounded-2xl', // default
+        'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
+        'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
+        'disabled:cursor-default disabled:border-surface-disabled disabled:bg-surface-disabled disabled:shadow-none', // disabled
+        'disabled:data-[state=checked]:border-surface-disabled-card disabled:data-[state=checked]:shadow-none', // disabled & checked
         className,
     );
 
     const labelClasses = classNames(
-        'w-full truncate text-left text-neutral-500 group-disabled:text-neutral-300 md:text-base',
-        'group-data-[state=checked]:text-neutral-800 group-data-[state=checked]:group-disabled:text-neutral-800',
+        'w-full truncate text-left type-label-option--card text-surface-default group-disabled:text-surface-disabled',
+        'group-data-[state=checked]:text-surface-primary group-data-[state=checked]:group-disabled:text-surface-primary',
     );
 
     return (
@@ -79,14 +79,15 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
             <div className="flex size-full items-center gap-x-group--12-16">
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
                 <div
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: label to tag gap 2 px, 16 px from md: no role has this pair
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4 text-sm leading-tight font-normal">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>
                         {description && (
-                            <p className="w-full truncate text-left text-neutral-500 group-disabled:text-neutral-300">
+                            <p className="w-full truncate text-left type-supporting--compact-meta text-surface-secondary group-disabled:text-surface-disabled">
                                 {description}
                             </p>
                         )}
@@ -94,10 +95,10 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                     {tag && <Tag {...tag} />}
                 </div>
                 <span className={classNames({ 'h-full': description })}>
-                    <Icon className="text-neutral-300 group-data-[state=checked]:hidden" icon={IconType.RADIO} />
+                    <Icon className="icon-surface-default group-data-[state=checked]:hidden" icon={IconType.RADIO} />
                     <RadioGroupIndicator>
                         <Icon
-                            className="text-primary-400 group-disabled:text-neutral-500"
+                            className="icon-accent-selected group-disabled:icon-surface-default-card"
                             icon={IconType.RADIO_SELECTED}
                         />
                     </RadioGroupIndicator>

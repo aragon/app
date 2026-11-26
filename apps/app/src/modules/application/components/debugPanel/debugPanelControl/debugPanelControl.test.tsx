@@ -31,7 +31,6 @@ describe('<DebugPanelControl /> component', () => {
         name: 'theme',
         type: 'select',
         label: 'Theme',
-        description: 'Pick a theme',
         options: [
             { label: 'Today', value: 'today' },
             { label: 'Next', value: 'next' },
@@ -51,7 +50,6 @@ describe('<DebugPanelControl /> component', () => {
         render(createTestComponent());
 
         expect(screen.getByText('Theme')).toBeInTheDocument();
-        expect(screen.getByText('Pick a theme')).toBeInTheDocument();
         expect(screen.getByRole('radio', { name: 'Today' })).toBeChecked();
         expect(screen.getByRole('radio', { name: 'Next' })).not.toBeChecked();
     });

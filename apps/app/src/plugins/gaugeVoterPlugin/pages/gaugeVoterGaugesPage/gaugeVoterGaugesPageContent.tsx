@@ -345,7 +345,9 @@ export const GaugeVoterGaugesPageContent: React.FC<
                     )}
                 >
                     {description && (
-                        <p className="text-base text-gray-500">{description}</p>
+                        <p className="type-body--unstepped text-gray-500">
+                            {description}
+                        </p>
                     )}
                     <GaugeVoterVotingStats
                         daysLeftToVote={daysLeftToVote}
@@ -368,7 +370,7 @@ export const GaugeVoterGaugesPageContent: React.FC<
                         onValueChange={setSelectedLocksPanelTab}
                         value={selectedLocksPanelTab}
                     >
-                        <Tabs.List className="mb-group">
+                        <Tabs.List className="pb-group">
                             {visibleLocksPanelTabs.map(({ value }) => (
                                 <Tabs.Trigger
                                     key={value}

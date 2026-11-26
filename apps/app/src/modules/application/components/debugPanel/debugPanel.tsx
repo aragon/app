@@ -7,9 +7,13 @@ import { useDebugContext } from '@/shared/components/debugProvider/debugProvider
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
-import { useSpacingPreview } from '../../hooks/useSpacingPreview';
+import { useTokenPreview } from '../../hooks/useTokenPreview';
 import { DebugPanelControl } from './debugPanelControl';
 import { WorkspaceRegistryControls } from './workspaceRegistryControls';
+// The kit's preview value sets (Next, Dark) and the Next faces: loaded with the panel only, so they never reach other
+// users.
+import '../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/nextTypographyFonts.css';
+import '../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/preview/index.css';
 
 const groupOrder: Record<string, number> = {
     Global: 0,
@@ -22,7 +26,7 @@ export const DebugPanel: React.FC = () => {
 
     const { controls, registerControl } = useDebugContext();
     useAddressImpersonation();
-    useSpacingPreview();
+    useTokenPreview();
     const { t } = useTranslations();
     const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 
@@ -92,7 +96,8 @@ export const DebugPanel: React.FC = () => {
             />
             <div
                 className={classNames(
-                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-neutral-100 bg-neutral-0 px-4 py-2 screen-sm:w-[480px]',
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users
+                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-surface-secondary bg-surface-primary px-4 py-2 screen-sm:w-[480px]',
                     { hidden: !isOpen },
                 )}
                 ref={panelRef}
@@ -108,14 +113,17 @@ export const DebugPanel: React.FC = () => {
                         variant="ghost"
                     />
                 </div>
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                 <div className="flex flex-col gap-4 overflow-y-auto">
                     {groupNames.map((group) => (
                         <Fragment key={group}>
                             {group === 'Simulation' && (
                                 <WorkspaceRegistryControls />
                             )}
+                            {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                             <div className="flex flex-col gap-2">
                                 <Heading size="h3">{group}</Heading>
+                                {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                                 <div className="flex flex-col gap-2">
                                     {groupedControls[group]?.map((control) => (
                                         <DebugPanelControl

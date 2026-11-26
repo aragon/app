@@ -12,15 +12,7 @@ refactor (such as a token or class change that should keep every colour) changes
 pnpm visual-diff ref main                  # main vs the working tree
 pnpm visual-diff ref main --filter button  # only story ids containing this text
 pnpm visual-diff ref HEAD~1 --head HEAD    # two refs, working tree untouched
-```
-
-`--spacing today|new|looser|compact` picks the Storybook Spacing toolbar value the captures are taken with (Today is
-not passed, so a build without the toolbar captures as before). To see what a preview mode changes, capture the base in
-Today and the working tree in the mode and compare:
-
-```sh
-pnpm visual-diff capture node_modules/.cache/visual-diff/head-storybook /tmp/vd-new --spacing new
-pnpm visual-diff compare node_modules/.cache/visual-diff/head /tmp/vd-new
+pnpm visual-diff ref main --theme next     # under a token preview (a row of .storybook/tokenPreviews.json)
 ```
 
 `ref` builds a static Storybook of the ref in a temporary git worktree (dependencies come from
@@ -29,6 +21,10 @@ story differs, prints the differing pixel count per story and writes diff images
 changes in red) to `node_modules/.cache/visual-diff/diff/`. A full run of the ~300 stories takes
 about 5 minutes. The steps are also separate commands: `build <dir> [--ref <ref>]`,
 `capture <storybook-dir> <out-dir>` and `compare <base> <head> [--diff <dir>]`.
+
+Use a new or empty output directory for the first run. Each command marks its output with a
+hidden file so it can replace the contents on subsequent runs. For caches created by older
+versions, choose a fresh directory (`--work-dir <dir>` for `ref`).
 
 Captures are deterministic on one machine: fixed 1280×800 viewport (full-page shots), animations
 and transitions off, reduced motion, fonts and images awaited, frozen `Date`, seeded
@@ -43,15 +39,8 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 
 ## Token generator (`tokens/generate.mjs`)
 
-The one generator for every token CSS output: the primitive CSS and the app's artifact, plus the semantic colour layer
-when the source has one (`semantic.config.json`), from the DTCG source in `design-system/tokens/source/`.
-`pnpm tokens:generate` writes, `pnpm tokens:check` fails when an output is stale, `pnpm tokens:report` lists verified
-and fallback Today values of the semantic layer, and the spacing layer (`spacing.config.json`: roles, component sizes,
-exceptions; the report prints their tables and the change in New). Tests: `scripts/tokens/generate.test.mjs` (run by the root
-`pnpm test:tokens`). Details: `design-system/tokens/README.md`.
-
-## App screenshot baseline (`app-baseline/`)
-
-The app-side counterpart of `visual-diff`: a patch for the app screenshot check of the `docs/design-canvas` branch
-(121 screenshots of the real app on a mock backend, production build) and `recheck.sh`, which captures a checkout and
-compares it with a saved capture at zero tolerance. Not run in CI. See `app-baseline/README.md`.
+Writes the token CSS (`src/theme/tokens/<layer>/`, the app-only tokens to `design-system/tokens/app/`) and the preview CSS (`design-system/tokens/preview/`) from the
+DTCG source in `design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when the CSS
+is stale.
+Tests: `scripts/tokens/generate.test.mjs` (`pnpm test:tokens`, part of `pnpm test`). Details:
+`design-system/tokens/README.md`.

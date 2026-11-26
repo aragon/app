@@ -22,9 +22,9 @@ export const FooterSidebar: React.FC = () => {
     const year = new Date().getFullYear();
 
     return (
-        <div className="flex flex-col gap-nav-related border-t border-neutral-100 px-inset-nav--fixed-4 pt-inset-nav text-sm leading-tight text-neutral-500">
+        <div className="flex flex-col gap-nav-related border-t border-surface-secondary px-inset-nav--fixed-4 pt-inset-nav text-surface-secondary">
             <Link
-                className="flex items-center gap-nav-related self-start text-sm font-normal text-neutral-500 hover:text-neutral-800"
+                className="flex items-center gap-nav-related self-start type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
                 href={isWalletConnected ? '/explore' : '/'}
             >
                 <span className="text-nowrap">
@@ -35,7 +35,7 @@ export const FooterSidebar: React.FC = () => {
             <div className="flex flex-wrap items-center gap-x-nav-related--fixed-8">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
-                        className="text-sm font-normal text-neutral-500 hover:text-neutral-800"
+                        className="type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
                         href={link}
                         key={label}
                         target={target}
@@ -45,7 +45,7 @@ export const FooterSidebar: React.FC = () => {
                 ))}
             </div>
             <div className="flex min-w-0 items-center gap-nav-related">
-                <p className="truncate text-xs">
+                <p className="truncate type-caption--unstepped">
                     {t('app.application.footer.copyright', { year })}
                 </p>
                 <Tag className="shrink-0" label={version} variant="primary" />

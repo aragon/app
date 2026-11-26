@@ -10,7 +10,7 @@ import { workspaceQueryServiceKeys } from '../../workspaceQueryServiceKeys';
  * a Safe Transaction Service call), and only a resolved Safe is cached there, so the result is kept fresh for five
  * minutes to avoid re-resolving the same account while the user edits the form.
  */
-const accountsStaleTime = 5 * 60 * 1000;
+export const workspaceAccountsStaleTime = 5 * 60 * 1000;
 
 export const workspaceAccountsOptions = (
     params: IGetWorkspaceAccountsParams,
@@ -18,7 +18,7 @@ export const workspaceAccountsOptions = (
 ): SharedQueryOptions<IWorkspaceAccountInfo[]> => ({
     queryKey: workspaceQueryServiceKeys.accounts(params),
     queryFn: () => workspaceQueryService.getAccounts(params),
-    staleTime: accountsStaleTime,
+    staleTime: workspaceAccountsStaleTime,
     ...options,
 });
 

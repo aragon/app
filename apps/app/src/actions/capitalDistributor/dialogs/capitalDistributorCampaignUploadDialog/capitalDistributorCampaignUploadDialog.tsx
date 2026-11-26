@@ -201,7 +201,7 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="my-related--fixed-8 flex flex-col gap-related">
+                <div className="flex flex-col gap-related py-related--fixed-8">
                     <TransactionStatus.Container steps={steps}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />

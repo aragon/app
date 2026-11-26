@@ -23,6 +23,11 @@ export interface INavigationDialogProps extends IDialogRootProps {
      * sections of the account it is scoped to).
      */
     secondaryLinks?: INavigationLink[];
+    /**
+     * Hides the trailing "Explore all DAOs" link.
+     * @default false
+     */
+    hideExplore?: boolean;
 }
 
 export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
@@ -30,6 +35,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
         groups,
         links,
         secondaryLinks,
+        hideExplore = false,
         children,
         onOpenChange,
         ...otherProps
@@ -66,7 +72,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     {secondaryLinks != null && (
                         <>
                             <div className="w-full px-inset-nav-bar--fixed-16">
-                                <div className="border-t border-neutral-100" />
+                                <div className="border-t border-surface-secondary" />
                             </div>
                             <NavigationLinks
                                 links={secondaryLinks}
@@ -75,17 +81,23 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                             />
                         </>
                     )}
-                    <div className="w-full px-inset-nav-bar--fixed-16">
-                        <div className="border-t border-neutral-100" />
-                    </div>
-                    <NavigationLinksItem
-                        href={exploreHref}
-                        icon={IconType.APP_EXPLORE}
-                        iconSide="right"
-                        variant="column"
-                    >
-                        {t('app.application.navigationDao.dialog.explore')}
-                    </NavigationLinksItem>
+                    {!hideExplore && (
+                        <>
+                            <div className="w-full px-inset-nav-bar--fixed-16">
+                                <div className="border-t border-surface-secondary" />
+                            </div>
+                            <NavigationLinksItem
+                                href={exploreHref}
+                                icon={IconType.APP_EXPLORE}
+                                iconSide="right"
+                                variant="column"
+                            >
+                                {t(
+                                    'app.application.navigationDao.dialog.explore',
+                                )}
+                            </NavigationLinksItem>
+                        </>
+                    )}
                 </div>
             </Dialog.Content>
         </Dialog.Root>

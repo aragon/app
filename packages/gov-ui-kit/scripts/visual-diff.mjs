@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Screenshot comparison of every kit story: catches unintended visual changes, e.g. while components move from
-// primitive palette classes to the semantic colour layer. Two capture sets are always produced on the same machine
+// Screenshot comparison of every kit story: catches unintended visual changes, e.g. of a token or class change that
+// should keep every colour. Two capture sets are always produced on the same machine
 // in the same run; no baseline is committed (screenshots are large and depend on the platform's font rendering).
 //
 //   node scripts/visual-diff.mjs ref <git-ref> [--head <git-ref>] [options]
@@ -13,8 +13,9 @@
 //   node scripts/visual-diff.mjs compare <base-dir> <head-dir> [--diff <dir>]
 //       Pixel comparison of two capture sets; writes a diff image per differing story. Exits 1 on any difference.
 //
-// Options: --spacing today|new|looser|compact (default today) · --filter <text contained in the story id> · --workers <n> (default 4)
-//          --work-dir <dir> (default node_modules/.cache/visual-diff) · --threshold <pixels> (default 0)
+// Options: --filter <text contained in the story id> · --workers <n> (default 4) · --threshold <pixels> (default 0)
+//          --work-dir <dir> (default node_modules/.cache/visual-diff)
+//          --<attribute> <mode> for each token preview of .storybook/tokenPreviews.json, e.g. --theme next
 //
 // Playwright: uses `playwright-core` from the kit if present, else from another workspace (apps/app, apps/docs), or
 // PLAYWRIGHT_CORE_PATH. Chromium: Playwright's own, else the newest one under PLAYWRIGHT_BROWSERS_PATH, or
@@ -23,10 +24,12 @@
 import { execFileSync } from 'node:child_process';
 import {
     existsSync,
+    lstatSync,
     mkdirSync,
     mkdtempSync,
     readdirSync,
     readFileSync,
+    realpathSync,
     rmSync,
     symlinkSync,
     writeFileSync,
@@ -34,7 +37,7 @@ import {
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { dirname, extname, join, relative, resolve } from 'node:path';
+import { dirname, extname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { crc32, deflateSync, inflateSync } from 'node:zlib';
 
@@ -47,7 +50,7 @@ const excludedStories = {};
 
 const fixedTime = new Date('2025-01-15T12:00:00Z');
 const viewport = { width: 1280, height: 800 };
-const spacings = ['today', 'new', 'looser', 'compact'];
+const tokenPreviews = JSON.parse(readFileSync(resolve(kitRoot, '.storybook/tokenPreviews.json'), 'utf8'));
 
 const log = (message) => console.log(`visual-diff: ${message}`);
 const fail = (message) => {
@@ -55,9 +58,33 @@ const fail = (message) => {
     process.exit(2);
 };
 
+const outputMarker = (dir, kind) => join(dir, `.visual-diff-${kind}`);
+
+const prepareOutput = (dir, kind, inputs = []) => {
+    mkdirSync(dir, { recursive: true });
+    if (!lstatSync(dir).isDirectory()) {
+        fail(`expected an output directory at ${dir}`);
+    }
+    const output = realpathSync(dir);
+    for (const input of [process.cwd(), kitRoot, ...inputs]) {
+        const path = realpathSync(input);
+        if (path === output || path.startsWith(join(output, sep))) {
+            fail(`output directory ${dir} contains ${input}`);
+        }
+    }
+    const entries = readdirSync(dir);
+    if (entries.length > 0 && !lstatSync(outputMarker(dir, kind), { throwIfNoEntry: false })?.isFile()) {
+        fail(`refusing to clear ${dir}: choose an empty directory or a previous visual-diff ${kind} output`);
+    }
+    for (const entry of entries) {
+        rmSync(join(dir, entry), { recursive: true, force: true });
+    }
+    writeFileSync(outputMarker(dir, kind), '', { flag: 'wx' });
+};
+
 const parseArgs = (argv) => {
     const positional = [];
-    const options = { spacing: 'today', workers: 4, threshold: 0 };
+    const options = { workers: 4, threshold: 0 };
     for (let index = 0; index < argv.length; index++) {
         const arg = argv[index];
         if (arg.startsWith('--')) {
@@ -69,9 +96,14 @@ const parseArgs = (argv) => {
     }
     options.workers = Number(options.workers);
     options.threshold = Number(options.threshold);
-    if (!spacings.includes(options.spacing)) {
-        fail(`unknown spacing "${options.spacing}" (${spacings.join(' | ')})`);
+    // Storybook globals of the requested token previews, as the iframe URL takes them: `theme:next;…`.
+    const requested = tokenPreviews.filter(({ attribute }) => options[attribute] != null);
+    for (const { attribute, modes } of requested) {
+        if (!modes.includes(options[attribute])) {
+            fail(`unknown ${attribute} "${options[attribute]}" (${modes.join(' | ')})`);
+        }
     }
+    options.globals = requested.map(({ attribute }) => `${attribute}:${options[attribute]}`).join(';');
     return { positional, options };
 };
 
@@ -205,7 +237,7 @@ const run = (command, args, cwd) =>
 
 const buildStorybook = (outDir, ref) => {
     const started = Date.now();
-    rmSync(outDir, { recursive: true, force: true });
+    prepareOutput(outDir, 'build');
     if (ref == null) {
         log(`building Storybook of the working tree -> ${outDir}`);
         run(
@@ -239,6 +271,8 @@ const buildStorybook = (outDir, ref) => {
             run('git', ['worktree', 'remove', '--force', worktree], repoRoot);
         }
     }
+    // Storybook can empty the output directory during its build.
+    writeFileSync(outputMarker(outDir, 'build'), '');
     log(`built in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 };
 
@@ -359,7 +393,7 @@ const freezeCss = `*, *::before, *::after {
     scroll-behavior: auto !important;
 }`;
 
-const captureStory = async (browser, origin, story, spacing, outDir) => {
+const captureStory = async (browser, origin, story, globals, outDir) => {
     const context = await browser.newContext({
         viewport,
         deviceScaleFactor: 1,
@@ -377,11 +411,7 @@ const captureStory = async (browser, origin, story, spacing, outDir) => {
         await context.addInitScript(seedRandom);
         const page = await context.newPage();
         await page.clock.setFixedTime(fixedTime);
-        // Today is the toolbar default and is not passed, so a build without the Spacing toolbar (an older ref) captures
-        // exactly as before.
-        await page.goto(
-            `${origin}/iframe.html?id=${story.id}&viewMode=story${spacing === 'today' ? '' : `&globals=spacing:${spacing}`}`,
-        );
+        await page.goto(`${origin}/iframe.html?id=${story.id}&viewMode=story&globals=${globals}`);
         const status = await page
             .waitForFunction(
                 () => {
@@ -404,7 +434,10 @@ const captureStory = async (browser, origin, story, spacing, outDir) => {
                 [...document.images].map((image) =>
                     image.complete
                         ? null
-                        : new Promise((done) => image.addEventListener('loadend', done, { once: true })),
+                        : new Promise((done) => {
+                              image.addEventListener('load', done, { once: true });
+                              image.addEventListener('error', done, { once: true });
+                          }),
                 ),
             );
             await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
@@ -438,8 +471,7 @@ const capture = async (storybookDir, outDir, options) => {
     const stories = all.filter(
         (story) => excludedStories[story.id] == null && (filter == null || story.id.includes(filter)),
     );
-    rmSync(outDir, { recursive: true, force: true });
-    mkdirSync(outDir, { recursive: true });
+    prepareOutput(outDir, 'capture', [root]);
     const started = Date.now();
     const { server, origin } = await serve(root);
     const browser = await launchBrowser();
@@ -450,7 +482,7 @@ const capture = async (storybookDir, outDir, options) => {
             while (next < stories.length) {
                 const story = stories[next++];
                 try {
-                    results[story.id] = await captureStory(browser, origin, story, options.spacing, outDir);
+                    results[story.id] = await captureStory(browser, origin, story, options.globals, outDir);
                 } catch (error) {
                     results[story.id] = { status: 'failed', error: String(error).split('\n')[0] };
                 }
@@ -466,10 +498,10 @@ const capture = async (storybookDir, outDir, options) => {
     const unstable = Object.entries(results).filter(([, result]) => result.unstable);
     writeFileSync(
         join(outDir, 'manifest.json'),
-        `${JSON.stringify({ spacing: options.spacing, viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
+        `${JSON.stringify({ globals: options.globals, viewport, stories: results, excluded: excludedStories }, null, 4)}\n`,
     );
     log(
-        `captured ${stories.length - failed.length}/${stories.length} stories (spacing ${options.spacing}, ` +
+        `captured ${stories.length - failed.length}/${stories.length} stories (${options.globals || 'default tokens'}, ` +
             `${Object.keys(excludedStories).length} excluded, ${all.length - stories.length - Object.keys(excludedStories).length} filtered) ` +
             `in ${((Date.now() - started) / 1000).toFixed(1)}s -> ${outDir}`,
     );
@@ -488,10 +520,10 @@ const capture = async (storybookDir, outDir, options) => {
 
 const compare = (baseDir, headDir, options) => {
     const diffDir = resolve(options.diff ?? join(headDir, '..', 'diff'));
-    rmSync(diffDir, { recursive: true, force: true });
     const pngs = (dir) => new Set(readdirSync(dir).filter((file) => file.endsWith('.png')));
     const base = pngs(baseDir);
     const head = pngs(headDir);
+    prepareOutput(diffDir, 'compare', [baseDir, headDir]);
     const names = [...new Set([...base, ...head])].sort();
     const rows = [];
     for (const name of names) {
@@ -509,7 +541,6 @@ const compare = (baseDir, headDir, options) => {
         const imageB = decodePng(b);
         const { count, image } = diffImages(imageA, imageB);
         if (count > options.threshold) {
-            mkdirSync(diffDir, { recursive: true });
             writeFileSync(join(diffDir, name), encodePng(image));
             const size =
                 imageA.width === imageB.width && imageA.height === imageB.height
@@ -562,7 +593,9 @@ switch (command) {
         await capture(join(workDir, 'base-storybook'), join(workDir, 'base'), options);
         await capture(join(workDir, 'head-storybook'), join(workDir, 'head'), options);
         const same = compare(join(workDir, 'base'), join(workDir, 'head'), { ...options, diff: join(workDir, 'diff') });
-        log(`${args[0]} vs ${options.head ?? 'working tree'} in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+        log(
+            `${args[0]} vs ${options.head ?? 'working tree'} (${options.globals || 'default tokens'}) in ${((Date.now() - started) / 1000).toFixed(1)}s`,
+        );
         process.exitCode = same ? 0 : 1;
         break;
     }

@@ -27,10 +27,6 @@ export interface IDebugContextControl {
      */
     label: string;
     /**
-     * Optional description rendered below the control.
-     */
-    description?: string;
-    /**
      * Options of a `select` control.
      */
     options?: IDebugContextControlOption[];

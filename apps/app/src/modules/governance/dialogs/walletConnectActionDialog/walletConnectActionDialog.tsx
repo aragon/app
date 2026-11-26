@@ -22,13 +22,13 @@ import { walletConnectActionDialogUtils } from './walletConnectActionDialogUtils
 
 export interface IWalletConnectActionDialogParams {
     /**
-     * Address of the DAO used for wallet-connect connection.
+     * Address of the account the dApp connects to, e.g. a DAO or a Safe.
      */
-    daoAddress: string;
+    address: string;
     /**
-     * Network of the DAO.
+     * Network of the account.
      */
-    daoNetwork: Network;
+    network: Network;
     /**
      * Callback called when user clicks on add actions button.
      */
@@ -47,7 +47,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
         location.params != null,
         'WalletConnectActionDialog: params must be defined',
     );
-    const { daoAddress, daoNetwork, onAddActionsClick } = location.params;
+    const { address, network, onAddActionsClick } = location.params;
 
     const { close } = useDialogContext();
     const [actions, setActions] = useState<IProposalAction[]>([]);
@@ -56,6 +56,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
         data: appSession,
         mutate: connectApp,
         status: connectionStatus,
+        error: connectionError,
         reset: resetAppSession,
     } = useConnectApp();
     const { mutate: disconnectApp } = useDisconnectApp();
@@ -63,11 +64,16 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
 
     const handleSessionRequest = useCallback(
         async (sessionRequest: ISessionRequest) => {
+            if (appSession == null) {
+                return;
+            }
+
             const proposalAction =
                 await walletConnectActionDialogUtils.sessionRequestToAction({
                     sessionRequest,
-                    daoAddress,
-                    daoNetwork,
+                    session: appSession,
+                    address,
+                    network,
                     decodeTransactionAsync,
                 });
 
@@ -75,12 +81,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
                 setActions((current) => [...current, proposalAction]);
             }
         },
-        [decodeTransactionAsync, daoAddress, daoNetwork],
+        [decodeTransactionAsync, appSession, address, network],
     );
 
     const handleCloseDialog = useCallback(() => {
         if (appSession) {
             disconnectApp({ session: appSession });
+        } else {
+            walletConnectService.cancelConnectApp();
         }
 
         resetAppSession();
@@ -121,12 +129,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => {
         // Reset previous errors in case of retry
         resetAppSession();
-        connectApp({ uri, address: daoAddress });
+        connectApp({ uri, address, network });
     };
 
     if (appSession == null) {
         return (
             <WalletConnectActionDialogConnect
+                error={connectionError}
+                network={network}
                 onCancel={handleCloseDialog}
                 onFormSubmit={handleFormSubmit}
                 status={connectionStatus}

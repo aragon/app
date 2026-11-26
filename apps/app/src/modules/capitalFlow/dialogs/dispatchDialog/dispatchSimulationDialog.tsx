@@ -167,12 +167,12 @@ export const DispatchSimulationDialog: React.FC<
                 })}
             />
             <Dialog.Content>
-                <div className="mb-section flex flex-col gap-group">
+                <div className="flex flex-col gap-group pb-section">
                     {/* Loading State */}
                     {isLoading && (
                         <Card className="flex flex-col items-center justify-center gap-group p-inset-surface-wide--fixed-32">
                             <Spinner size="lg" variant="primary" />
-                            <p className="text-neutral-500">
+                            <p className="text-surface-secondary">
                                 {t(
                                     'app.capitalFlow.dispatchSimulationDialog.loading',
                                 )}
@@ -183,24 +183,25 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="bg-critical-50 flex flex-col gap-related border-critical-200! p-inset-surface-flat--fixed-16"
+                            className="flex flex-col gap-related border-critical-primary-dispatch! p-inset-surface-flat--fixed-16"
                             role="alert"
                         >
                             <div className="flex items-start gap-related">
                                 <Icon
-                                    className="mt-0.5 shrink-0 text-critical-500"
+                                    // biome-ignore lint/plugin/noPrimitiveSpacing: optical nudge of the warning icon to the first text line
+                                    className="mt-0.5 shrink-0 icon-critical-primary"
                                     icon={IconType.WARNING}
                                     size="md"
                                 />
                                 <div className="min-w-0 flex-1">
-                                    <p className="leading-tight font-semibold text-critical-700">
+                                    <p className="type-title-group--compact type-strong text-critical-primary-tx-error">
                                         {t(
                                             isReverted
                                                 ? 'app.capitalFlow.dispatchSimulationDialog.reverted'
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-tight text-sm leading-tight break-words text-critical-600">
+                                    <p className="mt-tight type-body-compact--dialog-note break-words text-critical-primary-message">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>

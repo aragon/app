@@ -155,24 +155,21 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                 })}
             />
             <Dialog.Content>
-                <div className="mb-section flex flex-col gap-group">
-                    <Card
-                        className="flex flex-col gap-group"
-                        inset="surface-wide"
-                    >
+                <div className="flex flex-col gap-group pb-section">
+                    <Card className="flex flex-col gap-group p-inset-surface-wide">
                         <div className="flex flex-col gap-tight">
                             <div className="flex items-baseline gap-related--fixed-8">
-                                <span className="text-lg text-neutral-800">
+                                <span className="type-title-item--picker-row text-surface-primary">
                                     {policy.name}
                                 </span>
                                 {policy.policyKey && (
-                                    <span className="text-lg text-neutral-500">
+                                    <span className="type-title-item--picker-row text-surface-secondary">
                                         {policy.policyKey}
                                     </span>
                                 )}
                             </div>
                             {policy.description && (
-                                <p className="text-base text-neutral-500">
+                                <p className="type-body--unstepped text-surface-secondary">
                                     {policy.description}
                                 </p>
                             )}
@@ -198,27 +195,27 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         <div className="flex flex-col gap-related">
                             {subRouters.map((subRouter, index) => (
                                 <DataList.Item
-                                    className="flex items-baseline gap-section p-inset-surface-wide"
+                                    className="flex items-baseline gap-section px-inset-surface-wide! py-inset-surface-wide"
                                     key={subRouter.address}
                                 >
-                                    <div className="flex flex-1 gap-related--fixed-8 text-lg">
-                                        <span className="text-neutral-800">
+                                    <div className="flex flex-1 gap-related--fixed-8 type-title-item--picker-row">
+                                        <span className="text-surface-primary">
                                             {subRouter.name ??
                                                 t(
                                                     'app.capitalFlow.dispatchDialog.unnamedSubRouter',
                                                 )}
                                         </span>
                                         {subRouter.policyKey && (
-                                            <span className="text-neutral-500">
+                                            <span className="text-surface-secondary">
                                                 {subRouter.policyKey}
                                             </span>
                                         )}
                                     </div>
-                                    <span className="flex flex-wrap gap-phrase--fixed-2 text-base">
-                                        <span className="text-neutral-800">
+                                    <span className="flex gap-phrase--fixed-2 type-supporting--body-size">
+                                        <span className="text-surface-primary">
                                             {index + 1}
                                         </span>
-                                        <span className="text-neutral-500">
+                                        <span className="text-surface-secondary">
                                             {t(
                                                 'app.capitalFlow.dispatchDialog.subRouterOf',
                                                 {

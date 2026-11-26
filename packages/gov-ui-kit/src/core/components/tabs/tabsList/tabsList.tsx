@@ -11,7 +11,7 @@ export const TabsList: React.FC<ITabsListProps> = (props) => {
 
     const tabsListClassNames = classNames(
         'flex gap-x-section',
-        { 'border-b border-neutral-100': isUnderlined },
+        { 'border-b border-surface-secondary': isUnderlined },
         className,
     );
 

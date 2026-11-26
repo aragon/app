@@ -9,7 +9,7 @@ import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
-import { spacingPreviewUtils } from '@/modules/application/utils/spacingPreviewUtils';
+import { tokenPreviewUtils } from '@/modules/application/utils/tokenPreviewUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -54,9 +54,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
         false;
 
-    // Spacing preview of the debug panel (an axis of its own, independent of the colour theme and the typography): a
-    // stored spacing is only rendered while the panel is enabled, so a user without the panel always gets Today.
-    const spacingAttribute = spacingPreviewUtils.getServerSpacingAttribute(
+    // Token previews of the debug panel: a stored mode is only rendered while the panel is enabled, so a user
+    // without the panel always gets the default values.
+    const tokenPreviewAttributes = tokenPreviewUtils.getServerAttributes(
         isDebugPanelEnabled,
         requestHeaders.get('cookie'),
     );
@@ -68,10 +68,10 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html className="h-full" data-spacing={spacingAttribute} lang="en">
-            <body className="flex h-full flex-col bg-neutral-50 has-[[data-app-sidebar]]:bg-neutral-25">
+        <html className="h-full" lang="en" {...tokenPreviewAttributes}>
+            <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-body-sidebar">
                 <NextTopLoader
-                    color="var(--color-primary-400)"
+                    color="var(--guk-bg-accent-solid)"
                     easing="ease-in-out"
                     height={4}
                     shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"

@@ -25,24 +25,26 @@ export const WizardPageContainerProgress = (
     return (
         <div className="flex flex-col gap-related--6-12">
             <div className="flex flex-row justify-between">
-                <div className="flex flex-row flex-wrap gap-phrase text-base leading-tight font-normal">
-                    <span className="text-primary-400">
+                <div className="flex flex-row gap-phrase type-supporting--detail-value">
+                    <span className="text-accent-primary">
                         {t('app.shared.wizardPage.container.step', {
                             number: activeStepIndex + 1,
                         })}
                     </span>
-                    <span className="text-neutral-500">
+                    <span className="text-surface-secondary">
                         {t('app.shared.wizardPage.container.total', {
                             total: steps.length,
                         })}
                     </span>
                 </div>
                 {nextStepName != null && (
-                    <div className="flex flex-row flex-wrap gap-phrase text-base leading-tight font-normal">
-                        <span className="text-neutral-500">
+                    <div className="flex flex-row gap-phrase type-supporting--detail-value">
+                        <span className="text-surface-secondary">
                             {t('app.shared.wizardPage.container.next')}
                         </span>
-                        <span className="text-neutral-800">{nextStepName}</span>
+                        <span className="text-surface-primary">
+                            {nextStepName}
+                        </span>
                     </div>
                 )}
             </div>

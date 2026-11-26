@@ -29,21 +29,4 @@ export const Default: Story = {
     },
 };
 
-/**
- * The `inset` property pads the card with a spacing role (`surface`, `surface-flat`, `surface-wide`); the default
- * `none` leaves the padding to the content.
- */
-export const Inset: Story = {
-    args: {
-        className: 'min-w-80',
-        inset: 'surface',
-        children: (
-            <div className="flex flex-col">
-                <p className="text-xs leading-normal font-semibold">Example</p>
-                <p className="text-xs leading-normal font-normal">Description</p>
-            </div>
-        ),
-    },
-};
-
 export default meta;

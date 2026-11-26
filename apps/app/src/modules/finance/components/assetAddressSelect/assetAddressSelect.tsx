@@ -1,35 +1,36 @@
 'use client';
 
-import {
-    AssetDataListItem,
-    addressUtils,
-    DataListContainer,
-    DataListFilter,
-    DataListPagination,
-    DataListRoot,
-    IconType,
-} from '@aragon/gov-ui-kit';
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import type { Hex } from 'viem';
+import { AssetDataListItem, addressUtils } from '@aragon/gov-ui-kit';
+import type { ReactNode } from 'react';
 import type {
     IAsset,
     IGetAssetListParams,
 } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import { useSafeAssetListData } from '@/modules/finance/hooks/useSafeAssetListData';
+import type {
+    IDaoPlugin,
+    IPluginSettings,
+    Network,
+} from '@/shared/api/daoService';
+import {
+    DataListSelect,
+    type IDataListSelectProps,
+} from '@/shared/components/dataListSelect';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { AssetListParams, ISafeAssetListSource } from '../../types';
+import { assetUtils } from '../../utils/assetUtils';
 import { AssetAddressSelectAddAddressView } from './assetAddressSelectAddAddressView';
-import { AssetAddressSelectAddButton } from './assetAddressSelectAddButton';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
 export interface IAssetAddressSelectProps<
     TSettings extends IPluginSettings = IPluginSettings,
 > {
     /**
-     * Initial parameters to use for fetching the asset list.
+     * Initial parameters to use for fetching the asset list: the assets of a DAO, or the balances of a Safe.
      */
-    initialParams: IGetAssetListParams;
+    initialParams: AssetListParams;
     /**
      * DAO plugin (linked account) to display assets for.
      */
@@ -52,122 +53,167 @@ export interface IAssetAddressSelectProps<
     children?: ReactNode;
 }
 
-type AssetAddressSelectMode = 'list' | 'addAddress';
+type IAssetAddressSelectViewProps = Omit<
+    IAssetAddressSelectProps,
+    'initialParams'
+>;
+
+interface IAssetAddressSelectListProps
+    extends IAssetAddressSelectViewProps,
+        Pick<
+            IDataListSelectProps<IAsset>,
+            'state' | 'itemsCount' | 'pageSize' | 'onLoadMore' | 'errorState'
+        > {
+    /**
+     * Network of the listed assets, used to look up an asset added by address.
+     */
+    network: Network;
+    /**
+     * Assets to choose from.
+     */
+    assetList: IAsset[];
+}
+
+const AssetAddressSelectList: React.FC<IAssetAddressSelectListProps> = (
+    props,
+) => {
+    const {
+        network,
+        assetList,
+        state,
+        itemsCount,
+        pageSize,
+        onLoadMore,
+        errorState,
+        hidePagination,
+        hasSearch,
+        children,
+        onAssetClick,
+    } = props;
+
+    const { t } = useTranslations();
+
+    const filterAsset = ({ token }: IAsset, search: string) => {
+        const lowerSearch = search.toLowerCase();
+
+        return (
+            token.name.toLowerCase().includes(lowerSearch) ||
+            token.symbol.toLowerCase().includes(lowerSearch) ||
+            (addressUtils.isAddress(search) &&
+                addressUtils.isAddressEqual(token.address, search))
+        );
+    };
+
+    return (
+        <DataListSelect
+            errorState={errorState}
+            filterItem={filterAsset}
+            getItemKey={(asset) => asset.token.address}
+            hasSearch={hasSearch}
+            hidePagination={hidePagination}
+            items={assetList}
+            itemsCount={itemsCount}
+            labels={{
+                entity: t('app.finance.assetAddressSelect.entity'),
+                searchPlaceholder: t(
+                    'app.finance.assetAddressSelect.searchPlaceholder',
+                ),
+                addAddress: t('app.finance.assetAddressSelect.addButton.label'),
+                addByAddress: t(
+                    'app.finance.assetAddressSelect.emptyState.addByAddress',
+                ),
+                emptyHeading: (search) =>
+                    t('app.finance.assetAddressSelect.emptyState.heading', {
+                        search,
+                    }),
+                emptyDescription: t(
+                    'app.finance.assetAddressSelect.emptyState.description',
+                ),
+            }}
+            onLoadMore={onLoadMore}
+            pageSize={pageSize}
+            renderAddressView={({ initialAddress, onBack }) => (
+                <AssetAddressSelectAddAddressView
+                    initialAddress={initialAddress}
+                    network={network}
+                    onAssetClick={onAssetClick}
+                    onBack={onBack}
+                />
+            )}
+            renderItem={(asset) => (
+                <AssetAddressSelectItem
+                    asset={asset}
+                    onAssetClick={onAssetClick}
+                />
+            )}
+            SkeletonElement={AssetDataListItem.Skeleton}
+            state={state}
+        >
+            {children}
+        </DataListSelect>
+    );
+};
+
+interface IAssetAddressSelectDaoProps extends IAssetAddressSelectViewProps {
+    /**
+     * Parameters for fetching the indexed assets of the DAO.
+     */
+    initialParams: IGetAssetListParams;
+}
+
+const AssetAddressSelectDao: React.FC<IAssetAddressSelectDaoProps> = (
+    props,
+) => {
+    const { initialParams, ...otherProps } = props;
+
+    const { network } = daoUtils.parseDaoId(initialParams.queryParams.daoId);
+    const assetListData = useAssetListData(initialParams);
+
+    return (
+        <AssetAddressSelectList
+            network={network}
+            {...assetListData}
+            {...otherProps}
+        />
+    );
+};
+
+interface IAssetAddressSelectSafeProps extends IAssetAddressSelectViewProps {
+    /**
+     * Safe to list the balances of.
+     */
+    safe: ISafeAssetListSource;
+}
+
+const AssetAddressSelectSafe: React.FC<IAssetAddressSelectSafeProps> = (
+    props,
+) => {
+    const { safe, ...otherProps } = props;
+
+    const assetListData = useSafeAssetListData(safe);
+
+    return (
+        <AssetAddressSelectList
+            network={safe.network}
+            {...assetListData}
+            {...otherProps}
+        />
+    );
+};
 
 export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, hasSearch, children, onAssetClick } =
-        props;
-    const [searchValue, setSearchValue] = useState<string>();
-    const [mode, setMode] = useState<AssetAddressSelectMode>('list');
-    const [pendingAddress, setPendingAddress] = useState<Hex | undefined>();
+    const { initialParams, ...otherProps } = props;
 
-    const { t } = useTranslations();
-
-    const { network } = daoUtils.parseDaoId(initialParams.queryParams.daoId);
-
-    const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
-        useAssetListData(initialParams);
-
-    const handleOpenAddAddress = () => setMode('addAddress');
-    const handleBack = () => {
-        setPendingAddress(undefined);
-        setMode('list');
-    };
-
-    const filteredAssets = useMemo(() => {
-        if (!(hasSearch && searchValue)) {
-            return assetList;
-        }
-
-        const lowerSearch = searchValue.toLowerCase();
-        const searchIsAddress = addressUtils.isAddress(searchValue);
-
-        return assetList.filter(({ token }) => {
-            const nameHit = token.name.toLowerCase().includes(lowerSearch);
-            const symbolHit = token.symbol.toLowerCase().includes(lowerSearch);
-            const addrHit =
-                searchIsAddress &&
-                addressUtils.isAddressEqual(token.address, searchValue);
-            return nameHit || symbolHit || addrHit;
-        });
-    }, [assetList, searchValue, hasSearch]);
-
-    useEffect(() => {
-        if (mode !== 'list') {
-            return;
-        }
-        if (!searchValue || !addressUtils.isAddress(searchValue)) {
-            return;
-        }
-        if (filteredAssets.length > 0) {
-            return;
-        }
-
-        setPendingAddress(searchValue as Hex);
-        setSearchValue(undefined);
-        setMode('addAddress');
-    }, [mode, searchValue, filteredAssets.length]);
-
-    if (mode === 'addAddress') {
+    // Each source reads its own query, so it renders a component of its own rather than calling a hook conditionally.
+    if (assetUtils.isSafeAssetListParams(initialParams)) {
         return (
-            <AssetAddressSelectAddAddressView
-                initialAddress={pendingAddress}
-                network={network}
-                onAssetClick={onAssetClick}
-                onBack={handleBack}
-            />
+            <AssetAddressSelectSafe safe={initialParams.safe} {...otherProps} />
         );
     }
 
-    const emptyState = {
-        heading: t('app.finance.assetAddressSelect.emptyState.heading', {
-            search: searchValue ?? '',
-        }),
-        description: t('app.finance.assetAddressSelect.emptyState.description'),
-        primaryButton: {
-            label: t('app.finance.assetAddressSelect.emptyState.addByAddress'),
-            iconLeft: IconType.PLUS,
-            onClick: handleOpenAddAddress,
-        },
-    };
-
     return (
-        <DataListRoot
-            entityLabel={t('app.finance.assetAddressSelect.entity')}
-            itemsCount={itemsCount}
-            onLoadMore={onLoadMore}
-            pageSize={pageSize}
-            state={state}
-        >
-            {hasSearch ? (
-                <DataListFilter
-                    onSearchValueChange={setSearchValue}
-                    placeholder={t(
-                        'app.finance.assetAddressSelect.searchPlaceholder',
-                    )}
-                    searchValue={searchValue}
-                />
-            ) : null}
-            {filteredAssets.length > 0 && (
-                <AssetAddressSelectAddButton onClick={handleOpenAddAddress} />
-            )}
-            <DataListContainer
-                emptyState={emptyState}
-                errorState={errorState}
-                SkeletonElement={AssetDataListItem.Skeleton}
-            >
-                {filteredAssets.map((asset) => (
-                    <AssetAddressSelectItem
-                        asset={asset}
-                        key={asset.token.address}
-                        onAssetClick={onAssetClick}
-                    />
-                ))}
-            </DataListContainer>
-            {!(hidePagination || searchValue) && <DataListPagination />}
-            {children}
-        </DataListRoot>
+        <AssetAddressSelectDao initialParams={initialParams} {...otherProps} />
     );
 };

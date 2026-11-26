@@ -92,7 +92,7 @@ export const CapitalDistributorCampaignList: React.FC<
     return (
         <div className="flex flex-col gap-related">
             <ToggleGroup
-                className="flex gap-related"
+                className="flex gap-related!"
                 isMultiSelect={false}
                 onChange={handleToggleChange}
                 value={campaignFilter}

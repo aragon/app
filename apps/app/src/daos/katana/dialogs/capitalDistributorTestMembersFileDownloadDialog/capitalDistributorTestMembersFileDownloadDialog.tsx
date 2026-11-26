@@ -196,7 +196,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-section">
+                <div className="flex flex-col gap-section py-tight--fixed-8">
                     <InputContainer
                         helpText={t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochIdHelpText',
@@ -242,7 +242,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (
-                        <p className="text-sm text-critical-600">
+                        <p className="type-body-compact--component-note text-critical-primary-message">
                             {t(
                                 `app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.error.${errorKey}`,
                             )}

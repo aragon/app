@@ -73,10 +73,12 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
             <div className="flex flex-col gap-related--fixed-8">
                 <div className="flex flex-row justify-between gap-tight">
                     <div className="flex items-center gap-related--fixed-8">
-                        <Heading size="h2">{title}</Heading>
+                        <Heading as="h2" typeClassName="type-title-section">
+                            {title}
+                        </Heading>
                         {icon && (
                             <Icon
-                                className="text-warning-500"
+                                className="icon-warning-primary"
                                 icon={icon}
                                 size="md"
                             />
@@ -93,7 +95,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
                     )}
                 </div>
                 {description && (
-                    <div className="text-base leading-normal font-normal text-neutral-500">
+                    <div className="type-body--unstepped text-surface-secondary">
                         {description}
                     </div>
                 )}

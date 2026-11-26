@@ -176,19 +176,21 @@ export const GaugeVoterLockFormChart: React.FC<
     );
 
     return (
-        <div className="my-related--fixed-8 w-full">
+        <div className="w-full py-related--fixed-8">
             <div className="mb-related">
-                <p className="font-semibold!">
-                    {formatterUtils.formatNumber(activePoint.y, {
-                        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                    })}{' '}
-                    <span className="font-normal">
+                <p>
+                    <span className="type-strong text-surface-primary">
+                        {formatterUtils.formatNumber(activePoint.y, {
+                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                        })}{' '}
+                    </span>
+                    <span>
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockForm.chart.votingPower',
                         )}
                     </span>
                 </p>
-                <span className="text-sm text-neutral-500 md:text-base">
+                <span className="type-supporting--framework-leading text-surface-secondary">
                     {activePoint.x}
                 </span>
             </div>
@@ -203,19 +205,19 @@ export const GaugeVoterLockFormChart: React.FC<
                         <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
                             <stop
                                 offset="5%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0.4}
                             />
                             <stop
                                 offset="95%"
-                                stopColor="var(--color-primary-400)"
+                                stopColor="var(--guk-bg-accent-solid)"
                                 stopOpacity={0}
                             />
                         </linearGradient>
                     </defs>
                     <XAxis
                         axisLine={false}
-                        className="text-xs"
+                        className="type-caption--unstepped"
                         dataKey="x"
                         interval={0}
                         tick={{ dy: 12 }}
@@ -225,7 +227,7 @@ export const GaugeVoterLockFormChart: React.FC<
                     />
                     <YAxis
                         axisLine={false}
-                        className="text-xs"
+                        className="type-caption--unstepped"
                         dataKey="y"
                         domain={[yDomainMin, yDomainMax]}
                         orientation="right"
@@ -239,14 +241,14 @@ export const GaugeVoterLockFormChart: React.FC<
                         dataKey="y"
                         fill="url(#colorY)"
                         fillOpacity={1}
-                        stroke="var(--color-primary-400)"
+                        stroke="var(--guk-border-accent-secondary)"
                         strokeWidth={1}
                         type="monotone"
                     />
                     <ReferenceDot
-                        fill="var(--color-primary-400)"
+                        fill="var(--guk-bg-accent-solid)"
                         r={4}
-                        stroke="var(--color-neutral-0)"
+                        stroke="var(--guk-bg-surface-primary)"
                         strokeWidth={1}
                         x={activePoint.x}
                         y={activePoint.y}

@@ -7,92 +7,6 @@
         // The kit keeps the 120-column lines of its standalone repo.
         "lineWidth": 120
     },
-    // Raw spacing classes (p-4, md:gap-3, -mt-2, pt-[72px], space-y-6): padding, margin, gap and space take a spacing
-    // role, a component size or a documented <family>-<role>--<pattern> exception (src/theme/tokens/spacing.css). The
-    // .grit files are generated (`pnpm lint:spacing:generate`). Production code is at zero findings, so it is an error
-    // everywhere; stories only warn. Zero values and auto margins are not flagged. The allowlisted files (geometry,
-    // budget outliers and devtools, each listed with its allowed classes and reason in scripts/primitive-spacing.mjs)
-    // are left out of both scopes; `pnpm lint:spacing:check` verifies the plugins, the scopes and the allowlist, and
-    // `pnpm lint:spacing:report` lists the findings per folder.
-    "plugins": [
-        {
-            "path": "./biome-plugins/primitive-spacing.js.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.stories.tsx",
-                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
-                "!src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-                "!src/core/components/dataList/dataListFilter/dataListFilter.tsx",
-                "!src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-                "!src/core/components/forms/switch/switch.tsx",
-                "!src/core/components/forms/checkboxCard/checkboxCard.tsx",
-                "!src/core/components/forms/radioCard/radioCard.tsx",
-                "!src/core/components/states/emptyState/emptyState.tsx",
-                "!src/modules/components/wallet/wallet.tsx",
-                "!src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx",
-                "!src/theme/utils/prose.css"
-            ]
-        },
-        {
-            "path": "./biome-plugins/primitive-spacing.js.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.ts",
-                "src/**/*.tsx",
-                "!src/theme/tokens/**",
-                "!**/*.test.ts",
-                "!**/*.test.tsx",
-                "!src/**/*.stories.tsx",
-                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
-                "!src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-                "!src/core/components/dataList/dataListFilter/dataListFilter.tsx",
-                "!src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-                "!src/core/components/forms/switch/switch.tsx",
-                "!src/core/components/forms/checkboxCard/checkboxCard.tsx",
-                "!src/core/components/forms/radioCard/radioCard.tsx",
-                "!src/core/components/states/emptyState/emptyState.tsx",
-                "!src/modules/components/wallet/wallet.tsx",
-                "!src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx",
-                "!src/theme/utils/prose.css"
-            ]
-        },
-        {
-            "path": "./biome-plugins/primitive-spacing.css.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
-                "!src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-                "!src/core/components/dataList/dataListFilter/dataListFilter.tsx",
-                "!src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-                "!src/core/components/forms/switch/switch.tsx",
-                "!src/core/components/forms/checkboxCard/checkboxCard.tsx",
-                "!src/core/components/forms/radioCard/radioCard.tsx",
-                "!src/core/components/states/emptyState/emptyState.tsx",
-                "!src/modules/components/wallet/wallet.tsx",
-                "!src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx",
-                "!src/theme/utils/prose.css"
-            ]
-        },
-        {
-            "path": "./biome-plugins/primitive-spacing.css.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.css",
-                "!src/theme/tokens/**",
-                "!src/core/components/avatars/avatarStack/avatarStack.tsx",
-                "!src/core/components/dialogs/dialog/dialogHeader/dialogHeader.tsx",
-                "!src/core/components/dataList/dataListFilter/dataListFilter.tsx",
-                "!src/core/components/forms/inputFileAvatar/inputFileAvatar.tsx",
-                "!src/core/components/forms/switch/switch.tsx",
-                "!src/core/components/forms/checkboxCard/checkboxCard.tsx",
-                "!src/core/components/forms/radioCard/radioCard.tsx",
-                "!src/core/components/states/emptyState/emptyState.tsx",
-                "!src/modules/components/wallet/wallet.tsx",
-                "!src/modules/components/proposal/proposalActions/proposalActionsDecoder/proposalActionsDecoderField/proposalActionsDecoderField.tsx",
-                "!src/theme/utils/prose.css"
-            ]
-        }
-    ],
     "linter": {
         "rules": {
             "performance": {
@@ -108,6 +22,47 @@
         }
     },
     "overrides": [
+        {
+            // Token lint: source outside the theme takes role classes, not primitive ones. A token layer is one
+            // biome-plugins/<language>/<rule>.grit per language, listed here and in apps/app/biome.jsonc. A class kept
+            // on purpose gets `biome-ignore lint/plugin/<rule>: <reason>` on the line above it.
+            "includes": [
+                "src/**",
+                "!src/theme/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!**/*StoryComponent.tsx",
+                "!src/core/test/**",
+                "!src/modules/testUtils/**"
+            ],
+            "plugins": [
+                {
+                    "path": "./biome-plugins/js/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/js/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/js/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                }
+            ]
+        },
         {
             "includes": [
                 "scripts/**"

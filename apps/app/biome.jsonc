@@ -22,212 +22,6 @@
             "!src/assets/locales/**"
         ]
     },
-    // Raw spacing classes (p-4, md:gap-3, -mt-2, pt-[72px], space-y-6): padding, margin, gap and space take a GovKit
-    // spacing role, a component size or a documented exception. The .grit files are the kit's (`pnpm --filter
-    // @aragon/gov-ui-kit lint:spacing:generate`). Production code is at zero findings: an error everywhere, stories
-    // only warn. The allowlisted files (geometry, budget outliers and devtools, see the kit's
-    // scripts/primitive-spacing.mjs) are left out of both scopes; `lint:spacing:check` keeps them honest.
-    "plugins": [
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-spacing.js.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.stories.tsx",
-                "!src/daos/aragonDemo/components/aragonDemoPageHeader/aragonDemoPageHeader.tsx",
-                "!src/daos/aragonDemoPolicies/components/aragonDemoPoliciesPageHeader/aragonDemoPoliciesPageHeader.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessPageHeader.tsx",
-                "!src/daos/cryptex/components/cryptexPageHeader/cryptexPageHeader.tsx",
-                "!src/modules/application/components/debugPanel/debugPanel.tsx",
-                "!src/modules/application/components/debugPanel/workspaceRegistryControls.tsx",
-                "!src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx",
-                "!src/modules/application/components/navigations/navigationSidebarAccount/navigationSidebarAccount.tsx",
-                "!src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx",
-                "!src/modules/application/components/navigations/navigationWorkspace/navigationWorkspace.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx",
-                "!src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx",
-                "!src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionRecipients/setupStrategyDialogDistributionRecipientItem.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionStream/setupStrategyDialogDistributionStreamRecipientItem.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/existingConditionCard.tsx",
-                "!src/modules/explore/pages/exploreDaosPage/exploreDaosPageClient.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts/createWorkspaceFormAccountsItem.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormTargets/createWorkspaceFormTargetsItem.tsx",
-                "!src/shared/components/forms/resourcesInput/resourcesInputItem.tsx",
-                "!src/modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx",
-                "!src/modules/workspace/components/workspaceSelector/workspaceSelector.tsx",
-                "!src/modules/workspace/components/workspaceAccountStateCard/workspaceAccountStateCard.tsx",
-                "!src/modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx",
-                "!src/plugins/gaugeVoterPlugin/components/gaugeVoterVotingTerminal/gaugeVoterVotingTerminal.tsx",
-                "!src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogItem/gaugeVoterVoteDialogItem.tsx",
-                "!src/plugins/lockToVotePlugin/components/lockToVoteSetupGovernance/lockToVoteSetupGovernance.tsx",
-                "!src/plugins/tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance.tsx",
-                "!src/plugins/safeMultisigPlugin/components/safeMultisigSubmitVote/safeMultisigSubmitVote.tsx",
-                "!src/shared/components/banner/banner.tsx",
-                "!src/shared/components/container/container.tsx",
-                "!src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputMenu.tsx",
-                "!src/shared/components/navigation/navigationTrigger/navigationTrigger.tsx",
-                "!src/shared/components/page/pageContent/pageContent.tsx",
-                "!src/shared/components/page/pageHeader/pageHeader.tsx",
-                "!src/shared/components/page/pageMain/pageMain.tsx",
-                "!src/shared/components/transactionStatus/transactionStatusStep/transactionStatusStep.tsx",
-                "!src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-spacing.js.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.ts",
-                "src/**/*.tsx",
-                "!**/*.test.ts",
-                "!**/*.test.tsx",
-                "!src/**/*.stories.tsx",
-                "!src/daos/aragonDemo/components/aragonDemoPageHeader/aragonDemoPageHeader.tsx",
-                "!src/daos/aragonDemoPolicies/components/aragonDemoPoliciesPageHeader/aragonDemoPoliciesPageHeader.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessPageHeader.tsx",
-                "!src/daos/cryptex/components/cryptexPageHeader/cryptexPageHeader.tsx",
-                "!src/modules/application/components/debugPanel/debugPanel.tsx",
-                "!src/modules/application/components/debugPanel/workspaceRegistryControls.tsx",
-                "!src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx",
-                "!src/modules/application/components/navigations/navigationSidebarAccount/navigationSidebarAccount.tsx",
-                "!src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx",
-                "!src/modules/application/components/navigations/navigationWorkspace/navigationWorkspace.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx",
-                "!src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx",
-                "!src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionRecipients/setupStrategyDialogDistributionRecipientItem.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionStream/setupStrategyDialogDistributionStreamRecipientItem.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/existingConditionCard.tsx",
-                "!src/modules/explore/pages/exploreDaosPage/exploreDaosPageClient.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts/createWorkspaceFormAccountsItem.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormTargets/createWorkspaceFormTargetsItem.tsx",
-                "!src/shared/components/forms/resourcesInput/resourcesInputItem.tsx",
-                "!src/modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx",
-                "!src/modules/workspace/components/workspaceSelector/workspaceSelector.tsx",
-                "!src/modules/workspace/components/workspaceAccountStateCard/workspaceAccountStateCard.tsx",
-                "!src/modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx",
-                "!src/plugins/gaugeVoterPlugin/components/gaugeVoterVotingTerminal/gaugeVoterVotingTerminal.tsx",
-                "!src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogItem/gaugeVoterVoteDialogItem.tsx",
-                "!src/plugins/lockToVotePlugin/components/lockToVoteSetupGovernance/lockToVoteSetupGovernance.tsx",
-                "!src/plugins/tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance.tsx",
-                "!src/plugins/safeMultisigPlugin/components/safeMultisigSubmitVote/safeMultisigSubmitVote.tsx",
-                "!src/shared/components/banner/banner.tsx",
-                "!src/shared/components/container/container.tsx",
-                "!src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputMenu.tsx",
-                "!src/shared/components/navigation/navigationTrigger/navigationTrigger.tsx",
-                "!src/shared/components/page/pageContent/pageContent.tsx",
-                "!src/shared/components/page/pageHeader/pageHeader.tsx",
-                "!src/shared/components/page/pageMain/pageMain.tsx",
-                "!src/shared/components/transactionStatus/transactionStatusStep/transactionStatusStep.tsx",
-                "!src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-spacing.css.warn.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "!src/daos/aragonDemo/components/aragonDemoPageHeader/aragonDemoPageHeader.tsx",
-                "!src/daos/aragonDemoPolicies/components/aragonDemoPoliciesPageHeader/aragonDemoPoliciesPageHeader.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessPageHeader.tsx",
-                "!src/daos/cryptex/components/cryptexPageHeader/cryptexPageHeader.tsx",
-                "!src/modules/application/components/debugPanel/debugPanel.tsx",
-                "!src/modules/application/components/debugPanel/workspaceRegistryControls.tsx",
-                "!src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx",
-                "!src/modules/application/components/navigations/navigationSidebarAccount/navigationSidebarAccount.tsx",
-                "!src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx",
-                "!src/modules/application/components/navigations/navigationWorkspace/navigationWorkspace.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx",
-                "!src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx",
-                "!src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionRecipients/setupStrategyDialogDistributionRecipientItem.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionStream/setupStrategyDialogDistributionStreamRecipientItem.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/existingConditionCard.tsx",
-                "!src/modules/explore/pages/exploreDaosPage/exploreDaosPageClient.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts/createWorkspaceFormAccountsItem.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormTargets/createWorkspaceFormTargetsItem.tsx",
-                "!src/shared/components/forms/resourcesInput/resourcesInputItem.tsx",
-                "!src/modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx",
-                "!src/modules/workspace/components/workspaceSelector/workspaceSelector.tsx",
-                "!src/modules/workspace/components/workspaceAccountStateCard/workspaceAccountStateCard.tsx",
-                "!src/modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx",
-                "!src/plugins/gaugeVoterPlugin/components/gaugeVoterVotingTerminal/gaugeVoterVotingTerminal.tsx",
-                "!src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogItem/gaugeVoterVoteDialogItem.tsx",
-                "!src/plugins/lockToVotePlugin/components/lockToVoteSetupGovernance/lockToVoteSetupGovernance.tsx",
-                "!src/plugins/tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance.tsx",
-                "!src/plugins/safeMultisigPlugin/components/safeMultisigSubmitVote/safeMultisigSubmitVote.tsx",
-                "!src/shared/components/banner/banner.tsx",
-                "!src/shared/components/container/container.tsx",
-                "!src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputMenu.tsx",
-                "!src/shared/components/navigation/navigationTrigger/navigationTrigger.tsx",
-                "!src/shared/components/page/pageContent/pageContent.tsx",
-                "!src/shared/components/page/pageHeader/pageHeader.tsx",
-                "!src/shared/components/page/pageMain/pageMain.tsx",
-                "!src/shared/components/transactionStatus/transactionStatusStep/transactionStatusStep.tsx",
-                "!src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx"
-            ]
-        },
-        {
-            "path": "../../packages/gov-ui-kit/biome-plugins/primitive-spacing.css.error.grit",
-            "resolutionKind": "config",
-            "includes": [
-                "src/**/*.css",
-                "!src/daos/aragonDemo/components/aragonDemoPageHeader/aragonDemoPageHeader.tsx",
-                "!src/daos/aragonDemoPolicies/components/aragonDemoPoliciesPageHeader/aragonDemoPoliciesPageHeader.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessAvatarIcon.tsx",
-                "!src/daos/boundless/components/boundlessPageHeader/boundlessPageHeader.tsx",
-                "!src/daos/cryptex/components/cryptexPageHeader/cryptexPageHeader.tsx",
-                "!src/modules/application/components/debugPanel/debugPanel.tsx",
-                "!src/modules/application/components/debugPanel/workspaceRegistryControls.tsx",
-                "!src/modules/application/components/navigations/navigationDao/navigationDaoHome.tsx",
-                "!src/modules/application/components/navigations/navigationSidebarAccount/navigationSidebarAccount.tsx",
-                "!src/modules/application/components/navigations/navigationWizard/navigationWizard.tsx",
-                "!src/modules/application/components/navigations/navigationWorkspace/navigationWorkspace.tsx",
-                "!src/modules/application/pages/landingPage/landingPage.tsx",
-                "!src/modules/capitalFlow/components/dispatchPanel/dispatchPanel.tsx",
-                "!src/modules/capitalFlow/dialogs/dispatchDialog/dispatchSimulationDialog.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionRecipients/setupStrategyDialogDistributionRecipientItem.tsx",
-                "!src/modules/capitalFlow/dialogs/setupStrategyDialog/setupStrategyDialogDistributionStream/setupStrategyDialogDistributionStreamRecipientItem.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormGovernance/fields/governanceStagesField/governanceStagesField.tsx",
-                "!src/modules/createDao/components/createProcessForm/createProcessFormProposalCreation/existingConditionCard.tsx",
-                "!src/modules/explore/pages/exploreDaosPage/exploreDaosPageClient.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormAccounts/createWorkspaceFormAccountsItem.tsx",
-                "!src/modules/workspace/components/createWorkspaceForm/createWorkspaceFormTargets/createWorkspaceFormTargetsItem.tsx",
-                "!src/shared/components/forms/resourcesInput/resourcesInputItem.tsx",
-                "!src/modules/workspace/components/workspaceAccountSelector/workspaceAccountSelector.tsx",
-                "!src/modules/workspace/components/workspaceSelector/workspaceSelector.tsx",
-                "!src/modules/workspace/components/workspaceAccountStateCard/workspaceAccountStateCard.tsx",
-                "!src/modules/workspace/pages/workspaceDetailsPage/workspaceDetailsPageClient.tsx",
-                "!src/plugins/gaugeVoterPlugin/components/gaugeVoterVotingTerminal/gaugeVoterVotingTerminal.tsx",
-                "!src/plugins/gaugeVoterPlugin/dialogs/gaugeVoterVoteDialog/gaugeVoterVoteDialogItem/gaugeVoterVoteDialogItem.tsx",
-                "!src/plugins/lockToVotePlugin/components/lockToVoteSetupGovernance/lockToVoteSetupGovernance.tsx",
-                "!src/plugins/tokenPlugin/components/tokenSetupGovernance/tokenSetupGovernance.tsx",
-                "!src/plugins/safeMultisigPlugin/components/safeMultisigSubmitVote/safeMultisigSubmitVote.tsx",
-                "!src/shared/components/banner/banner.tsx",
-                "!src/shared/components/container/container.tsx",
-                "!src/shared/components/forms/addressesInput/addressesInputItem/addressesInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputItem.tsx",
-                "!src/shared/components/forms/autocompleteInput/autocompleteInputMenu.tsx",
-                "!src/shared/components/navigation/navigationTrigger/navigationTrigger.tsx",
-                "!src/shared/components/page/pageContent/pageContent.tsx",
-                "!src/shared/components/page/pageHeader/pageHeader.tsx",
-                "!src/shared/components/page/pageMain/pageMain.tsx",
-                "!src/shared/components/transactionStatus/transactionStatusStep/transactionStatusStep.tsx",
-                "!src/shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx"
-            ]
-        }
-    ],
     "linter": {
         "rules": {
             "style": {
@@ -256,6 +50,47 @@
         }
     },
     "overrides": [
+        {
+            // Token lint, the kit's plugins (see packages/gov-ui-kit/biome.jsonc): the app takes role classes, not
+            // primitive ones. Per-DAO page headers are brand art drawn over the DAO's own artwork and are never
+            // themed, so they stay on primitives.
+            "includes": [
+                "src/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!src/test/**",
+                "!src/__mocks__/**",
+                "!src/shared/testUtils/**",
+                "!src/daos/*/components/*PageHeader/**"
+            ],
+            "plugins": [
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                }
+            ]
+        },
         {
             // Biome reads tsconfig path aliases shaped like package names (@e2e/*, @aragon/gov-ui-kit-original) as packages.
             "includes": [

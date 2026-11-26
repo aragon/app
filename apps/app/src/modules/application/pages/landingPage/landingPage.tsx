@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Icon, IconType, Spinner } from '@aragon/gov-ui-kit';
+import { Button, Icon, IconType } from '@aragon/gov-ui-kit';
 import { useAppKit } from '@reown/appkit/react';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -40,40 +40,30 @@ export const LandingPage: React.FC = () => {
     const { open: openWeb3Modal } = useAppKit();
     const isWalletConnected = useWalletConnected();
     const year = new Date().getFullYear();
-    const { address, isConnecting } = useWalletAccount();
+    const { address } = useWalletAccount();
+
+    // Prefetched, so a connected wallet leaves at once.
+    useEffect(() => router.prefetch('/workspace'), [router]);
 
     useEffect(() => {
         if (isWalletConnected) {
             router.replace('/workspace');
         }
     }, [isWalletConnected, router]);
-    const isOpeningWorkspace =
-        isWalletConnected || address != null || isConnecting;
+
+    // A connected or restoring wallet leaves; the page stays visible behind the connect modal.
+    const isOpeningWorkspace = isWalletConnected || address != null;
 
     if (isOpeningWorkspace) {
         return (
-            <main
-                aria-busy="true"
-                className="flex min-h-dvh items-center justify-center bg-neutral-0"
-                data-ftue-landing=""
-            >
-                <div
-                    className="flex flex-col items-center gap-related text-neutral-500"
-                    role="status"
-                >
-                    <Spinner size="lg" variant="neutral" />
-                    <p className="text-base leading-tight">
-                        {t('app.application.landingPage.openingWorkspace')}
-                    </p>
-                </div>
-            </main>
+            <main aria-busy="true" className="min-h-dvh" data-ftue-landing="" />
         );
     }
 
     const legalLinks = (
         <nav
             aria-label={t('app.application.landingPage.legal')}
-            className="flex items-center gap-related text-sm leading-tight"
+            className="flex items-center gap-related type-control-sm"
         >
             <span>{t('app.application.landingPage.copyright', { year })}</span>
             <Link href={privacyUrl} target="_blank">
@@ -107,7 +97,8 @@ export const LandingPage: React.FC = () => {
 
     const demoLink = (
         <Link
-            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 text-base whitespace-nowrap text-neutral-0 transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
+            // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
+            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 type-control--tall-line whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
         >
@@ -118,18 +109,22 @@ export const LandingPage: React.FC = () => {
 
     return (
         <main
-            className="grid min-h-dvh grid-rows-[auto_auto] overflow-x-hidden bg-neutral-0 text-neutral-800 md:h-dvh md:grid-cols-2 md:grid-rows-1 md:overflow-hidden"
+            className="grid min-h-dvh grid-rows-[auto_auto] overflow-x-hidden bg-surface-primary text-surface-primary md:h-dvh md:grid-cols-2 md:grid-rows-1 md:overflow-hidden"
             data-ftue-landing=""
         >
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: landing gutters at the viewport edges: no role has them */}
             <section className="flex flex-col items-center gap-section px-6 pt-6 pb-5 text-center md:items-stretch md:justify-between md:px-12 md:py-12 md:text-left xl:px-[72px]">
                 <AragonLogo size="md" />
 
                 <div className="flex w-full max-w-[560px] flex-col items-center gap-section--24-32 md:items-start">
                     <div className="flex flex-col items-center gap-related md:items-start">
-                        <h1 className="text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] font-normal tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]">
+                        <h1
+                            // biome-ignore lint/plugin/noPrimitiveTypography: the hero keeps its fluid size, line height and tracking on top of the role
+                            className="type-display text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]"
+                        >
                             {t('app.application.landingPage.hero.title')}
                         </h1>
-                        <p className="text-base leading-normal text-pretty text-neutral-500">
+                        <p className="type-body--unstepped text-pretty text-surface-secondary">
                             {t('app.application.landingPage.hero.description')}
                         </p>
                     </div>
@@ -148,18 +143,18 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="mt-related--fixed-8 flex items-center gap-related text-sm leading-tight text-neutral-500">
-                            <span className="h-px grow bg-neutral-100" />
+                        <div className="flex items-center gap-related pt-related--fixed-8 type-supporting--compact-meta text-surface-secondary">
+                            <span className="h-px grow bg-surface-tertiary" />
                             {t('app.application.landingPage.signIn.comingSoon')}
-                            <span className="h-px grow bg-neutral-100" />
+                            <span className="h-px grow bg-surface-tertiary" />
                         </div>
-                        <div className="flex justify-center gap-section-wide--32-40 text-neutral-500">
+                        <div className="flex justify-center gap-section-wide--32-40 text-surface-secondary">
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
-                                <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100 bg-neutral-0 text-neutral-400">
+                                <span className="flex size-12 items-center justify-center rounded-full border border-surface-secondary bg-surface-primary text-surface-tertiary">
                                     <Icon
                                         icon={IconType.SOCIAL_EMAIL}
                                         size="md"
@@ -168,11 +163,11 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.email')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
-                                <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100 bg-neutral-0">
+                                <span className="flex size-12 items-center justify-center rounded-full border border-surface-secondary bg-surface-primary">
                                     <Image
                                         alt=""
                                         className="opacity-55 grayscale"
@@ -184,11 +179,11 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.google')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 text-sm leading-tight"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
-                                <span className="flex size-12 items-center justify-center rounded-full border border-neutral-100 bg-neutral-0 text-neutral-400">
+                                <span className="flex size-12 items-center justify-center rounded-full border border-surface-secondary bg-surface-primary text-surface-tertiary">
                                     <Icon icon={IconType.PERSON} size="md" />
                                 </span>
                                 {t(
@@ -199,12 +194,13 @@ export const LandingPage: React.FC = () => {
                     </div>
                 </div>
 
-                <footer className="hidden text-neutral-500 md:block">
+                <footer className="hidden text-surface-secondary md:block">
                     {legalLinks}
                 </footer>
             </section>
 
-            <section className="relative flex flex-col items-center justify-start gap-section overflow-hidden bg-primary-400 px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: landing gutters at the viewport edges: no role has them */}
+            <section className="relative flex flex-col items-center justify-start gap-section overflow-hidden bg-brand-solid px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
                 <Image
                     alt=""
                     aria-hidden="true"
@@ -216,7 +212,8 @@ export const LandingPage: React.FC = () => {
                     aria-label={t(
                         'app.application.landingPage.demo.previewLabel',
                     )}
-                    className="relative hidden aspect-[16/10] h-[64%] shrink-0 overflow-hidden rounded-l-xl bg-neutral-50 shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:block"
+                    // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
+                    className="relative hidden aspect-[16/10] h-[64%] shrink-0 overflow-hidden rounded-l-xl bg-surface-secondary shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:block"
                     href={demoWorkspaceUrl}
                     onClick={handleOpenDemo}
                 >
@@ -235,7 +232,8 @@ export const LandingPage: React.FC = () => {
                     aria-label={t(
                         'app.application.landingPage.demo.previewLabel',
                     )}
-                    className="relative block w-full max-w-[300px] overflow-hidden rounded-t-xl bg-neutral-50 shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:hidden"
+                    // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
+                    className="relative block w-full max-w-[300px] overflow-hidden rounded-t-xl bg-surface-secondary shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:hidden"
                     href={demoWorkspaceUrl}
                     onClick={handleOpenDemo}
                 >

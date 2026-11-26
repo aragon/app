@@ -24,6 +24,6 @@ describe('<AvatarIcon /> component', () => {
         const icon = IconType.PLUS;
         render(createTestComponent({ backgroundWhite, icon }));
         // eslint-disable-next-line testing-library/no-node-access
-        expect(screen.getByTestId(icon).parentElement?.classList).toContain('bg-neutral-0');
+        expect(screen.getByTestId(icon).parentElement?.classList).toContain('bg-surface-primary');
     });
 });

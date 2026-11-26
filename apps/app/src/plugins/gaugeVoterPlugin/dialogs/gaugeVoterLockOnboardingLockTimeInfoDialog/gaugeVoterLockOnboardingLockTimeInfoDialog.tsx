@@ -66,23 +66,24 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                 )}
             />
             <Dialog.Content className="flex flex-col gap-group pb-inset-surface-flat">
-                <p className="text-neutral-500">
+                <p className="text-surface-secondary">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.description',
                         { tokenSymbol },
                     )}
                 </p>
-                <div className="flex flex-col gap-related rounded-xl border border-neutral-100 p-inset-surface-wide">
+                <div className="flex flex-col gap-related rounded-xl border border-surface-secondary p-inset-surface-wide">
                     <div className="flex items-baseline justify-between">
                         <div className="flex items-center gap-tight--fixed-6">
-                            <span className="text-neutral-800">
+                            <span className="text-surface-primary">
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.minLocktime',
                                 )}
                             </span>
+                            {/* biome-ignore lint/plugin/noPrimitiveColors: no bg role has neutral-300 */}
                             <div className="size-2 rounded-full bg-neutral-300" />
                         </div>
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.days',
                                 { count: minLockDays },
@@ -91,28 +92,29 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                     </div>
                     <div className="flex items-baseline justify-between">
                         <div className="flex items-center gap-tight--fixed-6">
-                            <span className="text-info-800">
+                            <span className="text-info-primary">
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.cooldown',
                                 )}
                             </span>
+                            {/* biome-ignore lint/plugin/noPrimitiveColors: no bg role has info-400 */}
                             <div className="size-2 rounded-full bg-info-400" />
                         </div>
-                        <span className="text-neutral-500">
+                        <span className="text-surface-secondary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.days',
                                 { count: cooldownDays },
                             )}
                         </span>
                     </div>
-                    <div className="h-px w-full bg-neutral-100" />
+                    <div className="h-px w-full bg-surface-tertiary" />
                     <div className="flex items-baseline justify-between">
-                        <span className="text-neutral-800">
+                        <span className="text-surface-primary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.total',
                             )}
                         </span>
-                        <span className="text-neutral-800">
+                        <span className="text-surface-primary">
                             {t(
                                 'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.days',
                                 { count: totalDays },

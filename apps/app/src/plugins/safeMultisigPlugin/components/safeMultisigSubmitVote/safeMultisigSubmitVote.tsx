@@ -436,6 +436,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     return (
         <div className="flex w-full flex-col gap-section">
             {alerts.length > 0 && (
+                // biome-ignore lint/plugin/noPrimitiveSpacing: pulls the alerts into the section gap above them (24 - 16)
                 <div className="-mt-4 flex flex-col gap-related">
                     {alerts.map((alert) =>
                         alert.variant === 'info' ? (
@@ -478,7 +479,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                             <>
                                                 {' '}
                                                 <Link
-                                                    className="text-primary-400 hover:text-primary-600"
+                                                    className="text-link-default hover:text-link-hover-action"
                                                     href={blockerProposalUrl}
                                                 >
                                                     {blockerProposalSlug}

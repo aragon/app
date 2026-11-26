@@ -70,7 +70,7 @@ interface IWorkspaceTodoPreviewDisplay {
 }
 
 const rowClassName =
-    'flex items-center gap-group border-neutral-100 border-t px-inset-item py-inset-item--12-16 first:border-t-0';
+    'flex items-center gap-group border-t px-inset-item py-inset-item--12-16 first:border-t-0 border-surface-secondary';
 
 const metaSeparator = ' · ';
 
@@ -184,10 +184,10 @@ export const WorkspaceTodoPreviewItem: React.FC<
         <div className={rowClassName}>
             {avatar}
             <div className="flex min-w-0 grow flex-col gap-tight">
-                <p className="truncate text-base leading-tight text-neutral-800">
+                <p className="truncate type-title-item--compact-card text-surface-primary">
                     {title}
                 </p>
-                <p className="truncate text-sm leading-tight text-neutral-500">
+                <p className="truncate type-supporting--compact-meta text-surface-secondary">
                     {meta}
                 </p>
             </div>

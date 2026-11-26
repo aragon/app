@@ -12,7 +12,7 @@ export const ProposalDataListItemSkeleton: React.FC<IProposalDataListItemSkeleto
             aria-busy="true"
             aria-label="loading"
             className={classNames(
-                'flex min-h-[184.5px] flex-col justify-center gap-y-related--12-16 bg-neutral-0 py-inset-item--16-24 md:min-h-[221px]',
+                'flex min-h-[184.5px] flex-col justify-center gap-y-related--12-16 bg-surface-primary py-inset-item--16-24 md:min-h-[221px]',
                 className,
             )}
             tabIndex={0}

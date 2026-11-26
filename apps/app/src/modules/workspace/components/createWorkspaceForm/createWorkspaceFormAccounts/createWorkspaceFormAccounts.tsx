@@ -44,13 +44,13 @@ export const CreateWorkspaceFormAccounts: React.FC<
     return (
         <div className="flex flex-col gap-related">
             <InputContainer
+                className="gap-related!"
                 helpText={t(
                     'app.workspace.createWorkspaceForm.accounts.helpText',
                 )}
                 id="workspaceAccounts"
                 isOptional={true}
                 label={t('app.workspace.createWorkspaceForm.accounts.label')}
-                spacing="related"
                 useCustomWrapper={true}
             >
                 {fields.map((field, index) => (

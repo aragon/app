@@ -43,13 +43,13 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
 
     const namespace = 'app.workspace.createWorkspaceForm.accounts.identity';
     const containerClassName =
-        'flex min-h-14 items-center gap-related rounded-xl bg-neutral-50 px-inset-item-flat py-inset-item-flat';
+        'flex min-h-14 items-center gap-related rounded-xl px-inset-item-flat py-inset-item-flat bg-surface-secondary';
 
     if (isLoading) {
         return (
             <div className={containerClassName}>
                 <Spinner size="md" variant="neutral" />
-                <span className="text-base leading-tight text-neutral-500">
+                <span className="type-supporting--detail-value text-surface-secondary">
                     {t(`${namespace}.resolving`)}
                 </span>
             </div>
@@ -82,11 +82,11 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
                 />
             )}
             <div className="flex min-w-0 grow flex-col">
-                <span className="truncate text-base leading-tight text-neutral-800">
+                <span className="truncate type-title-item--compact-card text-surface-primary">
                     {resolvedName ?? truncatedAddress}
                 </span>
                 {resolvedName != null && (
-                    <span className="truncate text-sm leading-tight text-neutral-500">
+                    <span className="truncate type-supporting--compact-meta text-surface-secondary">
                         {truncatedAddress}
                     </span>
                 )}

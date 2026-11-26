@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace navigation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<nav class="app-sidebar" aria-label="Workspace navigation">
+  <div class="ws-sidebar__header">
+    <x-import component-from-global-scope="GovUiKit.Dropdown.Group" class-name="ws-selector-group">
+    <div class="ws-menu-wrap">
+      <button class="ws-selector" type="button" onClick="{{toggleWs}}">
+        <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
+        <span class="ws-selector__text"><span class="ws-selector__title" style="line-height:20px">Meridian Ecosystem</span></span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm" class-name="{{chevronWsClass}}"></x-import>
+      </button>
+      <sc-if value="{{menuWs}}" hint-placeholder-val="{{false}}">
+        <div class="ws-menu__scrim" onClick="{{closeMenu}}"></div>
+        <div class="ws-menu" role="menu">
+          <a class="ws-menu__item" href="#" aria-current="true" onClick="{{closeMenu}}">
+            <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="sm" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name">Meridian Ecosystem</span></span>
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="md" class-name="shrink-0 text-neutral-800"></x-import>
+          </a>
+          <div class="ws-menu__sep"></div>
+          <a class="ws-menu__item" href="CreateWorkspaceFlow.dc.html">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Create workspace</span></span>
+          </a>
+          <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="DEPOSIT" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Import workspace</span></span>
+          </a>
+        </div>
+      </sc-if>
+    </div>
+    <div class="ws-menu-wrap">
+      <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
+        <span class="ws-selector__avatar">
+          <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
+            <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
+          </sc-if>
+          <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{current.name}}" src="{{current.avatar}}" size="md"></x-import></sc-if>
+        </span>
+        <span class="ws-selector__text ws-selector__text--stacked">
+          <span class="ws-selector__title">{{current.name}}</span>
+          <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><span class="ws-selector__subtitle">{{current.meta}}</span></sc-if>
+        </span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm" class-name="{{chevronAcctClass}}"></x-import>
+      </button>
+      <sc-if value="{{menuAcct}}" hint-placeholder-val="{{false}}">
+        <div class="ws-menu__scrim" onClick="{{closeMenu}}"></div>
+        <div class="ws-menu" role="menu">
+          <sc-for list="{{options}}" as="o" hint-placeholder-count="5">
+            <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
+              <span class="ws-menu__avatar">
+                <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
+                  <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
+                </sc-if>
+                <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
+                  <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0" badge="{{netBadge}}"></x-import>
+                </sc-if>
+              </span>
+              <span class="ws-menu__text">
+                <span class="ws-menu__name">{{o.name}}</span>
+                <sc-if value="{{o.hasAddress}}" hint-placeholder-val="{{true}}"><span class="ws-menu__meta">{{o.address}}</span></sc-if>
+              </span>
+              <sc-if value="{{o.selected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="md" class-name="shrink-0 text-neutral-800"></x-import></sc-if>
+            </a>
+          </sc-for>
+          <div class="ws-menu__sep"></div>
+          <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
+            <span class="ws-menu__avatar"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0 text-neutral-300"></x-import></span>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Add account</span></span>
+          </a>
+        </div>
+      </sc-if>
+    </div>
+  </x-import>
+  </div>
+
+  <div class="ws-nav-groups">
+    <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
+      <div class="ws-nav-group">
+        <p class="ws-nav-group__label">Inbox</p>
+        <div class="app-nav-links">
+          <a class="app-nav-link" href="#" onClick="{{todos.go}}" aria-current="{{todos.current}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" class-name="{{todos.iconClass}}"></x-import>
+            To-dos
+            <sc-if value="{{todos.hasCount}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{todos.count}}" variant="critical" class-name="shrink-0 ml-auto"></x-import></sc-if>
+          </a>
+        </div>
+      </div>
+    </sc-if>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">Meridian Ecosystem</p>
+      <div class="app-nav-links">
+        <sc-for list="{{links}}" as="l" hint-placeholder-count="5">
+          <a class="app-nav-link" href="#" onClick="{{l.go}}" aria-current="{{l.current}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>
+            {{l.label}}
+          </a>
+        </sc-for>
+      </div>
+    </div>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">Settings</p>
+      <div class="app-nav-links">
+        <a class="app-nav-link" href="#" onClick="{{stop}}">
+          <x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import>
+          Workspace admin
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-sidebar__footer">
+    <sc-if value="{{disconnected}}" hint-placeholder-val="{{true}}">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" class-name="w-full" href="#" on-click="{{connectClick}}">Connect</x-import>
+    </sc-if>
+    <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
+      <a class="app-account" href="#" onClick="{{userClick}}">
+        <x-import component-from-global-scope="GovUiKit.MemberAvatar" address="{{user.address}}" ens-name="{{user.name}}" size="md"></x-import>
+        <span class="app-account__text">
+          <span class="app-account__name">{{user.name}}</span>
+          <span class="app-account__address">{{user.short}}</span>
+        </span>
+      </a>
+    </sc-if>
+    <div class="app-sidebar__meta">
+      <a class="app-sidebar__governed" href="Explore.dc.html">
+        <span style="white-space: nowrap;">Governed on</span>
+        <dc-import name="AragonLogo" size="sm" hint-size="97px,24px"></dc-import>
+      </a>
+      <div class="app-sidebar__links">
+        <a href="https://aragonassociation.atlassian.net/servicedesk/customer/portal/3">Support</a>
+        <a href="https://aragon.org/privacy-policy">Privacy</a>
+        <a href="https://aragon.org/terms-and-conditions">Terms of Service</a>
+      </div>
+      <div class="app-sidebar__copyright">
+        <p>© 2026 Aragon</p>
+        <x-import component-from-global-scope="GovUiKit.Tag" label="v1.44.0 (LOC)" variant="primary" class-name="shrink-0"></x-import>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav class="app-topbar app-topbar--with-sidebar" aria-label="Workspace navigation">
+  <div class="app-container app-topbar__inner">
+    <div class="app-topbar__row ws-topbar__row">
+      <button class="ws-compact" type="button" aria-haspopup="dialog" onClick="{{openNav}}">
+        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="sm" class-name="shrink-0 ws-compact__avatar"></x-import>
+        <span class="ws-compact__text">
+          <span class="ws-compact__title">Meridian Ecosystem</span>
+          <span class="ws-compact__subtitle">{{current.name}}</span>
+        </span>
+      </button>
+      <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}" on-click="{{walletClick}}"></x-import>
+    </div>
+  </div>
+</nav>
+
+<sc-if value="{{navOpen}}" hint-placeholder-val="{{false}}">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{yes}}" dc-props="{{rootProps}}" hidden-title="Workspace navigation" hidden-description="Navigate between the pages of this workspace">
+<x-import component-from-global-scope="GovUiKit.Dialog.Content" no-inset="{{yes}}">
+<div class="ws-nav-dialog">
+  <div class="ws-nav-dialog__selectors">
+  <x-import component-from-global-scope="GovUiKit.Dropdown.Group" class-name="ws-selector-group">
+    <div class="ws-menu-wrap">
+      <button class="ws-selector" type="button" onClick="{{toggleWs}}">
+        <span class="ws-selector__avatar"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="md"></x-import></span>
+        <span class="ws-selector__text"><span class="ws-selector__title" style="line-height:20px">Meridian Ecosystem</span></span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm" class-name="{{chevronWsClass}}"></x-import>
+      </button>
+      <sc-if value="{{menuWs}}" hint-placeholder-val="{{false}}">
+        <div class="ws-menu__scrim" onClick="{{closeMenu}}"></div>
+        <div class="ws-menu" role="menu">
+          <a class="ws-menu__item" href="#" aria-current="true" onClick="{{closeMenu}}">
+            <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="Meridian Ecosystem" size="sm" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name">Meridian Ecosystem</span></span>
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="md" class-name="shrink-0 text-neutral-800"></x-import>
+          </a>
+          <div class="ws-menu__sep"></div>
+          <a class="ws-menu__item" href="CreateWorkspaceFlow.dc.html">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Create workspace</span></span>
+          </a>
+          <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="DEPOSIT" size="md" class-name="shrink-0"></x-import>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Import workspace</span></span>
+          </a>
+        </div>
+      </sc-if>
+    </div>
+    <div class="ws-menu-wrap">
+      <button class="ws-selector" type="button" onClick="{{toggleAcct}}">
+        <span class="ws-selector__avatar">
+          <sc-if value="{{current.isAll}}" hint-placeholder-val="{{true}}">
+            <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
+          </sc-if>
+          <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{current.name}}" src="{{current.avatar}}" size="md"></x-import></sc-if>
+        </span>
+        <span class="ws-selector__text ws-selector__text--stacked">
+          <span class="ws-selector__title">{{current.name}}</span>
+          <sc-if value="{{current.isAccount}}" hint-placeholder-val="{{false}}"><span class="ws-selector__subtitle">{{current.meta}}</span></sc-if>
+        </span>
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CHEVRON_DOWN" size="sm" class-name="{{chevronAcctClass}}"></x-import>
+      </button>
+      <sc-if value="{{menuAcct}}" hint-placeholder-val="{{false}}">
+        <div class="ws-menu__scrim" onClick="{{closeMenu}}"></div>
+        <div class="ws-menu" role="menu">
+          <sc-for list="{{options}}" as="o" hint-placeholder-count="5">
+            <a class="ws-menu__item" href="#" aria-current="{{o.selected}}" onClick="{{o.go}}">
+              <span class="ws-menu__avatar">
+                <sc-if value="{{o.isAll}}" hint-placeholder-val="{{false}}">
+                  <x-import component-from-global-scope="GovUiKit.AvatarStack" avatars="{{stackAvatars}}" aria-hidden="true" class-name="shrink-0"></x-import>
+                </sc-if>
+                <sc-if value="{{o.isAccount}}" hint-placeholder-val="{{true}}">
+                  <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{o.name}}" src="{{o.avatar}}" size="sm" class-name="shrink-0" badge="{{netBadge}}"></x-import>
+                </sc-if>
+              </span>
+              <span class="ws-menu__text">
+                <span class="ws-menu__name">{{o.name}}</span>
+                <sc-if value="{{o.hasAddress}}" hint-placeholder-val="{{true}}"><span class="ws-menu__meta">{{o.address}}</span></sc-if>
+              </span>
+              <sc-if value="{{o.selected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="md" class-name="shrink-0 text-neutral-800"></x-import></sc-if>
+            </a>
+          </sc-for>
+          <div class="ws-menu__sep"></div>
+          <a class="ws-menu__item" href="#" onClick="{{closeMenu}}">
+            <span class="ws-menu__avatar"><x-import component-from-global-scope="GovUiKit.Icon" icon="PLUS" size="md" class-name="shrink-0 text-neutral-300"></x-import></span>
+            <span class="ws-menu__text"><span class="ws-menu__name" style="color:inherit">Add account</span></span>
+          </a>
+        </div>
+      </sc-if>
+    </div>
+  </x-import>
+  </div>
+  <div class="ws-nav-dialog__groups">
+    <sc-if value="{{connected}}" hint-placeholder-val="{{false}}">
+      <div class="ws-nav-group">
+        <p class="ws-nav-group__label">Inbox</p>
+        <div class="app-nav-links">
+          <a class="app-nav-link" href="#" onClick="{{todos.go}}" aria-current="{{todos.current}}">
+            <x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" class-name="{{todos.iconClass}}"></x-import>
+            To-dos
+            <sc-if value="{{todos.hasCount}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{todos.count}}" variant="critical" class-name="shrink-0 ml-auto"></x-import></sc-if>
+          </a>
+        </div>
+      </div>
+    </sc-if>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">Meridian Ecosystem</p>
+      <div class="app-nav-links">
+        <sc-for list="{{links}}" as="l" hint-placeholder-count="5">
+          <a class="app-nav-link" href="#" onClick="{{l.go}}" aria-current="{{l.current}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="{{l.icon}}" class-name="{{l.iconClass}}"></x-import>{{l.label}}</a>
+        </sc-for>
+      </div>
+    </div>
+    <div class="ws-nav-group">
+      <p class="ws-nav-group__label">Settings</p>
+      <div class="app-nav-links">
+        <a class="app-nav-link" href="#" onClick="{{stop}}"><x-import component-from-global-scope="GovUiKit.Icon" icon="SETTINGS" class-name="text-neutral-300"></x-import>Workspace admin</a>
+      </div>
+    </div>
+  </div>
+</div>
+</x-import>
+</x-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"scope":{"editor":"enum","options":["all","meridian","atlas","northstar","safe"],"default":"all"},"active":{"editor":"enum","options":["overview","todos","proposals","transactions","assets","members","permissions","settings"],"default":"overview"},"wallet":{"editor":"enum","options":["","connected"],"default":""},"todos":{"editor":null},"todoRows":{"editor":null},"on-nav":{"editor":null},"on-connect":{"editor":null},"on-user":{"editor":null},"$preview":{"width":1024,"height":900}}'>
+// Workspace navigation (apps/app: navigationWorkspace.tsx + navigationWorkspaceUtils.ts, workspaceSelector.tsx, workspaceAccountSelector.tsx):
+// the sidebar from lg, the top bar and the navigation dialog below lg.
+// Props: scope ('all' | account id: meridian | atlas | northstar | safe), active (section: overview | todos | proposals | transactions | assets |
+//   members | permissions | settings), wallet ('connected' | ''), onNav(target) with the Workspace.dc.html targets ('all:<section>' or
+//   'account:<id>:<section>'), onConnect(), onUser(), todoRows (the wallet's to-dos from the shell: one entry per row, acct = account id; the badge counts them, so it matches the rows the to-do pages list), todos (optional object { all, meridian, atlas, northstar, safe } overriding the counts).
+// Sections by scope follow workspaceSectionScopes: all accounts = Dashboard, Proposals, Transactions, Assets, Members; a DAO account adds Permissions and
+// Settings; a Safe has no Proposals or Permissions. Choosing an account keeps the current section when that account has it, else opens its overview.
+// The workspace menu lists the one workspace, "Create workspace" (CreateWorkspaceFlow.dc.html) and "Import workspace" (a file upload: inert).
+// The two selectors are stacked in one bordered group (kit Dropdown.Group). Each selector and its menu inside it are still drawn (class ws-menu*): the group's own `overflow-hidden` is lifted in app.css so the inline menus show, and a kit Dropdown.Container would need its whole trigger built with createElement.
+// Below lg the top bar carries a compact selector (workspace avatar, name, current account) that opens the navigation dialog.
+// The navigation dialog has no "Explore all DAOs" link (hideExplore). Menu rows carry the account's chain badge (kit Avatar `badge`).
+// "Add account" and "Workspace admin" (Settings group) have no screen yet.
+class Component extends DCLogic {
+  state = { navOpen: false, menu: '' };
+  render0 = 0;
+  renderVals() {
+    const p = this.props;
+    const scope = p.scope || 'all';
+    const active = p.active || 'overview';
+    const connected = p.wallet === 'connected';
+    const stop = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+    const go = (target) => { if (typeof p.onNav === 'function') p.onNav(target); };
+    const accounts = [
+      { id: 'meridian', name: 'Meridian DAO', address: '0xC8C3…BCde', avatar: 'assets/mock/avatar/meridian.svg', type: 'dao' },
+      { id: 'atlas', name: 'Atlas Grants Council', address: '0x3115…d368', avatar: 'assets/mock/avatar/atlas.svg', type: 'dao' },
+      { id: 'northstar', name: 'Northstar Protocol', address: '0xA767…A063', avatar: 'assets/mock/avatar/northstar.svg', type: 'dao' },
+      { id: 'safe', name: 'Northstar Council Safe', address: '0x515f…02e2', avatar: 'assets/safeWallet.png', type: 'safe' }
+    ];
+    // workspaceSectionScopes: proposals = all accounts + DAO; permissions = DAO; settings = DAO + Safe (not all accounts).
+    const served = (section, id) => {
+      const a = accounts.find((x) => x.id === id);
+      if (section === 'proposals') return id === 'all' || (a && a.type === 'dao');
+      if (section === 'permissions') return !!a && a.type === 'dao';
+      if (section === 'settings') return !!a;
+      return true;
+    };
+    const target = (id, section) => (id === 'all' ? 'all:' + section : 'account:' + id + ':' + section);
+    const closeAll = () => this.setState({ menu: '', navOpen: false });
+    // All accounts: the trigger shows the accounts' avatars stacked (kit AvatarStack) and no second line.
+    const current = scope === 'all'
+      ? { name: 'All accounts', avatar: undefined, meta: '', isAll: true, isAccount: false }
+      : (() => { const a = accounts.find((x) => x.id === scope) || accounts[0]; return { name: a.name, avatar: a.avatar, meta: a.address, isAll: false, isAccount: true }; })();
+    const option = (id, name, address, avatar) => ({
+      name, address, avatar, hasAddress: !!address, isAll: id === 'all', isAccount: id !== 'all',
+      selected: id === scope ? 'true' : undefined,
+      go: (e) => { stop(e); closeAll(); go(target(id, served(active, id) ? active : 'overview')); }
+    });
+    const link = (id, label, icon) => ({
+      label, icon,
+      current: id === active ? 'page' : undefined,
+      iconClass: id === active ? 'text-neutral-800' : 'text-neutral-300',
+      go: (e) => { stop(e); closeAll(); go(target(scope, id)); }
+    });
+    const links = [link('overview', 'Dashboard', 'APP_DASHBOARD')];
+    if (served('proposals', scope)) links.push(link('proposals', 'Proposals', 'APP_PROPOSALS'));
+    links.push(link('transactions', 'Transactions', 'APP_TRANSACTIONS'), link('assets', 'Assets', 'APP_ASSETS'), link('members', 'Members', 'APP_MEMBERS'));
+    if (scope !== 'all' && served('permissions', scope)) links.push(link('permissions', 'Permissions', 'APP_PERMISSIONS'));
+    if (scope !== 'all' && served('settings', scope)) links.push(link('settings', 'Settings', 'SETTINGS'));
+    // badge = the rows the to-do pages list: todoRows, computed by the shell (a row has acct = the account id it belongs to)
+    const rows = Array.isArray(p.todoRows) ? p.todoRows : [];
+    const counts = { all: rows.length, meridian: 0, atlas: 0, northstar: 0, safe: 0 };
+    rows.forEach((r) => { if (counts[r.acct] !== undefined) counts[r.acct] += 1; });
+    Object.assign(counts, p.todos || {});
+    const count = counts[scope] || 0;
+    const todos = Object.assign(link('todos', 'To-dos', 'CHECKMARK'), { count: String(count), hasCount: count > 0 });
+    // Built with createElement because both are props that take elements. networkBadge: the network logo as a plain img (the kit sizes it).
+    // The stack takes the four accounts' avatars as the app's accountAvatars does (DaoAvatar each, Safe logo as the src); four, so the stack steps down to xs and shows two plus "+2".
+    const h = window.React.createElement;
+    const netBadge = h('img', { src: 'assets/networks/ethereum.svg', alt: 'Ethereum', title: 'Ethereum', className: 'object-cover' });
+    const stackAvatars = accounts.map((a) => h(GovUiKit.DaoAvatar, { key: a.id, name: a.name, src: a.avatar }));
+    const userClick = (e) => { stop(e); closeAll(); if (typeof p.onUser === 'function') p.onUser(); };
+    const connectClick = (e) => { stop(e); closeAll(); if (typeof p.onConnect === 'function') p.onConnect(); };
+    return {
+      yes: true, stop,
+      connected, disconnected: !connected,
+      user: connected ? { address: '0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A', name: 'nadia.eth', short: '0x9CB2…D98A' } : undefined,
+      connectClick, userClick, walletClick: (e) => { if (connected) userClick(e); else connectClick(e); },
+      navOpen: this.state.navOpen,
+      openNav: (e) => { stop(e); this.setState({ navOpen: true, menu: '' }); },
+      rootProps: { onOpenAutoFocus: (e) => e.preventDefault(), onOpenChange: (o) => { if (!o) this.setState({ navOpen: false, menu: '' }); } },
+      menuWs: this.state.menu === 'ws', menuAcct: this.state.menu === 'acct',
+      chevronWsClass: 'shrink-0 ws-chevron' + (this.state.menu === 'ws' ? ' ws-chevron--open' : ''),
+      chevronAcctClass: 'shrink-0 ws-chevron' + (this.state.menu === 'acct' ? ' ws-chevron--open' : ''),
+      toggleWs: (e) => { stop(e); this.setState({ menu: this.state.menu === 'ws' ? '' : 'ws' }); },
+      toggleAcct: (e) => { stop(e); this.setState({ menu: this.state.menu === 'acct' ? '' : 'acct' }); },
+      closeMenu: (e) => { stop(e); this.setState({ menu: '' }); },
+      current, netBadge, stackAvatars,
+      options: [option('all', 'All accounts', '', undefined)].concat(accounts.map((a) => option(a.id, a.name, a.address, a.avatar))),
+      links, todos
+    };
+  }
+}
+</script>
+</body>
+</html>

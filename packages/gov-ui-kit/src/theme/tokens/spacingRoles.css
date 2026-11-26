@@ -1,0 +1,227 @@
+/*
+ * Spacing roles: `<family>-<name>` sets one property from the `--guk-space-<dimension>-<name>` variables
+ * (src/theme/tokens/spacing/, the app's in design-system/tokens/app/) and, through the `md` variant of the build that
+ * compiles it, from `--guk-space-md-<dimension>-<name>`: a container query on the app column in the app. A padding or
+ * margin reads its axis (`x`, `y`: an inset or a size's padding), then the gaps; `h-`, `min-h-` and `w-` read a size's
+ * height. A value without such a variable falls through to Tailwind's own utility (`p-4`, `gap-0`, `h-full`).
+ * Order: a utility declares its property twice (base and md), so it sorts before a raw class of the same property, which
+ * wins over it at every width (scripts/tokens/generate.test.mjs checks); between two roles the later name wins.
+ */
+
+@utility p-* {
+    padding: --value(--guk-space-y-*) --value(--guk-space-x-*);
+
+    @variant md {
+        padding: --value(--guk-space-md-y-*) --value(--guk-space-md-x-*);
+    }
+}
+
+@utility px-* {
+    padding-inline: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-inline: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility py-* {
+    padding-block: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-block: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility pt-* {
+    padding-top: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-top: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility pb-* {
+    padding-bottom: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-bottom: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility pl-* {
+    padding-left: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-left: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility pr-* {
+    padding-right: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-right: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility ps-* {
+    padding-inline-start: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        padding-inline-start: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility mx-* {
+    margin-inline: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-inline: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility my-* {
+    margin-block: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-block: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility mt-* {
+    margin-top: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-top: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility mb-* {
+    margin-bottom: --value(--guk-space-y-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-bottom: --value(--guk-space-md-y-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility ml-* {
+    margin-left: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-left: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility mr-* {
+    margin-right: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-right: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility ms-* {
+    margin-inline-start: --value(--guk-space-x-*, --guk-space-gap-*);
+
+    @variant md {
+        margin-inline-start: --value(--guk-space-md-x-*, --guk-space-md-gap-*);
+    }
+}
+
+@utility gap-* {
+    gap: --value(--guk-space-gap-*);
+
+    @variant md {
+        gap: --value(--guk-space-md-gap-*);
+    }
+}
+
+@utility gap-x-* {
+    column-gap: --value(--guk-space-gap-*);
+
+    @variant md {
+        column-gap: --value(--guk-space-md-gap-*);
+    }
+}
+
+@utility gap-y-* {
+    row-gap: --value(--guk-space-gap-*);
+
+    @variant md {
+        row-gap: --value(--guk-space-md-gap-*);
+    }
+}
+
+@utility space-x-* {
+    :where(& > :not(:last-child)) {
+        --tw-space-x-reverse: 0;
+        margin-inline-start: calc(
+            --value(--guk-space-gap-*) *
+            var(--tw-space-x-reverse)
+        );
+        margin-inline-end: calc(
+            --value(--guk-space-gap-*) *
+            calc(1 - var(--tw-space-x-reverse))
+        );
+
+        @variant md {
+            margin-inline-start: calc(
+                --value(--guk-space-md-gap-*) *
+                var(--tw-space-x-reverse)
+            );
+            margin-inline-end: calc(
+                --value(--guk-space-md-gap-*) *
+                calc(1 - var(--tw-space-x-reverse))
+            );
+        }
+    }
+}
+
+@utility space-y-* {
+    :where(& > :not(:last-child)) {
+        --tw-space-y-reverse: 0;
+        margin-block-start: calc(
+            --value(--guk-space-gap-*) *
+            var(--tw-space-y-reverse)
+        );
+        margin-block-end: calc(
+            --value(--guk-space-gap-*) *
+            calc(1 - var(--tw-space-y-reverse))
+        );
+
+        @variant md {
+            margin-block-start: calc(
+                --value(--guk-space-md-gap-*) *
+                var(--tw-space-y-reverse)
+            );
+            margin-block-end: calc(
+                --value(--guk-space-md-gap-*) *
+                calc(1 - var(--tw-space-y-reverse))
+            );
+        }
+    }
+}
+
+@utility h-* {
+    height: --value(--guk-space-height-*);
+
+    @variant md {
+        height: --value(--guk-space-md-height-*);
+    }
+}
+
+@utility min-h-* {
+    min-height: --value(--guk-space-height-*);
+
+    @variant md {
+        min-height: --value(--guk-space-md-height-*);
+    }
+}
+
+@utility w-* {
+    width: --value(--guk-space-height-*);
+
+    @variant md {
+        width: --value(--guk-space-md-height-*);
+    }
+}

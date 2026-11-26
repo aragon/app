@@ -59,7 +59,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             <RadixCheckbox.Root
                 checked={checked}
                 className={classNames(
-                    'group/checkbox peer cursor-pointer rounded-md focus-ring-primary disabled:cursor-default',
+                    'group/checkbox peer cursor-pointer rounded-md ring-accent-focus focus-ring disabled:cursor-default',
                 )}
                 disabled={disabled}
                 id={randomId}
@@ -69,13 +69,13 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             >
                 <Icon
                     className={classNames(
-                        'hidden text-neutral-400 group-data-[state=unchecked]/checkbox:block',
-                        'group-hover/root:text-primary-400 group-data-disabled/checkbox:text-neutral-300',
+                        'hidden icon-surface-default-control group-data-[state=unchecked]/checkbox:block',
+                        'group-hover/root:icon-accent-hover group-data-disabled/checkbox:icon-surface-disabled',
                     )}
                     icon={IconType.CHECKBOX}
                     size="md"
                 />
-                <RadixCheckbox.Indicator className="text-primary-400 group-data-disabled/checkbox:text-neutral-300">
+                <RadixCheckbox.Indicator className="icon-accent-selected group-data-disabled/checkbox:icon-surface-disabled">
                     <Icon
                         className="hidden group-data-[state=checked]/checkbox:block"
                         icon={IconType.CHECKBOX_SELECTED}
@@ -90,9 +90,9 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             </RadixCheckbox.Root>
             <label
                 className={classNames(
-                    'cursor-pointer text-sm leading-tight font-normal text-neutral-500 md:text-base',
-                    'group-hover/root:text-neutral-800',
-                    'peer-data-disabled:cursor-default peer-data-disabled:text-neutral-500 peer-data-[state=unchecked]:peer-data-disabled:text-neutral-300',
+                    'cursor-pointer type-label-option text-surface-default',
+                    'group-hover/root:text-surface-hover-label',
+                    'peer-data-disabled:cursor-default peer-data-disabled:text-surface-default peer-data-[state=unchecked]:peer-data-disabled:text-surface-disabled',
                     { 'pl-control-sm--8-12': labelPosition === 'right' },
                     { 'pr-control-sm--8-12': labelPosition === 'left' },
                 )}

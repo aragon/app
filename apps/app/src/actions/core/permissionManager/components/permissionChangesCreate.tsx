@@ -196,7 +196,7 @@ export const PermissionChangesCreate: React.FC<
 
                     return (
                         <div
-                            className="flex flex-col gap-section rounded-xl border border-neutral-100 p-inset-surface"
+                            className="flex flex-col gap-section rounded-xl border border-surface-secondary p-inset-surface"
                             key={rowIds.current[rowIndex]}
                         >
                             <div className="flex flex-row items-start justify-between gap-related--fixed-8">
@@ -292,7 +292,7 @@ export const PermissionChangesCreate: React.FC<
                     );
                 })}
                 {rows.length === 0 && (
-                    <p className="text-neutral-500">
+                    <p className="text-surface-secondary">
                         {t(
                             'app.actions.core.permissionChangesCreate.emptyList',
                         )}

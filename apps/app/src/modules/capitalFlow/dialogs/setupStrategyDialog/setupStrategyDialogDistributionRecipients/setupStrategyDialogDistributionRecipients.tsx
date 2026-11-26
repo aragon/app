@@ -104,7 +104,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
                           }
                         : undefined
                 }
-                className="gap-related"
+                className="gap-related!"
                 helpText={t(
                     'app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText',
                 )}
@@ -126,7 +126,7 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<
             </InputContainer>
 
             <div className="flex items-center justify-between">
-                <span className="text-sm leading-tight font-normal text-neutral-500">
+                <span className="type-supporting--compact-meta text-surface-secondary">
                     {recipientsField.length}/{maxRecipients}
                 </span>
 

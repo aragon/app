@@ -23,6 +23,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
 }) => {
     const containerClassNames = classNames(
         'grid w-full', // Defaults
+        // biome-ignore lint/plugin/noPrimitiveSpacing: stacked empty state 24 px, 48 px from md: no role has this pair
         { 'grid-cols-1 justify-items-center p-6 text-center md:p-12': isStacked }, // Stacked
         { 'gap-group-stepped': isStacked && humanIllustration != null }, // Staked & Human illustration
         { 'grid-cols-[auto_64px] items-center gap-group px-inset-surface py-inset-surface--16-20': !isStacked }, // Horizontal
@@ -39,7 +40,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                         {...humanIllustration}
                     />
                 ) : (
-                    <div className="order-last flex aspect-square w-full max-w-20 items-center justify-center justify-self-end overflow-hidden rounded-full bg-neutral-50">
+                    <div className="order-last flex aspect-square w-full max-w-20 items-center justify-center justify-self-end overflow-hidden rounded-full bg-surface-secondary">
                         <IllustrationHuman className="w-full scale-[1.25]" {...humanIllustration} />
                     </div>
                 ))}
@@ -47,7 +48,8 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                 <IllustrationObject
                     className={classNames({
                         'h-auto w-full max-w-40': isStacked,
-                        'order-last h-auto w-full max-w-20 justify-self-end rounded-full bg-neutral-50': !isStacked,
+                        'order-last h-auto w-full max-w-20 justify-self-end rounded-full bg-surface-secondary':
+                            !isStacked,
                     })}
                     {...objectIllustration}
                 />
@@ -67,17 +69,17 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                     })}
                 >
                     <p
-                        className={classNames('leading-tight font-normal text-neutral-800', {
-                            'text-xl md:text-2xl': isStacked,
-                            'text-base md:text-lg': !isStacked,
+                        className={classNames('text-surface-primary', {
+                            'type-title-section': isStacked,
+                            'type-title-section--inline-empty-state': !isStacked,
                         })}
                     >
                         {heading}
                     </p>
                     <p
-                        className={classNames('leading-tight font-normal text-neutral-500', {
-                            'text-sm md:text-base': isStacked,
-                            'text-xs md:text-sm': !isStacked,
+                        className={classNames('text-surface-secondary', {
+                            'type-supporting': isStacked,
+                            'type-supporting--inline-empty-state': !isStacked,
                         })}
                     >
                         {description}

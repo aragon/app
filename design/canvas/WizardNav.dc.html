@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wizard navigation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<nav class="wizard-nav" aria-label="Wizard">
+  <div class="app-container wizard-nav__inner">
+    <div class="wizard-nav__lead">
+      <a class="wizard-nav__close" href="{{exitHref}}" aria-label="Exit wizard">
+        <x-import component-from-global-scope="GovUiKit.Icon" icon="CLOSE" size="md"></x-import>
+      </a>
+      <div class="wizard-nav__title">
+        <p class="wizard-nav__name">{{wizardName}}</p>
+        <sc-if value="{{hasDao}}" hint-placeholder-val="{{no}}">
+          <div class="wizard-nav__dao">
+            <x-import component-from-global-scope="GovUiKit.AddressOutput" address="{{daoAddress}}" label="{{daoName}}" copy="{{no}}" class-name="text-sm leading-tight text-nowrap text-neutral-500"></x-import>
+            <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{daoName}}" src="{{daoAvatar}}" size="sm"></x-import>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <x-import component-from-global-scope="GovUiKit.Wallet" user="{{user}}"></x-import>
+  </div>
+  <div class="wizard-nav__trailing">
+    <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-left="FEEDBACK" aria-label="Open support chat"></x-import>
+  </div>
+</nav>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"wizardName":{"editor":"text","default":"Create DAO"},"exitHref":{"editor":null},"daoName":{"editor":null},"daoAddress":{"editor":null},"daoAvatar":{"editor":null},"walletAddress":{"editor":null},"walletName":{"editor":null},"walletConnected":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":91}}'>
+// Top navigation of the full-page wizards (apps/app: modules/application/components/navigations/navigationWizard
+// inside shared/components/navigation/navigationContainer, trailing supportChat/supportChatTrigger.tsx).
+// Use it as the first child of `.app-page`, then `.wizard-main` (see app.css "Wizards"), then the Footer:
+//   <dc-import name="WizardNav" wizard-name="Create DAO" hint-size="100%,91px"></dc-import>
+// Props:
+//   wizardName    the wizard's name (layoutWizard `name`, e.g. "Create DAO", "Create proposal").
+//   exitHref      where the close button goes (default Explore.dc.html, the app's "/").
+//   daoName, daoAddress, daoAvatar
+//                 the DAO line under the name, shown by wizards opened inside a DAO (create proposal, create process);
+//                 leave daoAddress unset for create DAO / create workspace, which have no DAO.
+//   walletConnected  false draws the disconnected wallet button (Connect) instead of the connected account (default true).
+//   walletAddress, walletName
+//                 the connected wallet (default nadia.eth, the account of the wizard screenshots).
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    return {
+      no: false,
+      wizardName: p.wizardName ?? 'Create DAO',
+      exitHref: p.exitHref ?? 'Explore.dc.html',
+      hasDao: p.daoAddress != null,
+      daoName: p.daoName,
+      daoAddress: p.daoAddress,
+      daoAvatar: p.daoAvatar,
+      user: p.walletConnected === false ? undefined : {
+        address: p.walletAddress ?? '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a',
+        name: p.walletName ?? 'nadia.eth'
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

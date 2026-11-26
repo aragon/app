@@ -21,10 +21,10 @@ const dialogAlertVariantToIcon: Record<DialogAlertVariant, IconType> = {
 };
 
 const dialogAlertVariantToTitleClass: Record<DialogAlertVariant, string> = {
-    critical: 'text-critical-600',
-    info: 'text-info-600',
-    success: 'text-success-600',
-    warning: 'text-warning-600',
+    critical: 'text-critical-primary-title',
+    info: 'text-info-primary-title',
+    success: 'text-success-primary-title',
+    warning: 'text-warning-primary-title',
 };
 
 export const DialogAlertHeader: React.FC<IDialogAlertHeaderProps> = (props) => {
@@ -33,14 +33,11 @@ export const DialogAlertHeader: React.FC<IDialogAlertHeaderProps> = (props) => {
     const { variant } = useDialogAlertContext();
 
     const headerClassNames = classNames(
-        'flex w-full items-center gap-x-group rounded-t-xl px-inset-surface pt-inset-surface pb-inset-surface-flat--fixed-8 backdrop-blur-md gradient-neutral-50-transparent-to-b',
+        'flex w-full items-center gap-x-group rounded-t-xl px-inset-surface pt-inset-surface pb-inset-surface-flat--fixed-8 backdrop-blur-md gradient-surface-primary-to-b',
         className,
     );
 
-    const titleClassNames = classNames(
-        'flex-1 truncate text-lg leading-tight font-normal md:text-xl',
-        dialogAlertVariantToTitleClass[variant],
-    );
+    const titleClassNames = classNames('flex-1 truncate type-title-group', dialogAlertVariantToTitleClass[variant]);
 
     return (
         <div className={headerClassNames} {...otherProps}>

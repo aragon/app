@@ -44,9 +44,11 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
         <>
             <ExploreNav />
             <div
-                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-primary-400 pt-[72px] md:-mt-24 md:pt-24"
+                // biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them
+                className="relative mt-[-72px] flex flex-col items-center self-stretch bg-brand-solid pt-[72px] md:-mt-24 md:pt-24"
                 id="explore-page-hero"
             >
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them */}
                 <Container className="w-full py-10 md:px-6 md:py-12">
                     <Image
                         alt="Background Texture"
@@ -57,10 +59,10 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
 
                     <div className="relative flex flex-col items-start justify-center gap-related--fixed-8 self-stretch">
                         <div className="flex max-w-[720px] flex-col items-start gap-related--8-12 self-stretch">
-                            <h1 className="text-3xl leading-tight font-normal text-neutral-0 md:text-5xl">
+                            <h1 className="type-display text-accent-inverse">
                                 {t('app.explore.exploreDaosPage.hero.title')}
                             </h1>
-                            <h3 className="text-lg leading-normal font-normal text-primary-50 md:text-2xl">
+                            <h3 className="type-body--explore-hero text-accent-inverse-brand">
                                 {t('app.explore.exploreDaosPage.hero.subtitle')}
                             </h3>
                         </div>
@@ -71,11 +73,16 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
             {featuredDaos && (
                 <section
                     className={classNames(
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them
                         'flex flex-col gap-group-stepped pt-10 md:pt-16',
                     )}
                 >
                     <Container className="w-full">
-                        <Heading as="h2" className="self-stretch" size="h1">
+                        <Heading
+                            as="h2"
+                            className="self-stretch"
+                            typeClassName="type-title-section--explore"
+                        >
                             {t('app.explore.exploreDaosPage.section.featured')}
                         </Heading>
                     </Container>
@@ -95,6 +102,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                 </section>
             )}
 
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them */}
             <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-layout">
                     <ExploreSection

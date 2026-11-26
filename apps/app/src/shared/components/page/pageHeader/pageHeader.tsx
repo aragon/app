@@ -57,7 +57,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b from-neutral-0 to-neutral-50 pt-inset-page group-has-[[data-app-sidebar]]/app:bg-none',
+                'bg-gradient-to-b from-(--guk-gradient-surface-secondary) to-(--guk-gradient-surface-primary) pt-inset-page group-has-[[data-app-sidebar]]/app:bg-none',
                 className,
             )}
             {...otherProps}
@@ -66,10 +66,11 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 {breadcrumbs && (
                     <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />
                 )}
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: page header gaps from lg: no role has them */}
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col gap-section">
                         <div className="flex flex-col gap-y-related--8-12">
-                            <Heading size="h1">
+                            <Heading as="h1" typeClassName="type-title-page">
                                 {title != null &&
                                 addressUtils.isAddress(title) ? (
                                     <AddressOutput
@@ -88,7 +89,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     buttonLabelOpened={t(
                                         'app.shared.page.header.readLess',
                                     )}
-                                    className="text-base text-neutral-500 md:text-lg"
+                                    className="type-body--framework-leading text-surface-secondary"
                                     collapsedLines={2}
                                 >
                                     {description}
@@ -96,7 +97,8 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             )}
                         </div>
                         {stats != null && stats.length > 0 && (
-                            <div className="my-related flex flex-row gap-section lg:gap-10 xl:gap-16">
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: page header gaps from lg: no role has them
+                            <div className="flex flex-row gap-section py-related lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
                                     <PageHeaderStat
                                         key={stat.label}

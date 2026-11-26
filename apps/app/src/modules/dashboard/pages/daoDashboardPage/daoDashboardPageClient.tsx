@@ -131,7 +131,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                     'app.dashboard.daoDashboardPage.aside.details.chain',
                                 )}
                             >
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {networkDefinition?.name}
                                 </p>
                             </DefinitionList.Item>

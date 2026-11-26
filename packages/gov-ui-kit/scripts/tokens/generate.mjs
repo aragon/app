@@ -1,273 +1,82 @@
 #!/usr/bin/env node
-// The one token generator. It reads the DTCG 2025.10 token source in design-system/tokens/source/ and writes every
-// token CSS output:
+// The token generator. It reads the DTCG 2025.10 token source in design-system/tokens/source/ and writes:
 //
-// - src/theme/tokens/primitives/*.css   the kit's primitive CSS (Tailwind `@theme` blocks) and its barrel
-// - src/theme/tokens/semantic/colors.css   the semantic colour layer (three value sets and its utilities)
-// - src/theme/tokens/spacing.css   the semantic spacing layer (roles, component sizes, exceptions and their utilities)
-//   and src/core/types/spacingStyles.ts (the names as TypeScript lists)
-// - .design-sync/generated/govkit-primitives.css   the app's flattened artifact (primitives plus the app overrides)
+// - src/theme/tokens/<layer>/*.css      the kit's token CSS (Tailwind `@theme` blocks) and a barrel, per layer; a
+//                                       layer's `dir` puts them elsewhere (design-system/tokens/app/: app-only tokens)
+// - design-system/tokens/preview/*.css  the preview modes: the tokens each mode changes (not in the npm package)
+// - the token source itself, normalised: every colour carries the `hex` of its components
 //
-// The semantic colour layer is optional: it is generated when the source has `semantic.config.json`, which then
-// requires `palette.tokens.json` and every mode file the config names. Without it the source is primitives only and
-// the semantic output is not written; a palette or mode file without the config is an error, not ignored.
-// The spacing layer follows the same rule with `spacing.config.json` and its three token files.
+// The default theme is every `*.tokens.json` directly in the source folder; every `*.config.json` there is a layer,
+// which lays out the tokens of the `*.tokens.json` of the same name.
 //
-// Usage: `node scripts/tokens/generate.mjs [--check | --report] [--source <dir>]`
-//   (none)    validate the source, write the outputs
-//   --check   validate the source, fail when an output on disk is stale (writes nothing)
-//   --report  validate the source, print the spacing tables and the semantic fallback / verified-value report
-//             (writes nothing)
-//   --source  read the source from another directory (a scratch copy), outputs stay in the repo
+// Usage: `node scripts/tokens/generate.mjs [--check]`
+//   (none)    validate the source, write the files
+//   --check   validate the source, fail when a file on disk is stale (writes nothing)
 // See design-system/tokens/README.md.
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderAppArtifact } from './lib/app.mjs';
-import { collectTokens, createSchemaValidator, mergeSets, readJson, resolveToken } from './lib/dtcg.mjs';
-import { primitiveFiles, renderPrimitives } from './lib/primitives.mjs';
-import { renderSemantic } from './lib/semantic.mjs';
-import { renderSpacing, spacingReport } from './lib/spacing.mjs';
+import { renderCss } from './lib/css.mjs';
+import { readJson, readTokens, tokenPaths, withColorHex } from './lib/dtcg.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const repoRoot = resolve(kitRoot, '../..');
 const defaultSourceDir = resolve(kitRoot, 'design-system/tokens/source');
-const SEMANTIC_OUTPUT = 'src/theme/tokens/semantic/colors.css';
-const SEMANTIC_CONFIG = 'semantic.config.json';
-const PALETTE = 'palette.tokens.json';
-const SPACING_CONFIG = 'spacing.config.json';
-const SPACING_FILES = {
-    roles: 'spacing.roles.tokens.json',
-    sizes: 'spacing.sizes.tokens.json',
-    exceptions: 'spacing.exceptions.tokens.json',
-};
 
-const fail = (message) => {
-    throw new Error(message);
-};
-
-// The semantic config, or null for a primitives-only source. Semantic token files without the config fail.
-const readSemanticConfig = (sourceDir) => {
-    const file = resolve(sourceDir, SEMANTIC_CONFIG);
-    if (existsSync(file)) {
-        return readJson(file);
-    }
-    const strays = readdirSync(sourceDir).filter(
-        (name) => name === PALETTE || /^semantic\..+\.tokens\.json$/.test(name),
-    );
-    if (strays.length > 0) {
-        fail(`${strays.join(', ')} without ${SEMANTIC_CONFIG}: add the config or remove the semantic files`);
-    }
-    return null;
-};
-
-// The spacing config, or null without a spacing layer. Spacing token files without the config fail.
-const readSpacingConfig = (sourceDir) => {
-    const file = resolve(sourceDir, SPACING_CONFIG);
-    if (existsSync(file)) {
-        return readJson(file);
-    }
-    const strays = readdirSync(sourceDir).filter((name) => /^spacing\..+\.tokens\.json$/.test(name));
-    if (strays.length > 0) {
-        fail(`${strays.join(', ')} without ${SPACING_CONFIG}: add the config or remove the spacing files`);
-    }
-    return null;
-};
-
-// Validates the whole source: every document against the published DTCG schema, every alias in every mode (missing
-// target, cycle, type mismatch), every resolved value against its own type. A primitives-only source is validated as
-// one view of the primitives.
-const loadSource = (sourceDir) => {
-    const validator = createSchemaValidator(resolve(sourceDir, 'schema/format.2025.10.json'));
-    const primitivesConfig = readJson(resolve(sourceDir, 'primitives.config.json'));
-    const semanticConfig = readSemanticConfig(sourceDir);
-    const spacingConfig = readSpacingConfig(sourceDir);
-    const modeNames = semanticConfig == null ? [] : Object.keys(semanticConfig.modes);
-    const documents = {
-        primitives: readJson(resolve(sourceDir, 'primitives.tokens.json')),
+// Every file the generator owns: absolute path -> text.
+export const generate = (sourceDir = defaultSourceDir) => {
+    const schema = readJson(resolve(sourceDir, 'schema/format.2025.10.json'));
+    const documents = new Map(); // file -> token document, as read
+    const document = (name) => {
+        const file = resolve(sourceDir, name);
+        return documents.get(file) ?? documents.set(file, readJson(file)).get(file);
     };
-    if (semanticConfig != null) {
-        documents.palette = readJson(resolve(sourceDir, PALETTE));
-        for (const [mode, { file }] of Object.entries(semanticConfig.modes)) {
-            documents[mode] = readJson(resolve(sourceDir, file));
-        }
-    }
-    const spacingDocuments = {};
-    for (const [key, file] of Object.entries(spacingConfig == null ? {} : SPACING_FILES)) {
-        spacingDocuments[key] = readJson(resolve(sourceDir, file));
-        validator.validateDocument(spacingDocuments[key], file);
-        for (const [path, entry] of collectTokens(spacingDocuments[key])) {
-            validator.validateValue(entry.type, entry.value, `${file}: ${path}`);
-        }
-    }
-    const entries = {};
-    for (const [label, document] of Object.entries(documents)) {
-        validator.validateDocument(document, label);
-        entries[label] = collectTokens(document);
-    }
-    const modes = Object.fromEntries(modeNames.map((mode) => [mode, entries[mode]]));
-    const views =
-        modeNames.length === 0
-            ? [['primitives', entries.primitives]]
-            : modeNames.map((mode) => [
-                  mode,
-                  mergeSets({ primitives: entries.primitives, palette: entries.palette, [mode]: entries[mode] }),
-              ]);
-    for (const [label, view] of views) {
-        for (const [path, entry] of view) {
-            validator.validateValue(entry.type, resolveToken(view, path).value, `${label}: ${path}`);
-        }
-    }
-    return {
-        primitives: entries.primitives,
-        palette: entries.palette,
-        modes,
-        primitivesConfig,
-        semanticConfig,
-        spacingConfig,
-        spacingDocuments,
-        validateDimension: (value, label) => validator.validateValue('dimension', value, label),
-        cssDir: resolve(sourceDir, 'css'),
-    };
+    const suffixed = (suffix) =>
+        readdirSync(sourceDir)
+            .filter((name) => name.endsWith(suffix))
+            .sort()
+            .map((name) => [name.slice(0, -suffix.length), name]);
+    const defaults = suffixed('.tokens.json').map(([, name]) => document(name));
+    const css = renderCss({
+        tokens: readTokens(schema, defaults),
+        layers: Object.fromEntries(
+            suffixed('.config.json').map(([layer, name]) => [layer, readJson(resolve(sourceDir, name))]),
+        ),
+        documentPaths: (name) => tokenPaths(document(name)),
+        modeTokens: (names) => readTokens(schema, defaults, names.map(document)),
+    });
+    return new Map([
+        ...[...documents].map(([file, json]) => [file, `${JSON.stringify(withColorHex(json), null, 4)}\n`]),
+        ...[...css].map(([file, text]) => [resolve(kitRoot, file), text]),
+    ]);
 };
 
-// Every output: repo-relative path -> text. `semantic` also carries the report data (null without a semantic layer).
-export const generateAll = ({ sourceDir = defaultSourceDir } = {}) => {
-    const source = loadSource(sourceDir);
-    const { bodies, varOf } = renderPrimitives({
-        tokens: source.primitives,
-        config: source.primitivesConfig,
-        cssDir: source.cssDir,
+// The files whose copy on disk is missing or differs.
+export const staleFiles = (files) =>
+    [...files.keys()].filter((file) => {
+        try {
+            return readFileSync(file, 'utf8') !== files.get(file);
+        } catch {
+            return true;
+        }
     });
-    // The app artifact writes multi-value declarations (shadow layers, the font stack) on one line.
-    const { bodies: flatBodies } = renderPrimitives({
-        tokens: source.primitives,
-        config: source.primitivesConfig,
-        cssDir: source.cssDir,
-        flat: true,
-    });
-    const outputs = new Map();
-    for (const [file, text] of primitiveFiles(bodies)) {
-        outputs.set(relative(repoRoot, resolve(kitRoot, file)), text);
-    }
-    const semantic =
-        source.semanticConfig == null
-            ? null
-            : renderSemantic({
-                  kitRoot,
-                  outputFile: resolve(kitRoot, SEMANTIC_OUTPUT),
-                  palette: source.palette,
-                  primitives: source.primitives,
-                  modes: source.modes,
-                  config: source.semanticConfig,
-                  varOf,
-                  fail,
-              });
-    if (semantic != null) {
-        outputs.set(relative(repoRoot, resolve(kitRoot, SEMANTIC_OUTPUT)), semantic.css);
-    }
-    const spacing =
-        source.spacingConfig == null
-            ? null
-            : renderSpacing({
-                  kitRoot,
-                  config: source.spacingConfig,
-                  documents: source.spacingDocuments,
-                  validateDimension: source.validateDimension,
-                  fail,
-              });
-    if (spacing != null) {
-        // Every exception is a documented entry: the decisions file must list it (its table comes from --report).
-        // Checked for the repository source only: a scratch source (--source, the tests) may hold trial exceptions.
-        const decisions = resolve(kitRoot, 'design-system/tokens/spacing.decisions.md');
-        if (sourceDir === defaultSourceDir && existsSync(decisions)) {
-            const text = readFileSync(decisions, 'utf8');
-            const missing = spacing.exceptionNames.filter((name) => !text.includes(`| ${name} |`));
-            if (missing.length > 0) {
-                fail(
-                    `spacing.decisions.md does not list the exceptions ${missing.join(', ')} (paste \`pnpm tokens:report\`)`,
-                );
-            }
-        }
-        outputs.set(relative(repoRoot, resolve(kitRoot, source.spacingConfig.output)), spacing.css);
-        outputs.set(relative(repoRoot, resolve(kitRoot, source.spacingConfig.typesOutput)), spacing.ts);
-    }
-    const app = source.primitivesConfig.app;
-    outputs.set(app.output, renderAppArtifact({ bodies: flatBodies, appConfig: app, repoRoot }));
-    return { outputs, semantic, spacing, source };
-};
-
-const report = ({ semantic, spacing, source }) => {
-    if (spacing != null) {
-        const { text, unused } = spacingReport({ spacing, repoRoot });
-        console.log(`${text}\n`);
-        if (unused.length > 0) {
-            process.exitCode = 1;
-        }
-    }
-    if (semantic == null) {
-        console.log(`no semantic layer (no ${SEMANTIC_CONFIG} in the source): nothing to report`);
-        return source;
-    }
-    const { tokens, utilities, paletteHex, fallbacks } = semantic;
-    const verified = [...tokens.values()].filter((token) => token.today.extensions?.evidence != null);
-    console.log(`${tokens.size} tokens, ${utilities.length} utilities, ${paletteHex.size} palette entries`);
-    console.log(`today: ${verified.length} verified from code, ${fallbacks.length} by fallback (unverified)`);
-    console.log('\nFallback today values (token | designer light | today | note):');
-    for (const f of fallbacks) {
-        console.log(`${f.name} | ${f.figma} | ${f.parity} | ${f.note}`);
-    }
-    console.log('\nVerified today values (token | value | evidence):');
-    for (const [name, token] of tokens) {
-        const { extensions, value } = token.today;
-        if (extensions?.evidence != null) {
-            const shown = typeof value === 'string' ? value : (extensions.mix?.of ?? JSON.stringify(value));
-            console.log(
-                `${name} | ${shown} | ${extensions.evidence}${extensions.conflict ? ` | CONFLICT: ${extensions.conflict}` : ''}`,
-            );
-        }
-    }
-    return source;
-};
 
 if (import.meta.main) {
-    const args = process.argv.slice(2);
-    const sourceIndex = args.indexOf('--source');
-    const sourceDir = sourceIndex === -1 ? undefined : resolve(args[sourceIndex + 1]);
-    const mode = args.find((arg) => arg === '--check' || arg === '--report');
     try {
-        const generated = generateAll({ sourceDir });
-        if (mode === '--report') {
-            report(generated);
-        } else if (mode === '--check') {
-            const stale = [...generated.outputs]
-                .filter(([file, text]) => {
-                    try {
-                        return readFileSync(resolve(repoRoot, file), 'utf8') !== text;
-                    } catch {
-                        return true;
-                    }
-                })
-                .map(([file]) => file);
+        const files = generate();
+        const stale = staleFiles(files);
+        if (process.argv.includes('--check')) {
             if (stale.length > 0) {
-                throw new Error(
-                    `stale generated files: ${stale.join(', ')}. Run \`pnpm tokens:generate\` and commit the result.`,
-                );
+                const names = stale.map((file) => relative(kitRoot, file)).join(', ');
+                throw new Error(`stale files: ${names}. Run \`pnpm tokens:generate\`.`);
             }
-            const { semantic, spacing } = generated;
-            console.log(
-                `tokens: ok${spacing == null ? '' : ` (spacing: ${spacing.utilities.length} utilities, ${spacing.exceptions.size} exceptions)`} (${generated.outputs.size} files up to date, ${semantic == null ? 'no semantic layer' : `${semantic.tokens.size} semantic tokens, ${semantic.utilities.length} utilities`})`,
-            );
+            console.log(`tokens: ok (${files.size} files up to date)`);
         } else {
-            for (const [file, text] of generated.outputs) {
-                mkdirSync(dirname(resolve(repoRoot, file)), { recursive: true });
-                writeFileSync(resolve(repoRoot, file), text);
+            for (const file of stale) {
+                mkdirSync(dirname(file), { recursive: true });
+                writeFileSync(file, files.get(file));
             }
-            const { semantic } = generated;
-            console.log(
-                `tokens: wrote ${generated.outputs.size} files (${semantic == null ? 'no semantic layer' : `${semantic.tokens.size} semantic tokens`})`,
-            );
+            console.log(`tokens: ${files.size} files, ${stale.length} written`);
         }
     } catch (error) {
         console.error(`tokens: ${error.message}`);

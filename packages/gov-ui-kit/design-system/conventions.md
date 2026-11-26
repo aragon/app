@@ -2,14 +2,14 @@
 
 This design system is `@aragon/gov-ui-kit`, built from `packages/gov-ui-kit` in the
 `aragon/app` repository (`packages/gov-ui-kit/design-system/SYNC.md` describes the sync).
-Previews are the kit's own Storybook stories. Font: **Manrope** (bundled). How the Aragon
+Live examples of every component are in the kit's Storybook, https://uikit.aragon.org; this system carries no previews. Font: **Manrope** (bundled). How the Aragon
 App composes these components (forms, wizards, dialogs, copy) is documented in the App, at
 `apps/app/docs/projectDocs/formsAndWizards.md`.
 
 ## Source of truth
 
 When sources disagree, trust them in this order: the component's `.d.ts` and the compiled
-bundle, then its preview (its Storybook story), then its **Usage notes**, then this guide.
+bundle, then its Storybook story, then its **Usage notes**, then this guide.
 Kit source, stories and tests live under `packages/gov-ui-kit/src/core` and
 `packages/gov-ui-kit/src/modules`.
 
@@ -53,20 +53,14 @@ build:
 
 | Family | Utilities |
 |---|---|
-| Background | `bg-primary-{50,300,400,500}`, `bg-neutral-{0,50,100,200,300,400,800}`, `bg-info-{100,200,300,500}`, `bg-success-{100…500}`, `bg-warning-{100…500}`, `bg-critical-{100,200,300,500}` |
-| Text | `text-primary-{300,400}`, `text-neutral-{0,50,200,300,400,500,600,800,900}`, `text-{info,success,warning,critical}-{500,600,800,900}` |
-| Border | `border-primary-{100,300,400}`, `border-neutral-{0,100,200,300}`, `border-{info,success}-{300,400}`, `border-{warning,critical}-{300…600}` |
+| Colour | Role classes `<family>-<group>-<role>`: families `bg`, `text`, `icon`, `border`; groups `surface`, `accent`, `brand`, `link`, `success`, `warning`, `critical`, `info`. For example `bg-surface-primary`, `text-surface-secondary`, `border-surface-default`, `icon-accent-primary`. Only the roles the kit uses are in `build.css`; check it before relying on one. Palette classes (`bg-neutral-0`) are not the idiom. |
 | Radius | `rounded-none/md/lg/xl/2xl/3xl/full`; `rounded-xl` is the 12px card radius. No `rounded-sm`. |
-| Shadows | `shadow-none`, `shadow-neutral{,-sm,-md,-lg}`, `shadow-primary{,-sm,-lg,-xl}`, `shadow-info{,-md}`, `shadow-success{,-sm,-md}`, `shadow-warning{,-sm,-md}`, `shadow-critical{,-sm,-md}`. No `shadow-sm`. |
+| Shadows | `shadow-surface-{sm,default,md}`, `shadow-accent-{sm,default}`, `shadow-{success,warning,critical,info}-{sm,default,md}`, `shadow-none`. No `shadow-sm`. |
 | Type | `text-xs/sm/base/lg/xl/2xl/3xl`, `font-normal/semibold`; headings via `Heading` |
 | Spacing | Common `p-*`/`gap-*` steps; check `build.css` before relying on a less common one (`space-y-2` exists only as `md:space-y-2`). |
 
-Token custom properties are `--color-*`, `--radius-*` and `--guk-*`. For a colour with no
-utility above, use its token in `style` (`style={{ color: 'var(--color-primary-600)' }}`).
-Colour scales defined in `build.css`: primary 50–900; neutral 0, 50–600, 800, 900; info,
-success, warning and critical 100–600, 800, 900. The kit source defines every `-700`, but
-`build.css` compiles only `primary-700`. Icons: `<Icon icon={IconType.PLUS} />`; icons
-inherit `currentColor`.
+Token custom properties are `--color-*`, `--radius-*` and `--guk-*`; like the classes, a
+variable is in `build.css` only when the kit's source uses it. Icons: `<Icon icon={IconType.PLUS} />`; icons inherit `currentColor`.
 
 ## Example
 

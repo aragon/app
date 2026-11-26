@@ -1,0 +1,1610 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Semantic spacing of the default theme: the roles (`role`: an inset with an `x` and a `y`, or a gap), the component sizes (`size`: a height, an `x` and `y` padding, a gap) and the exceptions (`exception.<role>--<pattern>`: a place that keeps its own value; the pattern spells it, phone then desktop, or `fixed-<n>`). Each value has a `base` and an `md` (from the md breakpoint).",
+    "space": {
+        "$type": "dimension",
+        "role": {
+            "inset-tight": {
+                "$description": "Padding of a small inline box: a chip that is not a Tag, code, a tooltip, a compact popover menu, an icon wrapper.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item": {
+                "$description": "Padding of one item among peers that steps up on desktop: data list rows, accordion headers and bodies, selectable cards, definition list rows.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item-flat": {
+                "$description": "Padding of one item among peers that keeps one size at every width: menu items, list rows inside menus and pickers, compact rows.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface": {
+                "$description": "Padding of a standalone surface that steps up on desktop: card, panel, dialog header, body and footer, alert, empty state.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat": {
+                "$description": "Padding of a small standalone surface that keeps one size: popovers, menus, compact cards and boxes.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide": {
+                "$description": "Padding of a large panel, 24 px at every width: aside cards, settings panels.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-flush": {
+                "$description": "Padding that only spaces siblings: a text line or wrapper with no background, border or click target.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-tight": {
+                "$description": "Between the parts of one element: icon and label, title and subtitle lines, value and unit, items of one inline cluster.",
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase": {
+                "$description": "Between the inline text fragments of one phrase laid out as flex children: a value and its unit, a count and its noun, a label and its status. Word spacing, not layout.",
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related": {
+                "$description": "Between the parts of one item or field: label and field, avatar and its text block, item header and its lines, a field and its action.",
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group": {
+                "$description": "Between peers that keep one gap at every width: items of a list, fields of a form, buttons of a group, a card title row and its content.",
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped": {
+                "$description": "Between peers that space out on desktop: card grids, page-level lists, form sections inside a page.",
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section": {
+                "$description": "Between the sections of a dialog, an aside or a wizard step (24 px at every width).",
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide": {
+                "$description": "Between the main sections of a page and its large blocks (40 px at every width).",
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-nav-item": {
+                "$description": "Navigation chrome: padding of a navigation link, a nav group label, the account and workspace pickers of the sidebar.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar": {
+                "$description": "Navigation chrome: padding of the top and mobile header bars and the mobile nav menu.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-nav-tight": {
+                "$description": "Navigation chrome: between the parts of one nav element (icon and label, the links of one group).",
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related": {
+                "$description": "Navigation chrome: between the parts of one nav block (header bar items, footer lines, sidebar header rows).",
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group": {
+                "$description": "Navigation chrome: between nav groups and blocks of the sidebar.",
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section": {
+                "$description": "Navigation chrome: between the top-level parts of the sidebar (header, links, footer).",
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            }
+        },
+        "size": {
+            "control-sm": {
+                "$description": "Small control: Button sm, icon buttons, toggle-group buttons on phone.",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-md": {
+                "$description": "Default control: Button md, toggle-group buttons from md, icon-only Button.",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg": {
+                "$description": "Large control and every text field: Button lg, InputContainer, select, tab trigger block padding.",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 48,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 48,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "tag": {
+                "$description": "Tag and badge pill (not a target).",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-label": {
+                "$description": "Inline padding of the label inside a Button.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item": {
+                "$description": "Block padding of a target laid out as an item that steps up on desktop: accordion headers, data list action rows, choice cards.",
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item-flat": {
+                "$description": "Block padding of a target laid out as an item that keeps one size: menu items and options.",
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "exception": {
+            "control-item--12-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-10": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-md--8-12": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--8-12": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-group--12-16": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group--fixed-20": {
+                "base": {
+                    "$value": {
+                        "value": 20,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 20,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped--16-20": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 20,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped--16-24": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped--20-24": {
+                "base": {
+                    "$value": {
+                        "value": 20,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-10": {
+                "base": {
+                    "$value": {
+                        "value": 10,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 10,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-32": {
+                "base": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-tight--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--4-6": {
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--12-16": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--8-10": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 10,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--8-12": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--8-16": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--fixed-10": {
+                "base": {
+                    "$value": {
+                        "value": 10,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 10,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section--24-28": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 28,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section--24-32": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section--fixed-24": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section--fixed-32": {
+                "base": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--2-4": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--4-6": {
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--4-8": {
+                "base": {
+                    "$value": {
+                        "value": 4,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--0-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item--12-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item--12-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item--16-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item-flat--fixed-12": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item-flat--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface--12-20": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface--12-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface--16-20": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface--16-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--8-12": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--4-2": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 2,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--6-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--fixed-4": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--fixed-6": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--fixed-8": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -70,12 +70,12 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
         <div className="flex w-full flex-col gap-related">
             <div className="flex flex-col gap-group">
                 <div className="flex flex-col gap-tight">
-                    <p className="text-lg leading-tight font-normal text-neutral-800">
+                    <p className="type-title-item--unstepped text-surface-primary">
                         {t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.label',
                         )}
                     </p>
-                    <p className="text-base leading-normal font-normal text-neutral-500">
+                    <p className="type-body--unstepped text-surface-secondary">
                         {t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.helpText',
                         )}
@@ -100,7 +100,7 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
                 </div>
 
                 <div className="flex items-center">
-                    <p className="flex-1 text-sm leading-tight font-normal text-neutral-500">
+                    <p className="flex-1 type-supporting--compact-meta text-surface-secondary">
                         {t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.counter',
                             {

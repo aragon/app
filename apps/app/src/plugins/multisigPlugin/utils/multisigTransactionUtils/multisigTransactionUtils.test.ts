@@ -257,4 +257,51 @@ describe('multisigTransaction utils', () => {
             );
         });
     });
+
+    describe('buildCreateDaoPluginSettings', () => {
+        const a1 = '0x1111111111111111111111111111111111111111';
+        const a2 = '0x2222222222222222222222222222222222222222';
+        const buildParams = () => ({
+            network: Network.ETHEREUM_SEPOLIA,
+            signers: [a1, a2] as Viem.Hex[],
+            minApprovals: 2,
+        });
+
+        beforeEach(() => {
+            encodeAbiParametersSpy.mockImplementation(
+                jest.requireActual<typeof Viem>('viem').encodeAbiParameters,
+            );
+        });
+
+        it('references the multisig setup repository of the network at its install version', () => {
+            const { pluginSetupRef } =
+                multisigTransactionUtils.buildCreateDaoPluginSettings(
+                    buildParams(),
+                );
+
+            expect(pluginSetupRef).toEqual({
+                pluginSetupRepo:
+                    multisigPlugin.repositoryAddresses[
+                        Network.ETHEREUM_SEPOLIA
+                    ],
+                versionTag: multisigPlugin.installVersion,
+            });
+        });
+
+        it('encodes the signers, approvals, the DAO as target and empty metadata', () => {
+            const params = buildParams();
+
+            const { data } =
+                multisigTransactionUtils.buildCreateDaoPluginSettings(params);
+
+            expect(
+                Viem.decodeAbiParameters(multisigPluginSetupAbi, data),
+            ).toEqual([
+                [a1, a2],
+                { onlyListed: true, minApprovals: 2 },
+                { target: Viem.zeroAddress, operation: 0 },
+                '0x',
+            ]);
+        });
+    });
 });

@@ -9,7 +9,7 @@ import { ProposalActionsDecoderBooleanField } from '../proposalActionsDecoderBoo
 import { ProposalActionsDecoderTextField } from '../proposalActionsDecoderTextField';
 import { proposalActionsDecoderUtils } from '../proposalActionsDecoderUtils';
 
-const nestedParameterHeaderClassName = 'font-normal text-base text-neutral-500 leading-tight md:text-lg';
+const nestedParameterHeaderClassName = 'type-label text-surface-secondary';
 
 export interface IProposalActionsDecoderFieldProps extends Pick<IProposalActionsDecoderProps, 'mode' | 'formPrefix'> {
     /**
@@ -49,13 +49,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
     const renderDeleteButton = (onClick?: () => void, size: 'lg' | 'sm' = 'lg', className?: string) =>
         onClick != null &&
         mode === ProposalActionsDecoderMode.EDIT && (
-            <Button
-                className={classNames('shrink-0', className)}
-                iconLeft={IconType.CLOSE}
-                onClick={onClick}
-                size={size}
-                variant="tertiary"
-            />
+            <Button className={className} iconLeft={IconType.CLOSE} onClick={onClick} size={size} variant="tertiary" />
         );
 
     if (!isNestedType) {
@@ -106,7 +100,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
             label={
                 hideLabels ? undefined : (
                     <>
-                        {name} <span className="text-neutral-500">({type})</span>
+                        {name} <span className="text-surface-secondary">({type})</span>
                     </>
                 )
             }
@@ -114,7 +108,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
         >
             <div
                 className={classNames('flex flex-col gap-group', {
-                    'rounded-xl border border-neutral-100 p-inset-surface-flat--fixed-16': isNestedType,
+                    'rounded-xl border border-surface-primary p-inset-surface-flat--fixed-16': isNestedType,
                 })}
             >
                 {/* Render text-field as hidden to register array field */}
@@ -161,6 +155,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
                                             parameter={parameter}
                                         />
                                     </div>
+                                    {/* biome-ignore lint/plugin/noPrimitiveSpacing: centres the small delete button on the large field ((48 - 32) / 2) */}
                                     {renderDeleteButton(removeArrayItem, 'sm', alignToInput ? 'mt-2' : undefined)}
                                 </div>
                             );

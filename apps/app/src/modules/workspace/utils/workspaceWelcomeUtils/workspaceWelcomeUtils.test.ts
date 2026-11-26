@@ -14,7 +14,7 @@ describe('workspaceWelcomeUtils', () => {
             expect(workspaceWelcomeUtils.isWelcomePending()).toBe(true);
         });
 
-        it('returns false once the welcome was acknowledged', () => {
+        it('returns false once the welcome was seen', () => {
             workspaceWelcomeUtils.markPendingWelcome();
             workspaceWelcomeUtils.markWelcomeSeen();
 
@@ -29,7 +29,7 @@ describe('workspaceWelcomeUtils', () => {
             expect(workspaceWelcomeUtils.isWelcomePending()).toBe(true);
         });
 
-        it('keeps an acknowledged welcome acknowledged', () => {
+        it('keeps a seen welcome seen', () => {
             workspaceWelcomeUtils.markWelcomeSeen();
 
             workspaceWelcomeUtils.markPendingWelcome();

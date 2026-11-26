@@ -15,19 +15,21 @@ export const Banner: React.FC<IBannerProps> = (props) => {
 
     return (
         <div
-            className={classNames('flex w-full bg-warning-100', className)}
+            className={classNames('flex w-full bg-warning-subtle', className)}
             {...otherProps}
         >
             <Container className="flex w-full grow flex-col justify-between gap-related py-inset-surface-wide lg:flex-row">
                 <div className="flex gap-x-related lg:items-center">
                     <Icon
-                        className="mt-1 text-warning-500 lg:mt-0"
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: icon nudge to the first text line and the action indent past the icon, until lg
+                        className="mt-1 icon-warning-primary lg:mt-0"
                         icon={IconType.WARNING}
                     />
-                    <p className="place-self-start text-warning-800 lg:self-center">
+                    <p className="place-self-start text-warning-primary lg:self-center">
                         {message}
                     </p>
                 </div>
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: icon nudge to the first text line and the action indent past the icon, until lg */}
                 <div className="ml-7 flex shrink-0 justify-start lg:ml-0 lg:justify-end">
                     {children}
                 </div>

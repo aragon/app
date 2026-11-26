@@ -41,13 +41,16 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'pointer-events-auto flex flex-col gap-related overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
+        // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
+        'pointer-events-auto flex flex-col gap-related overflow-hidden border-x border-accent-active bg-surface-primary shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
         {
+            // biome-ignore lint/plugin/noPrimitiveSpacing: the menu runs under the field it is attached to (the field height)
             'rounded-b-xl border-b pt-inset-tight--fixed-4 md:pb-12':
                 isBottomPlacement,
         },
         {
+            // biome-ignore lint/plugin/noPrimitiveSpacing: the menu runs under the field it is attached to (the field height)
             'rounded-t-xl border-t pb-inset-tight--fixed-4 md:pt-12':
                 !isBottomPlacement,
         },
@@ -55,7 +58,7 @@ export const AutocompleteInputMenu = forwardRef<
     );
 
     const footerClassName = classNames(
-        'absolute left-0 hidden w-full flex-row justify-between px-inset-surface-wide py-inset-surface-flat--fixed-16 text-base leading-tight font-normal backdrop-blur-md md:flex',
+        'absolute left-0 hidden w-full flex-row justify-between px-inset-surface-wide py-inset-surface-flat--fixed-16 type-control backdrop-blur-md md:flex',
         { 'bottom-0': isBottomPlacement },
         { 'top-0': !isBottomPlacement },
     );
@@ -80,14 +83,14 @@ export const AutocompleteInputMenu = forwardRef<
                             <div className="flex flex-row items-center gap-tight">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
                                 <KeyboardShortcut>↓</KeyboardShortcut>
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {t(
                                         'app.shared.autocompleteInput.menu.select',
                                     )}
                                 </p>
                             </div>
                             <div className="flex flex-row items-center gap-tight">
-                                <p className="text-neutral-500">
+                                <p className="text-surface-secondary">
                                     {selectItemLabel}
                                 </p>
                                 <KeyboardShortcut>↵</KeyboardShortcut>

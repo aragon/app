@@ -6,7 +6,6 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { ReactNode } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     type IWizardStepProps,
@@ -47,10 +46,6 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      * Disables the next button when set to true.
      */
     disableNext?: boolean;
-    /**
-     * Action rendered beside the submit button, e.g. skipping an optional step. It owns its own submit behaviour.
-     */
-    secondaryAction?: ReactNode;
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
@@ -61,7 +56,6 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         className,
         nextDropdownItems,
         disableNext = false,
-        secondaryAction,
         ...otherProps
     } = props;
 
@@ -87,8 +81,10 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         >
             <div className="flex flex-col gap-section-stepped--24-48">
                 <div className="flex flex-col gap-related--fixed-8">
-                    <Heading size="h1">{title}</Heading>
-                    <p className="text-base leading-normal font-normal text-neutral-500 md:text-lg">
+                    <Heading as="h1" typeClassName="type-title-page">
+                        {title}
+                    </Heading>
+                    <p className="type-body text-surface-secondary">
                         {description}
                     </p>
                 </div>
@@ -139,22 +135,19 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                                 )}
                             </Dropdown.Container>
                         ) : (
-                            <div className="flex items-center gap-related">
-                                {secondaryAction}
-                                <Button
-                                    disabled={disableNext}
-                                    iconRight={IconType.CHEVRON_RIGHT}
-                                    size="lg"
-                                    type="submit"
-                                    variant={submitVariant}
-                                >
-                                    {submitLabel}
-                                </Button>
-                            </div>
+                            <Button
+                                disabled={disableNext}
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                size="lg"
+                                type="submit"
+                                variant={submitVariant}
+                            >
+                                {submitLabel}
+                            </Button>
                         )}
                     </div>
                     {submitHelpText && (
-                        <p className="text-right text-sm leading-tight font-normal text-neutral-500">
+                        <p className="text-right type-supporting--compact-meta text-surface-secondary">
                             {submitHelpText}
                         </p>
                     )}

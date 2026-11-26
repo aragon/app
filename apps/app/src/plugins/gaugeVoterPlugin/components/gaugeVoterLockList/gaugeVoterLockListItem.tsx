@@ -281,7 +281,9 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-related--12-16">
                     <Avatar className="shrink-0" size="md" src={token.logo} />
-                    <Heading size="h4">ID: {lock.tokenId}</Heading>
+                    <Heading as="h4" typeClassName="type-title-item">
+                        ID: {lock.tokenId}
+                    </Heading>
                 </div>
 
                 <Tag
@@ -291,10 +293,10 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     variant={statusToVariant[status]}
                 />
             </div>
-            <hr className="border-neutral-100" />
-            <div className="grid grid-cols-3 gap-group text-base leading-tight text-neutral-800 md:text-lg">
+            <hr className="border-surface-secondary" />
+            <div className="grid grid-cols-3 gap-group type-supporting--row-value text-surface-primary">
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-secondary">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.locked',
                         )}
@@ -302,7 +304,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     <div className="truncate">{formattedLockedAmount}</div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-secondary">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.multiplier',
                         )}
@@ -312,7 +314,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     </div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-secondary">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.votingPower',
                         )}
@@ -355,7 +357,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                             )}
                         </Button>
                         {!canUnlock && (
-                            <p className="text-sm leading-normal text-neutral-500">
+                            <p className="type-body-compact--unstepped text-surface-secondary">
                                 {formattedMinLock}{' '}
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockList.item.minLockTimeLeftSuffix',
@@ -398,7 +400,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                                             : undefined;
 
                                     return (
-                                        <p className="text-sm leading-normal text-neutral-500">
+                                        <p className="type-body-compact--unstepped text-surface-secondary">
                                             {formattedMinCooldownDate}{' '}
                                             {t(
                                                 'app.plugins.gaugeVoter.gaugeVoterLockList.item.withdrawTimeLeftSuffix',

@@ -39,17 +39,17 @@ export const SupportChatLauncher: React.FC = () => {
         <div className="sticky bottom-6 z-10 h-0 self-end transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none starting:translate-y-2 starting:opacity-0">
             <button
                 aria-label={t('app.application.supportChat.launcher.label')}
-                className="group absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-control-md rounded-xl border border-primary-100 bg-neutral-0 whitespace-nowrap text-primary-400 shadow-primary-sm transition-all focus-ring-primary hover:border-primary-200 hover:bg-primary-50 hover:shadow-primary active:border-primary-400 active:bg-neutral-0 active:shadow-none md:w-auto md:px-control-md"
+                className="group absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-control-md rounded-xl border border-accent-default bg-accent-default-inverse whitespace-nowrap text-accent-default shadow-accent-sm ring-accent-focus focus-ring transition-all hover:border-accent-hover hover:bg-accent-hover-inverse hover:shadow-accent-default active:border-accent-active active:bg-accent-active-inverse active:shadow-none md:w-auto md:px-control-md"
                 onClick={open}
                 ref={buttonRef}
                 type="button"
             >
                 <Icon
-                    className="text-primary-300 transition-all group-hover:text-primary-400 group-active:text-primary-400"
+                    className="icon-accent-default transition-all group-hover:icon-accent-hover group-active:icon-accent-active"
                     icon={IconType.FEEDBACK}
                     size="md"
                 />
-                <span className="hidden text-base leading-tight md:inline">
+                <span className="hidden type-control md:inline">
                     {t('app.application.supportChat.launcher.label')}
                 </span>
             </button>

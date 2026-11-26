@@ -62,14 +62,14 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
     }
 
     return (
-        <Card inset="surface">
+        <Card className="p-inset-surface">
             <div className="flex flex-col gap-related--12-8">
                 <div className="flex flex-col gap-group-stepped md:flex-row md:items-start">
                     <div className="flex min-w-px flex-1 items-center justify-around gap-group--12-16 md:justify-start">
                         {pluginStats.map((stat, index) => (
                             <Fragment key={stat.label}>
                                 {index > 0 && (
-                                    <div className="h-11 w-px shrink-0 bg-neutral-100" />
+                                    <div className="h-11 w-px shrink-0 bg-surface-tertiary" />
                                 )}
                                 <PageHeaderStat {...stat} />
                             </Fragment>
@@ -87,10 +87,10 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                 </div>
                 {displayDisclaimer && (
                     <>
-                        <div className="my-related--fixed-8 hidden md:block">
-                            <div className="h-px w-full bg-neutral-100" />
+                        <div className="hidden py-related--fixed-8 md:block">
+                            <div className="h-px w-full bg-surface-tertiary" />
                         </div>
-                        <p className="text-center text-xs leading-normal text-neutral-400 md:text-left md:text-sm">
+                        <p className="text-center type-caption--definition-description text-surface-tertiary md:text-left">
                             {t('app.governance.delegationStatsCard.disclaimer')}
                         </p>
                     </>

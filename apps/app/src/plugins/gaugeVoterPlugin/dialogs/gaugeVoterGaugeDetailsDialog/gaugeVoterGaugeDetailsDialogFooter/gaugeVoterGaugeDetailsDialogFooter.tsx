@@ -54,7 +54,7 @@ export const GaugeVoterGaugeDetailsDialogFooter: React.FC<
                     'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.previous',
                 )}
             </Button>
-            <span className="text-sm text-neutral-500">
+            <span className="type-supporting--compact-detail text-surface-secondary">
                 {currentGaugeNumber} / {totalGauges}
             </span>
             <Button

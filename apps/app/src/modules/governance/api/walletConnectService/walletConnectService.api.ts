@@ -1,3 +1,4 @@
+import type { Network } from '@/shared/api/daoService';
 import type {
     ISession,
     ISessionEvent,
@@ -14,6 +15,10 @@ export interface IConnectAppParams {
      * Address of the connecting user.
      */
     address: string;
+    /**
+     * Network of the connecting user, the only chain offered to the dApp.
+     */
+    network: Network;
 }
 
 export interface IDisconnectAppParams {
@@ -29,12 +34,20 @@ export interface IApproveSessionParams {
      */
     address: string;
     /**
+     * Network of the connecting user, the only chain offered to the dApp.
+     */
+    network: Network;
+    /**
      * Proposed connection session to be approved.
      */
     sessionProposal: ISessionProposal;
 }
 
-export interface IHandleSessionProposalParams extends IApproveSessionParams {
+export interface IPendingConnection extends Omit<IConnectAppParams, 'uri'> {
+    /**
+     * Topic of the pairing created from the connection URI, used to match the dApp's session proposal.
+     */
+    pairingTopic: string;
     /**
      * Callback called with the initiated session.
      */

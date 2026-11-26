@@ -1,0 +1,2972 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Tokens only the app uses (DTCG 2025.10), default theme: component aliases of the semantic roles and typography exceptions that no kit component takes. app.config.json writes them to design-system/tokens/app/, which the app imports and the npm package does not ship.",
+    "semantic": {
+        "$type": "color",
+        "bg": {
+            "surface": {
+                "secondary-skeleton": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Skeleton bars and circles of the app (the kit skeletons take bg-surface-secondary). Component alias of bg-surface-secondary."
+                },
+                "hover-icon-button": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Assistant-chat ghost icon button, hover fill. Component alias of bg-surface-hover."
+                }
+            },
+            "body-sidebar": {
+                "$value": "{color.neutral.25}",
+                "$description": "Page background of the sidebar layout. Component alias of bg-body."
+            }
+        },
+        "border": {
+            "surface": {
+                "disabled-item": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Border of a disabled list item: workspace account item, process item. Component alias of border-surface-disabled."
+                },
+                "hover-graph-node": {
+                    "$value": "{color.primary.300}",
+                    "$description": "Permissions-graph node, hover border. Component alias of border-surface-hover."
+                },
+                "default-graph-node": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Permissions graph: unselected node border, idle edge. Component alias of border-surface-default."
+                },
+                "default-composer": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Assistant-chat composer border. Component alias of border-surface-default."
+                }
+            },
+            "accent": {
+                "primary-terminal": {
+                    "$value": "{color.primary.100}",
+                    "$description": "Gauge voting terminal border while voting. Component alias of border-accent-primary."
+                },
+                "primary-cta": {
+                    "$value": "{color.primary.200}",
+                    "$description": "Primary CTA card border. Component alias of border-accent-primary."
+                }
+            },
+            "success": {
+                "active-control": {
+                    "$value": "{color.success.500}",
+                    "$description": "Active border of a status control: pressed vote option (yes). Component alias of border-success-active."
+                }
+            },
+            "critical": {
+                "primary-dispatch": {
+                    "$value": "{color.critical.200}",
+                    "$description": "Border of the failed dispatch-simulation card. Component alias of border-critical-primary."
+                },
+                "primary-chat-error": {
+                    "$value": "{color.critical.300}",
+                    "$description": "Border of the assistant chat error box. Component alias of border-critical-primary."
+                }
+            }
+        },
+        "text": {
+            "surface": {
+                "default-wizard": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Wizard navigation step label. Component alias of text-surface-default."
+                },
+                "tertiary-hint": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Faint hint text and list markers: onboarding hint, account and process item meta, chat list markers and composer hint. Component alias of text-surface-tertiary."
+                },
+                "primary-detail": {
+                    "$value": "{color.neutral.700}",
+                    "$description": "Detail text one step lighter than primary: permissions summary, Safe proposal transaction details, permission chip. Component alias of text-surface-primary."
+                },
+                "primary-panel-title": {
+                    "$value": "{color.neutral.900}",
+                    "$description": "Titles of the permissions-graph detail panels. Component alias of text-surface-primary."
+                },
+                "selected-label": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Selected label kept neutral today: vote option toggle \"on\", navigation link of the current page. Component alias of text-surface-selected."
+                },
+                "default-attachment": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Chat attachment remove button. Component alias of text-surface-default."
+                },
+                "secondary-ticket": {
+                    "$value": "{color.neutral.600}",
+                    "$description": "Assistant-chat ticket card body text. Component alias of text-surface-secondary."
+                }
+            },
+            "critical": {
+                "primary-message": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Critical message text: file-download dialog errors, dispatch simulation detail, chat character counter at its limit. Component alias of text-critical-primary."
+                },
+                "primary-tx-error": {
+                    "$value": "{color.critical.700}",
+                    "$description": "Error text of transaction dialogs: dispatch simulation title, Safe transaction errors. Component alias of text-critical-primary."
+                },
+                "hover-attachment": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Chat attachment remove button, hover. Component alias of text-critical-hover."
+                }
+            }
+        },
+        "icon": {
+            "accent": {
+                "selected-nav": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Navigation link icon, current page. Component alias of icon-accent-selected."
+                }
+            },
+            "success": {
+                "primary-chat": {
+                    "$value": "{color.success.600}",
+                    "$description": "Success status icon of the assistant-chat ticket card. Component alias of icon-success-primary."
+                }
+            },
+            "critical": {
+                "primary-chat": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Critical status icon of assistant-chat cards (attachment error, ticket failed). Component alias of icon-critical-primary."
+                }
+            }
+        }
+    },
+    "type": {
+        "$type": "typography",
+        "exception": {
+            "supporting--compact-detail": {
+                "$description": "Secondary lines at 14 px with the default line height that keep one size (picker rows, file notes, permission details, sidebar account address)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control--compact-value": {
+                "$description": "Value shown inside a compact input (permission id input), fixed at 14 px",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-item--compact-card": {
+                "$description": "Item titles at 16/20 that keep one size (vote option cards, account and workspace items, welcome dialog items, simulation nodes)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body--demo-header": {
+                "$description": "Lead paragraph of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.normal}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "stat--dao-header": {
+                "$description": "Stat figures of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.2xl}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.4xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.4xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--dao-header-stat": {
+                "$description": "Stat labels and units of the Aragon demo DAO page headers",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--dao-header-action-compact": {
+                "$description": "Compact action titles of the partner DAO headers (Boundless, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--dao-header-action": {
+                "$description": "Action titles of the partner DAO headers (Cryptex, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body--partner-header": {
+                "$description": "Partner DAO header lead paragraph (Boundless, Cryptex), at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--dao-header-action": {
+                "$description": "Action descriptions of the xMaquina DAO header",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--dao-header-action-compact": {
+                "$description": "Compact action descriptions of the partner DAO headers (Boundless, xMaquina)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body--xmaquina-header": {
+                "$description": "Lead paragraph of the xMaquina DAO page header",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.2xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--profile-card": {
+                "$description": "Name on profile cards and dialogs (Aragon profile, user dialog, simulation summary), fixed at the desktop size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--framework-leading": {
+                "$description": "Small controls at 14 px with the default line height (sidebar footer links, chat input and suggestions)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--unstepped": {
+                "$description": "Small print that keeps the phone size on desktop, with the default line height (chart axes, badges, graph and column labels, raw data, chat metadata, the sidebar footer)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xs}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-page--wizard-nav": {
+                "$description": "Wizard name in the wizard navigation bar (names the flow the person is in)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control--workspace-switcher": {
+                "$description": "Workspace name in the workspace switcher, at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body-compact--dialog-lead": {
+                "$description": "Lead sentence of the connect-wallet dialog, at the group-title size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body-compact--dialog-note": {
+                "$description": "Notes inside dialogs at one size with the tight line height (connect wallet, dispatch simulation errors)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--profile-card-address": {
+                "$description": "Address standing in for the name on the user dialog, with the default line height",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "label--router": {
+                "$description": "Router address field label in Capital Flow, fixed at the desktop size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--cryptex-header": {
+                "$description": "Cryptex DAO header action description (snug line height)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.snug}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.snug}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control--dao-name": {
+                "$description": "DAO name in the DAO switcher, stepping at the sm breakpoint (with control--dao-name-wide)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control--dao-name-wide": {
+                "$description": "DAO name in the DAO switcher from the sm breakpoint",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--sm-step-label": {
+                "$description": "Labels that step up at the sm breakpoint, not md (DAO address in the DAO switcher, campaign stat labels); with supporting--sm-step-label-wide",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--sm-step-label-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-label",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--compact": {
+                "$description": "Group titles at 16/20 that keep one size (autocomplete menu groups, alert cards in dialogs)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--wizard-intro": {
+                "$description": "Intro heading of the governance stages step in Create DAO",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-item--stage-card": {
+                "$description": "Stage names on the governance stage cards of Create DAO",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body--framework-leading": {
+                "$description": "Body text left at the sizes' default line heights (page header descriptions, onboarding text)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body--explore-hero": {
+                "$description": "Lead line of the Explore hero, under the display statement",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.normal}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body-compact--transaction-review": {
+                "$description": "Text of the Safe transaction review and the transaction status container, left at the sizes' default line heights",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--framework-leading-large": {
+                "$description": "Secondary values at the item-title size left at the default line heights (gauge rows, contract cards, policy details)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-item--document-default": {
+                "$description": "Item titles at 16 px with line height 1.5 that keep one size (allowed actions, vote dialog items)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.normal}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--column-heading": {
+                "$description": "Column headings of the gauge list, semibold through type-strong, with letter spacing",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.7,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0.7,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--column-heading": {
+                "$description": "Uppercase inline column labels of gauge list rows on phones, semibold through type-strong, with tracking",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0.6,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xs}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0.6,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "stat--chart": {
+                "$description": "Figure in a chart tooltip (exit queue fee chart), semibold through type-strong",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "stat--voting-terminal": {
+                "$description": "Figures of the gauge voting terminal",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--voting-terminal": {
+                "$description": "Labels of the gauge voting terminal figures",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--sm-step-value": {
+                "$description": "Values that step up at the sm breakpoint, not md (campaign stat values); with supporting--sm-step-value-wide",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--sm-step-value-wide": {
+                "$description": "The sm-and-up step of supporting--sm-step-value",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--indicator-xs": {
+                "$description": "The extra-small size of the DAO target indicator",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xs}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--input-hint": {
+                "$description": "Hints attached to inputs at 12 px with the tight line height (keyboard shortcut chip, number input limit)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-item--chat": {
+                "$description": "Request titles in the assistant chat history",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "caption--chat-note": {
+                "$description": "Notes and disclaimers in the assistant chat at 12 px with the body line height",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.normal}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.normal}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-page--chat-markdown": {
+                "$description": "Markdown h1 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xl}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xl}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-section--chat-markdown": {
+                "$description": "Markdown h2 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.lg}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.lg}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--chat-markdown": {
+                "$description": "Markdown h3 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-item--chat-markdown": {
+                "$description": "Markdown h4 in the assistant chat",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.base}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.base}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.base}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "supporting--chat-markdown": {
+                "$description": "Markdown h5 in the assistant chat (semibold through type-strong)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.sm}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.sm}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--chat": {
+                "$description": "Small text buttons in the assistant chat at 12 px",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xs}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leadingDefault.xs}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xs}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leadingDefault.xs}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "body-compact--chat-message": {
+                "$description": "Assistant chat message text and its markdown paragraphs and list items (relaxed line height)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.sm}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.relaxed}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.sm}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.relaxed}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-section--network-groups": {
+                "$description": "Network group headings in the Create-DAO network step, at the item-title (h4) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-page--gate-prompt": {
+                "$description": "Workspace gate prompt heading (the page's h1) at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-section--explore": {
+                "$description": "Section titles on the Explore page at the page-title (h1) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.3xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-page--onboarding": {
+                "$description": "Dashboard onboarding greeting, two sizes above the page title",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.3xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.4xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "stat--stat-card": {
+                "$description": "Stat card figure at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--cta-card": {
+                "$description": "Call-to-action card title at the page-title (h1) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.2xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.3xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--cta-card-compact": {
+                "$description": "Compact call-to-action card title at the section-title (h2) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.xl}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.2xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-group--small-panel": {
+                "$description": "Panel and card titles at the item-title size (assistant chat header, cards inside dialogs)",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.base}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.lg}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "title-section--chat-empty-state": {
+                "$description": "Assistant chat welcome title (the chat's empty state) at the group-title (h3) size",
+                "base": {
+                    "$value": {
+                        "fontFamily": "{font.family.sans}",
+                        "fontSize": "{font.size.lg}",
+                        "fontWeight": "{font.weight.normal}",
+                        "letterSpacing": {
+                            "value": 0,
+                            "unit": "px"
+                        },
+                        "lineHeight": "{font.leading.tight}"
+                    }
+                },
+                "md": {
+                    "fontSize": {
+                        "$type": "dimension",
+                        "$value": "{font.size.xl}"
+                    },
+                    "lineHeight": {
+                        "$type": "number",
+                        "$value": "{font.leading.tight}"
+                    },
+                    "letterSpacing": {
+                        "$type": "dimension",
+                        "$value": {
+                            "value": 0,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "space": {
+        "$type": "dimension",
+        "role": {
+            "inset-page": {
+                "$description": "Page gutters and the page block padding: container, page main and content, page header, footer, top bars.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-section-stepped": {
+                "$description": "Between sections that space out on desktop: wizard steps, settings forms, governance setup sections.",
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-layout": {
+                "$description": "Between page columns (main and aside) and the top-level blocks of a landing page.",
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 80,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-nav": {
+                "$description": "Navigation chrome: padding of the app shell around the navigation: the sidebar panel, the top and mobile header bars, the mobile nav menu.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "size": {
+            "row": {
+                "$description": "Minimum height of a clickable list row that is not an item with padding (account and workspace selector rows).",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "exception": {
+            "control-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-md--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--fixed-10": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--fixed-6": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-group--16-12": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group--fixed-14": {
+                "base": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped--12-24": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--12-16": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--fixed-14": {
+                "base": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--8-12": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-40": {
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-48": {
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-tight--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--12-8": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--6-12": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-stepped--24-48": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--32-40": {
+                "base": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--40-48": {
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--fixed-36": {
+                "base": {
+                    "$value": {
+                        "value": 36,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 36,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--fixed-48": {
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-4": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-8": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-12": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-4": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--12-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-12": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--24-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-28": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 28,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 28,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--4-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

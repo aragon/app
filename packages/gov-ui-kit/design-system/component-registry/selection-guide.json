@@ -5,8 +5,8 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "d15e6878fcc2f2c83ddb2084e2293169b008862eb03fe55542418eb5c1dc2ed3",
-            "totalRecords": 404,
+            "sha256": "d22d1fa40865bd77f1e16553e53a6bdaf9fd1fd661da0177584cd32f2983c945",
+            "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
             "utilityEntryCount": 7,
@@ -472,7 +472,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:134",
+                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:136",
                 "stories": [
                     "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
                 ]
@@ -541,13 +541,13 @@
             "usageNotes": [
                 "Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.",
                 "The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.",
-                "Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.",
+                "Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.",
                 "Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140",
+                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:143",
                 "stories": [
                     "kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1"
                 ]
@@ -629,7 +629,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/button/button.tsx:188",
+                "source": "kit:src/core/components/button/button.tsx:196",
                 "stories": [
                     "kit:src/core/components/button/button.stories.tsx:1"
                 ]
@@ -650,12 +650,12 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "`Card` styles its surface (rounding, neutral background, hairline border, shadow) and, through `inset`, its padding as a spacing role; the default `none` adds no padding (the content pads itself). Prefer `inset` to padding classes in `className`. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
+                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. A class that overrides a property `Card` sets (background, border colour, shadow) needs the important modifier (`border-critical-primary!`): the stylesheet orders classes by name, not by their order in `className`."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/card/card.tsx:31",
+                "source": "kit:src/core/components/cards/card/card.tsx:14",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
                 ]
@@ -679,7 +679,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:18",
+                "source": "kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19",
                 "stories": [
                     "kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1"
                 ]
@@ -921,7 +921,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:83",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ]
@@ -1566,7 +1566,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72",
+                "source": "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:75",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1"
                 ]
@@ -1586,12 +1586,13 @@
             "keyProps": [],
             "usageNotes": [
                 "Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.",
+                "The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.",
                 "Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17",
+                "source": "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:19",
                 "stories": [
                     "kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1"
                 ]
@@ -1813,7 +1814,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/heading/heading.tsx:28",
+                "source": "kit:src/core/components/heading/heading.tsx:33",
                 "stories": [
                     "kit:src/core/components/heading/heading.stories.tsx:1"
                 ]
@@ -3073,7 +3074,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/spinner/spinner.tsx:87",
+                "source": "kit:src/core/components/spinner/spinner.tsx:88",
                 "stories": [
                     "kit:src/core/components/spinner/spinner.stories.tsx:1"
                 ]
@@ -3468,7 +3469,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/tooltip/tooltip.tsx:70",
+                "source": "kit:src/core/components/tooltip/tooltip.tsx:72",
                 "stories": [
                     "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
                 ]
@@ -3795,7 +3796,7 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
+                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states use rounded rectangular buttons from `md` upward.",
                 "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
             ],
             "constraints": [
@@ -3804,7 +3805,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/wallet/wallet.tsx:30",
+                "source": "kit:src/modules/components/wallet/wallet.tsx:31",
                 "stories": [
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ]

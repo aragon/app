@@ -224,17 +224,17 @@ const SubRouterCard: React.FC<ISubRouterCardProps> = (props) => {
         >
             <div className="flex w-full items-center justify-between">
                 <div className="flex items-baseline gap-related--fixed-8">
-                    <span className="text-base font-normal text-neutral-800 md:text-lg">
+                    <span className="type-title-item--framework-leading text-surface-primary">
                         {policyName}
                     </span>
                     {policyKey && (
-                        <span className="text-base font-normal text-neutral-500 md:text-lg">
+                        <span className="type-supporting--framework-leading-large text-surface-secondary">
                             {policyKey}
                         </span>
                     )}
                 </div>
                 <div className="flex items-center gap-group">
-                    <span className="text-sm text-neutral-500 md:text-base">
+                    <span className="type-supporting--framework-leading text-surface-secondary">
                         {index} of {total}
                     </span>
                     <AvatarIcon

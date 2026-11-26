@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace account overview</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<sc-if value="{{isMeridian}}" hint-placeholder-val="{{true}}">
+  <dc-import name="DaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isAtlas}}" hint-placeholder-val="{{false}}">
+  <dc-import name="AtlasDaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isNorthstar}}" hint-placeholder-val="{{false}}">
+  <dc-import name="NorthstarDaoDashboard" on-nav="{{onNav}}" wallet="{{wallet}}" on-connect="{{onConnect}}" hint-size="100%,900px"></dc-import>
+</sc-if>
+<sc-if value="{{isSafe}}" hint-placeholder-val="{{false}}">
+<div class="page-container" onClick="{{click}}">
+  <header class="page-header">
+    <div class="app-container page-header__inner">
+      <div class="page-header__row">
+        <div class="page-header__text">
+          <div class="page-header__title">
+            <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Northstar Council Safe</x-import>
+          </div>
+          <div class="page-header__stats">
+            <div class="page-stat"><div class="page-stat__value"><p>3</p></div><p class="page-stat__label">Threshold</p></div>
+            <div class="page-stat"><div class="page-stat__value"><p>5</p></div><p class="page-stat__label">Owners</p></div>
+            <div class="page-stat"><div class="page-stat__value"><p>{{nonceText}}</p></div><p class="page-stat__label">Nonce</p></div>
+          </div>
+        </div>
+        <div class="page-header__avatar">
+          <x-import component-from-global-scope="GovUiKit.Avatar" size="2xl" src="assets/safeWallet.png"></x-import>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container page-content">
+    <main class="page-main">
+      <div class="page-section">
+        <div class="ws-section__heading">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Pending transactions</x-import>
+          <p class="ws-section__description">Transactions waiting for the signatures of the owners of this Safe.</p>
+        </div>
+        <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+          <x-import component-from-global-scope="GovUiKit.CardEmptyState" heading="No pending transactions" description="This Safe has no transactions waiting to be executed." object-illustration="{{emptyIllustration}}" class-name="border border-neutral-100"></x-import>
+        </sc-if>
+        <sc-if value="{{hasPending}}" hint-placeholder-val="{{true}}">
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Transactions" items-count="{{pendingCount}}" page-size="{{six}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+<sc-if value="{{p1}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><sc-if value="{{p1.hasTag}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p1.tag}}" variant="neutral"></x-import></sc-if><span class="safe-pending__name">{{p1.title}}</span></div><span class="sf-muted">{{p1.queued}}</span><sc-if value="{{p1.waiting}}" hint-placeholder-val="{{false}}"><span class="sf-muted">{{p1.waitingText}}</span></sc-if></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> {{p1.countText}}</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" on-click="{{p1.review}}">Review</x-import></div></x-import>
+</sc-if>
+<sc-if value="{{p2}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><sc-if value="{{p2.hasTag}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p2.tag}}" variant="neutral"></x-import></sc-if><span class="safe-pending__name">{{p2.title}}</span></div><span class="sf-muted">{{p2.queued}}</span><sc-if value="{{p2.waiting}}" hint-placeholder-val="{{false}}"><span class="sf-muted">{{p2.waitingText}}</span></sc-if></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> {{p2.countText}}</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" on-click="{{p2.review}}">Review</x-import></div></x-import>
+</sc-if>
+<sc-if value="{{p3}}" hint-placeholder-val="{{true}}">
+<x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="safe-pending"><div class="safe-pending__main"><div class="safe-pending__title"><sc-if value="{{p3.hasTag}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.Tag" label="{{p3.tag}}" variant="neutral"></x-import></sc-if><span class="safe-pending__name">{{p3.title}}</span></div><span class="sf-muted">{{p3.queued}}</span><sc-if value="{{p3.waiting}}" hint-placeholder-val="{{false}}"><span class="sf-muted">{{p3.waitingText}}</span></sc-if></div><div class="safe-pending__side"><span class="safe-pending__confirmations"><x-import component-from-global-scope="GovUiKit.Icon" icon="CHECKMARK" size="sm"></x-import> {{p3.countText}}</span><x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="sm" on-click="{{p3.review}}">Review</x-import></div></x-import>
+</sc-if>
+</x-import>
+          <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+        </x-import>
+        </sc-if>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Members</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{five}}" page-size="{{six}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 lg:grid-cols-2">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" ens-name="nadia.eth" href="https://etherscan.io/address/0x9CB2A4c4d6169507A60086dBDB9616eCFf27D98A" target="_blank" rel="noopener"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xAC6399087027F972e6D2AB830dC9b33CDa035642" ens-name="kofi-mensah.eth" href="https://etherscan.io/address/0xAC6399087027F972e6D2AB830dC9b33CDa035642" target="_blank" rel="noopener"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05" ens-name="lenaweber.eth" href="https://etherscan.io/address/0x826e7eB63D237333d9063DC74E7Ce8e222B0FC05" target="_blank" rel="noopener"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81" ens-name="ines-alvarez.eth" href="https://etherscan.io/address/0xCDC7d3F9b0174765aaf7be715f9C357C663A1C81" target="_blank" rel="noopener"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x7331c334835fD8C5D6a351F67a517E6b0F452F63" ens-name="dmitri.eth" href="https://etherscan.io/address/0x7331c334835fD8C5D6a351F67a517E6b0F452F63" target="_blank" rel="noopener"></x-import>
+</x-import>
+        </x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:members" class-name="self-start">View all</x-import>
+      </div>
+
+      <div class="page-section">
+        <div class="page-section__header">
+          <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Assets</x-import>
+        </div>
+        <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Assets" items-count="{{three}}" page-size="{{three}}" state="idle">
+          <x-import component-from-global-scope="GovUiKit.DataList.Container">
+            <sc-for list="{{assets}}" as="a" hint-placeholder-count="3">
+              <x-import component-from-global-scope="GovUiKit.AssetDataListItem.Structure" name="{{a.name}}" symbol="{{a.symbol}}" amount="{{a.amount}}" fiat-price="{{a.price}}" logo-src="{{a.logo}}"></x-import>
+            </sc-for>
+          </x-import>
+        </x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="CHEVRON_RIGHT" href="#nav:assets" class-name="self-start">View all</x-import>
+      </div>
+    </main>
+
+    <aside class="page-aside">
+      <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+        <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Northstar Council Safe</x-import>
+        <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Read more" button-label-opened="Read less" collapsed-lines="{{two}}">The 3-of-5 council Safe of Northstar. It holds the ecosystem treasury and executes the transactions the council approves.</x-import>
+        <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+          <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Chain"><p class="text-neutral-500">Ethereum</p></x-import></div>
+          <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Address" copy-value="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" link="{{addressLink}}" children="0x515feC2E8F6553948b1D57C14c1243a1405C02e2"></x-import>
+        </x-import>
+        <div class="flex flex-col items-center gap-y-3 pt-4">
+          <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" icon-right="LINK_EXTERNAL" href="https://pro.octav.fi/?addresses=0x515feC2E8F6553948b1D57C14c1243a1405C02e2" target="_blank" class-name="w-full">View on Octav</x-import>
+          <p class="text-sm text-neutral-500" style="margin:0;line-height:20px">Octav provides advanced treasury analytics.</p>
+        </div>
+      </x-import>
+    </aside>
+  </div>
+</div>
+<dc-import name="SafeFlowReviewDialog" open="{{reviewOpen}}" tx="{{reviewTx}}" on-close="{{closeReview}}" hint-size="0px,0px"></dc-import>
+</sc-if>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"account":{"editor":"enum","options":["meridian","atlas","northstar","safe"],"default":"meridian"},"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"todoRows":{"editor":null},"safe":{"editor":null},"$preview":{"width":1100,"height":2100}}'>
+// Overview of one account of the workspace (apps/app: modules/workspace/pages/workspaceAccountOverviewPage). Props: account (meridian | atlas |
+// northstar | safe), onNav(target) with the account's own bare targets, wallet, onConnect(), safe (the shell's Safe state: nonce + the pending transactions).
+// As in the app, a DAO account shows the DAO dashboard as is (DaoDashboard, AtlasDaoDashboard, NorthstarDaoDashboard are mounted unchanged);
+// a Safe shows workspaceSafeDashboardPageClient: header with threshold / owners / nonce, pending transactions (safePendingTransactionList: "Review" opens the
+// read-only SafeFlowReviewDialog, as safeTransactionReviewDialog does), owners (rows open the block explorer), assets (top three by value) and the Safe card.
+// Approving and executing are not here: they are on the voting card of the transaction's row in the Safe's Transactions. "View all" opens the Safe's
+// members / assets pages (nav 'members' / 'assets'). Pending rows are three fixed slots at column 0 (the kit's pagination counts children); an executed
+// transaction leaves the list, none left shows the app's empty state.
+class Component extends DCLogic {
+  state = { reviewId: '' };
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  closeReview = () => this.setState({ reviewId: '' });
+  renderVals() {
+    const account = this.props.account || 'meridian';
+    const nav = (t) => { if (typeof this.props.onNav === 'function') this.props.onNav(t); };
+    const safe = this.props.safe && Array.isArray(this.props.safe.txs) ? this.props.safe : { nonce: 5, nonceText: '5', txs: [] };
+    const pending = safe.txs.filter((t) => !t.executed).sort((a, b) => a.nonce - b.nonce);
+    const row = (t) => t ? Object.assign({}, t, {
+      waitingText: 'Fully signed. It executes once the Safe reaches this nonce; nonce ' + t.currentNonce + ' is next.',
+      review: () => this.setState({ reviewId: t.id })
+    }) : null;
+    const open = pending.find((t) => t.id === this.state.reviewId) || null;
+    return {
+      yes: true, two: 2, six: 6,
+      isMeridian: account === 'meridian', isAtlas: account === 'atlas', isNorthstar: account === 'northstar', isSafe: account === 'safe',
+      onNav: nav, wallet: this.props.wallet || '', onConnect: this.props.onConnect,
+      click: this.click,
+      nonceText: safe.nonceText || String(safe.nonce),
+      p1: row(pending[0]), p2: row(pending[1]), p3: row(pending[2]),
+      pendingCount: pending.length, hasPending: pending.length > 0, empty: pending.length === 0, emptyIllustration: { object: 'CHAIN' },
+      reviewOpen: !!open, reviewTx: open || safe.txs[0] || {}, closeReview: this.closeReview,
+      three: 3, five: 5,
+      // the top three by value of the Safe's balances (the same figures as WsAssets, scope safe)
+      assets: [
+        { name: 'Northstar', symbol: 'NSP', amount: 750000, price: 0.42, logo: 'assets/mock/token/nsp.svg' },
+        { name: 'USD Coin', symbol: 'USDC', amount: 185000, price: 1, logo: 'assets/mock/token/usdc.svg' },
+        { name: 'Ether', symbol: 'ETH', amount: 42.5, price: 3148.62, logo: 'assets/mock/token/eth.svg' }
+      ],
+      addressLink: { href: 'https://app.safe.global/home?safe=eth:0x515feC2E8F6553948b1D57C14c1243a1405C02e2', isExternal: true, isOnchainEntity: true }
+    };
+  }
+}
+</script>
+</body>
+</html>

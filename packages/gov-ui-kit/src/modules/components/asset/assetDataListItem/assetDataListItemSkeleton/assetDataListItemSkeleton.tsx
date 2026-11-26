@@ -14,7 +14,7 @@ export const AssetDataListItemSkeleton: React.FC<IAssetDataListItemSkeletonProps
             aria-busy="true"
             aria-label="loading"
             className={classNames(
-                'flex min-h-[70px] w-full items-center gap-x-related gap-y-group bg-neutral-0 py-inset-item md:min-h-[88.5px]',
+                'flex min-h-[70px] w-full items-center gap-x-related gap-y-group bg-surface-primary py-inset-item md:min-h-[88.5px]',
                 className,
             )}
             tabIndex={0}

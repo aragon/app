@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DAO members</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{count}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m0.address}}" ens-name="{{m0.ens}}" delegation-count="{{m0.deleg}}" token-amount="{{m0.power}}" is-delegate="{{m0.isDelegate}}" class-name="min-w-0" href="{{m0.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m1.address}}" ens-name="{{m1.ens}}" delegation-count="{{m1.deleg}}" token-amount="{{m1.power}}" is-delegate="{{m1.isDelegate}}" class-name="min-w-0" href="{{m1.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m2.address}}" ens-name="{{m2.ens}}" delegation-count="{{m2.deleg}}" token-amount="{{m2.power}}" is-delegate="{{m2.isDelegate}}" class-name="min-w-0" href="{{m2.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m3.address}}" ens-name="{{m3.ens}}" delegation-count="{{m3.deleg}}" token-amount="{{m3.power}}" is-delegate="{{m3.isDelegate}}" class-name="min-w-0" href="{{m3.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m4.address}}" ens-name="{{m4.ens}}" delegation-count="{{m4.deleg}}" token-amount="{{m4.power}}" is-delegate="{{m4.isDelegate}}" class-name="min-w-0" href="{{m4.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m5.address}}" ens-name="{{m5.ens}}" delegation-count="{{m5.deleg}}" token-amount="{{m5.power}}" is-delegate="{{m5.isDelegate}}" class-name="min-w-0" href="{{m5.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m6.address}}" ens-name="{{m6.ens}}" delegation-count="{{m6.deleg}}" token-amount="{{m6.power}}" is-delegate="{{m6.isDelegate}}" class-name="min-w-0" href="{{m6.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m7.address}}" ens-name="{{m7.ens}}" delegation-count="{{m7.deleg}}" token-amount="{{m7.power}}" is-delegate="{{m7.isDelegate}}" class-name="min-w-0" href="{{m7.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m8.address}}" ens-name="{{m8.ens}}" delegation-count="{{m8.deleg}}" token-amount="{{m8.power}}" is-delegate="{{m8.isDelegate}}" class-name="min-w-0" href="{{m8.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m9.address}}" ens-name="{{m9.ens}}" delegation-count="{{m9.deleg}}" token-amount="{{m9.power}}" is-delegate="{{m9.isDelegate}}" class-name="min-w-0" href="{{m9.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m10.address}}" ens-name="{{m10.ens}}" delegation-count="{{m10.deleg}}" token-amount="{{m10.power}}" is-delegate="{{m10.isDelegate}}" class-name="min-w-0" href="{{m10.href}}"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{m11.address}}" ens-name="{{m11.ens}}" delegation-count="{{m11.deleg}}" token-amount="{{m11.power}}" is-delegate="{{m11.isDelegate}}" class-name="min-w-0" href="{{m11.href}}"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Meridian Token Voting</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <div style="display: flex; flex-direction: column; row-gap: 24px;">
+                  <p class="page-aside__text">Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.</p>
+                  <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.meridian.xyz/governance" is-external="{{yes}}" show-url="{{yes}}">Governance docs</x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda" description="Token Voting v1.3" link="{{pluginLink}}" children="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="October 2025"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="#nav:settings">View governance process</x-import>
+              </div>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Delegation</x-import>
+              <dc-import name="DaoDelegateForm" mode="panel" wallet="{{wallet}}" current="{{current}}" on-submit="{{startTx}}" on-connect="{{connect}}" hint-size="100%,400px"></dc-import>
+            </x-import>
+          </aside>
+        </div>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"on-connect":{"editor":null},"$preview":{"width":1440,"height":1382}}'>
+// Page part of Dao.dc.html. Props on-nav: function(target); wallet: "connected" or ""; on-connect: function().
+// The Delegation card is DaoDelegateForm; submitting it opens TxFlowDialog (simulated signing), and its success button stores the
+// new delegate on window.__daoDelegate (read by DaoMember too). The source has no search, sort or tabs on this page for a
+// single-body DAO such as Meridian (tabs only appear with several bodies), so none are drawn.
+// Prop on-nav: function(target). A member row calls on-nav("member:<address>").
+// DAO members (apps/app: modules/governance/pages/daoMembersPage, plugins/tokenPlugin/components/tokenMemberList and
+// tokenMemberPanel). Mock data: design/baseline-check/data.cjs (Meridian DAO, token voting).
+// The 12 list items are written out one per line at column 0 (the kit's pagination counts direct children; a loop counts as one).
+// A delegate that is not among the 12 members is pinned in slot 2 and the last member drops off.
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  constructor(props) {
+    super(props);
+    // The wallet's present delegate lives on window so it survives navigating between pages (parts remount).
+    this.state = { txOpen: false, pending: '' };
+  }
+  connect = () => { if (typeof this.props.onConnect === 'function') this.props.onConnect(); };
+  startTx = (address) => this.setState({ txOpen: true, pending: address });
+  closeTx = () => this.setState({ txOpen: false });
+  txDone = () => { window.__daoDelegate = this.state.pending; this.setState({ txOpen: false }); };
+  renderVals() {
+    const connected = this.props.wallet === 'connected';
+    const SELF = '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a';
+    const cur = connected ? (window.__daoDelegate || '') : '';
+    const base = [
+      ['0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth', 214, 4850000], ['0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth', 167, 3920000],
+      ['0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth', 98, 2740000], ['0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', '', 0, 2115000],
+      ['0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth', 54, 1680000], ['0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth', 21, 1245500],
+      ['0x697d04244eda05202c0c06aea0bfeced540eb42d', '', 0, 980200], ['0x3696e5ef91009a09864eb6c1cdb58eb0091df5d8', 'marcusj.eth', 12, 760000],
+      ['0x8a25faabbd80f71248328cf3a5867d3168210a46', 'chenwei.eth', 3, 512340], ['0x8ac8d965669201c92279ef49be1a5564b908ee27', '', 0, 388000],
+      ['0x6dd753d9ebc280a364354dbf6603d3f2a279a65c', 'jonas-b.eth', 1, 241750], ['0xbf2656ce7e3c0e9f5098060cf873c87430751ef9', '', 0, 125000]
+    ].map((r) => ({ address: r[0], ens: r[1], deleg: r[2], power: r[3], isDelegate: false, href: '#nav:member:' + r[0] }));
+    // As the app does: the connected user and the user's delegate are pinned to the top (delegate tagged "Your delegate").
+    let list = base;
+    if (connected && cur && cur !== SELF) {
+      let d = base.find((m) => m.address === cur);
+      if (!d) d = { address: cur, ens: '', deleg: 0, power: 0, isDelegate: false, href: '#nav:member:' + cur };
+      d = Object.assign({}, d, { isDelegate: true });
+      const rest = base.filter((m) => m.address !== cur && m.address !== SELF);
+      list = [base[0], d].concat(rest).slice(0, 12); // 12 fixed slots (pagination counts written-out children)
+    }
+    return { noIndexing: false,
+      onClick: this.click, yes: true, noSteps: [], wallet: this.props.wallet || '', current: cur,
+      count: 12, chainId: 1,
+      pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x45bb30f18a31d380003fb757d247a11ddae38c7ca421a7fb18abc972ff7fc412' },
+      m0: list[0], m1: list[1], m2: list[2], m3: list[3], m4: list[4], m5: list[5], m6: list[6], m7: list[7], m8: list[8], m9: list[9], m10: list[10], m11: list[11],
+      txOpen: this.state.txOpen, startTx: this.startTx, closeTx: this.closeTx, txDone: this.txDone, connect: this.connect
+    };
+  }
+}
+</script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{count}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<sc-for list="{{members}}" as="mem">
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="{{mem.address}}" ens-name="{{mem.ens}}" delegation-count="{{mem.deleg}}" token-amount="{{mem.power}}" is-delegate="{{mem.isDelegate}}" class-name="min-w-0" href="{{mem.href}}"></x-import>
+</sc-for>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Meridian Token Voting</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <div style="display: flex; flex-direction: column; row-gap: 24px;">
+                  <p class="page-aside__text">Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.</p>
+                  <x-import component-from-global-scope="GovUiKit.Link" href="https://docs.meridian.xyz/governance" is-external="{{yes}}" show-url="{{yes}}">Governance docs</x-import>
+                </div>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda" description="Token Voting v1.3" link="{{pluginLink}}" children="0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="October 2025"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="#nav:settings">View governance process</x-import>
+              </div>
+            </x-import>
+
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Delegation</x-import>
+              <dc-import name="DaoDelegateForm" mode="panel" wallet="{{wallet}}" current="{{current}}" on-submit="{{startTx}}" on-connect="{{connect}}" hint-size="100%,400px"></dc-import>
+            </x-import>
+          </aside>
+        </div>
+        <dc-import name="TxFlowDialog" indexing="{{noIndexing}}" open="{{txOpen}}" title="Delegate" description="To delegate to this address, confirm the onchain transaction in your wallet." steps="{{noSteps}}" submit-label="Delegate" success-label="View members" on-close="{{closeTx}}" on-success="{{txDone}}" hint-size="100%,1px"></dc-import>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"text","default":""},"on-connect":{"editor":null},"$preview":{"width":1440,"height":1382}}'>
+// Page part of Dao.dc.html. Props on-nav: function(target); wallet: "connected" or ""; on-connect: function().
+// The Delegation card is DaoDelegateForm; submitting it opens TxFlowDialog (simulated signing), and its success button stores the
+// new delegate on window.__daoDelegate (read by DaoMember too). The source has no search, sort or tabs on this page for a
+// single-body DAO such as Meridian (tabs only appear with several bodies), so none are drawn.
+// Prop on-nav: function(target). A member row calls on-nav("member:<address>").
+// DAO members (apps/app: modules/governance/pages/daoMembersPage, plugins/tokenPlugin/components/tokenMemberList and
+// tokenMemberPanel). Mock data: design/baseline-check/data.cjs (Meridian DAO, token voting).
+// The 12 list items are written out one per line at column 0 (the kit's pagination counts direct children; a loop counts as one).
+// A delegate that is not among the 12 members is pinned in slot 2 and the last member drops off.
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  renderVals() {
+    return {
+      yes: true,
+      count: 12,
+      pageSize: 12,
+      chainId: 1,
+      d0: 0,
+      d1: 1,
+      d3: 3,
+      d12: 12,
+      d21: 21,
+      d54: 54,
+      d98: 98,
+      d167: 167,
+      d214: 214,
+      pluginLink: { href: 'https://etherscan.io/address/0xa147f2ed0bb4a9739ae43eaf09e5ce318c9c8fda', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x45bb30f18a31d380003fb757d247a11ddae38c7ca421a7fb18abc972ff7fc412' }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 {
-    "$description": "Non-token configuration of the primitive CSS (the tokens are in primitives.tokens.json next to it). cssNames: the CSS custom property of each token path (`*` captures one path segment, `$1`.. reinsert it; first match wins). files: one generated CSS file per entry, in the order the primitives barrel (src/theme/tokens/primitives/index.css) imports them; each is a list of blocks, a block being an `at-rule or selector` with lines (`raw` text, `comment`, `blank`, `token`, `tokens` = every token of a group, optionally narrowed by `match`) or a `verbatim` CSS file of ./css that holds no token value (utilities, font faces). rawDeclarations are CSS values that have no DTCG representation (`--radius-none: none`, the namespace resets). app: the artifact the app imports.",
+    "$description": "How primitives.tokens.json becomes CSS. cssNames: the custom property of each token path (`*` captures one path segment, `$1`.. reinsert it; first match wins). files: the generated files of src/theme/tokens/primitives/, in the order their barrel imports them; each maps a selector or at-rule to its lines. A line ending in `;` is CSS that has no DTCG form (a namespace reset, `--radius-none: none`); any other line is a token path and places that token, or every token under that group, in document order.",
     "cssNames": {
         "color.transparent": "--color-transparent",
         "color.*.*": "--color-$1-$2",
@@ -7,279 +7,61 @@
         "breakpoint.css.*": "--breakpoint-$1",
         "breakpoint.px.*": "--breakpoint-$1-px",
         "spacing.base": "--spacing",
-        "font.family.*": "--font-$1",
+        "font.family.sans": "--font-sans",
+        "font.family.mono": "--font-mono",
         "font.weight.*": "--font-weight-$1",
         "font.size.*": "--text-$1",
         "font.leading.*": "--leading-$1",
+        "font.leadingDefault.*": "--leading-default-$1",
         "shadow.*": "--shadow-$1",
         "ring.color.*": "--ring-color-$1"
     },
     "files": {
-        "borderRadius.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--radius-*: initial;"
-                    },
-                    {
-                        "tokens": "radius"
-                    },
-                    {
-                        "raw": "--radius-none: none;"
-                    }
-                ]
-            }
-        ],
-        "breakpoints.css": [
-            {
-                "at": ":root",
-                "lines": [
-                    {
-                        "tokens": "breakpoint.px"
-                    }
-                ]
-            },
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--breakpoint-*: initial;"
-                    },
-                    {
-                        "tokens": "breakpoint.css"
-                    }
-                ]
-            }
-        ],
-        "colors.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--color-*: initial;"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Primary"
-                    },
-                    {
-                        "tokens": "color.primary"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Neutral"
-                    },
-                    {
-                        "tokens": "color.neutral"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Info"
-                    },
-                    {
-                        "tokens": "color.info"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Success"
-                    },
-                    {
-                        "tokens": "color.success"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Warning"
-                    },
-                    {
-                        "tokens": "color.warning"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Critical"
-                    },
-                    {
-                        "tokens": "color.critical"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Transparent"
-                    },
-                    {
-                        "token": "color.transparent"
-                    }
-                ]
-            },
-            {
-                "verbatim": "colors.utilities.css"
-            }
-        ],
-        "focusRing.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--ring-color-*: initial;"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "tokens": "ring.color"
-                    }
-                ]
-            },
-            {
-                "verbatim": "focusRing.utilities.css"
-            }
-        ],
-        "shadows.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--shadow-*: initial;"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Neutral"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^neutral(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Primary"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^primary(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Success"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^success(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Warning"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^warning(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Critical"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^critical(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "Info"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^info(-|$)"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "comment": "None"
-                    },
-                    {
-                        "tokens": "shadow",
-                        "match": "^none$"
-                    }
-                ]
-            }
-        ],
-        "spacing.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "token": "spacing.base"
-                    }
-                ]
-            }
-        ],
-        "typography.css": [
-            {
-                "at": "@theme",
-                "lines": [
-                    {
-                        "raw": "--font-*: initial;"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "token": "font.family.sans"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "tokens": "font.weight"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "tokens": "font.size"
-                    },
-                    {
-                        "blank": true
-                    },
-                    {
-                        "tokens": "font.leading"
-                    }
-                ]
-            },
-            {
-                "verbatim": "typography.fontFaces.css"
-            }
-        ]
-    },
-    "app": {
-        "output": ".design-sync/generated/govkit-primitives.css",
-        "overridesSource": "apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.overrides.css",
-        "fontUrlFrom": "../../fonts/",
-        "fontUrlTo": "../../apps/app/node_modules/@aragon/gov-ui-kit/src/theme/fonts/",
-        "provenance": "@aragon/gov-ui-kit@2.11.4 (64b517f5b90052797ecaced5f15ab616b5733f30)"
+        "borderRadius.css": {
+            "@theme": [
+                "--radius-*: initial;",
+                "radius",
+                "--radius-none: none;"
+            ]
+        },
+        "breakpoints.css": {
+            ":root": [
+                "breakpoint.px"
+            ],
+            "@theme": [
+                "--breakpoint-*: initial;",
+                "breakpoint.css"
+            ]
+        },
+        "colors.css": {
+            "@theme": [
+                "--color-*: initial;",
+                "color"
+            ]
+        },
+        "focusRing.css": {
+            "@theme": [
+                "--ring-color-*: initial;",
+                "ring.color"
+            ]
+        },
+        "shadows.css": {
+            "@theme": [
+                "--shadow-*: initial;",
+                "shadow",
+                "--shadow-none: 0px 0px #0000;"
+            ]
+        },
+        "spacing.css": {
+            "@theme": [
+                "spacing"
+            ]
+        },
+        "typography.css": {
+            "@theme": [
+                "--font-*: initial;",
+                "font"
+            ]
+        }
     }
 }

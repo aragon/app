@@ -94,7 +94,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                     'app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.description',
                 )}
             >
-                <div className="my-related--fixed-8 flex w-full flex-col gap-related--12-8">
+                <div className="flex w-full flex-col gap-related--12-8 py-related--fixed-8">
                     {isLoading && (
                         <DataList.Root
                             entityLabel={t(
@@ -128,7 +128,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                         </DataList.Root>
                     )}
                     {!isLoading && campaigns.length === 0 && (
-                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-neutral-500">
+                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-surface-secondary">
                             {t(
                                 `app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.${activityStatus === 'active' ? 'emptyStateActive' : 'emptyStateInactive'}`,
                             )}

@@ -18,7 +18,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { workspaceAccountsOptions } from '../../api/workspaceQueryService';
 import {
     useCreateWorkspace,
-    useUpdateWorkspace,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import type {
@@ -38,10 +37,6 @@ export interface IPublishWorkspaceDialogParams {
      * Values of the create-workspace form.
      */
     values: ICreateWorkspaceFormData;
-    /**
-     * ID of the workspace to update with the form values. A new workspace is created when not set.
-     */
-    workspaceId?: string;
 }
 
 export interface IPublishWorkspaceDialogProps
@@ -59,11 +54,8 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         'PublishWorkspaceDialog: required parameters must be set.',
     );
 
-    const { values, workspaceId } = location.params;
+    const { values } = location.params;
     const { name, description, avatar, accounts, targets } = values;
-
-    const isUpdate = workspaceId != null;
-    const mode = isUpdate ? 'update' : 'create';
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -74,10 +66,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     const resolveAvatarUri = useResolveWorkspaceAvatar();
     const { mutateAsync: createWorkspace, data: createdWorkspace } =
         useCreateWorkspace();
-    const { mutateAsync: updateWorkspace } = useUpdateWorkspace();
 
-    // An update keeps the ID of the workspace, a creation gets one assigned by the registry.
-    const savedWorkspaceId = workspaceId ?? createdWorkspace?.id;
     const queryClient = useQueryClient();
 
     // Resolves the type of every account in one call, the authoritative read right before the workspace is stored.
@@ -119,12 +108,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                 accountAvatarUris,
                 accountInfos,
             });
-            const workspace = isUpdate
-                ? await updateWorkspace({
-                      urlParams: { id: workspaceId },
-                      body,
-                  })
-                : await createWorkspace({ body });
+            const workspace = await createWorkspace({ body });
 
             await Promise.all([
                 queryClient.invalidateQueries({
@@ -139,10 +123,8 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
 
             setStatus('success');
             // The user enters a workspace they just created: owe them the welcome dialog once (see
-            // `workspaceWelcomeUtils`). An update is not a creation, so it owes nothing.
-            if (!isUpdate) {
-                workspaceWelcomeUtils.markPendingWelcome();
-            }
+            // `workspaceWelcomeUtils`).
+            workspaceWelcomeUtils.markPendingWelcome();
         } catch {
             setStatus('error');
         }
@@ -163,7 +145,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
         ? {
               label: t('app.workspace.publishWorkspaceDialog.button.success'),
               href: workspaceUtils.getAccountScopeUrl(
-                  savedWorkspaceId!,
+                  createdWorkspace!.id,
                   workspaceAllAccountsSegment,
                   'overview',
               ),
@@ -173,7 +155,7 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
               label: t(
                   status === 'error'
                       ? 'app.workspace.publishWorkspaceDialog.button.retry'
-                      : `app.workspace.publishWorkspaceDialog.${mode}.submit`,
+                      : 'app.workspace.publishWorkspaceDialog.create.submit',
               ),
               isLoading: status === 'pending',
               onClick: () => void handlePublishWorkspace(),
@@ -182,16 +164,16 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
     return (
         <>
             <Dialog.Header
-                title={t(`app.workspace.publishWorkspaceDialog.${mode}.title`)}
+                title={t('app.workspace.publishWorkspaceDialog.create.title')}
             />
             <Dialog.Content className="flex flex-col gap-group px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <div className="flex items-center gap-related">
                     <Avatar alt={name} size="lg" src={avatar?.url} />
                     <div className="flex min-w-0 flex-col gap-tight">
-                        <Heading as="h3" size="h4">
+                        <Heading as="h3" typeClassName="type-title-item">
                             {name}
                         </Heading>
-                        <p className="text-sm leading-normal text-neutral-500">
+                        <p className="type-body-compact--unstepped text-surface-secondary">
                             {t('app.workspace.publishWorkspaceDialog.summary', {
                                 accounts: accounts.length,
                                 targets: targets.length,
@@ -200,26 +182,26 @@ export const PublishWorkspaceDialog: React.FC<IPublishWorkspaceDialogProps> = (
                     </div>
                 </div>
                 {description !== '' && (
-                    <p className="text-base leading-normal text-neutral-500">
+                    <p className="type-body--unstepped text-surface-secondary">
                         {description}
                     </p>
                 )}
                 {status === 'error' && (
                     <AlertCard
                         message={t(
-                            `app.workspace.publishWorkspaceDialog.${mode}.error.title`,
+                            'app.workspace.publishWorkspaceDialog.create.error.title',
                         )}
                         variant="critical"
                     >
                         {t(
-                            `app.workspace.publishWorkspaceDialog.${mode}.error.description`,
+                            'app.workspace.publishWorkspaceDialog.create.error.description',
                         )}
                     </AlertCard>
                 )}
                 {isSuccess && (
                     <AlertCard
                         message={t(
-                            `app.workspace.publishWorkspaceDialog.${mode}.success`,
+                            'app.workspace.publishWorkspaceDialog.create.success',
                         )}
                         variant="success"
                     />

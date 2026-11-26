@@ -51,10 +51,10 @@ export interface IProposalVotingProgressItemProps extends Omit<IProgressProps, '
 }
 
 const variantToNameClassNames: Record<ProgressVariant, string> = {
-    critical: 'text-critical-800',
-    primary: 'text-primary-400',
-    neutral: 'text-neutral-800',
-    success: 'text-success-800',
+    critical: 'text-critical-primary',
+    primary: 'text-accent-primary',
+    neutral: 'text-surface-primary',
+    success: 'text-success-primary',
 };
 
 export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemProps> = (props) => {
@@ -84,20 +84,20 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
     return (
         <div className={classNames('flex w-full grow flex-col gap-related', className)}>
             <div className="flex flex-row items-center justify-between">
-                <div
-                    className={classNames(
-                        'flex flex-row flex-wrap gap-phrase text-base leading-tight font-normal md:text-lg',
-                    )}
-                >
-                    <p className={classNames(variantToNameClassNames[processedVariant])}>
+                <div className={classNames('flex flex-row gap-phrase')}>
+                    <p className={classNames('type-title-item', variantToNameClassNames[processedVariant])}>
                         {name}
-                        {nameDescription && <span className="text-neutral-500">{nameDescription}</span>}
+                        {nameDescription && <span className="text-surface-secondary">{nameDescription}</span>}
                     </p>
                     {showStatus && isThresholdReached && (
-                        <p className="text-primary-400">{copy.proposalVotingProgressItem.reached}</p>
+                        <p className="type-supporting--row-value text-accent-primary">
+                            {copy.proposalVotingProgressItem.reached}
+                        </p>
                     )}
                     {showStatus && !isThresholdReached && (
-                        <p className="text-neutral-500">{copy.proposalVotingProgressItem.unreached}</p>
+                        <p className="type-supporting--row-value text-surface-secondary">
+                            {copy.proposalVotingProgressItem.unreached}
+                        </p>
                     )}
                 </div>
                 {showStatus && <AvatarIcon icon={statusIcon} variant={statusVariant} />}
@@ -109,12 +109,12 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
                 variant={processedVariant}
                 {...otherProps}
             />
-            <div className="flex flex-row justify-between text-sm leading-tight font-normal md:text-base">
-                <div className="flex flex-row flex-wrap gap-phrase--fixed-2">
-                    <p className="text-neutral-800">{description.value}</p>
-                    <p className="text-neutral-500">{description.text}</p>
+            <div className="flex flex-row justify-between type-supporting">
+                <div className="flex flex-row gap-phrase--fixed-2">
+                    <p className="text-surface-primary">{description.value}</p>
+                    <p className="text-surface-secondary">{description.text}</p>
                 </div>
-                {showPercentage && <p className="text-neutral-500">{formattedPercentage}</p>}
+                {showPercentage && <p className="text-surface-secondary">{formattedPercentage}</p>}
             </div>
         </div>
     );

@@ -12,9 +12,8 @@ import {
     workspaceServiceKeys,
 } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
-import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceAdminAccountsProps {
     /**
@@ -59,11 +58,7 @@ export const WorkspaceAdminAccounts: React.FC<IWorkspaceAdminAccountsProps> = (
         }
     };
 
-    // TODO: open the Add accounts dialog in place of the edit wizard once it lands.
-    const addAccountUrl = workspaceUtils.getWorkspaceEditUrl(
-        id,
-        WorkspaceWizardStep.ACCOUNTS,
-    );
+    const handleAddAccounts = useWorkspaceAddAccountsDialog(id);
 
     return (
         <Page.MainSection
@@ -71,7 +66,7 @@ export const WorkspaceAdminAccounts: React.FC<IWorkspaceAdminAccountsProps> = (
                 label: t('app.workspace.workspaceAdminPage.accounts.add'),
                 iconLeft: IconType.PLUS,
                 variant: 'secondary',
-                href: addAccountUrl,
+                onClick: handleAddAccounts,
             }}
             className="gap-group--fixed-12"
             inset={false}

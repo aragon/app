@@ -23,18 +23,6 @@ export interface IWorkspaceWizardProps {
      */
     defaultValues?: UseFormProps<ICreateWorkspaceFormData>['defaultValues'];
     /**
-     * Step the wizard opens on, the first one when not set.
-     */
-    initialActiveStep?: WorkspaceWizardStep;
-    /**
-     * Steps the wizard renders, all of them in the order the enum declares them when not set.
-     */
-    steps?: WorkspaceWizardStep[];
-    /**
-     * Actions rendered beside the submit button of a step, e.g. a way to skip an optional one.
-     */
-    secondaryActions?: Partial<Record<WorkspaceWizardStep, ReactNode>>;
-    /**
      * Product flow reported by the wizard analytics, e.g. `create_workspace`.
      */
     analyticsFlow: string;
@@ -51,34 +39,21 @@ const stepContent: Record<WorkspaceWizardStep, ReactNode> = {
 };
 
 /**
- * Wizard of the workspace form, shared by the create and the edit flows, which only differ in their copy, default
- * values and submit action.
+ * Wizard of the workspace form, used by the create flow.
  */
 export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
-    const {
-        translationNamespace,
-        defaultValues,
-        initialActiveStep,
-        steps: stepFilter,
-        secondaryActions,
-        analyticsFlow,
-        onSubmit,
-    } = props;
+    const { translationNamespace, defaultValues, analyticsFlow, onSubmit } =
+        props;
 
     const { t } = useTranslations();
 
     const steps = useMemo(
         () =>
-            buildWorkspaceWizardSteps(translationNamespace)
-                .filter(
-                    (step) =>
-                        stepFilter == null || stepFilter.includes(step.id),
-                )
-                .map((step) => ({
-                    ...step,
-                    meta: { ...step.meta, name: t(step.meta.name) },
-                })),
-        [translationNamespace, t, stepFilter],
+            buildWorkspaceWizardSteps(translationNamespace).map((step) => ({
+                ...step,
+                meta: { ...step.meta, name: t(step.meta.name) },
+            })),
+        [translationNamespace, t],
     );
 
     // The final step is named after the submit action.
@@ -99,7 +74,6 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
             analytics={{ flow: analyticsFlow }}
             defaultValues={defaultValues}
             finalStep={submitLabel}
-            initialActiveStep={initialActiveStep}
             initialSteps={steps}
             onSubmit={handleSubmit}
             submitLabel={submitLabel}
@@ -110,7 +84,6 @@ export const WorkspaceWizard: React.FC<IWorkspaceWizardProps> = (props) => {
                         `${translationNamespace}.steps.${step.id}.description`,
                     )}
                     key={step.id}
-                    secondaryAction={secondaryActions?.[step.id]}
                     title={t(`${translationNamespace}.steps.${step.id}.title`)}
                     {...step}
                 >

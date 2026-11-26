@@ -105,30 +105,33 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                 )}
                 {isCurrentUser && <Tag label={copy.memberDataListItemStructure.you} variant="neutral" />}
             </div>
-            <Heading as="h2" className="inline-block w-full truncate" size="h3">
+            <Heading as="h2" className="inline-block w-full truncate" typeClassName="type-title-item--entity-list">
                 <AddressOutput address={address} className="truncate" label={resolvedUserHandle} />
             </Heading>
             {showDelegationOrTokenInformation && (
                 <div className="flex flex-col gap-y-related--fixed-8">
                     <Heading
                         as="h3"
-                        className={classNames('text-sm leading-tight md:text-base', {
+                        className={classNames({
                             invisible: delegationCount == null || delegationCount === 0,
                         })}
-                        size="h5"
+                        typeClassName="type-supporting"
                     >
-                        <span className="text-neutral-800">{formattedDelegationCount}</span>{' '}
-                        <span className="text-neutral-500">
+                        <span className="text-surface-primary">{formattedDelegationCount}</span>{' '}
+                        <span className="text-surface-secondary">
                             {copy.memberDataListItemStructure[delegationCount === 1 ? 'delegation' : 'delegations']}
                         </span>
                     </Heading>
-                    <Heading as="h3" size="h5">
-                        <span className="text-neutral-800">
+                    <Heading as="h3" typeClassName="type-supporting">
+                        <span className="text-surface-primary">
                             {formattedTokenAmount ?? ''}
                             {tokenSymbol ? ` ${tokenSymbol}` : ''}
                         </span>
                         {!hideLabelTokenVoting && (
-                            <span className="text-neutral-500"> {copy.memberDataListItemStructure.votingPower}</span>
+                            <span className="text-surface-secondary">
+                                {' '}
+                                {copy.memberDataListItemStructure.votingPower}
+                            </span>
                         )}
                     </Heading>
                 </div>

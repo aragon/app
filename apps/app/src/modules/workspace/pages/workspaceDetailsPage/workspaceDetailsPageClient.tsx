@@ -17,7 +17,8 @@ import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
 import { useWorkspace } from '../../api/workspaceService';
 import { WorkspaceAccountItem } from '../../components/workspaceAccountItem';
 import { WorkspaceTodoPreview } from '../../components/workspaceTodoPreview';
-import { WorkspaceWizardStep } from '../../constants/workspaceWizardStep';
+import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
+import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import {
     workspaceAllAccountsSegment,
     workspaceUtils,
@@ -50,6 +51,7 @@ export const WorkspaceDetailsPageClient: React.FC<
     const { workspaceId } = props;
 
     const { t } = useTranslations();
+    const handleAddAccounts = useWorkspaceAddAccountsDialog(workspaceId);
     const { open } = useDialogContext();
 
     const { data: workspace } = useWorkspace({
@@ -57,6 +59,9 @@ export const WorkspaceDetailsPageClient: React.FC<
     });
 
     const accounts = workspace?.accounts ?? [];
+
+    // For the avatar and indexed name; the workspace metadata goes over them.
+    const { daos } = useWorkspaceDaos(accounts);
 
     // Resolved once for the whole list to display the DAO names, which the registry does not store.
     const { data: accountInfos } = useWorkspaceAccounts(
@@ -137,6 +142,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                         )}
                     >
                         {accounts.length === 0 && (
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: empty-state card padding 40 px: no inset role has it
                             <Card className="py-10">
                                 <EmptyState
                                     heading={t(
@@ -147,10 +153,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         label: t(
                                             'app.workspace.workspaceDetailsPage.emptyAccounts.action',
                                         ),
-                                        href: workspaceUtils.getWorkspaceEditUrl(
-                                            workspaceId,
-                                            WorkspaceWizardStep.ACCOUNTS,
-                                        ),
+                                        onClick: handleAddAccounts,
                                     }}
                                     secondaryButton={{
                                         label: t(
@@ -172,6 +175,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                         accountInfos,
                                         account,
                                     )}
+                                    dao={daos[account.id]}
                                     key={account.id}
                                     workspaceId={workspaceId}
                                 />
@@ -190,10 +194,10 @@ export const WorkspaceDetailsPageClient: React.FC<
                             <div className="flex flex-col gap-related--12-8">
                                 {targets.map((target) => (
                                     <Card
-                                        className="flex flex-col gap-tight p-inset-surface shadow-neutral-sm"
+                                        className="flex flex-col gap-tight p-inset-surface shadow-surface-sm"
                                         key={`${target.network}-${target.address}`}
                                     >
-                                        <span className="text-sm leading-normal text-neutral-500">
+                                        <span className="type-body-compact--unstepped text-surface-secondary">
                                             {
                                                 networkDefinitions[
                                                     target.network

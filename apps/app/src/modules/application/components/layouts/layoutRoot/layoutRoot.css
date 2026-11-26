@@ -1,8 +1,7 @@
 @import "tailwindcss";
-@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/core/index.css";
-@import "../../../../../../../../.design-sync/generated/govkit-primitives.css";
-@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/tokens/spacing.css";
-@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/theme/utils/index.css";
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/src/index.css";
+/* The kit's token aliases that only the app uses: generated next to the kit's tokens, not in its npm package. */
+@import "../../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/app/index.css";
 /* biome-ignore lint/suspicious/noDuplicateAtImportRules: Preserve GovKit's original Tailwind layer boundary. */
 @import "tailwindcss";
 @import "./breakpoints.css";
@@ -10,3 +9,18 @@
 /* Class names of the workspace packages the app renders: the kit ships as a bundle, the chat as source. */
 @source "../../../../../../node_modules/@aragon/gov-ui-kit/dist";
 @source "../../../../../../node_modules/@aragon/assistant-chat/src";
+
+/* The app's values for the kit's stacking and positioning hooks. */
+:root {
+    --guk-avatar-container-position: relative;
+
+    --guk-dialog-overlay-z-index: 20;
+    --guk-dialog-alert-overlay-z-index: 20;
+
+    --guk-dialog-content-z-index: 30;
+    --guk-dialog-alert-content-z-index: 30;
+
+    --guk-text-area-rich-text-expanded-z-index: 35;
+
+    --guk-dropdown-container-content-z-index: 40;
+}

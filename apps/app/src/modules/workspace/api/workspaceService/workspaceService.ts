@@ -1,6 +1,7 @@
 // biome-ignore-all lint/suspicious/useAwait: async keeps the service contract of a real backend over the sync storage.
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import type { IResource } from '@/shared/api/daoService';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
 import { workspaceUtils } from '../../utils/workspaceUtils';
@@ -10,6 +11,7 @@ import {
     type IWorkspaceAccountMetadata,
     type IWorkspaceTarget,
     WorkspaceAccountType,
+    WorkspaceRegistryScope,
 } from './domain';
 import type {
     IAddWorkspaceAccountParams,
@@ -17,7 +19,6 @@ import type {
     IGetWorkspaceParams,
     IRemoveWorkspaceAccountParams,
     IUpdateWorkspaceDetailsParams,
-    IUpdateWorkspaceParams,
     IWorkspaceExport,
 } from './workspaceService.api';
 
@@ -29,7 +30,7 @@ export const workspaceStorageKey = 'aragon-workspaces';
 const sessionWorkspaceStorageKey = 'aragon-session-workspaces';
 
 /**
- * Name of the workspace seeded on an empty registry. Stored data the user can rename, so not translated.
+ * Name of the default workspace. Stored data the user can rename, so not translated.
  */
 export const defaultWorkspaceName = 'My workspace';
 
@@ -48,6 +49,21 @@ const workspaceExportVersion = 1;
 const isOptionalString = (value: unknown) =>
     value == null || typeof value === 'string';
 
+const isWorkspaceLink = (value: unknown): value is IResource => {
+    if (value == null || typeof value !== 'object') {
+        return false;
+    }
+
+    const link = value as Partial<IResource>;
+
+    return (
+        typeof link.name === 'string' &&
+        typeof link.url === 'string' &&
+        URL.canParse(link.url) &&
+        ['http:', 'https:'].includes(new URL(link.url).protocol)
+    );
+};
+
 const isWorkspaceAccountMetadata = (
     value: unknown,
 ): value is IWorkspaceAccountMetadata => {
@@ -60,7 +76,10 @@ const isWorkspaceAccountMetadata = (
     return (
         typeof metadata.name === 'string' &&
         isOptionalString(metadata.description) &&
-        isOptionalString(metadata.avatar)
+        isOptionalString(metadata.avatar) &&
+        (metadata.links == null ||
+            (Array.isArray(metadata.links) &&
+                metadata.links.every(isWorkspaceLink)))
     );
 };
 
@@ -117,20 +136,7 @@ const isWorkspaceBody = (value: unknown): value is Omit<IWorkspace, 'id'> => {
         typeof workspace.description === 'string' &&
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&
         Array.isArray(workspace.links) &&
-        workspace.links.every((value) => {
-            if (value == null || typeof value !== 'object') {
-                return false;
-            }
-
-            const link = value as Partial<(typeof workspace.links)[number]>;
-
-            return (
-                typeof link.name === 'string' &&
-                typeof link.url === 'string' &&
-                URL.canParse(link.url) &&
-                ['http:', 'https:'].includes(new URL(link.url).protocol)
-            );
-        }) &&
+        workspace.links.every(isWorkspaceLink) &&
         Array.isArray(workspace.accounts) &&
         workspace.accounts.every(isWorkspaceAccount) &&
         Array.isArray(workspace.targets) &&
@@ -188,11 +194,11 @@ const normaliseWorkspaceLinks = (value: unknown): unknown => {
             }
 
             const { url } = link as { url?: unknown };
-            if (typeof url !== 'string' || /^https?:\/\//i.test(url)) {
+            if (typeof url !== 'string') {
                 return link;
             }
 
-            return { ...link, url: `https://${url}` };
+            return { ...link, url: workspaceUtils.ensureUrlProtocol(url) };
         }),
     };
 };
@@ -232,8 +238,10 @@ const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
 /**
  * Workspace API.
  *
- * There is no workspace endpoint on the backend yet, so this service resolves workspaces from the route's browser
- * registry: persistent local storage, or a tab-scoped registry when the current workspace belongs to the fixture.
+ * There is no workspace endpoint on the backend yet, so this service resolves workspaces from a browser registry:
+ * persistent local storage, or a tab-scoped registry holding the demo workspaces. A workspace's registry follows from
+ * its ID (see `workspaceUtils.getRegistryScope`), the list takes it from the caller, and new workspaces are always
+ * persisted. The route is never read here, so a query key built from the same scope always matches what is read.
  * It is intentionally shaped like the other services (async, throws the same error type) so that swapping browser
  * storage for a real request is a single-method change and no consumer needs to be touched.
  *
@@ -244,7 +252,9 @@ class WorkspaceService {
     getWorkspace = async (params: IGetWorkspaceParams): Promise<IWorkspace> => {
         const { id } = params.urlParams;
 
-        const workspace = this.getStoredWorkspaces()[id];
+        const workspace = this.getStoredWorkspaces(
+            this.getWorkspaceStorage(id),
+        )[id];
 
         if (workspace == null) {
             throw this.buildNotFoundError(id);
@@ -253,27 +263,28 @@ class WorkspaceService {
         return workspace;
     };
 
-    getWorkspaceList = async (): Promise<IWorkspace[]> =>
-        Object.values(this.getStoredWorkspaces());
+    getWorkspaceList = async (
+        scope: WorkspaceRegistryScope,
+    ): Promise<IWorkspace[]> =>
+        Object.values(this.getStoredWorkspaces(this.getStorage(scope)));
 
     /**
-     * Returns the first workspace, seeding and persisting the default one when the active registry is empty.
+     * Persists the default workspace with the given accounts next to the stored ones.
      *
      * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
      */
-    getOrCreateDefaultWorkspace = async (): Promise<IWorkspace> => {
-        const workspaces = this.getStoredWorkspaces();
-        const firstWorkspace = Object.values(workspaces)[0];
-
-        if (firstWorkspace != null) {
-            return firstWorkspace;
-        }
-
-        const defaultWorkspace = this.buildDefaultWorkspace();
-        this.persistWorkspaces({
-            ...workspaces,
-            [defaultWorkspace.id]: defaultWorkspace,
-        });
+    createDefaultWorkspace = async (
+        accounts: IWorkspaceAccount[],
+    ): Promise<IWorkspace> => {
+        const target = this.getStorage(WorkspaceRegistryScope.PERSISTENT);
+        const defaultWorkspace = this.buildDefaultWorkspace(accounts);
+        this.persistWorkspaces(
+            {
+                ...this.getStoredWorkspaces(target),
+                [defaultWorkspace.id]: defaultWorkspace,
+            },
+            target,
+        );
 
         return defaultWorkspace;
     };
@@ -283,33 +294,15 @@ class WorkspaceService {
     ): Promise<IWorkspace> => {
         const { body } = params;
 
-        const workspaces = this.getStoredWorkspaces();
+        const target = this.getStorage(WorkspaceRegistryScope.PERSISTENT);
+        const workspaces = this.getStoredWorkspaces(target);
         const id = workspaceUtils.buildWorkspaceId(
             body.name,
             Object.keys(workspaces),
         );
         const workspace: IWorkspace = { ...body, id };
 
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
-
-        return workspace;
-    };
-
-    updateWorkspace = async (
-        params: IUpdateWorkspaceParams,
-    ): Promise<IWorkspace> => {
-        const { urlParams, body } = params;
-        const { id } = urlParams;
-
-        const workspaces = this.getStoredWorkspaces();
-
-        if (workspaces[id] == null) {
-            throw this.buildNotFoundError(id);
-        }
-
-        const workspace: IWorkspace = { ...body, id };
-
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, target);
 
         return workspace;
     };
@@ -329,7 +322,8 @@ class WorkspaceService {
         const { id } = urlParams;
         const { account } = body;
 
-        const workspaces = this.getStoredWorkspaces();
+        const target = this.getWorkspaceStorage(id);
+        const workspaces = this.getStoredWorkspaces(target);
         const storedWorkspace = workspaces[id];
 
         if (storedWorkspace == null) {
@@ -349,7 +343,7 @@ class WorkspaceService {
             accounts: [...storedWorkspace.accounts, account],
         };
 
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, target);
 
         return workspace;
     };
@@ -366,7 +360,8 @@ class WorkspaceService {
         const { urlParams, body } = params;
         const { id } = urlParams;
 
-        const workspaces = this.getStoredWorkspaces();
+        const target = this.getWorkspaceStorage(id);
+        const workspaces = this.getStoredWorkspaces(target);
         const storedWorkspace = workspaces[id];
 
         if (storedWorkspace == null) {
@@ -374,7 +369,7 @@ class WorkspaceService {
         }
 
         const workspace: IWorkspace = { ...storedWorkspace, ...body, id };
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, target);
 
         return workspace;
     };
@@ -391,7 +386,8 @@ class WorkspaceService {
         const { urlParams, body } = params;
         const { id } = urlParams;
 
-        const workspaces = this.getStoredWorkspaces();
+        const target = this.getWorkspaceStorage(id);
+        const workspaces = this.getStoredWorkspaces(target);
         const storedWorkspace = workspaces[id];
 
         if (storedWorkspace == null) {
@@ -407,7 +403,7 @@ class WorkspaceService {
         }
 
         const workspace: IWorkspace = { ...storedWorkspace, accounts };
-        this.persistWorkspaces({ ...workspaces, [id]: workspace });
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, target);
 
         return workspace;
     };
@@ -419,12 +415,9 @@ class WorkspaceService {
      */
     exportWorkspace = async (params: IGetWorkspaceParams): Promise<string> => {
         const { id: _id, ...workspace } = await this.getWorkspace(params);
-        // The resources input accepts a URL without a protocol, which the import validation rejects.
         const links = workspace.links.map((link) => ({
             ...link,
-            url: /^https?:\/\//i.test(link.url)
-                ? link.url
-                : `https://${link.url}`,
+            url: workspaceUtils.ensureUrlProtocol(link.url),
         }));
         const workspaceExport: IWorkspaceExport = {
             version: workspaceExportVersion,
@@ -445,10 +438,7 @@ class WorkspaceService {
         const body = parseWorkspaceExport(rawExport);
         this.requireWindow();
 
-        const localStorageTarget: IWorkspaceStorage = {
-            storage: localStorage,
-            key: workspaceStorageKey,
-        };
+        const localStorageTarget = this.getPersistentStorage();
         const workspaces = this.getStoredWorkspaces(localStorageTarget);
         // A demo ID would open the demo in place of the import.
         const id = workspaceUtils.buildWorkspaceId(body.name, [
@@ -466,8 +456,8 @@ class WorkspaceService {
     };
 
     /**
-     * The registry the file formats describe: the persistent one. `getActiveStorage` follows the route, so on a demo
-     * page the debug panel exported the fixture and wrote its import to the session registry, lost on navigation.
+     * The registry the file formats describe: the persistent one. Unlike `getStorage`, it leaves the demo registry in
+     * place, as the debug panel and the workspace import also run on demo pages.
      */
     private getPersistentStorage = (): IWorkspaceStorage => {
         this.requireWindow();
@@ -488,6 +478,20 @@ class WorkspaceService {
     ): Promise<IWorkspace[]> => {
         const target = this.getPersistentStorage();
         const imported = parseWorkspaceRegistry(rawRegistry);
+        // A demo ID would be listed here but read from the demo registry, so it could never be opened. Checked here
+        // and not in the parser, which also loads the demo fixture.
+        const demoIds = Object.keys(imported).filter(
+            (id) =>
+                workspaceUtils.getRegistryScope(id) ===
+                WorkspaceRegistryScope.DEMO,
+        );
+
+        if (demoIds.length > 0) {
+            throw new Error(
+                `The registry uses reserved demo IDs: ${demoIds.join(', ')}.`,
+            );
+        }
+
         const workspaces = merge
             ? { ...this.getStoredWorkspaces(target), ...imported }
             : imported;
@@ -496,6 +500,22 @@ class WorkspaceService {
 
         return Object.values(workspaces);
     };
+
+    /**
+     * Removes the persistent registry (`aragon-workspaces`); the demo session registry is left alone.
+     *
+     * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the removal.
+     */
+    deleteWorkspaceRegistry = async (): Promise<void> => {
+        this.requireWindow();
+
+        try {
+            localStorage.removeItem(workspaceStorageKey);
+        } catch (error: unknown) {
+            throw this.buildStorageError(error);
+        }
+    };
+
     activateSessionWorkspaceRegistry = async (
         rawRegistry: string,
     ): Promise<void> => {
@@ -530,24 +550,26 @@ class WorkspaceService {
     };
 
     /**
-     * Builds the workspace seeded on an empty registry. Its ID gets a random suffix so default workspaces of
+     * Builds the default workspace with the given accounts. Its ID gets a random suffix so default workspaces of
      * different users never share one.
      */
-    private buildDefaultWorkspace = (): IWorkspace => ({
+    private buildDefaultWorkspace = (
+        accounts: IWorkspaceAccount[],
+    ): IWorkspace => ({
         id: `${workspaceUtils.slugify(defaultWorkspaceName)}-${crypto.randomUUID().slice(0, 8)}`,
         name: defaultWorkspaceName,
         description: '',
         avatar: null,
         links: [],
-        accounts: [],
+        accounts,
         targets: [],
     });
 
     /**
-     * Returns the workspaces from the active browser registry, ignoring corrupted JSON.
+     * Returns the workspaces from the given browser registry, ignoring corrupted JSON.
      */
     private getStoredWorkspaces = (
-        target: IWorkspaceStorage = this.getActiveStorage(),
+        target: IWorkspaceStorage,
     ): Record<string, IWorkspace> => {
         const { storage, key } = target;
         const rawWorkspaces = storage.getItem(key);
@@ -564,13 +586,14 @@ class WorkspaceService {
     };
 
     /**
-     * Persists the given workspaces in the active browser registry, replacing the stored ones.
+     * Persists the given workspaces in the given browser registry, replacing the stored ones.
      * @param workspaces - Every workspace of the registry.
+     * @param target - Registry to write.
      * @throws {AragonBackendServiceError} `workspaceStorageError` when browser storage rejects the write.
      */
     private persistWorkspaces = (
         workspaces: Record<string, IWorkspace>,
-        target: IWorkspaceStorage = this.getActiveStorage(),
+        target: IWorkspaceStorage,
     ) => {
         const { storage, key } = target;
 
@@ -581,37 +604,23 @@ class WorkspaceService {
         }
     };
 
-    private getActiveStorage = (): IWorkspaceStorage => {
+    /**
+     * Returns the browser registry of the given scope. Reaching the persistent registry means the demo was left, so it
+     * drops the demo registry: the next visit starts from a fresh fixture.
+     */
+    private getStorage = (scope: WorkspaceRegistryScope): IWorkspaceStorage => {
         this.requireWindow();
 
-        const workspaceId =
-            window.location.pathname.split('/')[1] === 'workspace'
-                ? window.location.pathname.split('/')[2]
-                : undefined;
-        const rawSessionRegistry = sessionStorage.getItem(
-            sessionWorkspaceStorageKey,
-        );
-
-        if (workspaceId != null && rawSessionRegistry != null) {
-            try {
-                const sessionRegistry = JSON.parse(
-                    rawSessionRegistry,
-                ) as WorkspaceRegistry;
-
-                if (Object.hasOwn(sessionRegistry, workspaceId)) {
-                    return {
-                        storage: sessionStorage,
-                        key: sessionWorkspaceStorageKey,
-                    };
-                }
-            } catch {
-                // A malformed session fixture is disposable.
-            }
+        if (scope === WorkspaceRegistryScope.DEMO) {
+            return { storage: sessionStorage, key: sessionWorkspaceStorageKey };
         }
 
         sessionStorage.removeItem(sessionWorkspaceStorageKey);
         return { storage: localStorage, key: workspaceStorageKey };
     };
+
+    private getWorkspaceStorage = (id: string): IWorkspaceStorage =>
+        this.getStorage(workspaceUtils.getRegistryScope(id));
 
     private requireWindow = () => {
         if (typeof window === 'undefined') {

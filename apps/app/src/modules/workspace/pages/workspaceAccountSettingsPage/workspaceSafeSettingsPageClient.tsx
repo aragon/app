@@ -129,16 +129,16 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.accountTitle`)}
                 >
-                    <Card inset="surface-wide">
+                    <Card className="p-inset-surface-wide">
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t(`${translationKey}.account.blockchain`)}
                             >
                                 <div className="flex flex-col gap-tight">
-                                    <p className="text-neutral-500">
+                                    <p className="text-surface-secondary">
                                         {networkDefinitions[network].name}
                                     </p>
-                                    <p className="text-sm leading-tight font-normal text-neutral-400">
+                                    <p className="type-supporting--compact-meta text-surface-tertiary">
                                         {t(
                                             `${translationKey}.account.notChangeable`,
                                         )}
@@ -174,7 +174,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                                         )}
                                         collapsedLines={4}
                                     >
-                                        <p className="text-neutral-500">
+                                        <p className="text-surface-secondary">
                                             {description}
                                         </p>
                                     </Collapsible>
@@ -186,9 +186,9 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.governanceTitle`)}
                 >
-                    <Card inset="surface-wide">
+                    <Card className="p-inset-surface-wide">
                         {isGovernanceUnavailable ? (
-                            <p className="text-neutral-500">
+                            <p className="text-surface-secondary">
                                 {t(`${translationKey}.governance.unavailable`)}
                             </p>
                         ) : (
@@ -238,7 +238,7 @@ const SettingRow: React.FC<ISettingRowProps> = (props) => {
             term={row.term}
         >
             {row.link == null ? (
-                <p className="text-neutral-500">{row.definition}</p>
+                <p className="text-surface-secondary">{row.definition}</p>
             ) : (
                 row.definition
             )}

@@ -70,7 +70,7 @@ export const UpdateDaoContractsListDialog: React.FC<
                 title={t('app.settings.updateDaoContractsListDialog.title')}
             />
             <Dialog.Content>
-                <div className="mb-section flex flex-col gap-related">
+                <div className="flex flex-col gap-related pb-section">
                     {hasOsxUpdate && (
                         <UpdateDaoContractsCard
                             address={dao.address}

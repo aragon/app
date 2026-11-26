@@ -35,14 +35,17 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
 
     return (
         <Dialog.Content
+            // biome-ignore lint/plugin/noPrimitiveSpacing: wizard intro dialog inset: no role has it
             className="flex flex-col gap-y-section px-12 py-10 md:px-6"
             noInset={true}
         >
             <div className="flex flex-col gap-y-related">
                 <Title asChild={true}>
-                    <Heading size="h3">{title}</Heading>
+                    <Heading as="h3" typeClassName="type-title-group">
+                        {title}
+                    </Heading>
                 </Title>
-                <Description className="text-base leading-normal font-normal text-neutral-500">
+                <Description className="type-body--unstepped text-surface-secondary">
                     {description}
                 </Description>
                 {infoLink && (
@@ -54,18 +57,18 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
             <div className="flex flex-col">
                 {steps.map((step, index) => (
                     <div
-                        className="my-group flex items-center gap-x-section"
+                        className="flex items-center gap-x-section py-group"
                         // biome-ignore lint/suspicious/noArrayIndexKey: static steps list, never reordered
                         key={index}
                     >
                         <IllustrationObject
-                            className="size-16 rounded-full border border-neutral-100"
+                            className="size-16 rounded-full border border-surface-secondary"
                             object={step.icon}
                         />
-                        <p className="my-group grow leading-normal font-normal text-neutral-800">
+                        <p className="grow py-group type-body--unstepped text-surface-primary">
                             {step.label}
                         </p>
-                        <p className="text-base leading-normal font-normal text-neutral-500">
+                        <p className="type-body--unstepped text-surface-secondary">
                             {t('app.shared.wizardDetailsDialog.step', {
                                 number: index + 1,
                             })}
@@ -73,7 +76,7 @@ export const WizardDetailsDialog: React.FC<IWizardDetailsDialogProps> = (
                     </div>
                 ))}
             </div>
-            <div className="mt-section flex gap-x-group">
+            <div className="flex gap-x-group pt-section">
                 <Button href={wizardLink} onClick={handleActionClick}>
                     {actionLabel}
                 </Button>

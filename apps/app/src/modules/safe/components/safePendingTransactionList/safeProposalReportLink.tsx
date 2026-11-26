@@ -11,8 +11,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 // Shared with the item so the resolved title and the unresolved fallback read as the same heading.
-const titleClassName =
-    'truncate text-base text-neutral-800 leading-tight md:text-lg';
+const titleClassName = 'truncate type-title-item text-surface-primary';
 
 // Stretches the card's single anchor over the whole `DataListItem` (which is `relative`), so the
 // entire row navigates while the Review button, a later positioned sibling, stays clickable above

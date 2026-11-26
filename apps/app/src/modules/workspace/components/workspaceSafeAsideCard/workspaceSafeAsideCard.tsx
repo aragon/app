@@ -98,7 +98,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                     {address}
                 </DefinitionList.Item>
             </DefinitionList.Container>
-            <div className="mt-group flex flex-col items-center gap-y-related">
+            <div className="flex flex-col items-center gap-y-related pt-group">
                 <Button
                     className="w-full"
                     href={octavLink}
@@ -109,7 +109,7 @@ export const WorkspaceSafeAsideCard: React.FC<IWorkspaceSafeAsideCardProps> = (
                 >
                     {t('app.finance.financeDetailsList.octavLabel')}
                 </Button>
-                <p className="text-sm text-neutral-500">
+                <p className="type-supporting--compact-detail text-surface-secondary">
                     {t('app.finance.financeDetailsList.octavDescription')}
                 </p>
             </div>

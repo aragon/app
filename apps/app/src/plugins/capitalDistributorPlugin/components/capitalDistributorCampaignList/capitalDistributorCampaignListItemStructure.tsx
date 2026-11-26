@@ -90,32 +90,34 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
             <div className="flex w-full min-w-0 items-center gap-group">
                 <Avatar size="lg" src={token.logo} />
                 <div className="flex min-w-0 flex-col gap-tight">
-                    <h3 className="text-lg text-neutral-800">{title}</h3>
-                    <p className="line-clamp-1 text-neutral-500">
+                    <h3 className="type-title-item--picker-row text-surface-primary">
+                        {title}
+                    </h3>
+                    <p className="line-clamp-1 text-surface-secondary">
                         {description}
                     </p>
                 </div>
             </div>
-            <div className="w-full border-t border-neutral-100 sm:hidden" />
+            <div className="w-full border-t border-surface-secondary sm:hidden" />
             <div className="flex w-full items-center justify-between gap-group sm:w-auto sm:gap-section--fixed-32">
                 <div className="flex grow items-center gap-group">
                     <div className="flex min-w-20 flex-col gap-tight">
-                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                        <h3 className="type-supporting--sm-step-label text-surface-secondary sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount',
                             )}
                         </h3>
-                        <p className="text-base text-neutral-800 sm:text-lg">
+                        <p className="type-supporting--sm-step-value text-surface-primary sm:type-supporting--sm-step-value-wide">
                             {formattedAmount}
                         </p>
                     </div>
                     <div className="flex min-w-20 flex-col gap-tight">
-                        <h3 className="text-sm text-neutral-500 sm:text-base">
+                        <h3 className="type-supporting--sm-step-label text-surface-secondary sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value',
                             )}
                         </h3>
-                        <p className="text-base text-neutral-800 sm:text-lg">
+                        <p className="type-supporting--sm-step-value text-surface-primary sm:type-supporting--sm-step-value-wide">
                             {formattedValue}
                         </p>
                     </div>
