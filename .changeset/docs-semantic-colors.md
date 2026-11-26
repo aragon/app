@@ -2,4 +2,4 @@
 "@aragon/docs": patch
 ---
 
-Use the GovKit semantic colour classes instead of primitive palette classes in the help site's header, footer, page actions and base styles; no visible change.
+The help site's header, footer, page actions and base styles take their colours from the Governance UI Kit's role classes (`bg-surface-primary`, `text-surface-secondary`, …) instead of palette classes. Nothing looks different.

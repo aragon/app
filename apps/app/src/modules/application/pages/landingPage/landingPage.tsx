@@ -97,6 +97,7 @@ export const LandingPage: React.FC = () => {
 
     const demoLink = (
         <Link
+            // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
             className="relative inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-neutral-0/55 px-5 text-base whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
@@ -206,6 +207,7 @@ export const LandingPage: React.FC = () => {
                     aria-label={t(
                         'app.application.landingPage.demo.previewLabel',
                     )}
+                    // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
                     className="relative hidden aspect-[16/10] h-[64%] shrink-0 overflow-hidden rounded-l-xl bg-surface-secondary shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:block"
                     href={demoWorkspaceUrl}
                     onClick={handleOpenDemo}
@@ -225,6 +227,7 @@ export const LandingPage: React.FC = () => {
                     aria-label={t(
                         'app.application.landingPage.demo.previewLabel',
                     )}
+                    // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
                     className="relative block w-full max-w-[300px] overflow-hidden rounded-t-xl bg-surface-secondary shadow-[0_24px_64px_-20px_rgba(10,28,92,0.55)] ring-1 ring-neutral-0/35 md:hidden"
                     href={demoWorkspaceUrl}
                     onClick={handleOpenDemo}

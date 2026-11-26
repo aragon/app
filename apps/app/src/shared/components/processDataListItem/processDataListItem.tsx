@@ -58,6 +58,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
+                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                 'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive,
                 'border-surface-disabled-item bg-surface-secondary': isDisabled,

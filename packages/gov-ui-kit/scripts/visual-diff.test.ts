@@ -42,4 +42,11 @@ describe('visual-diff output directories', () => {
         expect(run('compare', 'base', 'head').status).toBe(0);
         expect(existsSync(stale)).toBe(false);
     });
+
+    it('accepts only the token preview modes of .storybook/tokenPreviews.json', () => {
+        expect(run('compare', 'base', 'head', '--theme', 'next').status).toBe(0);
+        const result = run('compare', 'base', 'head', '--theme', 'purple');
+        expect(result.status).toBe(2);
+        expect(result.stderr).toContain('unknown theme "purple"');
+    });
 });

@@ -158,7 +158,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     <button
                         aria-expanded={isDialogOpen}
                         aria-haspopup="dialog"
-                        className="flex min-w-0 cursor-pointer items-center gap-2 rounded-lg border border-surface-default bg-surface-default p-1.5 pr-2 text-surface-default focus-ring transition-all ring-accent-focus shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active md:gap-3 md:rounded-xl md:p-2 md:pr-3"
+                        className="flex min-w-0 cursor-pointer items-center gap-2 rounded-lg border border-surface-default bg-surface-default p-1.5 pr-2 text-surface-default shadow-surface-sm ring-accent-focus focus-ring transition-all hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active md:gap-3 md:rounded-xl md:p-2 md:pr-3"
                         onClick={() => handleDialogOpenChange(true)}
                         type="button"
                     >

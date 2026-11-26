@@ -183,6 +183,7 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
+                            // biome-ignore lint/plugin/noPrimitiveColors: critical-50 is not a colour, the class resolves to nothing
                             className="bg-critical-50 flex flex-col gap-3 border-critical-primary-dispatch! p-4"
                             role="alert"
                         >

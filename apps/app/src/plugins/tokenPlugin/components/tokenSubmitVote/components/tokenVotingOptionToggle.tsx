@@ -33,14 +33,17 @@ export interface ITokenVotingOptionToggleProps
 const variantToClassNames: Record<TokenVotingOptionToggleVariant, string[]> = {
     success: [
         'active:border-success-active-control',
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         'data-[state=on]:enabled:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
     ],
     neutral: [
         'active:border-accent-active',
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-surface-selected-label data-[state=on]:shadow-accent-sm',
     ],
     critical: [
         'active:border-critical-active-control',
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         'data-[state=on]:enabled:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
     ],
 };
@@ -77,7 +80,7 @@ export const TokenVotingOptionToggle: React.FC<
     const toggleClasses = classNames(
         'flex h-[50px] items-center justify-between gap-3 rounded-xl border py-2 pr-3 pl-4',
         'cursor-pointer bg-surface-default transition-all',
-        'border-surface-default text-surface-default focus-ring ring-accent-focus shadow-surface-sm',
+        'border-surface-default text-surface-default shadow-surface-sm ring-accent-focus focus-ring',
         'active:shadow-none',
         'hover:border-surface-hover hover:shadow-surface-default',
         'disabled:cursor-default disabled:border-surface-disabled-toggle disabled:bg-surface-disabled disabled:text-surface-disabled',

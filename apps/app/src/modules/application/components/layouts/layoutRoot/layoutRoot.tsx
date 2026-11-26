@@ -9,7 +9,7 @@ import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
-import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
+import { tokenPreviewUtils } from '@/modules/application/utils/tokenPreviewUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -54,9 +54,9 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
         false;
 
-    // Colour-theme preview of the debug panel: a stored theme is only rendered while the panel is enabled, so a
-    // user without the panel always gets the default theme.
-    const themeAttribute = themePreviewUtils.getServerThemeAttribute(
+    // Token previews of the debug panel: a stored mode is only rendered while the panel is enabled, so a user
+    // without the panel always gets the default values.
+    const tokenPreviewAttributes = tokenPreviewUtils.getServerAttributes(
         isDebugPanelEnabled,
         requestHeaders.get('cookie'),
     );
@@ -68,7 +68,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html className="h-full" data-theme={themeAttribute} lang="en">
+        <html className="h-full" lang="en" {...tokenPreviewAttributes}>
             <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-body-sidebar">
                 <NextTopLoader
                     color="var(--guk-bg-accent-solid)"

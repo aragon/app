@@ -68,6 +68,7 @@ export const SupportChatPanel: React.FC = () => {
         isOpen
             ? classNames(
                   'fixed inset-0 z-[var(--guk-dialog-content-z-index)] flex',
+                  // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
                   'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-l screen-lg:border-surface-secondary screen-lg:shadow-neutral-lg',
                   panelWidthClassName,
               )

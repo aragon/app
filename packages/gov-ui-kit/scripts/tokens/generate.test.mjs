@@ -7,11 +7,13 @@ import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import { compile } from 'tailwindcss';
 import { generate, staleFiles } from './generate.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const sourceDir = resolve(kitRoot, 'design-system/tokens/source');
 const cssFile = (name) => resolve(kitRoot, `src/theme/tokens/primitives/${name}.css`);
+const previewFile = resolve(kitRoot, 'design-system/tokens/preview/colors.css');
 
 // A scratch copy of the source with one JSON file changed.
 const mutated = (context, file, change) => {
@@ -169,8 +171,125 @@ for (const [name, file, change, expected] of [
         },
         /no token at or under colour/,
     ],
+    [
+        'two tokens with one CSS name',
+        'semantic.config.json',
+        (json) => {
+            json.cssNames['semantic.text.*.*'] = '--guk-bg-$1-$2';
+        },
+        /semantic\.text\.\S+ and semantic\.bg\.\S+ share the CSS name --guk-bg-/,
+    ],
+    [
+        'a dangling alias in a mode',
+        'modes/semantic.next.tokens.json',
+        ({ semantic }) => {
+            semantic.bg.surface.primary.$value = '{palette.missing.0}';
+        },
+        /Missing alias target: palette\.missing\.0 \(from semantic\.bg\.surface\.primary\)/,
+    ],
 ]) {
     test(`the generator rejects ${name}`, (context) => {
         assert.throws(() => generate(mutated(context, file, change)), expected);
     });
 }
+
+// The preview's declarations per mode selector, for a scratch source (or the repository's).
+const previewModes = (dir) =>
+    Object.fromEntries(
+        [
+            ...generate(dir)
+                .get(previewFile)
+                .matchAll(/\n(\S[^{\n]*) \{\n([^}]*)\}/g),
+        ].map(([, selector, body]) => [selector, body.trim().split(/\n\s*/)]),
+    );
+const NEXT = ':root[data-theme="next"], [data-theme="next"]';
+
+test('a mode override adds exactly its declaration to its mode in the preview', (context) => {
+    const dir = mutated(context, 'modes/semantic.next.tokens.json', ({ semantic }) => {
+        semantic.bg.surface.primary.$value = { colorSpace: 'srgb', components: [0x11 / 255, 0x22 / 255, 0x33 / 255] };
+    });
+    const before = previewModes();
+    const after = previewModes(dir);
+    assert.deepEqual(
+        after[NEXT].filter((line) => !before[NEXT].includes(line)),
+        ['--guk-bg-surface-primary: #112233;'],
+    );
+    assert.equal(after[NEXT].length, before[NEXT].length + 1);
+    assert.deepEqual({ ...after, [NEXT]: [] }, { ...before, [NEXT]: [] });
+});
+
+test('a token a mode leaves at its default value is not written', (context) => {
+    const { color } = JSON.parse(readFileSync(join(sourceDir, 'primitives.tokens.json'), 'utf8'));
+    const dir = mutated(context, 'modes/semantic.next.tokens.json', ({ semantic }) => {
+        semantic.text.surface.placeholder.$value = color.neutral['300'].$value;
+    });
+    const before = previewModes()[NEXT];
+    const after = previewModes(dir)[NEXT];
+    assert.deepEqual(
+        before.filter((line) => !after.includes(line)),
+        before.filter((line) => line.startsWith('--guk-text-surface-placeholder:')),
+    );
+    assert.equal(after.length, before.length - 1);
+});
+
+test('role classes compile once, after their primitive siblings, and keep variants and @apply', async () => {
+    const loadStylesheet = async (id, base) => {
+        const path =
+            id === 'tailwindcss' ? fileURLToPath(import.meta.resolve('tailwindcss/index.css')) : resolve(base, id);
+        return { path, base: dirname(path), content: readFileSync(path, 'utf8') };
+    };
+    const entry = [
+        '@import "./src/theme/tokens/index.css";',
+        '@import "tailwindcss";',
+        '.probe { @apply bg-surface-primary; }',
+    ].join('\n');
+    const { build } = await compile(entry, { base: kitRoot, loadStylesheet });
+    const css = build([
+        'bg-surface-primary',
+        'bg-neutral-0',
+        'text-surface-primary',
+        'icon-surface-primary',
+        'text-sm',
+        'border-2',
+        'border-surface-primary',
+        'border-t-surface-primary',
+        'ring-accent-focus',
+        'hover:bg-surface-hover',
+        'aria-disabled:text-surface-disabled',
+        'md:border-x-accent-default',
+    ]);
+    const rule = (selector) => {
+        const rules = css.match(
+            new RegExp(`\\n\\s*${selector.replace(/[\\.:[\]()"=]/g, '\\$&')} \\{\\n([^}]*)\\}`, 'g'),
+        );
+        assert.equal(rules?.length, 1, `one rule for ${selector}`);
+        return rules[0].split('{')[1].trim().replace(/\s+/g, ' ');
+    };
+    assert.equal(rule('.bg-surface-primary'), 'background-color: var(--guk-bg-surface-primary); }');
+    assert.equal(rule('.text-surface-primary'), 'color: var(--guk-text-surface-primary); }');
+    assert.equal(rule('.icon-surface-primary'), 'color: var(--guk-icon-surface-primary); }');
+    assert.equal(rule('.border-surface-primary'), 'border-color: var(--guk-border-surface-primary); }');
+    assert.equal(rule('.border-t-surface-primary'), 'border-top-color: var(--guk-border-surface-primary); }');
+    assert.equal(rule('.ring-accent-focus'), '--tw-ring-color: var(--guk-ring-accent-focus); }');
+    assert.equal(rule('.bg-neutral-0'), 'background-color: var(--color-neutral-0); }');
+    assert.match(rule('.text-sm'), /^font-size: var\(--text-sm\);/);
+    assert.match(rule('.border-2'), /border-width: 2px;/);
+    assert.equal(rule('.hover\\:bg-surface-hover:hover'), 'background-color: var(--guk-bg-surface-hover); }');
+    assert.equal(
+        rule('.aria-disabled\\:text-surface-disabled[aria-disabled="true"]'),
+        'color: var(--guk-text-surface-disabled); }',
+    );
+    assert.equal(rule('.md\\:border-x-accent-default'), 'border-inline-color: var(--guk-border-accent-default); }');
+    assert.equal(rule('.probe'), 'background-color: var(--guk-bg-surface-primary); }');
+    assert(css.indexOf('.bg-neutral-0 {') < css.indexOf('.bg-surface-primary {'));
+    assert(css.indexOf('.icon-surface-primary {') < css.indexOf('.text-surface-primary {'));
+    assert.match(css, /--guk-bg-surface-primary: var\(--color-neutral-0\);/);
+    assert.doesNotMatch(css, /--guk-bg-surface-tertiary:/);
+});
+
+test('the js and css lint plugins match the same classes', () => {
+    const patterns = (language) =>
+        readFileSync(resolve(kitRoot, `biome-plugins/${language}/noPrimitiveColors.grit`), 'utf8').match(/r"[^"]*"/g);
+    assert.equal(patterns('js').length, 2);
+    assert.deepEqual(patterns('css'), patterns('js'));
+});

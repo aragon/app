@@ -26,7 +26,7 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const buttonClassName = classNames(
         'cursor-pointer p-1 md:pr-4',
         'flex max-w-56 items-center gap-3 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all xl:max-w-68',
-        'focus-ring ring-accent-focus hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
         className,
     );
 

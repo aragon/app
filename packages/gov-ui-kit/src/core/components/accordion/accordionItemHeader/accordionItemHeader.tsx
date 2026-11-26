@@ -31,7 +31,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                 asChild={removeControl != null && index != null}
                 className={classNames(
                     'relative flex flex-1 items-baseline justify-between gap-x-4 px-4 py-3 outline-hidden md:gap-x-6 md:px-6 md:py-5',
-                    'focus-ring ring-accent-focus group-data-disabled:cursor-default group-data-disabled:bg-surface-disabled',
+                    'ring-accent-focus focus-ring group-data-disabled:cursor-default group-data-disabled:bg-surface-disabled',
                     {
                         'cursor-default': removeControl != null,
                         'cursor-pointer': removeControl == null,

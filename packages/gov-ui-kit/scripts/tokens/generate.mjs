@@ -1,33 +1,49 @@
 #!/usr/bin/env node
 // The token generator. It reads the DTCG 2025.10 token source in design-system/tokens/source/ and writes:
 //
-// - src/theme/tokens/primitives/*.css   the kit's primitive CSS (Tailwind `@theme` blocks) and its barrel
+// - src/theme/tokens/<layer>/*.css      the kit's token CSS (Tailwind `@theme` blocks) and a barrel, per layer
+// - design-system/tokens/preview/*.css  the preview modes: the tokens each mode changes (not in the npm package)
 // - the token source itself, normalised: every colour carries the `hex` of its components
+//
+// The default theme is every `*.tokens.json` directly in the source folder; every `*.config.json` there is a layer.
 //
 // Usage: `node scripts/tokens/generate.mjs [--check]`
 //   (none)    validate the source, write the files
 //   --check   validate the source, fail when a file on disk is stale (writes nothing)
 // See design-system/tokens/README.md.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { renderCss } from './lib/css.mjs';
 import { readJson, readTokens, withColorHex } from './lib/dtcg.mjs';
-import { renderPrimitives } from './lib/primitives.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const defaultSourceDir = resolve(kitRoot, 'design-system/tokens/source');
 
 // Every file the generator owns: absolute path -> text.
 export const generate = (sourceDir = defaultSourceDir) => {
-    const sourceFile = resolve(sourceDir, 'primitives.tokens.json');
-    const document = readJson(sourceFile);
-    const css = renderPrimitives({
-        tokens: readTokens(document, readJson(resolve(sourceDir, 'schema/format.2025.10.json'))),
-        config: readJson(resolve(sourceDir, 'primitives.config.json')),
+    const schema = readJson(resolve(sourceDir, 'schema/format.2025.10.json'));
+    const documents = new Map(); // file -> token document, as read
+    const document = (name) => {
+        const file = resolve(sourceDir, name);
+        return documents.get(file) ?? documents.set(file, readJson(file)).get(file);
+    };
+    const suffixed = (suffix) =>
+        readdirSync(sourceDir)
+            .filter((name) => name.endsWith(suffix))
+            .sort()
+            .map((name) => [name.slice(0, -suffix.length), name]);
+    const defaults = suffixed('.tokens.json').map(([, name]) => document(name));
+    const css = renderCss({
+        tokens: readTokens(schema, defaults),
+        layers: Object.fromEntries(
+            suffixed('.config.json').map(([layer, name]) => [layer, readJson(resolve(sourceDir, name))]),
+        ),
+        modeTokens: (names) => readTokens(schema, defaults, names.map(document)),
     });
     return new Map([
-        [sourceFile, `${JSON.stringify(withColorHex(document), null, 4)}\n`],
+        ...[...documents].map(([file, json]) => [file, `${JSON.stringify(withColorHex(json), null, 4)}\n`]),
         ...[...css].map(([file, text]) => [resolve(kitRoot, file), text]),
     ]);
 };
@@ -54,6 +70,7 @@ if (import.meta.main) {
             console.log(`tokens: ok (${files.size} files up to date)`);
         } else {
             for (const file of stale) {
+                mkdirSync(dirname(file), { recursive: true });
                 writeFileSync(file, files.get(file));
             }
             console.log(`tokens: ${files.size} files, ${stale.length} written`);

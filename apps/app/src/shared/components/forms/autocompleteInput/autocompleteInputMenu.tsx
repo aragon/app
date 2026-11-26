@@ -41,6 +41,7 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
+        // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
         'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-accent-active bg-surface-primary shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },

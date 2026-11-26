@@ -114,6 +114,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
         <DataList.Item
             className={classNames('px-4 py-3 md:px-6 md:py-4', {
                 // Checked but not highlighted: the user did not pick it.
+                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                 'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
                     isActive && !isInWorkspace,
                 'border-surface-disabled-item bg-surface-secondary': isDisabled,

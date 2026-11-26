@@ -3,7 +3,7 @@ import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapte
 import * as headers from 'next/headers';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
-import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
+import { tokenPreviewUtils } from '@/modules/application/utils/tokenPreviewUtils';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -39,10 +39,6 @@ describe('<LayoutRoot /> component', () => {
     const cookieToInitialStateSpy = jest.spyOn(wagmi, 'cookieToInitialState');
     const headersSpy = jest.spyOn(headers, 'headers');
     const getSnapshotSpy = jest.spyOn(featureFlags, 'getSnapshot');
-    const getServerThemeAttributeSpy = jest.spyOn(
-        themePreviewUtils,
-        'getServerThemeAttribute',
-    );
 
     // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
     const useFeatureFlagsSpy = jest.spyOn(
@@ -70,7 +66,6 @@ describe('<LayoutRoot /> component', () => {
         headersSpy.mockReset();
         useFeatureFlagsSpy.mockReset();
         getSnapshotSpy.mockReset();
-        getServerThemeAttributeSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
@@ -115,9 +110,9 @@ describe('<LayoutRoot /> component', () => {
     });
 
     it.each([true, false])(
-        'resolves the previewed colour theme from the request cookies with the debug panel enabled: %s',
+        'renders the token preview stored in the request cookies only with the debug panel enabled: %s',
         async (enabled) => {
-            const cookie = `${themePreviewUtils.cookieName}=next`;
+            const cookie = `${tokenPreviewUtils.axes[0].cookieName}=next`;
             headersSpy.mockReturnValue({
                 get: (name: string) => (name === 'cookie' ? cookie : null),
             } as unknown as Promise<ReadonlyHeaders>);
@@ -132,9 +127,8 @@ describe('<LayoutRoot /> component', () => {
 
             render(await createTestComponent());
 
-            expect(getServerThemeAttributeSpy).toHaveBeenCalledWith(
-                enabled,
-                cookie,
+            expect(document.documentElement.dataset.theme).toEqual(
+                enabled ? 'next' : undefined,
             );
         },
     );

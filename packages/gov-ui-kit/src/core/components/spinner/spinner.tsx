@@ -73,6 +73,7 @@ const variantToClassNames: Record<SpinnerVariant, string> = {
 };
 
 const variantToLoadingClassNames: Record<SpinnerVariant, string> = {
+    // biome-ignore lint/plugin/noPrimitiveColors: no border role has neutral-500
     neutral: 'border-t-neutral-500',
     primary: 'border-t-accent-secondary',
     primaryInverted: 'border-t-accent-secondary-inverse',

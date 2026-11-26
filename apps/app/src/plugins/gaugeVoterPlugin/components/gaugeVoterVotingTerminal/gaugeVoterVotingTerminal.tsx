@@ -90,6 +90,7 @@ export const GaugeVoterVotingTerminal: React.FC<
         'rounded-xl border border-b-0 bg-surface-primary p-3 md:h-[64px] md:px-4 md:py-0',
         {
             'border-surface-secondary shadow-surface-md': !showVoteButton,
+            // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the xl size
             'border-accent-primary-terminal shadow-primary-xl': showVoteButton,
         },
     );
