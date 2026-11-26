@@ -110,6 +110,8 @@ The scheduled run green-skips when there are no pending changesets for the `app`
 
 Right after production, the same tag is deployed to OCC ([new.app.aragon.org](https://new.app.aragon.org)), the production build with its own feature flags and analytics, under the approval production already got, followed by its own smoke run. The release is marked Completed after production; OCC deploys and runs its smoke right after.
 
+Between releases, **App OCC** (`app-occ.yml`) deploys `main` (or the dispatched ref) to OCC alone, with no approval, and runs the smoke suite; production is not touched. The next release or rollback puts OCC back on its tag.
+
 The deploy job only runs for tags starting `@aragon/app@`, so assistant and gov-ui-kit releases do not trigger it.
 
 If any step of any flow fails, the thread gets a ❌ message with the link to the run.
