@@ -21,6 +21,10 @@ changes in red) to `node_modules/.cache/visual-diff/diff/`. A full run of the ~3
 about 5 minutes. The steps are also separate commands: `build <dir> [--ref <ref>]`,
 `capture <storybook-dir> <out-dir>` and `compare <base> <head> [--diff <dir>]`.
 
+Use a new or empty output directory for the first run. Each command marks its output with a
+hidden file so it can replace the contents on subsequent runs. For caches created by older
+versions, choose a fresh directory (`--work-dir <dir>` for `ref`).
+
 Captures are deterministic on one machine: fixed 1280×800 viewport (full-page shots), animations
 and transitions off, reduced motion, fonts and images awaited, frozen `Date`, seeded
 `Math.random`, no network outside the static build, and a screenshot is only accepted once two

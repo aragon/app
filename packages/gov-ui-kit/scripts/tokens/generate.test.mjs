@@ -54,6 +54,37 @@ test('a changed token makes its file stale', (context) => {
     assert.deepEqual(staleFiles(generate(dir)), [cssFile('borderRadius')]);
 });
 
+test('a shadow preserves inset per layer and supports a whole-token alias', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+        shadow.neutral.$value[0].inset = true;
+        shadow.neutral.$value[1].inset = false;
+        shadow['neutral-sm'].$value = '{shadow.neutral}';
+    });
+    const css = generate(dir).get(cssFile('shadows'));
+    assert.match(css, /--shadow-neutral-sm: var\(--shadow-neutral\);/);
+    assert.match(css, /--shadow-neutral: inset 0px 1px 3px 0px rgba\([^)]+\), 0px 1px 2px -1px rgba/);
+});
+
+for (const [field, reference] of [
+    ['offsetX', '{spacing.base}'],
+    ['color', '{color.primary.500}'],
+    ['inset', { $ref: '#/shadow/neutral/$value/0/inset' }],
+]) {
+    test(`a shadow reference in ${field} identifies the unsupported field`, (context) => {
+        const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+            shadow['neutral-sm'].$value[0][field] = reference;
+        });
+        assert.throws(() => generate(dir), { message: `Unsupported shadow reference at shadow.neutral-sm.0.${field}` });
+    });
+}
+
+test('a reference used as a shadow layer identifies the unsupported layer', (context) => {
+    const dir = mutated(context, 'primitives.tokens.json', ({ shadow }) => {
+        shadow['neutral-sm'].$value.push('{shadow.primary}');
+    });
+    assert.throws(() => generate(dir), { message: 'Unsupported shadow reference at shadow.neutral-sm.1' });
+});
+
 test('a colour without a hex gets it written into the source', (context) => {
     const dir = mutated(context, 'primitives.tokens.json', (json) => {
         delete json.color.primary['500'].$value.hex;
