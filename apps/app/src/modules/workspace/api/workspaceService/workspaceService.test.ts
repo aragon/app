@@ -385,7 +385,11 @@ describe('workspace service', () => {
             localStorage.clear();
             await workspaceService.importWorkspaceRegistry(exported);
 
-            expect(getStoredWorkspaces()).toEqual({ first, second });
+            // The export always carries an address book, empty for a workspace with no names.
+            expect(getStoredWorkspaces()).toEqual({
+                first: { ...first, aliases: [] },
+                second: { ...second, aliases: [] },
+            });
         });
 
         it('can merge an imported fixture without replacing stored workspaces', async () => {
@@ -602,7 +606,10 @@ describe('workspace service', () => {
             });
 
             const { id: _id, ...workspace } = created;
-            expect(JSON.parse(exported)).toEqual({ version: 1, workspace });
+            expect(JSON.parse(exported)).toEqual({
+                version: 2,
+                workspace: { ...workspace, aliases: [] },
+            });
         });
 
         it('rejects with a not-found error for an unknown workspace', async () => {
@@ -644,7 +651,11 @@ describe('workspace service', () => {
 
             const imported = await workspaceService.importWorkspace(exported);
 
-            expect(imported).toEqual({ ...existing, id: 'new-workspace-2' });
+            expect(imported).toEqual({
+                ...existing,
+                aliases: [],
+                id: 'new-workspace-2',
+            });
             expect(getStoredWorkspaces()).toEqual({
                 [existing.id]: existing,
                 [imported.id]: imported,
@@ -732,7 +743,7 @@ describe('workspace service', () => {
             ['invalid JSON', '{'],
             [
                 'an unknown version',
-                JSON.stringify({ version: 2, workspace: buildBody() }),
+                JSON.stringify({ version: 3, workspace: buildBody() }),
             ],
             [
                 'a workspace registry',
@@ -763,6 +774,259 @@ describe('workspace service', () => {
                 workspaceService.importWorkspace(rawExport),
             ).rejects.toThrow();
             expect(getStoredWorkspaces()).toEqual({ [existing.id]: existing });
+        });
+    });
+    describe('address book', () => {
+        const lower = '0xd8da6bf26964af9d7eed9e03e53415d37aa96045';
+        const checksum = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        const wrongChecksum = '0xD8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        const alias = (override?: Record<string, unknown>) => ({
+            address: lower,
+            name: 'Treasury',
+            network: null,
+            updatedAt: 1,
+            ...override,
+        });
+        const workspaceFile = (aliases: unknown, version = 2) =>
+            JSON.stringify({
+                version,
+                workspace: {
+                    ...buildBody(),
+                    ...(aliases === undefined ? {} : { aliases }),
+                },
+            });
+        const registryOf = (count: number, aliases: unknown[] = []) =>
+            JSON.stringify(
+                Object.fromEntries(
+                    Array.from({ length: count }, (_, i) => [
+                        `ws-${i}`,
+                        { ...buildBody(), id: `ws-${i}`, aliases },
+                    ]),
+                ),
+            );
+
+        it('saves a name, edits the same address and network, and keeps a bound name apart (inv. 29)', async () => {
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const urlParams = { id };
+            await workspaceService.upsertWorkspaceAlias({
+                urlParams,
+                body: { address: lower, name: 'Treasury', network: null },
+            });
+            await workspaceService.upsertWorkspaceAlias({
+                urlParams,
+                body: { address: checksum, name: 'Vault', network: null },
+            });
+            const workspace = await workspaceService.upsertWorkspaceAlias({
+                urlParams,
+                body: {
+                    address: lower,
+                    name: 'Base Safe',
+                    network: Network.BASE_MAINNET,
+                },
+            });
+
+            expect(workspace.aliases).toHaveLength(2);
+            expect(
+                workspace.aliases?.map((a) => [a.address, a.name, a.network]),
+            ).toEqual([
+                [checksum, 'Vault', null],
+                [checksum, 'Base Safe', Network.BASE_MAINNET],
+            ]);
+        });
+
+        it('removes a name by address and network', async () => {
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            await workspaceService.upsertWorkspaceAlias({
+                urlParams: { id },
+                body: { address: lower, name: 'Treasury', network: null },
+            });
+            const workspace = await workspaceService.removeWorkspaceAlias({
+                urlParams: { id },
+                body: { address: checksum, network: null },
+            });
+
+            expect(workspace.aliases).toEqual([]);
+        });
+
+        it('rejects a wrong checksum on write (inv. 28) and a missing workspace', async () => {
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            await expect(
+                workspaceService.upsertWorkspaceAlias({
+                    urlParams: { id },
+                    body: {
+                        address: wrongChecksum,
+                        name: 'Treasury',
+                        network: null,
+                    },
+                }),
+            ).rejects.toThrow();
+            await expect(
+                workspaceService.upsertWorkspaceAlias({
+                    urlParams: { id: 'unknown' },
+                    body: { address: lower, name: 'Treasury', network: null },
+                }),
+            ).rejects.toMatchObject({ status: 404 });
+        });
+
+        it('leaves storage unchanged when the write fails (inv. 27)', async () => {
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            const before = localStorage.getItem(workspaceStorageKey);
+            const setItem = jest
+                .spyOn(Storage.prototype, 'setItem')
+                .mockImplementation(() => {
+                    throw new Error('QuotaExceededError');
+                });
+
+            await expect(
+                workspaceService.upsertWorkspaceAlias({
+                    urlParams: { id },
+                    body: { address: lower, name: 'Treasury', network: null },
+                }),
+            ).rejects.toMatchObject({ code: 'workspaceStorageError' });
+            setItem.mockRestore();
+
+            expect(localStorage.getItem(workspaceStorageKey)).toBe(before);
+        });
+
+        it('exports version 2 with the names and their network, and imports them back (inv. 27, 30)', async () => {
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            await workspaceService.upsertWorkspaceAlias({
+                urlParams: { id },
+                body: {
+                    address: lower,
+                    name: 'Base Safe',
+                    network: Network.BASE_MAINNET,
+                },
+            });
+            const exported = await workspaceService.exportWorkspace({
+                urlParams: { id },
+            });
+            expect(JSON.parse(exported).version).toBe(2);
+
+            const imported = await workspaceService.importWorkspace(exported);
+
+            expect(imported.id).not.toBe(id);
+            expect(imported.aliases).toEqual([
+                expect.objectContaining({
+                    address: checksum,
+                    name: 'Base Safe',
+                    network: Network.BASE_MAINNET,
+                }),
+            ]);
+        });
+
+        it('loads a version 1 file and a stored workspace with an empty book (inv. 27)', async () => {
+            const imported = await workspaceService.importWorkspace(
+                workspaceFile(undefined, 1),
+            );
+            expect(imported.aliases ?? []).toEqual([]);
+            const { id } = await workspaceService.createWorkspace({
+                body: buildBody(),
+            });
+            expect(
+                (await workspaceService.getWorkspace({ urlParams: { id } }))
+                    .aliases ?? [],
+            ).toEqual([]);
+        });
+
+        it.each([
+            ['an unknown network (inv. 30)', [alias({ network: 'nope' })]],
+            ['a wrong checksum (inv. 28)', [alias({ address: wrongChecksum })]],
+            ['an unknown key (inv. 25)', [alias({ extra: true })]],
+            [
+                'the same address and network twice (inv. 29)',
+                [alias(), alias({ name: 'Other' })],
+            ],
+            [
+                'more than 500 aliases (inv. 24)',
+                Array.from({ length: 501 }, (_, i) =>
+                    alias({ address: `0x${i.toString(16).padStart(40, '0')}` }),
+                ),
+            ],
+        ])('rejects a workspace file with %s', async (_name, aliases) => {
+            await expect(
+                workspaceService.importWorkspace(workspaceFile(aliases)),
+            ).rejects.toThrow();
+            expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
+        });
+
+        it('checks a file size of 1 MB before parsing it (inv. 24)', async () => {
+            const parse = jest.spyOn(JSON, 'parse');
+            const big = ' '.repeat(1_000_001);
+
+            await expect(workspaceService.importWorkspace(big)).rejects.toThrow(
+                /too large/i,
+            );
+            await expect(
+                workspaceService.importWorkspaceRegistry(big),
+            ).rejects.toThrow(/too large/i);
+            expect(parse).not.toHaveBeenCalled();
+            parse.mockRestore();
+        });
+
+        it('caps the registry at 100 workspaces and 5,000 aliases (inv. 24)', async () => {
+            await expect(
+                workspaceService.importWorkspaceRegistry(registryOf(101)),
+            ).rejects.toThrow();
+            const aliases = Array.from({ length: 100 }, (_, i) =>
+                alias({ address: `0x${i.toString(16).padStart(40, '0')}` }),
+            );
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    registryOf(51, aliases),
+                ),
+            ).rejects.toThrow();
+            await expect(
+                workspaceService.importWorkspaceRegistry(
+                    registryOf(50, aliases),
+                ),
+            ).resolves.toHaveLength(50);
+        });
+
+        it('caps the time of an imported name at the import time (inv. 26)', async () => {
+            const future = Date.now() + 10 ** 9;
+            const imported = await workspaceService.importWorkspace(
+                workspaceFile([alias({ updatedAt: future })]),
+            );
+
+            expect(imported.aliases?.[0].updatedAt).toBeLessThanOrEqual(
+                Date.now(),
+            );
+        });
+
+        it('changes nothing for __proto__ and constructor workspace ids (inv. 25)', async () => {
+            const registry = `{"__proto__": ${JSON.stringify({ ...buildBody(), id: '__proto__' })}}`;
+
+            await expect(
+                workspaceService.importWorkspaceRegistry(registry),
+            ).rejects.toThrow();
+            expect(({} as Record<string, unknown>).name).toBeUndefined();
+            expect(localStorage.getItem(workspaceStorageKey)).toBeNull();
+        });
+
+        it('keeps the names of a registry round trip with their network (inv. 30)', async () => {
+            const aliases = [alias({ network: Network.BASE_MAINNET })];
+            await workspaceService.importWorkspaceRegistry(
+                registryOf(1, aliases),
+            );
+            const exported = JSON.parse(
+                await workspaceService.exportWorkspaceRegistry(),
+            );
+
+            expect(exported['ws-0'].aliases[0]).toMatchObject({
+                address: checksum,
+                network: Network.BASE_MAINNET,
+            });
         });
     });
 });

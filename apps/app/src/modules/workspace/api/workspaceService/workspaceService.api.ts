@@ -3,6 +3,7 @@ import type {
     IRequestUrlBodyParams,
     IRequestUrlParams,
 } from '@/shared/api/httpService';
+import type { IWorkspaceAliasInput } from '../../utils/workspaceAliasUtils';
 import type { IWorkspace, IWorkspaceAccount } from './domain';
 
 export interface IGetWorkspaceUrlParams {
@@ -67,6 +68,18 @@ export interface IRemoveWorkspaceAccountParams
         IRemoveWorkspaceAccountBody
     > {}
 
+export interface IUpsertWorkspaceAliasParams
+    extends IRequestUrlBodyParams<
+        IGetWorkspaceUrlParams,
+        IWorkspaceAliasInput
+    > {}
+
+export interface IRemoveWorkspaceAliasParams
+    extends IRequestUrlBodyParams<
+        IGetWorkspaceUrlParams,
+        Pick<IWorkspaceAliasInput, 'address' | 'network'>
+    > {}
+
 /**
  * A single workspace as exported to a file, without its ID so an import is assigned a new one.
  */
@@ -74,7 +87,7 @@ export interface IWorkspaceExport {
     /**
      * Version of the export format.
      */
-    version: 1;
+    version: 1 | 2;
     /**
      * The exported workspace.
      */

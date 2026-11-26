@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import type { State } from 'wagmi';
 import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
+import { AddressBookProvider } from '@/modules/addressBook/components/addressBookProvider';
 import { ImportedContractAbisProvider } from '@/modules/governance/components/importedContractAbisProvider';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
 import { DebugContextProvider } from '@/shared/components/debugProvider/debugProvider';
@@ -94,23 +95,25 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 wagmiConfig={wagmiConfig}
                                 wagmiInitialState={wagmiInitialState}
                             >
-                                <FeatureFlagsProvider
-                                    initialSnapshot={featureFlagsSnapshot}
-                                >
-                                    <DialogProvider>
-                                        {/* Wraps the dialog root too, so an action composer rendered
+                                <AddressBookProvider>
+                                    <FeatureFlagsProvider
+                                        initialSnapshot={featureFlagsSnapshot}
+                                    >
+                                        <DialogProvider>
+                                            {/* Wraps the dialog root too, so an action composer rendered
                                             inside a dialog shares the imported contracts. */}
-                                        <ImportedContractAbisProvider>
-                                            <DesyncWatcher />
-                                            <SentryUserSync />
-                                            {children}
-                                            <DialogRoot
-                                                dialogs={providersDialogs}
-                                            />
-                                            <ReactQueryDevtools />
-                                        </ImportedContractAbisProvider>
-                                    </DialogProvider>
-                                </FeatureFlagsProvider>
+                                            <ImportedContractAbisProvider>
+                                                <DesyncWatcher />
+                                                <SentryUserSync />
+                                                {children}
+                                                <DialogRoot
+                                                    dialogs={providersDialogs}
+                                                />
+                                                <ReactQueryDevtools />
+                                            </ImportedContractAbisProvider>
+                                        </DialogProvider>
+                                    </FeatureFlagsProvider>
+                                </AddressBookProvider>
                             </GukModulesProvider>
                         </BlockNavigationContextProvider>
                     </TranslationsProvider>

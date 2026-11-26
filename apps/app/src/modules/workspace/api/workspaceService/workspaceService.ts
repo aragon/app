@@ -4,11 +4,13 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { IResource } from '@/shared/api/daoService';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import workspaceDemoFixture from '../../fixtures/workspaceDemo.fixture.json';
+import { workspaceAliasUtils } from '../../utils/workspaceAliasUtils';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 import {
     type IWorkspace,
     type IWorkspaceAccount,
     type IWorkspaceAccountMetadata,
+    type IWorkspaceAlias,
     type IWorkspaceTarget,
     WorkspaceAccountType,
     WorkspaceRegistryScope,
@@ -18,7 +20,9 @@ import type {
     ICreateWorkspaceParams,
     IGetWorkspaceParams,
     IRemoveWorkspaceAccountParams,
+    IRemoveWorkspaceAliasParams,
     IUpdateWorkspaceDetailsParams,
+    IUpsertWorkspaceAliasParams,
     IWorkspaceExport,
 } from './workspaceService.api';
 
@@ -42,9 +46,105 @@ interface IWorkspaceStorage {
 }
 
 /**
- * Version of the single-workspace export format, bumped on breaking changes to it.
+ * Version of the single-workspace export format, bumped on breaking changes to it. Version 2 carries the aliases of
+ * the workspace; version 1 files still import, with an empty address book.
  */
-const workspaceExportVersion = 1;
+const workspaceExportVersion = 2;
+
+/**
+ * Limits of an imported file, so a hostile file cannot fill the browser storage.
+ */
+const maxImportFileBytes = 1_000_000;
+const maxWorkspacesPerFile = 100;
+const maxAliasesPerFile = 5000;
+
+// Keys that would change the prototype of a registry built from a file.
+const reservedWorkspaceIds = ['__proto__', 'constructor', 'prototype'];
+
+const requireFileWithinLimit = (rawFile: string) => {
+    // Checked before parsing: parsing is what a large file would make expensive.
+    if (new Blob([rawFile]).size > maxImportFileBytes) {
+        throw new Error('The selected file is too large (1 MB at most).');
+    }
+};
+
+/**
+ * Whether a record holds no key other than the known ones. A file is rebuilt from known fields only, so a field the app
+ * does not know is a reason to reject it, never something stored and exported again.
+ */
+const hasOnlyKeys = (value: object, keys: readonly string[]) =>
+    Object.keys(value).every((key) => keys.includes(key));
+
+const linkKeys = ['name', 'url'];
+const accountMetadataKeys = ['name', 'description', 'avatar', 'links'];
+const accountKeys = ['id', 'type', 'address', 'network', 'metadata'];
+const targetKeys = ['address', 'network'];
+const workspaceKeys = [
+    'id',
+    'name',
+    'description',
+    'avatar',
+    'links',
+    'accounts',
+    'targets',
+    'aliases',
+];
+
+const pickLink = (link: IResource): IResource => ({
+    name: link.name,
+    url: link.url,
+});
+
+const pickAccount = (account: IWorkspaceAccount): IWorkspaceAccount => {
+    const { id, type, address, network, metadata } = account;
+
+    return {
+        id,
+        type,
+        address,
+        network,
+        ...(metadata != null && {
+            metadata: {
+                name: metadata.name,
+                ...(metadata.description != null && {
+                    description: metadata.description,
+                }),
+                ...(metadata.avatar != null && { avatar: metadata.avatar }),
+                ...(metadata.links != null && {
+                    links: metadata.links.map(pickLink),
+                }),
+            },
+        }),
+    };
+};
+
+/**
+ * Copies the known fields of a stored workspace, so a field the app does not know is never exported.
+ */
+const pickWorkspaceFields = (
+    workspace: IWorkspace,
+): Omit<IWorkspace, 'id'> => ({
+    name: workspace.name,
+    description: workspace.description,
+    avatar: workspace.avatar,
+    links: workspace.links.map((link) => ({
+        ...pickLink(link),
+        url: workspaceUtils.ensureUrlProtocol(link.url),
+    })),
+    accounts: workspace.accounts.map(pickAccount),
+    targets: workspace.targets.map(({ address, network }) => ({
+        address,
+        network,
+    })),
+    aliases: (workspace.aliases ?? []).map(
+        ({ address, name, network, updatedAt }) => ({
+            address,
+            name,
+            network,
+            updatedAt,
+        }),
+    ),
+});
 
 const isOptionalString = (value: unknown) =>
     value == null || typeof value === 'string';
@@ -57,6 +157,7 @@ const isWorkspaceLink = (value: unknown): value is IResource => {
     const link = value as Partial<IResource>;
 
     return (
+        hasOnlyKeys(link, linkKeys) &&
         typeof link.name === 'string' &&
         typeof link.url === 'string' &&
         URL.canParse(link.url) &&
@@ -74,6 +175,7 @@ const isWorkspaceAccountMetadata = (
     const metadata = value as Partial<IWorkspaceAccountMetadata>;
 
     return (
+        hasOnlyKeys(metadata, accountMetadataKeys) &&
         typeof metadata.name === 'string' &&
         isOptionalString(metadata.description) &&
         isOptionalString(metadata.avatar) &&
@@ -91,6 +193,7 @@ const isWorkspaceAccount = (value: unknown): value is IWorkspaceAccount => {
     const account = value as Partial<IWorkspaceAccount>;
 
     return (
+        hasOnlyKeys(account, accountKeys) &&
         typeof account.id === 'string' &&
         Object.values(WorkspaceAccountType).includes(
             account.type as WorkspaceAccountType,
@@ -117,6 +220,7 @@ const isWorkspaceTarget = (value: unknown): value is IWorkspaceTarget => {
     const target = value as Partial<IWorkspaceTarget>;
 
     return (
+        hasOnlyKeys(target, targetKeys) &&
         typeof target.network === 'string' &&
         networkUtils.isValidNetwork(target.network) &&
         typeof target.address === 'string' &&
@@ -132,6 +236,7 @@ const isWorkspaceBody = (value: unknown): value is Omit<IWorkspace, 'id'> => {
     const workspace = value as Partial<IWorkspace>;
 
     return (
+        hasOnlyKeys(workspace, workspaceKeys) &&
         typeof workspace.name === 'string' &&
         typeof workspace.description === 'string' &&
         (workspace.avatar == null || typeof workspace.avatar === 'string') &&
@@ -148,6 +253,7 @@ const isWorkspace = (id: string, value: unknown): value is IWorkspace =>
     isWorkspaceBody(value) && (value as Partial<IWorkspace>).id === id;
 
 const parseWorkspaceExport = (rawExport: string): Omit<IWorkspace, 'id'> => {
+    requireFileWithinLimit(rawExport);
     let parsed: unknown;
 
     try {
@@ -161,15 +267,21 @@ const parseWorkspaceExport = (rawExport: string): Omit<IWorkspace, 'id'> => {
     const workspaceExport = parsed as Partial<IWorkspaceExport> | null;
 
     if (
-        workspaceExport?.version !== workspaceExportVersion ||
+        (workspaceExport?.version !== workspaceExportVersion &&
+            workspaceExport?.version !== 1) ||
         !isWorkspaceBody(workspaceExport.workspace)
     ) {
         throw new Error('The selected file is not a valid workspace export.');
     }
 
     const { id: _id, ...workspace } = workspaceExport.workspace as IWorkspace;
+    // Version 1 files have no address book.
+    const aliases =
+        workspaceExport.version === 1
+            ? []
+            : workspaceAliasUtils.parse(workspace.aliases ?? [], Date.now());
 
-    return workspace;
+    return { ...workspace, aliases };
 };
 
 /**
@@ -204,6 +316,7 @@ const normaliseWorkspaceLinks = (value: unknown): unknown => {
 };
 
 const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
+    requireFileWithinLimit(rawRegistry);
     let parsed: unknown;
 
     try {
@@ -215,6 +328,15 @@ const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
     }
 
     if (parsed == null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        throw new Error('The selected file is not a valid workspace registry.');
+    }
+
+    const ids = Object.keys(parsed);
+
+    if (
+        ids.length > maxWorkspacesPerFile ||
+        ids.some((id) => reservedWorkspaceIds.includes(id))
+    ) {
         throw new Error('The selected file is not a valid workspace registry.');
     }
 
@@ -233,7 +355,27 @@ const parseWorkspaceRegistry = (rawRegistry: string): WorkspaceRegistry => {
         throw new Error('The selected file is not a valid workspace registry.');
     }
 
-    return normalised as WorkspaceRegistry;
+    const registry = normalised as WorkspaceRegistry;
+    const importedAt = Date.now();
+    let aliasCount = 0;
+
+    for (const workspace of Object.values(registry)) {
+        if (workspace.aliases != null) {
+            workspace.aliases = workspaceAliasUtils.parse(
+                workspace.aliases,
+                importedAt,
+            );
+            aliasCount += workspace.aliases.length;
+        }
+    }
+
+    if (aliasCount > maxAliasesPerFile) {
+        throw new Error(
+            `The selected file holds more than ${maxAliasesPerFile} aliases.`,
+        );
+    }
+
+    return registry;
 };
 /**
  * Workspace API.
@@ -409,19 +551,49 @@ class WorkspaceService {
     };
 
     /**
+     * Saves a name for an address in a workspace, or edits the one of the same address and network. The registry is
+     * read and written in one step, like the account methods.
+     *
+     * @throws {Error} when the address, name or network is not valid, or the workspace holds too many names.
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when browser storage rejects the write (the stored registry is left as it was).
+     */
+    upsertWorkspaceAlias = async (
+        params: IUpsertWorkspaceAliasParams,
+    ): Promise<IWorkspace> => {
+        const { id } = params.urlParams;
+
+        return this.changeAliases(id, (aliases) =>
+            workspaceAliasUtils.upsert(aliases, params.body, Date.now()),
+        );
+    };
+
+    /**
+     * Removes the name of an address and network from a workspace. A workspace without it is returned unchanged.
+     *
+     * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored, `workspaceStorageError`
+     * when browser storage rejects the write.
+     */
+    removeWorkspaceAlias = async (
+        params: IRemoveWorkspaceAliasParams,
+    ): Promise<IWorkspace> => {
+        const { id } = params.urlParams;
+
+        return this.changeAliases(id, (aliases) =>
+            workspaceAliasUtils.remove(aliases, params.body),
+        );
+    };
+
+    /**
      * Serialises one workspace, without its ID, for `importWorkspace`.
      *
      * @throws {AragonBackendServiceError} `notFoundCode` when the workspace is not stored.
      */
     exportWorkspace = async (params: IGetWorkspaceParams): Promise<string> => {
-        const { id: _id, ...workspace } = await this.getWorkspace(params);
-        const links = workspace.links.map((link) => ({
-            ...link,
-            url: workspaceUtils.ensureUrlProtocol(link.url),
-        }));
+        const workspace = await this.getWorkspace(params);
         const workspaceExport: IWorkspaceExport = {
             version: workspaceExportVersion,
-            workspace: { ...workspace, links },
+            workspace: pickWorkspaceFields(workspace),
         };
 
         return JSON.stringify(workspaceExport, null, 2);
@@ -467,7 +639,14 @@ class WorkspaceService {
 
     exportWorkspaceRegistry = async (): Promise<string> =>
         JSON.stringify(
-            this.getStoredWorkspaces(this.getPersistentStorage()),
+            Object.fromEntries(
+                Object.entries(
+                    this.getStoredWorkspaces(this.getPersistentStorage()),
+                ).map(([id, workspace]) => [
+                    id,
+                    { id, ...pickWorkspaceFields(workspace) },
+                ]),
+            ),
             null,
             2,
         );
@@ -547,6 +726,27 @@ class WorkspaceService {
         } catch {
             return false;
         }
+    };
+
+    private changeAliases = (
+        id: string,
+        change: (aliases: IWorkspaceAlias[]) => IWorkspaceAlias[],
+    ): IWorkspace => {
+        const target = this.getWorkspaceStorage(id);
+        const workspaces = this.getStoredWorkspaces(target);
+        const storedWorkspace = workspaces[id];
+
+        if (storedWorkspace == null) {
+            throw this.buildNotFoundError(id);
+        }
+
+        const workspace: IWorkspace = {
+            ...storedWorkspace,
+            aliases: change(storedWorkspace.aliases ?? []),
+        };
+        this.persistWorkspaces({ ...workspaces, [id]: workspace }, target);
+
+        return workspace;
     };
 
     /**
