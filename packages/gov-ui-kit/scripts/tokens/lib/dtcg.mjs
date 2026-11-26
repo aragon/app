@@ -1,4 +1,4 @@
-// DTCG 2025.10 plumbing of the token generator: reading and validating a token document, formatting values as CSS.
+// DTCG 2025.10 plumbing of the token generator: reading and validating token documents, formatting values as CSS.
 // Plain Node; the only dependency is Ajv, for the published DTCG schema.
 
 import assert from 'node:assert/strict';
@@ -48,16 +48,23 @@ const checkShadowLiterals = (value, path) => {
     }
 };
 
-// The tokens of a document (path -> { type, value }), validated: the document against the published schema, every
-// alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. JSON Schema
-// cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not satisfy
-// Ajv's strict mode, and its only `format` keywords describe schema URIs.
-export const readTokens = (document, schema) => {
+// The tokens of a set of documents (path -> { type, value }), validated: each document against the published schema,
+// every alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. The
+// `documents` define each token once; the `overrides` are merged over them in order and may redefine any token. JSON
+// Schema cannot inherit a group's $type, hence the per-value pass. The schema's conditional properties do not
+// satisfy Ajv's strict mode, and its only `format` keywords describe schema URIs.
+export const readTokens = (schema, documents, overrides = []) => {
     const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
     const validateDocument = ajv.compile(schema);
-    assert.equal(document.$schema, schema.$id, 'DTCG schema version changed');
-    assert(validateDocument(document), ajv.errorsText(validateDocument.errors));
-    const tokens = collectTokens(document);
+    const tokens = new Map();
+    for (const document of [...documents, ...overrides]) {
+        assert.equal(document.$schema, schema.$id, 'DTCG schema version changed');
+        assert(validateDocument(document), ajv.errorsText(validateDocument.errors));
+        for (const [path, token] of collectTokens(document)) {
+            assert(overrides.includes(document) || !tokens.has(path), `Token defined twice: ${path}`);
+            tokens.set(path, token);
+        }
+    }
     for (const [path, { type }] of tokens) {
         const validateValue = ajv.getSchema(schema.$id.replace(/format\.json$/, `format/values/${type}.json`));
         assert(validateValue, `Unsupported token type: ${type} (${path})`);
@@ -160,3 +167,6 @@ const valueToCss = ({ type, value }) => {
 // One declaration (`--name: value;`) of a token; an alias becomes a `var()` of its target (`varOf`: path -> name).
 export const declaration = (name, token, varOf) =>
     `${name}: ${isAlias(token.value) ? `var(${varOf(aliasTarget(token.value))})` : valueToCss(token)};`;
+
+// The CSS value of a token with its aliases followed to the literal.
+export const literal = (tokens, path) => valueToCss(resolveToken(tokens, path));

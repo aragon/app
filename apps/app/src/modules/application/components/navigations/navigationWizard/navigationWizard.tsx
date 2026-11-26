@@ -133,7 +133,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const linkClassName = classNames(
         'items-center gap-3 rounded-full border border-surface-default p-4 text-surface-default-wizard transition-all',
-        'focus-ring ring-accent-focus hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
     );
 
     const wizardName = typeof name === 'string' ? t(name) : t(...name);

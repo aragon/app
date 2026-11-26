@@ -181,7 +181,7 @@ export const Collapsible: React.FC<ICollapsibleProps> = (props) => {
                     <div
                         className={classNames(
                             overlayClassName,
-                            'via-gradient-surface-secondary/70 bg-linear-to-t from-gradient-surface-secondary to-gradient-surface-secondary-transparent',
+                            'bg-linear-to-t from-(--guk-gradient-surface-secondary) via-(--guk-gradient-surface-secondary)/70 to-(--guk-gradient-surface-secondary-transparent)',
                         )}
                         data-testid="collapsible-overlay"
                         style={{ height: overlayHeightPx }}

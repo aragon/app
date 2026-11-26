@@ -47,7 +47,7 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 text-left focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-surface-active-control"
+            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 text-left ring-accent-focus focus-ring transition-all hover:border-surface-hover active:bg-surface-active-control"
             onClick={onClick}
             type="button"
         >

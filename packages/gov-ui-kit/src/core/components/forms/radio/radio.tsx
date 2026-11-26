@@ -30,7 +30,7 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
     const randomId = useRandomId(id);
 
     const itemClasses = classNames(
-        'group peer cursor-pointer rounded-full outline-hidden focus-ring ring-accent-focus disabled:cursor-default',
+        'group peer cursor-pointer rounded-full ring-accent-focus outline-hidden focus-ring disabled:cursor-default',
         { 'order-2': labelPosition === 'left' },
     );
 

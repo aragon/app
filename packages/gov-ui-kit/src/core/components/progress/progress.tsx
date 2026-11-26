@@ -97,7 +97,7 @@ export const Progress: React.FC<IProgressProps> = (props) => {
             {processedIndicator != null && (
                 <div
                     className={classNames(
-                        'absolute flex self-center border-2 border-bg-surface-primary',
+                        'absolute flex self-center border-2 border-(--guk-bg-surface-primary)',
                         indicatorSizeClassNames,
                     )}
                     data-testid="progress-indicator"

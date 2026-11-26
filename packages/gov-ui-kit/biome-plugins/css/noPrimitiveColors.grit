@@ -1,0 +1,19 @@
+// Primitive colour classes in `@apply` lines and primitive colour variables. Source outside the theme takes role
+// classes instead (bg-surface-primary, text-surface-secondary, shadow-surface-sm, ring-accent-focus).
+// The ramps are the colour groups of design-system/tokens/source/primitives.tokens.json. Both regexes equal the ones
+// in ../js/noPrimitiveColors.grit (scripts/tokens/generate.test.mjs checks).
+language css
+
+or {
+    TwApplyAtRule(),
+    CssDashedIdentifier()
+} as $node where {
+    $node <: or {
+        // A ramp step under any utility or variant: bg-neutral-0, hover:text-primary-400/50, var(--color-critical-200).
+        r"(?s).*-(?:critical|info|neutral|primary|success|warning)-(?:0|25|50|[1-9]00)(?:\W.*|$)",
+        // A ramp without a step: shadow-neutral, shadow-primary-lg, ring-primary, focus-ring-critical. A status
+        // shadow with a size (shadow-success-sm) is the token's own class: the status families have no other name.
+        r"(?s)(?:.*[^\w-])?(?:(?:shadow|ring|focus-ring)-(?:critical|info|neutral|primary|success|warning)|shadow-(?:neutral|primary)-(?:sm|md|lg|xl|2xl))(?:[^\w-].*|$)"
+    },
+    register_diagnostic(span=$node, message="Primitive colour class: use a role class (bg-surface-primary, text-surface-secondary, shadow-surface-sm, ring-accent-focus). To keep it on purpose, put `biome-ignore lint/plugin/noPrimitiveColors: <reason>` on the line above.", severity="error")
+}

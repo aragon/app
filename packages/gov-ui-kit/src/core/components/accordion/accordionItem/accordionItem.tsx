@@ -21,7 +21,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, IAccordionItemProps>((pr
         'data-disabled:border-surface-disabled', // disabled
         'data-[state=open]:border-surface-active-accordion data-[state=open]:shadow-surface-sm', // open
         'hover:border-surface-hover hover:shadow-surface-sm', // hover
-        'focus-ring ring-accent-focus active:border-surface-active', // active / focus
+        'ring-accent-focus focus-ring active:border-surface-active', // active / focus
         className,
     );
 

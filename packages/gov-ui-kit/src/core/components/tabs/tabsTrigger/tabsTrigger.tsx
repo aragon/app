@@ -25,19 +25,24 @@ export const TabsTrigger: React.FC<ITabsTriggerProps> = (props) => {
 
     const triggerClassNames = classNames(
         'group line-clamp-1 flex items-center gap-x-4 rounded-t border-surface-selected py-3 text-base leading-tight font-normal', // Base
-        'active:data-[state=active]:text-surface-active active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0] active:data-[state=active]:shadow-border-surface-selected', // Active state
+        'active:data-[state=active]:text-surface-active active:data-[state=active]:shadow-(color:--guk-border-surface-selected) active:data-[state=active]:shadow-[inset_0_0_0_0,0_1px_0_0]', // Active state
         'focus:outline-hidden', // Focus state
-        { 'hover:shadow-[inset_0_0_0_0,0_1px_0_0] hover:shadow-border-surface-hover-tab': isUnderlined && !disabled }, //  Underlined & enabled variant
-        'data-[state=active]:text-surface-primary data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0] data-[state=active]:shadow-border-surface-selected', // Active selection
+        {
+            'hover:shadow-(color:--guk-border-surface-hover-tab) hover:shadow-[inset_0_0_0_0,0_1px_0_0]':
+                isUnderlined && !disabled,
+        }, //  Underlined & enabled variant
+        'data-[state=active]:text-surface-primary data-[state=active]:shadow-(color:--guk-border-surface-selected) data-[state=active]:shadow-[inset_0_-1px_0_0,0_1px_0_0]', // Active selection
         { 'cursor-pointer text-link-secondary-default hover:text-link-secondary-hover-nav': !disabled }, // Enabled state
         { 'text-surface-disabled': disabled }, // Disabled state
         className,
     );
 
     const iconClassNames = classNames(
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         'group-data-[state=active]:text-neutral-800', // Base
         { 'icon-surface-disabled-control': disabled }, // Disabled state
         { 'icon-surface-default-tab group-hover:icon-surface-hover-tab': !disabled }, // Enabled state
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         { 'group-focus:text-neutral-500 group-active:icon-surface-active-control': !disabled }, // Enabled & Active/Focus states
     );
 

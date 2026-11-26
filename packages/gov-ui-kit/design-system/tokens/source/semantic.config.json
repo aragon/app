@@ -1,432 +1,49 @@
 {
-    "$description": "Non-token configuration of the semantic colour layer; the tokens are in the *.tokens.json files next to it. modes: the value sets and their CSS selectors. rampPairs: today primitive ramp to designer palette ramp (the rule-derived fallback of an unverified today value; read in reverse by primitiveRemap). renames: Figma token name to code name (several Figma names may share one code name only when their values are identical). additions: the code-only tokens (not in the designer's Figma collection) in output order, each with the consumer that relies on it (usedBy). utilities and primitiveRemap: see their own descriptions.",
-    "modes": {
-        "today": {
-            "file": "semantic.today.tokens.json",
-            "selector": ":root"
+    "$description": "How semantic.tokens.json becomes CSS; cssNames and files read as in primitives.config.json, the files go to src/theme/tokens/semantic/. Colour roles are the kit's own `--guk-<family>-*` theme variables, read by the functional utilities of src/theme/tokens/colorRoles.css (`bg-*`, `text-*`, `border-*`, `icon-*`, `ring-*`) and gradients.css; shadows are Tailwind's `--shadow-*`, so its own `shadow-*` utility resolves them. preview: the files of design-system/tokens/preview/; each maps the selector of a mode to the token documents merged over the default theme, in order. `:root[data-theme]` outranks Tailwind's `:root` theme rule where that rule is not in a cascade layer.",
+    "cssNames": {
+        "semantic.bg.*": "--guk-bg-$1",
+        "semantic.bg.*.*": "--guk-bg-$1-$2",
+        "semantic.border.*.*": "--guk-border-$1-$2",
+        "semantic.text.*.*": "--guk-text-$1-$2",
+        "semantic.icon.*.*": "--guk-icon-$1-$2",
+        "semantic.gradient.*.*": "--guk-gradient-$1-$2",
+        "semantic.ring.*.*": "--guk-ring-$1-$2",
+        "semantic.shadow.*.*": "--shadow-$1-$2"
+    },
+    "files": {
+        "colors.css": {
+            "@theme": [
+                "semantic.bg",
+                "semantic.border",
+                "semantic.text",
+                "semantic.icon",
+                "semantic.gradient"
+            ]
         },
-        "next": {
-            "file": "semantic.next.tokens.json",
-            "selector": "[data-theme=\"next\"]"
+        "focusRing.css": {
+            "@theme": [
+                "semantic.ring"
+            ]
         },
-        "dark": {
-            "file": "semantic.dark.tokens.json",
-            "selector": "[data-theme=\"dark\"]"
+        "shadows.css": {
+            "@theme": [
+                "semantic.shadow"
+            ]
         }
     },
-    "rampPairs": {
-        "gray": "neutral",
-        "aragon": "primary",
-        "green": "success",
-        "orange": "warning",
-        "red": "critical",
-        "blue": "info"
-    },
-    "renames": {
-        "bg/accent/primary": "bg/accent/solid",
-        "bg/accent/primary-inverse": "bg/accent/subtle",
-        "bg/brand/primary": "bg/brand/solid",
-        "bg/brand/primary-inverse": "bg/brand/subtle",
-        "bg/success/primary": "bg/success/subtle",
-        "bg/success/tertiary": "bg/success/solid",
-        "bg/warning/primary": "bg/warning/subtle",
-        "bg/warning/tertiary": "bg/warning/solid",
-        "bg/critical/primary": "bg/critical/subtle",
-        "bg/critical/tertiary": "bg/critical/solid",
-        "bg/info/primary": "bg/info/subtle",
-        "bg/info/tertiary": "bg/info/solid",
-        "text/accent/default-inverse": "text/accent/inverse",
-        "text/accent/hover-inverse": "text/accent/inverse",
-        "text/accent/active-inverse": "text/accent/inverse",
-        "icon/accent/default-inverse": "icon/accent/inverse",
-        "icon/accent/hover-inverse": "icon/accent/inverse",
-        "icon/accent/active-inverse": "icon/accent/inverse",
-        "text/surface/primary-inverse": "text/surface/inverse"
-    },
-    "additions": {
-        "ring/accent/focus": {},
-        "ring/success/focus": {},
-        "ring/warning/focus": {},
-        "ring/critical/focus": {},
-        "border/accent/fill": {},
-        "border/accent/fill-hover": {},
-        "border/accent/fill-active": {},
-        "border/surface/fill-disabled": {},
-        "shadow/surface/md": {},
-        "shadow/accent/md": {},
-        "bg/surface/ghost-hover": {},
-        "border/surface/open": {},
-        "bg/info/subtle-tag": {},
-        "bg/success/subtle-tag": {},
-        "bg/warning/subtle-tag": {},
-        "bg/critical/subtle-tag": {},
-        "bg/success/solid-progress": {},
-        "bg/body-sidebar": {
-            "usedBy": "app"
-        },
-        "border/surface/active-accordion": {
-            "usedBy": "kit"
-        },
-        "border/surface/active-card": {
-            "usedBy": "kit"
-        },
-        "border/surface/active-control": {
-            "usedBy": "app, kit"
-        },
-        "bg/surface/active-control": {
-            "usedBy": "app, kit"
-        },
-        "icon/surface/disabled-accordion": {
-            "usedBy": "kit"
-        },
-        "bg/surface/tertiary-avatar": {
-            "usedBy": "kit"
-        },
-        "icon/critical/primary-avatar": {
-            "usedBy": "kit"
-        },
-        "icon/info/primary-avatar": {
-            "usedBy": "kit"
-        },
-        "icon/success/primary-avatar": {
-            "usedBy": "kit"
-        },
-        "icon/warning/primary-avatar": {
-            "usedBy": "kit"
-        },
-        "text/link/hover-action": {
-            "usedBy": "app, kit"
-        },
-        "text/link/active-action": {
-            "usedBy": "kit"
-        },
-        "icon/accent/hover-action": {
-            "usedBy": "kit"
-        },
-        "icon/accent/active-action": {
-            "usedBy": "kit"
-        },
-        "icon/surface/primary-item": {
-            "usedBy": "app, kit"
-        },
-        "bg/surface/hover-lift": {
-            "usedBy": "app, kit"
-        },
-        "bg/surface/transparent-active-item": {
-            "usedBy": "kit"
-        },
-        "text/critical/primary-title": {
-            "usedBy": "kit"
-        },
-        "text/info/primary-title": {
-            "usedBy": "kit"
-        },
-        "text/success/primary-title": {
-            "usedBy": "kit"
-        },
-        "text/warning/primary-title": {
-            "usedBy": "kit"
-        },
-        "text/surface/hover-label": {
-            "usedBy": "app, kit"
-        },
-        "text/link/secondary-hover-nav": {
-            "usedBy": "app, kit"
-        },
-        "icon/surface/default-control": {
-            "usedBy": "kit"
-        },
-        "icon/surface/hover-control": {
-            "usedBy": "kit"
-        },
-        "icon/surface/active-control": {
-            "usedBy": "kit"
-        },
-        "icon/surface/disabled-control": {
-            "usedBy": "kit"
-        },
-        "icon/surface/default-tab": {
-            "usedBy": "kit"
-        },
-        "icon/surface/hover-tab": {
-            "usedBy": "kit"
-        },
-        "icon/surface/default-clear": {
-            "usedBy": "kit"
-        },
-        "icon/surface/default-card": {
-            "usedBy": "kit"
-        },
-        "border/surface/disabled-card": {
-            "usedBy": "kit"
-        },
-        "border/surface/disabled-toggle": {
-            "usedBy": "app, kit"
-        },
-        "border/surface/disabled-item": {
-            "usedBy": "app"
-        },
-        "border/warning/default-input": {
-            "usedBy": "kit"
-        },
-        "border/critical/default-input": {
-            "usedBy": "kit"
-        },
-        "border/warning/hover-input": {
-            "usedBy": "kit"
-        },
-        "border/critical/hover-input": {
-            "usedBy": "kit"
-        },
-        "border/warning/hover-file-avatar": {
-            "usedBy": "kit"
-        },
-        "border/warning/active-control": {
-            "usedBy": "kit"
-        },
-        "border/critical/active-control": {
-            "usedBy": "app, kit"
-        },
-        "text/warning/primary-input": {
-            "usedBy": "kit"
-        },
-        "text/critical/primary-input": {
-            "usedBy": "kit"
-        },
-        "border/warning/primary-input": {
-            "usedBy": "kit"
-        },
-        "border/critical/primary-input": {
-            "usedBy": "kit"
-        },
-        "icon/warning/primary-input": {
-            "usedBy": "kit"
-        },
-        "icon/critical/primary-input": {
-            "usedBy": "kit"
-        },
-        "border/surface/default-switch": {
-            "usedBy": "kit"
-        },
-        "border/warning/primary-spinner": {
-            "usedBy": "kit"
-        },
-        "border/critical/primary-spinner": {
-            "usedBy": "kit"
-        },
-        "bg/accent/solid-ping": {
-            "usedBy": "kit"
-        },
-        "border/surface/hover-tab": {
-            "usedBy": "kit"
-        },
-        "bg/info/solid-tooltip": {
-            "usedBy": "kit"
-        },
-        "bg/success/solid-tooltip": {
-            "usedBy": "kit"
-        },
-        "bg/warning/solid-tooltip": {
-            "usedBy": "kit"
-        },
-        "icon/surface/default-asset-transfer": {
-            "usedBy": "kit"
-        },
-        "text/critical/primary-message": {
-            "usedBy": "app"
-        },
-        "text/critical/primary-tx-error": {
-            "usedBy": "app"
-        },
-        "border/critical/primary-dispatch": {
-            "usedBy": "app"
-        },
-        "border/critical/primary-chat-error": {
-            "usedBy": "app"
-        },
-        "text/surface/default-wizard": {
-            "usedBy": "app"
-        },
-        "text/surface/tertiary-hint": {
-            "usedBy": "app"
-        },
-        "text/accent/inverse-brand": {
-            "usedBy": "app"
-        },
-        "text/surface/primary-detail": {
-            "usedBy": "app"
-        },
-        "text/surface/primary-panel-title": {
-            "usedBy": "app"
-        },
-        "border/surface/secondary-panel": {
-            "usedBy": "app"
-        },
-        "border/surface/hover-graph-node": {
-            "usedBy": "app"
-        },
-        "border/surface/default-graph-node": {
-            "usedBy": "app"
-        },
-        "bg/surface/secondary-skeleton": {
-            "usedBy": "app"
-        },
-        "border/accent/primary-terminal": {
-            "usedBy": "app"
-        },
-        "border/accent/primary-cta": {
-            "usedBy": "app"
-        },
-        "border/success/active-control": {
-            "usedBy": "app"
-        },
-        "text/surface/selected-label": {
-            "usedBy": "app"
-        },
-        "icon/accent/selected-nav": {
-            "usedBy": "app"
-        },
-        "text/surface/default-attachment": {
-            "usedBy": "app"
-        },
-        "text/critical/hover-attachment": {
-            "usedBy": "app"
-        },
-        "icon/critical/primary-chat": {
-            "usedBy": "app"
-        },
-        "icon/success/primary-chat": {
-            "usedBy": "app"
-        },
-        "text/surface/secondary-ticket": {
-            "usedBy": "app"
-        },
-        "border/surface/default-composer": {
-            "usedBy": "app"
-        },
-        "bg/surface/hover-icon-button": {
-            "usedBy": "app"
-        },
-        "text/accent/active-secondary-button": {
-            "usedBy": "kit"
-        }
-    },
-    "utilities": {
-        "$description": "Extra utility families, generated for every token of the named families (Tailwind emits only the classes a source uses). Naming (P-41): single-side borders keep Tailwind's grammar, the side replacing the family (`border-t-accent-secondary` applies border/accent/secondary to the top side); every other applier is followed by the full token class (`from-gradient-surface-primary`, `fill-bg-surface-tertiary-inverse`, `caret-text-surface-secondary`), so the Figma token name stays readable in the class. Fades: `<gradient token>-to-<direction>` paints a gradient token to its `-transparent` twin (the semantic counterpart of the kit's `gradient-neutral-50-transparent-to-b`). `alphaStops` are the few stops that need a fixed opacity of a token, named like Tailwind's opacity modifier. `crossFamily` applies a token to a property of another family where the designer bound it so; each entry is a provisional decision (P-42) with its reason.",
-        "borderSides": [
-            "t",
-            "r",
-            "b",
-            "l",
-            "x",
-            "y"
-        ],
-        "appliers": [
-            {
-                "applier": "from",
-                "families": [
-                    "gradient"
-                ]
-            },
-            {
-                "applier": "via",
-                "families": [
-                    "gradient"
-                ]
-            },
-            {
-                "applier": "to",
-                "families": [
-                    "gradient"
-                ]
-            },
-            {
-                "applier": "fill",
-                "families": [
-                    "bg",
-                    "icon"
-                ]
-            },
-            {
-                "applier": "stroke",
-                "families": [
-                    "border",
-                    "icon"
-                ]
-            },
-            {
-                "applier": "caret",
-                "families": [
-                    "text"
-                ]
-            }
-        ],
-        "fadeDirections": [
-            "t",
-            "r",
-            "b",
-            "l"
-        ],
-        "alphaStops": [
-            {
-                "applier": "via",
-                "token": "gradient/surface/secondary",
-                "alpha": 70,
-                "note": "The collapsible's overflow fade has a 70 % middle stop today (via-neutral-0/70); Figma draws it with two stops (gradient/surface/secondary-transparent > secondary). Kept as today (O-01); the middle stop is listed for the designer."
-            }
-        ],
-        "crossFamily": [
-            {
-                "applier": "bg",
-                "token": "icon/surface/secondary",
-                "note": "Switch thumb, unchecked and checked + disabled: Figma fills the handle with icon/surface/secondary (G-17). Same colour today (neutral-300)."
-            },
-            {
-                "applier": "bg",
-                "token": "icon/accent/primary",
-                "note": "Switch thumb, checked: Figma fills the handle with icon/accent/primary (G-17). Same colour today (primary-400)."
-            },
-            {
-                "applier": "border",
-                "token": "bg/surface/primary",
-                "note": "Progress threshold marker outline: Figma strokes it with bg/surface/primary, the card surface the marker is cut out of (G-17). Same colour today (neutral-0)."
-            },
-            {
-                "applier": "border-b",
-                "token": "bg/surface/primary",
-                "note": "ProposalVotingProgress container in a row: the items keep their 1px bottom border, painted in the card's own surface colour to hide it (today border-b-neutral-0 on a neutral-0 card). Code-only: Figma has no bottom divider in the row layout."
-            },
-            {
-                "applier": "caret",
-                "token": "bg/surface/secondary-inverse",
-                "note": "Text-input caret: Figma draws it as a fill bound to bg/surface/secondary-inverse in every input focus state (G-07, G-17); the data-list filter's caret binds text/surface/secondary instead (G-18). Each follows its binding (P-28)."
-            },
-            {
-                "applier": "shadow",
-                "token": "border/surface/selected",
-                "note": "Tab trigger underline: Figma draws it as a border bound to border/surface/selected; the code draws it with a box-shadow, so the token is applied as the shadow colour. Same colour today (primary-400)."
-            },
-            {
-                "applier": "shadow",
-                "token": "border/surface/hover-tab",
-                "note": "Underlined tab, hover: the underline is drawn with a box-shadow in code; the alias (P-66) keeps today's neutral-800 and follows border/surface/hover, the Figma binding, in \"next\" and \"dark\" (A-22)."
-            },
-            {
-                "applier": "ring",
-                "token": "bg/surface/primary",
-                "note": "Avatar badge (#1602): the ring that cuts the badge out of the avatar takes the card surface, like the progress marker outline. Same colour today (neutral-0)."
-            },
-            {
-                "applier": "divide",
-                "token": "border/surface/secondary",
-                "note": "Dropdown group dividers (APP-1454): the rules between grouped menu sections take the static container border the group itself has. Same colour today (neutral-100)."
-            }
-        ]
-    },
-    "primitiveRemap": {
-        "$description": "Palette-change preview (L-01) in the \"next\" value set only: every primitive colour variable (--color-<ramp>-<step>, the variables behind the primitive classes such as bg-neutral-50 and text-critical-600) is redeclared under [data-theme=\"next\"] as the same step of the corresponding Figma ramp, so markup that still uses primitive classes follows the new palette in \"next\". The ramp correspondence is the one of `semantic-colors.parity.json` `fallbackRamps`, read in reverse (neutral -> gray, primary -> aragon, success -> green, warning -> orange, critical -> red, info -> blue). A step the Figma ramp lacks takes the nearest one; `steps` decides the ties (the generator fails on an undecided tie). The default theme and \"dark\" are not touched; dark is not remapped on purpose (P-55). Not a semantic conversion: the classes keep their step, only the palette under them changes (P-54).",
-        "steps": {
-            "neutral-25": "gray/50"
+    "preview": {
+        "colors.css": {
+            ":root[data-theme=\"next\"], [data-theme=\"next\"]": [
+                "modes/palette.tokens.json",
+                "modes/primitives.next.tokens.json",
+                "modes/shadows.tokens.json",
+                "modes/semantic.next.tokens.json"
+            ],
+            ":root[data-theme=\"dark\"], [data-theme=\"dark\"]": [
+                "modes/palette.tokens.json",
+                "modes/shadows.tokens.json",
+                "modes/semantic.dark.tokens.json"
+            ]
         }
     }
 }

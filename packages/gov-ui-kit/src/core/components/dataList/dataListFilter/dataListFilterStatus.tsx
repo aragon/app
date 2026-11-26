@@ -29,8 +29,11 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
         <div className="flex items-center justify-between">
             <p
                 className={classNames(
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     'px-3 py-2.5 text-sm leading-tight font-normal text-neutral-500 md:text-base',
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     { 'text-primary-400': isLoading || isInitialLoading },
+                    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
                     { 'text-neutral-500': displayItemsCount },
                 )}
             >

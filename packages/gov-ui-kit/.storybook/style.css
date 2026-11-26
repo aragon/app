@@ -1,10 +1,12 @@
+@reference "../index.css";
+
 /* Needed to hide the "Show code" button displayed on Storybook stories when opening Dialogs and Dropdowns  */
 .docs-story > div {
     z-index: auto;
 }
 
-/* Paint the canvas with the theme's body colour (semantic token bg/body), see the theme switcher in preview.tsx */
+/* The canvas takes the body colour, so it follows the token preview picked in the toolbar (preview.tsx). */
 .sb-show-main,
 .docs-story {
-    background-color: var(--guk-bg-body);
+    @apply bg-body;
 }

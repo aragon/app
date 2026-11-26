@@ -1,34 +1,49 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { useEffect } from 'react';
+import '../design-system/tokens/preview/index.css';
 import '../index.css';
 import { GukModulesProvider } from '../src/modules';
 import { DocsPage } from './components';
 import './style.css';
+import tokenPreviews from './tokenPreviews.json';
 
-// Colour themes of the semantic tokens (src/theme/tokens/semantic): "today" is the default value set (no attribute),
-// "next" and "dark" set `data-theme` on the preview root. The canvas is painted with bg-body in .storybook/style.css.
-const themes = {
-    today: { title: 'Today', attribute: undefined },
-    next: { title: 'Next', attribute: 'next' },
-    dark: { title: 'Dark', attribute: 'dark' },
-} as const;
+// Token previews: the value sets of design-system/tokens/preview, which the published CSS does not carry. Each row of
+// tokenPreviews.json is a toolbar global named after the `data-*` attribute it sets on the preview root, and a
+// `pnpm visual-diff --<attribute> <mode>` option. The default mode sets no attribute.
+const defaultMode = 'today';
 
-type Theme = keyof typeof themes;
-
-const withTheme: Decorator = (Story, context) => {
-    const attribute = themes[context.globals.theme as Theme]?.attribute;
-
+const withTokenPreviews: Decorator = (Story, { globals }) => {
     useEffect(() => {
-        const root = document.documentElement;
-        if (attribute == null) {
-            delete root.dataset.theme;
-        } else {
-            root.dataset.theme = attribute;
+        const { dataset } = document.documentElement;
+        for (const { attribute, modes } of tokenPreviews) {
+            if (modes.includes(globals[attribute])) {
+                dataset[attribute] = globals[attribute];
+            } else {
+                delete dataset[attribute];
+            }
         }
-    }, [attribute]);
+    });
 
     return <Story />;
 };
+
+const tokenPreviewGlobalTypes = Object.fromEntries(
+    tokenPreviews.map(({ attribute, title, icon, modes }) => [
+        attribute,
+        {
+            description: `${title} of the design tokens`,
+            toolbar: {
+                title,
+                icon,
+                items: [defaultMode, ...modes].map((mode) => ({
+                    value: mode,
+                    title: mode.charAt(0).toUpperCase() + mode.slice(1),
+                })),
+                dynamicTitle: true,
+            },
+        },
+    ]),
+);
 
 const preview: Preview = {
     parameters: {
@@ -62,7 +77,7 @@ const preview: Preview = {
     },
 
     decorators: [
-        withTheme,
+        withTokenPreviews,
         (Story) => (
             <GukModulesProvider>
                 <div className="flex">
@@ -81,20 +96,10 @@ const preview: Preview = {
         backgrounds: {},
         outline: {},
         viewport: {},
-        theme: {
-            description: 'Colour theme of the semantic tokens',
-            toolbar: {
-                title: 'Theme',
-                icon: 'paintbrush',
-                items: Object.entries(themes).map(([value, { title }]) => ({ value, title })),
-                dynamicTitle: true,
-            },
-        },
+        ...tokenPreviewGlobalTypes,
     },
 
-    initialGlobals: {
-        theme: 'today',
-    },
+    initialGlobals: Object.fromEntries(tokenPreviews.map(({ attribute }) => [attribute, defaultMode])),
 };
 
 export default preview;

@@ -95,6 +95,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
                 type="file"
             />
             {error != null && (
+                // biome-ignore lint/plugin/noPrimitiveColors: no text role has critical-500
                 <p className="text-sm text-critical-500" role="alert">
                     {error}
                 </p>

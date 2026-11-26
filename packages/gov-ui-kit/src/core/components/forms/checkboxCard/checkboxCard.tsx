@@ -73,7 +73,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
 
     const containerClasses = classNames(
         'group flex min-w-0 cursor-pointer flex-col gap-3 outline-hidden transition-all', // Layout
-        'rounded-xl border bg-surface-default px-4 py-3 focus-ring ring-accent-focus md:gap-4 md:px-6 md:py-4', // Style
+        'rounded-xl border bg-surface-default px-4 py-3 ring-accent-focus focus-ring md:gap-4 md:px-6 md:py-4', // Style
         'border-surface-selected shadow-accent-default hover:shadow-accent-md', // Checked/indeterminate & hover
         'data-[state=unchecked]:enabled:border-surface-default data-[state=unchecked]:enabled:shadow-surface-sm', // Unchecked
         'data-[state=unchecked]:enabled:hover:shadow-surface-default', // Unchecked hover

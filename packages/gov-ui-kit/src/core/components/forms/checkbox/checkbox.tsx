@@ -59,7 +59,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             <RadixCheckbox.Root
                 checked={checked}
                 className={classNames(
-                    'group/checkbox peer cursor-pointer rounded-md focus-ring ring-accent-focus disabled:cursor-default',
+                    'group/checkbox peer cursor-pointer rounded-md ring-accent-focus focus-ring disabled:cursor-default',
                 )}
                 disabled={disabled}
                 id={randomId}

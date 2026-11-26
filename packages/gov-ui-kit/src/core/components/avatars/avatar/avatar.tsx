@@ -176,7 +176,7 @@ export const Avatar: React.FC<IAvatarProps> = (props) => {
     }
 
     const badgeClassNames = classNames(
-        'absolute flex items-center justify-center overflow-hidden rounded-full bg-surface-primary ring-bg-surface-primary *:size-full',
+        'absolute flex items-center justify-center overflow-hidden rounded-full bg-surface-primary ring-(--guk-bg-surface-primary) *:size-full',
         responsiveUtils.generateClassNames(size, responsiveSize, responsiveBadgeClasses),
     );
 

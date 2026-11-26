@@ -18,20 +18,20 @@ const variantToClassNames: Record<ButtonVariant, string[]> = {
     primary: [
         'bg-accent-default text-accent-inverse border-accent-fill shadow-accent-sm', // Default
         'hover:bg-accent-hover hover:border-accent-fill-hover hover:shadow-accent-default', // Hover
-        'active:bg-accent-active active:border-accent-fill-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        'active:bg-accent-active active:border-accent-fill-active focus-ring ring-accent-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
     secondary: [
         'bg-accent-default-inverse text-accent-default border-accent-default shadow-accent-sm', // Default
         'hover:border-accent-hover hover:bg-accent-hover-inverse hover:text-accent-hover hover:shadow-accent-default', // Hover
-        // The pressed label keeps today's primary-400 (owner, P-09); Figma binds text/accent/active, which "next" and "dark" follow.
-        'active:border-accent-active active:bg-accent-active-inverse active:text-accent-active-secondary-button focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        // The pressed label keeps primary-400 in the default theme; Next and Dark follow text/accent/active, as Figma binds it.
+        'active:border-accent-active active:bg-accent-active-inverse active:text-accent-active-secondary-button focus-ring ring-accent-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
     tertiary: [
         'bg-surface-default text-surface-default border-surface-default shadow-surface-sm', // Default
         'hover:bg-surface-hover hover:border-surface-hover hover:text-surface-hover hover:shadow-surface-default', // Hover
-        'active:bg-surface-active active:border-surface-active active:text-surface-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        'active:bg-surface-active active:border-surface-active active:text-surface-active focus-ring ring-accent-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
     ghost: [
@@ -39,25 +39,25 @@ const variantToClassNames: Record<ButtonVariant, string[]> = {
         'bg-transparent border-transparent text-accent-default', // Default
         // Hover stays white as before the semantic tokens (Figma binds bg/surface/hover); see bg/surface/ghost-hover.
         'hover:bg-surface-ghost-hover hover:text-accent-hover', // Hover
-        'active:bg-surface-active active:text-accent-active focus-ring focus-visible:ring-accent-focus', // Active / Focus
+        'active:bg-surface-active active:text-accent-active focus-ring ring-accent-focus', // Active / Focus
         'aria-disabled:text-surface-disabled', // Disabled
     ],
     success: [
         'bg-success-default text-success-default border-success-default shadow-success-sm', // Default
         'hover:bg-success-hover hover:border-success-hover hover:text-success-hover hover:shadow-success-default', // Hover
-        'active:bg-success-active active:border-success-active active:text-success-active focus-ring focus-visible:ring-success-focus', // Active / Focus
+        'active:bg-success-active active:border-success-active active:text-success-active focus-ring ring-success-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
     warning: [
         'bg-warning-default text-warning-default border-warning-default shadow-warning-sm', // Default
         'hover:bg-warning-hover hover:border-warning-hover hover:text-warning-hover hover:shadow-warning-default', // Hover
-        'active:bg-warning-active active:border-warning-active active:text-warning-active focus-ring focus-visible:ring-warning-focus', // Active / Focus
+        'active:bg-warning-active active:border-warning-active active:text-warning-active focus-ring ring-warning-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
     critical: [
         'bg-critical-default text-critical-default border-critical-default shadow-critical-sm', // Default
         'hover:bg-critical-hover hover:border-critical-hover hover:text-critical-hover hover:shadow-critical-default', // Hover
-        'active:bg-critical-active active:border-critical-active active:text-critical-active focus-ring focus-visible:ring-critical-focus', // Active / Focus
+        'active:bg-critical-active active:border-critical-active active:text-critical-active focus-ring ring-critical-focus', // Active / Focus
         disabledClassNames, // Disabled
     ],
 };

@@ -15,7 +15,7 @@ export const ProposalVotingProgressContainer: React.FC<IProposalVotingProgressCo
 
     const colClassNames = 'flex-col *:pb-6 *:border-b *:border-b-surface-secondary';
     const rowClassNames =
-        'md:flex-row md:*:pr-6 md:*:border-r md:*:border-r-surface-secondary md:*:pb-0 md:*:border-b-bg-surface-primary';
+        'md:flex-row md:*:pr-6 md:*:border-r md:*:border-r-surface-secondary md:*:pb-0 md:*:border-b-(--guk-bg-surface-primary)';
 
     const containerClassNames = classNames(
         'flex gap-6 rounded-xl border border-surface-secondary bg-surface-primary px-4 py-3 shadow-surface-sm md:p-6',

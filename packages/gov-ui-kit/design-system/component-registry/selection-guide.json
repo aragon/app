@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "ffbc27685bf8c0ce3dfe6f15b0dda646d6c82aacab8c5b4cbd0a3da593a1e01f",
+            "sha256": "68b7a28f1e18d33fdf3617bf9878209a943ed2c66b5cedbf11aff0bbfab56523",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -650,12 +650,12 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`)."
+                "`Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. A class that overrides a property `Card` sets (background, border colour, shadow) needs the important modifier (`border-critical-primary!`): the stylesheet orders classes by name, not by their order in `className`."
             ],
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/cards/card/card.tsx:13",
+                "source": "kit:src/core/components/cards/card/card.tsx:14",
                 "stories": [
                     "kit:src/core/components/cards/card/card.stories.tsx:1"
                 ]
@@ -3074,7 +3074,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/spinner/spinner.tsx:87",
+                "source": "kit:src/core/components/spinner/spinner.tsx:88",
                 "stories": [
                     "kit:src/core/components/spinner/spinner.stories.tsx:1"
                 ]
@@ -3469,7 +3469,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/tooltip/tooltip.tsx:70",
+                "source": "kit:src/core/components/tooltip/tooltip.tsx:72",
                 "stories": [
                     "kit:src/core/components/tooltip/tooltip.stories.tsx:1"
                 ]

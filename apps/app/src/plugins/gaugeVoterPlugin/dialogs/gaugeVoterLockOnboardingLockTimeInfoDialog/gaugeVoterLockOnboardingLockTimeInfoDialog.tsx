@@ -80,6 +80,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.minLocktime',
                                 )}
                             </span>
+                            {/* biome-ignore lint/plugin/noPrimitiveColors: no bg role has neutral-300 */}
                             <div className="size-2 rounded-full bg-neutral-300" />
                         </div>
                         <span className="text-surface-secondary">
@@ -96,6 +97,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.cooldown',
                                 )}
                             </span>
+                            {/* biome-ignore lint/plugin/noPrimitiveColors: no bg role has info-400 */}
                             <div className="size-2 rounded-full bg-info-400" />
                         </div>
                         <span className="text-surface-secondary">

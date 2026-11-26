@@ -136,6 +136,7 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
         {
             // Per-axis border colours: they are emitted after the item's own `border-surface-*` classes, so they
             // replace its default and hover borders, while its pressed border still wins as it did before.
+            // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
             'border-x-primary-300 border-y-primary-300 hover:border-x-primary-300 hover:border-y-primary-300':
                 isSelected,
         },

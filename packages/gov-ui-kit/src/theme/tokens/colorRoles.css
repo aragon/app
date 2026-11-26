@@ -1,0 +1,48 @@
+/*
+ * Role classes: `<family>-<group>-<role>` sets one property from the semantic `--guk-<family>-*` variables
+ * (src/theme/tokens/semantic/). A value without such a variable falls through to Tailwind's own utility of the same
+ * name, so `bg-neutral-0`, `text-sm` and `border-2` keep working.
+ */
+@utility bg-* {
+    background-color: --value(--guk-bg-*);
+}
+
+@utility text-* {
+    color: --value(--guk-text-*);
+}
+
+@utility icon-* {
+    color: --value(--guk-icon-*);
+}
+
+@utility border-* {
+    border-color: --value(--guk-border-*);
+}
+
+@utility border-x-* {
+    border-inline-color: --value(--guk-border-*);
+}
+
+@utility border-y-* {
+    border-block-color: --value(--guk-border-*);
+}
+
+@utility border-t-* {
+    border-top-color: --value(--guk-border-*);
+}
+
+@utility border-r-* {
+    border-right-color: --value(--guk-border-*);
+}
+
+@utility border-b-* {
+    border-bottom-color: --value(--guk-border-*);
+}
+
+@utility border-l-* {
+    border-left-color: --value(--guk-border-*);
+}
+
+@utility ring-* {
+    --tw-ring-color: --value(--guk-ring-*);
+}

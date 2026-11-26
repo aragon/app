@@ -238,7 +238,7 @@ const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
 
     return (
         <a
-            className="rounded-sm underline underline-offset-2 focus-ring ring-accent-focus hover:text-link-secondary-hover"
+            className="rounded-sm underline underline-offset-2 ring-accent-focus focus-ring hover:text-link-secondary-hover"
             href={href}
             rel="noopener noreferrer"
             target="_blank"
@@ -286,7 +286,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="mx-auto cursor-pointer rounded-sm text-xs text-surface-secondary underline underline-offset-2 focus-ring ring-accent-focus"
+            className="mx-auto cursor-pointer rounded-sm text-xs text-surface-secondary underline underline-offset-2 ring-accent-focus focus-ring"
             onClick={onViewRequests}
             type="button"
         >
@@ -324,7 +324,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-surface-secondary px-3.5 py-1.5 text-sm whitespace-nowrap text-surface-primary focus-ring transition-colors ring-accent-focus hover:bg-surface-hover"
+                        className="cursor-pointer rounded-full border border-surface-secondary px-3.5 py-1.5 text-sm whitespace-nowrap text-surface-primary ring-accent-focus focus-ring transition-colors hover:bg-surface-hover"
                         type="button"
                     >
                         {suggestion.label}
@@ -388,7 +388,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-surface-primary outline-none caret-text-accent-primary placeholder:text-surface-placeholder"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 text-sm text-surface-primary caret-(--guk-text-accent-primary) outline-none placeholder:text-surface-placeholder"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}

@@ -133,7 +133,7 @@ export const InputFileAvatar: React.FC<IInputFileAvatarProps> = (props) => {
                         <button
                             aria-label="Cancel Selection"
                             className={classNames(
-                                'absolute -top-1 -right-1 cursor-pointer rounded-full bg-surface-default p-1 focus-ring ring-accent-focus shadow-surface-default',
+                                'absolute -top-1 -right-1 cursor-pointer rounded-full bg-surface-default p-1 shadow-surface-default ring-accent-focus focus-ring',
                             )}
                             onClick={handleCancel}
                             type="button"

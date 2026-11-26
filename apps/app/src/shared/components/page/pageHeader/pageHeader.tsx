@@ -57,7 +57,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b pt-6 from-gradient-surface-secondary to-gradient-surface-primary group-has-[[data-app-sidebar]]/app:bg-none md:pt-10',
+                'bg-gradient-to-b from-(--guk-gradient-surface-secondary) to-(--guk-gradient-surface-primary) pt-6 group-has-[[data-app-sidebar]]/app:bg-none md:pt-10',
                 className,
             )}
             {...otherProps}

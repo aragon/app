@@ -28,9 +28,10 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
 
     const actionItemClasses = classNames(
         'w-full rounded-xl px-4 text-left transition-all', // Default all
+        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
         { 'border border-surface-default bg-surface-default shadow-neutral-sm': variant === 'primary' }, // Default primary
         { 'bg-transparent': variant === 'select' }, // Default select
-        { 'cursor-pointer focus-ring ring-accent-focus': isInteractiveElement }, // Interactive default state
+        { 'cursor-pointer ring-accent-focus focus-ring': isInteractiveElement }, // Interactive default state
         {
             'hover:border-surface-hover hover:shadow-surface-default active:border-surface-active-card':
                 isInteractiveElement && variant === 'primary',
@@ -81,7 +82,7 @@ export const DataListItem: React.FC<IDataListItemProps> = (props) => {
             <div className={classNames(actionItemClasses, 'relative isolate')} {...divProps}>
                 <button
                     aria-labelledby={contentId}
-                    className="absolute inset-0 z-0 cursor-pointer border-0 bg-transparent p-0 focus-ring ring-accent-focus"
+                    className="absolute inset-0 z-0 cursor-pointer border-0 bg-transparent p-0 ring-accent-focus focus-ring"
                     onClick={handleClick}
                     onKeyDown={onKeyDown as unknown as React.KeyboardEventHandler<HTMLButtonElement>}
                     type="button"
