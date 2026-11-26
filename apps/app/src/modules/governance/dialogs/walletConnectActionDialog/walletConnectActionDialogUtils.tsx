@@ -1,10 +1,13 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { fromHex, isHex } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
 import type { useDecodeTransaction } from '../../api/smartContractService';
-import type {
-    ISessionRequest,
-    ISessionRequestParams,
+import {
+    type ISession,
+    type ISessionRequest,
+    type ISessionRequestParams,
+    walletConnectService,
 } from '../../api/walletConnectService';
 
 export interface ISessionRequestToActionParams {
@@ -12,6 +15,10 @@ export interface ISessionRequestToActionParams {
      * Request received from the connected dApp.
      */
     sessionRequest: ISessionRequest;
+    /**
+     * Active session the request must belong to.
+     */
+    session: ISession;
     /**
      * Address of the account the dApp is connected to.
      */
@@ -29,7 +36,7 @@ export interface ISessionRequestToActionParams {
 }
 
 export interface IDecodeRawActionParams
-    extends Omit<ISessionRequestToActionParams, 'sessionRequest'> {
+    extends Omit<ISessionRequestToActionParams, 'sessionRequest' | 'session'> {
     /**
      * Raw action to be decoded.
      */
@@ -40,7 +47,8 @@ class WalletConnectActionDialogUtils {
     sessionRequestToAction = async (
         params: ISessionRequestToActionParams,
     ): Promise<IProposalAction | undefined> => {
-        const { request } = params.sessionRequest.params;
+        const { sessionRequest, session, address, network } = params;
+        const { request, chainId } = sessionRequest.params;
 
         // Only sendTransaction session requests are currently supported
         if (request.method !== 'eth_sendTransaction') {
@@ -50,6 +58,17 @@ class WalletConnectActionDialogUtils {
         const rawAction = this.requestParamsToRawAction(
             request.params as ISessionRequestParams[typeof request.method],
         );
+
+        // Ignore requests from other sessions, for other chains or other senders, as the action would be executed
+        // by the given account on the given network
+        const isValidRequest =
+            sessionRequest.topic === session.topic &&
+            chainId === walletConnectService.getChainNamespace(network) &&
+            addressUtils.isAddressEqual(rawAction.from, address);
+
+        if (!isValidRequest) {
+            return;
+        }
 
         try {
             const decodedAction = await this.decodeRawAction({
