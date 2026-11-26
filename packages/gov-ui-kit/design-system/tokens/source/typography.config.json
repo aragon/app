@@ -1,14 +1,12 @@
 {
-    "$description": "How typography.tokens.json becomes CSS; cssNames, files and preview read as in semantic.config.json, the files go to src/theme/tokens/typography/. Each part of a style's composite is a `--guk-type-<property>-<style>` theme variable (`--guk-type-md-…` from the md breakpoint), read by the `type-*` utility of src/theme/tokens/typeRoles.css; the modifiers are `--guk-type-<modifier>`.",
+    "$description": "How typography.tokens.json becomes CSS; cssNames, files and preview read as in semantic.config.json, the files go to src/theme/tokens/typography/. Each part of a style's `base` composite is a `--guk-type-<property>-<style>` theme variable, each part of its `md` (font size, line height, letter spacing: the parts that may step) a `--guk-type-md-<property>-<style>` one; the names also serve app.tokens.json. They are read by the `type-*` utility of src/theme/tokens/typeRoles.css; the modifiers are `--guk-type-<modifier>`.",
     "cssNames": {
         "type.*.*.base.fontFamily": "--guk-type-font-family-$2",
         "type.*.*.base.fontSize": "--guk-type-font-size-$2",
         "type.*.*.base.fontWeight": "--guk-type-font-weight-$2",
         "type.*.*.base.letterSpacing": "--guk-type-letter-spacing-$2",
         "type.*.*.base.lineHeight": "--guk-type-line-height-$2",
-        "type.*.*.md.fontFamily": "--guk-type-md-font-family-$2",
         "type.*.*.md.fontSize": "--guk-type-md-font-size-$2",
-        "type.*.*.md.fontWeight": "--guk-type-md-font-weight-$2",
         "type.*.*.md.letterSpacing": "--guk-type-md-letter-spacing-$2",
         "type.*.*.md.lineHeight": "--guk-type-md-line-height-$2",
         "type.modifier.*": "--guk-type-$1"

@@ -99,7 +99,7 @@ export const WorkspaceEntryPageClient: React.FC<
                 role="status"
             >
                 <Spinner size="lg" variant="neutral" />
-                <p className="type-supporting--detail-value">
+                <p className="type-control">
                     {t('app.workspace.workspaceEntryPage.opening')}
                 </p>
             </div>

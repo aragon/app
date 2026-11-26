@@ -31,7 +31,7 @@ export const PermissionStackNode: React.FC<
                                 ? // biome-ignore lint/plugin/noPrimitiveColors: no border role has primary-500
                                   'border-primary-500 bg-primary-500 text-accent-inverse'
                                 : dimmed
-                                  ? // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+                                  ? // biome-ignore lint/plugin/noPrimitiveColors: no role for a dimmed chip at neutral-200 (bg/surface/disabled is neutral-100)
                                     'border-neutral-200 bg-neutral-200 text-surface-secondary'
                                   : // biome-ignore lint/plugin/noPrimitiveColors: no border or bg role has neutral-700
                                     'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
@@ -52,7 +52,7 @@ export const PermissionStackNode: React.FC<
                                 className={classNames(
                                     'rounded bg-surface-primary px-1',
                                     isSelected
-                                        ? // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+                                        ? // biome-ignore lint/plugin/noPrimitiveColors: no text/accent role at primary-700
                                           'text-primary-700'
                                         : dimmed
                                           ? 'text-surface-secondary'

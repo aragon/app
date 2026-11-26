@@ -114,8 +114,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
         <DataList.Item
             className={classNames('px-4 py-3 md:px-6 md:py-4', {
                 // Checked but not highlighted: the user did not pick it.
-                // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
+                'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive && !isInWorkspace,
                 'border-surface-disabled-item bg-surface-secondary': isDisabled,
                 // The kit drops the hover without a click handler; kept so these rows read like the others.
@@ -156,7 +155,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     {isMultiSelect ? (
                         <div className="flex shrink-0 items-center gap-3">
                             {note != null && (
-                                <span className="type-supporting--compact-meta text-surface-secondary">
+                                <span className="type-control-sm text-surface-secondary">
                                     {note}
                                 </span>
                             )}

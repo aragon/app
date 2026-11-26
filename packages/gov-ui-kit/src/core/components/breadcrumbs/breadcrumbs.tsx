@@ -39,7 +39,7 @@ export const Breadcrumbs: React.FC<IBreadcrumbsProps> = (props) => {
                 {pathLinks.map((link) => (
                     <li className="flex items-center gap-x-1 whitespace-nowrap" key={link.href}>
                         <Link href={link.href}>{link.label}</Link>
-                        {/* biome-ignore lint/plugin/noPrimitiveColors: not converted yet */}
+                        {/* biome-ignore lint/plugin/noPrimitiveColors: no icon role for a decorative separator at neutral-200 */}
                         <Icon className="text-neutral-200" icon={IconType.SLASH} responsiveSize={{ md: 'lg' }} />
                     </li>
                 ))}

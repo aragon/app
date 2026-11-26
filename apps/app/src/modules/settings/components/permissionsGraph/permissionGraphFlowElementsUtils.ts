@@ -92,8 +92,7 @@ const getEdgeFlow = (
 };
 
 const edgeBaseStyle = {
-    // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-    stroke: 'var(--color-neutral-300)',
+    stroke: 'var(--guk-border-surface-default-graph-node)',
     strokeWidth: 1.4,
 };
 
@@ -129,8 +128,7 @@ const getEdgeMarker = (active: boolean) => ({
     type: MarkerType.ArrowClosed,
     color: active
         ? 'var(--guk-border-surface-selected)'
-        : // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
-          'var(--color-neutral-300)',
+        : 'var(--guk-border-surface-default-graph-node)',
     width: 18,
     height: 18,
 });

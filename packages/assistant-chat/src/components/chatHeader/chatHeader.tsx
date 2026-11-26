@@ -93,7 +93,7 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
 
     // Match the app bar's md height after the docked panel leaves the app column at md width.
     return (
-        <div className="screen-docked-md:h-[91px] flex h-[75px] flex-none items-center gap-3.5 border-b border-surface-secondary pr-3.5 pl-5">
+        <div className="flex h-[75px] flex-none items-center gap-3.5 border-b border-surface-secondary pr-3.5 pl-5 screen-docked-md:h-[91px]">
             {isViewingRequests ? (
                 <Button
                     aria-label={chatCopy.header.back}

@@ -208,7 +208,8 @@ export const WorkspaceGettingStarted: React.FC = () => {
                             </div>
                             {isScanning && (
                                 <div
-                                    className="flex items-center gap-2 type-supporting--compact-detail text-surface-secondary"
+                                    // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
+                                    className="flex items-center gap-2 text-sm text-surface-secondary"
                                     role="status"
                                 >
                                     <Spinner size="sm" variant="neutral" />

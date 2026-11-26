@@ -33,17 +33,17 @@ export interface ITokenVotingOptionToggleProps
 const variantToClassNames: Record<TokenVotingOptionToggleVariant, string[]> = {
     success: [
         'active:border-success-active-control',
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected roles in the success group
         'data-[state=on]:enabled:border-success-300 data-[state=on]:text-success-800 data-[state=on]:shadow-success-sm',
     ],
     neutral: [
         'active:border-accent-active',
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected border role at primary-300 (border/surface/selected is primary-400)
         'data-[state=on]:enabled:border-primary-300 data-[state=on]:text-surface-selected-label data-[state=on]:shadow-accent-sm',
     ],
     critical: [
         'active:border-critical-active-control',
-        // biome-ignore lint/plugin/noPrimitiveColors: not converted yet
+        // biome-ignore lint/plugin/noPrimitiveColors: no selected roles in the critical group
         'data-[state=on]:enabled:border-critical-300 data-[state=on]:text-critical-800 data-[state=on]:shadow-critical-sm',
     ],
 };

@@ -123,14 +123,6 @@
                         "alpha": 0.08
                     },
                     "$description": "Pressed tint of the secondary data-list item. Component alias of bg-surface-transparent-active."
-                },
-                "secondary-skeleton": {
-                    "$value": "{color.neutral.200}",
-                    "$description": "Skeleton bars and circles of the app (the kit skeletons take bg-surface-secondary). Component alias of bg-surface-secondary."
-                },
-                "hover-icon-button": {
-                    "$value": "{color.neutral.100}",
-                    "$description": "Assistant-chat ghost icon button, hover fill. Component alias of bg-surface-hover."
                 }
             },
             "accent": {
@@ -312,10 +304,6 @@
                     "$value": "{color.info.300}",
                     "$description": "Status tooltip bubble and arrow (info). Component alias of bg-info-solid."
                 }
-            },
-            "body-sidebar": {
-                "$value": "{color.neutral.25}",
-                "$description": "Page background of the sidebar layout. Component alias of bg-body."
             }
         },
         "border": {
@@ -369,10 +357,6 @@
                     "$value": "{color.neutral.100}",
                     "$description": "Border of a disabled toggle: kit Toggle, vote option toggle. Component alias of border-surface-disabled."
                 },
-                "disabled-item": {
-                    "$value": "{color.neutral.100}",
-                    "$description": "Border of a disabled list item: workspace account item, process item. Component alias of border-surface-disabled."
-                },
                 "default-switch": {
                     "$value": "{color.neutral.200}",
                     "$description": "Switch track border. Component alias of border-surface-default."
@@ -384,18 +368,6 @@
                 "secondary-panel": {
                     "$value": "{color.neutral.200}",
                     "$description": "Static panel and divider borders: permissions-graph panels and skeleton, docs title rule, chat blockquote. Component alias of border-surface-secondary."
-                },
-                "hover-graph-node": {
-                    "$value": "{color.primary.300}",
-                    "$description": "Permissions-graph node, hover border. Component alias of border-surface-hover."
-                },
-                "default-graph-node": {
-                    "$value": "{color.neutral.300}",
-                    "$description": "Permissions-graph node, unselected border. Component alias of border-surface-default."
-                },
-                "default-composer": {
-                    "$value": "{color.neutral.200}",
-                    "$description": "Assistant-chat composer border. Component alias of border-surface-default."
                 }
             },
             "accent": {
@@ -431,14 +403,6 @@
                 "fill-active": {
                     "$value": "{semantic.bg.accent.active}",
                     "$description": "The Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
-                },
-                "primary-terminal": {
-                    "$value": "{color.primary.100}",
-                    "$description": "Gauge voting terminal border while voting. Component alias of border-accent-primary."
-                },
-                "primary-cta": {
-                    "$value": "{color.primary.200}",
-                    "$description": "Primary CTA card border. Component alias of border-accent-primary."
                 }
             },
             "success": {
@@ -456,10 +420,6 @@
                 },
                 "active": {
                     "$value": "{color.success.600}"
-                },
-                "active-control": {
-                    "$value": "{color.success.500}",
-                    "$description": "Active border of a status control: pressed vote option (yes). Component alias of border-success-active."
                 }
             },
             "warning": {
@@ -538,14 +498,6 @@
                 "primary-spinner": {
                     "$value": "{color.critical.300}",
                     "$description": "Spinner track (critical). Component alias of border-critical-primary."
-                },
-                "primary-dispatch": {
-                    "$value": "{color.critical.200}",
-                    "$description": "Border of the failed dispatch-simulation card. Component alias of border-critical-primary."
-                },
-                "primary-chat-error": {
-                    "$value": "{color.critical.300}",
-                    "$description": "Border of the assistant chat error box. Component alias of border-critical-primary."
                 }
             },
             "info": {
@@ -589,34 +541,6 @@
                 "hover-label": {
                     "$value": "{color.neutral.800}",
                     "$description": "Label that darkens on hover or keyboard highlight: dropdown item, checkbox, radio, autocomplete item, chat icon button. Component alias of text-surface-hover."
-                },
-                "default-wizard": {
-                    "$value": "{color.neutral.300}",
-                    "$description": "Wizard navigation step label. Component alias of text-surface-default."
-                },
-                "tertiary-hint": {
-                    "$value": "{color.neutral.300}",
-                    "$description": "Faint hint text and list markers: onboarding hint, account and process item meta, chat list markers and composer hint. Component alias of text-surface-tertiary."
-                },
-                "primary-detail": {
-                    "$value": "{color.neutral.700}",
-                    "$description": "Detail text one step lighter than primary: permissions summary, Safe proposal transaction details, permission chip. Component alias of text-surface-primary."
-                },
-                "primary-panel-title": {
-                    "$value": "{color.neutral.900}",
-                    "$description": "Titles of the permissions-graph detail panels. Component alias of text-surface-primary."
-                },
-                "selected-label": {
-                    "$value": "{color.neutral.800}",
-                    "$description": "Selected label kept neutral today: vote option toggle \"on\", navigation link of the current page. Component alias of text-surface-selected."
-                },
-                "default-attachment": {
-                    "$value": "{color.neutral.800}",
-                    "$description": "Chat attachment remove button. Component alias of text-surface-default."
-                },
-                "secondary-ticket": {
-                    "$value": "{color.neutral.600}",
-                    "$description": "Assistant-chat ticket card body text. Component alias of text-surface-secondary."
                 }
             },
             "accent": {
@@ -716,18 +640,6 @@
                 "primary-input": {
                     "$value": "{color.critical.600}",
                     "$description": "Input addon label (critical). Component alias of text-critical-primary."
-                },
-                "primary-message": {
-                    "$value": "{color.critical.600}",
-                    "$description": "Critical message text: file-download dialog errors, dispatch simulation detail, chat character counter at its limit. Component alias of text-critical-primary."
-                },
-                "primary-tx-error": {
-                    "$value": "{color.critical.700}",
-                    "$description": "Error text of transaction dialogs: dispatch simulation title, Safe transaction errors. Component alias of text-critical-primary."
-                },
-                "hover-attachment": {
-                    "$value": "{color.critical.600}",
-                    "$description": "Chat attachment remove button, hover. Component alias of text-critical-hover."
                 }
             },
             "info": {
@@ -817,7 +729,7 @@
                 },
                 "disabled-control": {
                     "$value": "{color.neutral.200}",
-                    "$description": "Disabled icon of the file-avatar input and tabs. Component alias of icon-surface-disabled."
+                    "$description": "Disabled icon of the file-avatar input and tabs, disabled switch thumb. Component alias of icon-surface-disabled."
                 },
                 "default-tab": {
                     "$value": "{color.neutral.500}",
@@ -872,10 +784,6 @@
                 "active-action": {
                     "$value": "{color.primary.700}",
                     "$description": "Pressed chevron of the collapsible toggle. Component alias of icon-accent-active."
-                },
-                "selected-nav": {
-                    "$value": "{color.neutral.800}",
-                    "$description": "Navigation link icon, current page. Component alias of icon-accent-selected."
                 }
             },
             "success": {
@@ -897,10 +805,6 @@
                 "primary-avatar": {
                     "$value": "{color.success.600}",
                     "$description": "Status icon of AvatarIcon (success). Component alias of icon-success-primary."
-                },
-                "primary-chat": {
-                    "$value": "{color.success.600}",
-                    "$description": "Success status icon of the assistant-chat ticket card. Component alias of icon-success-primary."
                 }
             },
             "warning": {
@@ -951,10 +855,6 @@
                 "primary-input": {
                     "$value": "{color.critical.600}",
                     "$description": "Input field icon (critical). Component alias of icon-critical-primary."
-                },
-                "primary-chat": {
-                    "$value": "{color.critical.600}",
-                    "$description": "Critical status icon of assistant-chat cards (attachment error, ticket failed). Component alias of icon-critical-primary."
                 }
             },
             "info": {

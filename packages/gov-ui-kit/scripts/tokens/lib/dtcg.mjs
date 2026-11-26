@@ -26,6 +26,9 @@ const collectTokens = (group, inheritedType, prefix = '', tokens = new Map()) =>
     return tokens;
 };
 
+// The token paths a document defines, in document order (a typography composite as its parts).
+export const tokenPaths = (document) => [...expandComposites(collectTokens(document)).keys()];
+
 // Follows aliases to the token that holds a value.
 const resolveToken = (tokens, path, chain = []) => {
     assert(!chain.includes(path), `Alias cycle: ${[...chain, path].join(' -> ')}`);

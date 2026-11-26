@@ -39,7 +39,7 @@ Needs `playwright-core` (resolved from another workspace, e.g. `apps/app`, or
 
 ## Token generator (`tokens/generate.mjs`)
 
-Writes the token CSS (`src/theme/tokens/<layer>/`) and the preview CSS (`design-system/tokens/preview/`) from the
+Writes the token CSS (`src/theme/tokens/<layer>/`, the app-only tokens to `design-system/tokens/app/`) and the preview CSS (`design-system/tokens/preview/`) from the
 DTCG source in `design-system/tokens/source/`. `pnpm tokens:generate` writes, `pnpm tokens:check` fails when the CSS
 is stale.
 Tests: `scripts/tokens/generate.test.mjs` (`pnpm test:tokens`, part of `pnpm test`). Details:

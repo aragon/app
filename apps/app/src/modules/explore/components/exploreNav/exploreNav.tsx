@@ -63,7 +63,7 @@ export const ExploreNav: React.FC = () => {
             className={classNames(
                 'border-b-0',
                 isPostHero
-                    ? '!bg-brand-solid'
+                    ? 'bg-brand-solid!'
                     : 'bg-transparent bg-gradient-to-b from-(--guk-gradient-brand-primary) to-transparent',
             )}
             containerClasses={classNames(

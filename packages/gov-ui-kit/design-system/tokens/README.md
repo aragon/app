@@ -7,9 +7,11 @@ design-system/tokens/source/
   primitives.tokens.json        the primitives: colours, shadows, radius, breakpoints, spacing, type, focus ring colours
   semantic.tokens.json          the semantic colour roles of the default theme, as aliases of the primitives
   typography.tokens.json        the typography roles, their exceptions and the modifiers of the default theme
+  app.tokens.json               the tokens only the app uses (component aliases and type exceptions no kit component takes)
   <layer>.config.json           not tokens: the CSS name of each token, the layout of the generated files, the previews
   modes/                        the preview modes (Next, Dark): documents merged over the default theme
   schema/format.2025.10.json    the published DTCG schema, unmodified
+design-system/tokens/app/       the generated CSS of app.tokens.json (do not edit)
 design-system/tokens/preview/   the generated preview CSS (do not edit)
 design-system/tokens/nextTypographyFonts.css   the faces of the Next typography preview, loaded with the preview
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
@@ -19,7 +21,8 @@ src/theme/fonts/                the font files and their @font-face rules
 ```
 
 `design-system/` is not in the npm package; `files` in the kit's `package.json` ships the generated CSS. The app and
-the docs site import the kit's CSS by path, so a regenerated file reaches them without another step.
+the docs site import the kit's CSS by path, so a regenerated file reaches them without another step. The app also
+imports `design-system/tokens/app/index.css` from its `layoutRoot.css`; the docs site does not.
 
 ## Changing a token
 
@@ -51,13 +54,15 @@ edit the hex and run the generator: it stops on the mismatch and prints the comp
 
 ## Layout config
 
-Each `<layer>.config.json` maps each generated file to its blocks, and each block (`@theme`, `:root`) to its lines. A
-line ending in `;` is CSS with no DTCG form, such as a namespace reset (`--color-*: initial;`) or
-`--radius-none: none;`. Any other line is a token path: it places that token, or every token under that group, in
-document order. `preview` maps each preview file to its mode selectors, and each selector to a list: the mode
-documents merged over the default theme, in order; follow rules such as `{ "type.exception.*--*": "type.role.$1" }`,
-which make every token under a matching group alias the same token under the target group (after the documents; a
-`*` matches within one path segment); and CSS lines ending in `;` for a value with no DTCG type.
+Each `<layer>.config.json` lays out the tokens of `<layer>.tokens.json`: it maps each generated file to its blocks, and
+each block (`@theme`, `:root`) to its lines. A line ending in `;` is CSS with no DTCG form, such as a namespace reset
+(`--color-*: initial;`) or `--radius-none: none;`. Any other line is a token path: it places that token, or every
+token under that group, in document order. The files go to `src/theme/tokens/<layer>/`, or to the kit-relative `dir`
+of the config (`app.config.json`: `design-system/tokens/app/`). `cssNames` rules apply across layers. `preview` maps
+each preview file to its mode selectors, and each selector to a list: the mode documents merged over the default
+theme, in order; follow rules such as `{ "type.exception.*--*": "type.role.$1" }`, which make every token under a
+matching group alias the same token under the target group (after the documents; a `*` matches within one path
+segment); and CSS lines ending in `;` for a value with no DTCG type.
 
 ## Semantic colours
 
@@ -70,7 +75,8 @@ Components take colours from roles, not from the primitive ramps. Three tiers:
   (`default`, `hover`, `active`, `selected`, `disabled`, `focus`), alone or combined (`hover-inverse`).
 - **Component aliases**: a role with a component suffix (`bg-surface-tertiary-avatar`, `border-surface-default-switch`)
   where one component needs a value no role has. Its `$description` names the component. Reuse a role before adding
-  one.
+  one. An alias that no kit component uses (only the app or the assistant chat) goes in `app.tokens.json`, so the
+  published kit CSS does not carry it.
 
 The variables are `--guk-<family>-<group>-<role>` theme variables; shadows are `--shadow-<group>-<size>` on Tailwind's
 own namespace. Tailwind emits only the variables a class or a `var()` in the scanned source uses.
@@ -88,7 +94,9 @@ needs a `cssNames` rule in `semantic.config.json`; a new family also needs its u
 Modes: `semantic.config.json` `preview` defines Next and Dark as documents merged over the default theme (`modes/`
 holds the designer's palette, its primitives, shadows and roles). The generator writes, per mode selector, every token
 whose value differs from the default as a literal to `design-system/tokens/preview/`. The file is not in the npm
-package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel.
+package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel. Tailwind
+inlines a literal shadow into its utility, so a primitive shadow class (`shadow-success-sm`) keeps its default colour
+in every mode; the alias shadows (`shadow-surface-*`, `shadow-accent-*`, `shadow-<status>-default`) read the variable.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveColors.grit` flag primitive colour classes and variables in kit and app
 source outside the theme. A class kept on purpose takes `biome-ignore lint/plugin/noPrimitiveColors: <reason>` on the
@@ -118,31 +126,39 @@ Code names that differ from Figma:
 
 Text takes a role by its job, not a size. `typography.tokens.json` holds 15 roles (`type.role.<role>`: display,
 title-page, title-section, title-group, title-item, body, body-compact, supporting, caption, label, label-option,
-control, control-sm, stat, tooltip). A role is two DTCG `typography` composites whose parts alias the type primitives:
-`base`, and `md` from the md breakpoint.
+control, control-sm, stat, tooltip). A role has a `base`, a DTCG `typography` composite whose parts alias the type
+primitives, and an `md` from the md breakpoint that holds only the parts that may step: font size, line height and
+letter spacing (family and weight never change at `md`).
 
 ```json
 "supporting": {
     "base": { "$value": { "fontFamily": "{font.family.sans}", "fontSize": "{font.size.sm}", "fontWeight": "{font.weight.normal}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": "{font.leading.tight}" } },
-    "md": { "$value": { "fontFamily": "{font.family.sans}", "fontSize": "{font.size.base}", "fontWeight": "{font.weight.normal}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": "{font.leading.tight}" } }
+    "md": {
+        "fontSize": { "$type": "dimension", "$value": "{font.size.base}" },
+        "lineHeight": { "$type": "number", "$value": "{font.leading.tight}" },
+        "letterSpacing": { "$type": "dimension", "$value": { "value": 0, "unit": "px" } }
+    }
 }
 ```
 
 Each part is a `--guk-type-<property>-<role>` theme variable (`--guk-type-md-…` for `md`). `src/theme/tokens/
-typeRoles.css` declares one functional utility, `type-*`, that sets the five properties (and `--tw-leading`, so a raw
-`text-*` on the element keeps the role's line height) and steps through the `md` variant of the build that compiles
-it: a container query on the app column in the app. Tailwind emits only the variables of the roles in use.
+typeRoles.css` declares one functional utility, `type-*`, that sets the five properties and steps through the `md`
+variant of the build that compiles it: a container query on the app column in the app. Tailwind emits only the
+variables of the roles in use.
 
 - **Exceptions** (`type.exception.<role>--<pattern>`): a place that renders another bundle than its role, its
-  `$description` naming the place. The class is `type-<role>--<pattern>`. In a preview mode an exception follows its
-  role: one rule in `typography.config.json` (`"type.exception.*--*": "type.role.$1"`).
+  `$description` naming the place. The class is `type-<role>--<pattern>`. An exception no kit component uses lives in
+  `app.tokens.json`, so the published CSS does not carry it. In a preview mode an exception follows its role: one rule
+  in `typography.config.json` (`"type.exception.*--*": "type.role.$1"`).
 - **Modifiers**: `type-strong` (`type.modifier.strong`, 600), `type-mono` (`type.modifier.mono`) and `type-numeric`
-  (tabular figures in Next only, a CSS line of the preview: `font-variant-numeric` has no DTCG type).
+  (tabular figures in Next, a CSS line of the preview because `font-variant-numeric` has no DTCG type; the parent's
+  figures otherwise).
 - **Order**: a role sorts before raw `text-*`, `leading-*`, `font-*` and `tracking-*` classes and the modifiers, so
-  those win over it at every width. Between two roles on one element the later name in the alphabet wins.
-- **A new role or exception**: add it to `typography.tokens.json` (and the role to
-  `modes/typography.next.tokens.json`), run `pnpm tokens:generate`, use the class. Reuse a role or an exception with
-  the same bundle before adding one.
+  those win over it at every width; a raw `text-*` brings its own line height. Between two roles on one element the
+  later name in the alphabet wins.
+- **A new role or exception**: add it to `typography.tokens.json` (an exception only the app uses to
+  `app.tokens.json`; a role also to `modes/typography.next.tokens.json`), run `pnpm tokens:generate`, use the class.
+  Reuse a role or an exception with the same bundle before adding one.
 - **Next**: `modes/typography.next.tokens.json` holds the designer's 15 role bundles and the two faces they use;
   `design-system/tokens/preview/typography.css` sets them under `data-typography="next"`. Storybook (toolbar) and the
   app's debug panel load it with `nextTypographyFonts.css`; nothing of Next ships in the kit's CSS.

@@ -64,7 +64,10 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                     onClick: handleClose,
                 }}
             >
-                <p className="-mb-2 type-caption--chat-note text-pretty text-surface-secondary">
+                <p
+                    // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
+                    className="-mb-2 text-xs leading-normal text-pretty text-surface-secondary"
+                >
                     {t('app.workspace.workspaceWelcomeDialog.note')}
                 </p>
             </Dialog.Footer>
