@@ -150,7 +150,8 @@ is the first suspect:
    `<folder>/kit-files.json` on both artifacts, from a `list` with `scope: "files"`), never version numbers: an
    artifact's version moves on its own with no change to its files.
 2. Is the kit artifact behind the code? The design sync is described in `packages/gov-ui-kit/design-system/SYNC.md`
-   (a Storybook build and previews). It publishes to the shared design system artifact, so it needs the person's
+   (a kit and Storybook build; no previews). After a sync, set `kit.sourceCommit` and `kit.version` in
+   `canvases/prototypes.json`. It publishes to the shared design system artifact, so it needs the person's
    say-so on its own; an OK for a catch-up or a ticket does not cover it.
 3. Give the canvas the current kit: publish to it with the entries of `<folder>/kit-files.json`.
 4. Check the prototypes still load, and set `kit.version` in the canvas's record (and in `canvas.json` →
@@ -162,8 +163,7 @@ sync): ask whether to run the sync first. If not, draw it in the prototype with 
 the element `data-stands-in-for="<Component>"`, and add it to the README's known gaps, so the next session that has
 the synced kit replaces it.
 
-The reference canvas was last given the kit on 20 November 2026 (artifact version `1794992991-48d3`); all 13
-prototypes loaded without errors against it at 1440 and 390 px.
+The kit was last synced from `main` at `054ac8b47` (25 November 2026, kit 3.1.0): `kit.sourceCommit` records it.
 
 ## Tweaks
 
@@ -244,44 +244,119 @@ A design ticket keeps its prototypes current by itself: design and code merge to
 of change, app code changed with no design ticket, which leaves a prototype behind without anything noticing.
 `canvases/prototypes.json` → `appCommit` is the app commit the prototypes were last brought in line with.
 
-1. Work on a branch off an up-to-date `main`, or off the release branch when catching up a release.
-2. Triage, read-only. `node design/publish/affected.cjs` lists the parts that app changes since `appCommit` touched,
-   using the map in `design/sources.json`: the changed app files, kit files and strings, each with the parts that
-   show it. Those files are the reading list: read every one of their diffs
-   (`git diff <appCommit> <head> -- <file>`), once each, however many there are. What the report does not list is
-   what you skip. Open a part when a diff changes what it shows: markup, text, classes, or a condition that decides
-   what renders. A string the report lists for a part is in that part's own file, also when the part mounts
-   another part showing the same text. For each such part, check whether it already has the change or is behind; a
-   part that changed in the same range usually has it. The report's unmapped list is
-   changed UI code that no part covers: skim the file names for a page a prototype should have, without reading the
-   diffs. Write the behind items as a table: what changed in a designer's words, the commit, the app file and
-   lines, the prototype file, a size. A kit change matters only if a prototype's own markup or props must change,
-   or a prototype now needs a kit component the kit artifact lacks; otherwise give the canvas the current kit (see
-   "The UI kit on a canvas"). A new page in an area a prototype covers is "no prototype covers it": list it; it is
-   built only when the person asks.
-3. Show the person the table and wait. If they said to carry on without them, continue, and leave undone anything
-   that needs a product decision. Error, loading and failure variants are left out of the prototypes on purpose (a
-   prototype has no backend and must never leave a designer stuck): list them as not done unless told otherwise.
-4. Fix what is behind, following `BRIEF.md`, from the app's source. Work alone when most fixes touch the same files (often
-   `app.css`); otherwise one agent per group of files, never two on the same file. Each fix is proved by clicking, not only by loading.
-5. Run the load check on every prototype touched, refresh the reference canvas, set `appCommit` to the head the
-   triage ran against (`node design/publish/affected.cjs --record`), add what was left out to the README's known
-   gaps, update the README's file count and prototype list if they changed, commit, push.
+Follow every step in order, in CI too. Each one exists because a run without it missed something; the examples say
+what.
 
-It finds what changed. It does not find a prototype that was wrong from the start; only someone looking does.
+### 1. Fix the range
+
+Work on a branch off an up-to-date `main`, or off the release branch when catching up a release. Write down two
+commits: `base` = `appCommit`, and `head` = the tip of `main` (or of the release branch): `git rev-parse origin/main`.
+`head` must be a commit that will exist on `main` after the merge. Never your branch's own commits or a merge commit
+of your branch: a squash merge drops them and the next catch-up cannot resolve its range.
+
+### 2. Get the reading list
+
+`node design/publish/affected.cjs --base <base> --head <head>` lists every changed app file, kit file and string
+with the prototype parts that show it (map: `design/sources.json`), and the changed UI files no part covers. Keep the
+report: it is the reading list. Read every listed diff once (`git diff <base> <head> -- <file>`); skip nothing it
+lists, however many there are.
+
+### 3. Write the ledger: one row per file and part
+
+Write `design/.runtime/catch-up-ledger.md` with **one row for every (file, part) pair** in the report: app files, kit
+files and strings alike. A file listed for five parts gets five rows. Columns: file, part, verdict, evidence. The
+verdict is exactly one of:
+
+| Verdict | Meaning | Evidence required |
+| --- | --- | --- |
+| `no visible change` | The diff changes nothing this part draws (logic, types, tests, props it does not use) | One line on what the diff changes |
+| `already there` | The part already draws the new version | The line of the part that shows it |
+| `behind` | The part draws the old version | The app line and the part's line that differ |
+| `no prototype` | The change is a page, dialog or state no part draws | Its name |
+
+Judge each part on its own. The same app component is drawn separately in several prototypes, and fixing it in one
+fixes nothing in the others. *25 November, CI: the sidebar's user row lost its chevron in the app; the run fixed
+`WsNav` and left `DaoNav`, both listed for the same file.*
+
+No row may be blank, and "not opened" or "probably fine" is not a verdict. Before going on, count: the ledger has
+exactly as many rows as the report has (file, part) pairs.
+
+### 4. Find the copies the map does not know
+
+For every `behind` row, search all of `design/canvas/` for what changed: its class names, its text, the kit
+component or app component name (`grep -rn "ws-acc-item" design/canvas`, or the Grep tool). Every other file that
+draws the same thing gets its own ledger row, marked `(not in map)`, even though the report did not list it, and
+the missing source goes in the report to the person as a change for `design/sources.json`. *25 November, CI:
+`WsProposals` draws its own copy of the select-account dialog, which the map ties only to `WsTransactionsAccountDialog`;
+the run fixed the dialog and left the copy.*
+
+### 5. Check the two things no diff shows
+
+**a. The kit the canvases have.** Canvases draw with the kit as synced at `kit.sourceCommit` in
+`canvases/prototypes.json`, not with the kit in the repo. `git log --oneline <kit.sourceCommit> <head> --
+packages/gov-ui-kit/src` lists kit changes canvases do not have. **Never use a kit component or prop added in that
+range**: on a canvas it renders nothing or fails, and the load check passes anyway when it runs with a newer kit.
+Draw it with kit tokens and `app.css`, mark it `data-stands-in-for="<Component>"`, and list it. Interactively, first
+ask whether to run the design sync (`packages/gov-ui-kit/design-system/SYNC.md`). *25 November, CI: the run gave
+account avatars the kit's new `badge` prop; with the canvas's kit, zero badges render.*
+
+**b. The feature flags.** The prototypes show the flag values recorded in `canvases/prototypes.json` → `flags`
+(`values`, for `environment`, with `except` overriding). Read the current values from `feature-flags.json` in
+`aragon/app-cms` (`main`): interactively from
+`https://raw.githubusercontent.com/aragon/app-cms/main/feature-flags.json`, in CI from
+`design/.runtime/feature-flags.json`, which the job fetches. A flag's value is its value for `environment`, else its
+`production` value, else `defaultValue` in `apps/app/src/shared/featureFlags/featureFlags.constants.ts`; then apply
+`except`. For every flag whose value differs from `values`, find what it gates
+(`grep -rn "isEnabled('<flag>')\|'<flag>'" apps/app/src`) and add ledger rows for each part that draws it. Update
+`values` once the parts match. *A flag change is not in any app diff: on 25 November the Automation section and the
+existing-conditions option were only found because the designer pointed at `app-cms`.*
+
+### 6. Report to the person
+
+A table of the `behind` rows: what changed in a designer's words, the commit, the app file and lines, the prototype
+file, a size. Then the `no prototype` rows as "listed, not built", and any `(not in map)` sources. Error, loading
+and failure variants are left out of the prototypes on purpose (a prototype has no backend and must never leave a
+designer stuck): list them, do not build them. A new page is built only when the person asks. Wait for the person;
+if they said to carry on without them, continue and leave undone anything that needs a product decision.
+
+### 7. Fix
+
+Fix every `behind` row from the app's source, following `BRIEF.md`. Work alone when most fixes touch the same files
+(often `app.css`); otherwise one agent per group of files, never two on the same file. Prove each fix by clicking
+(`check-canvas.cjs --eval`, real pointer events), not only by loading.
+
+### 8. Verify before recording
+
+- Every `behind` row is fixed or listed as left out with its reason.
+- Run `affected.cjs` again over the same range and recount: every (file, part) pair still has a row.
+- The load check on every prototype, at 1440 and 390 px, with the kit of `kit.sourceCommit` in `design/.runtime/`
+  (read from the canvas), not a newer one.
+
+### 9. Record and hand over
+
+`node design/publish/affected.cjs --record <head>` (the `head` from step 1). Add what was left out to the README's
+known gaps; update the README's file count and prototype list if they changed; add the run to the table below.
+Commit, push, open the pull request with the step 6 table as its description. After it merges, refresh the
+reference canvas.
+
+It finds what changed, and what a flag or the kit changed. It does not find a prototype that was wrong from the
+start; only someone looking does.
 
 ### In CI
 
 `app-design-catch-up.yml` runs this section when the app release PR opens, or by hand for a branch. The script runs
-first, and when it lists no part nothing else runs. Otherwise a headless session follows the steps above, with these
-differences:
+first, and when it lists no part nothing else runs. Otherwise a headless session follows steps 2 to 8 above, with
+these differences:
 
-- Nobody is there to ask. Skip the wait in step 3 and leave undone anything that needs a product decision.
-- Every listed diff is read, and every behind item is either fixed or listed as left out with its reason. "Not
-  opened" is not a reason.
-- No load check, no clicking and no canvas refresh: CI reaches neither the runtime nor the canvases. The designer
-  checks the result on a canvas before merging.
-- Change files only under `design/`. Write the table from step 2, with what was fixed and what was left out, to
+- Nobody is there to ask. Skip the wait in step 6 and leave undone anything that needs a product decision; never
+  run the design sync.
+- Search with the Grep tool (step 4) and read the flags from `design/.runtime/feature-flags.json` (step 5b). If that
+  file is missing, say so at the top of the report: the flags were not checked.
+- No load check, no clicking and no canvas refresh: CI reaches neither the runtime nor the canvases. Name every
+  prototype file you changed under "Check on a canvas" at the top of the report. The designer checks them before
+  merging.
+- Change files only under `design/`. `design/sources.json` is locked: list missing sources in the report instead.
+- Write the report from step 6, then the whole ledger inside `<details><summary>Ledger</summary>…</details>`, to
   `design/.runtime/catch-up.md`: it becomes the pull request's description.
 - The job, not the session, sets `appCommit` and opens the pull request into the release branch. The release's
   Slack thread and a comment on the release PR get one line: a ping to check that pull request, or that nothing
@@ -293,6 +368,7 @@ Runs so far:
 | --- | --- | --- | --- |
 | 20 November 2026 | 16 to 19 November, 139 app files | 10 behind, 8 fixed by two agents, 2 error states left out | Under an hour, improvised; this section was written afterwards |
 | 21 November 2026 | 19 to 20 November, 150 files (mostly one pull request) | 11 behind, all fixed; new pages listed, not built; two new kit components drawn by hand | About 20 minutes, by an agent with no prior context following this section, which it then corrected |
+| 25 November 2026 | 20 to 24 November, 127 app files (the merged workspace work) | 9 behind, all fixed; switched to OCC's feature flags; new pages listed, not built; kit re-synced, so the hand-drawn kit components became the real ones | About 10 minutes of triage and 10 of fixes by agents, plus a 47-minute kit sync; `affected.cjs`, added the same day, then found nothing the triage had missed |
 
 ## Finish a ticket
 

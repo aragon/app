@@ -66,15 +66,6 @@
               </div>
             </x-import>
           </div>
-
-          <div class="page-section page-section--compact">
-            <div class="page-section__header">
-              <div class="page-section__title">
-                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Automation</x-import>
-              </div>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS">Policy</x-import>
-            </div>
-          </div>
         </main>
 
         <aside class="page-aside">
@@ -95,8 +86,8 @@
 <script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
 // PART of the Atlas Grants Council prototype (AtlasDao.dc.html). Props: onNav(target), wallet, onConnect. Lifted from MsSettings; the governance process item opens the process page.
 // DAO settings (apps/app: modules/settings/pages/daoSettingsPage/daoSettingsPageClient.tsx). linkedAccount flag on, so
-// the Account section is DaoHierarchy (a Card with DaoInfo; Atlas has no linked accounts); Automation is shown
-// (capitalFlowAutomation on) with no policies. Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
+// the Account section is DaoHierarchy (a Card with DaoInfo; Atlas has no linked accounts); no Automation section
+// (capitalFlowAutomation off, as on new.app.aragon.org). Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
 // Process item: shared/components/processDataListItem. Mock data: design/baseline-check/data.cjs (Atlas Grants Council, multisig DAO).
 class Component extends DCLogic {
   // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
