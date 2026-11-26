@@ -6,28 +6,8 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "0a792d52532895703f3f5a290ebbfe18f82e720c",
-            "dirty": [
-                "packages/gov-ui-kit/AGENTS.md",
-                "packages/gov-ui-kit/scripts/README.md",
-                "packages/gov-ui-kit/scripts/tokens/generate.mjs",
-                "packages/gov-ui-kit/scripts/tokens/generate.test.mjs",
-                "packages/gov-ui-kit/scripts/tokens/lib/css.mjs",
-                "packages/gov-ui-kit/scripts/tokens/lib/dtcg.mjs",
-                "packages/gov-ui-kit/src/core/components/breadcrumbs/breadcrumbs.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListFilter/dataListFilterStatus.tsx",
-                "packages/gov-ui-kit/src/core/components/dataList/dataListItem/dataListItem.tsx",
-                "packages/gov-ui-kit/src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx",
-                "packages/gov-ui-kit/src/core/components/forms/switch/switch.tsx",
-                "packages/gov-ui-kit/src/core/components/illustrations/index.css",
-                "packages/gov-ui-kit/src/core/components/tabs/tabsTrigger/tabsTrigger.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemSkeleton/smartContractFunctionDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/modules/components/smartContract/smartContractFunctionDataListItem/smartContractFunctionDataListItemStructure/smartContractFunctionDataListItemStructure.tsx",
-                "packages/gov-ui-kit/src/modules/components/transaction/transactionDataListItem/transactionDataListItemSkeleton/transactionDataListItemSkeleton.tsx",
-                "packages/gov-ui-kit/src/theme/tokens/semantic/colors.css",
-                "packages/gov-ui-kit/src/theme/tokens/typeRoles.css",
-                "packages/gov-ui-kit/src/theme/tokens/typography/roles.css"
-            ],
+            "commit": "cfd34fe1314ca71648af7a7f692a5e363f320fa4",
+            "dirty": [],
             "sourceVersion": "3.1.0",
             "entrypoints": {
                 "js": [
@@ -3097,7 +3077,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "6d9c6c7af4d8e7b45e0246fad80b9bc4593e12f72f6112bd60be073d0297f935"
+                "sha256": "a334f2088287b4e426f253ad05d73512918884197315f891c6a215803d9d6b55"
             },
             "props": [],
             "stories": [],
