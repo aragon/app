@@ -1,5 +1,8 @@
-import { ChainEntityType } from '@aragon/gov-ui-kit';
-import { useEnsName } from '@/modules/ens';
+import {
+    ChainEntityType,
+    formatAddressText,
+    useResolveAddress,
+} from '@aragon/gov-ui-kit';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -19,7 +22,8 @@ export const useSppGovernanceSettingsDefault = (
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
-    const { data: bodyName } = useEnsName(pluginAddress);
+    // The name row shows only when the address book or ENS names the body; the address row always shows.
+    const { label, source, sourceLabel } = useResolveAddress(pluginAddress);
     const url = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
         id: pluginAddress,
@@ -28,7 +32,10 @@ export const useSppGovernanceSettingsDefault = (
     return sppSettingsUtils.parseDefaultSettings({
         t,
         address: pluginAddress,
-        name: bodyName ?? undefined,
+        name:
+            label != null && source != null
+                ? formatAddressText({ label, source, sourceLabel })
+                : undefined,
         url,
     });
 };

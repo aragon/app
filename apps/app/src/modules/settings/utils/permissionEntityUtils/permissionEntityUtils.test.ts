@@ -1,4 +1,3 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     type IDaoPlugin,
     type IPermissionEntityRef,
@@ -108,12 +107,11 @@ describe('permissionEntity Utils', () => {
                 },
             },
             {
-                description:
-                    'falls back to the truncated address for unknown addresses',
+                // No name: the address widget shows the address and names it from the address book.
+                description: 'leaves an unknown address without a name',
                 address: unknownAddress,
                 expected: {
-                    label: addressUtils.truncateAddress(unknownAddress),
-                    detailName: addressUtils.truncateAddress(unknownAddress),
+                    label: undefined,
                     isSentinel: false,
                     tag: undefined,
                     type: 'address',
@@ -150,10 +148,10 @@ describe('permissionEntity Utils', () => {
             );
 
             expect(result).toMatchObject({
-                label: addressUtils.truncateAddress(unknownAddress),
                 type: 'address',
                 layer: 'unknown',
             });
+            expect(result.label).toBeUndefined();
         });
 
         it('prefers backend-enriched entity metadata over local fallbacks', () => {

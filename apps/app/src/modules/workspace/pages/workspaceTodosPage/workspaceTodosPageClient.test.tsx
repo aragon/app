@@ -112,6 +112,7 @@ describe('<WorkspaceTodosPageClient /> component', () => {
             activeOption: {
                 id: account.id,
                 label: 'Demo DAO',
+                hasName: true,
                 account,
                 isAllAccounts: false,
                 isExternal: false,

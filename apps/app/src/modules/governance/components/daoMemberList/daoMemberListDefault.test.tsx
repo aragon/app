@@ -1,4 +1,8 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
@@ -29,11 +33,10 @@ describe('<DaoMemberListDefault /> component', () => {
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
 
-    const mockEnsNameByAddress = (entries: Record<string, string | null>) => {
-        useEnsNameSpy.mockImplementation(((address) => ({
-            data: address ? (entries[address] ?? null) : null,
-            isLoading: false,
-        })) as typeof ensModule.useEnsName);
+    // Member names come from the address book, so the rows are rendered under a provider that knows them.
+    let names: Record<string, string | null> = {};
+    const mockNamesByAddress = (entries: Record<string, string | null>) => {
+        names = entries;
     };
 
     beforeEach(() => {
@@ -78,6 +81,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useMemberExistsSpy.mockReset();
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
+        names = {};
     });
 
     const createTestComponent = (
@@ -91,22 +95,38 @@ describe('<DaoMemberListDefault /> component', () => {
             ...props,
         };
 
+        const entries = new Map(
+            Object.entries(names).flatMap(([address, label]) =>
+                label == null
+                    ? []
+                    : [
+                          [
+                              addressEntryKey(address, 0),
+                              { label, source: 'ens' as const },
+                          ],
+                      ],
+            ),
+        );
+
         return (
             <GukModulesProvider>
-                <DaoMemberListDefault {...completeProps} />
+                <AddressResolutionProvider entries={entries}>
+                    <DaoMemberListDefault {...completeProps} />
+                </AddressResolutionProvider>
             </GukModulesProvider>
         );
     };
 
     it('fetches and renders the multisig member list', () => {
         const resolvedEns = 'member-1';
+        const namedAddress = '0x4560000000000000000000000000000000000456';
         const members = [
             generateMember({ address: '0x123' }),
-            generateMember({ address: '0x456', ens: resolvedEns }),
+            generateMember({ address: namedAddress, ens: resolvedEns }),
         ];
-        mockEnsNameByAddress({
+        mockNamesByAddress({
             '0x123': null,
-            '0x456': resolvedEns,
+            [namedAddress]: resolvedEns,
         });
         useMemberListDataSpy.mockReturnValue({
             memberList: members,
@@ -159,7 +179,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
-        mockEnsNameByAddress({
+        mockNamesByAddress({
             [userAddress]: 'you.eth',
             [otherAddress]: 'other.eth',
         });
@@ -202,7 +222,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
-        mockEnsNameByAddress({
+        mockNamesByAddress({
             [otherMember.address]: 'other.eth',
         });
 
@@ -249,7 +269,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
-        mockEnsNameByAddress({
+        mockNamesByAddress({
             [userAddress]: 'you.eth',
             [otherMember.address]: 'other.eth',
         });
@@ -297,7 +317,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
-        mockEnsNameByAddress({
+        mockNamesByAddress({
             [userAddress]: 'you.eth',
             [otherMember.address]: 'other.eth',
         });

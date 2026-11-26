@@ -125,6 +125,7 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         const activeOption: IWorkspaceAccountOption = {
             id: daoAccount.id,
             label: 'Demo DAO',
+            hasName: true,
             account: daoAccount,
             isAllAccounts: false,
             isExternal: false,
@@ -145,6 +146,7 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         const activeOption: IWorkspaceAccountOption = {
             id: safeAccount.id,
             label: 'Demo Safe',
+            hasName: true,
             account: safeAccount,
             isAllAccounts: false,
             isExternal: false,
@@ -182,6 +184,7 @@ describe('<WorkspaceProposalsAsideCard /> component', () => {
         const activeOption: IWorkspaceAccountOption = {
             id: daoAccount.id,
             label: 'Demo DAO',
+            hasName: true,
             account: daoAccount,
             isAllAccounts: false,
             isExternal: false,

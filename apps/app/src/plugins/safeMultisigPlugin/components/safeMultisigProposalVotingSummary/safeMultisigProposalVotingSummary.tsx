@@ -1,13 +1,12 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     formatterUtils,
     NumberFormat,
     Progress,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
-import { useEnsName } from '@/modules/ens';
 import { SafeTransactionState } from '@/modules/safe/types';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
@@ -24,7 +23,6 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     const { proposal, body, stage, isVeto } = props;
 
     const { t } = useTranslations();
-    const { data: ensName } = useEnsName(body);
 
     const {
         safeInfo,
@@ -40,9 +38,9 @@ export const SafeMultisigProposalVotingSummary: React.FC<
         stage,
     });
 
-    // A Safe has no name onchain, so the body reads as its ENS name or address, exactly as the
-    // generic external body it replaces did.
-    const displayName = ensName ?? addressUtils.truncateAddress(body);
+    // A Safe has no name onchain, so the body reads as its address: its address book or ENS name, else the short
+    // address, as text with the address one hover away.
+    const displayName = <AddressOutput address={body} text={true} />;
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
 
     // Before the stage opens there is nothing to count, and a failed read must not be dressed up as

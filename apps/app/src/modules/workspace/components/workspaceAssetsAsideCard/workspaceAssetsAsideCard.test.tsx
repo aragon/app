@@ -113,6 +113,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         const activeOption: IWorkspaceAccountOption = {
             id: daoAccount.id,
             label: 'Demo DAO',
+            hasName: true,
             account: daoAccount,
             isAllAccounts: false,
             isExternal: false,
@@ -122,7 +123,11 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         expect(screen.getByTestId('dao-assets-mock')).toBeInTheDocument();
         expect(screen.queryByTestId('all-assets-mock')).not.toBeInTheDocument();
         expect(daoAssetsCardSpy).toHaveBeenLastCalledWith(
-            { account: daoAccount, label: 'Demo DAO', metadata },
+            {
+                account: daoAccount,
+                label: 'Demo DAO',
+                metadata,
+            },
             undefined,
         );
     });
@@ -132,6 +137,7 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         const activeOption: IWorkspaceAccountOption = {
             id: safeAccount.id,
             label: 'Demo Safe',
+            hasName: true,
             account: safeAccount,
             isAllAccounts: false,
             isExternal: false,
@@ -142,7 +148,11 @@ describe('<WorkspaceAssetsAsideCard /> component', () => {
         expect(screen.queryByTestId('all-assets-mock')).not.toBeInTheDocument();
         expect(screen.queryByTestId('dao-assets-mock')).not.toBeInTheDocument();
         expect(safeAssetsCardSpy).toHaveBeenLastCalledWith(
-            { account: safeAccount, label: 'Demo Safe', metadata },
+            {
+                account: safeAccount,
+                label: 'Demo Safe',
+                metadata,
+            },
             undefined,
         );
     });

@@ -1,7 +1,8 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
+import { useResolveAddressText } from '@aragon/gov-ui-kit';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWorkspaceAccounts } from '../../api/workspaceQueryService';
@@ -22,9 +23,15 @@ export interface IWorkspaceAccountOption {
      */
     id: string;
     /**
-     * Label of the option.
+     * Label of the option, as plain text: the account name, or its short address when unnamed. To show an account,
+     * use `useWorkspaceOptionText`, which also gives an unnamed account its address book name.
      */
     label: string;
+    /**
+     * Whether the label is the account's own name. An unnamed account is shown by its address, which the kit widget
+     * names from the address book.
+     */
+    hasName?: boolean;
     /**
      * Account of the option, undefined for the aggregated one.
      */
@@ -155,19 +162,33 @@ export const useWorkspaceAccountOptions =
             },
             { enabled: externalRef != null },
         );
+        // Text of an external account the accounts API has not named: its address book name, or its short address.
+        const externalAddressText = useResolveAddressText(
+            externalRef?.address,
+            externalRef == null
+                ? undefined
+                : networkDefinitions[externalRef.network].id,
+        );
 
         const options = useMemo<IWorkspaceAccountOption[]>(() => {
-            const accountOptions = (accounts ?? []).map((account) => ({
-                id: account.id,
-                // Same precedence as the workspace overview rows, so an option and its row never disagree.
-                label: workspaceUtils.getAccountLabel(
+            const accountOptions = (accounts ?? []).map((account) => {
+                const accountInfo = workspaceUtils.findAccountInfo(
+                    accountInfos,
                     account,
-                    workspaceUtils.findAccountInfo(accountInfos, account),
-                ),
-                account,
-                isAllAccounts: false,
-                isExternal: false,
-            }));
+                );
+
+                return {
+                    id: account.id,
+                    // Same precedence as the workspace overview rows, so an option and its row never disagree.
+                    label: workspaceUtils.getAccountLabel(account, accountInfo),
+                    hasName:
+                        workspaceUtils.getAccountName(account, accountInfo) !=
+                        null,
+                    account,
+                    isAllAccounts: false,
+                    isExternal: false,
+                };
+            });
 
             const allAccountsOption = {
                 id: workspaceAllAccountsSegment,
@@ -204,9 +225,8 @@ export const useWorkspaceAccountOptions =
             const externalOption = {
                 // The route segment as is, so the option links to the page being looked at.
                 id: accountId,
-                label:
-                    externalInfo?.name ??
-                    addressUtils.truncateAddress(externalRef.address),
+                label: externalInfo?.name ?? externalAddressText,
+                hasName: externalInfo?.name != null,
                 account: externalAccount,
                 isAllAccounts: false,
                 isExternal: true,
@@ -221,6 +241,7 @@ export const useWorkspaceAccountOptions =
             externalRef,
             externalInfos,
             externalInfosError,
+            externalAddressText,
             t,
         ]);
 

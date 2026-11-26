@@ -163,7 +163,7 @@ describe('buildPermissionGraph', () => {
             avatarSrc: 'https://external-dao.png',
         });
     });
-    it('falls back to the address for an unresolved external DAO', () => {
+    it('leaves an unresolved external DAO without a name, for the address widget to show', () => {
         const externalDaoAddress = '0x3333333333333333333333333333333333333333';
         const graph = buildPermissionGraph({
             rows: [
@@ -184,10 +184,7 @@ describe('buildPermissionGraph', () => {
             graph.nodes.find(
                 (node) => node.id === externalDaoAddress.toLowerCase(),
             ),
-        ).toMatchObject({
-            kind: 'linkedDao',
-            label: '0x3333…3333',
-        });
+        ).toMatchObject({ kind: 'linkedDao', label: undefined });
     });
 
     it.each([

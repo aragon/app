@@ -1,4 +1,9 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    addressUtils,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { type IDao, Network } from '@/shared/api/daoService';
@@ -125,6 +130,43 @@ describe('<WorkspaceAccountItem /> component', () => {
 
         expect(screen.getByText('Main treasury')).toBeInTheDocument();
         expect(screen.queryByText('Demo DAO')).not.toBeInTheDocument();
+    });
+
+    it('shows a named account once, with the plain short address below, when the address book names it too', () => {
+        // The workspace names the account (a known account) and ENS names the same address.
+        render(
+            <AddressResolutionProvider
+                entries={
+                    new Map([
+                        [
+                            addressEntryKey(
+                                address,
+                                networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+                            ),
+                            {
+                                label: 'Main treasury',
+                                source: 'known-account' as const,
+                            },
+                        ],
+                    ])
+                }
+                resolve={() =>
+                    Promise.resolve({ label: 'treasury.eth', source: 'ens' })
+                }
+            >
+                {createTestComponent({
+                    account: buildAccount({
+                        metadata: { name: 'Main treasury' },
+                    }),
+                })}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getAllByText('Main treasury')).toHaveLength(1);
+        expect(
+            screen.getByText(addressUtils.truncateAddress(address)),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('treasury.eth')).not.toBeInTheDocument();
     });
 
     it('displays the name and avatar of the DAO, which the registry does not store', () => {

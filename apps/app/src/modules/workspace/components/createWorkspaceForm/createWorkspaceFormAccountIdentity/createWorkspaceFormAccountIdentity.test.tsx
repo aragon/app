@@ -1,6 +1,12 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    addressUtils,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
@@ -66,6 +72,51 @@ describe('<CreateWorkspaceFormAccountIdentity /> component', () => {
         expect(
             screen.getByText(addressUtils.truncateAddress(address)),
         ).toBeInTheDocument();
+    });
+
+    describe('with an address book', () => {
+        // The same address named by the address book on the account's network.
+        const renderWithBook = (accountInfo: IWorkspaceAccountInfo) =>
+            render(
+                <AddressResolutionProvider
+                    entries={
+                        new Map([
+                            [
+                                addressEntryKey(
+                                    address,
+                                    networkDefinitions[Network.ETHEREUM_SEPOLIA]
+                                        .id,
+                                ),
+                                {
+                                    label: 'Ops Safe',
+                                    source: 'known-account' as const,
+                                },
+                            ],
+                        ])
+                    }
+                >
+                    {createTestComponent({ accountInfo })}
+                </AddressResolutionProvider>,
+            );
+
+        it('names an unnamed account by the address book, once', () => {
+            renderWithBook(buildAccountInfo({ name: null }));
+
+            expect(screen.getAllByText('Ops Safe')).toHaveLength(1);
+            expect(
+                screen.queryByText(addressUtils.truncateAddress(address)),
+            ).not.toBeInTheDocument();
+        });
+
+        it('shows a named DAO once, with the plain short address below', () => {
+            renderWithBook(buildAccountInfo({ name: 'Demo DAO' }));
+
+            expect(screen.getByText('Demo DAO')).toBeInTheDocument();
+            expect(
+                screen.getByText(addressUtils.truncateAddress(address)),
+            ).toBeInTheDocument();
+            expect(screen.queryByText('Ops Safe')).not.toBeInTheDocument();
+        });
     });
 
     it('displays the address and tag for a resolved Safe, which the API never names', () => {

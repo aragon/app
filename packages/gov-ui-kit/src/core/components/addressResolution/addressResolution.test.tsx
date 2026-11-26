@@ -443,5 +443,15 @@ describe('address resolution', () => {
             expect(text(a, entriesOf([a, 0, own('Vault 0x123456')]))).toBe('0xd8da…6045');
             expect(renderHook(() => useResolveAddressText('You')).result.current).toBe('You');
         });
+
+        it('returns the full checksummed address instead of the short one with showCompleteAddress', () => {
+            const full = (entries: ReadonlyMap<string, IAddressEntry>) =>
+                renderHook(() => useResolveAddressText(a, undefined, { showCompleteAddress: true }), {
+                    wrapper: wrapper({ entries }),
+                }).result.current;
+
+            expect(full(new Map())).toBe('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045');
+            expect(full(entriesOf([a, 0, own('Treasury')]))).toBe('Treasury');
+        });
     });
 });

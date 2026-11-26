@@ -22,6 +22,7 @@ import {
     Navigation,
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -77,7 +78,10 @@ const resolveDisplayDao = (
     dao?: IDao,
     targetDaoAddress?: string,
 ):
-    | Pick<IDao | ILinkedAccountSummary, 'address' | 'name' | 'avatar'>
+    | Pick<
+          IDao | ILinkedAccountSummary,
+          'address' | 'name' | 'avatar' | 'network'
+      >
     | undefined => {
     if (dao == null) {
         return undefined;
@@ -157,12 +161,19 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     </p>
                     {displayDao != null && (
                         <div className="flex items-center gap-x-2">
-                            <AddressOutput
-                                address={displayDao.address}
-                                className="text-sm leading-tight text-nowrap text-neutral-500"
-                                copy={false}
-                                label={displayDao.name?.trim() || undefined}
-                            />
+                            <span className="text-sm leading-tight text-nowrap text-neutral-500">
+                                {displayDao.name?.trim() || (
+                                    <AddressOutput
+                                        address={displayDao.address}
+                                        chainId={
+                                            networkDefinitions[
+                                                displayDao.network
+                                            ].id
+                                        }
+                                        copy={false}
+                                    />
+                                )}
+                            </span>
                             <DaoAvatar
                                 name={displayDaoName}
                                 size="sm"

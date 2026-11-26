@@ -5,9 +5,9 @@ import {
     // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
     useEnsName as useWagmiEnsName,
 } from 'wagmi';
-import { memberRegistrySubdomainSuffix } from '../constants/contracts';
 import { ensCache, ensChainId } from '../constants/ensConfig';
 import { logEnsError } from '../utils/logEnsError';
+import { stripAragonRegistrySuffix } from '../utils/stripAragonRegistrySuffix';
 
 export interface IUseEnsNameOptions {
     /**
@@ -43,7 +43,7 @@ export function useEnsName(
     address: string | undefined,
     options?: IUseEnsNameOptions,
 ) {
-    const { stripAragonRegistrySuffix = false } = options ?? {};
+    const { stripAragonRegistrySuffix: stripSuffix = false } = options ?? {};
 
     const validAddress =
         address != null && addressUtils.isAddress(address)
@@ -71,11 +71,9 @@ export function useEnsName(
         });
     }, [result.error, validAddress]);
 
-    const data =
-        stripAragonRegistrySuffix &&
-        result.data?.endsWith(memberRegistrySubdomainSuffix)
-            ? result.data.slice(0, -memberRegistrySubdomainSuffix.length)
-            : result.data;
+    const data = stripSuffix
+        ? stripAragonRegistrySuffix(result.data)
+        : result.data;
 
     return { ...result, data };
 }

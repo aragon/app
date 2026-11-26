@@ -7,6 +7,7 @@ import {
     StateSkeletonBar,
     StateSkeletonCircular,
     Tag,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { IDao } from '@/shared/api/daoService';
@@ -96,7 +97,12 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
     const isDao = type === WorkspaceAccountType.DAO;
 
     const networkName = networkDefinitions[network].name;
-    const truncatedAddress = addressUtils.truncateAddress(address);
+    // What an unnamed account is called: its address book name, or its short address.
+    const addressText = useResolveAddressText(
+        address,
+        networkDefinitions[network].id,
+    );
+    const shortAddress = addressUtils.truncateAddress(address);
 
     // The DAOs resolved by `useWorkspaceDaos` already have the workspace metadata applied, so the indexed name is
     // only read when the workspace owner did not name the account themselves.
@@ -107,8 +113,11 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
         undefined;
     const avatar = dao?.avatar ?? metadata?.avatar;
 
-    // Its reveal trigger is a button, which the row lifts above its click overlay so it can be hovered.
-    const addressOutput = <AddressOutput address={address} copy={false} />;
+    // A named account shows the plain short address under its name: resolving that address would repeat the name.
+    const checkboxLabel =
+        name == null
+            ? `${addressText}, ${networkName}`
+            : `${name}, ${networkName}, ${shortAddress}`;
 
     return (
         <DataList.Item
@@ -137,7 +146,14 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     />
                     <div className="flex min-w-0 grow flex-col gap-1">
                         <span className="truncate text-base leading-tight text-neutral-800">
-                            {name ?? addressOutput}
+                            {name ?? (
+                                // Its reveal trigger is a button, which the row lifts above its click overlay.
+                                <AddressOutput
+                                    address={address}
+                                    chainId={networkDefinitions[network].id}
+                                    copy={false}
+                                />
+                            )}
                         </span>
                         {/* An unnamed account is titled by its address, so only the network shows here. */}
                         <span className="flex min-w-0 items-baseline gap-1.5 text-sm leading-tight">
@@ -146,7 +162,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                             </span>
                             {name != null && (
                                 <span className="truncate text-neutral-500">
-                                    {addressOutput}
+                                    {shortAddress}
                                 </span>
                             )}
                         </span>
@@ -161,7 +177,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                             {/* Sits beside the row's overlay button, not inside it, so both toggle the selection. */}
                             {!hideCheckbox && (
                                 <Checkbox
-                                    aria-label={`${name ?? truncatedAddress}, ${networkName}, ${truncatedAddress}`}
+                                    aria-label={checkboxLabel}
                                     checked={isActive ?? false}
                                     disabled={isDisabled || isInWorkspace}
                                     label=""

@@ -1,4 +1,6 @@
 import {
+    AddressResolutionProvider,
+    addressEntryKey,
     addressUtils,
     clipboardUtils,
     DateFormat,
@@ -111,8 +113,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         (DaoList as jest.Mock).mockClear();
     });
 
+    // The member's name comes from the address book: `name` is what it holds for the member's address.
     const createTestComponent = (
         props?: Partial<IDaoMemberDetailsPageClientProps>,
+        name?: string,
     ) => {
         const completeProps: IDaoMemberDetailsPageClientProps = {
             daoId: 'dao-id',
@@ -120,12 +124,24 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             pluginAddress: defaultPlugin.address,
             ...props,
         };
+        const entries = new Map(
+            name == null
+                ? []
+                : [
+                      [
+                          addressEntryKey(completeProps.address, 0),
+                          { label: name, source: 'ens' as const },
+                      ],
+                  ],
+        );
 
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider>
-                    <DaoMemberDetailsPageClient {...completeProps} />
-                </FeatureFlagsProvider>
+                <AddressResolutionProvider entries={entries}>
+                    <FeatureFlagsProvider>
+                        <DaoMemberDetailsPageClient {...completeProps} />
+                    </FeatureFlagsProvider>
+                </AddressResolutionProvider>
             </GukModulesProvider>
         );
     };
@@ -155,11 +171,14 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         } as ReturnType<typeof ensModule.useEnsName>);
 
         render(
-            createTestComponent({
-                address,
-                daoId: dao.id,
-                pluginAddress: plugin.address,
-            }),
+            createTestComponent(
+                {
+                    address,
+                    daoId: dao.id,
+                    pluginAddress: plugin.address,
+                },
+                ens,
+            ),
         );
 
         expect(useMemberSpy).toHaveBeenCalledWith({
@@ -274,17 +293,14 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 data: generateMember({ address }),
             }),
         );
-        useEnsNameSpy.mockImplementation(
-            (_address, options) =>
-                ({
-                    data: options?.stripAragonRegistrySuffix
-                        ? 'alice'
-                        : 'alice.aragon.eth',
-                    isLoading: false,
-                }) as ReturnType<typeof ensModule.useEnsName>,
-        );
+        // The address book holds the name with the suffix stripped (see `resolveAddress`); the aside reads the full
+        // ENS name itself.
+        useEnsNameSpy.mockReturnValue({
+            data: 'alice.aragon.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
 
-        render(createTestComponent({ address }));
+        render(createTestComponent({ address }, 'alice'));
 
         expect(
             screen.getByRole('heading', { level: 1, name: 'alice' }),

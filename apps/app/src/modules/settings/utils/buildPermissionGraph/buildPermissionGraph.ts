@@ -79,11 +79,11 @@ const resolveNode = (
     }
 
     if (enrichedEntity?.layer === 'dao') {
+        // No name: the node is only its address, shown through the widget.
         const label =
-            enrichedEntity.label == null ||
             enrichedEntity.label === 'Unknown address'
-                ? addressUtils.truncateAddress(enrichedEntity.address)
-                : enrichedEntity.label;
+                ? undefined
+                : (enrichedEntity.label ?? undefined);
 
         return {
             id,
@@ -170,7 +170,8 @@ const resolveGoverningBodyActorNode = (
     return {
         id,
         kind: 'actor',
-        label: `Members of ${baseNode.label}`,
+        // A multisig plugin always has a name; the short address only covers a body the backend could not name.
+        label: `Members of ${baseNode.label ?? addressUtils.truncateAddress(baseNode.address)}`,
         layer: baseNode.layer,
         status: baseNode.status,
         brandId: baseNode.brandId,

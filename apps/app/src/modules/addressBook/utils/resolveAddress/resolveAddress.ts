@@ -5,6 +5,7 @@ import { normalize } from 'viem/ens';
 import type { Config } from 'wagmi';
 import { getEnsAddress, getEnsName } from 'wagmi/actions';
 import { logEnsError } from '@/modules/ens/utils/logEnsError';
+import { stripAragonRegistrySuffix } from '@/modules/ens/utils/stripAragonRegistrySuffix';
 
 const isNormalized = (name: string) => {
     try {
@@ -22,7 +23,8 @@ const errorLogWindowMs = 30_000;
  * only. A reverse name is only the claim of the address owner, so it is used only when it is in normalized form and
  * its forward record points back to the same address. The calls of a page start together; when the wagmi client has
  * `batch.multicall` (see `modules/application/constants/wagmi.ts`), viem groups them into a few multicalls. An address
- * with no name costs a single lookup. A failing RPC is logged at most once every 30 seconds.
+ * with no name costs a single lookup. The checks run on the full name; only an Aragon registry name is shown without
+ * its suffix, as `useEnsName` does. A failing RPC is logged at most once every 30 seconds.
  */
 export const createAddressResolver = (config: Config): AddressResolver => {
     let lastErrorLoggedAt = Number.NEGATIVE_INFINITY;
@@ -46,7 +48,7 @@ export const createAddressResolver = (config: Config): AddressResolver => {
             });
 
             return forward != null && isAddressEqual(forward, checksum)
-                ? { label: name, source: 'ens' }
+                ? { label: stripAragonRegistrySuffix(name), source: 'ens' }
                 : null;
         } catch (error) {
             const now = Date.now();

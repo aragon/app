@@ -8,7 +8,10 @@ export type PermissionNodeKind = 'dao' | 'linkedDao' | 'plugin' | 'actor';
 export interface IPermissionGraphNode {
     id: string;
     kind: PermissionNodeKind;
-    label: string;
+    /**
+     * Name of the node, undefined when it is only an address: it is then shown by the address widget.
+     */
+    label?: string;
     versionName?: string;
     tag?: string;
     layer?: IPermissionEntityRef['layer'];

@@ -1,6 +1,7 @@
 'use client';
 
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import { Page } from '@/shared/components/page';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,6 +41,8 @@ export const WorkspaceAllMembersAsideCard: React.FC<
 > = (props) => {
     const { activeOption, accounts, pageSize } = props;
 
+    const optionText = useWorkspaceOptionText(activeOption);
+
     const { t } = useTranslations();
 
     // Unfiltered first page of the list: it carries the total count and the partial flag. Shares its key with the
@@ -78,8 +81,9 @@ export const WorkspaceAllMembersAsideCard: React.FC<
     ];
 
     const cardTitle =
-        activeOption?.label ??
-        t('app.workspace.workspaceMembersAsideCard.allMembers');
+        activeOption == null
+            ? t('app.workspace.workspaceMembersAsideCard.allMembers')
+            : optionText;
 
     return (
         <Page.AsideCard title={cardTitle}>

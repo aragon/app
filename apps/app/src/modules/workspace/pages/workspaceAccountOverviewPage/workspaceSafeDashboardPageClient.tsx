@@ -20,6 +20,7 @@ import { WorkspaceAssetList } from '../../components/workspaceAssetList';
 import { WorkspaceMemberList } from '../../components/workspaceMemberList';
 import { WorkspaceSafeAsideCard } from '../../components/workspaceSafeAsideCard';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
+import { useWorkspaceAccountText } from '../../hooks/useWorkspaceAccountText';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceSafeDashboardPageClientProps {
@@ -75,7 +76,10 @@ export const WorkspaceSafeDashboardPageClient: React.FC<
         SafeServiceError.isUnsupportedChainError(safeInfoError);
 
     const account = activeOption?.account;
-    const name = activeOption?.label ?? addressUtils.truncateAddress(address);
+    const name = useWorkspaceAccountText({
+        name: activeOption?.hasName ? activeOption.label : undefined,
+        account: { network, address },
+    });
     const avatar =
         ipfsUtils.cidToSrc(account?.metadata?.avatar) ?? safeWallet.src;
 

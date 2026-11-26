@@ -17,6 +17,7 @@ import { useWorkspace } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
 import { useWorkspaceAccountOptions } from '@/modules/workspace/hooks/useWorkspaceAccountOptions';
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import { useWorkspaceTodoData } from '@/modules/workspace/hooks/useWorkspaceTodoData';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
@@ -77,6 +78,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
     // the account from the route, which is where it lives, and falls back to the aggregated segment.
     const { accountId, activeOption, scopedAccounts } =
         useWorkspaceAccountOptions();
+    const activeOptionText = useWorkspaceOptionText(activeOption);
 
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
@@ -180,7 +182,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                                 {workspace?.name}
                             </span>
                             <span className="truncate text-xs md:text-sm">
-                                {activeOption?.label}
+                                {activeOptionText}
                             </span>
                         </span>
                         <span

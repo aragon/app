@@ -1,4 +1,5 @@
 import type * as GovUiKit from '@aragon/gov-ui-kit';
+import { AddressResolutionProvider, addressEntryKey } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import {
@@ -56,5 +57,45 @@ describe('<NavigationSidebarAccount /> component', () => {
         render(createTestComponent({ user: { address } }));
 
         expect(screen.getAllByText('0x251D…96B8')).toHaveLength(1);
+    });
+
+    describe('with an address book', () => {
+        // The same address named twice, as an account of the workspace and by ENS.
+        const renderWithBook = (user: INavigationSidebarAccountProps['user']) =>
+            render(
+                <AddressResolutionProvider
+                    entries={
+                        new Map([
+                            [
+                                addressEntryKey(address, 0),
+                                {
+                                    label: 'Ops Safe',
+                                    source: 'known-account' as const,
+                                },
+                            ],
+                        ])
+                    }
+                    resolve={() =>
+                        Promise.resolve({ label: 'whomst.eth', source: 'ens' })
+                    }
+                >
+                    {createTestComponent({ user })}
+                </AddressResolutionProvider>,
+            );
+
+        it('shows a profile name once, with the plain short address below', () => {
+            renderWithBook({ address, name: 'whomst' });
+
+            expect(screen.getAllByText('whomst')).toHaveLength(1);
+            expect(screen.getByText('0x251D…96B8')).toBeInTheDocument();
+            expect(screen.queryByText('Ops Safe')).not.toBeInTheDocument();
+        });
+
+        it('shows an unnamed user once, by the address book name', () => {
+            renderWithBook({ address });
+
+            expect(screen.getAllByText('Ops Safe')).toHaveLength(1);
+            expect(screen.queryByText('0x251D…96B8')).not.toBeInTheDocument();
+        });
     });
 });

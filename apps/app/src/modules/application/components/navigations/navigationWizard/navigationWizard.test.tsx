@@ -1,12 +1,18 @@
 import type * as GovUiKit from '@aragon/gov-ui-kit';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
@@ -202,5 +208,31 @@ describe('<NavigationWizard /> component', () => {
 
         await userEvent.click(walletButton);
         expect(open).toHaveBeenCalledWith(ApplicationDialogId.CONNECT_WALLET);
+    });
+
+    it('names an unnamed DAO by the address book, on the network of the DAO', () => {
+        const address = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        const dao = generateDao({
+            name: '',
+            address,
+            network: Network.ETHEREUM_SEPOLIA,
+        });
+        // Bound to the DAO's network: it only resolves when the widget gets that network.
+        const entries = new Map([
+            [
+                addressEntryKey(
+                    address,
+                    networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+                ),
+                { label: 'Treasury', source: 'workspace' as const },
+            ],
+        ]);
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent({ dao })}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Treasury')).toBeInTheDocument();
     });
 });

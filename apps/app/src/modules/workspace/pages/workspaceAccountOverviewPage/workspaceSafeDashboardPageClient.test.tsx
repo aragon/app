@@ -70,6 +70,7 @@ describe('<WorkspaceSafeDashboardPageClient /> component', () => {
             {
                 id: accountId,
                 label: 'Grants Safe',
+                hasName: true,
                 account: safeAccount,
                 isAllAccounts: false,
                 isExternal: false,

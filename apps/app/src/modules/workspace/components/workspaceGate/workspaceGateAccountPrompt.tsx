@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    addressUtils,
-    Button,
-    Card,
-    Heading,
-    Radio,
-    RadioGroup,
-} from '@aragon/gov-ui-kit';
+import { Button, Card, Heading, Radio, RadioGroup } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
@@ -22,6 +15,7 @@ import {
     useWorkspaceList,
     workspaceServiceKeys,
 } from '../../api/workspaceService';
+import { useWorkspaceAccountText } from '../../hooks/useWorkspaceAccountText';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceGateAccountPromptProps {
@@ -62,9 +56,12 @@ export const WorkspaceGateAccountPrompt: React.FC<
     const { data: accountInfos } = useWorkspaceAccounts({
         body: { accounts: [{ network, address }] },
     });
-    const accountLabel =
-        workspaceUtils.findAccountInfo(accountInfos, { network, address })
-            ?.name ?? addressUtils.truncateAddress(address);
+    const accountLabel = useWorkspaceAccountText({
+        name:
+            workspaceUtils.findAccountInfo(accountInfos, { network, address })
+                ?.name ?? undefined,
+        account: { network, address },
+    });
 
     const { data: workspaces } = useWorkspaceList();
 

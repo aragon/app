@@ -1,6 +1,7 @@
 'use client';
 
 import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel';
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider/featureFlagsProvider';
 import {
     type IWorkspaceAccount,
@@ -43,6 +44,8 @@ export const WorkspaceTransactionsAsideCard: React.FC<
 > = (props) => {
     const { accounts, activeOption, pageSize } = props;
 
+    const label = useWorkspaceOptionText(activeOption);
+
     const { isEnabled } = useFeatureFlags();
     const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
@@ -52,7 +55,7 @@ export const WorkspaceTransactionsAsideCard: React.FC<
                 <>
                     <WorkspaceDaoTransactionsAsideCard
                         account={activeOption.account}
-                        label={activeOption.label}
+                        label={label}
                         pageSize={pageSize}
                     />
                     {isAutomationEnabled && (
@@ -67,7 +70,7 @@ export const WorkspaceTransactionsAsideCard: React.FC<
             return (
                 <WorkspaceSafeTransactionsAsideCard
                     account={activeOption.account}
-                    label={activeOption.label}
+                    label={label}
                     pageSize={pageSize}
                 />
             );

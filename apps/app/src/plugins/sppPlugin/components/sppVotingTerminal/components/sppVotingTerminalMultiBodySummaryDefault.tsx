@@ -1,6 +1,5 @@
 import { AddressOutput, ProposalStatus } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useEnsName } from '@/modules/ens';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
@@ -31,7 +30,6 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
     const { proposal, body, stage, canVote } = props;
 
     const { t } = useTranslations();
-    const { data: ensName } = useEnsName(body);
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const showStatus = stageStatus !== ProposalStatus.PENDING;
@@ -44,11 +42,7 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
 
     return (
         <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
-            <AddressOutput
-                address={body}
-                copy={false}
-                label={ensName ?? undefined}
-            />
+            <AddressOutput address={body} copy={false} />
             {showStatus && (
                 <span className={classNames(style, 'lowercase')}>
                     {' '}

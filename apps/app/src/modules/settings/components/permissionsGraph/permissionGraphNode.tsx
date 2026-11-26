@@ -97,11 +97,17 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                 <InteractiveAncestorContext.Provider value={true}>
                     <PermissionGraphHandles />
                     <div className="flex min-w-0 flex-col gap-0.5">
-                        <AddressOutput
-                            address={address}
-                            className="text-neutral-800"
-                            label={label}
-                        />
+                        {/* A named node shows its name; one that is only an address shows it through the widget. */}
+                        {label != null ? (
+                            <span className="truncate text-neutral-800">
+                                {label}
+                            </span>
+                        ) : (
+                            <AddressOutput
+                                address={address}
+                                className="text-neutral-800"
+                            />
+                        )}
                         <span className="truncate text-sm text-neutral-500">
                             {data.versionName ?? t(subtitleKey)}
                         </span>

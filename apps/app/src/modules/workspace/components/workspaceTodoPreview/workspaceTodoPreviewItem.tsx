@@ -11,6 +11,7 @@ import type { ReactNode } from 'react';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WorkspaceAccountType } from '../../api/workspaceService';
+import { useWorkspaceAccountText } from '../../hooks/useWorkspaceAccountText';
 import {
     type IWorkspaceTodoItem,
     type IWorkspaceTodoProposalItem,
@@ -127,11 +128,12 @@ const buildTransactionDisplay = (
     todo: IWorkspaceTodoTransactionItem,
     workspaceId: string,
     t: TranslationFunction,
+    accountText: string,
 ): IWorkspaceTodoPreviewDisplay => {
     const { account, transaction, hasNonceRival } = todo;
 
     const meta = t('app.workspace.workspaceTodoPreview.transaction.meta', {
-        account: workspaceUtils.getAccountLabel(account),
+        account: accountText,
         count: transaction.confirmations.length,
         required: workspaceTodoUtils.getRequiredSignatures(todo),
     });
@@ -175,10 +177,20 @@ export const WorkspaceTodoPreviewItem: React.FC<
 
     const { t } = useTranslations();
 
+    const transactionAccount =
+        todo.type === WorkspaceTodoType.PROPOSAL ? undefined : todo.account;
+    const accountText = useWorkspaceAccountText({
+        account: transactionAccount,
+        name:
+            transactionAccount == null
+                ? undefined
+                : workspaceUtils.getAccountName(transactionAccount),
+    });
+
     const { avatar, title, meta, action } =
         todo.type === WorkspaceTodoType.PROPOSAL
             ? buildProposalDisplay(todo, workspaceId, t)
-            : buildTransactionDisplay(todo, workspaceId, t);
+            : buildTransactionDisplay(todo, workspaceId, t, accountText);
 
     return (
         <div className={rowClassName}>

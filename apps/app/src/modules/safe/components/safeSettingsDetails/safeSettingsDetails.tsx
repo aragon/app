@@ -4,6 +4,7 @@ import {
     addressUtils,
     ChainEntityType,
     DefinitionList,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
 import {
     safeAppAccountUrl,
@@ -40,6 +41,8 @@ export const SafeSettingsDetails: React.FC<ISafeSettingsDetailsProps> = (
     const { buildEntityUrl } = useDaoChain({ network });
 
     const address = addressUtils.getChecksum(rawAddress);
+    // A Safe has no name onchain: its address book or ENS name, else its short address.
+    const safeName = useResolveAddressText(address);
     const { data: safeInfo } = useSafeInfo(
         { urlParams: { network, address } },
         { enabled: safeShortNameFromNetwork(network) != null },
@@ -52,7 +55,7 @@ export const SafeSettingsDetails: React.FC<ISafeSettingsDetailsProps> = (
     const rows = [
         safeSettingsUtils.addressRow({
             address,
-            safeName: addressUtils.truncateAddress(address),
+            safeName,
             safeHref,
             version: safeInfo?.version,
             t,

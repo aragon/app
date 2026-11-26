@@ -8,6 +8,7 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import { Banner } from '@/shared/components/banner';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWorkspaceAccountPageParams } from '@/shared/types';
@@ -39,6 +40,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
     const { workspaceId } =
         useParams<Pick<IWorkspaceAccountPageParams, 'workspaceId'>>();
     const { activeOption, accountId } = useWorkspaceAccountOptions();
+    const activeOptionText = useWorkspaceOptionText(activeOption);
 
     const { data: currentWorkspace } = useWorkspace({
         urlParams: { id: workspaceId },
@@ -102,7 +104,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
     const message = isError
         ? t(`${translationNamespace}.error`)
         : t(`${translationNamespace}.message`, {
-              account: activeOption.label,
+              account: activeOptionText,
               workspace: currentWorkspace?.name ?? '',
           });
 

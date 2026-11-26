@@ -6,17 +6,11 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "72259930b0ae4b269fafb4dcac667193bdaff16c",
+            "commit": "f601a949968d69c47973a5f575967c679abb2f31",
             "dirty": [
-                "packages/gov-ui-kit/src/core/assets/copy/coreCopy.ts",
-                "packages/gov-ui-kit/src/core/components/addressOutput/addressDisplayBoundary.tsx",
-                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutputSafety.test.tsx",
-                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutput.tsx",
-                "packages/gov-ui-kit/src/core/components/addressOutput/addressOutputResolution.test.tsx",
-                "packages/gov-ui-kit/src/core/components/addressResolution/addressLabelUtils.test.ts",
-                "packages/gov-ui-kit/src/core/components/addressResolution/addressLabelUtils.ts",
-                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolution.mdx",
-                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolutionProvider.tsx"
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolution.test.tsx",
+                "packages/gov-ui-kit/src/core/components/addressResolution/index.ts",
+                "packages/gov-ui-kit/src/core/components/addressResolution/useResolveAddressText.ts"
             ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -1504,12 +1498,6 @@
             "tests": [
                 {
                     "repository": "kit",
-                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
-                    "line": 1,
-                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
-                },
-                {
-                    "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.test.tsx",
                     "line": 1,
                     "sha256": "a37e3f005a12d0ba8895260b7711bf1a394dda42fbbd9f08c050dbb478c9127f"
@@ -1519,6 +1507,12 @@
                     "path": "src/core/components/addressOutput/addressOutputResolution.test.tsx",
                     "line": 1,
                     "sha256": "2901ff4d32788facec4c1b0280b85daf7d3897b51af955a055bd57234c2a37b2"
+                },
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
+                    "line": 1,
+                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
                 }
             ],
             "docs": [],
@@ -11413,12 +11407,6 @@
             "tests": [
                 {
                     "repository": "kit",
-                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
-                    "line": 1,
-                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
-                },
-                {
-                    "repository": "kit",
                     "path": "src/core/components/addressOutput/addressOutput.test.tsx",
                     "line": 1,
                     "sha256": "a37e3f005a12d0ba8895260b7711bf1a394dda42fbbd9f08c050dbb478c9127f"
@@ -11428,6 +11416,12 @@
                     "path": "src/core/components/addressOutput/addressOutputResolution.test.tsx",
                     "line": 1,
                     "sha256": "2901ff4d32788facec4c1b0280b85daf7d3897b51af955a055bd57234c2a37b2"
+                },
+                {
+                    "repository": "kit",
+                    "path": "src/core/components/addressOutput/addressOutputSafety.test.tsx",
+                    "line": 1,
+                    "sha256": "5f97e614cc05168772826ea0702d13e0eeb7c08b779995c1200bc2198a804aed"
                 }
             ],
             "docs": [],
@@ -22436,6 +22430,51 @@
             }
         },
         {
+            "id": "govkit:IUseResolveAddressTextOptions",
+            "name": "IUseResolveAddressTextOptions",
+            "kind": "non-component",
+            "exportNames": [
+                "IUseResolveAddressTextOptions"
+            ],
+            "exports": [
+                {
+                    "entrypoint": ".",
+                    "name": "IUseResolveAddressTextOptions",
+                    "isAlias": false
+                }
+            ],
+            "members": [],
+            "source": {
+                "repository": "kit",
+                "path": "src/core/components/addressResolution/useResolveAddressText.ts",
+                "line": 5,
+                "sha256": "4d29a842fc19182c57a68d1327813ef2014614fcbcc1d694c121459758238402"
+            },
+            "props": [],
+            "stories": [],
+            "tests": [],
+            "docs": [],
+            "intent": {
+                "description": null,
+                "useWhen": [],
+                "constraints": [],
+                "related": [],
+                "ownership": {
+                    "package": "@aragon/gov-ui-kit",
+                    "domain": null,
+                    "maintainer": null
+                },
+                "evidence": [],
+                "evidenceStatus": [],
+                "review": {
+                    "state": "unreviewed",
+                    "by": null,
+                    "at": null
+                },
+                "stale": false
+            }
+        },
+        {
             "id": "govkit:IVoteDataListItemSkeletonProps",
             "name": "IVoteDataListItemSkeletonProps",
             "kind": "non-component",
@@ -32719,8 +32758,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/core/components/addressResolution/useResolveAddressText.ts",
-                "line": 9,
-                "sha256": "4970b6360cfc77ce529c9301d799fff8c6400eb1d9c9f97001c60186b2c4766b"
+                "line": 19,
+                "sha256": "4d29a842fc19182c57a68d1327813ef2014614fcbcc1d694c121459758238402"
             },
             "props": [],
             "stories": [],

@@ -1,5 +1,6 @@
 'use client';
 
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import type { IWorkspaceAccount } from '../../api/workspaceService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
@@ -44,6 +45,8 @@ export const WorkspaceProposalsAsideCard: React.FC<
 > = (props) => {
     const { activeOption, activeTab, accounts, pageSize } = props;
 
+    const label = useWorkspaceOptionText(activeOption);
+
     const account = activeOption?.account;
 
     if (activeTab != null) {
@@ -54,7 +57,7 @@ export const WorkspaceProposalsAsideCard: React.FC<
         return (
             <WorkspaceDaoProposalsAsideCard
                 account={account}
-                label={activeOption.label}
+                label={label}
                 pageSize={pageSize}
             />
         );
@@ -65,7 +68,7 @@ export const WorkspaceProposalsAsideCard: React.FC<
         <WorkspaceAllProposalsAsideCard
             accounts={accounts}
             pageSize={pageSize}
-            title={activeOption?.label}
+            title={activeOption == null ? undefined : label}
         />
     );
 };

@@ -20,6 +20,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
+import { useWorkspaceAccountText } from '../../hooks/useWorkspaceAccountText';
 import { workspaceUtils } from '../../utils/workspaceUtils';
 
 export interface IWorkspaceSafeSettingsPageClientProps {
@@ -61,7 +62,10 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
     const { buildEntityUrl } = useDaoChain({ network });
 
     const address = addressUtils.getChecksum(rawAddress);
-    const truncatedAddress = addressUtils.truncateAddress(address);
+    const safeName = useWorkspaceAccountText({
+        name: activeOption?.hasName ? activeOption.label : undefined,
+        account: { network, address },
+    });
 
     const isSafeServed = safeShortNameFromNetwork(network) != null;
     const { data: safeInfo, isError } = useSafeInfo(
@@ -84,7 +88,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
 
     const safeRow = safeSettingsUtils.addressRow({
         address,
-        safeName: truncatedAddress,
+        safeName,
         safeHref,
         version: safeInfo?.version,
         t,

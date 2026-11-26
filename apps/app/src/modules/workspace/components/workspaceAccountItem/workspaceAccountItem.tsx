@@ -1,5 +1,6 @@
 import {
     AddressOutput,
+    addressUtils,
     Button,
     Card,
     DataList,
@@ -70,9 +71,9 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
         undefined;
     const avatar = dao?.avatar ?? metadata?.avatar;
 
-    // Its reveal trigger is a button, which a link row lifts above its overlay so it can be hovered.
-    const addressOutput = <AddressOutput address={address} copy={false} />;
-
+    // A named account shows the plain short address under its name: resolving that address would repeat the name. An
+    // unnamed one is titled by its address, named by the address book; its reveal trigger is a button, which a link
+    // row lifts above its overlay so it can be hovered.
     const content = (
         <>
             <WorkspaceAccountAvatar
@@ -83,13 +84,19 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
             />
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate text-base leading-tight text-neutral-800">
-                    {name ?? addressOutput}
+                    {name ?? (
+                        <AddressOutput
+                            address={address}
+                            chainId={networkDefinitions[network].id}
+                            copy={false}
+                        />
+                    )}
                 </span>
                 <span className="flex gap-1 truncate text-sm leading-tight">
                     <span className="text-neutral-800">{networkName}</span>
                     {name != null && (
                         <span className="min-w-0 text-neutral-500">
-                            {addressOutput}
+                            {addressUtils.truncateAddress(address)}
                         </span>
                     )}
                 </span>

@@ -6,6 +6,7 @@ import {
     type IWorkspace,
     workspaceService,
 } from '@/modules/workspace/api/workspaceService';
+import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { AddressBookProvider } from './addressBookProvider';
 
@@ -119,5 +120,72 @@ describe('<AddressBookProvider /> component', () => {
         });
 
         expect(getWorkspaceListSpy).toHaveBeenCalledTimes(calls);
+    });
+
+    describe('network of the page', () => {
+        // A name saved for Base only: it shows on the pages about Base.
+        const baseWorkspace: IWorkspace = {
+            ...workspace('Treasury'),
+            aliases: [
+                {
+                    address,
+                    name: 'Treasury',
+                    network: Network.BASE_MAINNET,
+                    updatedAt: 1,
+                },
+            ],
+        };
+
+        it.each([
+            {
+                page: 'a DAO page',
+                params: { network: Network.BASE_MAINNET },
+            },
+            {
+                page: 'a workspace account page',
+                params: {
+                    workspaceId: 'current',
+                    accountId: `${Network.BASE_MAINNET}-${address}`,
+                },
+            },
+        ])(
+            'names the addresses of $page on its network',
+            async ({ params }) => {
+                useParamsSpy.mockReturnValue(params);
+                getWorkspaceListSpy.mockResolvedValue([baseWorkspace]);
+                renderProvider();
+
+                expect(await screen.findByText('Treasury')).toBeInTheDocument();
+            },
+        );
+
+        // A page with no network gets no chain id. What it then shows is the kit's rule, kept in one place
+        // (`AddressResolutionStore.pick`): today, only names saved for all networks.
+        it.each([
+            {
+                page: 'a page of another network',
+                params: { network: Network.ETHEREUM_MAINNET },
+            },
+            {
+                page: 'the all-accounts pages',
+                params: { workspaceId: 'current', accountId: 'all' },
+            },
+            {
+                page: 'a page with an unknown network',
+                params: { network: 'unknown-network' },
+            },
+        ])(
+            'does not use a network-specific name on $page',
+            async ({ params }) => {
+                useParamsSpy.mockReturnValue(params);
+                getWorkspaceListSpy.mockResolvedValue([baseWorkspace]);
+                renderProvider();
+
+                await waitFor(() =>
+                    expect(getWorkspaceListSpy).toHaveBeenCalled(),
+                );
+                expect(screen.getByText('0xd8dA…6045')).toBeInTheDocument();
+            },
+        );
     });
 });

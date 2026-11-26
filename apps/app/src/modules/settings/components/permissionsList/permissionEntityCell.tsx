@@ -18,7 +18,12 @@ export const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     entity,
 }) => (
     <span className="flex min-w-0 items-center gap-2 text-neutral-800">
-        <AddressOutput address={entity.address} label={entity.label} />
+        {/* A named entity shows its name; one that is only an address shows it through the widget. */}
+        {entity.label != null ? (
+            <span className="truncate">{entity.label}</span>
+        ) : (
+            <AddressOutput address={entity.address} />
+        )}
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}

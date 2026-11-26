@@ -1,4 +1,9 @@
-import { AddressOutput, Avatar, invariant } from '@aragon/gov-ui-kit';
+import {
+    AddressOutput,
+    Avatar,
+    addressUtils,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -53,16 +58,17 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between">
                 <p className="flex items-center gap-2 text-base leading-tight text-neutral-800 md:text-lg">
-                    {address != null ? (
-                        <AddressOutput address={address} label={bodyName} />
-                    ) : (
-                        bodyName
-                    )}
+                    {/* A named body shows its name and the plain short address: resolving that address would
+                     * repeat a name. An unnamed one shows its address, named by the address book. */}
+                    {bodyName ??
+                        (address != null && (
+                            <AddressOutput address={address} />
+                        ))}
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
                 </p>
-                {address && name != null && name !== '' && (
+                {address != null && bodyName != null && (
                     <p className="text-base leading-tight text-neutral-500 md:text-lg">
-                        <AddressOutput address={address} />
+                        {addressUtils.truncateAddress(address)}
                     </p>
                 )}
             </div>

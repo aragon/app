@@ -1,11 +1,10 @@
 import {
-    addressUtils,
     type IDefinitionSetting,
     ProposalStatus,
     ProposalVoting,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { useEnsName } from '@/modules/ens';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -39,9 +38,9 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
     const { proposal, status, daoId } = props;
 
     const { address } = useWalletAccount();
-    const { data: pluginEnsName } = useEnsName(proposal.pluginAddress);
-
     const { network } = daoUtils.parseDaoId(daoId);
+    // The plugin is called by its address: the address book or ENS name, else the short address.
+    const pluginName = useResolveAddressText(proposal.pluginAddress);
     const voteListParams = {
         queryParams: {
             proposalId: proposal.id,
@@ -70,8 +69,6 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
         address: proposal.pluginAddress,
         settings: pluginSettings,
     });
-    const pluginName =
-        pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
 
     return (
         <ProposalVoting.Container

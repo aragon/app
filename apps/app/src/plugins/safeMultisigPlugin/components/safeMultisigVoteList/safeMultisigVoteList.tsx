@@ -178,7 +178,6 @@ const SafeMultisigVoteListItem: React.FC<ISafeMultisigVoteListItemProps> = (
             voter={{
                 address: signer,
                 avatarSrc: ensAvatar ?? undefined,
-                name: ensName ?? undefined,
             }}
         />
     );

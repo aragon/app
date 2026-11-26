@@ -38,12 +38,9 @@ export const PermissionNodeDetailPanel: React.FC<
         ANY_ADDR,
     );
 
-    // Unresolved nodes are labelled with their own truncated address, so that
-    // case renders as an address instead of a name. The panel header is the
-    // drag handle and the address row below owns the copy control, so the
-    // reveal stays passive here.
-    const isAddressLabel =
-        addressUtils.truncateAddress(node.address) === node.label;
+    // A node with no name is only an address, shown through the widget. The panel header is the drag handle and the
+    // address row below owns the copy control, so the reveal stays passive here.
+    const isAddressLabel = node.label == null;
 
     const explorerUrl = isSentinelAddress
         ? undefined

@@ -1,5 +1,4 @@
 import {
-    addressUtils,
     ChainEntityType,
     DefinitionList,
     useBlockExplorer,
@@ -16,16 +15,14 @@ export const PermissionAddressListItem: React.FC<
     IPermissionAddressListItemProps
 > = ({ address, term, name, chainId }) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const truncatedAddress = addressUtils.truncateAddress(address);
     const explorerUrl = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
         id: address,
     });
-    const description = name !== truncatedAddress ? name : undefined;
 
     return (
         <DefinitionList.Item
-            description={description}
+            description={name}
             link={{
                 href: explorerUrl,
                 isExternal: true,

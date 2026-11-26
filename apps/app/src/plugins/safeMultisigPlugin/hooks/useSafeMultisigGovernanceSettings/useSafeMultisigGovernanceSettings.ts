@@ -1,11 +1,13 @@
 'use client';
 
-import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import {
+    type IDefinitionSetting,
+    useResolveAddressText,
+} from '@aragon/gov-ui-kit';
 import {
     safeAppAccountUrl,
     safeShortNameFromNetwork,
 } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
-import { useEnsName } from '@/modules/ens';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import {
     type ISppProposal,
@@ -34,7 +36,8 @@ export const useSafeMultisigGovernanceSettings = (
     const { data: safeInfo } = useSafeInfo({
         urlParams: { network, address: pluginAddress },
     });
-    const { data: ensName } = useEnsName(pluginAddress);
+    // A Safe has no name onchain: its address book or ENS name, else its short address.
+    const safeName = useResolveAddressText(pluginAddress);
 
     /**
      * A native body's settings are snapshotted onto its sub-proposal at creation, so its Settings
@@ -84,7 +87,7 @@ export const useSafeMultisigGovernanceSettings = (
         safeInfo,
         address: safeInfo.address,
         version: safeInfo.version,
-        safeName: ensName ?? addressUtils.truncateAddress(pluginAddress),
+        safeName,
         safeHref: safeAppAccountUrl({ network, address: pluginAddress }),
         isDecided,
         settledTransaction: settledReport?.transaction,

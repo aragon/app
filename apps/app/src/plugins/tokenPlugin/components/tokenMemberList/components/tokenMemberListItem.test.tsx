@@ -1,4 +1,8 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
 import {
@@ -62,32 +66,40 @@ describe('<TokenMemberListItem /> component', () => {
         );
     };
 
-    it('renders the token member', () => {
-        const ensName = 'tttt.eth';
-        const member = generateTokenVotingMember({
-            ens: 'tttt.eth',
-            address: '0x123',
-        });
-        useEnsNameSpy.mockReturnValue({
-            data: ensName,
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
-        render(createTestComponent({ member }));
-        expect(screen.getByText(ensName)).toBeInTheDocument();
+    // The row names the member through the address book, which holds ENS names with the Aragon registry suffix
+    // already stripped (see `resolveAddress`).
+    const memberAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+    const renderWithName = (label: string) =>
+        render(
+            <AddressResolutionProvider
+                entries={
+                    new Map([
+                        [
+                            addressEntryKey(memberAddress, 0),
+                            { label, source: 'ens' as const },
+                        ],
+                    ])
+                }
+            >
+                {createTestComponent({
+                    member: generateTokenVotingMember({
+                        address: memberAddress,
+                    }),
+                })}
+            </AddressResolutionProvider>,
+        );
+
+    it('renders the token member with the name of its address', () => {
+        renderWithName('tttt.eth');
+        expect(screen.getByText('tttt.eth')).toBeInTheDocument();
     });
 
-    it('shows the shortened aragon name when the member has an aragon subdomain', () => {
-        const member = generateTokenVotingMember({ address: '0x123' });
-        useEnsNameSpy.mockImplementation(
-            (_address, options) =>
-                ({
-                    data: options?.stripAragonRegistrySuffix
-                        ? 'alice'
-                        : 'alice.aragon.eth',
-                    isLoading: false,
-                }) as ReturnType<typeof ensModule.useEnsName>,
-        );
-        render(createTestComponent({ member }));
+    it('never shows the full aragon name read for the avatar', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'alice.aragon.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        renderWithName('alice');
         expect(screen.getByText('alice')).toBeInTheDocument();
         expect(screen.queryByText('alice.aragon.eth')).not.toBeInTheDocument();
     });

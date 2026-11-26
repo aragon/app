@@ -43,3 +43,4 @@ export {
 export type { IEnsRecords, TEnsRecordKey } from './types';
 export type { IBuildUpdateRecordsTransactionParams } from './utils/ensTransactionUtils';
 export { ensTransactionUtils } from './utils/ensTransactionUtils';
+export { stripAragonRegistrySuffix } from './utils/stripAragonRegistrySuffix';

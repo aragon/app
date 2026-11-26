@@ -60,10 +60,12 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
     const sortedRows = rows
         .map((row) => ({
             row,
-            whereLabel: permissionEntityUtils.resolvePermissionEntity(
-                row.whereAddress,
-                { daoPlugins, accounts: accountRefs, entity: row.where },
-            ).label,
+            // Sort key only: an entity with no name sorts by its address, as it did by its short address.
+            whereLabel:
+                permissionEntityUtils.resolvePermissionEntity(
+                    row.whereAddress,
+                    { daoPlugins, accounts: accountRefs, entity: row.where },
+                ).label ?? row.whereAddress,
         }))
         .sort((first, second) =>
             first.whereLabel.localeCompare(second.whereLabel, undefined, {

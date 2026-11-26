@@ -1,4 +1,10 @@
-import { addressUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    addressUtils,
+    GukModulesProvider,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -88,6 +94,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     const daoOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption = {
         id: daoAccount.id,
         label: 'Demo DAO',
+        hasName: true,
         account: daoAccount,
         isAllAccounts: false,
         isExternal: false,
@@ -105,6 +112,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
     const safeOption: useWorkspaceAccountOptionsHook.IWorkspaceAccountOption = {
         id: safeAccount.id,
         label: 'Treasury Safe',
+        hasName: true,
         account: safeAccount,
         isAllAccounts: false,
         isExternal: false,
@@ -187,7 +195,11 @@ describe('<WorkspaceAccountSelector /> component', () => {
                     id: 'operations-safe',
                     label: 'Operations Safe',
                 },
-                { ...safeOption, id: 'reserve-safe', label: 'Reserve Safe' },
+                {
+                    ...safeOption,
+                    id: 'reserve-safe',
+                    label: 'Reserve Safe',
+                },
             ],
         });
         render(createTestComponent());
@@ -204,15 +216,81 @@ describe('<WorkspaceAccountSelector /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('displays the address once for an account labelled by its address', () => {
-        const truncatedAddress = addressUtils.truncateAddress(daoAddress);
-        mockAccountOptions({
-            activeOption: { ...daoOption, label: truncatedAddress },
-            isAllAccounts: false,
-        });
+    it('shows an unnamed account by its address, once', () => {
+        const unnamed = { ...daoOption, hasName: false };
+        mockAccountOptions({ activeOption: unnamed, isAllAccounts: false });
         render(createTestComponent());
 
-        expect(screen.getAllByText(truncatedAddress)).toHaveLength(1);
+        expect(
+            screen.getAllByText(addressUtils.truncateAddress(daoAddress)),
+        ).toHaveLength(1);
+    });
+
+    it('shows the address book name of an unnamed account', () => {
+        const unnamed = { ...daoOption, hasName: false };
+        mockAccountOptions({ activeOption: unnamed, isAllAccounts: false });
+        render(
+            <AddressResolutionProvider
+                entries={
+                    new Map([
+                        [
+                            addressEntryKey(
+                                daoAddress,
+                                networkDefinitions[Network.ETHEREUM_SEPOLIA].id,
+                            ),
+                            { label: 'Ops wallet', source: 'workspace' },
+                        ],
+                    ])
+                }
+            >
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Ops wallet')).toBeInTheDocument();
+        expect(
+            screen.queryByText(addressUtils.truncateAddress(daoAddress)),
+        ).not.toBeInTheDocument();
+    });
+
+    it('shows a named account once, with the plain short address below, in the trigger and the menu', async () => {
+        // The account is also named by the workspace (known account) and by ENS for the same address.
+        const chainId = networkDefinitions[Network.ETHEREUM_SEPOLIA].id;
+        mockAccountOptions({ activeOption: daoOption, isAllAccounts: false });
+        render(
+            <AddressResolutionProvider
+                entries={
+                    new Map([
+                        [
+                            addressEntryKey(daoAddress, chainId),
+                            {
+                                label: 'Demo DAO',
+                                source: 'known-account' as const,
+                            },
+                        ],
+                    ])
+                }
+                resolve={() =>
+                    Promise.resolve({ label: 'demo.eth', source: 'ens' })
+                }
+            >
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        const trigger = screen.getByRole('button');
+        expect(within(trigger).getAllByText('Demo DAO')).toHaveLength(1);
+        expect(
+            within(trigger).getByText(addressUtils.truncateAddress(daoAddress)),
+        ).toBeInTheDocument();
+
+        await userEvent.click(trigger);
+        const item = await screen.findByRole('menuitem', { name: /Demo DAO/ });
+        expect(within(item).getAllByText('Demo DAO')).toHaveLength(1);
+        expect(
+            within(item).getByText(addressUtils.truncateAddress(daoAddress)),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('demo.eth')).not.toBeInTheDocument();
     });
 
     it('lists every option with its avatar, using a list icon for the aggregated option, then the add account item', async () => {
@@ -527,6 +605,7 @@ describe('<WorkspaceAccountSelector /> component', () => {
             {
                 id: externalAccount.id,
                 label: 'External DAO',
+                hasName: true,
                 account: externalAccount,
                 isAllAccounts: false,
                 isExternal: true,

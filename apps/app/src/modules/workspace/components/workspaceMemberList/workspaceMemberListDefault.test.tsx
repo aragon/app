@@ -1,4 +1,8 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import * as ensModule from '@/modules/ens';
@@ -704,23 +708,30 @@ describe('<WorkspaceMemberListDefault /> component', () => {
 
     // Resolved through the ENS module, not read off the endpoint, so a member reads the same here and on the account
     // members page — the Aragon registry suffix included.
-    it('displays the ENS name resolved for the member', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: 'member.eth',
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
+    it('displays the name the address book gives the member, not the stale ENS of the API', () => {
         mockMembers([
             generateWorkspaceMember({
                 address: memberAddress,
                 ens: 'stale.eth',
             }),
         ]);
-        render(createTestComponent());
+        render(
+            <AddressResolutionProvider
+                entries={
+                    new Map([
+                        [
+                            addressEntryKey(memberAddress, 0),
+                            { label: 'member.eth', source: 'ens' as const },
+                        ],
+                    ])
+                }
+            >
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
 
-        expect(useEnsNameSpy).toHaveBeenCalledWith(memberAddress, {
-            stripAragonRegistrySuffix: true,
-        });
         expect(screen.getByText('member.eth')).toBeInTheDocument();
+        expect(screen.queryByText('stale.eth')).not.toBeInTheDocument();
     });
 
     it('warns that the list is incomplete when an account could not be read', () => {

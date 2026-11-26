@@ -9,6 +9,7 @@ import type {
 } from '@/modules/workspace/api/workspaceService';
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 
 class AddressBookUtils {
@@ -24,6 +25,27 @@ class AddressBookUtils {
         return networkUtils.isValidNetwork(network)
             ? networkDefinitions[network].id
             : undefined;
+    };
+
+    /**
+     * Chain id of the network a page is about: the network of a DAO route, or the one in the account ID of a
+     * workspace account route (`{network}-{address}`). Undefined elsewhere, e.g. on the all-accounts pages, and for a
+     * network the app does not know, since the route is parsed, not validated.
+     */
+    getRouteChainId = (params: {
+        network?: string;
+        accountId?: string;
+    }): number | undefined => {
+        const { network, accountId } = params;
+        const routeNetwork =
+            network ??
+            (accountId == null
+                ? undefined
+                : daoUtils.parseDaoId(accountId).network);
+
+        return routeNetwork == null
+            ? undefined
+            : this.getChainId(routeNetwork as Network);
     };
 
     /**

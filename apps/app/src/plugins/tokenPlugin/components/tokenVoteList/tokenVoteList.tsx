@@ -131,7 +131,6 @@ const TokenVoteItem: React.FC<{
             voter={{
                 address: vote.member.address,
                 avatarSrc: ensAvatar ?? undefined,
-                name: ensName ?? undefined,
             }}
             votingPower={formatUnits(
                 BigInt(vote.votingPower),

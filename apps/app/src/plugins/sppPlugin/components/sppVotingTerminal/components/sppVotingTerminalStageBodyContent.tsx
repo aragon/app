@@ -1,9 +1,8 @@
 import {
-    addressUtils,
     ProposalVoting,
     ProposalVotingTab,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
-import { useEnsName } from '@/modules/ens';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { useSppVotingTerminalBodyMode } from '@/plugins/sppPlugin/hooks/useSppVotingTerminalBodyMode';
@@ -43,7 +42,9 @@ export const SppVotingTerminalStageBodyContent: React.FC<
 > = (props) => {
     const { plugin, stage, proposal, daoId, displayStatus } = props;
 
-    const { data: pluginEns } = useEnsName(plugin.address);
+    // Only text is needed here: a plugin without a name of its own is called by its address book or ENS name, else
+    // its short address.
+    const addressText = useResolveAddressText(plugin.address);
     const { pluginId, isHistoryMissing } = useSppVotingTerminalBodyMode({
         plugin,
         proposal,
@@ -67,10 +68,8 @@ export const SppVotingTerminalStageBodyContent: React.FC<
     const hideTabs =
         getHiddenTabs?.(undefined) ??
         (isExternalPlugin ? hiddenExternalTabs : undefined);
-    const defaultName =
-        pluginEns ?? addressUtils.truncateAddress(plugin.address);
     const pluginName =
-        !isExternalPlugin && plugin.name != null ? plugin.name : defaultName;
+        !isExternalPlugin && plugin.name != null ? plugin.name : addressText;
 
     return (
         <ProposalVoting.BodyContent

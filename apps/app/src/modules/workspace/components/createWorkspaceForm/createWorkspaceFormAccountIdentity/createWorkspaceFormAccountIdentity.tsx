@@ -1,4 +1,5 @@
 import {
+    AddressOutput,
     Avatar,
     addressUtils,
     DaoAvatar,
@@ -7,6 +8,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     type IWorkspaceAccountInfo,
     WorkspaceAccountInfoStatus,
@@ -62,10 +64,10 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
 
     const { type, name, address } = accountInfo;
     const isDao = type === WorkspaceAccountInfoType.DAO;
-    const truncatedAddress = addressUtils.truncateAddress(address);
 
     // The accounts API only names DAOs, and only when the DAO has a name. Without one the address becomes the
-    // primary line instead of being repeated below it, and the type is left to the tag.
+    // primary line, named by the address book, and the type is left to the tag. With one, the plain short address
+    // sits below it: resolving that address would repeat the name.
     const resolvedName =
         isDao && name != null && name !== '' ? name : undefined;
 
@@ -83,11 +85,17 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
             )}
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate text-base leading-tight text-neutral-800">
-                    {resolvedName ?? truncatedAddress}
+                    {resolvedName ?? (
+                        <AddressOutput
+                            address={address}
+                            chainId={networkDefinitions[accountInfo.network].id}
+                            copy={false}
+                        />
+                    )}
                 </span>
                 {resolvedName != null && (
                     <span className="truncate text-sm leading-tight text-neutral-500">
-                        {truncatedAddress}
+                        {addressUtils.truncateAddress(address)}
                     </span>
                 )}
             </div>

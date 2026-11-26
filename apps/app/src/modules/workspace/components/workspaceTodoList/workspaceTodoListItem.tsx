@@ -9,6 +9,7 @@ import {
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WorkspaceAccountType } from '../../api/workspaceService';
+import { useWorkspaceAccountText } from '../../hooks/useWorkspaceAccountText';
 import {
     type IWorkspaceTodoItem,
     type IWorkspaceTodoProposalItem,
@@ -88,6 +89,7 @@ const buildTransactionDisplay = (
     todo: IWorkspaceTodoTransactionItem,
     workspaceId: string,
     t: TranslationFunction,
+    accountText: string,
 ): IWorkspaceTodoDisplay => {
     const { account, transaction, hasNonceRival } = todo;
 
@@ -102,7 +104,7 @@ const buildTransactionDisplay = (
             />
         ),
         // Titled as on the transactions page the row links to, so the transaction is recognised there.
-        title: workspaceUtils.getAccountLabel(account),
+        title: accountText,
         identifier: workspaceTransactionUtils.getSafeTransactionTitle(
             transaction.nonce,
             accountName,
@@ -138,6 +140,16 @@ export const WorkspaceTodoListItem: React.FC<IWorkspaceTodoListItemProps> = (
     const { todo, workspaceId } = props;
 
     const { t } = useTranslations();
+
+    const transactionAccount =
+        todo.type === WorkspaceTodoType.PROPOSAL ? undefined : todo.account;
+    const accountText = useWorkspaceAccountText({
+        account: transactionAccount,
+        name:
+            transactionAccount == null
+                ? undefined
+                : workspaceUtils.getAccountName(transactionAccount),
+    });
     const { copy } = useGukModulesContext();
 
     const { href, ...summary } =
@@ -148,7 +160,7 @@ export const WorkspaceTodoListItem: React.FC<IWorkspaceTodoListItemProps> = (
                   t,
                   copy.proposalDataListItemStatus.left,
               )
-            : buildTransactionDisplay(todo, workspaceId, t);
+            : buildTransactionDisplay(todo, workspaceId, t, accountText);
 
     return (
         <DataList.Item className="flex items-center py-3 md:py-5" href={href}>

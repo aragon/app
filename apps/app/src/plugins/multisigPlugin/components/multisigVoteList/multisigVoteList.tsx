@@ -104,7 +104,6 @@ const MultisigVoteItem: React.FC<{
             voter={{
                 address: vote.member.address,
                 avatarSrc: ensAvatar ?? undefined,
-                name: ensName ?? undefined,
             }}
         />
     );

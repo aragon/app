@@ -1,4 +1,3 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import { ANY_ADDR } from '@/modules/settings/constants/permissionSentinels';
 import * as daoService from '@/shared/api/daoService';
@@ -97,14 +96,12 @@ describe('usePermissionEntityResolver hook', () => {
         expect(entity.label).toBe('Linked DAO');
     });
 
-    it('keeps a linked account as a truncated address when the feature is disabled', () => {
+    it('leaves a linked account without a name when the feature is disabled', () => {
         const { result } = renderHook(() =>
             usePermissionEntityResolver({ daoId: 'test-dao' }),
         );
 
-        expect(result.current(linkedAddress).label).toBe(
-            addressUtils.truncateAddress(linkedAddress),
-        );
+        expect(result.current(linkedAddress).label).toBeUndefined();
     });
 
     it('resolves the OSx any-address sentinel', () => {
@@ -115,14 +112,12 @@ describe('usePermissionEntityResolver hook', () => {
         expect(result.current(ANY_ADDR).label).toBe('Anyone');
     });
 
-    it('falls back to the truncated address for an unknown account', () => {
+    it('leaves an unknown account without a name', () => {
         const { result } = renderHook(() =>
             usePermissionEntityResolver({ daoId: 'test-dao' }),
         );
 
-        expect(result.current(strangerAddress).label).toBe(
-            addressUtils.truncateAddress(strangerAddress),
-        );
+        expect(result.current(strangerAddress).label).toBeUndefined();
     });
 
     it('skips the DAO lookups when there is no daoId and resolves nothing', () => {
@@ -141,8 +136,6 @@ describe('usePermissionEntityResolver hook', () => {
         expect(useDaoPluginsSpy).toHaveBeenCalledWith(
             expect.objectContaining({ enabled: false }),
         );
-        expect(result.current(daoAddress).label).toBe(
-            addressUtils.truncateAddress(daoAddress),
-        );
+        expect(result.current(daoAddress).label).toBeUndefined();
     });
 });

@@ -75,6 +75,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     const daoOption: IWorkspaceAccountOption = {
         id: daoAccount.id,
         label: 'Demo DAO',
+        hasName: true,
         account: daoAccount,
         isAllAccounts: false,
         isExternal: false,
@@ -83,6 +84,7 @@ describe('<WorkspaceTransactionsAsideCard /> component', () => {
     const safeOption: IWorkspaceAccountOption = {
         id: safeAccount.id,
         label: 'Grants Safe',
+        hasName: true,
         account: safeAccount,
         isAllAccounts: false,
         isExternal: false,

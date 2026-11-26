@@ -41,6 +41,33 @@ describe('createAddressResolver', () => {
         });
     });
 
+    it('shows an Aragon registry name without its suffix, after the checks on the full name', async () => {
+        getEnsNameMock.mockResolvedValue('alice.aragon.eth');
+        getEnsAddressMock.mockResolvedValue(address);
+
+        await expect(resolve(address)).resolves.toEqual({
+            label: 'alice',
+            source: 'ens',
+        });
+        expect(getEnsAddressMock).toHaveBeenCalledWith(config, {
+            name: 'alice.aragon.eth',
+            chainId: mainnet.id,
+        });
+
+        getEnsAddressMock.mockResolvedValue(other);
+        await expect(resolve(address)).resolves.toBeNull();
+    });
+
+    it('keeps every other ENS domain in full', async () => {
+        getEnsNameMock.mockResolvedValue('alice.xyz.eth');
+        getEnsAddressMock.mockResolvedValue(address);
+
+        await expect(resolve(address)).resolves.toEqual({
+            label: 'alice.xyz.eth',
+            source: 'ens',
+        });
+    });
+
     it('does not use a reverse name without a matching forward record (inv. 31)', async () => {
         getEnsNameMock.mockResolvedValue('vitalik.eth');
 

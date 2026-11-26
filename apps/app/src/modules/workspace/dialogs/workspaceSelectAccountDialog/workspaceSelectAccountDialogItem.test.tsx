@@ -1,4 +1,9 @@
-import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    addressUtils,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { Network } from '@/shared/api/daoService';
@@ -94,6 +99,63 @@ describe('<WorkspaceSelectAccountDialogItem /> component', () => {
             expect(screen.getByRole('checkbox')).toHaveAccessibleName(
                 new RegExp(addressUtils.truncateAddress(address)),
             );
+        });
+
+        describe('with an address book naming the address', () => {
+            const chainName = networkDefinitions[Network.ETHEREUM_SEPOLIA].name;
+            const renderWithBook = (
+                props?: Partial<IWorkspaceSelectAccountDialogItemProps>,
+            ) =>
+                render(
+                    <AddressResolutionProvider
+                        entries={
+                            new Map([
+                                [
+                                    addressEntryKey(
+                                        address,
+                                        networkDefinitions[
+                                            Network.ETHEREUM_SEPOLIA
+                                        ].id,
+                                    ),
+                                    {
+                                        label: 'Ops Safe',
+                                        source: 'known-account' as const,
+                                    },
+                                ],
+                            ])
+                        }
+                    >
+                        {createTestComponent({ isMultiSelect: true, ...props })}
+                    </AddressResolutionProvider>,
+                );
+
+            it('shows a named account once, with the plain short address, and names it once to screen readers', () => {
+                renderWithBook({
+                    accountInfo: {
+                        network: Network.ETHEREUM_SEPOLIA,
+                        address,
+                        type: WorkspaceAccountInfoType.SAFE,
+                        status: WorkspaceAccountInfoStatus.AVAILABLE,
+                        indexed: true,
+                        name: 'Treasury',
+                    },
+                });
+
+                expect(screen.getAllByText('Treasury')).toHaveLength(1);
+                expect(screen.queryByText('Ops Safe')).not.toBeInTheDocument();
+                expect(screen.getByRole('checkbox')).toHaveAccessibleName(
+                    `Treasury, ${chainName}, ${addressUtils.truncateAddress(address)}`,
+                );
+            });
+
+            it('names an unnamed account by the address book, once', () => {
+                renderWithBook();
+
+                expect(screen.getAllByText('Ops Safe')).toHaveLength(1);
+                expect(screen.getByRole('checkbox')).toHaveAccessibleName(
+                    `Ops Safe, ${chainName}`,
+                );
+            });
         });
 
         it('toggles the selection from the checkbox', async () => {

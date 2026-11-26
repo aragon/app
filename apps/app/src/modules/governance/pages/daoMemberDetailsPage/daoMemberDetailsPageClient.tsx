@@ -1,12 +1,12 @@
 'use client';
 
 import {
-    addressUtils,
     ChainEntityType,
     DateFormat,
     DefinitionList,
     formatterUtils,
     MemberAvatar,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
 import { useBlock } from 'wagmi';
 import {
@@ -161,8 +161,12 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsProfileRecords(ensName);
-    const { data: displayName } = useEnsName(address, {
-        stripAragonRegistrySuffix: true,
+    // The name of the member from the address book (ENS with the Aragon registry suffix stripped). The ENS name above
+    // is still read for the avatar and the profile records, which the address book does not give.
+    // Without a name, the breadcrumb shows the short address and the title the full one, as before.
+    const memberName = useResolveAddressText(address);
+    const title = useResolveAddressText(address, undefined, {
+        showCompleteAddress: true,
     });
     const memberLinks = {
         github: ensRecords?.[ensRecordKeys.github],
@@ -189,9 +193,6 @@ export const DaoMemberDetailsPageClient: React.FC<
         },
     };
     const memberData = member ?? fallbackMember;
-
-    const truncatedAddress = addressUtils.truncateAddress(address);
-    const memberName = displayName ?? truncatedAddress;
 
     const addressUrl = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -247,13 +248,12 @@ export const DaoMemberDetailsPageClient: React.FC<
                     <MemberAvatar
                         address={address}
                         avatarSrc={ensAvatar ?? undefined}
-                        ensName={ensName ?? undefined}
                         size="2xl"
                     />
                 }
                 breadcrumbs={pageBreadcrumbs}
                 description={ensRecords?.description ?? undefined}
-                title={displayName ?? address}
+                title={title}
             />
             <Page.Content>
                 <Page.Main>

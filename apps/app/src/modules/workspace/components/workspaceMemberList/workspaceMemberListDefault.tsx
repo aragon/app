@@ -128,13 +128,10 @@ const WorkspaceMemberListItem: React.FC<IWorkspaceMemberListItemProps> = (
 ) => {
     const { member, workspaceId, accountId, bodyId, processId } = props;
 
-    // Resolved exactly as `DaoMemberListDefault` does — including the stripped Aragon registry suffix — so a member
-    // reads the same here and on the account members page this row links to.
+    // The name comes from the address book (ENS with the Aragon registry suffix stripped), as on the account members
+    // page this row links to. The ENS name is still read here for the avatar, which the address book does not give.
     const { data: ensName } = useEnsName(member.address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
-    const { data: displayName } = useEnsName(member.address, {
-        stripAragonRegistrySuffix: true,
-    });
 
     const { buildEntityUrl } = useDaoChain({ network: member.network });
 
@@ -186,7 +183,6 @@ const WorkspaceMemberListItem: React.FC<IWorkspaceMemberListItemProps> = (
             address={member.address}
             avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
-            ensName={displayName ?? undefined}
             href={href}
             rel={isExternalLink ? 'noopener noreferrer' : undefined}
             target={isExternalLink ? '_blank' : undefined}

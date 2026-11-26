@@ -85,6 +85,7 @@ describe('<WorkspaceExternalAccountBanner /> component', () => {
     const externalOption: IWorkspaceAccountOption = {
         id: externalAccount.id,
         label: 'External DAO',
+        hasName: true,
         account: externalAccount,
         isAllAccounts: false,
         isExternal: true,

@@ -1,5 +1,6 @@
 'use client';
 
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import type { IWorkspaceAssetListMetadata } from '../../api/workspaceQueryService';
 import { WorkspaceAccountType } from '../../api/workspaceService';
 import type { IWorkspaceAccountOption } from '../../hooks/useWorkspaceAccountOptions';
@@ -31,12 +32,14 @@ export const WorkspaceAssetsAsideCard: React.FC<
 > = (props) => {
     const { activeOption, metadata } = props;
 
+    const label = useWorkspaceOptionText(activeOption);
+
     switch (activeOption?.account?.type) {
         case WorkspaceAccountType.DAO:
             return (
                 <WorkspaceDaoAssetsAsideCard
                     account={activeOption.account}
-                    label={activeOption.label}
+                    label={label}
                     metadata={metadata}
                 />
             );
@@ -44,7 +47,7 @@ export const WorkspaceAssetsAsideCard: React.FC<
             return (
                 <WorkspaceSafeAssetsAsideCard
                     account={activeOption.account}
-                    label={activeOption.label}
+                    label={label}
                     metadata={metadata}
                 />
             );

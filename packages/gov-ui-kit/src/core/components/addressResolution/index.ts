@@ -22,4 +22,4 @@ export {
 } from './addressResolutionProvider';
 export type { IResolvedAddress } from './addressResolutionStore';
 export { useResolveAddress } from './useResolveAddress';
-export { useResolveAddressText } from './useResolveAddressText';
+export { type IUseResolveAddressTextOptions, useResolveAddressText } from './useResolveAddressText';

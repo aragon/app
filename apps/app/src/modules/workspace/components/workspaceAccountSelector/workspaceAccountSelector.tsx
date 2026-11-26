@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     AvatarIcon,
     AvatarStack,
     addressUtils,
@@ -14,13 +15,17 @@ import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     type IWorkspaceAccount,
     useWorkspace,
     WorkspaceAccountType,
 } from '../../api/workspaceService';
-import { useWorkspaceAccountOptions } from '../../hooks/useWorkspaceAccountOptions';
+import {
+    type IWorkspaceAccountOption,
+    useWorkspaceAccountOptions,
+} from '../../hooks/useWorkspaceAccountOptions';
 import { useWorkspaceAddAccountsDialog } from '../../hooks/useWorkspaceAddAccountsDialog';
 import { useWorkspaceDaos } from '../../hooks/useWorkspaceDaos';
 import { workspaceUtils } from '../../utils/workspaceUtils';
@@ -126,19 +131,32 @@ export const WorkspaceAccountSelector: React.FC<
             : src;
     };
 
+    // The account's own name, undefined when unnamed: an avatar then shows no initials of an address.
+    const getName = (option?: IWorkspaceAccountOption) =>
+        option?.hasName ? option.label : undefined;
+
     const accountAvatars = options
         .filter((option) => !option.isAllAccounts)
         .map((option) => (
             <DaoAvatar
                 key={option.id}
-                name={option.label}
+                name={getName(option)}
                 src={getStackAvatar(option.account)}
             />
         ));
-    const activeOptionAddress =
-        activeOption?.account == null
-            ? undefined
-            : addressUtils.truncateAddress(activeOption.account.address);
+    // An unnamed account is shown by its address alone, named by the address book. A named account shows its name and
+    // the plain short address below it: resolving that address would repeat the name. Inside a menu button or item, so
+    // the address only reveals on hover and has no buttons of its own.
+    const getAddressOutput = (account?: IWorkspaceAccount) =>
+        account == null ? undefined : (
+            <AddressOutput
+                address={account.address}
+                chainId={networkDefinitions[account.network].id}
+                copy={false}
+                hasInteractiveAncestor={true}
+            />
+        );
+    const activeAddressOutput = getAddressOutput(activeOption?.account);
 
     return (
         <Dropdown.Container
@@ -170,7 +188,7 @@ export const WorkspaceAccountSelector: React.FC<
                             // Unbadged, as in the design.
                             <WorkspaceAccountAvatar
                                 avatar={getAccountAvatar(activeOption?.account)}
-                                name={activeOption?.label}
+                                name={getName(activeOption)}
                                 type={
                                     activeOption?.account?.type ??
                                     WorkspaceAccountType.DAO
@@ -180,12 +198,16 @@ export const WorkspaceAccountSelector: React.FC<
                     </span>
                     <span className="flex min-w-0 grow flex-col text-left leading-tight">
                         <span className="truncate text-base text-neutral-800">
-                            {activeOption?.label}
+                            {getName(activeOption) ??
+                                activeAddressOutput ??
+                                activeOption?.label}
                         </span>
-                        {activeOptionAddress != null &&
-                            activeOptionAddress !== activeOption?.label && (
+                        {activeOption?.hasName &&
+                            activeOption.account != null && (
                                 <span className="truncate text-sm">
-                                    {activeOptionAddress}
+                                    {addressUtils.truncateAddress(
+                                        activeOption.account.address,
+                                    )}
                                 </span>
                             )}
                     </span>
@@ -215,10 +237,10 @@ export const WorkspaceAccountSelector: React.FC<
                                 variant="primary"
                             />
                         ) : (
-                            // An unresolved external account shows its label's initials, unbadged.
+                            // An unresolved external account has no network yet, so it shows unbadged.
                             <WorkspaceAccountAvatar
                                 avatar={getAccountAvatar(option.account)}
-                                name={option.label}
+                                name={getName(option)}
                                 network={option.account?.network}
                                 size="sm"
                                 type={
@@ -228,18 +250,18 @@ export const WorkspaceAccountSelector: React.FC<
                             />
                         )}
                         <span className="flex min-w-0 flex-col leading-tight">
-                            <span className="truncate">{option.label}</span>
-                            {option.account != null &&
-                                option.label !==
-                                    addressUtils.truncateAddress(
+                            <span className="truncate">
+                                {getName(option) ??
+                                    getAddressOutput(option.account) ??
+                                    option.label}
+                            </span>
+                            {option.hasName && option.account != null && (
+                                <span className="truncate text-sm text-neutral-500">
+                                    {addressUtils.truncateAddress(
                                         option.account.address,
-                                    ) && (
-                                    <span className="truncate text-sm text-neutral-500">
-                                        {addressUtils.truncateAddress(
-                                            option.account.address,
-                                        )}
-                                    </span>
-                                )}
+                                    )}
+                                </span>
+                            )}
                         </span>
                         {option.isExternal && (
                             <span className="shrink-0 text-sm text-neutral-500">

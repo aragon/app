@@ -1,5 +1,6 @@
 'use client';
 
+import { useWorkspaceOptionText } from '@/modules/workspace/hooks/useWorkspaceAccountText';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WorkspaceTodoList } from '../../components/workspaceTodoList';
@@ -29,6 +30,7 @@ export const WorkspaceTodosPageClient: React.FC<
     // Every account of the workspace, or just the one the route names, held by the workspace or not.
     const { activeOption, scopedAccounts, isPending } =
         useWorkspaceAccountOptions();
+    const activeOptionText = useWorkspaceOptionText(activeOption);
 
     return (
         <Page.Content>
@@ -47,7 +49,7 @@ export const WorkspaceTodosPageClient: React.FC<
                         title={
                             activeOption?.account == null
                                 ? undefined
-                                : activeOption.label
+                                : activeOptionText
                         }
                     />
                 )}

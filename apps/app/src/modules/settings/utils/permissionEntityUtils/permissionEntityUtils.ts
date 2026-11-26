@@ -18,10 +18,10 @@ export type PermissionEntityType = 'dao' | 'plugin' | 'sentinel' | 'address';
  */
 export interface IPermissionEntity {
     /**
-     * Human-readable label for the entity (e.g. a DAO name, a plugin name, a
-     * sentinel name, or a truncated address fallback).
+     * Name of the entity (e.g. a DAO name, a plugin name or a sentinel name). Undefined when the entity is only an
+     * address: it is then shown by the address widget, which names it from the address book.
      */
-    label: string;
+    label?: string;
     /**
      * Short type tag shown next to plugin entities (e.g. `MULTISIG` / `SPP`).
      */
@@ -179,11 +179,9 @@ class PermissionEntityUtils {
         }
 
         return {
-            label: addressUtils.truncateAddress(address),
             address,
             isSentinel: false,
             type: 'address',
-            detailName: addressUtils.truncateAddress(address),
         };
     };
 
@@ -198,9 +196,7 @@ class PermissionEntityUtils {
             entity.label !== 'Unknown address' ? entity.label : undefined;
         const label =
             backendLabel ??
-            (entity.layer === 'contract'
-                ? 'Unresolved contract'
-                : addressUtils.truncateAddress(address));
+            (entity.layer === 'contract' ? 'Unresolved contract' : undefined);
         const tag = entity.interfaceType?.toUpperCase();
 
         if (entity.brandId === PermissionEntityExternalBrandId.SAFE) {
@@ -307,7 +303,6 @@ class PermissionEntityUtils {
             address,
             isSentinel: false,
             type: 'address',
-            detailName: addressUtils.truncateAddress(address),
             layer: entity.layer,
             status: entity.status,
             brandId: entity.brandId,
