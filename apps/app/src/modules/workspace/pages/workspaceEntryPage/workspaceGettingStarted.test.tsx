@@ -289,7 +289,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
         const createButton = screen.getByRole('button', {
             name: 'app.workspace.workspaceGettingStarted.action.createAccount',
         });
-        expect(createButton).toHaveClass('bg-neutral-0');
+        expect(createButton).toHaveClass('bg-accent-default-inverse');
         await userEvent.click(createButton);
 
         expect(openCreateAccountMock).toHaveBeenCalledWith({
@@ -460,7 +460,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
             screen.getByRole('button', {
                 name: 'app.workspace.workspaceGettingStarted.action.createAccount',
             }),
-        ).toHaveClass('bg-primary-400');
+        ).toHaveClass('bg-accent-default');
     });
 
     it('brings the empty card back when the address view closes with nothing added', async () => {
@@ -531,7 +531,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
             screen.getByRole('button', {
                 name: 'app.workspace.workspaceGettingStarted.action.createAccount',
             }),
-        ).toHaveClass('bg-primary-400');
+        ).toHaveClass('bg-accent-default');
     });
 
     it('keeps the selection reachable, with creating secondary, when the suggestions are read again with none left', async () => {
@@ -555,7 +555,7 @@ describe('<WorkspaceGettingStarted /> component', () => {
             screen.getByRole('button', {
                 name: 'app.workspace.workspaceGettingStarted.action.createAccount',
             }),
-        ).toHaveClass('bg-neutral-0');
+        ).toHaveClass('bg-accent-default-inverse');
     });
 
     it('shows the empty card to a switched wallet with no accounts, even after an account was added by address', async () => {

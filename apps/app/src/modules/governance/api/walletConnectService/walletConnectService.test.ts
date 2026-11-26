@@ -2,16 +2,15 @@ import { WalletKit } from '@reown/walletkit';
 import type { SessionTypes } from '@walletconnect/types';
 import * as WalletConnectUtils from '@walletconnect/utils';
 import { getSdkError } from '@walletconnect/utils';
+import { Network } from '@/shared/api/daoService';
 import { walletConnectDefinitions } from '@/shared/constants/walletConnectDefinitions';
-import type {
-    ISession,
-    ISessionEventArguments,
-    ISessionProposal,
-} from './domain';
+import type { ISession, ISessionProposal } from './domain';
 import {
     WalletConnectService,
     walletConnectService,
 } from './walletConnectService';
+import { WalletConnectUnsupportedNetworkError } from './walletConnectUnsupportedNetworkError';
+import { WalletConnectUsedUriError } from './walletConnectUsedUriError';
 
 describe('walletConnect service', () => {
     const walletInitSpy = jest.spyOn(WalletKit, 'init');
@@ -20,12 +19,28 @@ describe('walletConnect service', () => {
         'buildApprovedNamespaces',
     );
 
+    const pairingTopic = 'a'.repeat(64);
+    const uri = `wc:${pairingTopic}@2?relay-protocol=irn&symKey=${'b'.repeat(64)}`;
+    const address = '0x123';
+    const network = Network.ETHEREUM_SEPOLIA;
+
+    const mockClient = (client: Record<string, unknown> = {}) => {
+        const clientMock = { on: jest.fn(), ...client };
+        walletInitSpy.mockResolvedValue(
+            clientMock as unknown as InstanceType<typeof WalletKit>,
+        );
+        return clientMock;
+    };
+
     const createTestService = async () => {
         const testService = new WalletConnectService();
         // Simple workaround to make sure the client is set after creating a new instance of the service
         await Promise.resolve();
         return testService;
     };
+
+    const generateSessionProposal = (topic = pairingTopic) =>
+        ({ id: 1, params: { pairingTopic: topic } }) as ISessionProposal;
 
     afterEach(() => {
         walletInitSpy.mockReset();
@@ -41,47 +56,141 @@ describe('walletConnect service', () => {
                 signConfig: walletConnectService['signConfig'],
             });
         });
+
+        it('registers the session-proposal handler once', async () => {
+            const { on } = mockClient();
+            const testService = await createTestService();
+            expect(on).toHaveBeenCalledWith(
+                'session_proposal',
+                testService['handleSessionProposal'],
+            );
+        });
     });
 
     describe('connectApp', () => {
-        it('calls the pair function and attaches a listener for the session-proposal event', async () => {
-            const uri = 'wc:abc123';
+        it('pairs and resolves the session approved for the proposal of its pairing', async () => {
             const pair = jest.fn(() => Promise.resolve());
-            walletInitSpy.mockResolvedValue({ pair } as unknown as InstanceType<
-                typeof WalletKit
-            >);
+            mockClient({ pair });
             const testService = await createTestService();
+            const session = { topic: 'session-topic' } as ISession;
+            const approveSession = jest.fn().mockResolvedValue(session);
+            testService['approveSession'] = approveSession;
+            const sessionProposal = generateSessionProposal();
 
-            testService['handleSessionProposal'] = (({ onSuccess }) =>
-                onSuccess(
-                    {} as ISession,
-                )) as (typeof testService)['handleSessionProposal'];
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            testService.attachListener = jest.fn(({ event, callback }) =>
-                callback({} as ISessionEventArguments[typeof event]),
-            );
-
-            await testService.connectApp({ uri, address: '00' });
-            expect(pair).toHaveBeenCalledWith({ uri });
-            expect(testService.attachListener).toHaveBeenCalledWith({
-                event: 'session_proposal',
-                callback: expect.any(Function) as unknown,
+            const connection = testService.connectApp({
+                uri,
+                address,
+                network,
             });
+            await testService['handleSessionProposal'](sessionProposal);
+
+            await expect(connection).resolves.toEqual(session);
+            expect(pair).toHaveBeenCalledWith({ uri });
+            expect(approveSession).toHaveBeenCalledWith({
+                sessionProposal,
+                address,
+                network,
+            });
+            expect(testService['pendingConnection']).toBeUndefined();
         });
 
-        it('throws error when pair function fails', async () => {
-            const pairError = new Error('unknown');
-            const pair = jest.fn(() => Promise.reject(pairError));
-            walletInitSpy.mockResolvedValue({ pair } as unknown as InstanceType<
-                typeof WalletKit
-            >);
+        it('rejects proposals of other pairings and keeps waiting for its own', async () => {
+            const rejectSession = jest.fn(() => Promise.resolve());
+            mockClient({
+                pair: jest.fn(() => Promise.resolve()),
+                rejectSession,
+            });
             const testService = await createTestService();
-            testService.attachListener = jest.fn();
-            testService['parseError'] = jest.fn(() => pairError);
+            const approveSession = jest.fn();
+            testService['approveSession'] = approveSession;
+            const sessionProposal = generateSessionProposal('c'.repeat(64));
+
+            void testService.connectApp({ uri, address, network });
+            await testService['handleSessionProposal'](sessionProposal);
+
+            expect(rejectSession).toHaveBeenCalledWith({
+                id: sessionProposal.id,
+                reason: getSdkError('USER_REJECTED'),
+            });
+            expect(approveSession).not.toHaveBeenCalled();
+            expect(testService['pendingConnection']?.pairingTopic).toEqual(
+                pairingTopic,
+            );
+        });
+
+        it('cancels the previous pending connection', async () => {
+            mockClient({ pair: jest.fn(() => Promise.resolve()) });
+            const testService = await createTestService();
+            const otherUri = uri.replace(pairingTopic, 'c'.repeat(64));
+
+            const previousConnection = testService.connectApp({
+                uri,
+                address,
+                network,
+            });
+            void testService.connectApp({ uri: otherUri, address, network });
+
+            await expect(previousConnection).rejects.toThrow();
+            expect(testService['pendingConnection']?.pairingTopic).toEqual(
+                'c'.repeat(64),
+            );
+        });
+
+        it('throws a used-URI error without pairing again when the URI was already paired', async () => {
+            const pair = jest.fn(() => Promise.resolve());
+            mockClient({ pair });
+            const testService = await createTestService();
+            testService['core'] = {
+                pairing: { getPairings: () => [{ topic: pairingTopic }] },
+            } as unknown as (typeof testService)['core'];
+
             await expect(
-                testService.connectApp({ uri: 'test', address: '00' }),
-            ).rejects.toThrow();
+                testService.connectApp({ uri, address, network }),
+            ).rejects.toThrow(WalletConnectUsedUriError);
+            expect(pair).not.toHaveBeenCalled();
+            expect(testService['pendingConnection']).toBeUndefined();
+        });
+
+        it('clears the pending connection and throws error when pair function fails', async () => {
+            const pairError = new Error('unknown');
+            mockClient({ pair: jest.fn(() => Promise.reject(pairError)) });
+            const testService = await createTestService();
+            testService['parseError'] = jest.fn(() => pairError);
+
+            await expect(
+                testService.connectApp({ uri, address, network }),
+            ).rejects.toThrow(pairError);
             expect(testService['parseError']).toHaveBeenCalledWith(pairError);
+            expect(testService['pendingConnection']).toBeUndefined();
+        });
+    });
+
+    describe('cancelConnectApp', () => {
+        it('rejects the pending connection and rejects the proposal its dApp sends afterwards', async () => {
+            const rejectSession = jest.fn(() => Promise.resolve());
+            mockClient({
+                pair: jest.fn(() => Promise.resolve()),
+                rejectSession,
+            });
+            const testService = await createTestService();
+            const approveSession = jest.fn();
+            testService['approveSession'] = approveSession;
+            const sessionProposal = generateSessionProposal();
+
+            const connection = testService.connectApp({
+                uri,
+                address,
+                network,
+            });
+            testService.cancelConnectApp();
+            await testService['handleSessionProposal'](sessionProposal);
+
+            await expect(connection).rejects.toThrow();
+            expect(approveSession).not.toHaveBeenCalled();
+            expect(rejectSession).toHaveBeenCalledWith({
+                id: sessionProposal.id,
+                reason: getSdkError('USER_REJECTED'),
+            });
         });
     });
 
@@ -89,9 +198,7 @@ describe('walletConnect service', () => {
         it('triggers the disconnect-session function from the wallet client', async () => {
             const session = { topic: 'test-topic' } as ISession;
             const disconnectSession = jest.fn();
-            walletInitSpy.mockResolvedValue({
-                disconnectSession,
-            } as unknown as InstanceType<typeof WalletKit>);
+            mockClient({ disconnectSession });
             await (await createTestService()).disconnectApp({ session });
             expect(disconnectSession).toHaveBeenCalledWith({
                 topic: session.topic,
@@ -102,11 +209,8 @@ describe('walletConnect service', () => {
 
     describe('attachListener', () => {
         it('attaches the callback to the specified event', async () => {
-            const on = jest.fn();
+            const { on } = mockClient();
             const callback = () => 'test';
-            walletInitSpy.mockResolvedValue({ on } as unknown as InstanceType<
-                typeof WalletKit
-            >);
             (await createTestService()).attachListener({
                 event: 'proposal_expire',
                 callback,
@@ -116,88 +220,33 @@ describe('walletConnect service', () => {
     });
 
     describe('removeListener', () => {
-        it('removes the event listener from the specified event', async () => {
+        it('only removes the given callback, keeping the event forwarded for other listeners', async () => {
             const off = jest.fn();
+            const eventsOff = jest.fn();
+            mockClient({ off, events: { off: eventsOff } });
             const callback = () => 'another';
-            walletInitSpy.mockResolvedValue({ off } as unknown as InstanceType<
-                typeof WalletKit
-            >);
             (await createTestService()).removeListener({
-                event: 'session_proposal',
+                event: 'session_request',
                 callback,
             });
-            expect(off).toHaveBeenCalledWith('session_proposal', callback);
-        });
-    });
-
-    describe('handleSessionProposal', () => {
-        const approveSessionSpy = jest.spyOn(
-            walletConnectService,
-            'approveSession' as keyof WalletConnectService,
-        );
-
-        afterEach(() => {
-            approveSessionSpy.mockReset();
-        });
-
-        afterAll(() => {
-            approveSessionSpy.mockRestore();
-        });
-
-        it('approves the session and calls the onSuccess callback on session approve success', async () => {
-            const onSuccess = jest.fn();
-            const sessionProposal = {} as ISessionProposal;
-            const address = '0x123';
-            const session = { topic: 'test' } as ISession;
-            approveSessionSpy.mockResolvedValue(session);
-            await walletConnectService['handleSessionProposal']({
-                sessionProposal,
-                address,
-                onSuccess,
-                onError: jest.fn(),
-            });
-            expect(approveSessionSpy).toHaveBeenCalledWith({
-                sessionProposal,
-                address,
-            });
-            expect(onSuccess).toHaveBeenCalledWith(session);
-        });
-
-        it('calls the onError callback on session approve error', async () => {
-            const onError = jest.fn();
-            const sessionProposal = {} as ISessionProposal;
-            const address = '0x123';
-            const approveError = new Error('unknown');
-            approveSessionSpy.mockRejectedValue(approveError);
-            await walletConnectService['handleSessionProposal']({
-                sessionProposal,
-                address,
-                onSuccess: jest.fn(),
-                onError,
-            });
-            expect(approveSessionSpy).toHaveBeenCalledWith({
-                sessionProposal,
-                address,
-            });
-            expect(onError).toHaveBeenCalledWith(approveError);
+            expect(eventsOff).toHaveBeenCalledWith('session_request', callback);
+            expect(off).not.toHaveBeenCalled();
         });
     });
 
     describe('approveSession', () => {
+        const approvedNamespaces = {
+            eip155: { accounts: [`eip155:11155111:${address}`] },
+        };
+
         it('builds the approved namespaces, approves and returns the session', async () => {
             const session = {} as ISession;
             const approveSession = jest.fn(() => Promise.resolve(session));
-            walletInitSpy.mockResolvedValue({
-                approveSession,
-            } as unknown as InstanceType<typeof WalletKit>);
-            const address = '0x123';
-            const sessionProposal = {
-                params: [],
-                id: '0',
-            } as unknown as ISessionProposal;
+            mockClient({ approveSession });
+            const sessionProposal = generateSessionProposal();
             const supportedNamespaces = { eip155: {} };
             buildApprovedNamespacesSpy.mockReturnValue(
-                supportedNamespaces as unknown as SessionTypes.Namespaces,
+                approvedNamespaces as unknown as SessionTypes.Namespaces,
             );
 
             const testService = await createTestService();
@@ -210,10 +259,12 @@ describe('walletConnect service', () => {
 
             const result = await testService['approveSession']({
                 address,
+                network,
                 sessionProposal,
             });
             expect(testService['getSupportedNamespaces']).toHaveBeenCalledWith(
                 address,
+                network,
             );
             expect(buildApprovedNamespacesSpy).toHaveBeenCalledWith({
                 proposal: sessionProposal.params,
@@ -221,25 +272,77 @@ describe('walletConnect service', () => {
             });
             expect(approveSession).toHaveBeenCalledWith({
                 id: sessionProposal.id,
-                namespaces: supportedNamespaces,
+                namespaces: approvedNamespaces,
             });
             expect(result).toEqual(session);
+        });
+
+        it.each([
+            [
+                'no account is approved',
+                () =>
+                    buildApprovedNamespacesSpy.mockReturnValue({
+                        eip155: { accounts: [] },
+                    } as unknown as SessionTypes.Namespaces),
+            ],
+            [
+                'the required namespaces are not supported',
+                () =>
+                    buildApprovedNamespacesSpy.mockImplementation(() => {
+                        throw new Error('unsupported');
+                    }),
+            ],
+        ])(
+            'rejects the proposal as unsupported chains when %s',
+            async (_, mockNamespaces) => {
+                const approveSession = jest.fn();
+                const rejectSession = jest.fn(() => Promise.resolve());
+                mockClient({ approveSession, rejectSession });
+                mockNamespaces();
+                const sessionProposal = generateSessionProposal();
+                const testService = await createTestService();
+
+                await expect(
+                    testService['approveSession']({
+                        address,
+                        network,
+                        sessionProposal,
+                    }),
+                ).rejects.toBeInstanceOf(WalletConnectUnsupportedNetworkError);
+                expect(rejectSession).toHaveBeenCalledWith({
+                    id: sessionProposal.id,
+                    reason: getSdkError('UNSUPPORTED_CHAINS'),
+                });
+                expect(approveSession).not.toHaveBeenCalled();
+            },
+        );
+    });
+
+    describe('getChainNamespace', () => {
+        it('returns the CAIP-2 chain id of the network', () => {
+            expect(
+                walletConnectService.getChainNamespace(
+                    Network.ETHEREUM_MAINNET,
+                ),
+            ).toEqual('eip155:1');
         });
     });
 
     describe('getSupportedNamespaces', () => {
-        it('builds the supported namespaces', () => {
+        it('only offers the account on the given network', () => {
             const address = '0x123';
-            const namespaces =
-                walletConnectService['getSupportedNamespaces'](address);
+            const namespaces = walletConnectService['getSupportedNamespaces'](
+                address,
+                Network.ETHEREUM_MAINNET,
+            );
             expect(namespaces.eip155.methods).toEqual(
                 walletConnectService['supportedMethods'],
             );
             expect(namespaces.eip155.events).toEqual(
                 walletConnectService['supportedEvents'],
             );
-            expect(namespaces.eip155.chains).toContain('eip155:1');
-            expect(namespaces.eip155.accounts).toContain(`eip155:1:${address}`);
+            expect(namespaces.eip155.chains).toEqual(['eip155:1']);
+            expect(namespaces.eip155.accounts).toEqual([`eip155:1:${address}`]);
         });
     });
 

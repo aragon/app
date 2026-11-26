@@ -1,0 +1,1059 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "GovKit semantic tokens (DTCG 2025.10), default theme: the roles components use, as aliases of the primitives. A token with a $description is not in the designer's Figma collection; the description says why it exists.",
+    "semantic": {
+        "$type": "color",
+        "bg": {
+            "surface": {
+                "primary": {
+                    "$value": "{color.neutral.0}"
+                },
+                "secondary": {
+                    "$value": "{color.neutral.50}"
+                },
+                "tertiary": {
+                    "$value": "{color.neutral.100}"
+                },
+                "primary-inverse": {
+                    "$value": "{color.neutral.400}"
+                },
+                "secondary-inverse": {
+                    "$value": "{color.neutral.500}"
+                },
+                "tertiary-inverse": {
+                    "$value": "{color.neutral.800}"
+                },
+                "default": {
+                    "$value": "{color.neutral.0}"
+                },
+                "hover": {
+                    "$value": "{color.neutral.50}"
+                },
+                "active": {
+                    "$value": "{color.neutral.0}"
+                },
+                "selected": {
+                    "$value": "{color.neutral.50}"
+                },
+                "disabled": {
+                    "$value": "{color.neutral.100}"
+                },
+                "hover-inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "disabled-inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "transparent": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            1,
+                            1,
+                            1
+                        ],
+                        "hex": "#ffffff",
+                        "alpha": 0
+                    }
+                },
+                "transparent-default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            1,
+                            1,
+                            1
+                        ],
+                        "hex": "#ffffff",
+                        "alpha": 0.01
+                    }
+                },
+                "transparent-hover": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19607843137254902,
+                            0.24705882352941178,
+                            0.29411764705882354
+                        ],
+                        "hex": "#323f4b",
+                        "alpha": 0.04
+                    }
+                },
+                "transparent-active": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19607843137254902,
+                            0.24705882352941178,
+                            0.29411764705882354
+                        ],
+                        "hex": "#323f4b",
+                        "alpha": 0.08
+                    }
+                },
+                "transparent-selected": {
+                    "$value": "{color.neutral.0}"
+                },
+                "ghost-hover": {
+                    "$value": "{color.neutral.0}",
+                    "$description": "Hover fill of the ghost Button. Stays white: the Figma binding, bg-surface-hover, equals the page background there."
+                },
+                "active-control": {
+                    "$value": "{color.neutral.50}",
+                    "$description": "Pressed fill of custom pressables outside Button: dialog close, wallet, navigation and workspace selectors. Component alias of bg-surface-active."
+                },
+                "tertiary-avatar": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Avatar placeholder and loading disc. Component alias of bg-surface-tertiary."
+                },
+                "hover-lift": {
+                    "$value": "{color.neutral.0}",
+                    "$description": "Hover fill that lifts a grey or translucent part to white: data-list action item icon well (hover / focus), chat attachment buttons. Component alias of bg-surface-hover."
+                },
+                "transparent-active-item": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.4823529411764706,
+                            0.5294117647058824,
+                            0.5803921568627451
+                        ],
+                        "hex": "#7b8794",
+                        "alpha": 0.08
+                    },
+                    "$description": "Pressed tint of the secondary data-list item. Component alias of bg-surface-transparent-active."
+                }
+            },
+            "accent": {
+                "solid": {
+                    "$value": "{color.primary.400}"
+                },
+                "subtle": {
+                    "$value": "{color.primary.50}"
+                },
+                "default": {
+                    "$value": "{color.primary.400}"
+                },
+                "hover": {
+                    "$value": "{color.primary.500}"
+                },
+                "active": {
+                    "$value": "{color.primary.800}"
+                },
+                "default-inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "hover-inverse": {
+                    "$value": "{color.primary.50}"
+                },
+                "active-inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "transparent-default": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.7686274509803922,
+                            0.8431372549019608,
+                            1
+                        ],
+                        "hex": "#c4d7ff",
+                        "alpha": 0.01
+                    }
+                },
+                "transparent-hover": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "hex": "#3164fa",
+                        "alpha": 0.04
+                    }
+                },
+                "transparent-active": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "hex": "#3164fa",
+                        "alpha": 0.08
+                    }
+                },
+                "solid-ping": {
+                    "$value": "{color.primary.500}",
+                    "$description": "Primary ping dot (ping dots stay on bg-*-solid). Component alias of bg-accent-solid."
+                }
+            },
+            "body": {
+                "$value": "{color.neutral.50}"
+            },
+            "brand": {
+                "solid": {
+                    "$value": "{color.primary.400}"
+                },
+                "subtle": {
+                    "$value": "{color.primary.50}"
+                }
+            },
+            "success": {
+                "subtle": {
+                    "$value": "{color.success.100}"
+                },
+                "secondary": {
+                    "$value": "{color.success.100}"
+                },
+                "solid": {
+                    "$value": "{color.success.500}"
+                },
+                "default": {
+                    "$value": "{color.success.100}"
+                },
+                "hover": {
+                    "$value": "{color.success.100}"
+                },
+                "active": {
+                    "$value": "{color.neutral.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{color.success.200}",
+                    "$description": "Tag fill (success). Component alias of bg-success-subtle."
+                },
+                "solid-progress": {
+                    "$value": "{color.success.400}",
+                    "$description": "Progress success bar. Component alias of bg-success-solid."
+                },
+                "solid-tooltip": {
+                    "$value": "{color.success.300}",
+                    "$description": "Status tooltip bubble and arrow (success). Component alias of bg-success-solid."
+                }
+            },
+            "warning": {
+                "subtle": {
+                    "$value": "{color.warning.100}"
+                },
+                "secondary": {
+                    "$value": "{color.warning.100}"
+                },
+                "solid": {
+                    "$value": "{color.warning.500}"
+                },
+                "default": {
+                    "$value": "{color.warning.100}"
+                },
+                "hover": {
+                    "$value": "{color.warning.100}"
+                },
+                "active": {
+                    "$value": "{color.neutral.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{color.warning.200}",
+                    "$description": "Tag fill (warning). Component alias of bg-warning-subtle."
+                },
+                "solid-tooltip": {
+                    "$value": "{color.warning.300}",
+                    "$description": "Status tooltip bubble and arrow (warning). Component alias of bg-warning-solid."
+                }
+            },
+            "critical": {
+                "subtle": {
+                    "$value": "{color.critical.100}"
+                },
+                "secondary": {
+                    "$value": "{color.critical.100}"
+                },
+                "solid": {
+                    "$value": "{color.critical.500}"
+                },
+                "default": {
+                    "$value": "{color.critical.100}"
+                },
+                "hover": {
+                    "$value": "{color.critical.100}"
+                },
+                "active": {
+                    "$value": "{color.neutral.0}"
+                },
+                "subtle-tag": {
+                    "$value": "{color.critical.200}",
+                    "$description": "Tag fill (critical). Component alias of bg-critical-subtle."
+                }
+            },
+            "info": {
+                "subtle": {
+                    "$value": "{color.info.100}"
+                },
+                "secondary": {
+                    "$value": "{color.info.100}"
+                },
+                "solid": {
+                    "$value": "{color.info.500}"
+                },
+                "subtle-tag": {
+                    "$value": "{color.info.200}",
+                    "$description": "Tag fill (info). Component alias of bg-info-subtle."
+                },
+                "solid-tooltip": {
+                    "$value": "{color.info.300}",
+                    "$description": "Status tooltip bubble and arrow (info). Component alias of bg-info-solid."
+                }
+            }
+        },
+        "border": {
+            "surface": {
+                "primary": {
+                    "$value": "{color.neutral.100}"
+                },
+                "secondary": {
+                    "$value": "{color.neutral.100}"
+                },
+                "default": {
+                    "$value": "{color.neutral.100}"
+                },
+                "hover": {
+                    "$value": "{color.neutral.200}"
+                },
+                "active": {
+                    "$value": "{color.neutral.400}"
+                },
+                "disabled": {
+                    "$value": "{color.neutral.200}"
+                },
+                "selected": {
+                    "$value": "{color.primary.400}"
+                },
+                "fill-disabled": {
+                    "$value": "{semantic.bg.surface.disabled}",
+                    "$description": "The Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+                },
+                "open": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Border of an open dropdown trigger: DropdownContainer passes it to its tertiary or critical Button while the menu is open. The class must sort after border-surface-default to win over the Button's own border (Tailwind orders same-property utilities by name); hover and active variants still win."
+                },
+                "active-accordion": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Open accordion item border. Component alias of border-surface-active."
+                },
+                "active-card": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Pressed border of pressable cards: data-list item, asset-transfer address panel. Component alias of border-surface-active."
+                },
+                "active-control": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Pressed border of small custom controls: dialog close, navigation menu trigger. Component alias of border-surface-active."
+                },
+                "disabled-card": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Border of a checked + disabled checkbox / radio card. Component alias of border-surface-disabled."
+                },
+                "disabled-toggle": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Border of a disabled toggle: kit Toggle, vote option toggle. Component alias of border-surface-disabled."
+                },
+                "default-switch": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Switch track border. Component alias of border-surface-default."
+                },
+                "hover-tab": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Hover underline of an underlined tab, drawn as a box-shadow. Component alias of border-surface-hover."
+                },
+                "secondary-panel": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Static panel and divider borders: permissions-graph panels and skeleton, docs title rule, chat blockquote. Component alias of border-surface-secondary."
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{color.primary.300}"
+                },
+                "primary-inverse": {
+                    "$value": "{color.primary.300}"
+                },
+                "secondary": {
+                    "$value": "{color.primary.400}"
+                },
+                "secondary-inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "default": {
+                    "$value": "{color.primary.100}"
+                },
+                "hover": {
+                    "$value": "{color.primary.200}"
+                },
+                "active": {
+                    "$value": "{color.primary.400}"
+                },
+                "fill": {
+                    "$value": "{semantic.bg.accent.default}",
+                    "$description": "The Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+                },
+                "fill-hover": {
+                    "$value": "{semantic.bg.accent.hover}",
+                    "$description": "The Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+                },
+                "fill-active": {
+                    "$value": "{semantic.bg.accent.active}",
+                    "$description": "The Button draws a 1px border in its fill colour (Figma has no stroke there). A transparent border is not pixel-identical at the rounded corners, so the border follows the fill token."
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{color.success.400}"
+                },
+                "secondary": {
+                    "$value": "{color.success.800}"
+                },
+                "default": {
+                    "$value": "{color.success.300}"
+                },
+                "hover": {
+                    "$value": "{color.success.500}"
+                },
+                "active": {
+                    "$value": "{color.success.600}"
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{color.warning.400}"
+                },
+                "secondary": {
+                    "$value": "{color.warning.800}"
+                },
+                "default": {
+                    "$value": "{color.warning.300}"
+                },
+                "hover": {
+                    "$value": "{color.warning.500}"
+                },
+                "active": {
+                    "$value": "{color.warning.600}"
+                },
+                "default-input": {
+                    "$value": "{color.warning.500}",
+                    "$description": "Border of a warning input field. Component alias of border-warning-default."
+                },
+                "hover-input": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Hover border of a warning input field. Component alias of border-warning-hover."
+                },
+                "hover-file-avatar": {
+                    "$value": "{color.warning.400}",
+                    "$description": "Hover border of the warning file-avatar drop zone. Component alias of border-warning-hover."
+                },
+                "active-control": {
+                    "$value": "{color.warning.500}",
+                    "$description": "Active border of a status control: focused + hover warning input field. Component alias of border-warning-active."
+                },
+                "primary-input": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Input addon border (warning). Component alias of border-warning-primary."
+                },
+                "primary-spinner": {
+                    "$value": "{color.warning.300}",
+                    "$description": "Spinner track (warning). Component alias of border-warning-primary."
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{color.critical.400}"
+                },
+                "secondary": {
+                    "$value": "{color.critical.800}"
+                },
+                "default": {
+                    "$value": "{color.critical.300}"
+                },
+                "hover": {
+                    "$value": "{color.critical.500}"
+                },
+                "active": {
+                    "$value": "{color.critical.600}"
+                },
+                "default-input": {
+                    "$value": "{color.critical.500}",
+                    "$description": "Border of a critical input field and file-avatar drop zone. Component alias of border-critical-default."
+                },
+                "hover-input": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Hover border of a critical input field and file-avatar drop zone. Component alias of border-critical-hover."
+                },
+                "active-control": {
+                    "$value": "{color.critical.500}",
+                    "$description": "Active border of a status control: focused + hover critical input field, pressed vote option (no). Component alias of border-critical-active."
+                },
+                "primary-input": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Input addon border (critical). Component alias of border-critical-primary."
+                },
+                "primary-spinner": {
+                    "$value": "{color.critical.300}",
+                    "$description": "Spinner track (critical). Component alias of border-critical-primary."
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{color.info.400}"
+                }
+            }
+        },
+        "text": {
+            "surface": {
+                "primary": {
+                    "$value": "{color.neutral.800}"
+                },
+                "secondary": {
+                    "$value": "{color.neutral.500}"
+                },
+                "tertiary": {
+                    "$value": "{color.neutral.400}"
+                },
+                "placeholder": {
+                    "$value": "{color.neutral.300}"
+                },
+                "inverse": {
+                    "$value": "{color.neutral.50}"
+                },
+                "default": {
+                    "$value": "{color.neutral.500}"
+                },
+                "hover": {
+                    "$value": "{color.neutral.500}"
+                },
+                "active": {
+                    "$value": "{color.neutral.800}"
+                },
+                "selected": {
+                    "$value": "{color.primary.400}"
+                },
+                "disabled": {
+                    "$value": "{color.neutral.300}"
+                },
+                "hover-label": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Label that darkens on hover or keyboard highlight: dropdown item, checkbox, radio, autocomplete item, chat icon button. Component alias of text-surface-hover."
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{color.primary.400}"
+                },
+                "secondary": {
+                    "$value": "{color.primary.900}"
+                },
+                "default": {
+                    "$value": "{color.primary.400}"
+                },
+                "hover": {
+                    "$value": "{color.primary.400}"
+                },
+                "active": {
+                    "$value": "{color.primary.600}"
+                },
+                "inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "inverse-brand": {
+                    "$value": "{color.primary.50}",
+                    "$description": "Light-blue text on the brand fill: explore hero subtitle, docs banner links. Component alias of text-accent-inverse."
+                },
+                "active-secondary-button": {
+                    "$value": "{color.primary.400}",
+                    "$description": "Pressed label of the secondary Button. Component alias of text-accent-active."
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{color.success.800}"
+                },
+                "secondary": {
+                    "$value": "{color.success.900}"
+                },
+                "default": {
+                    "$value": "{color.success.800}"
+                },
+                "hover": {
+                    "$value": "{color.success.800}"
+                },
+                "active": {
+                    "$value": "{color.success.800}"
+                },
+                "primary-title": {
+                    "$value": "{color.success.600}",
+                    "$description": "Alert-dialog title (success). Component alias of text-success-primary."
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{color.warning.800}"
+                },
+                "secondary": {
+                    "$value": "{color.warning.900}"
+                },
+                "default": {
+                    "$value": "{color.warning.800}"
+                },
+                "hover": {
+                    "$value": "{color.warning.800}"
+                },
+                "active": {
+                    "$value": "{color.warning.800}"
+                },
+                "primary-title": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Alert-dialog title (warning). Component alias of text-warning-primary."
+                },
+                "primary-input": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Input addon label (warning). Component alias of text-warning-primary."
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{color.critical.800}"
+                },
+                "secondary": {
+                    "$value": "{color.critical.900}"
+                },
+                "default": {
+                    "$value": "{color.critical.800}"
+                },
+                "hover": {
+                    "$value": "{color.critical.800}"
+                },
+                "active": {
+                    "$value": "{color.critical.800}"
+                },
+                "primary-title": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Alert-dialog title (critical). Component alias of text-critical-primary."
+                },
+                "primary-input": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Input addon label (critical). Component alias of text-critical-primary."
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{color.info.800}"
+                },
+                "secondary": {
+                    "$value": "{color.info.900}"
+                },
+                "primary-title": {
+                    "$value": "{color.info.600}",
+                    "$description": "Alert-dialog title (info). Component alias of text-info-primary."
+                }
+            },
+            "link": {
+                "default": {
+                    "$value": "{color.primary.400}"
+                },
+                "hover": {
+                    "$value": "{color.primary.500}"
+                },
+                "active": {
+                    "$value": "{color.primary.700}"
+                },
+                "secondary-default": {
+                    "$value": "{color.neutral.500}"
+                },
+                "secondary-hover": {
+                    "$value": "{color.neutral.600}"
+                },
+                "secondary-active": {
+                    "$value": "{color.neutral.800}"
+                },
+                "hover-action": {
+                    "$value": "{color.primary.600}",
+                    "$description": "Hover label of inline text actions styled as links: collapsible toggle, the asset input \"Max\", the Safe app link. Component alias of text-link-hover."
+                },
+                "active-action": {
+                    "$value": "{color.primary.800}",
+                    "$description": "Pressed label of the collapsible toggle. Component alias of text-link-active."
+                },
+                "secondary-hover-nav": {
+                    "$value": "{color.neutral.800}",
+                    "$description": "Hover label of tabs, navigation and footer links. Component alias of text-link-secondary-hover."
+                }
+            }
+        },
+        "icon": {
+            "surface": {
+                "primary": {
+                    "$value": "{color.neutral.400}"
+                },
+                "secondary": {
+                    "$value": "{color.neutral.300}"
+                },
+                "default": {
+                    "$value": "{color.neutral.300}"
+                },
+                "hover": {
+                    "$value": "{color.neutral.500}"
+                },
+                "active": {
+                    "$value": "{color.neutral.500}"
+                },
+                "disabled": {
+                    "$value": "{color.neutral.300}"
+                },
+                "disabled-accordion": {
+                    "$value": "{color.neutral.100}",
+                    "$description": "Disabled accordion chevron. Component alias of icon-surface-disabled."
+                },
+                "primary-item": {
+                    "$value": "{color.neutral.500}",
+                    "$description": "Static icon of list items: data-list action item (neutral), Safe pending transaction item, chat attachment. Component alias of icon-surface-primary."
+                },
+                "default-control": {
+                    "$value": "{color.neutral.400}",
+                    "$description": "Default icon of form controls: unchecked checkbox, file-avatar add icon, search icon. Component alias of icon-surface-default."
+                },
+                "hover-control": {
+                    "$value": "{color.neutral.600}",
+                    "$description": "Hover icon of the file-avatar input. Component alias of icon-surface-hover."
+                },
+                "active-control": {
+                    "$value": "{color.neutral.600}",
+                    "$description": "Focused / pressed icon of the search input and tabs. Component alias of icon-surface-active."
+                },
+                "disabled-control": {
+                    "$value": "{color.neutral.200}",
+                    "$description": "Disabled icon of the file-avatar input and tabs, disabled switch thumb. Component alias of icon-surface-disabled."
+                },
+                "default-tab": {
+                    "$value": "{color.neutral.500}",
+                    "$description": "Tab trigger icon. Component alias of icon-surface-default."
+                },
+                "hover-tab": {
+                    "$value": "{color.neutral.300}",
+                    "$description": "Tab trigger icon, hover. Component alias of icon-surface-hover."
+                },
+                "default-clear": {
+                    "$value": "{color.neutral.600}",
+                    "$description": "Clear icon of the search input. Component alias of icon-surface-default."
+                },
+                "default-card": {
+                    "$value": "{color.neutral.500}",
+                    "$description": "Checked mark of a disabled checkbox / radio card. Component alias of icon-surface-default."
+                },
+                "default-asset-transfer": {
+                    "$value": "{color.primary.300}",
+                    "$description": "Asset-transfer link-out icon, hover (Figma binds icon-surface-default in every state). Component alias of icon-surface-default."
+                }
+            },
+            "accent": {
+                "primary": {
+                    "$value": "{color.primary.400}"
+                },
+                "secondary": {
+                    "$value": "{color.primary.100}"
+                },
+                "tertiary": {
+                    "$value": "{color.primary.900}"
+                },
+                "default": {
+                    "$value": "{color.primary.300}"
+                },
+                "hover": {
+                    "$value": "{color.primary.400}"
+                },
+                "active": {
+                    "$value": "{color.primary.400}"
+                },
+                "selected": {
+                    "$value": "{color.primary.400}"
+                },
+                "inverse": {
+                    "$value": "{color.neutral.0}"
+                },
+                "hover-action": {
+                    "$value": "{color.primary.500}",
+                    "$description": "Hover chevron of the collapsible toggle. Component alias of icon-accent-hover."
+                },
+                "active-action": {
+                    "$value": "{color.primary.700}",
+                    "$description": "Pressed chevron of the collapsible toggle. Component alias of icon-accent-active."
+                }
+            },
+            "success": {
+                "primary": {
+                    "$value": "{color.success.500}"
+                },
+                "secondary": {
+                    "$value": "{color.success.100}"
+                },
+                "default": {
+                    "$value": "{color.success.500}"
+                },
+                "hover": {
+                    "$value": "{color.success.600}"
+                },
+                "active": {
+                    "$value": "{color.success.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{color.success.600}",
+                    "$description": "Status icon of AvatarIcon (success). Component alias of icon-success-primary."
+                }
+            },
+            "warning": {
+                "primary": {
+                    "$value": "{color.warning.500}"
+                },
+                "secondary": {
+                    "$value": "{color.warning.100}"
+                },
+                "default": {
+                    "$value": "{color.warning.500}"
+                },
+                "hover": {
+                    "$value": "{color.warning.600}"
+                },
+                "active": {
+                    "$value": "{color.warning.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Status icon of AvatarIcon (warning). Component alias of icon-warning-primary."
+                },
+                "primary-input": {
+                    "$value": "{color.warning.600}",
+                    "$description": "Input field icon (warning). Component alias of icon-warning-primary."
+                }
+            },
+            "critical": {
+                "primary": {
+                    "$value": "{color.critical.500}"
+                },
+                "secondary": {
+                    "$value": "{color.critical.100}"
+                },
+                "default": {
+                    "$value": "{color.critical.500}"
+                },
+                "hover": {
+                    "$value": "{color.critical.600}"
+                },
+                "active": {
+                    "$value": "{color.critical.600}"
+                },
+                "primary-avatar": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Status icon of AvatarIcon (critical). Component alias of icon-critical-primary."
+                },
+                "primary-input": {
+                    "$value": "{color.critical.600}",
+                    "$description": "Input field icon (critical). Component alias of icon-critical-primary."
+                }
+            },
+            "info": {
+                "primary": {
+                    "$value": "{color.info.500}"
+                },
+                "secondary": {
+                    "$value": "{color.info.100}"
+                },
+                "primary-avatar": {
+                    "$value": "{color.info.600}",
+                    "$description": "Status icon of AvatarIcon (info). Component alias of icon-info-primary."
+                }
+            },
+            "brand": {
+                "primary": {
+                    "$value": "{color.primary.400}"
+                },
+                "secondary": {
+                    "$value": "{color.primary.100}"
+                },
+                "tertiary": {
+                    "$value": "{color.primary.800}"
+                }
+            }
+        },
+        "shadow": {
+            "$type": "shadow",
+            "surface": {
+                "default": {
+                    "$value": "{shadow.neutral}"
+                },
+                "sm": {
+                    "$value": "{shadow.neutral-sm}"
+                },
+                "2xl": {
+                    "$value": "{shadow.neutral-2xl}"
+                },
+                "md": {
+                    "$value": "{shadow.neutral-md}",
+                    "$description": "Elevation of raised surfaces: dialog panels, the neutral tooltip, the asset-transfer address panel on hover. Figma defines sm, default and 2xl only."
+                }
+            },
+            "accent": {
+                "default": {
+                    "$value": "{shadow.primary}"
+                },
+                "sm": {
+                    "$value": "{shadow.primary-sm}"
+                },
+                "2xl": {
+                    "$value": "{shadow.primary-2xl}"
+                },
+                "md": {
+                    "$value": "{shadow.primary-md}",
+                    "$description": "Hover elevation of a selected CheckboxCard or RadioCard. Figma defines sm, default and 2xl only."
+                }
+            },
+            "success": {
+                "default": {
+                    "$value": "{shadow.success}"
+                }
+            },
+            "warning": {
+                "default": {
+                    "$value": "{shadow.warning}"
+                }
+            },
+            "critical": {
+                "default": {
+                    "$value": "{shadow.critical}"
+                }
+            },
+            "info": {
+                "default": {
+                    "$value": "{shadow.info}"
+                }
+            }
+        },
+        "gradient": {
+            "surface": {
+                "primary": {
+                    "$value": "{color.neutral.50}"
+                },
+                "primary-transparent": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.9607843137254902,
+                            0.9686274509803922,
+                            0.9803921568627451
+                        ],
+                        "hex": "#f5f7fa",
+                        "alpha": 0
+                    }
+                },
+                "secondary": {
+                    "$value": "{color.neutral.0}"
+                },
+                "secondary-transparent": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            1,
+                            1,
+                            1
+                        ],
+                        "hex": "#ffffff",
+                        "alpha": 0
+                    }
+                }
+            },
+            "skeleton": {
+                "start": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.8941176470588236,
+                            0.9058823529411765,
+                            0.9215686274509803
+                        ],
+                        "hex": "#e4e7eb",
+                        "alpha": 0
+                    }
+                },
+                "middle": {
+                    "$value": "{color.neutral.100}"
+                },
+                "end": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.8941176470588236,
+                            0.9058823529411765,
+                            0.9215686274509803
+                        ],
+                        "hex": "#e4e7eb",
+                        "alpha": 0
+                    }
+                }
+            },
+            "brand": {
+                "primary": {
+                    "$value": "{color.primary.400}"
+                },
+                "primary-transparent": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0.19215686274509805,
+                            0.39215686274509803,
+                            0.9803921568627451
+                        ],
+                        "hex": "#3164fa",
+                        "alpha": 0
+                    }
+                },
+                "tertiary": {
+                    "$value": "{color.primary.800}"
+                },
+                "tertiary-transparent": {
+                    "$value": {
+                        "colorSpace": "srgb",
+                        "components": [
+                            0,
+                            0.1607843137254902,
+                            0.5215686274509804
+                        ],
+                        "hex": "#002985",
+                        "alpha": 0
+                    }
+                }
+            }
+        },
+        "ring": {
+            "accent": {
+                "focus": {
+                    "$value": "{color.primary.200}",
+                    "$description": "Figma binds the Button focus ring to the primitive aragon/400, not to a semantic variable."
+                }
+            },
+            "success": {
+                "focus": {
+                    "$value": "{color.success.200}",
+                    "$description": "Figma binds the Button focus ring to the primitive green/400, not to a semantic variable."
+                }
+            },
+            "warning": {
+                "focus": {
+                    "$value": "{color.warning.200}",
+                    "$description": "Figma binds the Button focus ring to the primitive orange/400, not to a semantic variable."
+                }
+            },
+            "critical": {
+                "focus": {
+                    "$value": "{color.critical.200}",
+                    "$description": "Figma binds the Button focus ring to the primitive red/400, not to a semantic variable."
+                }
+            }
+        }
+    }
+}

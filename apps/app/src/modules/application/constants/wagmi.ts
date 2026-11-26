@@ -70,7 +70,8 @@ export const ensureAppKit = () => {
         },
         themeVariables: {
             '--w3m-font-family': 'var(--font-sans)',
-            '--w3m-accent': 'var(--color-primary-400)',
+            '--w3m-accent': 'var(--guk-bg-accent-solid)',
+            // biome-ignore lint/plugin/noPrimitiveColors: no role for the tint AppKit mixes into its own light palette
             '--w3m-color-mix': 'var(--color-neutral-100)',
             '--w3m-border-radius-master': '1.3px',
         },

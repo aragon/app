@@ -2541,9 +2541,11 @@
           },
           "description": "To connect, open the dApp, copy the WalletConnect QR code to your clipboard, and paste it here.",
           "title": "Connect to dApp",
+          "unsupportedNetwork": "This dApp doesn't support {{network}}. Switch the dApp to {{network}}, copy a new WalletConnect code and try again.",
           "uriField": {
             "placeholder": "wc:…"
-          }
+          },
+          "usedUri": "This WalletConnect code was already used. Copy a new code from the dApp and try again."
         },
         "listener": {
           "action": {

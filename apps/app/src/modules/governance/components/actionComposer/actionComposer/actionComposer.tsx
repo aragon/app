@@ -200,10 +200,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
         // Normalized like imported actions: the basic views expect their own shape (e.g. a transfer with a raw amount
         // to format once its decimals are known). Added as decoded, a transfer would re-encode the dApp's calldata from
-        // the raw amount at 18 decimals.
+        // the raw amount at 18 decimals. The `meta` set by the normalizer (e.g. the token-voting plugin of a mint) is
+        // kept, the basic views read it.
         const parsedActions = proposalActionsImportExportUtils
             .normalizeDecodedActions(actions, dao, decodedActionsAccount)
-            .map((action) => ({ ...action, daoId, meta: undefined }));
+            .map((action) => ({ ...action, daoId }) as IProposalActionData);
         onAddAction(parsedActions);
     };
 
@@ -222,6 +223,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
+    // Keeps the `meta` set by `decodeActions` (e.g. the token-voting plugin of a mint), the basic views read it.
     const handleImportActions = (actions: IProposalAction[]) => {
         const parsedActions = actions.map(
             (action) =>
@@ -229,7 +231,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     ...action,
                     value: BigInt(action.value),
                     daoId,
-                    meta: undefined,
                 }) as unknown as IProposalActionData,
         );
         onAddAction(parsedActions);

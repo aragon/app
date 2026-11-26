@@ -332,7 +332,7 @@ Polymorphic button that renders as a native <button> or, when given href, as an 
 
 **References**
 
-- `kit:src/core/components/button/button.tsx:188`
+- `kit:src/core/components/button/button.tsx:196`
 - `kit:src/core/components/button/button.stories.tsx:1`
 
 ### Card
@@ -343,7 +343,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **Usage notes**
 
-- `Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`).
+- `Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. A class that overrides a property `Card` sets (background, border colour, shadow) needs the important modifier (`border-critical-primary!`): the stylesheet orders classes by name, not by their order in `className`.
 
 **Use when**
 
@@ -351,7 +351,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **References**
 
-- `kit:src/core/components/cards/card/card.tsx:13`
+- `kit:src/core/components/cards/card/card.tsx:14`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
 
 ### CardCollapsible
@@ -751,7 +751,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:72`
+- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:75`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
 
 ### Dropdown.Group
@@ -1487,7 +1487,7 @@ Indeterminate loading spinner with size/variant.
 
 **References**
 
-- `kit:src/core/components/spinner/spinner.tsx:87`
+- `kit:src/core/components/spinner/spinner.tsx:88`
 - `kit:src/core/components/spinner/spinner.stories.tsx:1`
 
 ### StatePingAnimation
@@ -1707,7 +1707,7 @@ Hover/focus tooltip (Radix) with content and variant.
 
 **References**
 
-- `kit:src/core/components/tooltip/tooltip.tsx:70`
+- `kit:src/core/components/tooltip/tooltip.tsx:72`
 - `kit:src/core/components/tooltip/tooltip.stories.tsx:1`
 
 ### TransactionDataListItem.Skeleton

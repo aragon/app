@@ -52,7 +52,7 @@ export const CreateWorkspaceFormAccountsItemMetadata: React.FC<
     );
 
     return (
-        <div className="flex flex-col gap-6 border-t border-neutral-100 pt-4">
+        <div className="flex flex-col gap-6 border-t border-surface-secondary pt-4">
             <Heading as="h4" size="h5">
                 {t('app.workspace.createWorkspaceForm.accounts.metadata.title')}
             </Heading>

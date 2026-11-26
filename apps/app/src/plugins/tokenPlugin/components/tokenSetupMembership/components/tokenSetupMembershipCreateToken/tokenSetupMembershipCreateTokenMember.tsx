@@ -94,7 +94,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<
     );
 
     return (
-        <div className="flex items-end gap-x-4 rounded-xl border border-neutral-100 p-6">
+        <div className="flex items-end gap-x-4 rounded-xl border border-surface-secondary p-6">
             <div className="flex w-full flex-col gap-4 md:flex-row">
                 <AddressInput
                     chainId={chainId}

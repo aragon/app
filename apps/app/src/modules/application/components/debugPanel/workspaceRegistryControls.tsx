@@ -68,7 +68,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
     return (
         <section className="flex flex-col gap-2">
             <Heading size="h3">Workspace registry</Heading>
-            <p className="text-sm leading-normal text-neutral-500">
+            <p className="text-sm leading-normal text-surface-secondary">
                 Save, restore or delete the local workspace JSON for this
                 environment.
             </p>
@@ -95,6 +95,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
                 type="file"
             />
             {error != null && (
+                // biome-ignore lint/plugin/noPrimitiveColors: no text role has critical-500
                 <p className="text-sm text-critical-500" role="alert">
                     {error}
                 </p>

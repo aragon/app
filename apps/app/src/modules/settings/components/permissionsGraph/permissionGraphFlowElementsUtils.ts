@@ -92,12 +92,12 @@ const getEdgeFlow = (
 };
 
 const edgeBaseStyle = {
-    stroke: 'var(--color-neutral-300)',
+    stroke: 'var(--guk-border-surface-default-graph-node)',
     strokeWidth: 1.4,
 };
 
 const edgeActiveStyle = {
-    stroke: 'var(--color-primary-400)',
+    stroke: 'var(--guk-border-surface-selected)',
     strokeWidth: 2,
 };
 
@@ -126,7 +126,9 @@ const getOriginMarker = (active: boolean) =>
 
 const getEdgeMarker = (active: boolean) => ({
     type: MarkerType.ArrowClosed,
-    color: active ? 'var(--color-primary-400)' : 'var(--color-neutral-300)',
+    color: active
+        ? 'var(--guk-border-surface-selected)'
+        : 'var(--guk-border-surface-default-graph-node)',
     width: 18,
     height: 18,
 });

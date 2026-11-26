@@ -18,6 +18,7 @@ describe('safeBalanceUtils', () => {
                 name: 'Ether',
                 symbol: 'ETH',
                 amount: '1.5',
+                decimals: 18,
                 logoSrc: undefined,
                 tokenAddress: undefined,
             });
@@ -41,6 +42,7 @@ describe('safeBalanceUtils', () => {
                 name: 'USD Coin',
                 symbol: 'USDC',
                 amount: '2.5',
+                decimals: 6,
                 logoSrc: 'https://logo.test/usdc.png',
                 tokenAddress: '0xTokenAddress',
             });

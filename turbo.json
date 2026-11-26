@@ -42,8 +42,7 @@
         "version"
     ],
     "globalDependencies": [
-        "biome.json",
-        ".design-sync/**"
+        "biome.json"
     ],
     "agentGuidance": false,
     "tasks": {

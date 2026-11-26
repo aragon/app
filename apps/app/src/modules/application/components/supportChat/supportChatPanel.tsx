@@ -62,13 +62,14 @@ export const SupportChatPanel: React.FC = () => {
     }
 
     const panelClassNames = classNames(
-        'justify-end overflow-hidden bg-neutral-0',
+        'justify-end overflow-hidden bg-surface-primary',
         'screen-lg:sticky screen-lg:top-0 screen-lg:h-dvh screen-lg:shrink-0 screen-lg:self-start',
         'screen-lg:transition-[width] screen-lg:duration-300 screen-lg:ease-in-out',
         isOpen
             ? classNames(
                   'fixed inset-0 z-[var(--guk-dialog-content-z-index)] flex',
-                  'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-l screen-lg:border-neutral-100 screen-lg:shadow-neutral-lg',
+                  // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
+                  'screen-lg:inset-auto screen-lg:z-auto screen-lg:flex screen-lg:border-l screen-lg:border-surface-secondary screen-lg:shadow-neutral-lg',
                   panelWidthClassName,
               )
             : 'hidden screen-lg:flex screen-lg:w-0',

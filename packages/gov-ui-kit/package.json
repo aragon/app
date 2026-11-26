@@ -47,10 +47,14 @@
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "sb": "pnpm storybook",
         "storybook": "storybook dev -p 6006",
-        "test": "jest",
-        "test:coverage": "jest --coverage",
+        "test": "pnpm test:tokens && jest",
+        "test:coverage": "pnpm test:tokens && jest --coverage",
+        "test:tokens": "node --test scripts/tokens/*.test.mjs",
         "test:watch": "jest --watch",
-        "type-check": "tsc --noemit"
+        "tokens:check": "node scripts/tokens/generate.mjs --check",
+        "tokens:generate": "node scripts/tokens/generate.mjs",
+        "type-check": "tsc --noemit",
+        "visual-diff": "node scripts/visual-diff.mjs"
     },
     "dependencies": {
         "@floating-ui/dom": "^1.8.0",
@@ -110,6 +114,7 @@
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
         "@types/sanitize-html": "^2.16.2",
+        "ajv": "catalog:",
         "cross-env": "catalog:",
         "jest": "catalog:",
         "jest-environment-jsdom": "catalog:",

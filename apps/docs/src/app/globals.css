@@ -71,7 +71,7 @@
 
 /* Default font smoothing, as in the app: Manrope is drawn at its real weight. */
 body {
-    @apply bg-neutral-0 text-neutral-800;
+    @apply bg-surface-primary text-surface-primary;
 }
 
 /* The height of the site header (src/components/siteHeader.tsx: py-5 around the 40px button); the
@@ -162,7 +162,7 @@ body {
 }
 
 #nd-toc #toc-title {
-    @apply text-neutral-400 text-sm uppercase tracking-wider;
+    @apply text-surface-tertiary text-sm uppercase tracking-wider;
 }
 
 #nd-toc #toc-title svg {

@@ -1,0 +1,11 @@
+[
+    {
+        "attribute": "theme",
+        "title": "Colour theme",
+        "icon": "paintbrush",
+        "modes": [
+            "next",
+            "dark"
+        ]
+    }
+]

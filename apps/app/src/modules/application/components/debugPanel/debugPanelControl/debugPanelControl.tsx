@@ -1,4 +1,4 @@
-import { InputText, Switch } from '@aragon/gov-ui-kit';
+import { InputText, Radio, RadioGroup, Switch } from '@aragon/gov-ui-kit';
 import {
     type IDebugContextControl,
     useDebugContext,
@@ -10,7 +10,7 @@ import type { IDebugPanelControlProps } from './debugPanelControl.api';
 export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     const { control } = props;
 
-    const { type, name, label, onChange } = control;
+    const { type, name, label, options, onChange } = control;
 
     const { values, updateValue } = useDebugContext();
 
@@ -32,6 +32,26 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
                     handleValueChange(name, event, onChange)
                 }
             />
+        );
+    }
+
+    if (type === 'select') {
+        return (
+            <RadioGroup
+                label={label}
+                onValueChange={(value) =>
+                    handleValueChange(name, value, onChange)
+                }
+                value={values[name] as string | undefined}
+            >
+                {options?.map((option) => (
+                    <Radio
+                        key={option.value}
+                        label={option.label}
+                        value={option.value}
+                    />
+                ))}
+            </RadioGroup>
         );
     }
 

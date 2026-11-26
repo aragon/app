@@ -135,10 +135,10 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                                 term={t(`${translationKey}.account.blockchain`)}
                             >
                                 <div className="flex flex-col gap-1">
-                                    <p className="text-neutral-500">
+                                    <p className="text-surface-secondary">
                                         {networkDefinitions[network].name}
                                     </p>
-                                    <p className="text-sm leading-tight font-normal text-neutral-400">
+                                    <p className="text-sm leading-tight font-normal text-surface-tertiary">
                                         {t(
                                             `${translationKey}.account.notChangeable`,
                                         )}
@@ -174,7 +174,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                                         )}
                                         collapsedLines={4}
                                     >
-                                        <p className="text-neutral-500">
+                                        <p className="text-surface-secondary">
                                             {description}
                                         </p>
                                     </Collapsible>
@@ -188,7 +188,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 >
                     <Card className="p-6">
                         {isGovernanceUnavailable ? (
-                            <p className="text-neutral-500">
+                            <p className="text-surface-secondary">
                                 {t(`${translationKey}.governance.unavailable`)}
                             </p>
                         ) : (
@@ -238,7 +238,7 @@ const SettingRow: React.FC<ISettingRowProps> = (props) => {
             term={row.term}
         >
             {row.link == null ? (
-                <p className="text-neutral-500">{row.definition}</p>
+                <p className="text-surface-secondary">{row.definition}</p>
             ) : (
                 row.definition
             )}

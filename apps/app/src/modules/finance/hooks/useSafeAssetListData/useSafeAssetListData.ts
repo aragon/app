@@ -1,5 +1,6 @@
-import { formatUnits, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import type { IAsset } from '@/modules/finance/api/financeService';
+import { safeBalanceUtils } from '@/modules/safe/utils/safeBalanceUtils';
 import { type ISafeBalance, useSafeBalances } from '@/shared/api/safeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
@@ -11,28 +12,28 @@ import type { ISafeAssetListSource } from '../../types';
 import { assetUtils } from '../../utils/assetUtils';
 
 /**
- * Converts a balance of the Safe transaction service into an asset. The service reports the native currency with a
- * null token and no price, so the chain definition names it and the zero address identifies it, as on DAO assets.
+ * Converts a balance of the Safe transaction service into an asset, sharing the balance conversion of the Safe
+ * balance list. The native currency has no token address, so the zero address identifies it, as on DAO assets.
  */
 const balanceToAsset = (
     balance: ISafeBalance,
     network: ISafeAssetListSource['network'],
     nativeCurrency: INetworkDefinition['nativeCurrency'],
 ): IAsset => {
-    const { token, tokenAddress } = balance;
-    const decimals = token?.decimals ?? nativeCurrency.decimals;
+    const { name, symbol, amount, decimals, logoSrc, tokenAddress } =
+        safeBalanceUtils.getBalanceAsset({ balance, nativeCurrency });
 
     return assetUtils.normalizeAsset({
-        amount: formatUnits(BigInt(balance.balance), decimals),
+        amount,
         token: {
             address: tokenAddress ?? zeroAddress,
             network,
-            name: token?.name ?? nativeCurrency.name,
-            symbol: token?.symbol ?? nativeCurrency.symbol,
+            name,
+            symbol,
             decimals,
-            logo: token?.logoUri ?? '',
-            priceUsd: '0',
+            logo: logoSrc ?? '',
             // Not reported by the Safe transaction service.
+            priceUsd: '0',
             totalSupply: null,
         },
     });

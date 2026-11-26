@@ -23,6 +23,31 @@
     },
     "overrides": [
         {
+            // Token lint: source outside the theme takes role classes, not primitive ones. A token layer is one
+            // biome-plugins/<language>/<rule>.grit per language, listed here and in apps/app/biome.jsonc. A class kept
+            // on purpose gets `biome-ignore lint/plugin/<rule>: <reason>` on the line above it.
+            "includes": [
+                "src/**",
+                "!src/theme/**",
+                "!**/*.test.ts",
+                "!**/*.test.tsx",
+                "!**/*.stories.tsx",
+                "!**/*StoryComponent.tsx",
+                "!src/core/test/**",
+                "!src/modules/testUtils/**"
+            ],
+            "plugins": [
+                {
+                    "path": "./biome-plugins/js/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveColors.grit",
+                    "resolutionKind": "config"
+                }
+            ]
+        },
+        {
             "includes": [
                 "scripts/**"
             ],

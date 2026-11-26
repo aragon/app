@@ -291,10 +291,10 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     variant={statusToVariant[status]}
                 />
             </div>
-            <hr className="border-neutral-100" />
-            <div className="grid grid-cols-3 gap-4 text-base leading-tight text-neutral-800 md:text-lg">
+            <hr className="border-surface-secondary" />
+            <div className="grid grid-cols-3 gap-4 text-base leading-tight text-surface-primary md:text-lg">
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="text-sm text-surface-secondary md:text-base">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.locked',
                         )}
@@ -302,7 +302,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     <div className="truncate">{formattedLockedAmount}</div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="text-sm text-surface-secondary md:text-base">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.multiplier',
                         )}
@@ -312,7 +312,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                     </div>
                 </div>
                 <div className="flex flex-col">
-                    <div className="text-sm text-neutral-500 md:text-base">
+                    <div className="text-sm text-surface-secondary md:text-base">
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.votingPower',
                         )}
@@ -355,7 +355,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                             )}
                         </Button>
                         {!canUnlock && (
-                            <p className="text-sm leading-normal text-neutral-500">
+                            <p className="text-sm leading-normal text-surface-secondary">
                                 {formattedMinLock}{' '}
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockList.item.minLockTimeLeftSuffix',
@@ -398,7 +398,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                                             : undefined;
 
                                     return (
-                                        <p className="text-sm leading-normal text-neutral-500">
+                                        <p className="text-sm leading-normal text-surface-secondary">
                                             {formattedMinCooldownDate}{' '}
                                             {t(
                                                 'app.plugins.gaugeVoter.gaugeVoterLockList.item.withdrawTimeLeftSuffix',

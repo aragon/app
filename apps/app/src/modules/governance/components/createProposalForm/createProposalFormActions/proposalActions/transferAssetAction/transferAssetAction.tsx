@@ -122,6 +122,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         functionName: 'balanceOf',
         args: [senderAddress as Hex],
         chainId,
+        query: { enabled: disableTokenSelection },
     });
 
     const receiver = useWatch<

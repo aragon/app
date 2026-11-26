@@ -1,7 +1,13 @@
 import { Dialog, IconType, InputText } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
+import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
+import {
+    WalletConnectUnsupportedNetworkError,
+    WalletConnectUsedUriError,
+} from '../../api/walletConnectService';
 
 export interface IWalletConnectActionFormData {
     /**
@@ -23,6 +29,14 @@ export interface IWalletConnectActionDialogConnectProps {
      * Status of the app connection.
      */
     status: 'idle' | 'pending' | 'error';
+    /**
+     * Network of the account the dApp connects to.
+     */
+    network: Network;
+    /**
+     * Error of the last connection attempt, explained below the URI field when it is a known WalletConnect error.
+     */
+    error?: unknown;
 }
 
 const formId = 'dappConnectForm';
@@ -30,7 +44,7 @@ const formId = 'dappConnectForm';
 export const WalletConnectActionDialogConnect: React.FC<
     IWalletConnectActionDialogConnectProps
 > = (props) => {
-    const { onFormSubmit, onCancel, status } = props;
+    const { onFormSubmit, onCancel, status, network, error } = props;
 
     const { t } = useTranslations();
 
@@ -45,6 +59,21 @@ export const WalletConnectActionDialogConnect: React.FC<
     });
 
     const primaryActionLabel = status === 'error' ? 'retry' : 'connect';
+
+    const errorMessage =
+        error instanceof WalletConnectUnsupportedNetworkError
+            ? t(
+                  'app.governance.walletConnectActionDialog.connect.unsupportedNetwork',
+                  { network: networkDefinitions[network].name },
+              )
+            : error instanceof WalletConnectUsedUriError
+              ? t('app.governance.walletConnectActionDialog.connect.usedUri')
+              : undefined;
+
+    const errorAlert =
+        errorMessage != null
+            ? { message: errorMessage, variant: 'critical' as const }
+            : undefined;
 
     return (
         <>
@@ -67,6 +96,7 @@ export const WalletConnectActionDialogConnect: React.FC<
                             'app.governance.walletConnectActionDialog.connect.uriField.placeholder',
                         )}
                         {...uriField}
+                        alert={uriField.alert ?? errorAlert}
                     />
                 </form>
             </Dialog.Content>

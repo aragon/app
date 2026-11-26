@@ -18,7 +18,15 @@
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
-const { APP_ASSETS, CANVAS, REPO, die, pointerFile } = require('./paths.cjs');
+const {
+    APP_ASSETS,
+    CANVAS,
+    REPO,
+    STAMP,
+    die,
+    digestFolder,
+    pointerFile,
+} = require('./paths.cjs');
 
 const out = process.argv[2];
 if (!out || process.argv.length > 4) {
@@ -145,6 +153,19 @@ const kitFiles = Object.fromEntries(
         { artifact: reference.kit.artifact, path: `project/${file}` },
     ]),
 );
+// The reference canvas carries its own record of what was published, so a refresh changes nothing in git:
+// project/published.json, with the commit and the fingerprint canvas-digest.cjs checks the canvas against.
+if (POINTER === pointerFile()) {
+    const commit = require('node:child_process')
+        .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO })
+        .toString()
+        .trim();
+    fs.writeFileSync(
+        path.join(out, 'project', STAMP),
+        `${JSON.stringify({ commit, digest: digestFolder(path.join(out, 'project')) }, null, 1)}\n`,
+    );
+    ownFiles[`project/${STAMP}`] = `project/${STAMP}`;
+}
 fs.writeFileSync(
     path.join(out, 'files.json'),
     `${JSON.stringify(ownFiles, null, 1)}\n`,

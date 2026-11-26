@@ -796,22 +796,15 @@
 /* chevron: size sm, transition-transform group-data-[state=open]:rotate-180 */
 .ws-chevron { transition: transform 150ms; }
 .ws-chevron--open { transform: rotate(180deg); }
-/* Dropdown.Group (kit dropdownGroup.tsx): flex flex-col divide-y divide-neutral-100 overflow-hidden rounded-xl border
-   border-neutral-100 bg-neutral-0; triggers inside lose their border, rounding and shadow. No overflow-hidden here:
-   the menus are drawn inside the group, not in a portal as in the app. */
-.ws-selector-group { display: flex; flex-direction: column; border: 1px solid var(--color-neutral-100); border-radius: 12px; background: var(--color-neutral-0); }
-.ws-selector-group > .ws-menu-wrap + .ws-menu-wrap { border-top: 1px solid var(--color-neutral-100); }
+/* Dropdown.Group (kit): the real component draws the border, surface, rounding and the divider between the selectors.
+   The menus are drawn inside the group, not in a portal as in the app, so its overflow-hidden is lifted; the selectors
+   lose their own border and take the group's corner radii. */
+.ws-selector-group { overflow: visible; }
 .ws-selector-group .ws-selector, .ws-selector-group .ws-selector:hover { border: 0; border-radius: 0; box-shadow: none; }
 .ws-selector-group > .ws-menu-wrap:first-child .ws-selector { border-radius: 11px 11px 0 0; }
 .ws-selector-group > .ws-menu-wrap:last-child .ws-selector { border-radius: 0 0 11px 11px; }
-/* AvatarStack (kit avatarStack.tsx), 3+ avatars: size xs (16px), -ml-1 overlap, the first two plus a "+N" count avatar
-   (bg-neutral-50 font-semibold text-neutral-500, text-[8px] leading-none) */
-.ws-avatar-stack { display: inline-flex; align-items: center; }
-.ws-avatar-stack__slot { position: relative; display: flex; width: 16px; height: 16px; flex-shrink: 0; overflow: hidden; border-radius: 9999px; }
-.ws-avatar-stack__slot > * { width: 100% !important; height: 100% !important; }
-.ws-avatar-stack__slot--overlap { margin-left: -4px; }
-.ws-avatar-stack__count { align-items: center; justify-content: center; background: var(--color-neutral-50); color: var(--color-neutral-500); font: 600 8px/1 var(--font-sans); }
 /* flex min-w-0 grow flex-col text-left leading-tight */
+
 .ws-selector__text { display: flex; min-width: 0; flex-grow: 1; flex-direction: column; text-align: left; line-height: 1.25; }
 .ws-selector__title { overflow: hidden; color: var(--color-neutral-800); font-size: 16px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
 .ws-selector__subtitle { overflow: hidden; color: var(--color-neutral-500); font-size: 14px; line-height: 20px; text-overflow: ellipsis; white-space: nowrap; }
@@ -842,8 +835,6 @@
 .ws-compact__text { display: flex; min-width: 0; flex-direction: column; text-align: left; line-height: 1.25; }
 .ws-compact__title { overflow: hidden; color: var(--color-neutral-800); font-size: 14px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
 .ws-compact__subtitle { overflow: hidden; font-size: 12px; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
-.ws-compact__chevrons { display: flex; flex-shrink: 0; flex-direction: column; align-items: center; }
-.ws-compact__chevrons > * + * { margin-top: -4px; }
 @media (min-width: 48rem) {
     .ws-compact { gap: 12px; padding: 8px 12px 8px 8px; border-radius: 12px; }
     .ws-compact__title { font-size: 16px; }
@@ -1042,7 +1033,7 @@
 .pg-stack__item--cond { padding-bottom: 4px; }
 .pg-stack__cond { border-radius: 4px; padding: 0 4px; background: var(--color-neutral-0); color: var(--color-neutral-800); }
 
-/* ---- Dialogs: apps/app layoutRoot.overrides.css (z-index tokens of the kit dialogs) ---- */
+/* ---- Dialogs: apps/app layoutRoot.css (z-index tokens of the kit dialogs) ---- */
 :root {
     --guk-dialog-overlay-z-index: 20;
     --guk-dialog-alert-overlay-z-index: 20;
@@ -1298,15 +1289,17 @@
 .wizard-step__errors { display: flex; flex-direction: column; gap: 24px; }
 
 /* ---- WorkspaceWelcomeDialog: modules/workspace/dialogs/workspaceWelcomeDialog/workspaceWelcomeDialog.tsx ---- */
-/* content: flex flex-col gap-6 px-6 pt-4 pb-6 */
-.ws-welcome { display: flex; flex-direction: column; gap: 24px; padding: 16px 24px 24px; font-family: var(--font-sans); }
+/* content: flex flex-col gap-4 pt-2 pb-4 (+ default px-4 md:px-6); the description sits in the header, the note in the footer */
+.ws-welcome { display: flex; flex-direction: column; gap: 16px; padding: 8px 16px 16px; font-family: var(--font-sans); }
+@media (min-width: 768px) { .ws-welcome { padding-left: 24px; padding-right: 24px; } }
 .ws-welcome p { margin: 0; }
-/* text-base leading-normal text-neutral-500 */
-.ws-welcome__description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
-.ws-welcome__features { display: flex; flex-direction: column; gap: 16px; }
-.ws-welcome__feature { display: flex; flex-direction: row; align-items: flex-start; gap: 12px; }
+.ws-welcome__feature { display: flex; flex-direction: row; align-items: center; gap: 12px; }
+/* flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-50, Icon text-primary-400 */
+.ws-welcome__icon { display: flex; width: 32px; height: 32px; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 9999px; background: var(--color-primary-50); color: var(--color-primary-400); }
 .ws-welcome__feature-text { display: flex; flex-direction: column; gap: 2px; }
-.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 400; line-height: 1.25; }
-.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 16px; line-height: 1.5; }
+/* text-base leading-tight font-semibold text-neutral-800 */
+.ws-welcome__feature-title { color: var(--color-neutral-800); font-size: 16px; font-weight: 600; line-height: 1.25; }
 /* text-sm leading-normal text-neutral-500 */
-.ws-welcome__note { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+.ws-welcome__feature-description { color: var(--color-neutral-500); font-size: 14px; line-height: 1.5; }
+/* Dialog.Footer child: -mb-2 text-xs leading-normal text-neutral-500 */
+.ws-welcome__note { margin: 0 0 -8px; color: var(--color-neutral-500); font-size: 12px; line-height: 1.5; }

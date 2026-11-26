@@ -56,6 +56,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
         data: appSession,
         mutate: connectApp,
         status: connectionStatus,
+        error: connectionError,
         reset: resetAppSession,
     } = useConnectApp();
     const { mutate: disconnectApp } = useDisconnectApp();
@@ -63,9 +64,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
 
     const handleSessionRequest = useCallback(
         async (sessionRequest: ISessionRequest) => {
+            if (appSession == null) {
+                return;
+            }
+
             const proposalAction =
                 await walletConnectActionDialogUtils.sessionRequestToAction({
                     sessionRequest,
+                    session: appSession,
                     address,
                     network,
                     decodeTransactionAsync,
@@ -75,12 +81,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
                 setActions((current) => [...current, proposalAction]);
             }
         },
-        [decodeTransactionAsync, address, network],
+        [decodeTransactionAsync, appSession, address, network],
     );
 
     const handleCloseDialog = useCallback(() => {
         if (appSession) {
             disconnectApp({ session: appSession });
+        } else {
+            walletConnectService.cancelConnectApp();
         }
 
         resetAppSession();
@@ -121,12 +129,14 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     const handleFormSubmit = ({ uri }: IWalletConnectActionFormData) => {
         // Reset previous errors in case of retry
         resetAppSession();
-        connectApp({ uri, address });
+        connectApp({ uri, address, network });
     };
 
     if (appSession == null) {
         return (
             <WalletConnectActionDialogConnect
+                error={connectionError}
+                network={network}
                 onCancel={handleCloseDialog}
                 onFormSubmit={handleFormSubmit}
                 status={connectionStatus}

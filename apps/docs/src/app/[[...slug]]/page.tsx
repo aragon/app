@@ -23,7 +23,7 @@ interface IPageProps {
 
 // The page actions as small tertiary buttons of the gov-ui-kit.
 const pageActionClassName =
-    'h-8 gap-1 rounded-lg border border-neutral-100 bg-neutral-0 px-2 font-normal text-neutral-500 text-sm shadow-neutral-sm hover:border-neutral-200 hover:bg-neutral-50 hover:text-neutral-500 hover:shadow-neutral [&_svg]:size-4 [&_svg]:text-neutral-300';
+    'h-8 gap-1 rounded-lg border border-surface-default bg-surface-default px-2 font-normal text-surface-default text-sm shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:text-surface-hover hover:shadow-surface-default [&_svg]:size-4 [&_svg]:icon-surface-default!';
 
 export default async function Page({ params }: IPageProps) {
     const { slug } = await params;
@@ -43,7 +43,7 @@ export default async function Page({ params }: IPageProps) {
             full={page.data.full}
             toc={page.data.toc}
         >
-            <DocsTitle className="border-b border-neutral-200 pb-3 text-2xl leading-tight font-normal text-neutral-800 md:text-3xl">
+            <DocsTitle className="border-b border-surface-secondary-panel pb-3 text-2xl leading-tight font-normal text-surface-primary md:text-3xl">
                 {page.data.title}
             </DocsTitle>
             {/* The markdown copy of the page, which the build publishes next to it: copy it, or open
@@ -75,7 +75,7 @@ export default async function Page({ params }: IPageProps) {
             {/* The date of the page's last change in the knowledge base (prepareContent.ts). */}
             {page.data.lastModified != null && (
                 <PageLastUpdate
-                    className="text-neutral-500"
+                    className="text-surface-secondary"
                     date={new Date(page.data.lastModified)}
                 />
             )}

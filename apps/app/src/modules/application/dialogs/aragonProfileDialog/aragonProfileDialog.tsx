@@ -356,7 +356,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                     variant="info"
                 >
                     <div className="flex flex-col gap-3">
-                        <p className="text-base leading-normal text-neutral-500">
+                        <p className="text-base leading-normal text-surface-secondary">
                             {t(
                                 'app.application.aragonProfileDialog.alert.description',
                             )}
@@ -371,7 +371,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
                 {isAragonName && (
                     <InputContainer
-                        className="[&_label_div_p]:text-critical-800"
+                        className="[&_label_div_p]:text-critical-primary"
                         helpText={t(
                             'app.application.aragonProfileDialog.dangerZone.description',
                         )}

@@ -1,16 +1,20 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
+import { TokenProposalActionType } from '@/plugins/tokenPlugin/types';
 import * as daoService from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import {
     generateDao,
+    generateDaoPlugin,
     generateDialogContext,
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { ProposalActionType } from '../../../api/governanceService';
+import { smartContractService } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
 import { generateProposalAction } from '../../../testUtils';
@@ -149,6 +153,98 @@ describe('ActionComposer', () => {
                     daoId: 'dao-1',
                 }),
             ]);
+        });
+    });
+
+    describe('DAO mint actions', () => {
+        const tokenAddress = '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238';
+        const receiver = '0x2222222222222222222222222222222222222222';
+        const tokenPlugin = generateDaoPlugin({
+            interfaceType: daoService.PluginInterfaceType.TOKEN_VOTING,
+            settings: generateTokenPluginSettings({
+                token: {
+                    ...generateTokenPluginSettings().token,
+                    address: tokenAddress,
+                    decimals: 6,
+                },
+            }),
+        });
+
+        // A mint of the DAO's governance token as the backend decodes it, with the raw amount.
+        const decodedMint = generateProposalAction({
+            type: TokenProposalActionType.MINT,
+            to: tokenAddress,
+            value: '0',
+            data: '0x40c10f19',
+            inputData: {
+                function: 'mint',
+                contract: 'GovernanceERC20',
+                parameters: [
+                    { name: 'to', type: 'address', value: receiver },
+                    { name: 'amount', type: 'uint256', value: '2500000' },
+                ],
+            },
+        });
+
+        // The mint view reads the token from the plugin set as `meta` as soon as it renders.
+        const expectedMint = expect.objectContaining({
+            type: TokenProposalActionType.MINT,
+            receiver: { address: receiver },
+            amount: '2.5',
+            daoId: 'dao-1',
+            meta: tokenPlugin,
+        });
+
+        beforeEach(() => {
+            useDaoSpy.mockReturnValue(
+                generateReactQueryResultSuccess({
+                    data: generateDao({ plugins: [tokenPlugin] }),
+                }),
+            );
+        });
+
+        it('keeps the token-voting plugin as meta of a mint added through WalletConnect', async () => {
+            const openMock = jest.fn();
+            useDialogContextSpy.mockReturnValue(
+                generateDialogContext({ open: openMock }),
+            );
+            const onAddAction = jest.fn();
+            render(createTestComponent({ onAddAction }));
+
+            await userEvent.click(
+                screen.getByRole('button', { name: /walletConnect/i }),
+            );
+            const { params } = openMock.mock.calls[0][1] as {
+                params: IWalletConnectActionDialogParams;
+            };
+            act(() => params.onAddActionsClick([decodedMint]));
+
+            expect(onAddAction).toHaveBeenCalledWith([expectedMint]);
+        });
+
+        it('keeps the token-voting plugin as meta of a mint imported from a file', async () => {
+            const decodeSpy = jest
+                .spyOn(smartContractService, 'decodeTransactionsLight')
+                .mockResolvedValue([decodedMint]);
+            const onAddAction = jest.fn();
+            const { container } = render(createTestComponent({ onAddAction }));
+
+            const exported = [
+                { to: tokenAddress, value: '0', data: decodedMint.data },
+            ];
+            const file = new File([JSON.stringify(exported)], 'actions.json', {
+                type: 'application/json',
+            });
+            const input =
+                container.querySelector<HTMLInputElement>(
+                    'input[type="file"]',
+                )!;
+            await userEvent.upload(input, file);
+
+            await waitFor(() =>
+                expect(onAddAction).toHaveBeenCalledWith([expectedMint]),
+            );
+            decodeSpy.mockRestore();
         });
     });
 

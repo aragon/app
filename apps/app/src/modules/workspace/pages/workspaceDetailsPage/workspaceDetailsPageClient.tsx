@@ -193,10 +193,10 @@ export const WorkspaceDetailsPageClient: React.FC<
                             <div className="flex flex-col gap-3 md:gap-2">
                                 {targets.map((target) => (
                                     <Card
-                                        className="flex flex-col gap-1 p-4 shadow-neutral-sm md:p-6"
+                                        className="flex flex-col gap-1 p-4 shadow-surface-sm md:p-6"
                                         key={`${target.network}-${target.address}`}
                                     >
-                                        <span className="text-sm leading-normal text-neutral-500">
+                                        <span className="text-sm leading-normal text-surface-secondary">
                                             {
                                                 networkDefinitions[
                                                     target.network

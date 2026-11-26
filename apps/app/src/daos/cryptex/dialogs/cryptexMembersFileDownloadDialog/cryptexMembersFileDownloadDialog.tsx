@@ -137,7 +137,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (
-                        <p className="text-sm text-critical-600">
+                        <p className="text-sm text-critical-primary-message">
                             {errorCode
                                 ? t(
                                       'app.daos.cryptex.cryptexMembersFileDownloadDialog.error.withCode',

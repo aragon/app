@@ -52,19 +52,21 @@ export interface ITooltipProps {
 }
 
 const variantToArrowFill: Record<TooltipVariant, string> = {
+    // biome-ignore lint/plugin/noPrimitiveColors: the critical tooltip has no background role
     critical: 'fill-critical-300',
-    info: 'fill-info-300',
-    neutral: 'fill-neutral-800',
-    success: 'fill-success-300',
-    warning: 'fill-warning-300',
+    info: 'fill-(--guk-bg-info-solid-tooltip)',
+    neutral: 'fill-(--guk-bg-surface-tertiary-inverse)',
+    success: 'fill-(--guk-bg-success-solid-tooltip)',
+    warning: 'fill-(--guk-bg-warning-solid-tooltip)',
 };
 
 const variantToContentClassName: Record<TooltipVariant, string> = {
-    critical: 'bg-critical-300 text-critical-900 shadow-critical-md',
-    info: 'bg-info-300 text-info-900 shadow-info-md',
-    neutral: 'bg-neutral-800 text-neutral-50 shadow-neutral-md',
-    success: 'bg-success-300 text-success-900 shadow-success-md',
-    warning: 'bg-warning-300 text-warning-900 shadow-warning-md',
+    // biome-ignore lint/plugin/noPrimitiveColors: the critical tooltip has no background role
+    critical: 'bg-critical-300 text-critical-secondary shadow-critical-md',
+    info: 'bg-info-solid-tooltip text-info-secondary shadow-info-md',
+    neutral: 'bg-surface-tertiary-inverse text-surface-inverse shadow-surface-md',
+    success: 'bg-success-solid-tooltip text-success-secondary shadow-success-md',
+    warning: 'bg-warning-solid-tooltip text-warning-secondary shadow-warning-md',
 };
 
 export const Tooltip: React.FC<ITooltipProps> = (props) => {

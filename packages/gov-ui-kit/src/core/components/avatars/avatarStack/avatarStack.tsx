@@ -166,7 +166,7 @@ export const AvatarStack: React.FC<IAvatarStackProps> = (props) => {
                     fallback={
                         <span
                             aria-label={`+${overflowCount}`}
-                            className="flex size-full items-center justify-center bg-neutral-50 font-semibold text-neutral-500"
+                            className="flex size-full items-center justify-center bg-surface-secondary font-semibold text-surface-secondary"
                             role="img"
                         >
                             {overflowCount > 9 ? '9+' : `+${overflowCount}`}
