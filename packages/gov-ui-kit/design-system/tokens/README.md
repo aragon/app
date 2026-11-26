@@ -35,6 +35,7 @@ Tokens follow the DTCG format. A colour is a colour object, a dimension a value 
 ```
 
 A token can alias another of the same type (`"$value": "{color.primary.200}"`); the CSS then holds a `var()`.
+Individual shadow layers and their fields must be literals. Set `"inset": true` on a layer for an inner shadow.
 
 The `components` are the colour; the `hex` is its readable form, which DTCG keeps optional and this source always
 carries. `pnpm tokens:generate` writes it, so a new colour needs only its components. To change a colour by its hex,
