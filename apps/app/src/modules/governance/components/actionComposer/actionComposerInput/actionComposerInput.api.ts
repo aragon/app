@@ -56,6 +56,11 @@ export interface IActionComposerInputProps<TMeta = undefined>
      */
     importedContractAbis: ISmartContractAbi[];
     /**
+     * Address of the account the actions are executed from outside DAO context, e.g. a Safe. Offers the transfer
+     * action from this account.
+     */
+    accountAddress?: string;
+    /**
      * List of allowed actions to show.
      * If provided, only actions that are allowed will be displayed.
      */

@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { formatUnits, isHex, zeroAddress } from 'viem';
+import { formatUnits, isHex, toFunctionSelector, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     ProposalActionType,
@@ -17,7 +17,12 @@ import {
     type Network,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { smartContractService } from '../../api/smartContractService';
+
+const erc20TransferSelector = toFunctionSelector(
+    'function transfer(address,uint256)',
+);
 
 /**
  * Extended action data for imported transfer actions.
@@ -29,6 +34,20 @@ export interface IImportedTransferActionData {
      * Used temporarily for imported actions until token decimals are fetched by the component.
      */
     rawAmount?: string;
+}
+
+/**
+ * Account running the decoded actions outside DAO context, e.g. a Safe.
+ */
+export interface IDecodedActionsAccount {
+    /**
+     * Network the account is deployed on.
+     */
+    network: Network;
+    /**
+     * Address of the account, the sender of the actions.
+     */
+    address: string;
 }
 
 export interface IExportedAction {
@@ -144,36 +163,50 @@ class ProposalActionsImportExportUtils {
 
     /**
      * Decodes imported actions using the smart contract service. The DAO is optional to support decoding
-     * outside a DAO context, in which case all actions are normalized to the decoded view (`Unknown` type).
+     * outside a DAO context, see `normalizeDecodedActions` for the views the actions then get.
      */
     decodeActions = async (
         actions: IExportedAction[],
         network: Network,
         dao?: IDao,
+        account?: IDecodedActionsAccount,
     ): Promise<IProposalAction[]> => {
+        const from = dao?.address ?? account?.address;
         const decodedActions =
             await smartContractService.decodeTransactionsLight({
                 urlParams: { network },
-                queryParams: dao != null ? { from: dao.address } : undefined,
+                queryParams: from != null ? { from } : undefined,
                 body: actions,
             });
 
-        return this.normalizeDecodedActions(decodedActions, dao);
+        return this.normalizeDecodedActions(decodedActions, dao, account);
     };
 
     /**
-     * Normalize decoded actions to a format expected by create action input forms (basic views).
+     * Normalize decoded actions to a format expected by create action input forms (basic views). Outside DAO context
+     * only transfers have a basic view, and only when the account sending them is known: every other action, and every
+     * action without an account, is left to the decoded view (`Unknown` type).
+     * @param decodedActions - Actions as decoded by the backend.
+     * @param dao - DAO the actions are composed for.
+     * @param account - Account running the actions outside DAO context, ignored when `dao` is set.
      */
     normalizeDecodedActions = (
         decodedActions: IProposalAction[],
         dao?: IDao,
+        account?: IDecodedActionsAccount,
     ): IProposalAction[] => {
         if (dao == null) {
-            // Without a DAO there is only decoded view available.
-            return decodedActions.map((action) => ({
-                ...action,
-                type: 'Unknown',
-            }));
+            return decodedActions.map((action) =>
+                account != null && this.isTransferAction(action)
+                    ? {
+                          ...this.normalizeTransferAction(
+                              action,
+                              account.network,
+                          ),
+                          from: account.address,
+                      }
+                    : { ...action, type: 'Unknown' },
+            );
         }
 
         const { plugins } = dao;
@@ -210,11 +243,8 @@ class ProposalActionsImportExportUtils {
                 return this.normalizeTokenMintAction(action, plugins);
             }
 
-            if (
-                action.type === ProposalActionType.TRANSFER ||
-                action.type === ProposalActionType.TRANSFER_NATIVE
-            ) {
-                return this.normalizeTransferAction(action, dao);
+            if (this.isTransferAction(action)) {
+                return this.normalizeTransferAction(action, dao.network);
             }
 
             // For imported actions which are not handled explicitly above, set the type as `Unknown` so that the decoded view is usable.
@@ -371,9 +401,27 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Normalize transfer action (ERC20 and native)
+     * Whether the transfer view can represent the action: a native transfer, or an ERC-20 `transfer(address,uint256)`
+     * call. The backend also types `transferFrom` and `safeTransferFrom` calls as transfers, but the view reads the
+     * receiver and amount from the first two arguments and re-encodes the call as a plain `transfer`, so those are left
+     * to the decoded view.
+     * @param action - Decoded action.
+     * @returns True when the action has a transfer basic view.
      */
-    private normalizeTransferAction = (action: IProposalAction, dao: IDao) => {
+    private isTransferAction = (action: IProposalAction): boolean =>
+        action.type === ProposalActionType.TRANSFER_NATIVE ||
+        (action.type === ProposalActionType.TRANSFER &&
+            action.data.slice(0, 10).toLowerCase() === erc20TransferSelector);
+
+    /**
+     * Normalize transfer action (ERC20 and native)
+     * @param action - Decoded transfer action.
+     * @param network - Network the transfer is sent on.
+     */
+    private normalizeTransferAction = (
+        action: IProposalAction,
+        network: Network,
+    ) => {
         const { inputData, to, value, type } = action;
         const isNativeTransfer = type === ProposalActionType.TRANSFER_NATIVE;
 
@@ -388,25 +436,29 @@ class ProposalActionsImportExportUtils {
             : (inputData?.parameters?.[1]?.value as string);
 
         const tokenAddress = isNativeTransfer ? zeroAddress : to;
+        const { nativeCurrency } = networkDefinitions[network];
 
         // For imported actions, we don't have full token info yet.
         // The token details will be fetched by TransferAssetAction component.
-        // We provide minimal token structure with address and network.
+        // We provide minimal token structure with address and network; the native currency is the network's own.
         const tokenInfo = {
             address: tokenAddress,
-            network: dao.network,
-            symbol: isNativeTransfer ? 'ETH' : '',
-            name: isNativeTransfer ? 'Ether' : inputData?.contract || '',
+            network,
+            symbol: isNativeTransfer ? nativeCurrency.symbol : '',
+            name: isNativeTransfer
+                ? nativeCurrency.name
+                : inputData?.contract || '',
             logo: '',
-            decimals: 18, // Default decimals, actual decimals will be fetched by component for ERC20
+            // Default decimals for ERC20, actual decimals will be fetched by component
+            decimals: isNativeTransfer ? nativeCurrency.decimals : 18,
             priceUsd: '0',
             totalSupply: null,
         };
 
-        // For native transfers, we can format immediately with 18 decimals
+        // For native transfers, we can format immediately with the decimals of the native currency
         // For ERC20, we need to wait for the actual decimals to be fetched
         const formattedAmount = isNativeTransfer
-            ? formatUnits(BigInt(amountValue), 18)
+            ? formatUnits(BigInt(amountValue), nativeCurrency.decimals)
             : '0';
 
         return {

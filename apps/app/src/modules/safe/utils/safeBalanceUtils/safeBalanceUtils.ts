@@ -16,6 +16,10 @@ export interface ISafeBalanceAsset {
      */
     amount: string;
     /**
+     * Decimals of the asset, those of the native currency when the balance has no token.
+     */
+    decimals: number;
+    /**
      * Logo of the asset, when known.
      */
     logoSrc?: string;
@@ -52,6 +56,7 @@ class SafeBalanceUtils {
             name: token?.name ?? nativeCurrency.name,
             symbol: token?.symbol ?? nativeCurrency.symbol,
             amount: formatUnits(BigInt(balance.balance), decimals),
+            decimals,
             logoSrc: token?.logoUri ?? undefined,
             tokenAddress: tokenAddress ?? undefined,
         };

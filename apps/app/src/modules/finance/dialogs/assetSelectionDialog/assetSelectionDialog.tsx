@@ -1,17 +1,15 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import type {
-    IAsset,
-    IGetAssetListParams,
-} from '@/modules/finance/api/financeService';
+import type { IAsset } from '@/modules/finance/api/financeService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetAddressSelect } from '../../components/assetAddressSelect';
+import type { AssetListParams } from '../../types';
 
 export interface IAssetSelectionDialogParams {
     /**
-     * Initial params to fetch the asset list.
+     * Initial params to fetch the asset list: the assets of a DAO, or the balances of a Safe.
      */
-    initialParams: IGetAssetListParams;
+    initialParams: AssetListParams;
     /**
      * Callback called on token click.
      */

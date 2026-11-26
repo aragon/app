@@ -7,10 +7,20 @@ import type {
     IGetAssetListParams,
 } from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
-import { DataListSelect } from '@/shared/components/dataListSelect';
+import { useSafeAssetListData } from '@/modules/finance/hooks/useSafeAssetListData';
+import type {
+    IDaoPlugin,
+    IPluginSettings,
+    Network,
+} from '@/shared/api/daoService';
+import {
+    DataListSelect,
+    type IDataListSelectProps,
+} from '@/shared/components/dataListSelect';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { AssetListParams, ISafeAssetListSource } from '../../types';
+import { assetUtils } from '../../utils/assetUtils';
 import { AssetAddressSelectAddAddressView } from './assetAddressSelectAddAddressView';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
@@ -18,9 +28,9 @@ export interface IAssetAddressSelectProps<
     TSettings extends IPluginSettings = IPluginSettings,
 > {
     /**
-     * Initial parameters to use for fetching the asset list.
+     * Initial parameters to use for fetching the asset list: the assets of a DAO, or the balances of a Safe.
      */
-    initialParams: IGetAssetListParams;
+    initialParams: AssetListParams;
     /**
      * DAO plugin (linked account) to display assets for.
      */
@@ -43,18 +53,45 @@ export interface IAssetAddressSelectProps<
     children?: ReactNode;
 }
 
-export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
+type IAssetAddressSelectViewProps = Omit<
+    IAssetAddressSelectProps,
+    'initialParams'
+>;
+
+interface IAssetAddressSelectListProps
+    extends IAssetAddressSelectViewProps,
+        Pick<
+            IDataListSelectProps<IAsset>,
+            'state' | 'itemsCount' | 'pageSize' | 'onLoadMore' | 'errorState'
+        > {
+    /**
+     * Network of the listed assets, used to look up an asset added by address.
+     */
+    network: Network;
+    /**
+     * Assets to choose from.
+     */
+    assetList: IAsset[];
+}
+
+const AssetAddressSelectList: React.FC<IAssetAddressSelectListProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, hasSearch, children, onAssetClick } =
-        props;
+    const {
+        network,
+        assetList,
+        state,
+        itemsCount,
+        pageSize,
+        onLoadMore,
+        errorState,
+        hidePagination,
+        hasSearch,
+        children,
+        onAssetClick,
+    } = props;
 
     const { t } = useTranslations();
-
-    const { network } = daoUtils.parseDaoId(initialParams.queryParams.daoId);
-
-    const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
-        useAssetListData(initialParams);
 
     const filterAsset = ({ token }: IAsset, search: string) => {
         const lowerSearch = search.toLowerCase();
@@ -114,5 +151,69 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
         >
             {children}
         </DataListSelect>
+    );
+};
+
+interface IAssetAddressSelectDaoProps extends IAssetAddressSelectViewProps {
+    /**
+     * Parameters for fetching the indexed assets of the DAO.
+     */
+    initialParams: IGetAssetListParams;
+}
+
+const AssetAddressSelectDao: React.FC<IAssetAddressSelectDaoProps> = (
+    props,
+) => {
+    const { initialParams, ...otherProps } = props;
+
+    const { network } = daoUtils.parseDaoId(initialParams.queryParams.daoId);
+    const assetListData = useAssetListData(initialParams);
+
+    return (
+        <AssetAddressSelectList
+            network={network}
+            {...assetListData}
+            {...otherProps}
+        />
+    );
+};
+
+interface IAssetAddressSelectSafeProps extends IAssetAddressSelectViewProps {
+    /**
+     * Safe to list the balances of.
+     */
+    safe: ISafeAssetListSource;
+}
+
+const AssetAddressSelectSafe: React.FC<IAssetAddressSelectSafeProps> = (
+    props,
+) => {
+    const { safe, ...otherProps } = props;
+
+    const assetListData = useSafeAssetListData(safe);
+
+    return (
+        <AssetAddressSelectList
+            network={safe.network}
+            {...assetListData}
+            {...otherProps}
+        />
+    );
+};
+
+export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
+    props,
+) => {
+    const { initialParams, ...otherProps } = props;
+
+    // Each source reads its own query, so it renders a component of its own rather than calling a hook conditionally.
+    if (assetUtils.isSafeAssetListParams(initialParams)) {
+        return (
+            <AssetAddressSelectSafe safe={initialParams.safe} {...otherProps} />
+        );
+    }
+
+    return (
+        <AssetAddressSelectDao initialParams={initialParams} {...otherProps} />
     );
 };

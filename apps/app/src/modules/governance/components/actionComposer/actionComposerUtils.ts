@@ -362,7 +362,14 @@ class ActionComposerUtils {
     getActionItems = (
         params: IGetActionItemsParams,
     ): IActionComposerInputItem[] => {
-        const { t, dao, abis, nativeItems, excludeActionTypes } = params;
+        const {
+            t,
+            dao,
+            abis,
+            nativeItems,
+            excludeActionTypes,
+            accountAddress,
+        } = params;
 
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
@@ -375,6 +382,7 @@ class ActionComposerUtils {
             t,
             dao,
             nativeItems,
+            accountAddress,
         }).map(this.infoToSelectorMapper);
 
         const {
@@ -596,10 +604,19 @@ class ActionComposerUtils {
     private getNativeActionItems = (
         params: IGetNativeActionItemsParams,
     ): IActionComposerInputItem[] => {
-        const { t, dao, nativeItems } = params;
+        const { t, dao, nativeItems, accountAddress } = params;
 
         if (dao == null) {
-            return nativeItems;
+            return accountAddress == null
+                ? nativeItems
+                : [
+                      this.buildTransferNativeAction(
+                          t,
+                          undefined,
+                          accountAddress,
+                      ),
+                      ...nativeItems,
+                  ];
         }
 
         const transferAction = this.buildTransferNativeAction(t);
@@ -619,13 +636,14 @@ class ActionComposerUtils {
     private buildTransferNativeAction = (
         t: TranslationFunction,
         token?: string,
+        from?: string,
     ) => ({
         id: ProposalActionType.TRANSFER,
         name: t(
             `app.governance.actionComposer.nativeItem.${ProposalActionType.TRANSFER}`,
         ),
         icon: IconType.APP_TRANSACTIONS,
-        defaultValue: this.buildDefaultActionTransfer(token),
+        defaultValue: this.buildDefaultActionTransfer(token, from),
         groupId: token,
         info: token != null ? this.transferSelector : undefined,
     });
@@ -754,16 +772,25 @@ class ActionComposerUtils {
         },
     });
 
-    private buildDefaultActionTransfer = (token?: string): IProposalAction => ({
+    /**
+     * Builds the default transfer action.
+     * @param token - Token to lock the transfer to, any asset can be picked when omitted.
+     * @param from - Account the transfer is sent from. Left empty in DAO context, where the DAO of the action sends it.
+     */
+    private buildDefaultActionTransfer = (
+        token?: string,
+        from?: string,
+    ): IProposalAction => ({
         type:
             token != null
                 ? this.transferActionLocked
                 : ProposalActionType.TRANSFER,
-        from: '',
+        from: from ?? '',
         to: token ?? zeroAddress,
         data: '0x',
         value: '0',
-        inputData: { function: 'transfer', contract: 'Ether', parameters: [] },
+        // The transfer view names the asset once mounted: the picked token, or the native currency of the network.
+        inputData: { function: 'transfer', contract: '', parameters: [] },
     });
 
     private buildDefaultActionMetadata = (dao: IDao) => {
