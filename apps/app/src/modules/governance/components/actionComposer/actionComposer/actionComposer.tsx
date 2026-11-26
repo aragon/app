@@ -23,7 +23,10 @@ import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
-import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
+import {
+    type IDecodedActionsAccount,
+    proposalActionsImportExportUtils,
+} from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import { useImportedContractAbis } from '../../importedContractAbisProvider';
 import {
@@ -56,10 +59,10 @@ export interface IActionComposerProps
      */
     hideWalletConnect?: boolean;
     /**
-     * Address of the account a WalletConnect dApp connects to, e.g. a Safe. Defaults to the DAO
-     * address; outside DAO context WalletConnect is only offered when set.
+     * Address of the account the actions are executed from outside DAO context, e.g. a Safe. Offers the transfer
+     * action from this account and connects WalletConnect dApps to it. In DAO context the DAO is that account.
      */
-    walletConnectAddress?: string;
+    accountAddress?: string;
     /**
      * Allowed actions to show instead of default actions. An empty list restricts the composer to no
      * action at all, leave it undefined to offer every action. Only read on mount, so it must be
@@ -109,7 +112,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction,
         excludeActionTypes,
         hideWalletConnect = false,
-        walletConnectAddress,
+        accountAddress,
         allowedActions,
         hasActions = false,
         onDownloadActions,
@@ -134,7 +137,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     );
 
     const resolvedNetwork = network ?? dao?.network;
-    const walletConnectAccount = walletConnectAddress ?? dao?.address;
+    const executorAddress = accountAddress ?? dao?.address;
+
+    // Outside DAO context the account runs the actions, so the decoded transfers it brings in (imported or through
+    // WalletConnect) get their basic view, sent from it.
+    const decodedActionsAccount: IDecodedActionsAccount | undefined =
+        daoId == null && accountAddress != null && resolvedNetwork != null
+            ? { network: resolvedNetwork, address: accountAddress }
+            : undefined;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -188,29 +198,32 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        const parsedActions = actions.map((action) => ({
-            ...action,
-            daoId,
-            meta: undefined,
-        }));
+        // Normalized like imported actions: the basic views expect their own shape (e.g. a transfer with a raw amount
+        // to format once its decimals are known). Added as decoded, a transfer would re-encode the dApp's calldata from
+        // the raw amount at 18 decimals. The `meta` set by the normalizer (e.g. the token-voting plugin of a mint) is
+        // kept, the basic views read it.
+        const parsedActions = proposalActionsImportExportUtils
+            .normalizeDecodedActions(actions, dao, decodedActionsAccount)
+            .map((action) => ({ ...action, daoId }) as IProposalActionData);
         onAddAction(parsedActions);
     };
 
     const displayWalletConnectDialog = () => {
         invariant(
-            walletConnectAccount != null && resolvedNetwork != null,
+            executorAddress != null && resolvedNetwork != null,
             'displayWalletConnectDialog: account address and network are required for WalletConnect dialog',
         );
 
         setUploadError(null);
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
-            address: walletConnectAccount,
+            address: executorAddress,
             network: resolvedNetwork,
         };
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
+    // Keeps the `meta` set by `decodeActions` (e.g. the token-voting plugin of a mint), the basic views read it.
     const handleImportActions = (actions: IProposalAction[]) => {
         const parsedActions = actions.map(
             (action) =>
@@ -218,7 +231,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     ...action,
                     value: BigInt(action.value),
                     daoId,
-                    meta: undefined,
                 }) as unknown as IProposalActionData,
         );
         onAddAction(parsedActions);
@@ -254,6 +266,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         result.actions,
                         resolvedNetwork,
                         dao,
+                        decodedActionsAccount,
                     );
 
                 handleImportActions(decodedActions);
@@ -312,7 +325,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions != null && onRemoveAllActions != null;
 
     const shouldRenderWalletConnect =
-        walletConnectAccount != null &&
+        executorAddress != null &&
         resolvedNetwork != null &&
         !hideWalletConnect &&
         !onlyShowAuthorizedActions;
@@ -462,6 +475,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 )}
             </div>
             <ActionComposerInput
+                accountAddress={accountAddress}
                 allowedActions={
                     onlyShowAuthorizedActions ? allowedActions : undefined
                 }

@@ -50,7 +50,7 @@ interface ISafeCreateTransactionWizardActionsStepProps {
      */
     network: Network;
     /**
-     * Address of the Safe, exposed to WalletConnect dApps as the connected account.
+     * Address of the Safe, the account the actions are executed from.
      */
     safeAddress: string;
 }
@@ -80,11 +80,11 @@ const SafeCreateTransactionWizardActionsStep: React.FC<
             )}
             {...actionsStep}
         >
-            {/* Without a DAO the composer offers the actions any account can run: contract calls, raw calldata and
-            WalletConnect requests made as the Safe. */}
+            {/* Without a DAO the composer offers the actions any account can run: transfers from the Safe, contract calls,
+            raw calldata and WalletConnect requests made as the Safe. */}
             <ProposalActionsEditor
+                accountAddress={safeAddress}
                 network={network}
-                walletConnectAddress={safeAddress}
             />
         </WizardPage.Step>
     );

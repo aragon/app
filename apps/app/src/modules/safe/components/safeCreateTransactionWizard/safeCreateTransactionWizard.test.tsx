@@ -82,12 +82,12 @@ describe('<SafeCreateTransactionWizard /> component', () => {
         );
     };
 
-    it('composes the actions for the network of the Safe, outside any DAO, with WalletConnect connected as the Safe', () => {
+    it('composes the actions for the network of the Safe, outside any DAO, with the Safe as the account running them', () => {
         render(createTestComponent());
 
         expect(screen.getByText('actions editor')).toBeInTheDocument();
         expect(proposalActionsEditorSpy).toHaveBeenCalledWith(
-            { network, walletConnectAddress: safeAddress },
+            { network, accountAddress: safeAddress },
             undefined,
         );
     });
