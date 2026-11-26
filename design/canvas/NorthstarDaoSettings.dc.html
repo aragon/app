@@ -74,15 +74,6 @@ body{margin:0}
               </div>
             </x-import>
           </div>
-
-          <div class="page-section page-section--compact">
-            <div class="page-section__header">
-              <div class="page-section__title">
-                <x-import component-from-global-scope="GovUiKit.Heading" size="h2">Automation</x-import>
-              </div>
-              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="PLUS">Policy</x-import>
-            </div>
-          </div>
         </main>
 
         <aside class="page-aside">
@@ -111,8 +102,8 @@ body{margin:0}
 <script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null}}'>
 // PART of the Northstar DAO prototype (mounted by NorthstarDao.dc.html). Props: onNav(target), wallet, onConnect. Links carry href="#nav:<target>": the Governance process item opens the process detail, "View all permissions" the permissions page.
 // DAO settings (apps/app: modules/settings/pages/daoSettingsPage/daoSettingsPageClient.tsx). linkedAccount flag on, so
-// the Account section is DaoHierarchy (a Card with DaoInfo; Northstar has no linked accounts); Automation is shown
-// (capitalFlowAutomation on) with no policies. Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
+// the Account section is DaoHierarchy (a Card with DaoInfo; Northstar has no linked accounts); no Automation section
+// (capitalFlowAutomation off, as on new.app.aragon.org). Aside: DaoVersionInfo + UpdateDaoContracts (osxUpdates on).
 // Process item: shared/components/processDataListItem. Mock data: design/baseline-check/data.cjs (Northstar Protocol, SPP DAO: data-spp.cjs).
 class Component extends DCLogic {
   // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).

@@ -108,7 +108,7 @@ class Component extends DCLogic {
   constructor(props) {
     super(props);
     this.state = { step: 1, sub: {}, touched: {}, name: '', key: '', desc: '', descFocus: false, resources: [],
-      gov: 'BASIC', body: null, stages: [], mode: 'LISTED_BODIES', conditions: [], perm: 'ANY', selectors: [], menuOpen: false, search: '',
+      gov: 'BASIC', body: null, stages: [], mode: 'LISTED_BODIES', perm: 'ANY', selectors: [], menuOpen: false, search: '',
       dlg: null, sdlg: null, chk: {}, tx1: false, tx2: false };
   }
   componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); clearTimeout(this.t3); }
@@ -145,10 +145,9 @@ class Component extends DCLogic {
   step3Errors() {
     const s = this.state; const e = {};
     const bodies = this.processBodies();
-    const hasSources = bodies.some((x) => x.b.canCreate) || (s.gov === 'ADVANCED' && s.conditions.length > 0);
+    const hasSources = bodies.some((x) => x.b.canCreate);
     if (s.mode !== 'ANY_WALLET' && !hasSources) e.bodies = 'You must select at least one body or existing condition.';
     if (s.mode !== 'ANY_WALLET') bodies.forEach((x, i) => { if (x.b.canCreate && x.b.plugin === 'tokenVoting' && !(Number(x.b.minReq) > 0)) e['min' + i] = 'Minimum requirement is invalid.'; });
-    if (s.gov === 'ADVANCED') s.conditions.forEach((c, i) => { if (!ADDR.test(c.address)) e['cond' + i] = 'Address is required'; });
     return e;
   }
   // ---------- step 4
@@ -374,10 +373,7 @@ class Component extends DCLogic {
           onChecked: (c) => this.mut((st) => { const t = x.ref.kind === 'basic' ? st.body : st.stages[x.ref.si].bodies[x.ref.bi]; t.canCreate = c === true; }),
           hasMinReq: b.plugin === 'tokenVoting', minReq: b.minReq, minReqAlert: e['min' + i] ? this.alertOf(e['min' + i]) : undefined,
           onMinReq: (v) => this.mut((st) => { const t = x.ref.kind === 'basic' ? st.body : st.stages[x.ref.si].bodies[x.ref.bi]; t.minReq = v; }) };
-      }),
-      conditions: s.conditions.map((c, i) => ({ address: c.address, alert: wanted('cond' + i) ? this.alertOf(e['cond' + i]) : undefined,
-        onAddress: (v) => this.mut((st) => { st.conditions[i].address = v; }), onAccept: noopAccept, onBlur: () => this.touch('cond' + i), onRemove: () => this.mut((st) => { st.conditions.splice(i, 1); }) })),
-      showExisting: s.gov === 'ADVANCED', onAddCondition: () => this.mut((st) => { st.conditions.push({ address: '' }); }), showBasicNotSupported: s.gov !== 'ADVANCED' };
+      }) };
   }
 
   permissionsVm() {
@@ -520,7 +516,6 @@ class Component extends DCLogic {
       closeTx: () => this.setState({ tx1: false, tx2: false }), tx1Done: () => this.setState({ tx1: false, tx2: true }), tx2Done: () => { this.setState({ tx2: false }); const a = document.getElementById('cpr-dao-link'); if (a) a.click(); }, txSteps2: [] };
   }
 }
-const noopAccept = () => undefined;
 </script>
 </body>
 </html>

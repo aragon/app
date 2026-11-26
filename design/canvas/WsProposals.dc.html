@@ -106,10 +106,10 @@
               <sc-for list="{{accounts}}" as="a" hint-placeholder-count="3">
                 <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.cls}}" on-click="{{a.choose}}">
                   <div class="flex items-center gap-3">
-                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0"></x-import>
-                    <div class="ws-account-item__text">
-                      <span class="ws-account-item__name">{{a.name}}</span>
-                      <span class="ws-account-item__meta"><span class="ws-account-item__network">{{a.network}}</span><span>{{a.address}}</span></span>
+                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0" badge="{{netBadge}}"></x-import>
+                    <div class="ws-acc-item__text">
+                      <span class="ws-acc-item__name">{{a.name}}</span>
+                      <span class="ws-acc-item__meta"><span class="ws-acc-item__net">{{a.network}}</span><span class="ws-acc-item__addr">{{a.address}}</span></span>
                     </div>
                     <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
                   </div>
@@ -173,9 +173,11 @@ class Component extends DCLogic {
       northstar: { title: 'Northstar Staged Governance (NSP)', text: 'Proposals are approved by the Council Safe or the Core Team, then pass a 7-day community veto window in which NSP holders or the Security Guardian can block them.', href: '#nav:account:northstar:process:nsp' }
     };
     const setFilter = (k) => () => this.setState({ filter: k });
+    // The network logo is the Avatar's `badge` prop, which takes an element, so it is built here.
+    const netBadge = window.React.createElement('img', { src: 'assets/networks/ethereum.svg', alt: 'Ethereum', title: 'Ethereum', className: 'object-cover' });
     const recent = GovUiKit.formatterUtils.formatDate(now - 1 * day - hour, { format: GovUiKit.DateFormat.RELATIVE }).split(' ');
     return {
-      onClick: this.click, yes: true, no: false, noFocus: (e) => e.preventDefault(),
+      netBadge, onClick: this.click, yes: true, no: false, noFocus: (e) => e.preventDefault(),
       count, pageSize: 10, show, people, st,
       agc4Status: at.executed4 ? 'EXECUTED' : 'EXECUTABLE',
       dates: {

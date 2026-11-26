@@ -529,6 +529,16 @@
                 "apps/app/src/modules/application/components/aragonProfile*/**"
             ]
         },
+        "Landing": {
+            "route": "/",
+            "sources": [
+                "apps/app/src/modules/application/pages/landingPage/**",
+                "apps/app/src/app/page.tsx",
+                "apps/app/src/assets/images/net_bg.svg",
+                "apps/app/src/assets/images/google.svg",
+                "apps/app/public/landing/**"
+            ]
+        },
         "Explore": {
             "route": "/explore",
             "sources": [
@@ -988,7 +998,8 @@
             "sources": [
                 "apps/app/src/modules/workspace/pages/workspaceProposalsPage/**",
                 "apps/app/src/modules/workspace/components/workspaceProposalList/**",
-                "apps/app/src/modules/workspace/components/workspaceProposalsAsideCard/**"
+                "apps/app/src/modules/workspace/components/workspaceProposalsAsideCard/**",
+                "apps/app/src/modules/workspace/dialogs/workspaceSelectAccountDialog/**"
             ]
         },
         "WsTodos": {
