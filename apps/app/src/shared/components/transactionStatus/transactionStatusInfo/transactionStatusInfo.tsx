@@ -45,11 +45,15 @@ export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (
                 className,
             )}
         >
-            <Heading as="h4" className="truncate" typeRole="title-item">
+            <Heading
+                as="h4"
+                className="truncate"
+                typeClassName="type-title-item"
+            >
                 {title}
             </Heading>
             {isMultiphase && (
-                <div className="flex flex-row flex-wrap gap-phrase type-supporting text-surface-primary">
+                <div className="flex flex-row gap-phrase type-supporting text-surface-primary">
                     <span>
                         {t('app.shared.transactionStatus.info.current', {
                             current,

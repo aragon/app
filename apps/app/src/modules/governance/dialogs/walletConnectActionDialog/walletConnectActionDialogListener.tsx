@@ -70,7 +70,7 @@ export const WalletConnectActionDialogListener: React.FC<
             <Dialog.Content className="flex flex-col gap-group-stepped pt-inset-surface pb-inset-surface-flat--fixed-16">
                 <div className="flex flex-col gap-related--8-12">
                     <Avatar size="md" src={icons[0]} />
-                    <Heading as="h3" typeRole="title-group">
+                    <Heading as="h3" typeClassName="type-title-group">
                         {name}
                     </Heading>
                     <div className="flex flex-row gap-related">

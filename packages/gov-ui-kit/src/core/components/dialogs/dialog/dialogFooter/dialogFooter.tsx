@@ -42,7 +42,7 @@ export const DialogFooter: React.FC<IDialogFooterProps> = (props) => {
 
     const actionsClassNames = classNames(
         'flex gap-group--12-16',
-        { 'mt-group-stepped': children != null },
+        { 'pt-group-stepped': children != null },
         { 'flex-col md:flex-row': variant === 'default' },
         { 'flex-row-reverse justify-between': variant === 'wizard' },
         className,

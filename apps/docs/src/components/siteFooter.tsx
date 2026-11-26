@@ -17,7 +17,7 @@ const restLinks = [
 ];
 
 const linkClassName =
-    'truncate border-surface-secondary border-b type-control text-link-secondary-default transition-colors last:border-none hover:text-link-secondary-hover-nav max-md:py-inset-nav-item--fixed-16 md:border-none';
+    'truncate border-b transition-colors last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none type-control border-surface-secondary text-link-secondary-default hover:text-link-secondary-hover-nav';
 
 /**
  * The footer of the app (apps/app/src/modules/application/components/footer), below the whole

@@ -49,13 +49,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
     const renderDeleteButton = (onClick?: () => void, size: 'lg' | 'sm' = 'lg', className?: string) =>
         onClick != null &&
         mode === ProposalActionsDecoderMode.EDIT && (
-            <Button
-                className={classNames('shrink-0', className)}
-                iconLeft={IconType.CLOSE}
-                onClick={onClick}
-                size={size}
-                variant="tertiary"
-            />
+            <Button className={className} iconLeft={IconType.CLOSE} onClick={onClick} size={size} variant="tertiary" />
         );
 
     if (!isNestedType) {
@@ -161,6 +155,7 @@ export const ProposalActionsDecoderField: React.FC<IProposalActionsDecoderFieldP
                                             parameter={parameter}
                                         />
                                     </div>
+                                    {/* biome-ignore lint/plugin/noPrimitiveSpacing: centres the small delete button on the large field ((48 - 32) / 2) */}
                                     {renderDeleteButton(removeArrayItem, 'sm', alignToInput ? 'mt-2' : undefined)}
                                 </div>
                             );

@@ -3,9 +3,7 @@ import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapte
 import * as headers from 'next/headers';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
-import { spacingPreviewUtils } from '@/modules/application/utils/spacingPreviewUtils';
-import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
-import { typographyPreviewUtils } from '@/modules/application/utils/typographyPreviewUtils';
+import { tokenPreviewUtils } from '@/modules/application/utils/tokenPreviewUtils';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -41,38 +39,6 @@ describe('<LayoutRoot /> component', () => {
     const cookieToInitialStateSpy = jest.spyOn(wagmi, 'cookieToInitialState');
     const headersSpy = jest.spyOn(headers, 'headers');
     const getSnapshotSpy = jest.spyOn(featureFlags, 'getSnapshot');
-    // The three debug-panel preview axes are independent: each has its own server-side resolver, cookie and attribute.
-    const axes = [
-        {
-            name: 'colour theme',
-            utils: themePreviewUtils,
-            method: 'getServerThemeAttribute',
-            attribute: 'data-theme',
-            value: 'next',
-        },
-        {
-            name: 'typography',
-            utils: typographyPreviewUtils,
-            method: 'getServerTypographyAttribute',
-            attribute: 'data-typography',
-            value: 'next',
-        },
-        {
-            name: 'spacing',
-            utils: spacingPreviewUtils,
-            method: 'getServerSpacingAttribute',
-            attribute: 'data-spacing',
-            value: 'compact',
-        },
-    ] as const;
-    const resolvers = axes.map((axis) => {
-        const utils = axis.utils as unknown as Record<
-            string,
-            (...args: never[]) => unknown
-        >;
-        const original = utils[axis.method];
-        return { axis, original, spy: jest.spyOn(utils, axis.method) };
-    });
 
     // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
     const useFeatureFlagsSpy = jest.spyOn(
@@ -88,9 +54,6 @@ describe('<LayoutRoot /> component', () => {
             get: jest.fn(),
         } as unknown as Promise<ReadonlyHeaders>);
         getSnapshotSpy.mockResolvedValue([]);
-        for (const { original, spy } of resolvers) {
-            spy.mockImplementation(original);
-        }
         useFeatureFlagsSpy.mockReturnValue({
             isEnabled: () => false,
         } as unknown as ReturnType<
@@ -103,9 +66,6 @@ describe('<LayoutRoot /> component', () => {
         headersSpy.mockReset();
         useFeatureFlagsSpy.mockReset();
         getSnapshotSpy.mockReset();
-        for (const { spy } of resolvers) {
-            spy.mockReset();
-        }
     });
 
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {
@@ -114,23 +74,6 @@ describe('<LayoutRoot /> component', () => {
 
         return Component;
     };
-
-    it('links no preview stylesheet when no preview is selected', async () => {
-        getSnapshotSpy.mockResolvedValue([
-            {
-                key: 'debugPanel',
-                name: 'Debug panel',
-                description: '',
-                enabled: true,
-            },
-        ]);
-
-        render(await createTestComponent());
-
-        expect(
-            document.querySelector('link[href="/tokens-preview.css"]'),
-        ).toBeNull();
-    });
 
     it('renders the children property and the application footer', async () => {
         const children = 'test-children';
@@ -166,10 +109,10 @@ describe('<LayoutRoot /> component', () => {
         expect(providers.dataset.wagmistate).toEqual(initialState);
     });
 
-    describe.each(resolvers)('$axis.name preview', ({ axis, spy }) => {
-        const cookie = `${axis.utils.cookieName}=${axis.value}`;
-
-        const mockRequest = (enabled: boolean) => {
+    it.each([true, false])(
+        'renders the token preview stored in the request cookies only with the debug panel enabled: %s',
+        async (enabled) => {
+            const cookie = `${tokenPreviewUtils.axes[0].cookieName}=next`;
             headersSpy.mockReturnValue({
                 get: (name: string) => (name === 'cookie' ? cookie : null),
             } as unknown as Promise<ReadonlyHeaders>);
@@ -181,54 +124,12 @@ describe('<LayoutRoot /> component', () => {
                     enabled,
                 },
             ]);
-        };
 
-        it.each([true, false])(
-            'resolves the previewed value from the request cookies with the debug panel enabled: %s',
-            async (enabled) => {
-                mockRequest(enabled);
+            render(await createTestComponent());
 
-                render(await createTestComponent());
-
-                expect(spy).toHaveBeenCalledWith(enabled, cookie);
-            },
-        );
-
-        it.each([
-            [true, axis.value],
-            [false, null],
-        ])(
-            `renders ${axis.attribute} from a stored cookie only with the debug panel enabled (%s)`,
-            async (enabled, expected) => {
-                mockRequest(enabled);
-                cookieToInitialStateSpy.mockReturnValue(undefined);
-
-                render(await createTestComponent());
-
-                // React renders <html> as the document's root singleton.
-                expect(
-                    document.documentElement.getAttribute(axis.attribute),
-                ).toEqual(expected);
-            },
-        );
-
-        it.each([
-            [true, true],
-            [false, false],
-        ])(
-            'links the preview stylesheet only with the debug panel enabled and the preview selected (%s)',
-            async (enabled, linked) => {
-                mockRequest(enabled);
-                cookieToInitialStateSpy.mockReturnValue(undefined);
-
-                render(await createTestComponent());
-
-                expect(
-                    document.querySelector(
-                        'link[rel="stylesheet"][href="/tokens-preview.css"]',
-                    ) != null,
-                ).toEqual(linked);
-            },
-        );
-    });
+            expect(document.documentElement.dataset.theme).toEqual(
+                enabled ? 'next' : undefined,
+            );
+        },
+    );
 });

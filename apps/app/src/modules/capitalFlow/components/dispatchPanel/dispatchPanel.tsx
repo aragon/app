@@ -73,6 +73,7 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
                             {t('app.capitalFlow.dispatchPanel.routingTitle')}
                         </span>
                     </div>
+                    {/* biome-ignore lint/plugin/noPrimitiveSpacing: indents the description past the title icon (icon + gap) */}
                     <p className="pl-9 type-supporting--compact-detail text-surface-secondary">
                         {t('app.capitalFlow.dispatchPanel.routingDescription')}
                     </p>

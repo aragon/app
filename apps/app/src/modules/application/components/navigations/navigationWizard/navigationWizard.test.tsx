@@ -125,6 +125,17 @@ describe('<NavigationWizard /> component', () => {
         expect(screen.getByRole('link')).toHaveAttribute('href', '/');
     });
 
+    it('calls onExit when the close link is clicked', async () => {
+        const onExit = jest.fn();
+        render(createTestComponent({ onExit }));
+
+        await userEvent.click(screen.getByRole('link'));
+        expect(onExit).toHaveBeenCalledTimes(1);
+        expect(onExit).toHaveBeenCalledWith(
+            expect.objectContaining({ type: 'click' }),
+        );
+    });
+
     it('renders the DAO avatar and name when data is fetched', () => {
         const dao = generateDao({
             avatar: 'ipfs://avatar-cid',

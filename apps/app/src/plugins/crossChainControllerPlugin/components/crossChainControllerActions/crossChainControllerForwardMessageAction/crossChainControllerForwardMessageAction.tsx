@@ -324,10 +324,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 useCustomWrapper={true}
             >
                 {hasNestedActions ? (
-                    <Card
-                        className="flex flex-col gap-group rounded-xl bg-surface-primary md:flex-row md:items-center md:justify-between"
-                        inset="surface"
-                    >
+                    <Card className="flex flex-col gap-group rounded-xl bg-surface-primary p-inset-surface md:flex-row md:items-center md:justify-between">
                         <p className="text-surface-primary">
                             {t(
                                 nestedActions.length === 1

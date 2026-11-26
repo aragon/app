@@ -137,13 +137,13 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
             />
             <Dialog.Content>
                 {!allResultsReady && (
-                    <div className="mt-group mb-group">
+                    <div className="py-group">
                         <Spinner size="lg" />
                     </div>
                 )}
                 <div
                     className={classNames(
-                        'mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-related--fixed-8',
+                        'flex flex-col gap-related--fixed-8 py-tight--fixed-8',
                         {
                             hidden: !allResultsReady,
                         },

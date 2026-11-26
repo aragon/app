@@ -93,7 +93,7 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
 
     // Match the app bar's md height after the docked panel leaves the app column at md width.
     return (
-        <div className="screen-docked-md:h-[91px] flex h-[75px] flex-none items-center gap-nav-group--fixed-14 border-b border-surface-secondary pr-inset-nav-bar--fixed-14 pl-inset-nav-bar--fixed-20">
+        <div className="flex h-[75px] flex-none items-center gap-nav-group--fixed-14 border-b border-surface-secondary pr-inset-nav-bar--fixed-14 pl-inset-nav-bar--fixed-20 screen-docked-md:h-[91px]">
             {isViewingRequests ? (
                 <Button
                     aria-label={chatCopy.header.back}
@@ -106,7 +106,7 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
                 <AragonMark />
             )}
             <div className="flex min-w-0 flex-col">
-                <Heading as="h2" typeRole="title-group--small-panel">
+                <Heading as="h2" typeClassName="type-title-group--small-panel">
                     {chatCopy.header.title}
                 </Heading>
                 <p className="truncate type-caption--unstepped text-surface-tertiary">

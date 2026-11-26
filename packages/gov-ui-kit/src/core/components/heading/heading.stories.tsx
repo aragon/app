@@ -13,10 +13,9 @@ const meta: Meta<typeof Heading> = {
         docs: {
             description: {
                 component:
-                    'Renders the heading element of `as` (or `size`) with the typography role of `typeRole`, a ' +
-                    '`type-*` utility that steps up at the `md` breakpoint. Without `typeRole` the role follows ' +
-                    '`size` (h1 title-page, h2 title-section, h3 title-group, h4 title-item, h5 supporting); styling ' +
-                    'through `size` is deprecated.',
+                    'Renders the heading element of `as` (or `size`) with the typography role of `size` (h1 ' +
+                    'title-page, h2 title-section, h3 title-group, h4 title-item, h5 supporting). `typeClassName` ' +
+                    'replaces that role class, e.g. `type-title-item--entity-list`.',
             },
         },
     },
@@ -67,25 +66,25 @@ export const CustomAs: Story = {
 export default meta;
 
 /**
- * The element and the typography are chosen separately: `as` sets the heading level, `typeRole` the typography role
- * (or a documented exception of one).
+ * The element and the typography are chosen separately: `as` sets the heading level, `typeClassName` the typography
+ * role class (or a documented exception of one).
  */
 export const TypographyRoles: Story = {
     render: () => (
         <div className="flex-col space-y-4">
-            <Heading as="h1" typeRole="title-page">
+            <Heading as="h1" typeClassName="type-title-page">
                 h1 as title-page
             </Heading>
-            <Heading as="h2" typeRole="title-section">
+            <Heading as="h2" typeClassName="type-title-section">
                 h2 as title-section
             </Heading>
-            <Heading as="h3" typeRole="title-group">
+            <Heading as="h3" typeClassName="type-title-group">
                 h3 as title-group
             </Heading>
-            <Heading as="h4" typeRole="title-item">
+            <Heading as="h4" typeClassName="type-title-item">
                 h4 as title-item
             </Heading>
-            <Heading as="h2" typeRole="title-item--entity-list">
+            <Heading as="h2" typeClassName="type-title-item--entity-list">
                 h2 as the title-item exception of the main entity lists
             </Heading>
         </div>

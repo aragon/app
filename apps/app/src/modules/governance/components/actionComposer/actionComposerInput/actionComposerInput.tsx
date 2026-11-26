@@ -17,6 +17,7 @@ export const ActionComposerInput = forwardRef<
         importedContractAbis,
         excludeActionTypes,
         allowedActions,
+        accountAddress,
         ...otherProps
     } = props;
 
@@ -50,6 +51,7 @@ export const ActionComposerInput = forwardRef<
               abis: importedContractAbis,
               nativeItems,
               excludeActionTypes,
+              accountAddress,
           });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {

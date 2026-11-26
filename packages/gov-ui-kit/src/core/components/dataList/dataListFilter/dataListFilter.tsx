@@ -109,11 +109,12 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                     />
                 )}
                 {state === 'loading' && (
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the search clear button and of the spinner slot
                     <Spinner className="m-1" responsiveSize={{ md: 'lg' }} size="md" variant="primary" />
                 )}
                 <input
                     className={classNames(
-                        'size-full search-cancel-hidden truncate bg-transparent pl-control-md outline-hidden caret-text-surface-secondary',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-control-md caret-(--guk-text-surface-secondary) outline-hidden',
                         'placeholder:type-control placeholder:text-surface-placeholder',
                     )}
                     onBlur={handleInputBlur}
@@ -124,6 +125,7 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                     value={searchValue}
                 />
                 {displayClearIcon && (
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the search clear button and of the spinner slot
                     <button className="mr-related--8-16 cursor-pointer p-2.5" onClick={handleClear} type="button">
                         <Icon className="icon-surface-default" icon={IconType.CLOSE} size="sm" />
                     </button>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace proposals, all accounts</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{onClick}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Proposals</x-import>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-left="PLUS" on-click="{{openDialog}}">New proposal</x-import>
+            </header>
+            <div class="flex flex-col gap-2 md:gap-3">
+              <div>
+                <x-import component-from-global-scope="GovUiKit.Dropdown.Container" label="{{filterLabel}}">
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{sel.all}}" on-select="{{pick.all}}">All proposals</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{sel.meridian}}" on-select="{{pick.meridian}}">Meridian DAO · Meridian Token Voting</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{sel.atlas}}" on-select="{{pick.atlas}}">Atlas Grants Council · Grants Council Multisig</x-import>
+                  <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{sel.northstar}}" on-select="{{pick.northstar}}">Northstar Protocol · Northstar Staged Governance</x-import>
+                </x-import>
+              </div>
+              <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Proposals" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+                <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1">
+<sc-if value="{{show.r0}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-8" title="Seed NSP/ETH liquidity on Uniswap v4" summary="Move 2,000,000 NSP and 220 ETH to the Liquidity Operations Safe to seed an NSP/ETH v4 pool with a dynamic-fee hook." status="{{st.n8.status}}" status-context="{{st.n8.ctx}}" date="{{st.n8.date}}" publisher="{{people.northstar.kofi}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-8"></x-import></sc-if>
+<sc-if value="{{show.r1}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-6" title="Q1 2027 council operating budget" summary="Approve the 30,000 USDC operating budget for council operations, tooling and legal review in Q1 2027." status="PENDING" date="{{dates.agc6}}" publisher="{{people.atlas.lena}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-6"></x-import></sc-if>
+<sc-if value="{{show.r2}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-8" title="Fund the Q1 2027 Ecosystem Grants Program" summary="Allocate 250,000 USDC and 400,000 MRD to the Ecosystem Grants Program to fund integrations, tooling and research during Q1 2027." status="ACTIVE" date="{{dates.mgp8}}" publisher="{{people.meridian.lena}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-8"></x-import></sc-if>
+<sc-if value="{{show.r3}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-7" title="Increase the bug bounty ceiling to 1M USDC" summary="Raise the maximum Immunefi payout for critical vulnerabilities from 250,000 to 1,000,000 USDC and pre-fund the bounty Safe with 250,000 USDC." status="{{st.n7.status}}" status-context="{{st.n7.ctx}}" date="{{st.n7.date}}" publisher="{{people.northstar.tomas}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-7"></x-import></sc-if>
+<sc-if value="{{show.r4}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-7" title="Adopt the Meridian Constitution v2" summary="Ratify the revised constitution that formalises working groups, conflict-of-interest disclosures and emergency procedures." status="PENDING" date="{{dates.mgp7}}" publisher="{{people.meridian.nadia}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-7"></x-import></sc-if>
+<sc-if value="{{show.r5}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-5" title="Grant: Wallet accessibility audit" summary="Commission an accessibility audit of the five most-used governance wallets (18,500 USDC)." status="ACTIVE" date="{{dates.agc5}}" publisher="{{people.atlas.tomas}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-5"></x-import></sc-if>
+<sc-if value="{{show.r6}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-6" title="Launch the Northstar Ecosystem Grants round 3" summary="Fund grants round 3 with 300,000 USDC and 1,500,000 NSP for solver tooling, intent explorers and research on MEV-aware settlement." status="{{st.n6.status}}" status-context="{{st.n6.ctx}}" date="{{st.n6.date}}" publisher="{{people.northstar.ines}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-6"></x-import></sc-if>
+<sc-if value="{{show.r7}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-4" title="Add a sixth council seat for research" summary="Expand the council with a research seat to improve technical review of grant applications." status="{{agc4Status}}" date="{{dates.agc4}}" publisher="{{people.atlas.nadia}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-4"></x-import></sc-if>
+<sc-if value="{{show.r8}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-6" title="Allocate 120 ETH to Uniswap v4 liquidity provisioning" summary="Move 120 ETH from the treasury to the Liquidity Operations Safe to seed the MRD/ETH v4 pool with a dynamic-fee hook." status="EXECUTABLE" date="{{dates.mgp6}}" publisher="{{people.meridian.kofi}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-6"></x-import></sc-if>
+<sc-if value="{{show.r9}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-5" title="Raise the protocol fee switch to 25 bps" summary="Increase the protocol fee on settled volume from 10 to 25 basis points and route the additional revenue to the treasury." status="VETOED" date="{{dates.nsp5}}" publisher="{{people.northstar.lena}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-5"></x-import></sc-if>
+<sc-if value="{{show.r10}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-5" title="Signal: Expand the delegate compensation framework" summary="Non-binding signal to expand delegate compensation to the top 30 delegates by voting power, funded from the community budget." status="ACCEPTED" date="{{dates.mgp5}}" publisher="{{people.meridian.sofia}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-5"></x-import></sc-if>
+<sc-if value="{{show.r11}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-4" title="Deploy Northstar v3 settlement on Base" summary="Send 40 ETH to the Base Operations Safe to deploy and seed the v3 settlement contracts on Base, following the successful Arbitrum launch." status="{{st.n4.status}}" status-context="{{st.n4.ctx}}" date="{{st.n4.date}}" publisher="{{people.northstar.nadia}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-4"></x-import></sc-if>
+<sc-if value="{{show.r12}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-4" title="Reduce proposal threshold to 25,000 MRD" summary="Lower the minimum voting power required to submit a proposal from 100,000 MRD to 25,000 MRD to broaden participation." status="REJECTED" date="{{dates.mgp4}}" publisher="{{people.meridian.anon}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-4"></x-import></sc-if>
+<sc-if value="{{show.r13}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-3" title="Grant: Hackathon prize pool for Q4" summary="Provide a 15,000 DAI prize pool for the Atlas Q4 hackathon tracks." status="REJECTED" date="{{dates.agc3}}" publisher="{{people.atlas.chenwei}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-3"></x-import></sc-if>
+<sc-if value="{{show.r14}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-3" title="Update DAO metadata and website links" summary="Refresh the DAO description to reflect the cross-chain routing roadmap and add the new Discord and forum links." status="EXECUTED" date="{{dates.mgp3}}" publisher="{{people.meridian.kofi}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-3"></x-import></sc-if>
+<sc-if value="{{show.r15}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-3" title="Onboard Wintermute as a designated solver" summary="Add Wintermute to the designated solver set with a 500,000 NSP bond, enabling it to settle intents on all supported rollups." status="EXPIRED" date="{{dates.nsp3}}" publisher="{{people.northstar.sofia}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-3"></x-import></sc-if>
+<sc-if value="{{show.r16}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-2" title="Fund the Q4 2026 security audit program" summary="Allocate 240,000 USDC to the audit program covering the v3 settlement contracts, the solver registry and the cross-rollup bridge adapters." status="EXECUTED" date="{{dates.nsp2}}" publisher="{{people.northstar.kofi}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-2"></x-import></sc-if>
+<sc-if value="{{show.r17}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-2" title="Grant: Governance analytics dashboard" summary="Fund a public dashboard that tracks delegate participation across ecosystem DAOs (25,000 USDC)." status="EXPIRED" date="{{dates.agc2}}" publisher="{{people.atlas.sofia}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-2"></x-import></sc-if>
+<sc-if value="{{show.r18}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-2" title="Q4 2026 Contributor Compensation" summary="Approve the Q4 2026 compensation budget of 180,000 USDC for the core contributor team, paid to the Contributors Safe." status="EXECUTED" date="{{dates.mgp2}}" publisher="{{people.meridian.nadia}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-2"></x-import></sc-if>
+<sc-if value="{{show.r19}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="AGC-1" title="Grant: Open-source zk proving benchmarks" summary="Fund the Nexus Research Guild with 40,000 USDC to publish reproducible benchmarks for zk proving systems." status="EXECUTED" date="{{dates.agc1}}" publisher="{{people.atlas.nadia}}" tag="Atlas Grants Council" href="#nav:account:atlas:proposal:AGC-1"></x-import></sc-if>
+<sc-if value="{{show.r20}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="NSP-1" title="Migrate NSP staking to liquid restaking" summary="Replace the native NSP staking module with a liquid restaking wrapper so stakers can use stNSP as collateral across integrated money markets." status="REJECTED" date="{{dates.nsp1}}" publisher="{{people.northstar.dmitri}}" tag="Northstar Protocol" href="#nav:account:northstar:proposal:NSP-1"></x-import></sc-if>
+<sc-if value="{{show.r21}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.ProposalDataListItem.Structure" id="MGP-1" title="Sponsor the ETHDenver 2027 Community Hub" summary="Proposal to sponsor a Meridian community hub at ETHDenver 2027 for 85,000 USDC to grow developer adoption." status="REJECTED" date="{{dates.mgp1}}" publisher="{{people.meridian.lena}}" tag="Meridian DAO" href="#nav:account:meridian:proposal:MGP-1"></x-import></sc-if>
+</x-import>
+                <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+              </x-import>
+            </div>
+          </main>
+
+          <aside class="page-aside">
+            <sc-if value="{{isAll}}" hint-placeholder-val="{{true}}">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <div class="aside-card__header">
+                <x-import component-from-global-scope="GovUiKit.Heading" size="h3">All proposals</x-import>
+              </div>
+              <div class="stat-grid">
+                <div class="stat-card">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h3">22</x-import>
+                  <p class="stat-card__label">Total proposals</p>
+                </div>
+                <div class="stat-card">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h3">3</x-import>
+                  <p class="stat-card__label">Accounts</p>
+                </div>
+                <div class="stat-card">
+                  <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{recentValue}}<span class="stat-card__suffix">{{recentUnit}}</span></x-import>
+                  <p class="stat-card__label">Most recent</p>
+                </div>
+              </div>
+            </x-import>
+            </sc-if>
+            <sc-if value="{{isOne}}" hint-placeholder-val="{{false}}">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">{{process.title}}</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <p class="page-aside__text">{{process.text}}</p>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="{{process.href}}">View governance process</x-import>
+              </div>
+            </x-import>
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Notifications</x-import>
+              <p class="page-aside__text">Get notified on Telegram about new proposals and other activity.</p>
+              <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="md" icon-left="SOCIAL_TELEGRAM" href="https://t.me/aragon_test_bot" target="_blank" class-name="w-full">Subscribe</x-import>
+            </x-import>
+            </sc-if>
+          </aside>
+        </div>
+
+        <x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{dialogOpen}}" on-open-change="{{dialogChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Select an account" hidden-description="Select the account to create a proposal for">
+          <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Select an account" description="Select the account you want to create a proposal for. You pick the process of that account on the next step." on-close="{{closeDialog}}"></x-import>
+          <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+            <div class="wsy-pick-list">
+              <sc-for list="{{accounts}}" as="a" hint-placeholder-count="3">
+                <x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="{{a.cls}}" on-click="{{a.choose}}">
+                  <div class="flex items-center gap-3">
+                    <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{a.name}}" src="{{a.avatar}}" size="md" class-name="shrink-0" badge="{{netBadge}}"></x-import>
+                    <div class="ws-acc-item__text">
+                      <span class="ws-acc-item__name">{{a.name}}</span>
+                      <span class="ws-acc-item__meta"><span class="ws-acc-item__net">{{a.network}}</span><span class="ws-acc-item__addr">{{a.address}}</span></span>
+                    </div>
+                    <x-import component-from-global-scope="GovUiKit.Tag" label="DAO" variant="primary" class-name="shrink-0"></x-import>
+                  </div>
+                </x-import>
+              </sc-for>
+            </div>
+          </x-import>
+          <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" secondary-action="{{secondary}}"></x-import>
+        </x-import>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"onNav":{"editor":null},"wallet":{"editor":null},"onConnect":{"editor":null},"scope":{"editor":null},"$preview":{"width":1100,"height":1300}}'>
+// PART of the workspace prototype (mounted by Workspace.dc.html). Props: onNav(target), wallet, onConnect (unused), scope (unused, 'all').
+// All-accounts proposals (apps/app: modules/workspace/pages/workspaceProposalsPage/workspaceProposalsPageClient.tsx, components
+// workspaceProposalList (PluginFilterComponent, variant "dropdown"), workspaceProposalListDefault, workspaceProposalsAsideCard, workspaceSelectAccountDialog).
+// The 22 proposals of the three DAOs (Meridian token voting, Atlas multisig, Northstar multi-stage), newest first, page size 10, each row tagged with its DAO and
+// opening account:<id>:proposal:<slug>. The filter is the app's: ONE dropdown, "All proposals" plus one entry per process ("<DAO> · <process>"); there is
+// no status or account filter besides it. A selection narrows the list and the "x of y" count, and swaps the aside to that process (the app's
+// workspaceProcessProposalsAsideCard). Rows sit one per line at column 0, each in its own <sc-if>: the kit's pagination counts the direct children.
+// "New proposal" opens the select-account dialog (DAO accounts only; Safes have no proposals); "Next" continues to CreateProposalFlow.dc.html, the only
+// create-proposal wizard built (the app's next step, selecting a process, is skipped). Statuses of AGC-4 and NSP-4/6/7/8 follow the DAO prototypes' shared state.
+class Component extends DCLogic {
+  state = { filter: 'all', dialog: false, chosen: '' };
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#nav:"]') : null;
+    if (!a) return;
+    e.preventDefault();
+    if (typeof this.props.onNav === 'function') this.props.onNav(a.getAttribute('href').slice(5));
+  };
+  renderVals() {
+    const hour = 3600000, day = 24 * hour, now = Date.now();
+    const f = this.state.filter, chosen = this.state.chosen;
+    const ov = window.__nspState || {}, at = window.__atlasDao || {};
+    const ACC = [
+      ['meridian', 'Meridian DAO', 'assets/mock/avatar/meridian.svg', 'Ethereum', '0xC8C3…BCde'],
+      ['atlas', 'Atlas Grants Council', 'assets/mock/avatar/atlas.svg', 'Ethereum', '0x3115…d368'],
+      ['northstar', 'Northstar Protocol', 'assets/mock/avatar/northstar.svg', 'Ethereum', '0xA767…A063']
+    ];
+    const OWNER = ['northstar', 'atlas', 'meridian', 'northstar', 'meridian', 'atlas', 'northstar', 'atlas', 'meridian', 'northstar', 'meridian', 'northstar', 'meridian', 'atlas', 'meridian', 'northstar', 'northstar', 'atlas', 'meridian', 'atlas', 'northstar', 'meridian'];
+    const show = {}; let count = 0;
+    OWNER.forEach((o, i) => { const on = f === 'all' || f === o; show['r' + i] = on; if (on) count++; });
+    const person = (acc, address, name) => ({ address, name, link: '#nav:account:' + acc + ':member:' + address });
+    const P = [['lena', '0x826e7eb63d237333d9063dc74e7ce8e222b0fc05', 'lenaweber.eth'], ['nadia', '0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a', 'nadia.eth'],
+      ['kofi', '0xac6399087027f972e6d2ab830dc9b33cda035642', 'kofi-mensah.eth'], ['sofia', '0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a', 'sofiaruiz.eth'],
+      ['tomas', '0xb8616ba616766bd8fbdc69ded1b02e41b482b98e', 'tomas.eth'], ['chenwei', '0x8a25faabbd80f71248328cf3a5867d3168210a46', 'chenwei.eth'],
+      ['anon', '0x865f1f2c83b0ee4a9116da01bcc1e2661086e089', undefined], ['ines', '0xcdc7d3f9b0174765aaf7be715f9c357c663a1c81', 'ines-alvarez.eth'],
+      ['dmitri', '0x7331c334835fd8c5d6a351f67a517e6b0f452f63', 'dmitri.eth']];
+    const people = {};
+    ACC.forEach((a) => { people[a[0]] = {}; P.forEach((p) => { people[a[0]][p[0]] = person(a[0], p[1], p[2]); }); });
+    const st = {
+      n8: ov.adv8 ? { status: 'ACTIVE', ctx: 'Community veto', date: now + 7 * day } : (ov.core8 || ov.council8) ? { status: 'ADVANCEABLE', ctx: 'Council approval', date: now + 3 * day + hour } : { status: 'ACTIVE', ctx: 'Council approval', date: now + 3 * day + hour },
+      n7: ov.adv7 ? { status: 'ACTIVE', ctx: 'Community veto', date: now + 7 * day } : { status: 'ADVANCEABLE', ctx: 'Council approval', date: now + 1 * day + hour },
+      n6: ov.veto6 ? { status: 'VETOED', ctx: undefined, date: now - 1 * day } : { status: 'ACTIVE', ctx: 'Community veto', date: now + 4 * day + hour },
+      n4: ov.exec4 ? { status: 'EXECUTED', ctx: undefined, date: now - 4 * day - hour } : { status: 'EXECUTABLE', ctx: undefined, date: now - 4 * day - hour }
+    };
+    const LABEL = { all: 'All proposals', meridian: 'Meridian DAO · Meridian Token Voting', atlas: 'Atlas Grants Council · Grants Council Multisig', northstar: 'Northstar Protocol · Northstar Staged Governance' };
+    const PROC = {
+      meridian: { title: 'Meridian Token Voting (MGP)', text: 'Token-weighted governance for all MRD holders and their delegates. Proposals pass with a simple majority and 15% quorum.', href: '#nav:account:meridian:process:mgp' },
+      atlas: { title: 'Grants Council Multisig (AGC)', text: 'Five elected council members approve grant disbursements. Three approvals are required to execute.', href: '#nav:account:atlas:process:agc' },
+      northstar: { title: 'Northstar Staged Governance (NSP)', text: 'Proposals are approved by the Council Safe or the Core Team, then pass a 7-day community veto window in which NSP holders or the Security Guardian can block them.', href: '#nav:account:northstar:process:nsp' }
+    };
+    const setFilter = (k) => () => this.setState({ filter: k });
+    // The network logo is the Avatar's `badge` prop, which takes an element, so it is built here.
+    const netBadge = window.React.createElement('img', { src: 'assets/networks/ethereum.svg', alt: 'Ethereum', title: 'Ethereum', className: 'object-cover' });
+    const recent = GovUiKit.formatterUtils.formatDate(now - 1 * day - hour, { format: GovUiKit.DateFormat.RELATIVE }).split(' ');
+    return {
+      netBadge, onClick: this.click, yes: true, no: false, noFocus: (e) => e.preventDefault(),
+      count, pageSize: 10, show, people, st,
+      agc4Status: at.executed4 ? 'EXECUTED' : 'EXECUTABLE',
+      dates: {
+        mgp8: now + 3 * day + hour, mgp7: now + 6 * day + hour, mgp6: now - 1 * day - hour, mgp5: now - 6 * day - hour, mgp4: now - 13 * day - hour,
+        mgp3: now - 26 * day - hour, mgp2: now - 39 * day - hour, mgp1: now - 62 * day - hour,
+        agc6: now + 8 * day + hour, agc5: now + 6 * day + hour, agc4: now + 4 * day + hour, agc3: now - 13 * day - hour, agc2: now - 23 * day - hour, agc1: now - 34 * day - hour,
+        nsp5: now - 2 * day - hour, nsp3: now - 17 * day - hour, nsp2: now - 17 * day - hour, nsp1: now - 29 * day - hour
+      },
+      filterLabel: LABEL[f],
+      sel: { all: f === 'all', meridian: f === 'meridian', atlas: f === 'atlas', northstar: f === 'northstar' },
+      pick: { all: setFilter('all'), meridian: setFilter('meridian'), atlas: setFilter('atlas'), northstar: setFilter('northstar') },
+      isAll: f === 'all', isOne: f !== 'all', process: PROC[f] || PROC.meridian,
+      recentValue: recent[0] || '1', recentUnit: ' ' + recent.slice(1).join(' '),
+      dialogOpen: this.state.dialog,
+      openDialog: () => this.setState({ dialog: true, chosen: '' }),
+      closeDialog: () => this.setState({ dialog: false }),
+      dialogChange: (o) => { if (!o) this.setState({ dialog: false }); },
+      accounts: ACC.map((a) => ({ name: a[1], avatar: a[2], network: a[3], address: a[4], cls: 'wsy-pick' + (chosen === a[0] ? ' wsy-pick--active' : ''), choose: () => this.setState({ chosen: a[0] }) })),
+      primary: { label: 'Next', href: 'CreateProposalFlow.dc.html?from=workspace&account=' + chosen, disabled: !chosen },
+      secondary: { label: 'Cancel', onClick: () => this.setState({ dialog: false }) }
+    };
+  }
+}
+</script>
+</body>
+</html>

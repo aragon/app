@@ -43,6 +43,7 @@ export const TransactionStatusStep = <
         >
             <div className="flex flex-row items-center gap-related--8-12">
                 {['pending', 'idle'].includes(state) && (
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: 2 px frame that gives the spinner the icon size
                     <div className="p-0.5">
                         <Spinner
                             isLoading={state === 'pending'}

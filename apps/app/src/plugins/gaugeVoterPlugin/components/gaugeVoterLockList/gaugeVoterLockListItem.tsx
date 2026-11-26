@@ -281,7 +281,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-related--12-16">
                     <Avatar className="shrink-0" size="md" src={token.logo} />
-                    <Heading as="h4" typeRole="title-item">
+                    <Heading as="h4" typeClassName="type-title-item">
                         ID: {lock.tokenId}
                     </Heading>
                 </div>

@@ -39,10 +39,7 @@ export const ProposalCreationEligibilityField: React.FC<
         onChange(value === 'members' ? '1' : '0');
 
     return (
-        <Card
-            className="flex flex-col gap-section shadow-surface-sm"
-            inset="surface-wide"
-        >
+        <Card className="flex flex-col gap-section p-inset-surface-wide shadow-surface-sm">
             <RadioGroup
                 className="w-full"
                 helpText={t(

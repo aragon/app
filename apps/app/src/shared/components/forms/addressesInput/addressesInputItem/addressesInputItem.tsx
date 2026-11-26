@@ -117,6 +117,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
                 />
                 <Button
                     aria-label={t('app.shared.addressesInput.item.remove')}
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: centres the small remove button on the large field ((48 - 32) / 2)
                     className="hidden shrink-0 sm:mt-2 sm:flex"
                     disabled={!canRemove}
                     iconLeft={IconType.CLOSE}

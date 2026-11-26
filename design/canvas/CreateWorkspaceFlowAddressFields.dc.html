@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace flow: address fields</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="workspace-fields">
+  <div class="workspace-account__row">
+    <div class="workspace-account__network">
+      <x-import component-from-global-scope="GovUiKit.InputContainer" id="{{netId}}" label="Network" use-custom-wrapper="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.Dropdown.Container" align="start" custom-trigger="{{trigger}}" constrain-content-width="{{no}}">
+          <sc-for list="{{options}}" as="opt" hint-placeholder-count="3">
+            <x-import component-from-global-scope="GovUiKit.Dropdown.Item" selected="{{opt.selected}}" on-click="{{opt.pick}}">
+              <span class="network-option">
+                <x-import component-from-global-scope="GovUiKit.Avatar" alt="{{opt.name}}" size="sm" src="{{opt.logo}}"></x-import>
+                <span class="network-option__name">{{opt.name}}</span>
+                <sc-if value="{{opt.tag}}" hint-placeholder-val="{{no}}"><span class="network-tag">{{opt.tag}}</span></sc-if>
+              </span>
+            </x-import>
+          </sc-for>
+        </x-import>
+      </x-import>
+    </div>
+    <x-import component-from-global-scope="GovUiKit.AddressInput" label="Address" class-name="w-full min-w-0" chain-id="{{chainId}}" placeholder="0x… or ENS name" value="{{address}}" alert="{{alert}}" on-change="{{changeAddress}}" on-blur="{{blurAddress}}"></x-import>
+  </div>
+  <sc-if value="{{showResolving}}" hint-placeholder-val="{{no}}">
+    <div class="workspace-identity">
+      <x-import component-from-global-scope="GovUiKit.Spinner" size="md" variant="neutral"></x-import>
+      <span class="workspace-identity__resolving">Checking address…</span>
+    </div>
+  </sc-if>
+  <sc-if value="{{showIdentity}}" hint-placeholder-val="{{no}}">
+    <div class="workspace-identity">
+      <sc-if value="{{identity.isDao}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.DaoAvatar" name="{{identity.name}}" src="{{identity.avatar}}" size="md" class-name="shrink-0"></x-import>
+      </sc-if>
+      <sc-if value="{{identity.isSafe}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.Avatar" alt="Safe" size="md" src="assets/safeWallet.png" class-name="shrink-0"></x-import>
+      </sc-if>
+      <div class="workspace-identity__main">
+        <span class="workspace-identity__name">{{identity.primary}}</span>
+        <sc-if value="{{identity.hasName}}" hint-placeholder-val="{{no}}"><span class="workspace-identity__address">{{identity.truncated}}</span></sc-if>
+      </div>
+      <x-import component-from-global-scope="GovUiKit.Tag" label="{{identity.tag}}" variant="{{identity.tagVariant}}" class-name="shrink-0"></x-import>
+    </div>
+  </sc-if>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"row":{"editor":null},"$preview":{"width":760,"height":120}}'>
+// Network + address fields of one workspace target / account row (apps/app: modules/workspace/components/createWorkspaceForm/
+// createWorkspaceFormNetworkAddressFields, createWorkspaceFormAccountIdentity; shared/components/forms/networkInput).
+// Used by CreateWorkspaceFlowTargets and CreateWorkspaceFlowAccounts. Prop `row` (built by CreateWorkspaceFlow):
+//   { id, networkName, networkLogo, chainId, options: [{ name, logo, tag, selected, pick }], address, alert: {message, variant},
+//     onAddress(value), onBlur(), identity: null | 'loading' | { isDao, name, avatar, primary, truncated, hasName, tag, tagVariant } }
+class Component extends DCLogic {
+  renderVals() {
+    const r = this.props.row || {};
+    const h = React.createElement, K = GovUiKit;
+    const id = r.identity;
+    const trigger = h('button', { type: 'button', className: 'network-input', 'aria-label': 'Network' },
+      h(K.Avatar, { alt: r.networkName, size: 'sm', src: r.networkLogo, className: 'shrink-0' }),
+      h('span', { className: 'network-input__name' }, r.networkName),
+      h(K.Icon, { icon: 'CHEVRON_DOWN', className: 'shrink-0 text-neutral-300' }));
+    return {
+      yes: true, no: false,
+      netId: 'net-' + r.id, trigger, options: r.options || [], chainId: r.chainId, address: r.address ?? '', alert: r.alert,
+      changeAddress: (v) => r.onAddress && r.onAddress(v ?? ''),
+      blurAddress: () => r.onBlur && r.onBlur(),
+      showResolving: id === 'loading',
+      showIdentity: !!id && id !== 'loading',
+      identity: id && id !== 'loading' ? id : {}
+    };
+  }
+}
+</script>
+</body>
+</html>

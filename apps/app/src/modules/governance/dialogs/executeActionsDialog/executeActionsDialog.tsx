@@ -265,7 +265,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
                 title={t('app.governance.executeActionsDialog.title')}
             />
             <Dialog.Content>
-                <div className="mb-group--12-16 flex flex-col gap-section">
+                <div className="flex flex-col gap-section pb-group--12-16">
                     <NetworkSwitchAlert
                         isCrossNetworkTransaction={isCrossNetworkTransaction}
                         networkName={networkName}

@@ -230,7 +230,7 @@ Generic image avatar with size variants, a fallback and an optional corner badge
 
 **References**
 
-- `kit:src/core/components/avatars/avatar/avatar.tsx:134`
+- `kit:src/core/components/avatars/avatar/avatar.tsx:136`
 - `kit:src/core/components/avatars/avatar/avatar.stories.tsx:1`
 
 ### AvatarBase
@@ -273,12 +273,12 @@ Avatar-shaped frame rendering an Icon with variant styling.
 
 - Pass fully rendered `Avatar`-compatible nodes through `avatars`; the stack applies one shared size to them.
 - The default size steps down from `md` for one avatar to `sm` for two and `xs` for three or more.
-- Three or more avatars render the first two plus a neutral count avatar capped visually at `9+`.
+- Up to three avatars are shown in full. Four or more render the first two plus a neutral count avatar capped visually at `9+`.
 - Accessibility is caller-controlled: set `aria-label`/`role` on the stack as needed.
 
 **References**
 
-- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:140`
+- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:143`
 - `kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1`
 
 ### Breadcrumbs
@@ -343,7 +343,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **Usage notes**
 
-- `Card` styles its surface (rounding, neutral background, hairline border, shadow) and, through `inset`, its padding as a spacing role; the default `none` adds no padding (the content pads itself). Prefer `inset` to padding classes in `className`. Replace the border colour through `className`; colours sorting before `neutral` (e.g. `critical`) need the important modifier (`border-critical-200!`).
+- `Card` styles only its surface (rounding, neutral background, hairline border, shadow): it adds no padding. Add spacing through `className` or the content inside. A class that overrides a property `Card` sets (background, border colour, shadow) needs the important modifier (`border-critical-primary!`): the stylesheet orders classes by name, not by their order in `className`.
 
 **Use when**
 
@@ -351,7 +351,7 @@ Basic surface container (rounding, background, hairline border, shadow; no paddi
 
 **References**
 
-- `kit:src/core/components/cards/card/card.tsx:31`
+- `kit:src/core/components/cards/card/card.tsx:14`
 - `kit:src/core/components/cards/card/card.stories.tsx:1`
 
 ### CardCollapsible
@@ -366,7 +366,7 @@ Card whose body collapses/expands, with an optional exact collapsed pixel height
 
 **References**
 
-- `kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:18`
+- `kit:src/core/components/cards/cardCollapsible/cardCollapsible.tsx:19`
 - `kit:src/core/components/cards/cardCollapsible/cardCollapsible.stories.tsx:1`
 
 ### CardEmptyState
@@ -516,7 +516,7 @@ Avatar specialized for a DAO (name + image with fallback).
 
 **References**
 
-- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
+- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:83`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
 
 ### DaoDataListItem.Skeleton
@@ -751,7 +751,7 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:76`
+- `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.tsx:75`
 - `kit:src/core/components/dropdown/dropdownContainer/dropdownContainer.stories.tsx:1`
 
 ### Dropdown.Group
@@ -763,11 +763,12 @@ DropdownContainer: layout container for child items of the Dropdown compound (Co
 **Usage notes**
 
 - Wrap direct `Dropdown.Container` children, or components that render them, to share one border, surface, rounding, and neutral dividers.
+- The dividers sit on the group's direct children and keep their colour while a trigger is hovered or pressed.
 - Each child remains an independent Radix dropdown; the group provides presentation only and has no selection or accessibility semantics of its own.
 
 **References**
 
-- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:17`
+- `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.tsx:19`
 - `kit:src/core/components/dropdown/dropdownGroup/dropdownGroup.stories.tsx:1`
 
 ### Dropdown.Item
@@ -868,7 +869,7 @@ Semantic heading with size and rendered element (as h1..h5).
 
 **References**
 
-- `kit:src/core/components/heading/heading.tsx:34`
+- `kit:src/core/components/heading/heading.tsx:33`
 - `kit:src/core/components/heading/heading.stories.tsx:1`
 
 ### Icon
@@ -1486,7 +1487,7 @@ Indeterminate loading spinner with size/variant.
 
 **References**
 
-- `kit:src/core/components/spinner/spinner.tsx:87`
+- `kit:src/core/components/spinner/spinner.tsx:88`
 - `kit:src/core/components/spinner/spinner.stories.tsx:1`
 
 ### StatePingAnimation
@@ -1706,7 +1707,7 @@ Hover/focus tooltip (Radix) with content and variant.
 
 **References**
 
-- `kit:src/core/components/tooltip/tooltip.tsx:70`
+- `kit:src/core/components/tooltip/tooltip.tsx:72`
 - `kit:src/core/components/tooltip/tooltip.stories.tsx:1`
 
 ### TransactionDataListItem.Skeleton
@@ -1812,7 +1813,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **Usage notes**
 
-- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.
+- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar in a circular button. The disconnected Connect button remains pill-shaped below `md`; both states use rounded rectangular buttons from `md` upward.
 - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`.
 
 **Use when**
@@ -1826,7 +1827,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **References**
 
-- `kit:src/modules/components/wallet/wallet.tsx:30`
+- `kit:src/modules/components/wallet/wallet.tsx:31`
 - `kit:src/modules/components/wallet/wallet.stories.tsx:1`
 
 ## Compound components

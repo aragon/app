@@ -238,7 +238,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
                             <circle
                                 cx="4"
                                 cy="4"
-                                fill="var(--color-neutral-300)"
+                                fill="var(--guk-border-surface-default-graph-node)"
                                 r="3.5"
                             />
                         </marker>

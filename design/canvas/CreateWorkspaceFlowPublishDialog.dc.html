@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace flow: publish dialog</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<x-import component-from-global-scope="GovUiKit.Dialog.Root" open="{{isOpen}}" on-open-change="{{openChange}}" on-open-auto-focus="{{noFocus}}" container-class-name="dlg-container--static" hidden-title="Create workspace" hidden-description="Create workspace dialog">
+  <x-import component-from-global-scope="GovUiKit.Dialog.Header" title="Create workspace" on-close="{{close}}"></x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Content">
+    <div class="workspace-publish">
+      <div class="workspace-publish__head">
+        <x-import component-from-global-scope="GovUiKit.Avatar" alt="{{name}}" size="lg" src="{{avatarUrl}}"></x-import>
+        <div class="workspace-publish__title">
+          <x-import component-from-global-scope="GovUiKit.Heading" as="h3" size="h4">{{name}}</x-import>
+          <p class="workspace-publish__summary">{{summary}}</p>
+        </div>
+      </div>
+      <sc-if value="{{hasDescription}}" hint-placeholder-val="{{no}}">
+        <p class="workspace-publish__description">{{description}}</p>
+      </sc-if>
+      <sc-if value="{{isError}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.AlertCard" message="Unable to create the workspace" variant="critical">The workspace could not be created. Check your connection and try again.</x-import>
+      </sc-if>
+      <sc-if value="{{isSuccess}}" hint-placeholder-val="{{no}}">
+        <x-import component-from-global-scope="GovUiKit.AlertCard" message="Workspace created" variant="success"></x-import>
+      </sc-if>
+    </div>
+  </x-import>
+  <x-import component-from-global-scope="GovUiKit.Dialog.Footer" primary-action="{{primary}}" has-error="{{isError}}"></x-import>
+</x-import>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"open":{"editor":"boolean","default":true},"simulateError":{"editor":"boolean","default":false},"workspaceName":{"editor":null},"avatarUrl":{"editor":null},"description":{"editor":null},"accounts":{"editor":"int","default":1},"targets":{"editor":"int","default":0},"onClose":{"editor":null},"successHref":{"editor":null},"$preview":{"width":1440,"height":900}}'>
+// PUBLISH_WORKSPACE dialog, create mode (apps/app: modules/workspace/dialogs/publishWorkspaceDialog/publishWorkspaceDialog.tsx).
+// Not a blockchain transaction: the workspace is stored in the browser registry. Mount it inside the flow, drive `open` from its state:
+//   <dc-import name="CreateWorkspaceFlowPublishDialog" open="{{dialogOpen}}" workspace-name="…" accounts="{{n}}" targets="{{m}}" on-close="{{closeDialog}}"
+//     success-href="Explore.dc.html" hint-size="100%,1px"></dc-import>
+// Props: open; workspaceName, avatarUrl, description (form values); accounts, targets (numbers, summary "N accounts · M targets");
+// onClose (close button, Escape, overlay); successHref (the "View workspace" link, default Explore.dc.html);
+// simulateError (tweak): the save fails -> "Unable to create the workspace", primary "Try again"; switch off and retry to succeed.
+// States: idle (primary "Create workspace") -> pending (button loading ~1 s) -> success (AlertCard "Workspace created", primary link "View workspace").
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { status: 'idle' }; this.timer = null; }
+  componentDidUpdate(prev) { if (prev.open !== this.props.open) this.reset(); }
+  componentWillUnmount() { clearTimeout(this.timer); }
+  reset() { clearTimeout(this.timer); this.setState({ status: 'idle' }); }
+  publish() {
+    this.setState({ status: 'pending' });
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.setState({ status: this.props.simulateError ? 'error' : 'success' }), 1000);
+  }
+  close() { if (typeof this.props.onClose === 'function') this.props.onClose(); else this.reset(); }
+  renderVals() {
+    const p = this.props, status = this.state.status;
+    const n = Number(p.accounts ?? 0), m = Number(p.targets ?? 0);
+    let primary;
+    if (status === 'success') primary = { label: 'View workspace', href: p.successHref || 'Explore.dc.html' };
+    else primary = { label: status === 'error' ? 'Try again' : 'Create workspace', isLoading: status === 'pending', onClick: () => this.publish() };
+    return {
+      no: false,
+      isOpen: p.open === undefined ? true : !!p.open,
+      name: p.workspaceName || 'Meridian Ecosystem', avatarUrl: p.avatarUrl,
+      summary: n + ' accounts · ' + m + ' targets',
+      hasDescription: !!p.description, description: p.description,
+      isError: status === 'error', isSuccess: status === 'success', primary,
+      noFocus: (e) => e.preventDefault(),
+      openChange: (o) => { if (!o) this.close(); },
+      close: () => this.close()
+    };
+  }
+}
+</script>
+</body>
+</html>

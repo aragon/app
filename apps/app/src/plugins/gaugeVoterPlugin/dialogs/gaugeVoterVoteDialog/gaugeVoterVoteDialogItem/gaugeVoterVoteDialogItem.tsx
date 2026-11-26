@@ -89,6 +89,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
 
     return (
         <DataList.Item className="relative flex flex-col gap-group rounded-xl border border-surface-secondary bg-surface-primary p-inset-item-flat--fixed-16 md:flex-row md:items-center md:justify-between">
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: room for the absolute remove button on phones */}
             <div className="b-0 flex flex-1 items-center gap-related border-b border-surface-secondary pr-10 pb-inset-item-flat--fixed-16 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar

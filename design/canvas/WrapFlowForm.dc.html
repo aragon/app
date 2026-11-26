@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Wrap form</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<form class="flex flex-col gap-4" onSubmit="{{submit}}" noValidate="{{yes}}">
+  <p class="wf-info">Wrap {{under}} to get voting power.</p>
+  <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-y-3">
+      <x-import component-from-global-scope="GovUiKit.InputContainer" id="wrapAmount" wrapper-class-name="transfer-amount__field items-center" alert="{{alert}}" variant="{{variant}}">
+        <div class="wf-token"><x-import component-from-global-scope="GovUiKit.Avatar" size="xs" src="assets/mock/token/nsp.svg"></x-import><span>{{under}}</span></div>
+        <input class="size-full rounded-xl bg-transparent px-4 py-3 caret-neutral-500 transfer-amount__input" type="number" step="any" placeholder="0" value="{{amount}}" onChange="{{onAmount}}">
+        <p class="wf-fiat">{{fiat}}</p>
+      </x-import>
+      <x-import component-from-global-scope="GovUiKit.ToggleGroup" is-multi-select="{{no}}" value="{{percent}}" on-change="{{onPercent}}" variant="space-between">
+        <x-import component-from-global-scope="GovUiKit.Toggle" label="None" value="0"></x-import>
+        <x-import component-from-global-scope="GovUiKit.Toggle" label="25%" value="25"></x-import>
+        <x-import component-from-global-scope="GovUiKit.Toggle" label="50%" value="50"></x-import>
+        <x-import component-from-global-scope="GovUiKit.Toggle" label="75%" value="75"></x-import>
+        <x-import component-from-global-scope="GovUiKit.Toggle" label="100%" value="100"></x-import>
+      </x-import>
+    </div>
+  </div>
+  <sc-if value="{{isDialog}}" hint-placeholder-val="{{no}}">
+    <div class="flex flex-col gap-9">
+      <p class="footer-info">Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.</p>
+      <div class="flex gap-3 justify-between">
+        <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" size="md" on-click="{{cancel}}">Cancel</x-import>
+        <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="md" icon-right="CHEVRON_RIGHT" disabled="{{noBalance}}" on-click="{{press}}">{{submitLabel}}</x-import>
+      </div>
+    </div>
+  </sc-if>
+  <sc-if value="{{isPanel}}" hint-placeholder-val="{{yes}}">
+    <div class="flex flex-col gap-3">
+      <x-import component-from-global-scope="GovUiKit.Button" variant="primary" size="lg" disabled="{{noBalance}}" on-click="{{press}}">{{submitLabel}}</x-import>
+      <sc-if value="{{hasWrapped}}" hint-placeholder-val="{{yes}}">
+        <x-import component-from-global-scope="GovUiKit.Button" variant="secondary" size="lg" on-click="{{unwrap}}">Unwrap {{wrappedShort}} {{wsym}}</x-import>
+      </sc-if>
+      <p class="footer-info">Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.</p>
+    </div>
+  </sc-if>
+</form>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode":{"editor":"enum","options":["panel","dialog"],"default":"panel"},"wallet":{"editor":"text","default":"connected"},"underlying":{"editor":"float","default":12500},"wrapped":{"editor":"float","default":2000},"allowance":{"editor":"float","default":0},"on-submit":{"editor":null},"on-unwrap":{"editor":null},"on-cancel":{"editor":null},"on-connect":{"editor":null},"$preview":{"width":380,"height":520}}'>
+// Wrap form (apps/app: plugins/tokenPlugin/components/tokenMemberPanel/tokenWrap/tokenWrapForm.tsx), used in the Wrap tab
+// of the members aside (mode "panel") and in the wrap onboarding dialog (mode "dialog").
+// Props: mode panel|dialog; wallet ('connected' or ''); underlying (user's HBR balance); wrapped (user's wHBR balance);
+// allowance (HBR already approved for the wrapper; the button reads "Approve HBR" while allowance < amount, as the app does);
+// on-submit(amount) (valid submit: the host runs approve -> wrap); on-unwrap() (unwraps the whole wHBR balance, as the app does);
+// on-connect() (button while disconnected); on-cancel() (dialog mode).
+// Source: the app hides "Max" here and offers the percentage toggle (None/25/50/75/100%); 100% is preselected, so the amount
+// starts at the full balance. Validation (react-hook-form, on submit then on change): "Amount is mandatory.",
+// "Amount must be less than <balance>.", "Amount is invalid." (zero or less).
+const PRICE = 0.84;
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const bal = this.balance(props);
+    this.state = { amount: bal > 0 ? String(bal) : '', percent: '100', submitted: false };
+  }
+  balance(p) { return p.wallet === 'connected' ? Number(p.underlying) || 0 : 0; }
+  componentDidUpdate(prev) {
+    const a = this.balance(prev), b = this.balance(this.props);
+    if (a !== b) this.setState({ amount: b > 0 ? String(b) : '', percent: '100', submitted: false });
+  }
+  error(amount, bal) {
+    if (amount === '' || amount == null) return 'Amount is mandatory.';
+    const n = parseFloat(amount);
+    if (!(n > 0)) return 'Amount is invalid.';
+    if (n > bal) return 'Amount must be less than ' + bal + '.';
+    return '';
+  }
+  renderVals() {
+    const p = this.props;
+    const K = window.GovUiKit;
+    const connected = p.wallet === 'connected';
+    const bal = this.balance(p);
+    const { amount, percent, submitted } = this.state;
+    const err = connected && submitted ? this.error(amount, bal) : '';
+    const n = parseFloat(amount) || 0;
+    const needsApproval = connected && (Number(p.allowance) || 0) < n;
+    const wrapped = connected ? Number(p.wrapped) || 0 : 0;
+    const fmt = (v) => K.formatterUtils.formatNumber(v, { format: K.NumberFormat.TOKEN_AMOUNT_SHORT });
+    const go = () => {
+      if (!connected) { if (typeof p.onConnect === 'function') p.onConnect(); return; }
+      this.setState({ submitted: true });
+      if (this.error(amount, bal)) return;
+      if (typeof p.onSubmit === 'function') p.onSubmit(n);
+    };
+    const stop = (fn) => (e) => { if (e && e.preventDefault) e.preventDefault(); fn(); };
+    return {
+      yes: true, no: false, under: 'HBR', wsym: 'wHBR',
+      isPanel: p.mode !== 'dialog', isDialog: p.mode === 'dialog',
+      amount, percent,
+      fiat: K.formatterUtils.formatNumber(n * PRICE, { format: K.NumberFormat.FIAT_TOTAL_SHORT }),
+      alert: err ? { message: err, variant: 'critical' } : undefined,
+      variant: err ? 'critical' : 'default',
+      noBalance: connected && bal === 0,
+      submitLabel: (needsApproval ? 'Approve ' : 'Wrap ') + 'HBR',
+      hasWrapped: wrapped > 0, wrappedShort: fmt(wrapped),
+      onAmount: (e) => this.setState({ amount: e && e.target ? e.target.value : '', percent: '' }),
+      onPercent: (v) => {
+        if (!v) return;
+        const val = (bal * Number(v)) / 100;
+        this.setState({ percent: v, amount: String(val) });
+      },
+      submit: stop(go), press: stop(go),
+      unwrap: stop(() => { if (typeof p.onUnwrap === 'function') p.onUnwrap(); }),
+      cancel: stop(() => { if (typeof p.onCancel === 'function') p.onCancel(); })
+    };
+  }
+}
+</script>
+</body>
+</html>

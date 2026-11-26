@@ -43,7 +43,7 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
 
     const namespace = 'app.workspace.createWorkspaceForm.accounts.identity';
     const containerClassName =
-        'flex min-h-14 items-center gap-related rounded-xl bg-surface-secondary px-inset-item-flat py-inset-item-flat';
+        'flex min-h-14 items-center gap-related rounded-xl px-inset-item-flat py-inset-item-flat bg-surface-secondary';
 
     if (isLoading) {
         return (

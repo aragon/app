@@ -31,7 +31,7 @@ export const AragonDemoPoliciesPageHeaderStat: React.FC<
             )}
             {...otherProps}
         >
-            <div className="flex flex-row flex-wrap items-baseline gap-phrase">
+            <div className="flex flex-row items-baseline gap-phrase">
                 <p className="type-stat--dao-header">{value}</p>
                 {suffix && (
                     <p className="type-caption--dao-header-stat">{suffix}</p>

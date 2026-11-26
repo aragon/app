@@ -46,7 +46,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
             />
 
             <Container className="relative flex w-full grow flex-col">
-                <div className="top-6 my-section flex w-fit max-w-180 flex-col gap-related--6-12 md:absolute md:top-8 md:w-180">
+                <div className="top-6 flex w-fit max-w-180 flex-col gap-related--6-12 py-section md:absolute md:top-8 md:w-180">
                     <p className="type-display text-neutral-0">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
                         {ensName && (

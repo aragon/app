@@ -59,6 +59,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (
             />
             {!isSubPlugin && (
                 <InputContainer
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: field gap 24 px, 12 px from md: no role has this pair
                     className="flex flex-col gap-6 md:gap-3"
                     helpText={t(
                         'app.plugins.token.tokenSetupGovernance.minDuration.helpText',

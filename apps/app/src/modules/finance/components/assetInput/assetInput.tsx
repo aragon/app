@@ -229,7 +229,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const inputClassName = classNames(
-        'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg outline-none caret-bg-surface-secondary-inverse', // base styles
+        'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg caret-(--guk-bg-surface-secondary-inverse) outline-none', // base styles
         'placeholder:type-control placeholder:text-surface-placeholder', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
@@ -313,7 +313,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             {assetField.value?.amount && !hideMax && (
                 <div className="flex items-center self-end pr-control-lg">
                     <button
-                        className="flex cursor-pointer flex-wrap gap-x-phrase text-link-default hover:text-link-hover-action"
+                        className="flex cursor-pointer gap-x-phrase text-link-default hover:text-link-hover-action"
                         onClick={handleMaxAmount}
                         type="button"
                     >

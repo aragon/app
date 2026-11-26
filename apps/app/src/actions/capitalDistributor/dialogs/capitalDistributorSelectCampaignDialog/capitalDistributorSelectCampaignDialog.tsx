@@ -94,7 +94,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                     'app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.description',
                 )}
             >
-                <div className="my-related--fixed-8 flex w-full flex-col gap-related--12-8">
+                <div className="flex w-full flex-col gap-related--12-8 py-related--fixed-8">
                     {isLoading && (
                         <DataList.Root
                             entityLabel={t(

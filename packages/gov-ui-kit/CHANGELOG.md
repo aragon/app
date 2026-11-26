@@ -1,5 +1,19 @@
 # @aragon/gov-ui-kit
 
+## 3.1.0
+
+### Minor Changes
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add reusable `AvatarStack` and `Dropdown.Group` presentation primitives for composing grouped dropdown triggers, including count-based avatar sizing and correctly scaled fallback text.
+
+- [#1602](https://github.com/aragon/app/pull/1602) [`5896533`](https://github.com/aragon/app/commit/5896533e3a27282d52db652f6a2ea3158776a397) Thanks [@Fabricevladimir](https://github.com/Fabricevladimir)! - Add a `badge` property to `Avatar`, `DaoAvatar` and `MemberAvatar`: a small round badge at the bottom-right of the avatar, e.g. a network logo, sized from the avatar size.
+
+### Patch Changes
+
+- [#1563](https://github.com/aragon/app/pull/1563) [`89bfd83`](https://github.com/aragon/app/commit/89bfd83812d655bca941e06f551ef02986a2b1a3) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - `Dropdown.Group` renders its children directly: the wrapper it added around each child drew an empty divider row when a child rendered nothing.
+
+- [#1584](https://github.com/aragon/app/pull/1584) [`fc128e3`](https://github.com/aragon/app/commit/fc128e30a05fcdd4216df2c35bee51a5d3b0c975) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Order Tailwind classes against the kit theme (no visual change)
+
 ## 3.0.1
 
 ### Patch Changes

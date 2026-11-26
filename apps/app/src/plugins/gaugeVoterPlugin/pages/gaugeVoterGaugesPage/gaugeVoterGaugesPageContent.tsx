@@ -370,7 +370,7 @@ export const GaugeVoterGaugesPageContent: React.FC<
                         onValueChange={setSelectedLocksPanelTab}
                         value={selectedLocksPanelTab}
                     >
-                        <Tabs.List className="mb-group">
+                        <Tabs.List className="pb-group">
                             {visibleLocksPanelTabs.map(({ value }) => (
                                 <Tabs.Trigger
                                     key={value}

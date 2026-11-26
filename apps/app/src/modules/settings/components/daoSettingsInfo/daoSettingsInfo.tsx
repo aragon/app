@@ -31,7 +31,7 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     const { buildEntityUrl } = useDaoChain({ network: dao.network });
 
     return (
-        <Card inset="surface-wide">
+        <Card className="p-inset-surface-wide">
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t('app.settings.daoSettingsInfo.name')}

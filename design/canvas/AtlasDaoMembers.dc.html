@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Atlas DAO members page</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+      <div class="page-container" onClick="{{click}}">
+        <div class="app-container page-content">
+          <main class="page-main page-main--titled">
+            <header class="page-main__header">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h1">Members</x-import>
+            </header>
+            <x-import component-from-global-scope="GovUiKit.DataList.Root" entity-label="Members" items-count="{{count}}" page-size="{{pageSize}}" state="idle">
+              <x-import component-from-global-scope="GovUiKit.DataList.Container" layout-class-name="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+<sc-if value="{{connected}}" hint-placeholder-val="{{false}}"><x-import component-from-global-scope="GovUiKit.DataList.Item" class-name="flex min-w-0 flex-col items-start justify-center gap-y-3 py-4 md:min-w-44 md:py-6" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"><div class="mb-1 flex w-full items-center justify-between"><x-import component-from-global-scope="GovUiKit.MemberAvatar" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" responsive-size="{{mdSize}}" size="sm"></x-import><x-import component-from-global-scope="GovUiKit.Tag" label="You" variant="neutral"></x-import></div><x-import component-from-global-scope="GovUiKit.Heading" as="h2" class-name="inline-block w-full truncate" size="h3"><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" class-name="truncate" label="nadia.eth"></x-import></x-import></x-import></sc-if>
+<sc-if value="{{disconnected}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a" ens-name="nadia.eth" class-name="min-w-0" href="#nav:member:0x9cb2a4c4d6169507a60086dbdb9616ecff27d98a"></x-import></sc-if>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x826e7eb63d237333d9063dc74e7ce8e222b0fc05" ens-name="lenaweber.eth" class-name="min-w-0" href="#nav:member:0x826e7eb63d237333d9063dc74e7ce8e222b0fc05"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a" ens-name="sofiaruiz.eth" class-name="min-w-0" href="#nav:member:0xd7ae7a08d86bdd5c6d4d95961f6af3264351ae7a"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0xb8616ba616766bd8fbdc69ded1b02e41b482b98e" ens-name="tomas.eth" class-name="min-w-0" href="#nav:member:0xb8616ba616766bd8fbdc69ded1b02e41b482b98e"></x-import>
+<x-import component-from-global-scope="GovUiKit.MemberDataListItem.Structure" address="0x8a25faabbd80f71248328cf3a5867d3168210a46" ens-name="chenwei.eth" class-name="min-w-0" href="#nav:member:0x8a25faabbd80f71248328cf3a5867d3168210a46"></x-import>
+</x-import>
+              <x-import component-from-global-scope="GovUiKit.DataList.Pagination"></x-import>
+            </x-import>
+          </main>
+
+          <aside class="page-aside">
+            <x-import component-from-global-scope="GovUiKit.Card" class-name="flex shrink-0 flex-col gap-4 p-6">
+              <x-import component-from-global-scope="GovUiKit.Heading" size="h3">Grants Council Multisig</x-import>
+              <div style="display: flex; flex-direction: column; row-gap: 16px;">
+                <p class="page-aside__text">Five elected council members approve grant disbursements. Three approvals are required to execute.</p>
+                <x-import component-from-global-scope="GovUiKit.DefinitionList.Container">
+                  <div class="dl-row"><x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Plugin address" copy-value="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae" description="Multisig v1.3" link="{{pluginLink}}" children="0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae"></x-import></div>
+                  <x-import component-from-global-scope="GovUiKit.DefinitionList.Item" term="Launched" link="{{launchLink}}" children="March 2026"></x-import>
+                </x-import>
+                <x-import component-from-global-scope="GovUiKit.Button" variant="tertiary" icon-right="CHEVRON_RIGHT" href="#nav:process:agc">View governance process</x-import>
+              </div>
+            </x-import>
+          </aside>
+        </div>
+      </div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"on-nav":{"editor":null},"wallet":{"editor":"enum","options":["","connected"],"default":""},"on-connect":{"editor":null},"$preview":{"width":1100,"height":900}}'>
+// PART of the Atlas Grants Council prototype. Props: onNav(target), wallet, onConnect. Lifted from MsMembers; connected, nadia.eth carries the You tag.
+// DAO members of the multisig DAO (apps/app: modules/governance/pages/daoMembersPage; the multisig plugin registers no
+// member list or member panel slot, so the default list and the plugin-info aside card render).
+// The list items are written out one by one at the start of the line (the kit's pagination counts direct children).
+class Component extends DCLogic {
+  // Links to other DAO pages carry href="#nav:<target>"; one delegated handler turns them into onNav(target).
+  click = (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    const h = a.getAttribute('href');
+    e.preventDefault();
+    if (h && h.indexOf('#nav:') === 0 && this.props.onNav) this.props.onNav(h.slice(5));
+  };
+  baseVals() {
+    return {
+      yes: true,
+      count: 5,
+      pageSize: 5,
+      pluginLink: { href: 'https://etherscan.io/address/0x2c50cdfaebb0d839f5efdfd5cb0addc1ab8ca5ae', isOnchainEntity: true },
+      launchLink: { href: 'https://etherscan.io/tx/0x145a7ae04cba403de6e76cd3eb13de56deb884cdfb97af3e9de4f224aa7952c3' }
+    };
+  }
+  renderVals() {
+    const connected = this.props.wallet === 'connected';
+    return Object.assign(this.baseVals(), { click: this.click, connected, disconnected: !connected, mdSize: { md: 'md' } });
+  }
+}
+</script>
+</body>
+</html>

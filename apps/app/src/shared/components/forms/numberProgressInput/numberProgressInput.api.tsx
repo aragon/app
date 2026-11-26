@@ -42,4 +42,9 @@ export interface INumberProgressInputProps
      * Optional tags to be displayed to the left and right of the progress component. The first tag will be displayed to the left and the second to the right.
      */
     tags?: [ITagProps, ITagProps];
+    /**
+     * Hides the label repeated on the number input, which is then named by the field label.
+     * @default false
+     */
+    hideInputLabel?: boolean;
 }

@@ -79,7 +79,7 @@ export const WorkspaceAdminPageClient: React.FC<
                     }}
                     title={t('app.workspace.workspaceAdminPage.details.title')}
                 >
-                    <Card inset="surface-wide">
+                    <Card className="p-inset-surface-wide">
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t(
@@ -166,7 +166,7 @@ export const WorkspaceAdminPageClient: React.FC<
                         </DefinitionList.Container>
                         <Button
                             className="w-full"
-                            iconLeft={IconType.DEPOSIT}
+                            iconLeft={IconType.WITHDRAW}
                             onClick={handleExport}
                             variant="tertiary"
                         >

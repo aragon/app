@@ -41,7 +41,7 @@ export interface IWorkspaceGateProps {
 export const WorkspaceGate: React.FC<IWorkspaceGateProps> = (props) => {
     const { workspaceId, children } = props;
 
-    // Absent on the routes that are not account-scoped, e.g. the edit wizard.
+    // Absent on the routes that are not account-scoped, e.g. `all/` and `admin`.
     const { accountId } = useParams<Partial<IWorkspaceAccountPageParams>>();
 
     // Retrying is pointless as the registry is read from local storage and fails the same way every time.
@@ -52,7 +52,8 @@ export const WorkspaceGate: React.FC<IWorkspaceGateProps> = (props) => {
 
     if (isPending) {
         return (
-            <div className="flex min-h-46 grow items-center justify-center">
+            // biome-ignore lint/plugin/noPrimitiveSpacing: loading placeholder, 80 px above and below the spinner
+            <div className="flex grow items-center justify-center py-20">
                 <Spinner size="lg" variant="neutral" />
             </div>
         );

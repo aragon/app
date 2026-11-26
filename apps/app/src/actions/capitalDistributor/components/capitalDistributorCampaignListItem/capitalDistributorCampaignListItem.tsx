@@ -33,7 +33,7 @@ export const CapitalDistributorCampaignListItem: React.FC<
                 'px-inset-item py-inset-item--12-24',
                 className,
                 {
-                    'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
+                    'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                         isActive,
                 },
             )}

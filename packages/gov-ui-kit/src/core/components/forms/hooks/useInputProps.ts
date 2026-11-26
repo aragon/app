@@ -36,7 +36,6 @@ export const useInputProps = <TElement extends InputComponentElement>(
         onChange,
         value,
         wrapperClassName,
-        spacing,
         ...inputElementProps
     } = props;
 
@@ -61,11 +60,10 @@ export const useInputProps = <TElement extends InputComponentElement>(
         className,
         inputLength,
         wrapperClassName,
-        spacing,
     };
 
     const inputClasses = classNames(
-        'size-full rounded-xl bg-transparent px-control-lg py-control-lg outline-hidden caret-bg-surface-secondary-inverse', // Default
+        'size-full rounded-xl bg-transparent px-control-lg py-control-lg caret-(--guk-bg-surface-secondary-inverse) outline-hidden', // Default
         'placeholder:type-control placeholder:text-surface-placeholder', // Placeholder
         inputClassName, // Prop
     );

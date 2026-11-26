@@ -141,6 +141,15 @@ describe('<WorkspaceAccountItem /> component', () => {
         );
     });
 
+    it('badges the avatar with the network of the account', () => {
+        render(createTestComponent());
+
+        expect(WorkspaceAccountAvatar).toHaveBeenLastCalledWith(
+            expect.objectContaining({ network: Network.ETHEREUM_SEPOLIA }),
+            undefined,
+        );
+    });
+
     describe('with a remove action', () => {
         it('renders a row with a menu instead of a link', () => {
             render(createTestComponent({ onRemove: jest.fn() }));
@@ -168,5 +177,29 @@ describe('<WorkspaceAccountItem /> component', () => {
 
             expect(onRemove).toHaveBeenCalledTimes(1);
         });
+    });
+
+    it('shows the full address in a tooltip on its truncated form', async () => {
+        render(createTestComponent({ onRemove: jest.fn() }));
+
+        await userEvent.hover(
+            screen.getByText(addressUtils.truncateAddress(address)),
+        );
+
+        expect(await screen.findByRole('tooltip')).toHaveTextContent(address);
+    });
+
+    it('names a DAO without a name by its address', () => {
+        render(createTestComponent({ dao: { name: '' } as IDao }));
+
+        // As the title, the address comes before the network line.
+        const title = screen.getByText(addressUtils.truncateAddress(address));
+        const network = screen.getByText(
+            networkDefinitions[Network.ETHEREUM_SEPOLIA].name,
+        );
+        expect(
+            title.compareDocumentPosition(network) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
     });
 });

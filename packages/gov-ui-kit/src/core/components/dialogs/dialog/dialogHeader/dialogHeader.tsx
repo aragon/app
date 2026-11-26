@@ -25,14 +25,16 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
 
     const headerClassNames = classNames(
         'relative flex w-full items-start rounded-t-xl backdrop-blur-md gradient-surface-primary-to-b', // Layout
+        // biome-ignore lint/plugin/noPrimitiveSpacing: room for the absolute close button, and its frame
         'pt-inset-surface pr-14 pb-inset-tight--6-8 pl-inset-surface md:pr-16', // Spacings (pr: room for the close button)
         className,
     );
 
     const closeButtonClassNames = classNames(
+        // biome-ignore lint/plugin/noPrimitiveSpacing: room for the absolute close button, and its frame
         'group cursor-pointer rounded-full border border-surface-default bg-surface-default p-1 outline-hidden', // Default
         'absolute top-3 right-3 md:top-4 md:right-4', // Positioning
-        'focus-ring ring-accent-focus hover:border-surface-hover active:border-surface-active-control active:bg-surface-active-control', // Hover/Active/Focus states
+        'ring-accent-focus focus-ring hover:border-surface-hover active:border-surface-active-control active:bg-surface-active-control', // Hover/Active/Focus states
     );
 
     return (
@@ -53,7 +55,7 @@ export const DialogHeader: React.FC<IDialogHeaderProps> = (props) => {
                 </Close>
             </div>
             {description && (
-                <Description className="mb-group--12-16 px-inset-surface type-body-compact--unstepped text-surface-secondary">
+                <Description className="px-inset-surface pb-group--12-16 type-body-compact--unstepped text-surface-secondary">
                     {description}
                 </Description>
             )}

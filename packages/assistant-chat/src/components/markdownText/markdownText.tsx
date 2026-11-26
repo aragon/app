@@ -55,9 +55,7 @@ const CodeHeader: React.FC<CodeHeaderProps> = ({ language, code }) => {
 
     return (
         <div className="mt-related flex items-center justify-between rounded-t-xl border border-b-0 border-surface-secondary bg-surface-secondary px-inset-surface-flat--fixed-14 py-inset-tight--fixed-6 type-caption--unstepped">
-            <span className="text-surface-secondary lowercase">
-                {language}
-            </span>
+            <span className="text-surface-secondary lowercase">{language}</span>
             <TooltipIconButton
                 onClick={onCopy}
                 tooltip={chatCopy.markdown.copyCode}
@@ -193,7 +191,10 @@ const defaultComponents = memoizeMarkdownComponents({
     ),
     hr: ({ className, ...props }) => (
         <hr
-            className={classNames('my-related border-surface-secondary', className)}
+            className={classNames(
+                'my-related border-surface-secondary',
+                className,
+            )}
             {...props}
         />
     ),

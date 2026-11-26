@@ -1,0 +1,21 @@
+{
+    "$description": "How app.tokens.json becomes CSS. dir: the folder of the generated files, relative to the kit (without it, src/theme/tokens/<layer>/); this one is outside src/, so the npm package does not ship it and only the app imports it. The CSS names come from the cssNames of the other layers; files reads as in primitives.config.json.",
+    "dir": "design-system/tokens/app",
+    "files": {
+        "colors.css": {
+            "@theme": [
+                "semantic"
+            ]
+        },
+        "spacing.css": {
+            "@theme": [
+                "space"
+            ]
+        },
+        "typography.css": {
+            "@theme": [
+                "type"
+            ]
+        }
+    }
+}

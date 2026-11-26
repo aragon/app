@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    DaoAvatar,
-    Dropdown,
-    Icon,
-    IconType,
-    Wallet,
-} from '@aragon/gov-ui-kit';
+import { DaoAvatar, Dropdown, Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -164,7 +158,8 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     <button
                         aria-expanded={isDialogOpen}
                         aria-haspopup="dialog"
-                        className="flex min-w-0 cursor-pointer items-center gap-nav-related--8-12 rounded-lg border border-surface-default bg-surface-default py-1.5 pr-control-sm--8-12 pl-1.5 text-surface-default focus-ring transition-all ring-accent-focus shadow-surface-sm hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active md:rounded-xl md:py-2 md:pl-2"
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the workspace avatar button and the overlap of the stacked chevrons
+                        className="flex min-w-0 cursor-pointer items-center gap-nav-related--8-12 rounded-lg border border-surface-default bg-surface-default py-1.5 pr-control-sm--8-12 pl-1.5 text-surface-default shadow-surface-sm ring-accent-focus focus-ring transition-all hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active md:rounded-xl md:py-2 md:pl-2"
                         onClick={() => handleDialogOpenChange(true)}
                         type="button"
                     >
@@ -183,13 +178,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                                 {activeOption?.label}
                             </span>
                         </span>
-                        <span
-                            aria-hidden={true}
-                            className="flex shrink-0 flex-col items-center -space-y-1"
-                        >
-                            <Icon icon={IconType.CHEVRON_UP} size="sm" />
-                            <Icon icon={IconType.CHEVRON_DOWN} size="sm" />
-                        </span>
                     </button>
                     {workspace != null ? (
                         <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -203,6 +191,7 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
                     hiddenTitle={t(
                         'app.application.navigationWorkspace.a11y.title',
                     )}
+                    hideExplore={true}
                     onOpenChange={handleDialogOpenChange}
                     open={isDialogOpen}
                 >

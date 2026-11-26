@@ -157,7 +157,7 @@ export const CreatePolicyStrategyDetails: React.FC<
             >
                 {renderRecipients()}
             </DefinitionList.Item>
-            <div className="mt-group flex w-full justify-between">
+            <div className="flex w-full justify-between pt-group">
                 <Button onClick={onEdit} size="md" variant="secondary">
                     {t(
                         'app.capitalFlow.createPolicyForm.configure.strategy.details.edit',

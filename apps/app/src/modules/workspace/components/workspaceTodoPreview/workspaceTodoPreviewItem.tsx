@@ -70,7 +70,7 @@ interface IWorkspaceTodoPreviewDisplay {
 }
 
 const rowClassName =
-    'flex items-center gap-group border-surface-secondary border-t px-inset-item py-inset-item--12-16 first:border-t-0';
+    'flex items-center gap-group border-t px-inset-item py-inset-item--12-16 first:border-t-0 border-surface-secondary';
 
 const metaSeparator = ' · ';
 

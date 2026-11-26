@@ -1,7 +1,6 @@
 /**
  * @jest-environment node
  */
-import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/postcss';
 import postcss, { type AtRule, type Root, type Rule } from 'postcss';
@@ -214,28 +213,5 @@ describe('breakpoints.css', () => {
                 'container-name: app',
             ],
         });
-    });
-
-    // The generated token value sets switch their variables at the md breakpoint of this file: Today's column scope as a
-    // container query on the column, the preview sheet at both scopes (kit generator, scopes.config.json).
-    it('pins the md condition of the generated token value sets', () => {
-        const readFile = (file: string) =>
-            readFileSync(path.join(getTestDirectory(), file), 'utf8');
-        const breakpoints = readFile('breakpoints.css');
-        const md = /@custom-variant md \{\s*@container app (\([^)]*\))/.exec(
-            breakpoints,
-        )?.[1];
-
-        expect(md).toBe('(width >= 48rem)');
-        expect(readFile('tokensColumn.css')).toContain(`@container app ${md}`);
-        expect(
-            readFileSync(
-                path.join(
-                    getTestDirectory(),
-                    '../../../../../../public/tokens-preview.css',
-                ),
-                'utf8',
-            ),
-        ).toContain(`@container app ${md}`);
     });
 });

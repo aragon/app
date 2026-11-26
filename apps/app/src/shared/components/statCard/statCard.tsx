@@ -23,7 +23,7 @@ export const StatCard: React.FC<IStatCardProps> = (props) => {
             <Heading
                 as="h3"
                 className="type-numeric"
-                typeRole="stat--stat-card"
+                typeClassName="type-stat--stat-card"
             >
                 {value}
                 {suffix && (

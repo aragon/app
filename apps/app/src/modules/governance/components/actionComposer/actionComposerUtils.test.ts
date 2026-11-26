@@ -134,6 +134,54 @@ describe('actionComposerUtils', () => {
             ]);
         });
 
+        it('offers no transfer outside DAO context without an account', () => {
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                abis: [],
+                nativeItems: [],
+            });
+
+            expect(result.map((item) => item.id)).toEqual([
+                ActionItemId.ADD_CONTRACT,
+            ]);
+        });
+
+        it('offers the transfer from the account outside DAO context', () => {
+            const accountAddress = '0x3333333333333333333333333333333333333333';
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                abis: [],
+                nativeItems: [],
+                accountAddress,
+            });
+
+            expect(result.map((item) => item.id)).toEqual([
+                ActionItemId.ADD_CONTRACT,
+                ProposalActionType.TRANSFER,
+            ]);
+            expect(result[1].defaultValue).toEqual(
+                expect.objectContaining({
+                    type: ProposalActionType.TRANSFER,
+                    from: accountAddress,
+                }),
+            );
+        });
+
+        it('keeps the transfer sent by the DAO of the action in DAO context, ignoring the account', () => {
+            const result = actionComposerUtils.getActionItems({
+                t: mockTranslations.tMock,
+                dao: generateDao({ address: '0xDAO' }),
+                abis: [],
+                nativeItems: [],
+                accountAddress: '0x3333333333333333333333333333333333333333',
+            });
+
+            const transfer = result.find(
+                (item) => item.id === ProposalActionType.TRANSFER,
+            );
+            expect(transfer?.defaultValue?.from).toEqual('');
+        });
+
         it('returns default and custom items if no native items', () => {
             const dao = generateDao({ address: '0xDAO' });
             const abis = [

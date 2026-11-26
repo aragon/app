@@ -39,7 +39,7 @@ export const SupportChatLauncher: React.FC = () => {
         <div className="sticky bottom-6 z-10 h-0 self-end transition-[opacity,translate] delay-300 duration-200 ease-out motion-reduce:transition-none starting:translate-y-2 starting:opacity-0">
             <button
                 aria-label={t('app.application.supportChat.launcher.label')}
-                className="group absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-control-md rounded-xl border border-accent-default bg-accent-default-inverse whitespace-nowrap text-accent-default focus-ring transition-all ring-accent-focus shadow-accent-sm hover:border-accent-hover hover:bg-accent-hover-inverse hover:shadow-accent-default active:border-accent-active active:bg-accent-active-inverse active:shadow-none md:w-auto md:px-control-md"
+                className="group absolute right-6 bottom-0 flex size-10 cursor-pointer items-center justify-center gap-control-md rounded-xl border border-accent-default bg-accent-default-inverse whitespace-nowrap text-accent-default shadow-accent-sm ring-accent-focus focus-ring transition-all hover:border-accent-hover hover:bg-accent-hover-inverse hover:shadow-accent-default active:border-accent-active active:bg-accent-active-inverse active:shadow-none md:w-auto md:px-control-md"
                 onClick={open}
                 ref={buttonRef}
                 type="button"

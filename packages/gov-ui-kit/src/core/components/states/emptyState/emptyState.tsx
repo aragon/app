@@ -23,6 +23,7 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
 }) => {
     const containerClassNames = classNames(
         'grid w-full', // Defaults
+        // biome-ignore lint/plugin/noPrimitiveSpacing: stacked empty state 24 px, 48 px from md: no role has this pair
         { 'grid-cols-1 justify-items-center p-6 text-center md:p-12': isStacked }, // Stacked
         { 'gap-group-stepped': isStacked && humanIllustration != null }, // Staked & Human illustration
         { 'grid-cols-[auto_64px] items-center gap-group px-inset-surface py-inset-surface--16-20': !isStacked }, // Horizontal

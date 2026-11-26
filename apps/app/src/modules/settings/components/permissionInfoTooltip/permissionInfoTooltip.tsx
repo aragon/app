@@ -29,6 +29,7 @@ export const PermissionInfoTooltip: React.FC<IPermissionInfoTooltipProps> = ({
         <Tooltip content={tooltip} triggerAsChild={true}>
             <span
                 aria-label={`${t(tooltipLabelKey)}: ${tooltip}`}
+                // biome-ignore lint/plugin/noPrimitiveTypography: icon box of the tooltip trigger, no text
                 className="inline-flex size-5 shrink-0 cursor-help items-center justify-center leading-none text-surface-tertiary"
                 role="img"
             >

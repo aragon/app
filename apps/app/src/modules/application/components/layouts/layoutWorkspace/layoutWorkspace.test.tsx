@@ -252,19 +252,18 @@ describe('<LayoutWorkspace /> component', () => {
     });
 
     describe('welcome dialog', () => {
-        it('opens the welcome dialog once when a workspace was just created, keeping it owed until acknowledged', async () => {
+        it('opens the welcome dialog once when a workspace was just created, recording it as seen', async () => {
             workspaceWelcomeUtils.markPendingWelcome();
 
             render(await createTestComponent());
 
             await waitFor(() =>
                 expect(openMock).toHaveBeenCalledWith(
-                    WorkspaceDialogId.WORKSPACE_WELCOME,
-                    expect.objectContaining({ disableOutsideClick: true }),
+                    WorkspaceDialogId.WELCOME,
                 ),
             );
             expect(openMock).toHaveBeenCalledTimes(1);
-            expect(workspaceWelcomeUtils.isWelcomePending()).toBe(true);
+            expect(workspaceWelcomeUtils.isWelcomePending()).toBe(false);
         });
 
         it('does not open the welcome dialog on a workspace the user returns to', async () => {

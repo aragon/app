@@ -87,6 +87,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             <div
                 className={classNames(
                     'flex min-w-64 cursor-pointer items-center justify-between gap-group border bg-surface-primary px-inset-item-flat py-inset-item-flat transition-colors hover:border-surface-hover-graph-node',
+                    // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
                     isSelected && 'border-surface-selected shadow-primary-lg',
                     selectionRole != null
                         ? 'rounded-xl rounded-tl-none'

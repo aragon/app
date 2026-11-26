@@ -37,6 +37,11 @@ export interface IGetNativeActionItemsParams extends IGetActionBaseParams {
      * Additional action items.
      */
     nativeItems: IActionComposerInputItem[];
+    /**
+     * Address of the account the actions are executed from outside DAO context, e.g. a Safe. Adds the transfer
+     * action, sent from this account, to the items. Ignored when `dao` is set.
+     */
+    accountAddress?: string;
 }
 
 export interface IGetCustomActionParams extends IGetActionBaseParams {

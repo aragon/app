@@ -166,7 +166,9 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
     return (
         <div className="flex items-center gap-related">
             <span className="h-px flex-1 bg-surface-tertiary" />
-            <p className="flex-none type-caption--unstepped text-surface-tertiary">{label}</p>
+            <p className="flex-none type-caption--unstepped text-surface-tertiary">
+                {label}
+            </p>
             <span className="h-px flex-1 bg-surface-tertiary" />
         </div>
     );
@@ -187,7 +189,7 @@ const ThreadMessage: React.FC = () => {
 // Styled after the gov-ui-kit Link (its own type scale is too large for the caption lines): the
 // app's plain link look, opening in a new tab so the chat stays put.
 const captionLinkClassName =
-    'focus-ring ring-accent-focus inline-flex items-center gap-tight--fixed-6 rounded-md text-link-default hover:text-link-hover active:text-link-active';
+    'inline-flex items-center gap-tight--fixed-6 rounded-md focus-ring ring-accent-focus text-link-default hover:text-link-hover active:text-link-active';
 
 interface ICaptionLinkProps {
     href: string;
@@ -213,7 +215,11 @@ const CaptionLink: React.FC<ICaptionLinkProps> = (props) => {
 // Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
     <div className="flex flex-1 flex-col items-center justify-center px-inset-surface-wide--fixed-32 py-inset-surface-wide text-center">
-        <Heading as="h2" className="text-balance" typeRole="title-section--chat-empty-state">
+        <Heading
+            as="h2"
+            className="text-balance"
+            typeClassName="type-title-section--chat-empty-state"
+        >
             {chatCopy.welcome.greeting}
         </Heading>
     </div>
@@ -238,7 +244,7 @@ const NoticeLink: React.FC<INoticeLinkProps> = (props) => {
 
     return (
         <a
-            className="rounded-sm underline underline-offset-2 focus-ring ring-accent-focus hover:text-link-secondary-hover"
+            className="rounded-sm underline underline-offset-2 ring-accent-focus focus-ring hover:text-link-secondary-hover"
             href={href}
             rel="noopener noreferrer"
             target="_blank"
@@ -256,7 +262,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="mx-related--fixed-8 text-center type-caption--chat-note text-balance text-surface-tertiary"
+            className="px-related--fixed-8 text-center type-caption--chat-note text-balance text-surface-tertiary"
             id={id}
         >
             {text}
@@ -286,7 +292,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 
     return (
         <button
-            className="mx-auto cursor-pointer rounded-sm type-control-sm--chat text-surface-secondary underline underline-offset-2 focus-ring ring-accent-focus"
+            className="mx-auto cursor-pointer rounded-sm type-control-sm--chat text-surface-secondary underline underline-offset-2 ring-accent-focus focus-ring"
             onClick={onViewRequests}
             type="button"
         >
@@ -324,7 +330,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 type-control-sm--framework-leading whitespace-nowrap text-surface-primary focus-ring transition-colors ring-accent-focus hover:bg-surface-hover"
+                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 type-control-sm--framework-leading whitespace-nowrap text-surface-primary ring-accent-focus focus-ring transition-colors hover:bg-surface-hover"
                         type="button"
                     >
                         {suggestion.label}
@@ -377,7 +383,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="mx-related--fixed-10 type-caption--chat-note text-surface-tertiary-hint">
+                        <p className="px-related--fixed-10 type-caption--chat-note text-surface-tertiary-hint">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -388,7 +394,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 type-control-sm--framework-leading text-surface-primary outline-none caret-text-accent-primary placeholder:text-surface-placeholder"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 type-control-sm--framework-leading text-surface-primary caret-(--guk-text-accent-primary) outline-none placeholder:text-surface-placeholder"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -570,7 +576,7 @@ const AssistantWorking: React.FC = () => {
     return (
         <div
             aria-label={label}
-            className="my-tight flex items-center"
+            className="flex items-center py-tight"
             role="status"
         >
             <Spinner size="md" variant="neutral" />
@@ -604,7 +610,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="mx-related--fixed-8 type-body-compact--chat-message wrap-break-word text-surface-primary">
+        <div className="px-related--fixed-8 type-body-compact--chat-message wrap-break-word text-surface-primary">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -625,7 +631,7 @@ const AssistantMessage: React.FC = () => (
 
         {/* The slot always occupies its height so messages never shift; the bar itself fades in
             on hover (or keyboard focus) only. */}
-        <div className="ms-related--fixed-8 mt-tight--fixed-6 flex items-center opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+        <div className="ms-related--fixed-8 flex items-center pt-tight--fixed-6 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <AssistantActionBar />
         </div>
     </MessagePrimitive.Root>

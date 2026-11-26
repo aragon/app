@@ -3,4 +3,4 @@
 "@aragon/assistant-chat": patch
 ---
 
-Move the app and the assistant chat to the GovKit typography roles (`type-*` utilities and documented exceptions) with no visible change, enforce them with a primitive-typography lint, and add a "Typography (GovKit preview)" select to the developer debug panel that previews the Next typography (Sora, Inter Display) independently of the colour theme; a stored choice is ignored unless the debug panel flag is on.
+The app and the assistant chat set their text through the Governance UI Kit's typography roles (`type-*` classes) instead of size, line height and weight classes; pages look the same. A lint rule rejects those classes in the app outside a few marked places. The typography exceptions only the app and the chat use come from the kit's app-only token CSS, not from the published package. The debug panel gets a Typography switch next to the colour theme that previews the Next typography; like the theme, it only reaches developers with the panel enabled.

@@ -24,14 +24,18 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center type-mono text-[10px] transition-colors shadow-surface-sm',
+                            // biome-ignore lint/plugin/noPrimitiveTypography: node labels follow the node size, not a type role
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center type-mono text-[10px] shadow-surface-sm transition-colors',
                             permission.conditionLabel != null &&
                                 'pb-inset-tight--fixed-4',
                             isSelected
-                                ? 'border-primary-500 bg-primary-500 text-accent-inverse'
+                                ? // biome-ignore lint/plugin/noPrimitiveColors: no border role has primary-500
+                                  'border-primary-500 bg-primary-500 text-accent-inverse'
                                 : dimmed
-                                  ? 'border-neutral-200 bg-neutral-200 text-surface-secondary'
-                                  : 'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
+                                  ? // biome-ignore lint/plugin/noPrimitiveColors: no role for a dimmed chip at neutral-200 (bg/surface/disabled is neutral-100)
+                                    'border-neutral-200 bg-neutral-200 text-surface-secondary'
+                                  : // biome-ignore lint/plugin/noPrimitiveColors: no border or bg role has neutral-700
+                                    'border-neutral-700 bg-neutral-800 text-neutral-0 hover:border-primary-300 hover:bg-neutral-700',
                         )}
                         key={permission.edgeId}
                         onClick={(event) => {
@@ -49,7 +53,8 @@ export const PermissionStackNode: React.FC<
                                 className={classNames(
                                     'rounded bg-surface-primary px-inset-tight--fixed-4',
                                     isSelected
-                                        ? 'text-primary-700'
+                                        ? // biome-ignore lint/plugin/noPrimitiveColors: no text/accent role at primary-700
+                                          'text-primary-700'
                                         : dimmed
                                           ? 'text-surface-secondary'
                                           : 'text-surface-primary',

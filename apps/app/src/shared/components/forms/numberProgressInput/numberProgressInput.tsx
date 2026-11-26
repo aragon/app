@@ -29,6 +29,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         suffix,
         thresholdIndicator,
         tags,
+        hideInputLabel = false,
         ...otherProps
     } = props;
 
@@ -43,6 +44,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
         value = 0,
         onChange,
         alert,
+        label: inputLabel,
         ...numberField
     } = useFormField<Record<string, number | undefined>, typeof fieldName>(
         fieldName,
@@ -75,10 +77,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
             label={label}
             useCustomWrapper={true}
         >
-            <Card
-                className="flex w-full flex-col gap-group-stepped rounded-xl"
-                inset="surface"
-            >
+            <Card className="flex w-full flex-col gap-group-stepped rounded-xl p-inset-surface">
                 <div className="flex flex-col-reverse gap-section md:flex-row md:items-center md:justify-between">
                     <InputNumber
                         className="w-full md:max-w-40"
@@ -87,6 +86,9 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                         prefix={prefix}
                         suffix={suffix}
                         value={value}
+                        {...(hideInputLabel
+                            ? { id: containerId }
+                            : { label: inputLabel })}
                         {...numberField}
                         {...otherProps}
                     />

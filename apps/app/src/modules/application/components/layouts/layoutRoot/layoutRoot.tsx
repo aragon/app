@@ -9,9 +9,7 @@ import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { fetchInterceptorUtils } from '@/modules/application/utils/fetchInterceptorUtils';
-import { spacingPreviewUtils } from '@/modules/application/utils/spacingPreviewUtils';
-import { themePreviewUtils } from '@/modules/application/utils/themePreviewUtils';
-import { typographyPreviewUtils } from '@/modules/application/utils/typographyPreviewUtils';
+import { tokenPreviewUtils } from '@/modules/application/utils/tokenPreviewUtils';
 import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
@@ -24,7 +22,6 @@ import {
     SupportChatPanel,
 } from '../../supportChat';
 import './layoutRoot.css';
-import './nextTypographyFonts.css';
 
 export interface ILayoutRootProps {
     /**
@@ -57,30 +54,12 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
         false;
 
-    // Preview axes of the debug panel (each its own cookie and attribute, independent of the others): a stored value is
-    // only rendered while the panel is enabled, so a user without the panel always gets Today.
-    const cookie = requestHeaders.get('cookie');
-    const themeAttribute = themePreviewUtils.getServerThemeAttribute(
+    // Token previews of the debug panel: a stored mode is only rendered while the panel is enabled, so a user
+    // without the panel always gets the default values.
+    const tokenPreviewAttributes = tokenPreviewUtils.getServerAttributes(
         isDebugPanelEnabled,
-        cookie,
+        requestHeaders.get('cookie'),
     );
-    const typographyAttribute =
-        typographyPreviewUtils.getServerTypographyAttribute(
-            isDebugPanelEnabled,
-            cookie,
-        );
-    const spacingAttribute = spacingPreviewUtils.getServerSpacingAttribute(
-        isDebugPanelEnabled,
-        cookie,
-    );
-
-    // The preview value sets (colour Next and Dark, typography Next, spacing New, looser and compact) are not part of
-    // the stylesheet every user downloads: this one is linked, in the head so that there is no flash of Today, only
-    // while a preview is selected on a debug panel that is on.
-    const isPreviewActive =
-        themeAttribute != null ||
-        typographyAttribute != null ||
-        spacingAttribute != null;
 
     const queryClient = new QueryClient();
     await Promise.all([
@@ -89,18 +68,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html
-            className="h-full"
-            data-spacing={spacingAttribute}
-            data-theme={themeAttribute}
-            data-typography={typographyAttribute}
-            lang="en"
-        >
-            <head>
-                {isPreviewActive && (
-                    <link href="/tokens-preview.css" rel="stylesheet" />
-                )}
-            </head>
+        <html className="h-full" lang="en" {...tokenPreviewAttributes}>
             <body className="flex h-full flex-col bg-body has-[[data-app-sidebar]]:bg-body-sidebar">
                 <NextTopLoader
                     color="var(--guk-bg-accent-solid)"

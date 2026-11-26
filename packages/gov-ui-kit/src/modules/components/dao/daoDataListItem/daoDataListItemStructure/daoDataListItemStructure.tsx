@@ -52,11 +52,11 @@ export const DaoDataListItemStructure: React.FC<IDaoDataListItemStructureProps> 
         <DataList.Item className="grid gap-y-related--12-16 py-inset-item--16-24" {...otherProps}>
             <div className="flex w-full justify-between gap-related--fixed-8">
                 <div className="grid shrink items-center gap-y-tight--fixed-6 text-surface-primary">
-                    <Heading as="h2" className="truncate" typeRole="title-item--entity-list">
+                    <Heading as="h2" className="truncate" typeClassName="type-title-item--entity-list">
                         {name}
                     </Heading>
                     {!!addressLine && (
-                        <Heading as="h3" className="truncate" typeRole="supporting">
+                        <Heading as="h3" className="truncate" typeClassName="type-supporting">
                             {address == null ? (
                                 addressLine
                             ) : (

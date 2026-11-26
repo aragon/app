@@ -53,7 +53,7 @@ export const MultisigChangeMembersActionDetails: React.FC<
                 ))}
             </div>
             <div>
-                <Heading as="h3" typeRole="title-group">
+                <Heading as="h3" typeClassName="type-title-group">
                     {t(
                         'app.actions.multisig.multisigChangeMembersActionDetails.summary',
                     )}

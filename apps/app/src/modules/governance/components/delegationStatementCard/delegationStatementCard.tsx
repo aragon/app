@@ -82,8 +82,8 @@ export const DelegationStatementCard: React.FC<
 
     if (statement != null) {
         return (
-            <Card className="flex flex-col gap-related--8-12" inset="surface">
-                <Heading as="h3" typeRole="title-group">
+            <Card className="flex flex-col gap-related--8-12 p-inset-surface">
+                <Heading as="h3" typeClassName="type-title-group">
                     {t('app.governance.delegationStatementCard.heading')}
                 </Heading>
                 <Collapsible
@@ -100,7 +100,7 @@ export const DelegationStatementCard: React.FC<
                     />
                 </Collapsible>
                 {isOwner && (
-                    <div className="mt-group-stepped--12-24">
+                    <div className="pt-group-stepped--12-24">
                         <Button
                             className="w-full md:w-auto"
                             onClick={handleEditClick}

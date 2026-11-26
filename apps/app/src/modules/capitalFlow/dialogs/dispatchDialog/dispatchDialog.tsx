@@ -155,11 +155,8 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                 })}
             />
             <Dialog.Content>
-                <div className="mb-section flex flex-col gap-group">
-                    <Card
-                        className="flex flex-col gap-group"
-                        inset="surface-wide"
-                    >
+                <div className="flex flex-col gap-group pb-section">
+                    <Card className="flex flex-col gap-group p-inset-surface-wide">
                         <div className="flex flex-col gap-tight">
                             <div className="flex items-baseline gap-related--fixed-8">
                                 <span className="type-title-item--picker-row text-surface-primary">
@@ -198,7 +195,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         <div className="flex flex-col gap-related">
                             {subRouters.map((subRouter, index) => (
                                 <DataList.Item
-                                    className="flex items-baseline gap-section p-inset-surface-wide"
+                                    className="flex items-baseline gap-section px-inset-surface-wide! py-inset-surface-wide"
                                     key={subRouter.address}
                                 >
                                     <div className="flex flex-1 gap-related--fixed-8 type-title-item--picker-row">
@@ -214,7 +211,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="flex flex-wrap gap-phrase--fixed-2 type-supporting--body-size">
+                                    <span className="flex gap-phrase--fixed-2 type-supporting--body-size">
                                         <span className="text-surface-primary">
                                             {index + 1}
                                         </span>

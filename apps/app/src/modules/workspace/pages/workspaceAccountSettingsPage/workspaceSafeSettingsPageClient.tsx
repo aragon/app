@@ -129,7 +129,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.accountTitle`)}
                 >
-                    <Card inset="surface-wide">
+                    <Card className="p-inset-surface-wide">
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t(`${translationKey}.account.blockchain`)}
@@ -186,7 +186,7 @@ export const WorkspaceSafeSettingsPageClient: React.FC<
                 <Page.MainSection
                     title={t(`${translationKey}.main.governanceTitle`)}
                 >
-                    <Card inset="surface-wide">
+                    <Card className="p-inset-surface-wide">
                         {isGovernanceUnavailable ? (
                             <p className="text-surface-secondary">
                                 {t(`${translationKey}.governance.unavailable`)}

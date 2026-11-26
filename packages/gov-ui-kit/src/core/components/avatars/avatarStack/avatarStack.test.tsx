@@ -42,33 +42,34 @@ describe('<AvatarStack /> component', () => {
         expect(screen.getAllByTestId('avatar-duplicate')).toHaveLength(2);
     });
 
-    it('renders the first two avatars and the remaining count for three avatars', () => {
+    it('renders all three avatars without an overflow count', () => {
         render(
             createTestComponent({
                 avatars: [createAvatar('first'), createAvatar('second'), createAvatar('third')],
             }),
         );
 
-        const firstSlot = screen.getByTestId('avatar-first').parentElement?.parentElement?.parentElement;
-        const overflowAvatar = screen.getByText('+1').parentElement?.parentElement;
-
-        expect(screen.getAllByTestId(/avatar-/).map((avatar) => avatar.textContent)).toEqual(['first', 'second']);
-        expect(screen.queryByTestId('avatar-third')).not.toBeInTheDocument();
-        expect(screen.getByText('+1')).toHaveClass('bg-surface-secondary');
-        expect(firstSlot).toHaveClass('size-4');
-        expect(firstSlot).not.toHaveClass('border-2');
-        expect(overflowAvatar).toHaveClass('text-[8px]');
-        expect(overflowAvatar).not.toHaveClass('border-2');
+        expect(screen.getAllByText(/^(first|second|third)$/).map((avatar) => avatar.textContent)).toEqual([
+            'first',
+            'second',
+            'third',
+        ]);
+        expect(screen.queryByRole('img', { name: '+1' })).not.toBeInTheDocument();
+        expect(screen.getByTestId('avatar-first').parentElement?.parentElement?.parentElement).toHaveClass('size-4');
     });
 
-    it('uses the overflow math for four avatars', () => {
+    it.each([4, 5])('renders two avatars and the remaining count for %i avatars', (count) => {
         render(
             createTestComponent({
-                avatars: [createAvatar('first'), createAvatar('second'), createAvatar('third'), createAvatar('fourth')],
+                avatars: Array.from({ length: count }, (_, index) => createAvatar(`Account ${index + 1}`)),
             }),
         );
 
-        expect(screen.getByText('+2')).toBeInTheDocument();
+        expect(screen.getAllByText(/^Account \d+$/).map((avatar) => avatar.textContent)).toEqual([
+            'Account 1',
+            'Account 2',
+        ]);
+        expect(screen.getByRole('img', { name: `+${count - 2}` })).toHaveTextContent(`+${count - 2}`);
     });
 
     it('caps the visible overflow count at nine while preserving the exact accessible count', () => {

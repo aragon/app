@@ -41,13 +41,16 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
+        // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the lg size
         'pointer-events-auto flex flex-col gap-related overflow-hidden border-x border-accent-active bg-surface-primary shadow-primary-lg outline-none',
         'z-[var(--guk-dropdown-container-content-z-index)]',
         {
+            // biome-ignore lint/plugin/noPrimitiveSpacing: the menu runs under the field it is attached to (the field height)
             'rounded-b-xl border-b pt-inset-tight--fixed-4 md:pb-12':
                 isBottomPlacement,
         },
         {
+            // biome-ignore lint/plugin/noPrimitiveSpacing: the menu runs under the field it is attached to (the field height)
             'rounded-t-xl border-t pb-inset-tight--fixed-4 md:pt-12':
                 !isBottomPlacement,
         },

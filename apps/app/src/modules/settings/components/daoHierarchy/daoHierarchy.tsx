@@ -212,7 +212,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
 
     // Default: regular view for main DAO without linked accounts or when viewing a linked account
     return (
-        <Card inset="surface-wide">
+        <Card className="p-inset-surface-wide">
             <DaoInfo dao={dao} permissionsHref={permissionsHref} />
         </Card>
     );

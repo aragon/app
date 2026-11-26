@@ -1,0 +1,156 @@
+{
+    "note": "Press Play on a frame to use it full screen. Each frame is a whole flow, not one screen. Narrow the window to see its phone layout. Start with Landing: it leads to the workspace and to Explore, which links to the DAO and the two creation wizards.",
+    "rows": [
+        {
+            "title": "Start here",
+            "artboards": [
+                {
+                    "file": "Landing.dc.html",
+                    "title": "Landing"
+                },
+                {
+                    "file": "Explore.dc.html",
+                    "title": "Explore"
+                }
+            ]
+        },
+        {
+            "title": "A DAO, one per governance type",
+            "artboards": [
+                {
+                    "file": "Dao.dc.html",
+                    "title": "Meridian DAO · token voting"
+                },
+                {
+                    "file": "AtlasDao.dc.html",
+                    "title": "Atlas Grants Council · multisig"
+                },
+                {
+                    "file": "NorthstarDao.dc.html",
+                    "title": "Northstar Protocol · multi-stage"
+                }
+            ]
+        },
+        {
+            "title": "Workspace and Safe",
+            "artboards": [
+                {
+                    "file": "Workspace.dc.html",
+                    "title": "Workspace · three DAOs and a Safe"
+                },
+                {
+                    "file": "SafeFlow.dc.html",
+                    "title": "Safe account"
+                },
+                {
+                    "file": "SafeTransactionFlow.dc.html",
+                    "title": "Create a Safe transaction"
+                }
+            ]
+        },
+        {
+            "title": "Creating things",
+            "artboards": [
+                {
+                    "file": "CreateDaoFlow.dc.html",
+                    "title": "Create a DAO"
+                },
+                {
+                    "file": "CreateWorkspaceFlow.dc.html",
+                    "title": "Create a workspace"
+                },
+                {
+                    "file": "CreateProposalFlow.dc.html",
+                    "title": "Create a proposal"
+                },
+                {
+                    "file": "CreateProcessFlow.dc.html",
+                    "title": "Create a governance process"
+                }
+            ]
+        },
+        {
+            "title": "Token mechanics",
+            "artboards": [
+                {
+                    "file": "WrapFlow.dc.html",
+                    "title": "Wrap tokens"
+                },
+                {
+                    "file": "LockFlow.dc.html",
+                    "title": "Lock to vote"
+                }
+            ]
+        }
+    ],
+    "partPages": [
+        {
+            "id": "parts-dao",
+            "name": "Meridian DAO",
+            "prototypes": [
+                "Explore.dc.html",
+                "Dao.dc.html"
+            ]
+        },
+        {
+            "id": "parts-atlas",
+            "name": "Atlas (multisig)",
+            "prototypes": [
+                "AtlasDao.dc.html"
+            ]
+        },
+        {
+            "id": "parts-northstar",
+            "name": "Northstar (multi-stage)",
+            "prototypes": [
+                "NorthstarDao.dc.html"
+            ]
+        },
+        {
+            "id": "parts-workspace",
+            "name": "Workspace",
+            "prototypes": [
+                "Workspace.dc.html"
+            ],
+            "reuses": true
+        },
+        {
+            "id": "parts-safe",
+            "name": "Safe",
+            "prototypes": [
+                "SafeFlow.dc.html",
+                "SafeTransactionFlow.dc.html"
+            ]
+        },
+        {
+            "id": "parts-create",
+            "name": "Create DAO and workspace",
+            "prototypes": [
+                "CreateDaoFlow.dc.html",
+                "CreateWorkspaceFlow.dc.html"
+            ]
+        },
+        {
+            "id": "parts-proposal",
+            "name": "Create proposal",
+            "prototypes": [
+                "CreateProposalFlow.dc.html"
+            ]
+        },
+        {
+            "id": "parts-process",
+            "name": "Governance designer",
+            "prototypes": [
+                "CreateProcessFlow.dc.html"
+            ]
+        },
+        {
+            "id": "parts-token",
+            "name": "Wrap and lock",
+            "prototypes": [
+                "WrapFlow.dc.html",
+                "LockFlow.dc.html"
+            ]
+        }
+    ]
+}

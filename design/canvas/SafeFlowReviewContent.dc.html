@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Safe transaction review content</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/tokens.css">
+<link rel="stylesheet" href="ds/aragon-gov-ui-kit/components/bundle.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="proto.css">
+<script src="ds/aragon-gov-ui-kit/components/lib/react-hook-form.js"></script>
+<script src="ds/aragon-gov-ui-kit/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<x-import component-from-global-scope="GovUiKit.GukModulesProvider">
+<div class="sf-review">
+  <dl class="sf-dl">
+    <div class="sf-row">
+      <dt>Safe</dt>
+      <dd><x-import component-from-global-scope="GovUiKit.AddressOutput" address="0x515feC2E8F6553948b1D57C14c1243a1405C02e2" href="https://app.safe.global/home?safe=eth:0x515feC2E8F6553948b1D57C14c1243a1405C02e2" is-external="{{yes}}"></x-import></dd>
+    </div>
+    <div class="sf-row">
+      <dt>Network</dt>
+      <dd>Ethereum</dd>
+    </div>
+  </dl>
+  <div class="sf-alert">
+    <x-import component-from-global-scope="GovUiKit.AlertCard" message="Recommended, especially with a hardware wallet: compare the hashes and calldata below with what your wallet displays before signing." variant="info"></x-import>
+  </div>
+  <div class="sf-box">
+    <x-import component-from-global-scope="GovUiKit.Collapsible" button-label-closed="Verify transaction details" button-label-opened="Hide transaction details" collapsed-pixels="{{zero}}" is-open="{{open}}" on-toggle="{{toggle}}">
+      <div class="sf-details">
+        <dl class="sf-dl sf-dl--flush">
+          <div class="sf-row"><dt>Nonce</dt><dd>{{tx.nonceText}}</dd></div>
+          <div class="sf-row"><dt>Safe tx gas</dt><dd>0</dd></div>
+          <div class="sf-row"><dt>Base gas</dt><dd>0</dd></div>
+          <div class="sf-row"><dt>Gas price</dt><dd>0</dd></div>
+          <div class="sf-row"><dt>Gas token</dt><dd>0x0000…0000</dd></div>
+          <div class="sf-row"><dt>Refund receiver</dt><dd>0x0000…0000</dd></div>
+        </dl>
+        <p class="sf-muted">Compare the domain hash and message hash below with the ones your hardware wallet shows. Matching values prove this screen sends what it displays; they cannot prove the transaction is safe.</p>
+        <dl class="sf-dl sf-dl--tight">
+          <div class="sf-hash"><dt>Domain hash</dt><dd>{{tx.domainHash}}</dd></div>
+          <div class="sf-hash"><dt>Message hash</dt><dd>{{tx.messageHash}}</dd></div>
+          <div class="sf-hash"><dt>Transaction hash</dt><dd>{{tx.safeTxHash}}</dd></div>
+        </dl>
+        <div class="sf-muted">Tip: cross-check the transaction hash with an independent hash tool like <x-import component-from-global-scope="GovUiKit.Link" href="https://github.com/Cyfrin/safe-hash-rs" is-external="{{yes}}" show-url="{{no}}" text-class-name="text-sm">Cyfrin's safe-hash</x-import>.</div>
+        <ol class="sf-calls">
+          <li class="sf-call">
+            <div class="sf-call__head">
+              <x-import component-from-global-scope="GovUiKit.Tag" label="Call" variant="info"></x-import>
+              <span class="sf-call__name">{{tx.fn}}</span>
+            </div>
+            <span class="sf-muted">To {{toShort}} · {{tx.value}} wei</span>
+            <span class="sf-mono">{{tx.data}}</span>
+          </li>
+        </ol>
+      </div>
+    </x-import>
+  </div>
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tx":{"editor":null},"$preview":{"width":432,"height":520}}'>
+// Review content of a Safe transaction (apps/app: modules/safe/components/safeTransactionReviewContent). Prop: tx (one entry of
+// the queue derived by SafeFlow: nonceText, fn, to, value, data, domainHash, messageHash, safeTxHash). Used by the review dialog
+// and the approve/execute dialog. The details start collapsed, as in the app (state `open` is local).
+// Source-only: every warning variant (hash mismatch, version mismatch, decoder disagreement, incomplete batch, delegate calls,
+// gas refund) is not drawn: the sample transaction is a plain, verified call.
+class Component extends DCLogic {
+  state = { open: false };
+  toggle = (o) => this.setState({ open: typeof o === 'boolean' ? o : !this.state.open });
+  renderVals() {
+    const tx = this.props.tx || {};
+    const to = tx.to || '';
+    return {
+      yes: true, no: false, zero: 0, tx, open: this.state.open, toggle: this.toggle,
+      toShort: to ? to.slice(0, 6) + '…' + to.slice(-4) : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -96,7 +96,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                     ))}
                 </div>
                 {resolvedOctavLink && (
-                    <div className="mt-group flex flex-col items-center gap-y-related">
+                    <div className="flex flex-col items-center gap-y-related pt-group">
                         <Button
                             className="w-full"
                             href={resolvedOctavLink}

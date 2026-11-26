@@ -91,7 +91,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
             />
             <Dialog.Content>
                 {shouldShowTabs && (
-                    <div className="mt-tight--fixed-8 mb-related flex flex-col gap-related">
+                    <div className="flex flex-col gap-related pt-tight--fixed-8 pb-related">
                         <ToggleGroup
                             isMultiSelect={false}
                             onChange={handleTabChange}
@@ -112,10 +112,10 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                         </ToggleGroup>
                     </div>
                 )}
-                <div className="mb-section flex flex-col gap-related">
+                <div className="flex flex-col gap-related pb-section">
                     {displayedPolicies.map((policy) => (
                         <DataList.Item
-                            className="flex cursor-pointer items-center gap-section p-inset-surface-wide"
+                            className="flex cursor-pointer items-center gap-section px-inset-surface-wide! py-inset-surface-wide"
                             key={policy.address}
                             onClick={() => handleSelectPolicy(policy)}
                         >
@@ -133,7 +133,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
-                                <span className="flex flex-wrap gap-phrase--fixed-2 type-supporting--body-size">
+                                <span className="flex gap-phrase--fixed-2 type-supporting--body-size">
                                     <span className="text-surface-primary">
                                         {policy.strategy?.subRouters?.length ??
                                             0}

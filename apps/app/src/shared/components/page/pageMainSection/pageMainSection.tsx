@@ -73,7 +73,7 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
             <div className="flex flex-col gap-related--fixed-8">
                 <div className="flex flex-row justify-between gap-tight">
                     <div className="flex items-center gap-related--fixed-8">
-                        <Heading as="h2" typeRole="title-section">
+                        <Heading as="h2" typeClassName="type-title-section">
                             {title}
                         </Heading>
                         {icon && (

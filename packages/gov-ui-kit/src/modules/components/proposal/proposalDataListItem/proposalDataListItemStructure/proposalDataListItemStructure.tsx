@@ -65,7 +65,7 @@ export const ProposalDataListItemStructure: React.FC<IProposalDataListItemStruct
         >
             <ProposalDataListItemStatus date={date} status={status} statusContext={statusContext} voted={voted} />
             <div className="flex flex-col gap-y-tight">
-                <Heading as="h2" className="flex gap-x-related--8-12" typeRole="title-item--entity-list">
+                <Heading as="h2" className="flex gap-x-related--8-12" typeClassName="type-title-item--entity-list">
                     {id && <span className="shrink-0 text-surface-secondary">{id}</span>}
                     <span className="line-clamp-1 text-surface-primary">{title}</span>
                 </Heading>

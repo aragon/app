@@ -4,8 +4,6 @@ import {
     addressUtils,
     Button,
     type ICompositeAddress,
-    Icon,
-    IconType,
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -49,7 +47,8 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="flex w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-surface-default bg-surface-default p-2 text-left focus-ring transition-all ring-accent-focus hover:border-surface-hover active:bg-surface-active-control"
+            // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the account avatar button
+            className="flex w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-surface-default bg-surface-default p-2 text-left ring-accent-focus focus-ring transition-all hover:border-surface-hover active:bg-surface-active-control"
             onClick={onClick}
             type="button"
         >
@@ -68,11 +67,6 @@ export const NavigationSidebarAccount: React.FC<
                     </span>
                 )}
             </span>
-            <Icon
-                className="shrink-0 icon-surface-primary"
-                icon={IconType.CHEVRON_RIGHT}
-                size="md"
-            />
         </button>
     );
 };

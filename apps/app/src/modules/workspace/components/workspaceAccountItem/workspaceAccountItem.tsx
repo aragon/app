@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     Button,
     Card,
     DataList,
@@ -63,24 +63,33 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     const isDao = type === WorkspaceAccountType.DAO;
 
     const networkName = networkDefinitions[network].name;
-    const truncatedAddress = addressUtils.truncateAddress(address);
-
+    // An empty name, which the backend returns for unnamed DAOs, falls back to the address like a missing one.
     const name =
-        dao?.name ?? workspaceUtils.getAccountName(account, accountInfo);
+        dao?.name ||
+        workspaceUtils.getAccountName(account, accountInfo) ||
+        undefined;
     const avatar = dao?.avatar ?? metadata?.avatar;
+
+    // Its reveal trigger is a button, which a link row lifts above its overlay so it can be hovered.
+    const addressOutput = <AddressOutput address={address} copy={false} />;
 
     const content = (
         <>
-            <WorkspaceAccountAvatar avatar={avatar} name={name} type={type} />
+            <WorkspaceAccountAvatar
+                avatar={avatar}
+                name={name}
+                network={network}
+                type={type}
+            />
             <div className="flex min-w-0 grow flex-col">
                 <span className="truncate type-title-item--compact-card text-surface-primary">
-                    {name ?? truncatedAddress}
+                    {name ?? addressOutput}
                 </span>
                 <span className="flex gap-phrase truncate type-supporting--compact-meta">
                     <span className="text-surface-primary">{networkName}</span>
                     {name != null && (
-                        <span className="text-surface-secondary">
-                            {truncatedAddress}
+                        <span className="min-w-0 text-surface-secondary">
+                            {addressOutput}
                         </span>
                     )}
                 </span>
@@ -91,7 +100,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     // A menu cannot sit inside a link, so a removable row is not one.
     if (onRemove != null) {
         return (
-            <Card className="flex items-center gap-related" inset="surface">
+            <Card className="flex items-center gap-related p-inset-surface">
                 {content}
                 <Dropdown.Container
                     constrainContentWidth={false}

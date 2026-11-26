@@ -5,8 +5,6 @@
 
 @theme {
     --color-*: initial;
-
-    /* Primary */
     --color-primary-50: #f5f8ff;
     --color-primary-100: #c4d7ff;
     --color-primary-200: #93b2ff;
@@ -17,8 +15,6 @@
     --color-primary-700: #0031ad;
     --color-primary-800: #002985;
     --color-primary-900: #001f5c;
-
-    /* Neutral */
     --color-neutral-0: #ffffff;
     --color-neutral-25: #fafbfd;
     --color-neutral-50: #f5f7fa;
@@ -31,8 +27,6 @@
     --color-neutral-700: #3e4c59;
     --color-neutral-800: #323f4b;
     --color-neutral-900: #1f2933;
-
-    /* Info */
     --color-info-100: #d1fdfa;
     --color-info-200: #a4f9fb;
     --color-info-300: #75e8f3;
@@ -42,8 +36,6 @@
     --color-info-700: #0f669b;
     --color-info-800: #09497d;
     --color-info-900: #053467;
-
-    /* Success */
     --color-success-100: #f3fccc;
     --color-success-200: #e4f99a;
     --color-success-300: #ccef66;
@@ -53,8 +45,6 @@
     --color-success-700: #5c9205;
     --color-success-800: #467603;
     --color-success-900: #366101;
-
-    /* Warning */
     --color-warning-100: #fff3d6;
     --color-warning-200: #ffe4ad;
     --color-warning-300: #ffd083;
@@ -64,8 +54,6 @@
     --color-warning-700: #b75e19;
     --color-warning-800: #93430f;
     --color-warning-900: #7a3009;
-
-    /* Critical */
     --color-critical-100: #fee4d6;
     --color-critical-200: #fec3ae;
     --color-critical-300: #fd9a86;
@@ -75,15 +63,5 @@
     --color-critical-700: #b31b35;
     --color-critical-800: #901132;
     --color-critical-900: #770a30;
-
-    /* Transparent */
     --color-transparent: transparent;
-}
-
-@utility gradient-neutral-50-transparent-to-b {
-    @apply bg-linear-to-b from-neutral-50/100 to-neutral-50/0;
-}
-
-@utility gradient-neutral-50-transparent-to-t {
-    @apply bg-linear-to-t from-neutral-50/100 to-neutral-50/0;
 }

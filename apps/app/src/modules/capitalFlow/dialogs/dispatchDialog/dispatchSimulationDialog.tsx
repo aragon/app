@@ -167,7 +167,7 @@ export const DispatchSimulationDialog: React.FC<
                 })}
             />
             <Dialog.Content>
-                <div className="mb-section flex flex-col gap-group">
+                <div className="flex flex-col gap-group pb-section">
                     {/* Loading State */}
                     {isLoading && (
                         <Card className="flex flex-col items-center justify-center gap-group p-inset-surface-wide--fixed-32">
@@ -183,11 +183,12 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="bg-critical-50 flex flex-col gap-related border-critical-primary-dispatch! p-inset-surface-flat--fixed-16"
+                            className="flex flex-col gap-related border-critical-primary-dispatch! p-inset-surface-flat--fixed-16"
                             role="alert"
                         >
                             <div className="flex items-start gap-related">
                                 <Icon
+                                    // biome-ignore lint/plugin/noPrimitiveSpacing: optical nudge of the warning icon to the first text line
                                     className="mt-0.5 shrink-0 icon-critical-primary"
                                     icon={IconType.WARNING}
                                     size="md"

@@ -84,7 +84,7 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
     return (
         <div className={classNames('flex w-full grow flex-col gap-related', className)}>
             <div className="flex flex-row items-center justify-between">
-                <div className={classNames('flex flex-row flex-wrap gap-phrase')}>
+                <div className={classNames('flex flex-row gap-phrase')}>
                     <p className={classNames('type-title-item', variantToNameClassNames[processedVariant])}>
                         {name}
                         {nameDescription && <span className="text-surface-secondary">{nameDescription}</span>}
@@ -110,7 +110,7 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
                 {...otherProps}
             />
             <div className="flex flex-row justify-between type-supporting">
-                <div className="flex flex-row flex-wrap gap-phrase--fixed-2">
+                <div className="flex flex-row gap-phrase--fixed-2">
                     <p className="text-surface-primary">{description.value}</p>
                     <p className="text-surface-secondary">{description.text}</p>
                 </div>

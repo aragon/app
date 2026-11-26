@@ -30,7 +30,7 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
     return (
         <div className="flex flex-col gap-section--fixed-32">
             <div className="flex flex-col gap-group">
-                <Heading as="h1" typeRole="title-page--onboarding">
+                <Heading as="h1" typeClassName="type-title-page--onboarding">
                     {t('app.dashboard.dashboardOnboarding.admin.welcome')}{' '}
                     {displayName != null && (
                         <span className="text-accent-primary">

@@ -62,7 +62,7 @@ export const ExistingConditionCard: React.FC<IExistingConditionCardProps> = (
         onAddressChange(value?.address ?? '');
 
     return (
-        <Card className="w-full shrink-0 border-surface-selected p-inset-surface-flat--fixed-16 !shadow-accent-default">
+        <Card className="w-full shrink-0 border-surface-selected p-inset-surface-flat--fixed-16 shadow-accent-default!">
             <div className="flex w-full min-w-0 flex-col items-start gap-related sm:flex-row sm:items-start sm:gap-related--fixed-8">
                 <AddressInput
                     chainId={chainId}
@@ -77,6 +77,7 @@ export const ExistingConditionCard: React.FC<IExistingConditionCardProps> = (
                     aria-label={t(
                         'app.createDao.createProcessForm.proposalCreation.existingCondition.remove',
                     )}
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: centres the small remove button on the large field ((48 - 32) / 2)
                     className="shrink-0 sm:mt-2"
                     iconLeft={IconType.CLOSE}
                     onClick={onRemove}

@@ -54,6 +54,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
+            // biome-ignore lint/plugin/noPrimitiveSpacing: stage card 16 px, 48 px from md: no role has this pair
             <div className="flex flex-col gap-section rounded-xl border border-surface-secondary bg-surface-primary p-4 shadow-surface-sm md:p-12">
                 <div className="flex items-start justify-between gap-section">
                     <div className="flex flex-col gap-related--fixed-8">

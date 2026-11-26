@@ -24,3 +24,11 @@ max_line_length = off
 
 [*.{ts,tsx}]
 max_line_length = 120
+
+# Written by the claude.ai canvas editor and synced back byte for byte (design/README.md): leave them as they are.
+[design/canvas/**]
+indent_style = unset
+indent_size = unset
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+max_line_length = off

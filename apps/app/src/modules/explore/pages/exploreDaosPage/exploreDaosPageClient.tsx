@@ -44,9 +44,11 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
         <>
             <ExploreNav />
             <div
+                // biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them
                 className="relative mt-[-72px] flex flex-col items-center self-stretch bg-brand-solid pt-[72px] md:-mt-24 md:pt-24"
                 id="explore-page-hero"
             >
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them */}
                 <Container className="w-full py-10 md:px-6 md:py-12">
                     <Image
                         alt="Background Texture"
@@ -71,6 +73,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
             {featuredDaos && (
                 <section
                     className={classNames(
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them
                         'flex flex-col gap-group-stepped pt-10 md:pt-16',
                     )}
                 >
@@ -78,7 +81,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                         <Heading
                             as="h2"
                             className="self-stretch"
-                            typeRole="title-section--explore"
+                            typeClassName="type-title-section--explore"
                         >
                             {t('app.explore.exploreDaosPage.section.featured')}
                         </Heading>
@@ -99,6 +102,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                 </section>
             )}
 
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: explore hero pulled up by the header height, and its section paddings: no role has them */}
             <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-layout">
                     <ExploreSection

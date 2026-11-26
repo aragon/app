@@ -22,7 +22,8 @@ or from the root as `pnpm --filter @aragon/gov-ui-kit <script>`.
 - `pnpm storybook` — Storybook dev server on :6006; primary component dev surface.
 - `pnpm build` — Rollup build to `dist/` plus compiled `build.css`.
 - `pnpm build:storybook` — static Storybook build used in CI.
-- `pnpm test` — Jest. Variants: `pnpm test:watch`, `pnpm test:coverage`.
+- `pnpm test` — the token generator tests (`pnpm test:tokens`), then Jest. Variants: `pnpm test:watch`,
+  `pnpm test:coverage`.
 - `pnpm type-check` — `tsc --noemit`.
 - `pnpm lint` — Biome check with writes. `pnpm lint:check` — no writes.
 - `pnpm css:check` — verify `build.css` still matches a source compile (runs in CI after `pnpm build`).
@@ -69,20 +70,14 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - **Styling:** Tailwind CSS v4, CSS-first. There is no `tailwind.config.js`. Root `index.css`
   imports `./src/index.css` and `tailwindcss`, scanning only `src` for class names;
   `src/index.css` pulls in core + theme CSS.
-  Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the CSS
-  under `src/theme/tokens/` (via `@theme`) that exposes the `--color-*` scale used
-  as utilities such as `bg-primary-500` and `text-neutral-800`. Text takes a typography role (`type-title-item`,
-  `type-supporting`, …, or a documented `type-<role>--<pattern>` exception; `type-strong` / `type-mono` /
-  `type-numeric` on top), generated into `src/theme/tokens/typography.css`; primitive type classes (`text-sm`,
-  `leading-*`, `font-semibold`, …) fail the typography lint (`pnpm lint:typography:report`). See
-  `design-system/tokens/typography.decisions.md`. Spacing takes a spacing role instead of a number:
-  insets `p*-inset-<scope>` (`px-inset-item`, `p-inset-surface`), gaps `gap-<level>` (`gap-group`, `mt-related`,
-  `space-y-section`), control sizes (`h-control-md`, `px-control-md`, `h-tag`), or a documented
-  `<family>-<role>--<pattern>` exception; one class replaces `x md:y` (the md step is a switch of the variable the utility reads). Generated into
-  `src/theme/tokens/spacing.css`; see `design-system/tokens/spacing.decisions.md`. A raw class passed in `className`
-  always beats a role (the roles sort first), so check callers when converting a component. The preview value sets
-  (colour Next/Dark, typography Next, spacing New/looser/compact) are generated apart (`.storybook/tokensPreview.css`,
-  the app's `public/tokens-preview.css`) and are not part of `build.css`; see `design-system/tokens/README.md`.
+  Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the
+  `@theme` CSS under `src/theme/tokens/primitives/` (the `--color-*` ramps, shadows, radius, type) and
+  `src/theme/tokens/semantic/`, `spacing/` and `typography/` (the `--guk-<family>-*` colour roles, the
+  `--guk-space-*` spacing roles, the `--guk-type-*` type roles), and the colour aliases and spacing and type
+  exceptions only the app uses under `design-system/tokens/app/` (not published; the app imports it). Components use
+  role classes such as `bg-surface-primary`, `text-surface-secondary`, `px-inset-item`, `gap-related`,
+  `h-control-md` and `type-supporting`, the functional utilities of `src/theme/tokens/colorRoles.css`,
+  `spacingRoles.css` and `typeRoles.css`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).
@@ -96,13 +91,28 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 
 - **No raw hex/rgb** in components or CSS. Use token-backed utilities; colors must work in
   light and dark themes.
-- **No Tailwind arbitrary spacing/values** (`p-[17px]`, `w-[42%]`). Use the token/scale.
+- **Role classes, not primitive colour classes.** Outside `src/theme`, colours come from role classes
+  (`bg-surface-primary`, not `bg-neutral-0`); `lint:check` fails on a primitive one unless a
+  `biome-ignore lint/plugin/noPrimitiveColors: <reason>` above it says why. A colour class passed through
+  `className` that sets a property the component already sets needs the important modifier (`bg-surface-hover!`):
+  utilities of one property are emitted in alphabetical order, so source order decides nothing.
+- **Typography roles, not primitive type classes.** Text takes a `type-<role>` class (or a documented
+  `type-<role>--<pattern>` exception) and the modifiers `type-strong`, `type-mono`, `type-numeric`, not `text-sm`,
+  `leading-*`, `font-semibold` or `tracking-*`; `lint:check` fails on those unless a
+  `biome-ignore lint/plugin/noPrimitiveTypography: <reason>` above it says why.
+- **Spacing roles, not number classes.** Padding, margins, gaps and control heights take a spacing role
+  (`px-inset-item`, `gap-group`, `mt-section`, `h-control-md`) or a documented `<family>-<role>--<pattern>`
+  exception (`gap-related--8-12`), not `p-4` or `md:gap-6`; `lint:check` fails on a number padding, margin, gap or
+  space class unless a `biome-ignore lint/plugin/noPrimitiveSpacing: <reason>` above it says why. One role class holds
+  its `md` step. A raw spacing class beats a role at every width; a role passed through `className` over a role the
+  component sets needs the important modifier (`gap-related!`).
+- **No Tailwind arbitrary values** (`w-[42%]`). Use the token/scale.
 - **No component without a co-located `*.stories.tsx`.** Storybook is the docs source of truth.
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.
 - **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
-  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/**` CSS by hand
-  (`pnpm tokens:check` fails on a stale file). Do not edit tokens without CODEOWNERS review
+  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/*/`
+  or `design-system/tokens/{app,preview}/` by hand (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
   `src/modules` must keep labeling, focus order, and keyboard interaction intact, and rely on
@@ -138,16 +148,15 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
 - `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
-  `src/theme/tokens/` — the CSS generated from it; both CODEOWNERS-gated (`@aragon/app-team`).
+  `src/theme/tokens/*/` and `design-system/tokens/app/` — the CSS generated from it; all CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules
   for this package. Install policy and the dependency catalog are at the repo root.
 - `rollup.config.mjs`, `svgo.config.js`, `postcss.config.js` — build and asset pipeline.
-- `scripts/` — the checks CI runs outside Biome/tsc/Jest: `check-build-css.mjs`; `scripts/tokens/` is the token generator. Plain Node, no
-  framework; keep new checks in that shape. `scripts/README.md` covers the local screenshot comparison
-  (`pnpm visual-diff`), the primitive-colour lint (`pnpm lint:colors:report`) and the primitive-typography lint
-  (`pnpm lint:typography:report`).
+- `scripts/` — plain Node, no framework; keep new scripts in that shape. `check-build-css.mjs` is the check CI runs
+  outside Biome/tsc/Jest, `scripts/tokens/` is the token generator, and `scripts/README.md` covers the local
+  screenshot comparison (`pnpm visual-diff`).
 - `RELEASING.md` — how a version reaches npm, and the four constraints that break OIDC publishing.
 - Root `AGENTS.md` — monorepo layout, release scopes, CI split and Turbo caching.
 - `.github/workflows/app-development.yml` — CI truth for the type/lint/test gates (all workspaces);

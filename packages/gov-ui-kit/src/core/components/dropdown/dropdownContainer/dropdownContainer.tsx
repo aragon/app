@@ -69,8 +69,7 @@ export interface IDropdownContainerProps extends Omit<ComponentProps<'div'>, 'di
     variant?: ButtonVariant;
 }
 
-// The open trigger darkens its border only where that border wins over the Button's own one, as before the semantic
-// tokens: on tertiary and critical Buttons. The other variants keep their own border while open.
+// Variants whose open trigger takes border-surface-open: it sorts after their resting border; hover and active win.
 const openBorderVariants: ButtonVariant[] = ['tertiary', 'critical'];
 
 export const DropdownContainer: React.FC<IDropdownContainerProps> = (props) => {

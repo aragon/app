@@ -24,9 +24,10 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     const buttonClassName = classNames(
+        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the DAO avatar button
         'cursor-pointer p-1 md:pr-control-lg',
         'flex max-w-56 items-center gap-nav-related--fixed-12 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all xl:max-w-68',
-        'focus-ring ring-accent-focus hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
         className,
     );
 

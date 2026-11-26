@@ -1,5 +1,6 @@
-# The guardrail metrics log is append-only and every line stands on its own, so two branches
-# that both recorded hits want each other's lines, never a resolution. Union-merge keeps both
-# sets instead of asking every rebase to settle a conflict by hand.
-# See .agents/shared/metrics/README.md.
-.agents/shared/metrics/hits.jsonl merge=union
+# Design canvas files are written by the claude.ai canvas editor and synced back byte for byte: no end-of-line
+# conversion, and kept out of the language statistics. See design/README.md.
+design/canvas/** -text linguist-vendored
+# The canvas layout (where frames sit). The canvas editor rewrites the whole file on any hand edit, so its diff is
+# noise, not design: GitHub shows it collapsed as a generated file.
+design/canvas/canvas.json -text linguist-vendored linguist-generated

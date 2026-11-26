@@ -48,6 +48,10 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      * `wizardReturnToParam`).
      */
     exitPath: Route;
+    /**
+     * Called on a click of the close link; `preventDefault` cancels the exit navigation.
+     */
+    onExit?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 /**
@@ -96,7 +100,7 @@ const resolveDisplayDao = (
 };
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, dao, targetDaoAddress, exitPath } = props;
+    const { name, dao, targetDaoAddress, exitPath, onExit } = props;
 
     const returnTo = useSearchParams().get(wizardReturnToParam);
     const exitHref = isAppPath(returnTo) ? returnTo : exitPath;
@@ -128,8 +132,9 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
+        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the icon-only exit link
         'items-center gap-nav-related--fixed-12 rounded-full border border-surface-default p-4 text-surface-default-wizard transition-all',
-        'focus-ring ring-accent-focus hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
+        'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
     );
 
     const wizardName = typeof name === 'string' ? t(name) : t(...name);
@@ -140,7 +145,11 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
             trailing={<SupportChatTrigger />}
         >
             <div className="flex min-w-0 grow items-center gap-x-nav-group--12-16">
-                <Link className={linkClassName} href={exitHref}>
+                <Link
+                    className={linkClassName}
+                    href={exitHref}
+                    onClick={onExit}
+                >
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
                 <div className="flex min-w-0 flex-col gap-y-nav-tight--fixed-2">

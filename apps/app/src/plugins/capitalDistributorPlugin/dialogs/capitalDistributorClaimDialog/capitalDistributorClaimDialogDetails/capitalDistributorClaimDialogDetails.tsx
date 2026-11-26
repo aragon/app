@@ -112,10 +112,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
 
     return (
         <div className="flex grow flex-col gap-group">
-            <Card
-                className="flex grow flex-col gap-related"
-                inset="surface-wide"
-            >
+            <Card className="flex grow flex-col gap-related p-inset-surface-wide">
                 {completeDetails.map((detailsGroup, index) => (
                     // biome-ignore lint/suspicious/noArrayIndexKey: fixed groups, never reordered
                     <React.Fragment key={index}>
@@ -134,11 +131,11 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                 ))}
             </Card>
             {resources != null && resources.length > 0 && (
-                <Card
-                    className="flex flex-col gap-related"
-                    inset="surface-wide"
-                >
-                    <Heading as="h4" typeRole="title-group--small-panel">
+                <Card className="flex flex-col gap-related p-inset-surface-wide">
+                    <Heading
+                        as="h4"
+                        typeClassName="type-title-group--small-panel"
+                    >
                         {t(
                             'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources',
                         )}

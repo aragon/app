@@ -70,7 +70,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
 
             {/* Help text */}
             {helpText && (
-                <p className="mt-tight type-body-compact--unstepped text-surface-secondary">
+                <p className="pt-tight type-body-compact--unstepped text-surface-secondary">
                     {helpText}
                 </p>
             )}

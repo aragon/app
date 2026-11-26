@@ -90,14 +90,13 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
     return (
         <Card
             className={classNames(
-                'relative flex flex-col gap-group-stepped',
+                'relative flex flex-col gap-group-stepped p-inset-surface',
                 {
-                    'border-accent-primary-cta! !shadow-accent-default':
+                    'border-accent-primary-cta! shadow-accent-default!':
                         isPrimary,
                 },
                 className,
             )}
-            inset="surface"
         >
             {tag != null && (
                 <Tag
@@ -113,10 +112,10 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
             <div className="flex flex-col gap-related">
                 <Heading
                     as="h2"
-                    typeRole={
+                    typeClassName={
                         isSmaller
-                            ? 'title-group--cta-card-compact'
-                            : 'title-group--cta-card'
+                            ? 'type-title-group--cta-card-compact'
+                            : 'type-title-group--cta-card'
                     }
                 >
                     {title}

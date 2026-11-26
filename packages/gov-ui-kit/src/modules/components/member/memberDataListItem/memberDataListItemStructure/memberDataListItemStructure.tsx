@@ -105,7 +105,7 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                 )}
                 {isCurrentUser && <Tag label={copy.memberDataListItemStructure.you} variant="neutral" />}
             </div>
-            <Heading as="h2" className="inline-block w-full truncate" typeRole="title-item--entity-list">
+            <Heading as="h2" className="inline-block w-full truncate" typeClassName="type-title-item--entity-list">
                 <AddressOutput address={address} className="truncate" label={resolvedUserHandle} />
             </Heading>
             {showDelegationOrTokenInformation && (
@@ -115,14 +115,14 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                         className={classNames({
                             invisible: delegationCount == null || delegationCount === 0,
                         })}
-                        typeRole="supporting"
+                        typeClassName="type-supporting"
                     >
                         <span className="text-surface-primary">{formattedDelegationCount}</span>{' '}
                         <span className="text-surface-secondary">
                             {copy.memberDataListItemStructure[delegationCount === 1 ? 'delegation' : 'delegations']}
                         </span>
                     </Heading>
-                    <Heading as="h3" typeRole="supporting">
+                    <Heading as="h3" typeClassName="type-supporting">
                         <span className="text-surface-primary">
                             {formattedTokenAmount ?? ''}
                             {tokenSymbol ? ` ${tokenSymbol}` : ''}

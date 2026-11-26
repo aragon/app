@@ -22,12 +22,12 @@ import { appendRequestToHistory } from '../../requests';
 // The vertical margins separate the card from the assistant text around it in the same message —
 // the model narrates both into a draft and past a result, so text can sit on either side.
 const cardClassName =
-    'my-related flex w-full flex-col gap-group--fixed-14 rounded-xl border border-surface-secondary bg-surface-primary p-inset-surface-wide--fixed-20 shadow-surface-md first:mt-0 last:mb-0';
+    'my-related flex w-full flex-col gap-group--fixed-14 rounded-xl border p-inset-surface-wide--fixed-20 first:mt-0 last:mb-0 border-surface-secondary bg-surface-primary shadow-surface-md';
 
 // A draft nobody acted on is not an event worth a card: it collapses into a quiet line so the
 // transcript stays readable while still reading honestly.
 const spentNoteClassName =
-    'my-related text-center text-surface-tertiary type-caption--chat-note first:mt-0 last:mb-0';
+    'my-related text-center first:mt-0 last:mb-0 type-caption--chat-note text-surface-tertiary';
 
 // The ticket draft the model assembled, rendered as an approval card in the transcript. It walks
 // four states: the draft streaming in, the draft awaiting the user's Create/Dismiss decision, the
@@ -69,7 +69,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         icon={IconType.SUCCESS}
                         size="md"
                     />
-                    <Heading as="h3" typeRole="supporting">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.successTitle}
                     </Heading>
                 </div>
@@ -110,7 +110,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         icon={IconType.WARNING}
                         size="md"
                     />
-                    <Heading as="h3" typeRole="supporting">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.errorTitle}
                     </Heading>
                 </div>
@@ -176,7 +176,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         <div className={cardClassName}>
             {/* The ticket leads with itself: its title is the card's heading. */}
             {args.title != null && (
-                <Heading as="h3" typeRole="title-item">
+                <Heading as="h3" typeClassName="type-title-item">
                     {args.title}
                 </Heading>
             )}

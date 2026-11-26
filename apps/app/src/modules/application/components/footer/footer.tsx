@@ -14,7 +14,7 @@ import { footerLinks } from './footerLinks';
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
 const linkClassNames =
-    'truncate border-surface-secondary border-b type-control text-surface-secondary last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none';
+    'truncate border-b last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none type-control border-surface-secondary text-surface-secondary';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;

@@ -196,7 +196,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="mt-tight--fixed-8 mb-tight--fixed-8 flex flex-col gap-section">
+                <div className="flex flex-col gap-section py-tight--fixed-8">
                     <InputContainer
                         helpText={t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochIdHelpText',

@@ -19,7 +19,7 @@ export type NetworkInputBaseForm = Record<string, Network>;
  * inside paragraphs (see `Dropdown.Item`), where only phrasing content is valid.
  */
 const networkTagClassName =
-    'flex h-tag shrink-0 items-center rounded-full bg-surface-tertiary px-tag text-surface-secondary type-supporting';
+    'flex h-tag shrink-0 items-center rounded-full px-tag type-supporting bg-surface-tertiary text-surface-secondary';
 
 /**
  * Networks selectable in the input, i.e. every supported network that is not disabled, ordered as defined on the
@@ -84,7 +84,7 @@ export const NetworkInput: React.FC<INetworkInputProps> = (props) => {
                 customTrigger={
                     <button
                         aria-label={label ?? t('app.shared.networkInput.label')}
-                        className="flex w-full cursor-pointer items-center gap-related rounded-xl border border-surface-default bg-surface-primary px-control-lg py-control-lg text-left focus-ring ring-accent-focus hover:border-surface-hover focus:outline-hidden"
+                        className="flex w-full cursor-pointer items-center gap-related rounded-xl border border-surface-default bg-surface-primary px-control-lg py-control-lg text-left ring-accent-focus focus-ring hover:border-surface-hover focus:outline-hidden"
                         type="button"
                     >
                         <Avatar

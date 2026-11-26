@@ -92,7 +92,7 @@ export const GovernanceStagesFieldItem: React.FC<
     );
 
     return (
-        <Card className="flex flex-col gap-y-section-wide" inset="surface-wide">
+        <Card className="flex flex-col gap-y-section-wide p-inset-surface-wide">
             <div className="flex flex-col gap-section">
                 <div className="flex items-center justify-between">
                     <p className="type-title-item--stage-card text-surface-primary">

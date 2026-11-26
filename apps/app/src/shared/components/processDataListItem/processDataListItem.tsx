@@ -58,7 +58,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     return (
         <DataList.Item
             className={classNames('px-inset-item py-inset-item--12-24', {
-                'border-surface-selected shadow-primary hover:border-surface-selected hover:!shadow-accent-default':
+                'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive,
                 'border-surface-disabled-item bg-surface-secondary': isDisabled,
             })}

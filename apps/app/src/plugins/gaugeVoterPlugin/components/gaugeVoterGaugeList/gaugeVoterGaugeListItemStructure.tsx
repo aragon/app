@@ -134,8 +134,8 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
     const itemClassName = classNames(
         'flex flex-col gap-related--12-16 px-inset-item py-inset-item-flat md:min-h-20 md:flex-row md:items-center',
         {
-            // Per-axis border colours: they are emitted after the item's own `border-surface-*` classes, so they
-            // replace its default and hover borders, while its pressed border still wins as it did before.
+            // Per-axis colours sort after the item's own border colour: they win at rest and on hover, not when pressed.
+            // biome-ignore lint/plugin/noPrimitiveColors: no selected border role at primary-300 (border/surface/selected is primary-400)
             'border-x-primary-300 border-y-primary-300 hover:border-x-primary-300 hover:border-y-primary-300':
                 isSelected,
         },

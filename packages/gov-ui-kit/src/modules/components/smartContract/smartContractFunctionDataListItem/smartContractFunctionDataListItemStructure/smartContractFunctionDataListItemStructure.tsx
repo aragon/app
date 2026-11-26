@@ -78,7 +78,7 @@ export const SmartContractFunctionDataListItemStructure: React.FC<ISmartContract
     const displayWarningFeedback = displayWarning || !hasVerifiedNames;
 
     const containerClassName = asChild
-        ? '!p-0 border-none shadow-none'
+        ? 'border-none p-0! shadow-none!'
         : 'flex items-center justify-between gap-x-related--12-16 py-inset-item';
 
     const functionLabelStyle = displayWarningFeedback ? 'text-warning-primary' : 'text-surface-primary';

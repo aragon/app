@@ -86,10 +86,12 @@ export const GaugeVoterVotingTerminal: React.FC<
 
     const wrapperClassName = classNames(
         'flex flex-col gap-group-stepped--12-24 md:flex-row md:items-center md:justify-between',
+        // biome-ignore lint/plugin/noPrimitiveSpacing: the sticky terminal bleeds past the column from lg
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
         'rounded-xl border border-b-0 bg-surface-primary px-inset-surface-flat--12-16 md:h-[64px] max-md:py-inset-surface-flat',
         {
             'border-surface-secondary shadow-surface-md': !showVoteButton,
+            // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the xl size
             'border-accent-primary-terminal shadow-primary-xl': showVoteButton,
         },
     );
@@ -105,7 +107,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                 <div className="flex items-center gap-section--fixed-32 md:gap-related">
                     <div className="flex items-center gap-tight--fixed-8">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
-                        <div className="flex flex-wrap items-baseline gap-phrase--fixed-2">
+                        <div className="flex items-baseline gap-phrase--fixed-2">
                             <span className="type-stat--voting-terminal text-surface-primary">
                                 {displayVotingPower}
                             </span>
@@ -114,7 +116,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                             </span>
                         </div>
                     </div>
-                    <div className="flex flex-wrap items-baseline gap-phrase--fixed-2">
+                    <div className="flex items-baseline gap-phrase--fixed-2">
                         <span className="type-stat--voting-terminal text-surface-primary">
                             {formattedUsagePercentage}
                         </span>

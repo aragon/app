@@ -101,6 +101,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
                 />
             </div>
 
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: aligns the remove button with the field top */}
             <div className="flex h-full items-start pt-1">
                 <Button
                     disabled={!canRemove}

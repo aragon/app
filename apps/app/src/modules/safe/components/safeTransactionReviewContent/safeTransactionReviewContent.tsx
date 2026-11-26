@@ -370,7 +370,7 @@ export const SafeTransactionReviewContent: React.FC<
     return (
         <>
             {intent != null && (
-                <p className="mb-group type-body-compact--transaction-review text-surface-secondary">
+                <p className="pb-group type-body-compact--transaction-review text-surface-secondary">
                     {intent}
                 </p>
             )}
@@ -437,7 +437,7 @@ export const SafeTransactionReviewContent: React.FC<
                     variant="warning"
                 />
             )}
-            <dl className="mt-group flex flex-col gap-related">
+            <dl className="flex flex-col gap-related pt-group">
                 <div className="flex flex-row items-center justify-between gap-group">
                     <dt className="type-supporting--framework-leading text-surface-secondary">
                         {t(`${translationKey}.fields.safe`)}
@@ -459,7 +459,7 @@ export const SafeTransactionReviewContent: React.FC<
                 />
             </dl>
             {costNote != null && (
-                <p className="mt-related type-body-compact--transaction-review text-surface-secondary">
+                <p className="pt-related type-body-compact--transaction-review text-surface-secondary">
                     {costNote}
                 </p>
             )}

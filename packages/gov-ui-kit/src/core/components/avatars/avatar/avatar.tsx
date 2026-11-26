@@ -29,6 +29,7 @@ export interface IAvatarProps extends ComponentPropsWithoutRef<'img'> {
     size?: AvatarSize;
 }
 
+// biome-ignore-start lint/plugin/noPrimitiveTypography: the initials follow the avatar size, not a type role
 const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     xs: {
         default: 'size-4 text-[8px]',
@@ -79,6 +80,7 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
         '2xl': '2xl:size-16 2xl:text-xl',
     },
 };
+// biome-ignore-end lint/plugin/noPrimitiveTypography: the initials follow the avatar size, not a type role
 
 const responsiveBadgeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     xs: {
@@ -137,6 +139,7 @@ export const Avatar: React.FC<IAvatarProps> = (props) => {
     const [imgLoading, setImgLoading] = useState(false);
 
     const containerClassNames = classNames(
+        // biome-ignore lint/plugin/noPrimitiveTypography: the initials box is one glyph line, not a type role
         '[position:var(--guk-avatar-container-position)] flex shrink-0 items-center justify-center overflow-hidden rounded-full leading-none',
         responsiveUtils.generateClassNames(size, responsiveSize, responsiveSizeClasses),
         className,
@@ -176,7 +179,7 @@ export const Avatar: React.FC<IAvatarProps> = (props) => {
     }
 
     const badgeClassNames = classNames(
-        'absolute flex items-center justify-center overflow-hidden rounded-full bg-surface-primary ring-bg-surface-primary *:size-full',
+        'absolute flex items-center justify-center overflow-hidden rounded-full bg-surface-primary ring-(--guk-bg-surface-primary) *:size-full',
         responsiveUtils.generateClassNames(size, responsiveSize, responsiveBadgeClasses),
     );
 

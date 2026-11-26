@@ -1,5 +1,6 @@
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import type {
+    IGetWorkspaceAccountSuggestionsParams,
     IGetWorkspaceAccountsParams,
     IGetWorkspaceAssetListParams,
     IGetWorkspaceMemberListParams,
@@ -10,6 +11,7 @@ import type {
 
 export enum WorkspaceQueryServiceKey {
     ACCOUNTS = 'WORKSPACE_ACCOUNTS',
+    ACCOUNT_SUGGESTIONS = 'WORKSPACE_ACCOUNT_SUGGESTIONS',
     TRANSACTIONS = 'WORKSPACE_TRANSACTIONS',
     ASSET_LIST = 'WORKSPACE_ASSET_LIST',
     PROPOSAL_LIST = 'WORKSPACE_PROPOSAL_LIST',
@@ -18,6 +20,11 @@ export enum WorkspaceQueryServiceKey {
 }
 
 export const workspaceQueryServiceKeys = {
+    accountSuggestions: (params: IGetWorkspaceAccountSuggestionsParams) => [
+        WorkspaceQueryServiceKey.ACCOUNT_SUGGESTIONS,
+        apiVersionUtils.getApiVersion(),
+        params,
+    ],
     accounts: (params: IGetWorkspaceAccountsParams) => [
         WorkspaceQueryServiceKey.ACCOUNTS,
         apiVersionUtils.getApiVersion(),
