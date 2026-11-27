@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "bae91cb2e1ea4fb3387b7d1d21b3001a5252d73843f82210e2526b87ddcf877f",
+            "sha256": "6713f4dee98153b70fd4b3b005bce3dd3a691c899fc320af8a12c887c40b66c3",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -547,7 +547,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:143",
+                "source": "kit:src/core/components/avatars/avatarStack/avatarStack.tsx:141",
                 "stories": [
                     "kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1"
                 ]
