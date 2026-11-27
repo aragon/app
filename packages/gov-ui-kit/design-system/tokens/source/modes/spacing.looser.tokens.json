@@ -530,6 +530,38 @@
             }
         },
         "exception": {
+            "control-lg--fixed-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-8": {
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
             "gap-group-stepped--16-24": {
                 "base": {
                     "$value": {
@@ -698,10 +730,32 @@
                     }
                 }
             },
+            "gap-phrase--4-6": {
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
             "gap-related--fixed-12": {
                 "base": {
                     "$value": {
-                        "value": 8,
+                        "value": 12,
                         "unit": "px"
                     }
                 },
@@ -723,6 +777,58 @@
                     "$value": {
                         "value": 24,
                         "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--4-8": {
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-tight--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--0-24": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item--16-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-item-flat--fixed-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
                     }
                 }
             },
@@ -987,6 +1093,82 @@
                     "md": {
                         "$value": {
                             "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--24-32": {
+                "x": {
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--4-8": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--6-8": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--fixed-8": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
                             "unit": "px"
                         }
                     }

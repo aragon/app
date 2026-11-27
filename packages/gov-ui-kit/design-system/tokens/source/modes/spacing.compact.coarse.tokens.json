@@ -1,6 +1,6 @@
 {
     "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
-    "$description": "Spacing preview compact on coarse pointers: control heights and block paddings fall back to New, so a touch target keeps its size.",
+    "$description": "Spacing preview compact on coarse pointers: control heights and block paddings fall back to New, so a touch target keeps its size. The exceptions listed here keep their default value, which their size at New would exceed.",
     "space": {
         "$type": "dimension",
         "size": {
@@ -109,6 +109,66 @@
                     "md": {
                         "$value": {
                             "value": 56,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "exception": {
+            "control-item--12-16": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-10": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
                             "unit": "px"
                         }
                     }

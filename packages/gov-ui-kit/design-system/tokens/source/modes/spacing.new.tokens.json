@@ -240,6 +240,16 @@
                     }
                 }
             },
+            "inset-flush--0-24": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
             "inset-nav--fixed-16": {
                 "x": {
                     "base": {

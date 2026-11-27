@@ -359,7 +359,7 @@ test('a mode inside an at-rule adds to the same mode outside it and writes only 
     assert(coarse.includes('--guk-space-height-control-md: 40px;'));
     assert(compact.includes('--guk-space-height-control-md: 36px;'));
     // An exception that follows its size follows it inside the at-rule too.
-    assert(coarse.includes('--guk-space-y-control-lg--fixed-8: 12px;'));
+    assert(coarse.includes('--guk-space-y-control-lg--fixed-16: 12px;'));
     assert.deepEqual(
         coarse.filter((line) => compact.includes(line)),
         [],
@@ -371,6 +371,43 @@ test('a mode inside an at-rule adds to the same mode outside it and writes only 
     assert.deepEqual(
         coarse.filter((line) => !after.includes(line)),
         ['--guk-space-height-control-md: 40px;'],
+    );
+});
+
+test('in looser no spacing value is tighter than the default, in compact none is looser', () => {
+    const files = generate();
+    const values = (lines) =>
+        new Map(
+            lines.map((line) => {
+                const [, name, px] = line.match(/^(--[\w-]+): (\d+)px;$/);
+                return [name, Number(px)];
+            }),
+        );
+    const defaults = values(
+        [cssFile('roles', 'spacing'), resolve(kitRoot, 'design-system/tokens/app/spacing.css')].flatMap((file) =>
+            declarations(files.get(file), '@theme'),
+        ),
+    );
+    const preview = files.get(previewFile('spacing'));
+    // The coarse block writes only what differs from compact; the rest is checked with compact.
+    const blocks = [
+        ['spacing.looser', declarations(preview, SPACING('looser')), (px, def) => px < def],
+        ['spacing.compact', declarations(preview, SPACING('compact')), (px, def) => px > def],
+        [
+            'spacing.compact.coarse',
+            declarations(preview, SPACING('compact'), '@media (pointer: coarse)'),
+            (px, def) => px > def,
+        ],
+    ];
+    const wrongWay = blocks.flatMap(([document, lines, isWrong]) =>
+        [...values(lines)]
+            .filter(([name, px]) => isWrong(px, defaults.get(name)))
+            .map(([name, px]) => `${document}: ${name} is ${px}px, default ${defaults.get(name)}px`),
+    );
+    assert.deepEqual(
+        wrongWay,
+        [],
+        'Set these to their default value in modes/<document>.tokens.json: an exception the document leaves out follows its role or size',
     );
 });
 
