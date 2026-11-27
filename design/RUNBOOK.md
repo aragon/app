@@ -150,12 +150,11 @@ is the first suspect:
    `<folder>/kit-files.json` on both artifacts, from a `list` with `scope: "files"`), never version numbers: an
    artifact's version moves on its own with no change to its files.
 2. Is the kit artifact behind the code? The design sync is described in `packages/gov-ui-kit/design-system/SYNC.md`
-   (a kit and Storybook build; no previews). After a sync, set `kit.sourceCommit` and `kit.version` in
-   `canvases/prototypes.json`. It publishes to the shared design system artifact, so it needs the person's
-   say-so on its own; an OK for a catch-up or a ticket does not cover it.
+   (a kit and Storybook build; no previews). It publishes to the shared design system artifact, so it needs the
+   person's say-so on its own; an OK for a catch-up or a ticket does not cover it.
 3. Give the canvas the current kit: publish to it with the entries of `<folder>/kit-files.json`.
-4. Check the prototypes still load, and set `kit.version` in the canvas's record (and in `canvas.json` →
-   `designSystems`) to the artifact's version. No commit here: on a ticket it goes in with the next save, on the
+4. Check the prototypes still load, and set `version` in `canvas.json` → `designSystems` to the artifact's
+   version. No commit here: on a ticket it goes in with the next save, on the
    reference canvas with the refresh.
 
 **A kit component the app uses that the kit artifact does not have yet** (it was added to the kit after the last
@@ -163,7 +162,8 @@ sync): ask whether to run the sync first. If not, draw it in the prototype with 
 the element `data-stands-in-for="<Component>"`, and add it to the README's known gaps, so the next session that has
 the synced kit replaces it.
 
-The kit was last synced from `main` at `054ac8b47` (25 November 2026, kit 3.1.0): `kit.sourceCommit` records it.
+The kit's design system states the commit it was built from: the first line of its README, and `meta.ref` in its
+`tokens.json`, which a canvas copies with the kit.
 
 ## Tweaks
 
@@ -298,9 +298,10 @@ the run fixed the dialog and left the copy.*
 
 ### 5. Check the two things no diff shows
 
-**a. The kit the canvases have.** Canvases draw with the kit as synced at `kit.sourceCommit` in
-`canvases/prototypes.json`, not with the kit in the repo. `git log --oneline <kit.sourceCommit> <head> --
-packages/gov-ui-kit/src` lists kit changes canvases do not have. **Never use a kit component or prop added in that
+**a. The kit the canvases have.** Canvases draw with the kit they copied, not with the kit in the repo. The
+commit it was built from is `meta.ref` in the canvas's copy of `tokens.json` (`main@<commit>`, under
+`project/ds/aragon-gov-ui-kit/`). `git log --oneline <that commit> <head> -- packages/gov-ui-kit/src` lists kit
+changes the canvas does not have. **Never use a kit component or prop added in that
 range**: on a canvas it renders nothing or fails, and the load check passes anyway when it runs with a newer kit.
 Draw it with kit tokens and `app.css`, mark it `data-stands-in-for="<Component>"`, and list it. Interactively, first
 ask whether to run the design sync (`packages/gov-ui-kit/design-system/SYNC.md`). *25 November, CI: the run gave
@@ -335,7 +336,7 @@ Fix every `behind` row from the app's source, following `BRIEF.md`. Work alone w
 
 - Every `behind` row is fixed or listed as left out with its reason.
 - Run `affected.cjs` again over the same range and recount: every (file, part) pair still has a row.
-- The load check on every prototype, at 1440 and 390 px, with the kit of `kit.sourceCommit` in `design/.runtime/`
+- The load check on every prototype, at 1440 and 390 px, with the canvas's own kit in `design/.runtime/`
   (read from the canvas), not a newer one.
 
 ### 9. Record and hand over
