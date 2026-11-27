@@ -26,7 +26,7 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const buttonClassName = classNames(
         // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the DAO avatar button
         'cursor-pointer p-1 md:pr-control-lg',
-        'flex max-w-56 items-center gap-nav-related--fixed-12 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all xl:max-w-68',
+        'flex items-center gap-nav-related--fixed-12 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all',
         'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
         className,
     );
@@ -35,7 +35,8 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
         <button className={buttonClassName} {...otherProps}>
             <InteractiveAncestorContext.Provider value={true}>
                 <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
-                <p className="hidden grow truncate text-left type-control text-surface-primary md:block">
+                {/* The cap sits on the name, so a roomier frame around it does not shorten it. */}
+                <p className="hidden max-w-37.5 grow truncate text-left type-control text-surface-primary md:block xl:max-w-49.5">
                     <AddressOutput
                         address={dao.address}
                         label={daoName || undefined}

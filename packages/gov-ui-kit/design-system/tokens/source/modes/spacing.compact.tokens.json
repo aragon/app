@@ -734,6 +734,20 @@
                     }
                 }
             },
+            "gap-phrase--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
             "gap-related--fixed-12": {
                 "base": {
                     "$value": {
@@ -759,6 +773,16 @@
                     "$value": {
                         "value": 24,
                         "unit": "px"
+                    }
+                }
+            },
+            "inset-flush--0-24": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
                     }
                 }
             },
@@ -830,13 +854,13 @@
                 "x": {
                     "base": {
                         "$value": {
-                            "value": 16,
+                            "value": 14,
                             "unit": "px"
                         }
                     },
                     "md": {
                         "$value": {
-                            "value": 16,
+                            "value": 14,
                             "unit": "px"
                         }
                     }

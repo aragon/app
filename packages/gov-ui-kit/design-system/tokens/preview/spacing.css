@@ -105,7 +105,6 @@
     --guk-space-md-gap-tight--fixed-6: 4px;
     --guk-space-gap-tight--fixed-8: 4px;
     --guk-space-md-gap-tight--fixed-8: 4px;
-    --guk-space-md-y-inset-flush--0-24: 0px;
     --guk-space-md-y-inset-item--12-16: 20px;
     --guk-space-x-inset-item--12-24: 16px;
     --guk-space-md-y-inset-item--12-24: 20px;
@@ -151,8 +150,6 @@
     --guk-space-md-y-control-item-flat--fixed-8: 16px;
     --guk-space-y-control-lg--fixed-8: 12px;
     --guk-space-md-y-control-lg--fixed-8: 12px;
-    --guk-space-gap-control-lg--fixed-8: 6px;
-    --guk-space-md-gap-control-lg--fixed-8: 6px;
     --guk-space-x-control-md--fixed-14: 16px;
     --guk-space-md-x-control-md--fixed-14: 16px;
     --guk-space-x-control-sm--fixed-10: 12px;
@@ -181,8 +178,6 @@
     --guk-space-md-gap-nav-section--fixed-48: 64px;
     --guk-space-gap-nav-tight--fixed-2: 4px;
     --guk-space-md-gap-nav-tight--fixed-2: 4px;
-    --guk-space-gap-phrase--fixed-6: 4px;
-    --guk-space-md-gap-phrase--fixed-6: 4px;
     --guk-space-md-gap-related--12-8: 16px;
     --guk-space-gap-related--6-12: 12px;
     --guk-space-md-gap-related--6-12: 16px;
@@ -210,7 +205,6 @@
     --guk-space-md-x-inset-surface-flat--fixed-14: 20px;
     --guk-space-y-inset-surface-flat--fixed-14: 16px;
     --guk-space-md-y-inset-surface-flat--fixed-14: 16px;
-    --guk-space-md-x-inset-surface-wide--24-32: 24px;
     --guk-space-y-inset-surface-wide--24-32: 32px;
     --guk-space-x-inset-surface-wide--fixed-20: 24px;
     --guk-space-md-x-inset-surface-wide--fixed-20: 24px;
@@ -218,10 +212,7 @@
     --guk-space-md-y-inset-surface-wide--fixed-20: 32px;
     --guk-space-y-inset-surface-wide--fixed-28: 32px;
     --guk-space-md-y-inset-surface-wide--fixed-28: 32px;
-    --guk-space-x-inset-surface-wide--fixed-32: 24px;
-    --guk-space-md-x-inset-surface-wide--fixed-32: 24px;
     --guk-space-y-inset-tight--4-8: 6px;
-    --guk-space-md-y-inset-tight--4-8: 6px;
     --guk-space-x-inset-tight: 6px;
     --guk-space-md-x-inset-tight: 6px;
     --guk-space-y-inset-tight: 6px;
@@ -284,8 +275,6 @@
     --guk-space-md-y-control-item--12-16: 24px;
     --guk-space-y-control-lg--fixed-10: 12px;
     --guk-space-md-y-control-lg--fixed-10: 12px;
-    --guk-space-y-control-lg--fixed-16: 12px;
-    --guk-space-md-y-control-lg--fixed-16: 12px;
     --guk-space-x-control-md--8-12: 16px;
     --guk-space-md-x-control-md--8-12: 16px;
     --guk-space-x-control-sm--8-12: 12px;
@@ -300,7 +289,6 @@
     --guk-space-md-gap-nav-section--fixed-32: 40px;
     --guk-space-gap-nav-tight--fixed-6: 8px;
     --guk-space-md-gap-nav-tight--fixed-6: 8px;
-    --guk-space-md-gap-phrase--4-6: 4px;
     --guk-space-gap-phrase--fixed-2: 4px;
     --guk-space-md-gap-phrase--fixed-2: 4px;
     --guk-space-gap-related--8-10: 12px;
@@ -310,7 +298,6 @@
     --guk-space-gap-related--8-16: 12px;
     --guk-space-gap-related--fixed-10: 12px;
     --guk-space-md-gap-related--fixed-10: 16px;
-    --guk-space-gap-related--fixed-12: 8px;
     --guk-space-gap-related--fixed-8: 12px;
     --guk-space-md-gap-related--fixed-8: 16px;
     --guk-space-gap-section--24-28: 32px;
@@ -320,20 +307,14 @@
     --guk-space-md-gap-tight--2-4: 6px;
     --guk-space-gap-tight--4-6: 6px;
     --guk-space-gap-tight--4-8: 6px;
-    --guk-space-md-gap-tight--4-8: 6px;
     --guk-space-gap-tight--fixed-2: 6px;
     --guk-space-md-gap-tight--fixed-2: 6px;
-    --guk-space-gap-tight--fixed-8: 6px;
-    --guk-space-md-gap-tight--fixed-8: 6px;
-    --guk-space-md-y-inset-flush--0-24: 0px;
     --guk-space-md-y-inset-item--12-16: 24px;
     --guk-space-x-inset-item--12-24: 16px;
     --guk-space-md-x-inset-item--12-24: 32px;
-    --guk-space-y-inset-item--16-24: 12px;
     --guk-space-x-inset-item-flat--fixed-12: 16px;
     --guk-space-md-x-inset-item-flat--fixed-12: 20px;
     --guk-space-md-x-inset-item-flat--fixed-16: 20px;
-    --guk-space-y-inset-item-flat--fixed-16: 12px;
     --guk-space-y-inset-surface--12-20: 20px;
     --guk-space-md-y-inset-surface--12-20: 32px;
     --guk-space-y-inset-surface--12-24: 20px;
@@ -347,15 +328,10 @@
     --guk-space-md-y-inset-surface-flat--fixed-8: 16px;
     --guk-space-y-inset-tight--4-2: 6px;
     --guk-space-md-y-inset-tight--4-2: 6px;
-    --guk-space-md-y-inset-tight--6-8: 6px;
     --guk-space-x-inset-tight--fixed-4: 6px;
     --guk-space-md-x-inset-tight--fixed-4: 6px;
     --guk-space-y-inset-tight--fixed-4: 6px;
     --guk-space-md-y-inset-tight--fixed-4: 6px;
-    --guk-space-x-inset-tight--fixed-8: 6px;
-    --guk-space-md-x-inset-tight--fixed-8: 6px;
-    --guk-space-y-inset-tight--fixed-8: 6px;
-    --guk-space-md-y-inset-tight--fixed-8: 6px;
 }
 
 :root[data-spacing="compact"], [data-spacing="compact"] {
@@ -419,8 +395,6 @@
     --guk-space-md-x-inset-nav--fixed-4: 2px;
     --guk-space-x-inset-nav--fixed-8: 6px;
     --guk-space-md-x-inset-nav--fixed-8: 6px;
-    --guk-space-x-inset-nav-bar--fixed-14: 16px;
-    --guk-space-md-x-inset-nav-bar--fixed-14: 16px;
     --guk-space-md-x-inset-surface-flat--12-16: 12px;
     --guk-space-y-inset-surface-flat--fixed-12: 8px;
     --guk-space-md-y-inset-surface-flat--fixed-12: 8px;
@@ -523,8 +497,6 @@
     --guk-space-gap-nav-tight--fixed-6: 4px;
     --guk-space-md-gap-nav-tight--fixed-6: 4px;
     --guk-space-md-gap-phrase--4-6: 4px;
-    --guk-space-gap-phrase--fixed-2: 4px;
-    --guk-space-md-gap-phrase--fixed-2: 4px;
     --guk-space-gap-related--12-16: 6px;
     --guk-space-md-gap-related--12-16: 8px;
     --guk-space-gap-related--8-10: 6px;
@@ -552,7 +524,6 @@
     --guk-space-md-gap-tight--fixed-6: 2px;
     --guk-space-gap-tight--fixed-8: 2px;
     --guk-space-md-gap-tight--fixed-8: 2px;
-    --guk-space-md-y-inset-flush--0-24: 0px;
     --guk-space-y-inset-item--12-16: 8px;
     --guk-space-md-x-inset-item--12-24: 20px;
     --guk-space-y-inset-item--12-24: 8px;
@@ -591,10 +562,6 @@
     :root[data-spacing="compact"], [data-spacing="compact"] {
         --guk-space-height-row: 56px;
         --guk-space-md-height-row: 56px;
-        --guk-space-y-control-item-flat--fixed-8: 12px;
-        --guk-space-md-y-control-item-flat--fixed-8: 12px;
-        --guk-space-y-control-lg--fixed-8: 12px;
-        --guk-space-md-y-control-lg--fixed-8: 12px;
         --guk-space-height-control-sm: 32px;
         --guk-space-md-height-control-sm: 32px;
         --guk-space-height-control-md: 40px;
@@ -608,9 +575,8 @@
         --guk-space-y-control-item-flat: 12px;
         --guk-space-md-y-control-item-flat: 12px;
         --guk-space-y-control-item--12-16: 12px;
-        --guk-space-md-y-control-item--12-16: 20px;
-        --guk-space-y-control-lg--fixed-10: 12px;
-        --guk-space-md-y-control-lg--fixed-10: 12px;
+        --guk-space-y-control-lg--fixed-10: 10px;
+        --guk-space-md-y-control-lg--fixed-10: 10px;
         --guk-space-y-control-lg--fixed-16: 12px;
         --guk-space-md-y-control-lg--fixed-16: 12px;
     }

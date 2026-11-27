@@ -215,10 +215,12 @@ Padding, margins, gaps and control heights take a role by its job, not a number.
 - **Previews**: `modes/spacing.new.tokens.json`, `spacing.looser.tokens.json` and `spacing.compact.tokens.json` hold the
   values that differ from the default theme, `spacing.compact.coarse.tokens.json` the controls that keep their New size
   on a touch screen (written inside `@media (pointer: coarse)`). To change a preview value, edit or add it in its mode
-  document (a missing `base` or `md` keeps the default) and run `pnpm tokens:generate`. An exception follows its role,
+  document (a `base` or `md` a role or size leaves out keeps the default) and run `pnpm tokens:generate`. An exception follows its role,
   a `control-*` one its size, unless its mode document sets it: the navigation chrome and the density-invariant
-  exceptions have their own values there. `design-system/tokens/preview/spacing.css` sets the modes under
-  `data-spacing="new|looser|compact"`; Storybook (toolbar) and the app's debug panel load it.
+  exceptions have their own values there, and an exception its role would move the wrong way (tighter than the
+  default in looser, looser in compact) keeps its default value there; `generate.test.mjs` checks the direction.
+  `design-system/tokens/preview/spacing.css` sets the modes under `data-spacing="new|looser|compact"`; Storybook
+  (toolbar) and the app's debug panel load it.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveSpacing.grit` flag number, `px`, arbitrary and variable values of padding,
 margin, gap and space classes (`p-4`, `md:gap-x-2.5`, `-ml-1`, `pt-[72px]`) outside the theme; zero and `auto` pass. A
