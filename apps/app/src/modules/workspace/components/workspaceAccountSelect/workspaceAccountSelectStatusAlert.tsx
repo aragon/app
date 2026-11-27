@@ -23,7 +23,7 @@ export const WorkspaceAccountSelectStatusAlert: React.FC = () => {
     return (
         <div
             className={classNames(
-                'flex items-center justify-between gap-3 rounded-xl py-2.5 pr-3 pl-4',
+                'flex items-center justify-between gap-related rounded-xl py-related--fixed-10 pr-inset-surface-flat--fixed-12 pl-inset-surface-flat',
                 isError ? 'bg-critical-subtle' : 'bg-warning-subtle',
             )}
         >

@@ -46,15 +46,15 @@ export const AssetDataListItemStructure: React.FC<IAssetDataListItemStructurePro
 
     return (
         <DataList.Item
-            className={classNames('flex items-center justify-between gap-x-3 py-3 md:py-5', className)}
+            className={classNames('flex items-center justify-between gap-x-related py-inset-item', className)}
             {...otherProps}
         >
-            <div className="flex min-w-0 items-center gap-3 md:gap-4">
+            <div className="flex min-w-0 items-center gap-related--12-16">
                 <Avatar className="block shrink-0" responsiveSize={{ md: 'md', sm: 'sm' }} src={logoSrc} />
                 <span className="truncate type-title-item text-surface-primary">{name}</span>
             </div>
-            <div className="flex min-w-0 gap-x-2 text-right">
-                <div className="flex min-w-0 flex-col gap-y-1">
+            <div className="flex min-w-0 gap-x-related--fixed-8 text-right">
+                <div className="flex min-w-0 flex-col gap-y-tight">
                     <span className="truncate type-supporting--row-value text-surface-primary">{parsedAmount}</span>
                     {!hideValue && (
                         <span className="truncate type-supporting text-surface-secondary">{formattedValue}</span>

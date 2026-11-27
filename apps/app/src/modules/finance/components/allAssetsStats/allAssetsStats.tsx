@@ -73,8 +73,8 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
             : null);
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="grid w-full grid-cols-2 gap-3">
+        <div className="flex flex-col gap-section">
+            <div className="grid w-full grid-cols-2 gap-related">
                 {stats.map((stat) => (
                     <StatCard
                         key={stat.label}
@@ -84,7 +84,7 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
                 ))}
             </div>
             {showOctavCta && resolvedOctavLink && (
-                <div className="flex flex-col items-center gap-y-3">
+                <div className="flex flex-col items-center gap-y-related">
                     <Button
                         className="w-full"
                         href={resolvedOctavLink}

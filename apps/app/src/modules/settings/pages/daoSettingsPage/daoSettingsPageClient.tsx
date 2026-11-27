@@ -218,7 +218,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                         action={
                             supportsAddProcess ? addProcessAction : undefined
                         }
-                        className="gap-3"
+                        className="gap-related"
                         id="governance"
                         inset={false}
                         title={t(
@@ -241,7 +241,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                 {isAutomationEnabled && (
                     <Page.MainSection
                         action={addPolicyAction}
-                        className="gap-3"
+                        className="gap-related"
                         inset={false}
                         title={t(
                             'app.settings.daoSettingsPage.main.automationInfoTitle',

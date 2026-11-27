@@ -175,7 +175,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
             variant={collapsedAlert?.variant ?? 'default'}
             wrapperClassName="h-auto"
         >
-            <div className="flex min-w-0 grow flex-col gap-0.5 px-4 py-3">
+            <div className="flex min-w-0 grow flex-col gap-tight--fixed-2 px-control-lg py-control-lg">
                 {displayName != null && (
                     <p className="truncate text-surface-primary">
                         {displayName}
@@ -188,7 +188,7 @@ export const PermissionIdInput: React.FC<IPermissionIdInputProps> = (props) => {
                     {value}
                 </p>
             </div>
-            <div className="mr-2 flex shrink-0 flex-row items-center self-center">
+            <div className="mr-control-sm flex shrink-0 flex-row items-center self-center">
                 <Button
                     aria-label={t(
                         'app.actions.core.permissionActionCreate.changePermission',

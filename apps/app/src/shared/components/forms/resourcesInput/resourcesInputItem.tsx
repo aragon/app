@@ -81,9 +81,12 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
 
     return (
         <Card
-            className={classNames('flex flex-col gap-3 p-6 shadow-surface-sm', {
-                'md:flex-row md:gap-2': !isStacked,
-            })}
+            className={classNames(
+                'flex flex-col gap-related p-inset-surface-wide shadow-surface-sm',
+                {
+                    'md:flex-row md:gap-related--fixed-8': !isStacked,
+                },
+            )}
         >
             <InputText
                 placeholder={t(
@@ -109,6 +112,7 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
                     {t('app.shared.resourcesInput.item.removeResource')}
                 </Button>
             ) : (
+                // biome-ignore lint/plugin/noPrimitiveSpacing: aligns the remove button with the field below the label from md
                 <div className="mt-0 md:mt-9">
                     <Dropdown.Container
                         constrainContentWidth={false}

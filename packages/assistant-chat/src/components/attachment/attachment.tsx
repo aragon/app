@@ -91,7 +91,7 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
             <Dialog.Trigger asChild={true}>{children}</Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-900/60" />
-                <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-w-3xl -translate-x-1/2 -translate-y-1/2 p-2 outline-none">
+                <Dialog.Content className="fixed top-1/2 left-1/2 z-50 max-w-3xl -translate-x-1/2 -translate-y-1/2 p-inset-tight--fixed-8 outline-none">
                     <Dialog.Title className="sr-only">
                         {chatCopy.attachments.previewTitle}
                     </Dialog.Title>
@@ -241,7 +241,7 @@ const AttachmentRemove: React.FC = () => (
 );
 
 export const UserMessageAttachments: React.FC = () => (
-    <div className="col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end gap-2 empty:hidden">
+    <div className="col-span-full col-start-1 row-start-1 flex w-full flex-row justify-end gap-related--fixed-8 empty:hidden">
         <MessagePrimitive.Attachments>
             {() => <AttachmentUI />}
         </MessagePrimitive.Attachments>
@@ -249,7 +249,7 @@ export const UserMessageAttachments: React.FC = () => (
 );
 
 export const ComposerAttachments: React.FC = () => (
-    <div className="flex w-full flex-row items-center gap-2 overflow-x-auto empty:hidden">
+    <div className="flex w-full flex-row items-center gap-related--fixed-8 overflow-x-auto empty:hidden">
         <ComposerPrimitive.Attachments>
             {() => <AttachmentUI />}
         </ComposerPrimitive.Attachments>

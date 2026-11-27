@@ -80,6 +80,14 @@
                 {
                     "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveTypography.grit",
                     "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
                 }
             ]
         },

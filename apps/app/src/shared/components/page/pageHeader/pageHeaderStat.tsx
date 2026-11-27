@@ -27,10 +27,10 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
 
     return (
         <div
-            className={classNames('flex flex-col gap-1', className)}
+            className={classNames('flex flex-col gap-tight', className)}
             {...otherProps}
         >
-            <div className="flex flex-row items-baseline gap-1">
+            <div className="flex flex-row items-baseline gap-phrase">
                 <p className="type-stat text-surface-primary type-numeric">
                     {parsedValue}
                 </p>

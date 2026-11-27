@@ -118,8 +118,8 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 </div>
             </div>
 
-            <Container className="pointer-events-none relative z-[3] flex w-full flex-col gap-y-12">
-                <div className="pointer-events-auto relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
+            <Container className="pointer-events-none relative z-[3] flex w-full flex-col gap-y-section-wide--fixed-48">
+                <div className="pointer-events-auto relative flex max-w-[520px] flex-col gap-related--6-12 text-left xl:max-w-[600px]">
                     <div
                         className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-white/70 via-white/26 to-transparent blur-2xl transition-opacity duration-[1200ms] ease-in-out md:block"
                         style={{ opacity: isLightMode ? 1 : 0 }}
@@ -160,7 +160,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 </div>
 
                 {/* Static row for extra-large desktop view */}
-                <div className="pointer-events-auto relative z-[3] hidden w-full items-center justify-between gap-4 xl:flex">
+                <div className="pointer-events-auto relative z-[3] hidden w-full items-center justify-between gap-group xl:flex">
                     {actions.map((action) => (
                         <CryptexActionItem
                             description={action.description}

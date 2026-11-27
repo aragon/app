@@ -47,7 +47,7 @@ export const TransactionDetailSummary: React.FC<ITransactionDetailSummaryProps> 
     return (
         <div
             className={classNames(
-                'rounded-xl border border-surface-primary bg-surface-primary px-4 md:px-6',
+                'rounded-xl border border-surface-primary bg-surface-primary px-inset-surface',
                 className,
             )}
         >

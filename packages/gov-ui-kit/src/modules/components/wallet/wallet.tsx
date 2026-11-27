@@ -44,10 +44,11 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
     const contentId = useId();
 
     const buttonClassName = classNames(
-        'flex max-w-48 cursor-pointer items-center gap-3 rounded-full border border-surface-default bg-surface-default text-surface-default transition-all md:rounded-xl',
+        'flex max-w-48 cursor-pointer items-center gap-related rounded-full border border-surface-default bg-surface-default text-surface-default transition-all md:rounded-xl',
         'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active disabled:cursor-default',
-        { 'px-4 py-2.5': user == null },
-        { 'p-1 md:pl-4': user != null },
+        { 'px-control-lg py-control-lg--fixed-10': user == null },
+        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the avatar-only wallet button
+        { 'p-1 md:pl-control-lg': user != null },
         className,
     );
 
@@ -60,7 +61,7 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
             />
             <InteractiveAncestorContext.Provider value={true}>
                 <div
-                    className="pointer-events-none relative z-10 flex w-full items-center gap-3 [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+                    className="pointer-events-none relative z-10 flex w-full items-center gap-related [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
                     id={contentId}
                 >
                     {!user && copy.wallet.connect}

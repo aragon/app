@@ -31,7 +31,7 @@ export const InputTime = forwardRef<HTMLInputElement, IInputTimeProps>((props, r
             />
             {!disabled && (
                 <Button
-                    className="mr-2 shrink-0"
+                    className="mr-control-sm shrink-0"
                     iconLeft={IconType.CLOCK}
                     onClick={handleClockClick}
                     size="sm"

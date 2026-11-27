@@ -56,8 +56,8 @@ export const ProposalVotingStatusAdvanceable: React.FC<IProposalVotingStatusAdva
     }
 
     return (
-        <div className={classNames('flex flex-row items-center gap-2', className)} {...otherProps}>
-            <div className="flex flex-row gap-0.5">
+        <div className={classNames('flex flex-row items-center gap-related--fixed-8', className)} {...otherProps}>
+            <div className="flex flex-row gap-phrase--fixed-2">
                 {(!isAdvanceableNow || isShortWindow) && (
                     <span className={isShortWindow ? 'text-accent-primary' : 'text-surface-primary'}>
                         {formatterUtils.formatDate(nextAdvanceDate, { format: DateFormat.DURATION }) ?? '-'}

@@ -50,11 +50,14 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
 
     const linkClassNames = classNames(
         'truncate type-control text-link-secondary-default hover:text-link-secondary-hover-nav active:text-link-secondary-active',
-        'group flex items-center py-3 ring-accent-focus focus-ring',
-        { 'rounded-xl px-4 hover:bg-surface-hover': variant === 'column' },
+        'group flex items-center py-inset-nav-item ring-accent-focus focus-ring',
+        {
+            'rounded-xl px-inset-nav-item hover:bg-surface-hover':
+                variant === 'column',
+        },
         { 'bg-surface-selected': isActive && variant === 'column' },
         { 'text-surface-selected-label': isActive },
-        { 'gap-2': iconSide === 'left' },
+        { 'gap-nav-related': iconSide === 'left' },
         { 'flex-row-reverse justify-between': iconSide === 'right' },
         className,
     );

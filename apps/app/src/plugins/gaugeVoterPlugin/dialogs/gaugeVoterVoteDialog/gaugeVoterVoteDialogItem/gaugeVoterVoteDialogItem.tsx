@@ -88,8 +88,9 @@ export const GaugeVoterVoteDialogItem: React.FC<
         weight > BigInt(0) && displayVotes && displayVotes !== '0';
 
     return (
-        <DataList.Item className="relative flex flex-col gap-4 rounded-xl border border-surface-secondary bg-surface-primary p-4 md:flex-row md:items-center md:justify-between">
-            <div className="b-0 flex flex-1 items-center gap-3 border-b border-surface-secondary pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
+        <DataList.Item className="relative flex flex-col gap-group rounded-xl border border-surface-secondary bg-surface-primary p-inset-item-flat--fixed-16 md:flex-row md:items-center md:justify-between">
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: room for the absolute remove button on phones */}
+            <div className="b-0 flex flex-1 items-center gap-related border-b border-surface-secondary pr-10 pb-inset-item-flat--fixed-16 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar
                         alt={displayGaugeName}
@@ -112,7 +113,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
                     </span>
                 </div>
             </div>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
+            <div className="flex flex-col gap-related md:flex-row md:items-center md:self-end">
                 <div className="flex flex-col items-end md:w-32">
                     {displayShare != null && (
                         <span className="type-supporting--body-size type-strong text-surface-primary">

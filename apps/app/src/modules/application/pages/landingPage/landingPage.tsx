@@ -63,7 +63,7 @@ export const LandingPage: React.FC = () => {
     const legalLinks = (
         <nav
             aria-label={t('app.application.landingPage.legal')}
-            className="flex items-center gap-3 type-control-sm"
+            className="flex items-center gap-related type-control-sm"
         >
             <span>{t('app.application.landingPage.copyright', { year })}</span>
             <Link href={privacyUrl} target="_blank">
@@ -98,7 +98,7 @@ export const LandingPage: React.FC = () => {
     const demoLink = (
         <Link
             // biome-ignore lint/plugin/noPrimitiveColors: translucent white over the hero; role classes take no opacity modifier
-            className="relative inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-neutral-0/55 px-5 type-control--tall-line whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
+            className="relative inline-flex h-control-lg items-center justify-center gap-control-lg--fixed-8 rounded-xl border border-neutral-0/55 px-control-lg--fixed-20 type-control--tall-line whitespace-nowrap text-accent-inverse transition-colors hover:border-neutral-0 hover:bg-neutral-0/10"
             href={demoWorkspaceUrl}
             onClick={handleOpenDemo}
         >
@@ -112,11 +112,12 @@ export const LandingPage: React.FC = () => {
             className="grid min-h-dvh grid-rows-[auto_auto] overflow-x-hidden bg-surface-primary text-surface-primary md:h-dvh md:grid-cols-2 md:grid-rows-1 md:overflow-hidden"
             data-ftue-landing=""
         >
-            <section className="flex flex-col items-center gap-6 px-6 pt-6 pb-5 text-center md:items-stretch md:justify-between md:px-12 md:py-12 md:text-left xl:px-[72px]">
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: landing gutters at the viewport edges: no role has them */}
+            <section className="flex flex-col items-center gap-section px-6 pt-6 pb-5 text-center md:items-stretch md:justify-between md:px-12 md:py-12 md:text-left xl:px-[72px]">
                 <AragonLogo size="md" />
 
-                <div className="flex w-full max-w-[560px] flex-col items-center gap-6 md:items-start md:gap-8">
-                    <div className="flex flex-col items-center gap-3 md:items-start">
+                <div className="flex w-full max-w-[560px] flex-col items-center gap-section--24-32 md:items-start">
+                    <div className="flex flex-col items-center gap-related md:items-start">
                         <h1
                             // biome-ignore lint/plugin/noPrimitiveTypography: the hero keeps its fluid size, line height and tracking on top of the role
                             className="type-display text-[clamp(1.25rem,7vw,1.75rem)] leading-[1.2] tracking-[-0.01em] text-balance md:text-[clamp(1.25rem,calc(3.7vw-7.5px),2.5rem)] xl:text-[clamp(1.25rem,calc(3.7vw-11px),2.5rem)]"
@@ -128,7 +129,7 @@ export const LandingPage: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex w-full max-w-[400px] flex-col gap-3">
+                    <div className="flex w-full max-w-[400px] flex-col gap-related">
                         <Button
                             className="w-full"
                             iconLeft={IconType.BLOCKCHAIN_WALLET}
@@ -142,14 +143,14 @@ export const LandingPage: React.FC = () => {
                                 'app.application.landingPage.signIn.walletAction',
                             )}
                         </Button>
-                        <div className="flex items-center gap-3 pt-2 type-supporting--compact-meta text-surface-secondary">
+                        <div className="flex items-center gap-related pt-related--fixed-8 type-supporting--compact-meta text-surface-secondary">
                             <span className="h-px grow bg-surface-tertiary" />
                             {t('app.application.landingPage.signIn.comingSoon')}
                             <span className="h-px grow bg-surface-tertiary" />
                         </div>
-                        <div className="flex justify-center gap-8 text-surface-secondary md:gap-10">
+                        <div className="flex justify-center gap-section-wide--32-40 text-surface-secondary">
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 type-control-sm"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
@@ -162,7 +163,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.email')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 type-control-sm"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
@@ -178,7 +179,7 @@ export const LandingPage: React.FC = () => {
                                 {t('app.application.landingPage.signIn.google')}
                             </button>
                             <button
-                                className="flex w-20 flex-col items-center gap-2 rounded-xl py-2 type-control-sm"
+                                className="flex w-20 flex-col items-center gap-related--fixed-8 rounded-xl py-inset-tight--fixed-8 type-control-sm"
                                 disabled={true}
                                 type="button"
                             >
@@ -198,7 +199,8 @@ export const LandingPage: React.FC = () => {
                 </footer>
             </section>
 
-            <section className="relative flex flex-col items-center justify-start gap-6 overflow-hidden bg-brand-solid px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: landing gutters at the viewport edges: no role has them */}
+            <section className="relative flex flex-col items-center justify-start gap-section overflow-hidden bg-brand-solid px-6 pt-6 md:min-h-0 md:items-start md:justify-center md:px-0 md:pt-0 md:pl-12 xl:pl-[72px]">
                 <Image
                     alt=""
                     aria-hidden="true"

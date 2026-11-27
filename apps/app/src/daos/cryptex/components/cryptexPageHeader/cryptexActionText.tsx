@@ -28,7 +28,7 @@ export const CryptexActionText: React.FC<ICryptexActionTextProps> = (props) => {
     return (
         <motion.div
             animate={isHovered ? { y: -4, scale: 1.02 } : { y: 0, scale: 1 }}
-            className="flex flex-col items-start gap-1"
+            className="flex flex-col items-start gap-tight"
             initial={{ y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >

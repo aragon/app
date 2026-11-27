@@ -80,6 +80,28 @@ test('a layer lays out the tokens of its own document, in its own dir', () => {
     assert.doesNotMatch(css('src/theme/tokens/typography/roles.css'), /xmaquina/);
 });
 
+test('a spacing value becomes a theme variable per dimension and width, the app-only ones in the app layer', () => {
+    const files = generate();
+    const css = (path) => files.get(resolve(kitRoot, path));
+    const roles = css('src/theme/tokens/spacing/roles.css');
+    assert(
+        roles.includes(
+            [
+                '--guk-space-x-inset-item: 16px;',
+                '--guk-space-md-x-inset-item: 24px;',
+                '--guk-space-y-inset-item: 12px;',
+                '--guk-space-md-y-inset-item: 20px;',
+            ].join('\n    '),
+        ),
+    );
+    // A gap drops its `gap-` prefix; a size names its dimension; an exception keeps its pattern.
+    assert.match(roles, /--guk-space-gap-related: 12px;\n {4}--guk-space-md-gap-related: 12px;/);
+    assert.match(roles, /--guk-space-height-control-md: 40px;/);
+    assert.match(roles, /--guk-space-gap-related--8-12: 8px;\n {4}--guk-space-md-gap-related--8-12: 12px;/);
+    assert.match(css('design-system/tokens/app/spacing.css'), /--guk-space-x-inset-page: 16px;/);
+    assert.doesNotMatch(roles, /inset-page/);
+});
+
 test('a status shadow primitive has no class name, and each status shadow role aliases one', () => {
     const files = generate();
     const declarations = (layer) =>
@@ -311,6 +333,84 @@ test('a token a mode leaves at its default value is not written', (context) => {
     assert.equal(after.length, before.length - 1);
 });
 
+const spacingPreview = (dir) => generate(dir).get(previewFile('spacing'));
+const SPACING = (mode) => `:root[data-spacing="${mode}"], [data-spacing="${mode}"]`;
+// The declarations of one top-level block of a preview file, or of the block inside one at-rule.
+const declarations = (css, selector, atRule) => {
+    const scope = atRule ? css.slice(css.indexOf(`\n${atRule} {`)) : css;
+    const body = scope.slice(scope.indexOf(`${selector} {\n`) + selector.length + 3);
+    return body.slice(0, body.indexOf('}')).trim().split(/\n\s*/);
+};
+
+test('in a mode, an exception the mode document sets keeps its value; the others follow their role', (context) => {
+    const dir = mutated(context, 'modes/spacing.new.tokens.json', ({ space }) => {
+        space.role['gap-related'].base.$value.value = 20;
+    });
+    const lines = declarations(spacingPreview(dir), SPACING('new'));
+    assert(lines.includes('--guk-space-gap-related: 20px;'));
+    assert(lines.includes('--guk-space-gap-related--8-12: 20px;'));
+    // gap-related--fixed-12 has its own value in the New document.
+    assert(lines.includes('--guk-space-gap-related--fixed-12: 8px;'));
+});
+
+test('a mode inside an at-rule adds to the same mode outside it and writes only what differs from it', (context) => {
+    const coarse = declarations(spacingPreview(), SPACING('compact'), '@media (pointer: coarse)');
+    const compact = declarations(spacingPreview(), SPACING('compact'));
+    assert(coarse.includes('--guk-space-height-control-md: 40px;'));
+    assert(compact.includes('--guk-space-height-control-md: 36px;'));
+    // An exception that follows its size follows it inside the at-rule too.
+    assert(coarse.includes('--guk-space-y-control-lg--fixed-16: 12px;'));
+    assert.deepEqual(
+        coarse.filter((line) => compact.includes(line)),
+        [],
+    );
+    const dir = mutated(context, 'modes/spacing.compact.coarse.tokens.json', ({ space }) => {
+        space.size['control-md'].height.base.$value.value = 36;
+    });
+    const after = declarations(spacingPreview(dir), SPACING('compact'), '@media (pointer: coarse)');
+    assert.deepEqual(
+        coarse.filter((line) => !after.includes(line)),
+        ['--guk-space-height-control-md: 40px;'],
+    );
+});
+
+test('in looser no spacing value is tighter than the default, in compact none is looser', () => {
+    const files = generate();
+    const values = (lines) =>
+        new Map(
+            lines.map((line) => {
+                const [, name, px] = line.match(/^(--[\w-]+): (\d+)px;$/);
+                return [name, Number(px)];
+            }),
+        );
+    const defaults = values(
+        [cssFile('roles', 'spacing'), resolve(kitRoot, 'design-system/tokens/app/spacing.css')].flatMap((file) =>
+            declarations(files.get(file), '@theme'),
+        ),
+    );
+    const preview = files.get(previewFile('spacing'));
+    // The coarse block writes only what differs from compact; the rest is checked with compact.
+    const blocks = [
+        ['spacing.looser', declarations(preview, SPACING('looser')), (px, def) => px < def],
+        ['spacing.compact', declarations(preview, SPACING('compact')), (px, def) => px > def],
+        [
+            'spacing.compact.coarse',
+            declarations(preview, SPACING('compact'), '@media (pointer: coarse)'),
+            (px, def) => px > def,
+        ],
+    ];
+    const wrongWay = blocks.flatMap(([document, lines, isWrong]) =>
+        [...values(lines)]
+            .filter(([name, px]) => isWrong(px, defaults.get(name)))
+            .map(([name, px]) => `${document}: ${name} is ${px}px, default ${defaults.get(name)}px`),
+    );
+    assert.deepEqual(
+        wrongWay,
+        [],
+        'Set these to their default value in modes/<document>.tokens.json: an exception the document leaves out follows its role or size',
+    );
+});
+
 // The kit's token CSS and Tailwind compiled with `extra` CSS after them, for the given class candidates.
 const compileTokens = async (extra, candidates) => {
     const loadStylesheet = async (id, base) => {
@@ -412,21 +512,87 @@ test('a type role steps with the md variant of the build that compiles it', asyn
     assert.match(css, /@container app \(width >= 48rem\) \{\n\s+font-size: var\(--guk-type-md-font-size-supporting\);/);
 });
 
-for (const rule of ['noPrimitiveColors', 'noPrimitiveTypography']) {
+test('spacing roles step with md and sort before raw classes of their property; between two the later name wins', async () => {
+    const candidates = ['gap-3', 'gap-related--8-12', 'gap-related', 'p-4', 'p-inset-surface', 'mt-2', 'mt-section'];
+    const css = await compileTokens('', [
+        ...candidates,
+        'h-10',
+        'h-control-md',
+        'space-y-4',
+        'space-y-section',
+        'gap-related!',
+    ]);
+    const at = (selector) => {
+        const index = css.indexOf(`\n  ${selector} `);
+        assert(index >= 0, selector);
+        return index;
+    };
+    assert(at('.gap-related') < at('.gap-related--8-12'));
+    for (const [role, raw] of [
+        ['.gap-related--8-12', '.gap-3'],
+        ['.p-inset-surface', '.p-4'],
+        ['.mt-section', '.mt-2'],
+        ['.h-control-md', '.h-10'],
+        [':where(.space-y-section', ':where(.space-y-4'],
+    ]) {
+        assert(at(role) < at(raw), `${role} before ${raw}`);
+    }
+    assert.match(
+        css,
+        /\.p-inset-surface \{\n\s+padding: var\(--guk-space-y-inset-surface\) var\(--guk-space-x-inset-surface\);\n\s+@media \(width >= 48rem\) \{\n\s+padding: var\(--guk-space-md-y-inset-surface\) var\(--guk-space-md-x-inset-surface\);/,
+    );
+    // A gap role reads the gaps from any padding or margin family.
+    assert.match(css, /\.mt-section \{\n\s+margin-top: var\(--guk-space-gap-section\);/);
+    assert.match(css, /\.gap-related\\! \{\n\s+gap: var\(--guk-space-gap-related\) !important;/);
+    assert.match(css, /\.h-control-md \{\n\s+height: var\(--guk-space-height-control-md\);/);
+});
+
+// A lint rule's regexes, matched like Grit: against the whole node text.
+const lintPatterns = (rule, language = 'js') =>
+    readFileSync(resolve(kitRoot, `biome-plugins/${language}/${rule}.grit`), 'utf8').match(/r"[^"]*"/g);
+const lintMatcher = (rule) => {
+    const patterns = lintPatterns(rule).map(
+        (pattern) => new RegExp(`^(?:${pattern.slice(2, -1).replace('(?s)', '')})$`, 's'),
+    );
+    return (text) => patterns.some((pattern) => pattern.test(text));
+};
+
+for (const rule of ['noPrimitiveColors', 'noPrimitiveTypography', 'noPrimitiveSpacing']) {
     test(`the js and css plugins of ${rule} match the same classes`, () => {
-        const patterns = (language) =>
-            readFileSync(resolve(kitRoot, `biome-plugins/${language}/${rule}.grit`), 'utf8').match(/r"[^"]*"/g);
-        assert.equal(patterns('js').length, 2);
-        assert.deepEqual(patterns('css'), patterns('js'));
+        assert(lintPatterns(rule).length > 0);
+        assert.deepEqual(lintPatterns(rule, 'css'), lintPatterns(rule));
     });
 }
 
+test('the spacing lint flags raw spacing classes and nothing that merely starts like one', () => {
+    const flagged = lintMatcher('noPrimitiveSpacing');
+    for (const text of [
+        'flex p-4',
+        'md:gap-x-2.5',
+        '-ml-1',
+        'mt-px',
+        'pt-[72px]',
+        'mt-(--offset)',
+        'py-2!',
+        'gap-0.5',
+    ]) {
+        assert(flagged(text), text);
+    }
+    for (const text of [
+        'p-0 gap-0',
+        'mx-auto',
+        'px-inset-item',
+        'gap-related--8-12',
+        'top-4',
+        'h-10',
+        'space-y-reverse',
+    ]) {
+        assert(!flagged(text), text);
+    }
+});
+
 test('the typography lint flags primitive type classes and nothing that merely starts like one', () => {
-    const patterns = readFileSync(resolve(kitRoot, 'biome-plugins/js/noPrimitiveTypography.grit'), 'utf8')
-        .match(/r"[^"]*"/g)
-        // Grit matches a regex against the whole node text.
-        .map((pattern) => new RegExp(`^(?:${pattern.slice(2, -1).replace('(?s)', '')})$`, 's'));
-    const flagged = (text) => patterns.some((pattern) => pattern.test(text));
+    const flagged = lintMatcher('noPrimitiveTypography');
     for (const text of [
         'p-2 text-sm',
         'md:text-lg/6',

@@ -74,7 +74,7 @@ export const ProposalActionsRoot: React.FC<IProposalActionsRootProps> = (props) 
     );
 
     return (
-        <div className={classNames('flex w-full flex-col gap-3 md:gap-4')} {...otherProps}>
+        <div className={classNames('flex w-full flex-col gap-group--12-16')} {...otherProps}>
             <ProposalActionsContextProvider value={contextValues}>{children}</ProposalActionsContextProvider>
         </div>
     );

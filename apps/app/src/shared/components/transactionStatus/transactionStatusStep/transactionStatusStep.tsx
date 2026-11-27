@@ -36,13 +36,14 @@ export const TransactionStatusStep = <
     return (
         <li
             className={classNames(
-                'flex flex-row justify-between gap-2',
+                'flex flex-row justify-between gap-related--fixed-8',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-center gap-2 md:gap-3">
+            <div className="flex flex-row items-center gap-related--8-12">
                 {['pending', 'idle'].includes(state) && (
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: 2 px frame that gives the spinner the icon size
                     <div className="p-0.5">
                         <Spinner
                             isLoading={state === 'pending'}
@@ -89,7 +90,7 @@ export const TransactionStatusStep = <
                 </Link>
             )}
             {addon != null && !isLinkAddon && (
-                <div className="flex flex-row items-center gap-2">
+                <div className="flex flex-row items-center gap-related--fixed-8">
                     <p className="type-supporting text-surface-secondary">
                         {addon.label}
                     </p>

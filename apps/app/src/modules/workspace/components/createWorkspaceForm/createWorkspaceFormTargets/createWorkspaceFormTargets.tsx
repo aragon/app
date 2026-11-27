@@ -42,9 +42,9 @@ export const CreateWorkspaceFormTargets: React.FC<
         append(createWorkspaceFormEmptyNetworkAddress);
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             <InputContainer
-                className="gap-3"
+                className="gap-related!"
                 helpText={t(
                     'app.workspace.createWorkspaceForm.targets.helpText',
                 )}

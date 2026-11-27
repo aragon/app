@@ -84,82 +84,82 @@ const variantToSpinnerVariant: Record<ButtonVariant, SpinnerVariant> = {
 
 const responsiveSizeClassNames: ResponsiveAttributeClassMap<ButtonSize> = {
     sm: {
-        default: 'h-8 type-control-sm rounded-lg gap-0.5',
-        sm: 'sm:h-8 sm:type-control-sm sm:rounded-lg sm:gap-0.5',
-        md: 'md:h-8 md:type-control-sm md:rounded-lg md:gap-0.5',
-        lg: 'lg:h-8 lg:type-control-sm lg:rounded-lg lg:gap-0.5',
-        xl: 'xl:h-8 xl:type-control-sm xl:rounded-lg xl:gap-0.5',
-        '2xl': '2xl:h-8 2xl:type-control-sm 2xl:rounded-lg 2xl:gap-0.5',
+        default: 'h-control-sm rounded-lg gap-control-sm type-control-sm',
+        sm: 'sm:h-control-sm sm:rounded-lg sm:gap-control-sm sm:type-control-sm',
+        md: 'md:h-control-sm md:rounded-lg md:gap-control-sm md:type-control-sm',
+        lg: 'lg:h-control-sm lg:rounded-lg lg:gap-control-sm lg:type-control-sm',
+        xl: 'xl:h-control-sm xl:rounded-lg xl:gap-control-sm xl:type-control-sm',
+        '2xl': '2xl:h-control-sm 2xl:rounded-lg 2xl:gap-control-sm 2xl:type-control-sm',
     },
     md: {
-        default: 'h-10 type-control rounded-xl gap-1',
-        sm: 'sm:h-10 sm:type-control sm:rounded-xl sm:gap-1',
-        md: 'md:h-10 md:type-control md:rounded-xl md:gap-1',
-        lg: 'lg:h-10 lg:type-control lg:rounded-xl lg:gap-1',
-        xl: 'xl:h-10 xl:type-control xl:rounded-xl xl:gap-1',
-        '2xl': '2xl:h-10 2xl:type-control 2xl:rounded-xl 2xl:gap-1',
+        default: 'h-control-md rounded-xl gap-control-md type-control',
+        sm: 'sm:h-control-md sm:rounded-xl sm:gap-control-md sm:type-control',
+        md: 'md:h-control-md md:rounded-xl md:gap-control-md md:type-control',
+        lg: 'lg:h-control-md lg:rounded-xl lg:gap-control-md lg:type-control',
+        xl: 'xl:h-control-md xl:rounded-xl xl:gap-control-md xl:type-control',
+        '2xl': '2xl:h-control-md 2xl:rounded-xl 2xl:gap-control-md 2xl:type-control',
     },
     lg: {
-        default: 'h-12 type-control rounded-xl gap-1',
-        sm: 'sm:h-12 sm:type-control sm:rounded-xl sm:gap-1',
-        md: 'md:h-12 md:type-control md:rounded-xl md:gap-1',
-        lg: 'lg:h-12 lg:type-control lg:rounded-xl lg:gap-1',
-        xl: 'xl:h-12 xl:type-control xl:rounded-xl xl:gap-1',
-        '2xl': '2xl:h-12 2xl:type-control 2xl:rounded-xl 2xl:gap-1',
+        default: 'h-control-lg rounded-xl gap-control-lg type-control',
+        sm: 'sm:h-control-lg sm:rounded-xl sm:gap-control-lg sm:type-control',
+        md: 'md:h-control-lg md:rounded-xl md:gap-control-lg md:type-control',
+        lg: 'lg:h-control-lg lg:rounded-xl lg:gap-control-lg lg:type-control',
+        xl: 'xl:h-control-lg xl:rounded-xl xl:gap-control-lg xl:type-control',
+        '2xl': '2xl:h-control-lg 2xl:rounded-xl 2xl:gap-control-lg 2xl:type-control',
     },
 };
 
 const responsiveDefaultContextClassNames: ResponsiveAttributeClassMap<ButtonSize> = {
     sm: {
-        default: 'min-w-20 px-2',
-        sm: 'sm:min-w-20 sm:px-2',
-        md: 'md:min-w-20 md:px-2',
-        lg: 'lg:min-w-20 lg:px-2',
-        xl: 'xl:min-w-20 xl:px-2',
-        '2xl': '2xl:min-w-20 2xl:px-2',
+        default: 'min-w-20 px-control-sm',
+        sm: 'sm:min-w-20 sm:px-control-sm',
+        md: 'md:min-w-20 md:px-control-sm',
+        lg: 'lg:min-w-20 lg:px-control-sm',
+        xl: 'xl:min-w-20 xl:px-control-sm',
+        '2xl': '2xl:min-w-20 2xl:px-control-sm',
     },
     md: {
-        default: 'min-w-24 px-3',
-        sm: 'sm:min-w-24 sm:px-3',
-        md: 'md:min-w-24 md:px-3',
-        lg: 'lg:min-w-24 lg:px-3',
-        xl: 'xl:min-w-24 xl:px-3',
-        '2xl': '2xl:min-w-24 2xl:px-3',
+        default: 'min-w-24 px-control-md',
+        sm: 'sm:min-w-24 sm:px-control-md',
+        md: 'md:min-w-24 md:px-control-md',
+        lg: 'lg:min-w-24 lg:px-control-md',
+        xl: 'xl:min-w-24 xl:px-control-md',
+        '2xl': '2xl:min-w-24 2xl:px-control-md',
     },
     lg: {
-        default: 'min-w-28 px-4',
-        sm: 'sm:min-w-28 sm:px-4',
-        md: 'md:min-w-28 md:px-4',
-        lg: 'lg:min-w-28 lg:px-4',
-        xl: 'xl:min-w-28 xl:px-4',
-        '2xl': '2xl:min-w-28 2xl:px-4',
+        default: 'min-w-28 px-control-lg',
+        sm: 'sm:min-w-28 sm:px-control-lg',
+        md: 'md:min-w-28 md:px-control-lg',
+        lg: 'lg:min-w-28 lg:px-control-lg',
+        xl: 'xl:min-w-28 xl:px-control-lg',
+        '2xl': '2xl:min-w-28 2xl:px-control-lg',
     },
 };
 
 const responsiveOnlyIconContextClassNames: ResponsiveAttributeClassMap<ButtonSize> = {
     sm: {
-        default: 'w-8',
-        sm: 'sm:w-8',
-        md: 'md:w-8',
-        lg: 'lg:w-8',
-        xl: 'xl:w-8',
-        '2xl': '2xl:w-8',
+        default: 'w-control-sm',
+        sm: 'sm:w-control-sm',
+        md: 'md:w-control-sm',
+        lg: 'lg:w-control-sm',
+        xl: 'xl:w-control-sm',
+        '2xl': '2xl:w-control-sm',
     },
     md: {
-        default: 'w-10',
-        sm: 'sm:w-10',
-        md: 'md:w-10',
-        lg: 'lg:w-10',
-        xl: 'xl:w-10',
-        '2xl': '2xl:w-10',
+        default: 'w-control-md',
+        sm: 'sm:w-control-md',
+        md: 'md:w-control-md',
+        lg: 'lg:w-control-md',
+        xl: 'xl:w-control-md',
+        '2xl': '2xl:w-control-md',
     },
     lg: {
-        default: 'w-12',
-        sm: 'sm:w-12',
-        md: 'md:w-12',
-        lg: 'lg:w-12',
-        xl: 'xl:w-12',
-        '2xl': '2xl:w-12',
+        default: 'w-control-lg',
+        sm: 'sm:w-control-lg',
+        md: 'md:w-control-lg',
+        lg: 'lg:w-control-lg',
+        xl: 'xl:w-control-lg',
+        '2xl': '2xl:w-control-lg',
     },
 };
 
@@ -279,7 +279,7 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, IButtonP
                     variant={variantToSpinnerVariant[variant]}
                 />
             )}
-            {!isOnlyIcon && <div className="px-1">{children}</div>}
+            {!isOnlyIcon && <div className="px-control-label">{children}</div>}
             {displayIconRight && <Icon icon={iconRight} {...commonIconProps} />}
         </>
     );

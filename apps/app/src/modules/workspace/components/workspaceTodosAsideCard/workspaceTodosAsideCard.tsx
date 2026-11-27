@@ -66,7 +66,7 @@ export const WorkspaceTodosAsideCard: React.FC<
         <Page.AsideCard
             title={title ?? t('app.workspace.workspaceTodosAsideCard.allTodos')}
         >
-            <div className="grid w-full grid-cols-2 gap-3">
+            <div className="grid w-full grid-cols-2 gap-group--fixed-12">
                 {stats.map((stat) => (
                     <StatCard
                         key={stat.label}

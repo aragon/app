@@ -192,9 +192,9 @@ export const WorkspaceGettingStarted: React.FC = () => {
             {/* Main's `h-full` must resolve against the space below the nav, not the whole page. */}
             <div className="flex grow flex-col">
                 <Page.Main fullWidth={true}>
-                    <div className="mx-auto flex w-full max-w-[800px] flex-col gap-8">
-                        <div className="flex flex-col gap-4">
-                            <div className="flex flex-col gap-2">
+                    <div className="mx-auto flex w-full max-w-[800px] flex-col gap-section--fixed-32">
+                        <div className="flex flex-col gap-group">
+                            <div className="flex flex-col gap-related--fixed-8">
                                 <Heading size="h1">
                                     {t(
                                         'app.workspace.workspaceGettingStarted.title',
@@ -209,7 +209,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                             {isScanning && (
                                 <div
                                     // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
-                                    className="flex items-center gap-2 text-sm text-surface-secondary"
+                                    className="flex items-center gap-related--fixed-8 text-sm text-surface-secondary"
                                     role="status"
                                 >
                                     <Spinner size="sm" variant="neutral" />
@@ -224,7 +224,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-group">
                             <WorkspaceAccountSelectStatusAlert />
                             {showEmptyCard ? (
                                 <CardEmptyState
@@ -252,7 +252,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                 />
                             ) : (
                                 <>
-                                    <Card className="p-4 shadow-surface-sm md:p-6">
+                                    <Card className="p-inset-surface shadow-surface-sm">
                                         <WorkspaceAccountSelect
                                             initialMode={
                                                 isAddressViewOpen
@@ -290,7 +290,8 @@ export const WorkspaceGettingStarted: React.FC = () => {
                         </div>
                         {!showEmptyCard && (
                             // Below `md`, a full-width bar stuck to the bottom; negative margins cancel `Page.Main`'s padding.
-                            <div className="sticky bottom-0 z-5 -mx-4 -mb-10 flex flex-col gap-6 border-t border-surface-secondary bg-surface-primary px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] md:static md:z-auto md:mx-0 md:mb-0 md:border-t-0 md:bg-transparent md:p-0">
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: the phone bar cancels the page padding and clears the safe area
+                            <div className="sticky bottom-0 z-5 -mx-4 -mb-10 flex flex-col gap-section border-t border-surface-secondary bg-surface-primary px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] md:static md:z-auto md:mx-0 md:mb-0 md:border-t-0 md:bg-transparent md:p-0">
                                 {isError && (
                                     <AlertInline
                                         message={t(
@@ -299,7 +300,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                         variant="critical"
                                     />
                                 )}
-                                <div className="flex flex-wrap justify-end gap-3">
+                                <div className="flex flex-wrap justify-end gap-related">
                                     <Button
                                         disabled={isBusy}
                                         isLoading={isAddingLater}

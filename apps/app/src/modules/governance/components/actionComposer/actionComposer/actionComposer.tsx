@@ -338,12 +338,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     return (
         <>
             <div
-                className={classNames('flex flex-col gap-3', {
+                className={classNames('flex flex-col gap-related', {
                     hidden: displayActionComposer,
                 })}
             >
-                <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
-                    <div className="flex w-full flex-col gap-y-2 md:flex-row md:gap-x-3">
+                <div className="flex flex-col items-center justify-between gap-related md:flex-row">
+                    <div className="flex w-full flex-col gap-y-related--fixed-8 md:flex-row md:gap-x-related">
                         <Button
                             iconLeft={IconType.PLUS}
                             onClick={handleAddAction}
@@ -391,7 +391,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             </>
                         )}
                     </div>
-                    <div className="flex w-full shrink-0 flex-row items-center justify-end gap-3 md:w-auto">
+                    <div className="flex w-full shrink-0 flex-row items-center justify-end gap-related md:w-auto">
                         {shouldRenderAuthorizedSwitch && (
                             <Switch
                                 checked={onlyShowAuthorizedActions}

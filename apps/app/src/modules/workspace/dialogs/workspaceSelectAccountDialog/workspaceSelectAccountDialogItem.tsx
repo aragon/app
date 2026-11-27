@@ -112,7 +112,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
 
     return (
         <DataList.Item
-            className={classNames('px-4 py-3 md:px-6 md:py-4', {
+            className={classNames('px-inset-item py-inset-item--12-16', {
                 // Checked but not highlighted: the user did not pick it.
                 'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive && !isInWorkspace,
@@ -124,9 +124,9 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
             {...otherProps}
             {...(isDisabled || isInWorkspace ? { onClick: undefined } : {})}
         >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related">
                 <div
-                    className={classNames('flex items-center gap-3', {
+                    className={classNames('flex items-center gap-related', {
                         'opacity-60': isDisabled,
                     })}
                 >
@@ -136,12 +136,12 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         network={network}
                         type={type}
                     />
-                    <div className="flex min-w-0 grow flex-col gap-1">
+                    <div className="flex min-w-0 grow flex-col gap-tight">
                         <span className="truncate type-title-item--compact-card text-surface-primary">
                             {name ?? addressOutput}
                         </span>
                         {/* An unnamed account is titled by its address, so only the network shows here. */}
-                        <span className="flex min-w-0 items-baseline gap-1.5 type-supporting--compact-meta">
+                        <span className="flex min-w-0 items-baseline gap-tight--fixed-6 type-supporting--compact-meta">
                             <span className="shrink-0 text-surface-primary">
                                 {networkName}
                             </span>
@@ -153,7 +153,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         </span>
                     </div>
                     {isMultiSelect ? (
-                        <div className="flex shrink-0 items-center gap-3">
+                        <div className="flex shrink-0 items-center gap-related">
                             {note != null && (
                                 <span className="type-control-sm text-surface-secondary">
                                     {note}
@@ -204,11 +204,11 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
 export const WorkspaceSelectAccountDialogItemSkeleton: React.FC = () => (
     <div
         aria-busy="true"
-        className="flex items-center gap-3 px-4 py-3 md:px-6 md:py-4"
+        className="flex items-center gap-related px-inset-item py-inset-item--12-16"
         role="status"
     >
         <StateSkeletonCircular size="md" />
-        <div className="flex grow flex-col gap-2">
+        <div className="flex grow flex-col gap-related--fixed-8">
             <StateSkeletonBar size="lg" width="45%" />
             <StateSkeletonBar width="30%" />
         </div>

@@ -173,7 +173,7 @@ export const PermissionChangesCreate: React.FC<
     };
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             <AlertInline
                 message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"
@@ -189,17 +189,17 @@ export const PermissionChangesCreate: React.FC<
                     name={`inputData.parameters.${(tupleIndex - 1).toString()}.value`}
                 />
             )}
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex w-full flex-col gap-related">
                 {rows.map((row, rowIndex) => {
                     const operation = Number(row[columnIndex('operation')]);
                     const isRevoke = operation === PermissionOperation.REVOKE;
 
                     return (
                         <div
-                            className="flex flex-col gap-6 rounded-xl border border-surface-secondary p-4 md:p-6"
+                            className="flex flex-col gap-section rounded-xl border border-surface-secondary p-inset-surface"
                             key={rowIds.current[rowIndex]}
                         >
-                            <div className="flex flex-row items-start justify-between gap-2">
+                            <div className="flex flex-row items-start justify-between gap-related--fixed-8">
                                 <InputContainer
                                     id={`${fieldPrefix}-operation-${rowIndex.toString()}`}
                                     label={t(

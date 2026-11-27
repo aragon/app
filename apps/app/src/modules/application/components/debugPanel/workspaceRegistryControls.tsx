@@ -66,6 +66,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
     };
 
     return (
+        // biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users
         <section className="flex flex-col gap-2">
             <Heading as="h3" typeClassName="type-title-group">
                 Workspace registry
@@ -74,6 +75,7 @@ export const WorkspaceRegistryControls: React.FC = () => {
                 Save, restore or delete the local workspace JSON for this
                 environment.
             </p>
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
             <div className="flex flex-wrap gap-2">
                 <Button onClick={handleExport} size="sm" variant="secondary">
                     Export JSON

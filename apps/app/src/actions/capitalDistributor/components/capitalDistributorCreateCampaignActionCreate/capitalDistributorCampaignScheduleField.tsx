@@ -76,7 +76,7 @@ export const CapitalDistributorCampaignScheduleField: React.FC<
     return (
         <>
             <RadioGroup
-                className="flex w-full gap-4 md:flex-row!"
+                className="flex w-full gap-group md:flex-row!"
                 helpText={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.schedule.helpText',
                 )}
@@ -107,7 +107,7 @@ export const CapitalDistributorCampaignScheduleField: React.FC<
             </RadioGroup>
 
             {scheduleType === CampaignScheduleType.SCHEDULED && (
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-section">
                     <AdvancedDateInput
                         field={`${fieldPrefix}.startTime`}
                         helpText={t(

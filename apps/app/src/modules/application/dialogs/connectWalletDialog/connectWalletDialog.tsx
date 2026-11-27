@@ -106,15 +106,15 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
 
     return (
         <>
-            <Dialog.Content className="flex flex-col gap-6 p-6 md:p-8">
-                <div className="flex flex-col gap-3 md:gap-4">
+            <Dialog.Content className="flex flex-col gap-section py-inset-surface-wide--24-32">
+                <div className="flex flex-col gap-related--12-16">
                     <AragonLogo size="lg" />
                     <p className="type-body-compact--dialog-lead text-surface-secondary">
                         {t('app.application.connectWalletDialog.connect')}
                     </p>
                 </div>
-                <div className="flex flex-col gap-4 type-body-compact--dialog-note text-surface-secondary">
-                    <div className="flex flex-row items-center gap-3">
+                <div className="flex flex-col gap-group type-body-compact--dialog-note text-surface-secondary">
+                    <div className="flex flex-row items-center gap-related">
                         <AvatarIcon
                             icon={IconType.CHECKMARK}
                             size="sm"
@@ -126,7 +126,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
                             )}
                         </p>
                     </div>
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="flex flex-row items-center gap-related">
                         <AvatarIcon
                             icon={IconType.APP_MEMBERS}
                             size="sm"
@@ -138,7 +138,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
                             )}
                         </p>
                     </div>
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="flex flex-row items-center gap-related">
                         <AvatarIcon
                             icon={IconType.BLOCKCHAIN_SMARTCONTRACT}
                             size="sm"

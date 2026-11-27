@@ -43,8 +43,8 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                     type="video/mp4"
                 />
             </video>
-            <Container className="flex w-full flex-col gap-y-12">
-                <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
+            <Container className="flex w-full flex-col gap-y-section-wide--fixed-48">
+                <div className="flex max-w-[720px] flex-col gap-related--6-12 text-center md:text-left">
                     <p className="type-display text-[#000000]">
                         {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
                         {ensName && (
@@ -58,7 +58,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                     </p>
                 </div>
                 {/* Static row for desktop view */}
-                <div className="hidden w-full items-center justify-between gap-4 lg:flex">
+                <div className="hidden w-full items-center justify-between gap-group lg:flex">
                     {actions.map((action) => (
                         <BoundlessActionItem key={action.title} {...action} />
                     ))}

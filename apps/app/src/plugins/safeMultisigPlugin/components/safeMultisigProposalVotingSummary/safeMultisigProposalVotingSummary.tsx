@@ -103,7 +103,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
         liveMembersCount > 0 ? (minApprovals / liveMembersCount) * 100 : 0;
 
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-related">
             <p className="type-title-item text-surface-primary">
                 {displayName}{' '}
                 <span className="text-surface-secondary">

@@ -13,7 +13,7 @@ export const PermissionStackNode: React.FC<
     return (
         <div
             className={classNames(
-                'nodrag nopan relative flex w-fit flex-col items-center gap-0.5',
+                'nodrag nopan relative flex w-fit flex-col items-center gap-tight--fixed-2',
                 dimmed === true && 'opacity-50',
             )}
         >
@@ -25,8 +25,9 @@ export const PermissionStackNode: React.FC<
                     <button
                         className={classNames(
                             // biome-ignore lint/plugin/noPrimitiveTypography: node labels follow the node size, not a type role
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center type-mono text-[10px] shadow-surface-sm transition-colors',
-                            permission.conditionLabel != null && 'pb-1',
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-tight--fixed-2 rounded border px-inset-tight--fixed-6 py-inset-tight text-center type-mono text-[10px] shadow-surface-sm transition-colors',
+                            permission.conditionLabel != null &&
+                                'pb-inset-tight--fixed-4',
                             isSelected
                                 ? // biome-ignore lint/plugin/noPrimitiveColors: no border role has primary-500
                                   'border-primary-500 bg-primary-500 text-accent-inverse'
@@ -50,7 +51,7 @@ export const PermissionStackNode: React.FC<
                         {permission.conditionLabel != null && (
                             <span
                                 className={classNames(
-                                    'rounded bg-surface-primary px-1',
+                                    'rounded bg-surface-primary px-inset-tight--fixed-4',
                                     isSelected
                                         ? // biome-ignore lint/plugin/noPrimitiveColors: no text/accent role at primary-700
                                           'text-primary-700'

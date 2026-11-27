@@ -28,7 +28,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
     const formattedReceiveAmount = formatAmount(receiveAmount);
 
     return (
-        <div className="flex flex-col gap-3 rounded-xl border border-surface-secondary p-4 md:p-6">
+        <div className="flex flex-col gap-related rounded-xl border border-surface-secondary p-inset-surface">
             {/* Locked tokens row */}
             <div className="flex items-baseline justify-between type-supporting--detail-value text-surface-secondary">
                 <span>
@@ -70,7 +70,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
 
             {/* Help text */}
             {helpText && (
-                <p className="pt-1 type-body-compact--unstepped text-surface-secondary">
+                <p className="pt-tight type-body-compact--unstepped text-surface-secondary">
                     {helpText}
                 </p>
             )}

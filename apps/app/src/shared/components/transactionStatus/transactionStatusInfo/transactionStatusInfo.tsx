@@ -53,7 +53,7 @@ export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (
                 {title}
             </Heading>
             {isMultiphase && (
-                <div className="flex flex-row gap-1 type-supporting text-surface-primary">
+                <div className="flex flex-row gap-phrase type-supporting text-surface-primary">
                     <span>
                         {t('app.shared.transactionStatus.info.current', {
                             current,

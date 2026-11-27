@@ -106,7 +106,7 @@ export const InputNumber = forwardRef<HTMLInputElement, IInputNumberProps>((prop
         <InputContainer className={containerClassName} disabled={disabled} {...otherContainerProps}>
             {!disabled && (
                 <Button
-                    className="ml-2 shrink-0"
+                    className="ml-control-sm shrink-0"
                     iconLeft={IconType.MINUS}
                     onClick={() => handleStepChange(-1)}
                     size="sm"
@@ -125,7 +125,7 @@ export const InputNumber = forwardRef<HTMLInputElement, IInputNumberProps>((prop
             />
             {!disabled && (
                 <Button
-                    className="mr-2 shrink-0"
+                    className="mr-control-sm shrink-0"
                     iconLeft={IconType.PLUS}
                     onClick={() => handleStepChange(1)}
                     size="sm"

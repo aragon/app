@@ -50,7 +50,7 @@ export const Clipboard: React.FC<IClipboardProps> = (props) => {
     };
 
     return (
-        <span className={classNames('inline-flex max-w-full min-w-0 items-center gap-2', className)}>
+        <span className={classNames('inline-flex max-w-full min-w-0 items-center gap-tight--fixed-8', className)}>
             {children}
             {(variant === 'avatar' || variant === 'avatar-neutral') && (
                 <Tooltip content={tooltipText} triggerAsChild={true}>

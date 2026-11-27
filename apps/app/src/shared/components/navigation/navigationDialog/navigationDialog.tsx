@@ -50,11 +50,11 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
             <Dialog.Content
-                className="flex flex-col gap-4 pt-8 pb-4"
+                className="flex flex-col gap-nav-group pt-inset-nav-bar--fixed-32 pb-inset-nav-bar--fixed-16"
                 noInset={true}
             >
                 {children}
-                <div className="flex flex-col gap-4 px-4">
+                <div className="flex flex-col gap-nav-group px-inset-nav-bar--fixed-16">
                     {groups?.map((group) => (
                         <NavigationLinksGroup
                             group={group}
@@ -71,7 +71,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     )}
                     {secondaryLinks != null && (
                         <>
-                            <div className="w-full px-4">
+                            <div className="w-full px-inset-nav-bar--fixed-16">
                                 <div className="border-t border-surface-secondary" />
                             </div>
                             <NavigationLinks
@@ -83,7 +83,7 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
                     )}
                     {!hideExplore && (
                         <>
-                            <div className="w-full px-4">
+                            <div className="w-full px-inset-nav-bar--fixed-16">
                                 <div className="border-t border-surface-secondary" />
                             </div>
                             <NavigationLinksItem

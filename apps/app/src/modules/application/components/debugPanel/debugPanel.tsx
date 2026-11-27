@@ -96,6 +96,7 @@ export const DebugPanel: React.FC = () => {
             />
             <div
                 className={classNames(
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users
                     'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-l border-surface-secondary bg-surface-primary px-4 py-2 screen-sm:w-[480px]',
                     { hidden: !isOpen },
                 )}
@@ -112,14 +113,17 @@ export const DebugPanel: React.FC = () => {
                         variant="ghost"
                     />
                 </div>
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                 <div className="flex flex-col gap-4 overflow-y-auto">
                     {groupNames.map((group) => (
                         <Fragment key={group}>
                             {group === 'Simulation' && (
                                 <WorkspaceRegistryControls />
                             )}
+                            {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                             <div className="flex flex-col gap-2">
                                 <Heading size="h3">{group}</Heading>
+                                {/* biome-ignore lint/plugin/noPrimitiveSpacing: debug panel, never shown to users */}
                                 <div className="flex flex-col gap-2">
                                     {groupedControls[group]?.map((control) => (
                                         <DebugPanelControl

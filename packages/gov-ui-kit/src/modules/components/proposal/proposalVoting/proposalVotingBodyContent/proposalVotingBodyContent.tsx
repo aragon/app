@@ -50,7 +50,7 @@ export const ProposalVotingBodyContent: React.FC<IProposalVotingBodyContentProps
         <div className={classNames('flex w-full flex-col', className)} {...otherProps}>
             {bodyList && bodyList.length > 1 && (
                 <Button
-                    className="mb-4 w-fit"
+                    className="mb-group w-fit"
                     iconLeft={IconType.CHEVRON_LEFT}
                     onClick={() => setActiveBody?.(undefined)}
                     size="sm"
@@ -59,10 +59,10 @@ export const ProposalVotingBodyContent: React.FC<IProposalVotingBodyContentProps
                     {copy.proposalVotingBodyContent.back}
                 </Button>
             )}
-            <div className="flex flex-col gap-4 gap-x-6 gap-y-1 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-x-section gap-y-tight md:flex-row md:items-center md:justify-between">
                 <p className="truncate type-title-group--voting-body text-surface-primary">{name}</p>
                 {bodyBrand != null && (
-                    <div className="flex items-center gap-2 type-supporting--framework-leading text-surface-secondary">
+                    <div className="flex items-center gap-related--fixed-8 type-supporting--framework-leading text-surface-secondary">
                         <span>{bodyBrand.label}</span>
                         <Avatar size="sm" src={bodyBrand.logo} />
                     </div>

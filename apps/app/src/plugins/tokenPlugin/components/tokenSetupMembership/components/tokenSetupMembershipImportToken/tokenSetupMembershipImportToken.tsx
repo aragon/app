@@ -166,7 +166,7 @@ export const TokenSetupMembershipImportToken: React.FC<
 
     return (
         <>
-            <div className="flex flex-col gap-2 md:gap-3">
+            <div className="flex flex-col gap-related--8-12">
                 <AddressInput
                     alert={alert}
                     // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
@@ -201,8 +201,8 @@ export const TokenSetupMembershipImportToken: React.FC<
                             : 'warning'
                     }
                 >
-                    <div className="flex flex-col gap-3">
-                        <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-related">
+                        <div className="flex flex-col gap-section">
                             <p>{t(`${alertNamespace}.description1`)}</p>
                             {alertContext === 'notGovernanceCompatible' && (
                                 <p>{t(`${alertNamespace}.description2`)}</p>

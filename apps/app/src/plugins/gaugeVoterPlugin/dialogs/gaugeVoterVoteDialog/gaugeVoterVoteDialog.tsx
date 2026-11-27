@@ -232,7 +232,7 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
                 onClose={close}
                 title={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 py-6">
+            <Dialog.Content className="flex flex-col gap-section py-inset-surface-wide">
                 <GaugeVoterVoteDialogContent
                     onRemoveGauge={handleRemoveGauge}
                     onUpdateWeight={handleUpdateWeight}

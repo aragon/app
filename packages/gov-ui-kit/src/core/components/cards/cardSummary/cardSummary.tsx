@@ -9,9 +9,9 @@ export const CardSummary: React.FC<ICardSummaryProps> = (props) => {
     const { icon, value, description, action, isStacked = true, className, ...otherProps } = props;
 
     const containerClassNames = classNames(
-        'grid grid-cols-[auto_max-content] items-center gap-4 p-4 md:px-6 md:py-5',
-        { 'md:gap-5': isStacked },
-        { 'md:grid-flow-col md:grid-cols-[auto_1fr_1fr_max-content] md:gap-6': !isStacked },
+        'grid grid-cols-[auto_max-content] items-center px-inset-surface py-inset-surface--16-20',
+        { 'gap-group-stepped--16-20': isStacked },
+        { 'gap-group-stepped md:grid-flow-col md:grid-cols-[auto_1fr_1fr_max-content]': !isStacked },
     );
 
     return (
@@ -39,7 +39,7 @@ export const CardSummary: React.FC<ICardSummaryProps> = (props) => {
                 </Button>
                 <div
                     className={classNames(
-                        'col-span-2 flex gap-x-2 gap-y-1',
+                        'col-span-2 flex gap-x-tight--fixed-8 gap-y-tight',
                         { 'flex-col': isStacked },
                         { 'flex-col md:col-start-2 md:flex-row md:items-baseline': !isStacked },
                     )}

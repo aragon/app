@@ -42,7 +42,7 @@ export const generate = (sourceDir = defaultSourceDir) => {
         layers: Object.fromEntries(
             suffixed('.config.json').map(([layer, name]) => [layer, readJson(resolve(sourceDir, name))]),
         ),
-        layerPaths: (layer) => tokenPaths(document(`${layer}.tokens.json`)),
+        documentPaths: (name) => tokenPaths(document(name)),
         modeTokens: (names) => readTokens(schema, defaults, names.map(document)),
     });
     return new Map([

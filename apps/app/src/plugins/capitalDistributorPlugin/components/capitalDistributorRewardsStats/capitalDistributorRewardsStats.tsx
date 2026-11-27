@@ -83,7 +83,7 @@ export const CapitalDistributorRewardsStats: React.FC<
     ];
 
     return (
-        <div className="grid w-full grid-cols-2 gap-3">
+        <div className="grid w-full grid-cols-2 gap-related">
             {stats.map(({ label, value, suffix }) => (
                 <StatCard
                     key={label}

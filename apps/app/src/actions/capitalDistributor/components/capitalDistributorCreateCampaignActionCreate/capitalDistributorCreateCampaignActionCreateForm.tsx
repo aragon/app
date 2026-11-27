@@ -195,7 +195,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
     };
 
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-section-wide">
             <InputText
                 maxLength={titleMaxLength}
                 value={titleValue || ''}
@@ -267,9 +267,9 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 )}
                 useCustomWrapper={true}
             >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     {merkleTreeInfo != null && (
-                        <Card className="px-6 py-2 shadow-surface-sm">
+                        <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-surface-sm">
                             <DefinitionList.Container>
                                 <DefinitionList.Item
                                     term={t(

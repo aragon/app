@@ -51,7 +51,7 @@ export const CreateProposalFormMetadata: React.FC<
     );
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <InputText maxLength={128} {...titleField} />
             <TextArea
                 helpText={t(

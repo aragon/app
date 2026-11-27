@@ -229,7 +229,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     };
 
     const inputClassName = classNames(
-        'size-full [appearance:textfield] rounded-xl bg-transparent px-4 py-3 caret-(--guk-bg-surface-secondary-inverse) outline-none', // base styles
+        'size-full [appearance:textfield] rounded-xl bg-transparent px-control-lg py-control-lg caret-(--guk-bg-surface-secondary-inverse) outline-none', // base styles
         'placeholder:type-control placeholder:text-surface-placeholder', // placeholder styles
         '[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none', // remove incr/decr buttons for number type
     );
@@ -245,7 +245,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
     const renderAssetButton = (size: 'md' | 'sm' = 'sm') =>
         disableAssetField ? (
             <AssetInputToken
-                className="cursor-default px-2"
+                className="cursor-default px-control-sm"
                 token={assetField.value?.token}
             />
         ) : (
@@ -274,11 +274,11 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             {renderAssetButton('md')}
         </InputContainer>
     ) : (
-        <div className="flex flex-col gap-y-3">
+        <div className="flex flex-col gap-y-related">
             <InputContainer
                 id={inputId}
                 label={hideAmountLabel ? undefined : amountLabel}
-                wrapperClassName="pl-1.5 pr-4 items-center"
+                wrapperClassName="pl-control-sm--fixed-6 pr-control-lg items-center"
                 {...amountField}
             >
                 {renderAssetButton()}
@@ -311,9 +311,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 </ToggleGroup>
             )}
             {assetField.value?.amount && !hideMax && (
-                <div className="flex items-center self-end pr-4">
+                <div className="flex items-center self-end pr-control-lg">
                     <button
-                        className="flex cursor-pointer gap-x-1 text-link-default hover:text-link-hover-action"
+                        className="flex cursor-pointer gap-x-phrase text-link-default hover:text-link-hover-action"
                         onClick={handleMaxAmount}
                         type="button"
                     >

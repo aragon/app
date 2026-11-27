@@ -33,9 +33,9 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                 onClose={handleClose}
                 title={t('app.workspace.workspaceWelcomeDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-4 pt-2 pb-4">
+            <Dialog.Content className="flex flex-col gap-group pt-tight--fixed-8 pb-group">
                 {items.map(({ key, icon }) => (
-                    <div className="flex items-center gap-3" key={key}>
+                    <div className="flex items-center gap-related" key={key}>
                         <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent-subtle">
                             <Icon
                                 className="icon-accent-primary"
@@ -43,7 +43,7 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                                 size="sm"
                             />
                         </div>
-                        <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-col gap-tight--fixed-2">
                             <p className="type-title-item--compact-card type-strong text-surface-primary">
                                 {t(
                                     `app.workspace.workspaceWelcomeDialog.items.${key}.title`,
@@ -66,6 +66,7 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
             >
                 <p
                     // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: pulls the note towards the footer below it
                     className="-mb-2 text-xs leading-normal text-pretty text-surface-secondary"
                 >
                     {t('app.workspace.workspaceWelcomeDialog.note')}

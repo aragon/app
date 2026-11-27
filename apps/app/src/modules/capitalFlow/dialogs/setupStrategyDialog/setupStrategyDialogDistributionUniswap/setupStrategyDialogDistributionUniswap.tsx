@@ -45,8 +45,8 @@ export const SetupStrategyDialogDistributionUniswap: React.FC<
     });
 
     return (
-        <div className="flex w-full flex-col gap-6">
-            <div className="flex flex-col gap-0.5 md:gap-1">
+        <div className="flex w-full flex-col gap-section">
+            <div className="flex flex-col gap-tight--2-4">
                 <p className="type-title-item text-surface-primary">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionUniswap.token.label',

@@ -1693,7 +1693,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     title={t('app.safe.safeProposalTransactionDialog.title')}
                 />
                 <Dialog.Content>
-                    <div className="flex flex-col gap-4 pb-3 md:pb-4">
+                    <div className="flex flex-col gap-group pb-group--12-16">
                         {isPreparing ? (
                             <>
                                 <StateSkeletonBar size="lg" width="60%" />
@@ -1766,7 +1766,7 @@ export const SafeProposalTransactionDialog: React.FC<
                     : undefined
             }
         >
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related">
                 <SafeTransactionReviewContent
                     costNote={reviewCostNote}
                     intent={reviewIntent}

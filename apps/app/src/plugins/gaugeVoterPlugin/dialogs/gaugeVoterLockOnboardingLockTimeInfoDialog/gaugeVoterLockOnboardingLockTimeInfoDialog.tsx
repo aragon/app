@@ -65,16 +65,16 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                     { tokenSymbol },
                 )}
             />
-            <Dialog.Content className="flex flex-col gap-4 pb-3">
+            <Dialog.Content className="flex flex-col gap-group pb-inset-surface-flat">
                 <p className="text-surface-secondary">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.description',
                         { tokenSymbol },
                     )}
                 </p>
-                <div className="flex flex-col gap-3 rounded-xl border border-surface-secondary p-6">
+                <div className="flex flex-col gap-related rounded-xl border border-surface-secondary p-inset-surface-wide">
                     <div className="flex items-baseline justify-between">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-tight--fixed-6">
                             <span className="text-surface-primary">
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.minLocktime',
@@ -91,7 +91,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                         </span>
                     </div>
                     <div className="flex items-baseline justify-between">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-tight--fixed-6">
                             <span className="text-info-primary">
                                 {t(
                                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.cooldown',

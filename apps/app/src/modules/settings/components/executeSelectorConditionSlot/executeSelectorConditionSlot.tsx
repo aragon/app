@@ -34,7 +34,7 @@ export const ExecuteSelectorConditionSlot: React.FC<
         network != null && pluginAddress != null && hasRawAllowedActions;
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             <p className="text-surface-secondary">
                 {t('app.settings.executeSelectorConditionSlot.description')}
             </p>

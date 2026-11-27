@@ -57,7 +57,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
 
     return (
         <DataList.Item
-            className={classNames('px-4 py-3 md:p-6', {
+            className={classNames('px-inset-item py-inset-item--12-24', {
                 'border-surface-selected shadow-accent-default! hover:border-surface-selected':
                     isActive,
                 'border-surface-disabled-item bg-surface-secondary': isDisabled,
@@ -66,14 +66,14 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             {...otherProps}
             {...(isDisabled ? { onClick: undefined } : {})}
         >
-            <div className="flex flex-col gap-3 md:gap-4">
+            <div className="flex flex-col gap-group--12-16">
                 <div
-                    className={classNames('flex flex-col gap-3 md:gap-4', {
+                    className={classNames('flex flex-col gap-group--12-16', {
                         'opacity-60': isDisabled,
                     })}
                 >
-                    <div className="flex flex-col gap-y-1">
-                        <div className="flex gap-2 type-title-item">
+                    <div className="flex flex-col gap-y-tight">
+                        <div className="flex gap-related--fixed-8 type-title-item">
                             <p className="truncate text-surface-primary">
                                 {daoUtils.getPluginName(process)}
                             </p>

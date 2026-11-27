@@ -434,9 +434,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         `${translationKey}.${safeInfo == null ? 'noDataDescription' : 'unreachableDescription'}`,
     );
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             {alerts.length > 0 && (
-                <div className="-mt-4 flex flex-col gap-3">
+                // biome-ignore lint/plugin/noPrimitiveSpacing: pulls the alerts into the section gap above them (24 - 16)
+                <div className="-mt-4 flex flex-col gap-related">
                     {alerts.map((alert) =>
                         alert.variant === 'info' ? (
                             <AlertInline
@@ -493,7 +494,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                                 )}
                                 {(alert.key === 'stale' ||
                                     alert.key === 'readFailed') && (
-                                    <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col gap-group">
                                         <p>{readDescription}</p>
                                         {canRetryRead && (
                                             <Button
@@ -515,10 +516,10 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 </div>
             )}
             {(showAction || queuedReportHref != null) && (
-                <div className="flex flex-col items-start gap-3 md:flex-row md:items-center">
+                <div className="flex flex-col items-start gap-related md:flex-row md:items-center">
                     {showAction &&
                         (showBundleChoice ? (
-                            <div className="flex w-full gap-2 md:w-fit">
+                            <div className="flex w-full gap-related--fixed-8 md:w-fit">
                                 <Button
                                     className="w-full md:w-fit"
                                     disabled={isActionDisabled}

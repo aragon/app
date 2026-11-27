@@ -132,7 +132,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
-        'items-center gap-3 rounded-full border border-surface-default p-4 text-surface-default-wizard transition-all',
+        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the icon-only exit link
+        'items-center gap-nav-related--fixed-12 rounded-full border border-surface-default p-4 text-surface-default-wizard transition-all',
         'ring-accent-focus focus-ring hover:border-surface-hover active:bg-surface-active-control active:text-surface-active',
     );
 
@@ -140,10 +141,10 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     return (
         <Navigation.Container
-            containerClasses="flex flex-row items-center gap-x-6 justify-between py-5"
+            containerClasses="flex flex-row items-center gap-x-nav-section justify-between py-inset-nav-bar--fixed-20"
             trailing={<SupportChatTrigger />}
         >
-            <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
+            <div className="flex min-w-0 grow items-center gap-x-nav-group--12-16">
                 <Link
                     className={linkClassName}
                     href={exitHref}
@@ -151,12 +152,12 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                 >
                     <Icon icon={IconType.CLOSE} size="md" />
                 </Link>
-                <div className="flex min-w-0 flex-col gap-y-0.5">
+                <div className="flex min-w-0 flex-col gap-y-nav-tight--fixed-2">
                     <p className="type-title-page--wizard-nav text-nowrap text-surface-primary">
                         {wizardName}
                     </p>
                     {displayDao != null && (
-                        <div className="flex items-center gap-x-2">
+                        <div className="flex items-center gap-x-nav-related">
                             <AddressOutput
                                 address={displayDao.address}
                                 className="type-supporting--compact-meta text-nowrap text-surface-secondary"

@@ -82,9 +82,9 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
     const formattedPercentage = formatterUtils.formatNumber(value / 100, { format: NumberFormat.PERCENTAGE_SHORT });
 
     return (
-        <div className={classNames('flex w-full grow flex-col gap-3', className)}>
+        <div className={classNames('flex w-full grow flex-col gap-related', className)}>
             <div className="flex flex-row items-center justify-between">
-                <div className={classNames('flex flex-row gap-1')}>
+                <div className={classNames('flex flex-row gap-phrase')}>
                     <p className={classNames('type-title-item', variantToNameClassNames[processedVariant])}>
                         {name}
                         {nameDescription && <span className="text-surface-secondary">{nameDescription}</span>}
@@ -110,7 +110,7 @@ export const ProposalVotingProgressItem: React.FC<IProposalVotingProgressItemPro
                 {...otherProps}
             />
             <div className="flex flex-row justify-between type-supporting">
-                <div className="flex flex-row gap-0.5">
+                <div className="flex flex-row gap-phrase--fixed-2">
                     <p className="text-surface-primary">{description.value}</p>
                     <p className="text-surface-secondary">{description.text}</p>
                 </div>

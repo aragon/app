@@ -93,6 +93,7 @@ export const WorkspaceAccountStateCard: React.FC<
         (accountState != null ? states[accountState] : undefined) ?? errorState;
 
     return (
+        // biome-ignore lint/plugin/noPrimitiveSpacing: empty-state card padding 40 px: no inset role has it
         <Card className="py-10">
             <EmptyState
                 description={t(

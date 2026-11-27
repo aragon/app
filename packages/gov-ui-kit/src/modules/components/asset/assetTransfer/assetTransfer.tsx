@@ -88,7 +88,7 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
     });
 
     return (
-        <div className="flex size-full flex-col gap-y-2 md:gap-y-3">
+        <div className="flex size-full flex-col gap-y-related--8-12">
             <div className="relative flex h-full flex-col rounded-xl bg-surface-primary md:flex-row">
                 <AssetTransferAddress addressUrl={senderUrl} participant={sender} txRole="sender" />
                 <div className="border-t border-surface-primary md:border-l" />
@@ -103,12 +103,12 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
                 <AssetTransferAddress addressUrl={recipientUrl} participant={recipient} txRole="recipient" />
             </div>
             <DataList.Item
-                className="flex h-16 items-center justify-between px-4 md:h-20 md:px-6"
+                className="flex h-16 items-center justify-between px-inset-surface md:h-20"
                 href={assetUrl}
                 rel="noopener noreferrer"
                 target="_blank"
             >
-                <div className="flex items-center space-x-3 md:space-x-4">
+                <div className="space-x-related--12-16 flex items-center">
                     <Avatar responsiveSize={{ md: 'md' }} src={assetIconSrc} />
                     <span className="type-title-item--compact-list text-surface-primary">{assetName}</span>
                 </div>

@@ -52,6 +52,7 @@ export const WorkspaceGate: React.FC<IWorkspaceGateProps> = (props) => {
 
     if (isPending) {
         return (
+            // biome-ignore lint/plugin/noPrimitiveSpacing: loading placeholder, 80 px above and below the spinner
             <div className="flex grow items-center justify-center py-20">
                 <Spinner size="lg" variant="neutral" />
             </div>

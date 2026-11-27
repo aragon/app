@@ -126,7 +126,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
     };
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-group">
             {!showOptions && !hasVoted && (
                 <Button
                     className="w-fit"
@@ -142,7 +142,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
                 </Button>
             )}
             {!showOptions && hasVoted && (
-                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                <div className="flex w-full flex-col items-center gap-group md:flex-row">
                     {/* The vote may have been cast on either stage, so there is no single transaction to link to. */}
                     <Button
                         className="w-full md:w-fit"
@@ -170,7 +170,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="p-6 shadow-surface-sm">
+                <Card className="p-inset-surface-wide shadow-surface-sm">
                     <TokenVotingOptions
                         disabledOptions={disabledOptions}
                         helpText={t(
@@ -183,7 +183,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
                 </Card>
             )}
             {showOptions && (
-                <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
+                <div className="flex w-full flex-col items-center gap-y-related md:flex-row md:gap-x-group">
                     <Button
                         className="w-full md:w-fit"
                         disabled={

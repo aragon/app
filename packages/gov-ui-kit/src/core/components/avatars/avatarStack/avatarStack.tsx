@@ -75,6 +75,7 @@ const responsiveSizeClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     },
 };
 
+// biome-ignore-start lint/plugin/noPrimitiveSpacing: the avatar overlap follows the avatar size
 const responsiveOverlapClasses: ResponsiveAttributeClassMap<AvatarSize> = {
     xs: {
         default: '-ml-1',
@@ -125,6 +126,7 @@ const responsiveOverlapClasses: ResponsiveAttributeClassMap<AvatarSize> = {
         '2xl': '2xl:-ml-4',
     },
 };
+// biome-ignore-end lint/plugin/noPrimitiveSpacing: the avatar overlap follows the avatar size
 
 /**
  * Overlapping row of avatars with an automatic overflow count avatar.

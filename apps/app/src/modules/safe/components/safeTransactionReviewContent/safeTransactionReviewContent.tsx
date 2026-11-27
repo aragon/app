@@ -370,7 +370,7 @@ export const SafeTransactionReviewContent: React.FC<
     return (
         <>
             {intent != null && (
-                <p className="pb-4 type-body-compact--transaction-review text-surface-secondary">
+                <p className="pb-group type-body-compact--transaction-review text-surface-secondary">
                     {intent}
                 </p>
             )}
@@ -437,8 +437,8 @@ export const SafeTransactionReviewContent: React.FC<
                     variant="warning"
                 />
             )}
-            <dl className="flex flex-col gap-3 pt-4">
-                <div className="flex flex-row items-center justify-between gap-4">
+            <dl className="flex flex-col gap-related pt-group">
+                <div className="flex flex-row items-center justify-between gap-group">
                     <dt className="type-supporting--framework-leading text-surface-secondary">
                         {t(`${translationKey}.fields.safe`)}
                     </dt>
@@ -459,16 +459,16 @@ export const SafeTransactionReviewContent: React.FC<
                 />
             </dl>
             {costNote != null && (
-                <p className="pt-3 type-body-compact--transaction-review text-surface-secondary">
+                <p className="pt-related type-body-compact--transaction-review text-surface-secondary">
                     {costNote}
                 </p>
             )}
             <AlertCard
-                className="mt-4"
+                className="mt-group"
                 message={t(`${translationKey}.verificationRecommendation`)}
                 variant="info"
             />
-            <div className="mt-4 flex flex-col gap-3 rounded-xl bg-surface-secondary p-4">
+            <div className="mt-group flex flex-col gap-related rounded-xl bg-surface-secondary p-inset-surface-flat--fixed-16">
                 <Collapsible
                     buttonLabelClosed={t(
                         `${translationKey}.detailsToggle.closed`,
@@ -483,8 +483,11 @@ export const SafeTransactionReviewContent: React.FC<
                     isOpen={detailsOpen}
                     onToggle={setDetailsOpen}
                 >
-                    <div className="flex flex-col gap-3" inert={!detailsOpen}>
-                        <dl className="flex flex-col gap-3">
+                    <div
+                        className="flex flex-col gap-related"
+                        inert={!detailsOpen}
+                    >
+                        <dl className="flex flex-col gap-related">
                             <SafeTransactionReviewRow
                                 label={t(`${translationKey}.fields.nonce`)}
                                 value={envelope.nonce}
@@ -538,7 +541,7 @@ export const SafeTransactionReviewContent: React.FC<
                                     )}
                                 </p>
                             )}
-                        <dl className="flex flex-col gap-2">
+                        <dl className="flex flex-col gap-related--fixed-8">
                             {domainHash != null && messageHash != null && (
                                 <>
                                     <SafeTransactionReviewHash
@@ -581,10 +584,10 @@ export const SafeTransactionReviewContent: React.FC<
                             </KitLink>
                             .
                         </div>
-                        <ol className="flex flex-col gap-3">
+                        <ol className="flex flex-col gap-related">
                             {calls.map(({ call, depth }, index) => (
                                 <li
-                                    className="flex flex-col gap-1 border-t border-surface-secondary pt-3"
+                                    className="flex flex-col gap-tight border-t border-surface-secondary pt-inset-item-flat"
                                     // Position identifies a call: the same target can legitimately appear
                                     // more than once in a batch.
                                     key={`${index.toString()}-${call.to}`}
@@ -592,7 +595,7 @@ export const SafeTransactionReviewContent: React.FC<
                                         marginLeft: `${(depth * 12).toString()}px`,
                                     }}
                                 >
-                                    <div className="flex flex-row items-center gap-2">
+                                    <div className="flex flex-row items-center gap-related--fixed-8">
                                         <Tag
                                             label={t(
                                                 `${translationKey}.operation.${call.operation === 1 ? 'delegateCall' : 'call'}`,
@@ -654,7 +657,7 @@ const SafeTransactionReviewRow: React.FC<{
     const { label, value } = props;
 
     return (
-        <div className="flex flex-row items-center justify-between gap-4">
+        <div className="flex flex-row items-center justify-between gap-group">
             <dt className="type-supporting--framework-leading text-surface-secondary">
                 {label}
             </dt>
@@ -677,7 +680,7 @@ const SafeTransactionReviewHash: React.FC<{
     const { label, value } = props;
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-tight">
             <dt className="type-supporting--framework-leading text-surface-secondary">
                 {label}
             </dt>

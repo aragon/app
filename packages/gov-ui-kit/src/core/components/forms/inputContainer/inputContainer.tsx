@@ -53,7 +53,7 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
 
     const processedVariant = disabled ? 'disabled' : variant;
     const containerClasses = classNames(
-        'flex min-h-12 w-full flex-row items-center', // Layout
+        'flex min-h-control-lg w-full flex-row items-center', // Layout
         'rounded-xl border text-surface-secondary transition-all', // Styling
         'type-control', // Typography
         variantToClassNames[processedVariant],
@@ -68,11 +68,11 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
     const containerProps = useCustomWrapper ? {} : { className: containerClasses };
 
     return (
-        <div className={classNames('flex grow flex-col gap-2 md:gap-3', className)} ref={ref} {...otherProps}>
+        <div className={classNames('flex grow flex-col gap-related--8-12', className)} ref={ref} {...otherProps}>
             {(label != null || helpText != null) && (
-                <label className="flex flex-col gap-0.5 md:gap-1" htmlFor={id}>
+                <label className="flex flex-col gap-tight--2-4" htmlFor={id}>
                     {label && (
-                        <div className="flex flex-row items-center gap-3">
+                        <div className="flex flex-row items-center gap-related">
                             <p className="type-label text-surface-primary">{label}</p>
                             {isOptional && <Tag label={copy.inputContainer.optionalLabel} variant="neutral" />}
                         </div>

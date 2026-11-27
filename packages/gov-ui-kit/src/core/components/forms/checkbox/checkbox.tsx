@@ -93,8 +93,8 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
                     'cursor-pointer type-label-option text-surface-default',
                     'group-hover/root:text-surface-hover-label',
                     'peer-data-disabled:cursor-default peer-data-disabled:text-surface-default peer-data-[state=unchecked]:peer-data-disabled:text-surface-disabled',
-                    { 'pl-2 md:pl-3': labelPosition === 'right' },
-                    { 'pr-2 md:pr-3': labelPosition === 'left' },
+                    { 'pl-control-sm--8-12': labelPosition === 'right' },
+                    { 'pr-control-sm--8-12': labelPosition === 'left' },
                 )}
                 htmlFor={randomId}
             >

@@ -61,8 +61,13 @@ export const PermissionDetailContent: React.FC<
     const selectedTab = hasConditionBreakdown ? activeTab : 'permission';
 
     return (
-        <div className={className ?? 'flex flex-col gap-4 p-4'}>
-            <div className="flex items-center justify-between gap-4">
+        <div
+            className={
+                className ??
+                'flex flex-col gap-group p-inset-surface-flat--fixed-16'
+            }
+        >
+            <div className="flex items-center justify-between gap-group">
                 <p className="text-surface-primary">
                     {t('app.settings.permissionsList.details.heading')}
                 </p>

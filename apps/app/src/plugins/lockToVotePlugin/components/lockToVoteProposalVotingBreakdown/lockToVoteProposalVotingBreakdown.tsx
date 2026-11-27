@@ -54,7 +54,7 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
     if (totalSupply <= BigInt(0)) {
         return (
             <Tabs.Content
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-group"
                 value={ProposalVotingTab.BREAKDOWN}
             >
                 {children}

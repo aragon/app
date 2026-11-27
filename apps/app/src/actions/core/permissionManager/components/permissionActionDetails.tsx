@@ -45,7 +45,7 @@ export const PermissionActionDetails: React.FC<
     });
 
     return (
-        <div className="flex w-full flex-col gap-4">
+        <div className="flex w-full flex-col gap-group">
             <AlertInline
                 message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"

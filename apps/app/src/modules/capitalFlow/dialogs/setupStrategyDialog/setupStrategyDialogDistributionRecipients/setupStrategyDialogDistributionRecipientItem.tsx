@@ -76,7 +76,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
     };
 
     return (
-        <Card className="flex flex-col gap-4 p-4 shadow-surface-sm md:flex-row md:items-start md:gap-3">
+        <Card className="flex flex-col gap-group--16-12 p-inset-surface-flat--fixed-16 shadow-surface-sm md:flex-row md:items-start">
             <div className="flex-1">
                 <AddressInput
                     chainId={chainId}
@@ -101,6 +101,7 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<
                 />
             </div>
 
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: aligns the remove button with the field top */}
             <div className="flex h-full items-start pt-1">
                 <Button
                     disabled={!canRemove}

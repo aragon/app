@@ -72,11 +72,12 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the
   `@theme` CSS under `src/theme/tokens/primitives/` (the `--color-*` ramps, shadows, radius, type) and
-  `src/theme/tokens/semantic/` and `typography/` (the `--guk-<family>-*` colour roles, the `--guk-type-*` type roles),
-  and the colour aliases and type exceptions only the app uses under `design-system/tokens/app/` (not published; the
-  app imports it). Components use role classes such as `bg-surface-primary`, `text-surface-secondary`,
-  `icon-accent-primary` and `type-supporting`, the functional utilities of `src/theme/tokens/colorRoles.css` and
-  `typeRoles.css`.
+  `src/theme/tokens/semantic/`, `spacing/` and `typography/` (the `--guk-<family>-*` colour roles, the
+  `--guk-space-*` spacing roles, the `--guk-type-*` type roles), and the colour aliases and spacing and type
+  exceptions only the app uses under `design-system/tokens/app/` (not published; the app imports it). Components use
+  role classes such as `bg-surface-primary`, `text-surface-secondary`, `px-inset-item`, `gap-related`,
+  `h-control-md` and `type-supporting`, the functional utilities of `src/theme/tokens/colorRoles.css`,
+  `spacingRoles.css` and `typeRoles.css`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).
@@ -99,7 +100,13 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `type-<role>--<pattern>` exception) and the modifiers `type-strong`, `type-mono`, `type-numeric`, not `text-sm`,
   `leading-*`, `font-semibold` or `tracking-*`; `lint:check` fails on those unless a
   `biome-ignore lint/plugin/noPrimitiveTypography: <reason>` above it says why.
-- **No Tailwind arbitrary spacing/values** (`p-[17px]`, `w-[42%]`). Use the token/scale.
+- **Spacing roles, not number classes.** Padding, margins, gaps and control heights take a spacing role
+  (`px-inset-item`, `gap-group`, `mt-section`, `h-control-md`) or a documented `<family>-<role>--<pattern>`
+  exception (`gap-related--8-12`), not `p-4` or `md:gap-6`; `lint:check` fails on a number padding, margin, gap or
+  space class unless a `biome-ignore lint/plugin/noPrimitiveSpacing: <reason>` above it says why. One role class holds
+  its `md` step. A raw spacing class beats a role at every width; a role passed through `className` over a role the
+  component sets needs the important modifier (`gap-related!`).
+- **No Tailwind arbitrary values** (`w-[42%]`). Use the token/scale.
 - **No component without a co-located `*.stories.tsx`.** Storybook is the docs source of truth.
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.

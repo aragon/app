@@ -7,16 +7,17 @@ design-system/tokens/source/
   primitives.tokens.json        the primitives: colours, shadows, radius, breakpoints, spacing, type, focus ring colours
   semantic.tokens.json          the semantic colour roles of the default theme, as aliases of the primitives
   typography.tokens.json        the typography roles, their exceptions and the modifiers of the default theme
-  app.tokens.json               the tokens only the app uses (component aliases and type exceptions no kit component takes)
+  spacing.tokens.json           the spacing roles, the component sizes and their exceptions of the default theme
+  app.tokens.json               the tokens only the app uses (colour aliases, type and spacing exceptions no kit component takes)
   <layer>.config.json           not tokens: the CSS name of each token, the layout of the generated files, the previews
-  modes/                        the preview modes (Next, Dark): documents merged over the default theme
+  modes/                        the preview modes (Next, Dark, the spacing densities): documents merged over the default theme
   schema/format.2025.10.json    the published DTCG schema, unmodified
 design-system/tokens/app/       the generated CSS of app.tokens.json (do not edit)
 design-system/tokens/preview/   the generated preview CSS (do not edit)
 design-system/tokens/nextTypographyFonts.css   the faces of the Next typography preview, loaded with the preview
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
 src/theme/tokens/<layer>/       the generated CSS (do not edit)
-src/theme/tokens/               hand-written CSS that goes with the tokens: role, type role, focus ring and gradient utilities
+src/theme/tokens/               hand-written CSS that goes with the tokens: colour, spacing and type role, focus ring and gradient utilities
 src/theme/fonts/                the font files and their @font-face rules
 ```
 
@@ -61,8 +62,11 @@ token under that group, in document order. The files go to `src/theme/tokens/<la
 of the config (`app.config.json`: `design-system/tokens/app/`). `cssNames` rules apply across layers. `preview` maps
 each preview file to its mode selectors, and each selector to a list: the mode documents merged over the default
 theme, in order; follow rules such as `{ "type.exception.*--*": "type.role.$1" }`, which make every token under a
-matching group alias the same token under the target group (after the documents; a `*` matches within one path
-segment); and CSS lines ending in `;` for a value with no DTCG type.
+matching group alias the same token under the target group (after the documents, and only where no listed document
+sets the token; a `*` matches within one path segment, and the first matching rule wins); and CSS lines ending in `;`
+for a value with no DTCG type. An at-rule key (`"@media (pointer: coarse)": { <selector>: [...] }`) writes its modes
+inside that rule: each adds its list to the one of the same selector outside and holds only the tokens that differ
+from that mode.
 
 ## Semantic colours
 
@@ -170,6 +174,61 @@ Lint: `biome-plugins/{js,css}/noPrimitiveTypography.grit` flag primitive type cl
 `leading-*`, `font-semibold`, `tracking-*`, `text-[13px]`) outside the theme. A class kept on purpose takes
 `biome-ignore lint/plugin/noPrimitiveTypography: <reason>` on the line above.
 
+## Spacing roles
+
+Padding, margins, gaps and control heights take a role by its job, not a number. `spacing.tokens.json` holds the roles
+(`space.role.<role>`), the component sizes (`space.size.<size>`) and their exceptions; each value has a `base` and an
+`md` (from the md breakpoint), in px. An inset has an `x` and a `y`; a size a `height`, an `x` and `y` padding and a
+`gap`, whichever it sets.
+
+```json
+"inset-item": {
+    "$description": "Padding of one item among peers that steps up on desktop: data list rows, accordion headers and bodies, …",
+    "x": { "base": { "$value": { "value": 16, "unit": "px" } }, "md": { "$value": { "value": 24, "unit": "px" } } },
+    "y": { "base": { "$value": { "value": 12, "unit": "px" } }, "md": { "$value": { "value": 20, "unit": "px" } } }
+}
+```
+
+| Group | Tokens | Job (each `$description` says where) |
+|---|---|---|
+| Insets | `inset-tight`, `inset-item`, `inset-item-flat`, `inset-surface`, `inset-surface-flat`, `inset-surface-wide`, `inset-page`, `inset-flush` | the padding of a box, by what the box is |
+| Gaps | `gap-tight`, `gap-phrase`, `gap-related`, `gap-group`, `gap-group-stepped`, `gap-section`, `gap-section-stepped`, `gap-section-wide`, `gap-layout` | the space between siblings, from the parts of one element to page columns |
+| Navigation chrome | `inset-nav`, `inset-nav-item`, `inset-nav-bar`, `gap-nav-tight`, `gap-nav-related`, `gap-nav-group`, `gap-nav-section` | the app shell around the navigation |
+| Sizes | `control-sm`, `control-md`, `control-lg`, `control-item`, `control-item-flat`, `control-label`, `tag`, `row` | control heights and their padding |
+
+- **Classes**: each value is a `--guk-space-<dimension>-<name>` theme variable (`--guk-space-md-…` for `md`), the
+  dimension `x`, `y`, `gap` or `height`; a gap drops its `gap-` prefix. `src/theme/tokens/spacingRoles.css` declares
+  one functional utility per family in use (`p`, `px`, `py`, `pt`, `pb`, `pl`, `pr`, `ps`, `mx`, `my`, `mt`, `mb`,
+  `ml`, `mr`, `ms`, `gap`, `gap-x`, `gap-y`, `space-x`, `space-y`, `h`, `min-h`, `w`): a padding or margin reads its
+  axis, then the gaps; `h-`, `min-h-` and `w-` read a height. So `px-inset-item`, `py-control-lg`, `gap-related`,
+  `mt-section`, `h-control-md`. One class holds both widths: it steps through the `md` variant of the build that
+  compiles it, a container query on the app column in the app. A number falls through to Tailwind (`p-4`, `gap-0`).
+- **Exceptions** (`space.exception.<role>--<pattern>`): a place that keeps its own value, the pattern spelling it
+  (`fixed-8`, or `12-16` phone then desktop). The class is `<family>-<role>--<pattern>` (`gap-related--8-12`,
+  `py-inset-item--12-24`). An exception holds the dimensions its classes read. One no kit component and no docs page
+  uses lives in `app.tokens.json`, like the roles only the app uses.
+- **Order**: a role declares its property twice (base and `md`), so it sorts before a raw class of the same property,
+  and the raw class wins at every width: a raw base class passed to a component also replaces the role's `md` value.
+  Between two roles on one element the later name in the alphabet wins (`gap-related--8-12` over `gap-related`), so a
+  caller that overrides the role a kit component sets passes its role with the important modifier (`gap-related!`).
+  `generate.test.mjs` pins this order.
+- **A new role, size or exception**: add it to `spacing.tokens.json` (or `app.tokens.json`), run
+  `pnpm tokens:generate`, use the class; a family not yet in `spacingRoles.css` needs its utility there. Reuse a role
+  or an exception with the same value before adding one.
+- **Previews**: `modes/spacing.new.tokens.json`, `spacing.looser.tokens.json` and `spacing.compact.tokens.json` hold the
+  values that differ from the default theme, `spacing.compact.coarse.tokens.json` the controls that keep their New size
+  on a touch screen (written inside `@media (pointer: coarse)`). To change a preview value, edit or add it in its mode
+  document (a `base` or `md` a role or size leaves out keeps the default) and run `pnpm tokens:generate`. An exception follows its role,
+  a `control-*` one its size, unless its mode document sets it: the navigation chrome and the density-invariant
+  exceptions have their own values there, and an exception its role would move the wrong way (tighter than the
+  default in looser, looser in compact) keeps its default value there; `generate.test.mjs` checks the direction.
+  `design-system/tokens/preview/spacing.css` sets the modes under `data-spacing="new|looser|compact"`; Storybook
+  (toolbar) and the app's debug panel load it.
+
+Lint: `biome-plugins/{js,css}/noPrimitiveSpacing.grit` flag number, `px`, arbitrary and variable values of padding,
+margin, gap and space classes (`p-4`, `md:gap-x-2.5`, `-ml-1`, `pt-[72px]`) outside the theme; zero and `auto` pass. A
+class kept on purpose takes `biome-ignore lint/plugin/noPrimitiveSpacing: <reason>` on the line above.
+
 ## What the generator checks
 
 - The document against the DTCG 2025.10 schema, every alias (missing target, cycle, type mismatch, typography parts
@@ -179,7 +238,8 @@ Lint: `biome-plugins/{js,css}/noPrimitiveTypography.grit` flag primitive type cl
 
 ## Representation boundaries
 
-- `--spacing` is the 4px Tailwind multiplier, not an enumerated spacing scale.
+- `--spacing` is the 4px Tailwind multiplier, not an enumerated spacing scale. The spacing roles are pixel values, not
+  multiples of it: DTCG has no expression to alias `4 × --spacing`.
 - Breakpoint numbers (`--breakpoint-*-px`, in `:root`) and rem dimensions (`--breakpoint-*`, in `@theme`) are separate
   tokens; no root font-size assumption converts between them.
 - `transparent` is sRGB black with alpha zero.

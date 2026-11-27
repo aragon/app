@@ -217,7 +217,7 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
             state={state}
         >
             {(showAccountFilter || showTypeFilters) && (
-                <div className="flex flex-col items-start gap-2 md:gap-3">
+                <div className="flex flex-col items-start gap-related--8-12">
                     {showAccountFilter && bodyFilter && (
                         <Dropdown.Container
                             constrainContentWidth={false}

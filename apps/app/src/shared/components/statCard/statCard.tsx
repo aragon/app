@@ -19,7 +19,7 @@ export const StatCard: React.FC<IStatCardProps> = (props) => {
     const { value, suffix, label } = props;
 
     return (
-        <div className="flex flex-col gap-y-1 rounded-xl bg-surface-secondary p-4">
+        <div className="flex flex-col gap-y-tight rounded-xl bg-surface-secondary p-inset-surface-flat--fixed-16">
             <Heading
                 as="h3"
                 className="type-numeric"

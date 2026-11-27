@@ -86,7 +86,7 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
 
     return (
         <DataList.Item
-            className={classNames('flex items-center justify-between gap-x-3 py-3 md:gap-x-4 md:py-5', className)}
+            className={classNames('flex items-center justify-between gap-x-related--12-16 py-inset-item', className)}
             href={processedHref}
             {...otherProps}
         >
@@ -101,7 +101,7 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
                     <Spinner className="transition" responsiveSize={{ md: 'lg' }} variant="neutral" />
                 </div>
             )}
-            <div className="flex w-full flex-col items-start gap-y-0.5 self-center md:gap-y-1">
+            <div className="flex w-full flex-col items-start gap-y-tight--2-4 self-center">
                 <span className="type-title-item text-surface-primary">
                     {typeToHeading[type]}
                     {isExecution && processedLabel != null && (
@@ -118,7 +118,7 @@ export const TransactionDataListItemStructure: React.FC<ITransactionDataListItem
                 )}
             </div>
 
-            <div className="flex h-full shrink-0 flex-col items-end gap-y-0.5 truncate md:gap-y-1">
+            <div className="flex h-full shrink-0 flex-col items-end gap-y-tight--2-4 truncate">
                 <span className="type-supporting--row-value text-surface-primary">{processedValue}</span>
                 {showValue && (
                     <span className="type-supporting text-surface-secondary">{formattedTransactionValue}</span>

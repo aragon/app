@@ -139,14 +139,14 @@ export const SafePendingTransactionListItem: React.FC<
         });
 
     return (
-        <DataListItem className="relative flex flex-col gap-3 py-3 md:py-5">
-            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div className="flex min-w-0 flex-col gap-1">
-                    <div className="flex min-w-0 flex-row items-center gap-2">
+        <DataListItem className="relative flex flex-col gap-related py-inset-item">
+            <div className="flex flex-col gap-related md:flex-row md:items-center md:justify-between">
+                <div className="flex min-w-0 flex-col gap-tight">
+                    <div className="flex min-w-0 flex-row items-center gap-related--fixed-8">
                         {associatedReports.length === 0 ? (
                             <SafeTransactionCardLink href={safeAppLink} />
                         ) : (
-                            <div className="flex min-w-0 flex-row flex-wrap items-center gap-x-2 gap-y-1">
+                            <div className="flex min-w-0 flex-row flex-wrap items-center gap-x-related--fixed-8 gap-y-tight">
                                 {associatedReports.map((report) => (
                                     <SafeProposalReportLink
                                         fallbackHref={safeAppLink}
@@ -189,10 +189,10 @@ export const SafePendingTransactionListItem: React.FC<
                         />
                     )}
                 </div>
-                <div className="flex shrink-0 flex-row items-center gap-3">
+                <div className="flex shrink-0 flex-row items-center gap-related">
                     <span
                         aria-label={confirmationLabel}
-                        className="flex items-center gap-1 type-supporting text-surface-secondary"
+                        className="flex items-center gap-tight type-supporting text-surface-secondary"
                         role="img"
                     >
                         <Icon

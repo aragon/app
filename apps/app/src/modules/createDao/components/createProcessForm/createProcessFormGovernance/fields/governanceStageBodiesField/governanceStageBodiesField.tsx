@@ -100,7 +100,7 @@ export const GovernanceStageBodiesField: React.FC<
     return (
         <InputContainer
             alert={fieldAlert}
-            className="flex flex-col gap-2"
+            className="flex flex-col"
             helpText={t(
                 'app.createDao.createProcessForm.governance.stageBodiesField.helpText',
             )}
@@ -135,7 +135,7 @@ export const GovernanceStageBodiesField: React.FC<
                 />
             )}
             {bodiesMerged.length > 0 && (
-                <div className="flex flex-col gap-3 md:gap-2">
+                <div className="flex flex-col gap-related--12-8">
                     {bodiesMerged.map((body, index) => (
                         <GovernanceBodyField
                             body={body}

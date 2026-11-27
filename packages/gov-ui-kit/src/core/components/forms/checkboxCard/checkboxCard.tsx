@@ -72,8 +72,8 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex min-w-0 cursor-pointer flex-col gap-3 outline-hidden transition-all', // Layout
-        'rounded-xl border bg-surface-default px-4 py-3 ring-accent-focus focus-ring md:gap-4 md:px-6 md:py-4', // Style
+        'group flex min-w-0 cursor-pointer flex-col gap-group--12-16 outline-hidden transition-all', // Layout
+        'rounded-xl border bg-surface-default px-inset-item py-control-item--12-16 ring-accent-focus focus-ring', // Style
         'border-surface-selected shadow-accent-default hover:shadow-accent-md', // Checked/indeterminate & hover
         'data-[state=unchecked]:enabled:border-surface-default data-[state=unchecked]:enabled:shadow-surface-sm', // Unchecked
         'data-[state=unchecked]:enabled:hover:shadow-surface-default', // Unchecked hover
@@ -98,9 +98,9 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
             ref={ref}
             {...otherProps}
         >
-            <div className={classNames('flex w-full min-w-0 flex-row gap-3', { 'items-center': !description })}>
+            <div className={classNames('flex w-full min-w-0 flex-row gap-related', { 'items-center': !description })}>
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
-                <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 md:gap-1">
+                <div className="flex min-w-0 flex-1 flex-col items-start gap-tight--2-4">
                     <p className={labelClasses} id={randomId}>
                         {label}
                     </p>
@@ -113,6 +113,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                 {tag && <Tag {...tag} className={classNames(tag.className, { 'self-start': description })} />}
                 <Icon
                     className={classNames(
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: the indicator aligns with the first text line
                         'mt-0.5 hidden icon-surface-primary group-data-disabled:icon-surface-disabled group-data-[state=unchecked]:block md:mt-1',
                         { 'self-start': description },
                     )}
@@ -121,6 +122,7 @@ export const CheckboxCard = forwardRef<HTMLButtonElement, ICheckboxCardProps>((p
                 />
                 <RadixCheckbox.Indicator
                     className={classNames(
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: the indicator aligns with the first text line
                         'mt-0.5 icon-accent-selected group-data-disabled:icon-surface-default-card md:mt-1',
                         {
                             'self-start': description,

@@ -68,7 +68,7 @@ export const WorkspaceAdminAccounts: React.FC<IWorkspaceAdminAccountsProps> = (
                 variant: 'secondary',
                 onClick: handleAddAccounts,
             }}
-            className="gap-3"
+            className="gap-group--fixed-12"
             inset={false}
             title={t('app.workspace.workspaceAdminPage.accounts.title')}
         >
@@ -92,7 +92,7 @@ export const WorkspaceAdminAccounts: React.FC<IWorkspaceAdminAccountsProps> = (
                     objectIllustration={{ object: 'WALLET' }}
                 />
             ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-group--fixed-12">
                     {accounts.map((account) => (
                         <WorkspaceAccountItem
                             account={account}

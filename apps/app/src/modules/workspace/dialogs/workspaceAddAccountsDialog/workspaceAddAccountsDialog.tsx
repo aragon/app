@@ -146,7 +146,7 @@ export const WorkspaceAddAccountsDialog: React.FC<
                 onClose={handleClose}
                 title={t('app.workspace.workspaceAddAccountsDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-4 pb-4">
+            <Dialog.Content className="flex flex-col gap-group pb-group">
                 <WorkspaceAccountSelectStatusAlert />
                 {workspace != null && (
                     // Not keyed by address: accounts added by address belong to no wallet, so they stay.

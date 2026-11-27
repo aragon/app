@@ -45,17 +45,17 @@ export const VoteProposalDataListItemStructure: React.FC<IVoteProposalDataListIt
     return (
         <DataList.Item
             className={classNames(
-                'flex min-w-0 flex-col justify-center gap-x-3 gap-y-1 py-3 md:gap-x-4 md:gap-y-1.5 md:py-5',
+                'flex min-w-0 flex-col justify-center gap-x-related--12-16 gap-y-tight--4-6 py-inset-item',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex w-full items-center gap-x-1 type-title-item md:gap-x-1.5">
+            <div className="flex w-full items-center gap-x-phrase--4-6 type-title-item">
                 <p className="max-w-full shrink-0 truncate text-surface-secondary">{proposalId}</p>
                 <p className="truncate text-surface-primary">{proposalTitle}</p>
             </div>
-            <div className="flex items-center gap-x-4 type-supporting text-surface-secondary md:gap-x-6">
-                <div className="flex items-center gap-x-1 md:gap-x-2">
+            <div className="flex items-center gap-x-group-stepped type-supporting text-surface-secondary">
+                <div className="flex items-center gap-x-tight--4-8">
                     <Tag
                         className="capitalize"
                         data-testid="tag"
@@ -64,7 +64,7 @@ export const VoteProposalDataListItemStructure: React.FC<IVoteProposalDataListIt
                     />
                     {voteIndicatorDescription && <span className="whitespace-nowrap">{voteIndicatorDescription}</span>}
                 </div>
-                {date && <p className="mx-1">{formatterUtils.formatDate(date, { format: DateFormat.RELATIVE })}</p>}
+                {date && <p className="mx-tight">{formatterUtils.formatDate(date, { format: DateFormat.RELATIVE })}</p>}
             </div>
         </DataList.Item>
     );

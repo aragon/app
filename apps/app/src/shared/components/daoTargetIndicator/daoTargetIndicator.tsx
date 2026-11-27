@@ -85,7 +85,7 @@ export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
     const textSizeClass = size != null ? sizeConfig[size] : '';
 
     return (
-        <div className="flex items-center gap-2 text-surface-secondary">
+        <div className="flex items-center gap-related--fixed-8 text-surface-secondary">
             <DaoAvatar name={targetDao.name} size="sm" src={avatarSrc} />
             <span className={`${textSizeClass} truncate`.trim()}>
                 {targetDao.name}

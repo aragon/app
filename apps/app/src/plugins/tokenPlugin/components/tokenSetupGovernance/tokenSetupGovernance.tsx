@@ -51,7 +51,7 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (
         );
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-section">
             <SupportThresholdField formPrefix={formPrefix} />
             <MinParticipationField
                 formPrefix={formPrefix}
@@ -59,7 +59,8 @@ export const TokenSetupGovernance: React.FC<ITokenSetupGovernanceProps> = (
             />
             {!isSubPlugin && (
                 <InputContainer
-                    className="flex flex-col gap-6"
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: field gap 24 px, 12 px from md: no role has this pair
+                    className="flex flex-col gap-6 md:gap-3"
                     helpText={t(
                         'app.plugins.token.tokenSetupGovernance.minDuration.helpText',
                     )}

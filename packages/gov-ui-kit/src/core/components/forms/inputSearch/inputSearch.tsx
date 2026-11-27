@@ -57,11 +57,11 @@ export const InputSearch = forwardRef<HTMLInputElement, IInputSearchProps>((prop
 
     return (
         <InputContainer inputLength={inputLength} {...otherContainerProps}>
-            {isLoading && <Spinner className="ml-4" size="sm" variant="neutral" />}
+            {isLoading && <Spinner className="ml-control-lg" size="sm" variant="neutral" />}
             {!isLoading && (
                 <Icon
                     className={classNames(
-                        'ml-4 transition-all',
+                        'ml-control-lg transition-all',
                         isFocused ? 'icon-surface-active-control' : 'icon-surface-default-control',
                     )}
                     icon={IconType.SEARCH}
@@ -78,7 +78,7 @@ export const InputSearch = forwardRef<HTMLInputElement, IInputSearchProps>((prop
                 {...otherInputProps}
             />
             {displayClearIcon && (
-                <button className="mr-4 cursor-pointer" onClick={handleClear} type="button">
+                <button className="mr-control-lg cursor-pointer" onClick={handleClear} type="button">
                     <Icon className="icon-surface-default-clear" icon={IconType.CLOSE} />
                 </button>
             )}

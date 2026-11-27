@@ -87,7 +87,7 @@ export const GaugeVoterSelectGaugeDialog: React.FC<
                     'app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.description',
                 )}
             >
-                <div className="flex w-full flex-col gap-3 py-2 md:gap-2">
+                <div className="flex w-full flex-col gap-related--12-8 py-related--fixed-8">
                     {isLoading && (
                         <DataList.Root
                             entityLabel={t(
@@ -118,7 +118,7 @@ export const GaugeVoterSelectGaugeDialog: React.FC<
                         </DataList.Root>
                     )}
                     {!isLoading && gauges.length === 0 && (
-                        <div className="flex items-center justify-center py-8 text-surface-secondary">
+                        <div className="flex items-center justify-center py-inset-surface-wide--fixed-32 text-surface-secondary">
                             {t(
                                 'app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.emptyState',
                             )}

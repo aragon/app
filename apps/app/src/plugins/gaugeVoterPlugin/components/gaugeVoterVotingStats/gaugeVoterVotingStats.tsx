@@ -68,7 +68,7 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (
     ];
 
     return (
-        <div className="grid w-full grid-cols-2 gap-3">
+        <div className="grid w-full grid-cols-2 gap-related">
             {stats.map(({ label, value, suffix }) => (
                 <StatCard
                     key={label}

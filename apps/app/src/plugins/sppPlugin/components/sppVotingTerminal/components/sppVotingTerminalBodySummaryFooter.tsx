@@ -71,7 +71,7 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
     }
 
     return (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-related--fixed-8">
             {requirements.map(({ action, labelKey, threshold }) => (
                 <p
                     className="text-center text-surface-secondary md:text-right"

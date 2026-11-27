@@ -31,11 +31,11 @@ export const CreatePolicyFormInterval: React.FC<
     }) as PolicyDispatchIntervalType;
 
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-section-wide">
             <RadioGroup
                 onValueChange={onIntervalTypeChange}
                 {...intervalTypeField}
-                className="flex gap-4 md:flex-row"
+                className="flex gap-group md:flex-row"
             >
                 <RadioCard
                     description={t(

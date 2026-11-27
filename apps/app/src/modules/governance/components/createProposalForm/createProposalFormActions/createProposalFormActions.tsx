@@ -97,7 +97,7 @@ export const CreateProposalFormActions: React.FC<
     const hasActions = actionsMerged.length > 0;
 
     return (
-        <div className="flex flex-col gap-y-10">
+        <div className="flex flex-col gap-y-section-wide">
             <ProposalActionsEditList
                 actionsMerged={actionsMerged}
                 chainId={chainId}

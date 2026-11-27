@@ -1,0 +1,179 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Spacing preview compact on coarse pointers: control heights and block paddings fall back to New, so a touch target keeps its size. The exceptions listed here keep their default value, which their size at New would exceed.",
+    "space": {
+        "$type": "dimension",
+        "size": {
+            "control-sm": {
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-md": {
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg": {
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 48,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 48,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item-flat": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "row": {
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "exception": {
+            "control-item--12-16": {
+                "y": {
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-10": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

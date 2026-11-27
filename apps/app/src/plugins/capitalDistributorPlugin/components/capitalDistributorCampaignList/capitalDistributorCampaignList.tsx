@@ -90,9 +90,9 @@ export const CapitalDistributorCampaignList: React.FC<
     const campaignList = campaignData?.pages.flatMap((page) => page.data);
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             <ToggleGroup
-                className="flex gap-3"
+                className="flex gap-related!"
                 isMultiSelect={false}
                 onChange={handleToggleChange}
                 value={campaignFilter}

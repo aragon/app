@@ -155,10 +155,10 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                 })}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-4 pb-6">
-                    <Card className="flex flex-col gap-4 p-6">
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-baseline gap-2">
+                <div className="flex flex-col gap-group pb-section">
+                    <Card className="flex flex-col gap-group p-inset-surface-wide">
+                        <div className="flex flex-col gap-tight">
+                            <div className="flex items-baseline gap-related--fixed-8">
                                 <span className="type-title-item--picker-row text-surface-primary">
                                     {policy.name}
                                 </span>
@@ -192,13 +192,13 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                     </Card>
 
                     {isMultiDispatch && (
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-related">
                             {subRouters.map((subRouter, index) => (
                                 <DataList.Item
-                                    className="flex items-baseline gap-6 px-6 py-6"
+                                    className="flex items-baseline gap-section px-inset-surface-wide! py-inset-surface-wide"
                                     key={subRouter.address}
                                 >
-                                    <div className="flex flex-1 gap-2 type-title-item--picker-row">
+                                    <div className="flex flex-1 gap-related--fixed-8 type-title-item--picker-row">
                                         <span className="text-surface-primary">
                                             {subRouter.name ??
                                                 t(
@@ -211,7 +211,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="flex gap-0.5 type-supporting--body-size">
+                                    <span className="flex gap-phrase--fixed-2 type-supporting--body-size">
                                         <span className="text-surface-primary">
                                             {index + 1}
                                         </span>
@@ -232,7 +232,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
             </Dialog.Content>
             {dropdownItems ? (
                 <Dialog.Footer variant="wizard">
-                    <div className="flex w-full items-center gap-3">
+                    <div className="flex w-full items-center gap-related">
                         {showBackButton && (
                             <Button
                                 onClick={handleBack}

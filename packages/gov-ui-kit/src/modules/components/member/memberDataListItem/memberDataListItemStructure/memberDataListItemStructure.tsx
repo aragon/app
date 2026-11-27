@@ -87,12 +87,12 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
     return (
         <DataList.Item
             className={classNames(
-                'flex min-w-fit flex-col items-start justify-center gap-y-3 py-4 md:min-w-44 md:py-6',
+                'flex min-w-fit flex-col items-start justify-center gap-y-related py-inset-item--16-24 md:min-w-44',
                 className,
             )}
             {...otherProps}
         >
-            <div className="mb-1 flex w-full items-center justify-between">
+            <div className="mb-tight flex w-full items-center justify-between">
                 <MemberAvatar
                     address={address}
                     avatarSrc={avatarSrc}
@@ -109,7 +109,7 @@ export const MemberDataListItemStructure: React.FC<IMemberDataListItemProps> = (
                 <AddressOutput address={address} className="truncate" label={resolvedUserHandle} />
             </Heading>
             {showDelegationOrTokenInformation && (
-                <div className="flex flex-col gap-y-2">
+                <div className="flex flex-col gap-y-related--fixed-8">
                     <Heading
                         as="h3"
                         className={classNames({

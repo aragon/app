@@ -114,7 +114,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                 // Dialogs render outside the layout error boundaries: without one here a
                 // throwing dialog unmounts the whole app into the global error page.
                 const errorFallback = (
-                    <div className="px-4 py-6 md:px-6">
+                    <div className="px-inset-surface py-inset-surface-wide">
                         <ErrorFeedback
                             primaryButton={{
                                 label: t('app.shared.dialogRoot.errorClose'),

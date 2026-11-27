@@ -40,12 +40,13 @@ const createNameOf = (cssNames) => {
     };
 };
 
-const block = ([selector, lines]) => `${selector} {\n${lines.map((line) => `    ${line}`).join('\n')}\n}`;
+const indent = (text) => text.replace(/^(?=.)/gm, '    ');
+const block = ([selector, lines]) => `${selector} {\n${indent(lines.join('\n'))}\n}`;
 
-// Kit-relative path -> generated text. `layers`: layer name -> its config. `layerPaths`: layer name -> the token paths
-// of its own document. `modeTokens`: the documents of a mode -> the tokens with those documents merged over `tokens`.
+// Kit-relative path -> generated text. `layers`: layer name -> its config. `documentPaths`: a source file -> the token
+// paths it defines. `modeTokens`: the documents of a mode -> the tokens with those documents merged over `tokens`.
 // Fails unless every token has one CSS name of its own and is placed exactly once.
-export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
+export const renderCss = ({ tokens, layers, documentPaths, modeTokens }) => {
     const nameOf = createNameOf(Object.values(layers).flatMap(({ cssNames = {} }) => Object.entries(cssNames)));
     const varOf = (path) => {
         const name = nameOf(path);
@@ -63,7 +64,7 @@ export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
     };
 
     for (const [layer, config] of Object.entries(layers)) {
-        const own = layerPaths(layer);
+        const own = documentPaths(`${layer}.tokens.json`);
         // A line ending in `;` is CSS; any other line is a token path of the layer's document: that token, or every
         // token under that group.
         const renderLine = (line) => {
@@ -94,21 +95,23 @@ export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
 
     // A preview file: per mode selector, every placed token whose value differs from the default, as a literal. A mode
     // lists the documents merged over the default theme, rules that make every token under a group follow the same
-    // token under another (`{ "type.exception.*--*": "type.role.$1" }`, applied after the documents), and CSS lines
-    // ending in `;` for values with no DTCG type.
+    // token under another (`{ "type.exception.*--*": "type.role.$1" }`, applied after the documents to every token no
+    // listed document sets), and CSS lines ending in `;` for values with no DTCG type. An at-rule key scopes the modes
+    // inside it: each adds its entries to those of the same selector outside and writes what differs from that mode.
     const previews = Object.entries(layers).flatMap(([layer, config]) =>
         Object.entries(config.preview ?? {}).map(([file, modes]) => {
-            const blocks = Object.entries(modes).map(([selector, entries]) => {
-                const css = entries.filter((entry) => typeof entry === 'string' && entry.endsWith(';'));
-                const mode = modeTokens(entries.filter((entry) => typeof entry === 'string' && !entry.endsWith(';')));
+            const modeOf = (entries) => {
+                const documents = entries.filter((entry) => typeof entry === 'string' && !entry.endsWith(';'));
+                const mode = modeTokens(documents);
                 const stray = [...mode.keys()].filter((path) => !tokens.has(path) && nameOf(path));
                 assert.equal(stray.length, 0, `${layer}.config.json: not in the default theme: ${stray.join(', ')}`);
+                const explicit = new Set(documents.flatMap(documentPaths));
                 const targetOf = createNameOf(
                     entries.flatMap((entry) => (typeof entry === 'object' ? Object.entries(entry) : [])),
                 );
                 for (const [path, { type }] of mode) {
                     const segments = path.split('.');
-                    for (let depth = 1; depth < segments.length; depth++) {
+                    for (let depth = 1; depth < segments.length && !explicit.has(path); depth++) {
                         const group = targetOf(segments.slice(0, depth).join('.'));
                         if (group !== undefined) {
                             mode.set(path, { type, value: `{${[group, ...segments.slice(depth)].join('.')}}` });
@@ -116,10 +119,28 @@ export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
                         }
                     }
                 }
-                const changed = [...placed].filter(([, path]) => literal(mode, path) !== literal(tokens, path));
-                return [selector, [...changed.map(([name, path]) => `${name}: ${literal(mode, path)};`), ...css]];
-            });
-            return [file, blocks.map(block).join('\n\n')];
+                return mode;
+            };
+            const render = ([selector, entries], outer = []) => {
+                const css = entries.filter((entry) => typeof entry === 'string' && entry.endsWith(';'));
+                const mode = modeOf([...outer, ...entries]);
+                const base = outer.length > 0 ? modeOf(outer) : tokens;
+                const changed = [...placed].filter(([, path]) => literal(mode, path) !== literal(base, path));
+                return block([
+                    selector,
+                    [...changed.map(([name, path]) => `${name}: ${literal(mode, path)};`), ...css],
+                ]);
+            };
+            const blocks = Object.entries(modes).map(([key, entries]) =>
+                Array.isArray(entries)
+                    ? render([key, entries])
+                    : `${key} {\n${indent(
+                          Object.entries(entries)
+                              .map(([selector, own]) => render([selector, own], modes[selector]))
+                              .join('\n\n'),
+                      )}\n}`,
+            );
+            return [file, blocks.join('\n\n')];
         }),
     );
     if (previews.length > 0) {

@@ -45,8 +45,8 @@ export const CreateWorkspaceFormAccountsItem: React.FC<
     };
 
     return (
-        <Card className="flex flex-col gap-4 p-6 shadow-surface-sm">
-            <div className="flex items-start gap-3">
+        <Card className="flex flex-col gap-group p-inset-surface-wide shadow-surface-sm">
+            <div className="flex items-start gap-related">
                 <div className="min-w-0 grow">
                     <CreateWorkspaceFormNetworkAddressFields
                         index={index}
@@ -54,6 +54,7 @@ export const CreateWorkspaceFormAccountsItem: React.FC<
                         validateAccount={true}
                     />
                 </div>
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: aligns the menu button with the field below the label from md */}
                 <div className="mt-0 md:mt-9">
                     <Dropdown.Container
                         constrainContentWidth={false}
