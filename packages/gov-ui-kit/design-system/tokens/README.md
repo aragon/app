@@ -81,6 +81,11 @@ Components take colours from roles, not from the primitive ramps. Three tiers:
 The variables are `--guk-<family>-<group>-<role>` theme variables; shadows are `--shadow-<group>-<size>` on Tailwind's
 own namespace. Tailwind emits only the variables a class or a `var()` in the scanned source uses.
 
+Shadow classes: the neutral and primary primitives keep their Tailwind names, and their classes (`shadow-neutral-sm`)
+inline the default value, so they ignore a preview mode. The status primitives are `--guk-shadow-<status>-<size>`,
+which no utility reads, so `shadow-success-sm` is the class of the `semantic.shadow.success.sm` role and follows the
+mode.
+
 Classes: `src/theme/tokens/colorRoles.css` declares one functional utility per family and property (`bg-*`, `text-*`,
 `icon-*`, `border-*` and its sides, `ring-*`) that reads those variables, so `bg-surface-primary` sets
 `background-color: var(--guk-bg-surface-primary)`. A value with no role variable falls through to Tailwind's own
@@ -94,9 +99,7 @@ needs a `cssNames` rule in `semantic.config.json`; a new family also needs its u
 Modes: `semantic.config.json` `preview` defines Next and Dark as documents merged over the default theme (`modes/`
 holds the designer's palette, its primitives, shadows and roles). The generator writes, per mode selector, every token
 whose value differs from the default as a literal to `design-system/tokens/preview/`. The file is not in the npm
-package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel. Tailwind
-inlines a literal shadow into its utility, so a primitive shadow class (`shadow-success-sm`) keeps its default colour
-in every mode; the alias shadows (`shadow-surface-*`, `shadow-accent-*`, `shadow-<status>-default`) read the variable.
+package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveColors.grit` flag primitive colour classes and variables in kit and app
 source outside the theme. A class kept on purpose takes `biome-ignore lint/plugin/noPrimitiveColors: <reason>` on the
