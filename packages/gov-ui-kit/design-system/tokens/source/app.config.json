@@ -6,6 +6,11 @@
             "@theme": [
                 "semantic"
             ]
+        },
+        "typography.css": {
+            "@theme": [
+                "type"
+            ]
         }
     }
 }

@@ -99,7 +99,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                                 src={ipfsUtils.cidToSrc(workspace?.avatar)}
                             />
                         </span>
-                        <span className="grow truncate text-left text-base leading-tight text-surface-primary">
+                        <span className="grow truncate text-left type-control text-surface-primary">
                             {workspace?.name}
                         </span>
                         <Icon

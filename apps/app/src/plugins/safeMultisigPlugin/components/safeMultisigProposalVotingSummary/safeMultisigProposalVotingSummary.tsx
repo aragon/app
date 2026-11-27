@@ -49,7 +49,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
     // zero approvals: name the body and say no more.
     if (stageStatus === ProposalStatus.PENDING || safeInfo == null) {
         return (
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+            <p className="type-title-item text-surface-primary">
                 {displayName}
             </p>
         );
@@ -84,7 +84,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                   : 'text-surface-secondary';
 
         return (
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+            <p className="type-title-item text-surface-primary">
                 {displayName}{' '}
                 <span className={statusClass}>
                     {t(`${translationKey}.${statusKey}`)}
@@ -104,7 +104,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+            <p className="type-title-item text-surface-primary">
                 {displayName}{' '}
                 <span className="text-surface-secondary">
                     {t(
@@ -120,7 +120,7 @@ export const SafeMultisigProposalVotingSummary: React.FC<
                 value={approvalsPercentage}
                 variant="neutral"
             />
-            <p className="text-sm leading-tight font-normal text-surface-primary md:text-base">
+            <p className="type-supporting text-surface-primary">
                 {formatterUtils.formatNumber(approvalsAmount, {
                     format: NumberFormat.GENERIC_SHORT,
                 })}{' '}

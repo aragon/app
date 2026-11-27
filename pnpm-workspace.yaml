@@ -16,6 +16,8 @@ catalog:
   "@biomejs/biome": ^2.6.6
   "@changesets/changelog-github": ^1.0.1
   "@changesets/cli": ^3.0.3
+  # Next typography preview faces (OFL-1.1): kit dev dependencies, loaded by its Storybook and the app's debug panel.
+  "@fontsource/sora": 5.3.0
   "@hono/node-server": ^2.1.6
   "@linear/sdk": ^101.1.0
   # orama: tilde-pinned to the 3.1 line — the assistant persists its documentation index in a
@@ -52,6 +54,8 @@ catalog:
   file-type: ^22.3.0
   hono: ^4.13.17
   husky: ^9.1.7
+  # inter-ui: OFL-1.1, the static InterDisplay faces of Inter 4 (Next typography preview, see @fontsource/sora).
+  inter-ui: 4.1.1
   # jest: held on 30.4 — 30.5 replaces module.register/registerHooks with a throwing stub, and
   # @tailwindcss/node calls one on import, so breakpoints.test.ts cannot load Tailwind.
   jest: ~30.4.2

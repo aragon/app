@@ -47,12 +47,12 @@ export const SetupStrategyDialogDistributionDexSwap: React.FC<
     return (
         <div className="flex w-full flex-col gap-6">
             <div className="flex flex-col gap-0.5 md:gap-1">
-                <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
+                <p className="type-title-item text-surface-primary">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionDexSwap.token.label',
                     )}
                 </p>
-                <p className="text-sm leading-normal font-normal text-surface-secondary md:text-base">
+                <p className="type-body-compact text-surface-secondary">
                     {t(
                         'app.capitalFlow.setupStrategyDialog.distributionDexSwap.token.helpText',
                     )}

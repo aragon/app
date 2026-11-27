@@ -185,6 +185,9 @@ catalogs:
     '@changesets/cli':
       specifier: ^3.0.3
       version: 3.0.3
+    '@fontsource/sora':
+      specifier: 5.3.0
+      version: 5.3.0
     '@hono/node-server':
       specifier: ^2.1.6
       version: 2.1.6
@@ -281,6 +284,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    inter-ui:
+      specifier: 4.1.1
+      version: 4.1.1
     jest:
       specifier: ~30.4.2
       version: 30.4.2
@@ -1114,6 +1120,9 @@ importers:
       '@biomejs/biome':
         specifier: 'catalog:'
         version: 2.6.6
+      '@fontsource/sora':
+        specifier: 'catalog:'
+        version: 5.3.0
       '@hookform/devtools':
         specifier: ^4.4.0
         version: 4.4.0(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(supports-color@8.1.1)
@@ -1192,6 +1201,9 @@ importers:
       cross-env:
         specifier: 'catalog:'
         version: 10.1.0
+      inter-ui:
+        specifier: 'catalog:'
+        version: 4.1.1
       jest:
         specifier: 'catalog:'
         version: 30.4.2(@types/node@24.19.2)(babel-plugin-macros@3.1.0)(supports-color@8.1.1)
@@ -2630,6 +2642,9 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource/sora@5.3.0':
+    resolution: {integrity: sha512-SqW3OpKxxfKvxDLPlbdrWf2KooPfbd+W3jaYn483o+Y/JrmU87vjFPNptDqwP428c3vY+gnranLhjcbRaXB0Jw==}
 
   '@fuma-translate/react@1.0.2':
     resolution: {integrity: sha512-uOiOtBx3nRXR8Nu1GzBf1tApgF1FErDBTHxRIAQeyQdyOoZbrNRN6H4kDCWObY4qyGeGbHydG0DHzgeUgFDMIw==}
@@ -9119,6 +9134,10 @@ packages:
   inline-style-parser@0.2.9:
     resolution: {integrity: sha512-IttN8BqKLxzUrnTqHI+/hwAJQItBAUjdoHERCDv+oOuX48VP6bzW8+QjOXSfoevzq3YrYAwX1uLHp8TqO9yIeg==}
 
+  inter-ui@4.1.1:
+    resolution: {integrity: sha512-451h0J29HyOmA+JXgSi/6M12tL7ZCZ8arYKZUXiOXTJpJbAKqJvFh3k5SiV3x7tKe0C0KyrKUUiQIvvZ2PQDcA==}
+    engines: {node: '>=16.0.0'}
+
   internal-slot@1.1.0:
     resolution: {integrity: sha512-4gd7VpWNQNB4UKKCFFVcp1AVv+FMOgs9NKzjHKusc8jTMhd5eL1NqQqOpE0KzMds804/yHlglp3uxgluOqAPLw==}
     engines: {node: '>= 0.4'}
@@ -14949,6 +14968,8 @@ snapshots:
       tabbable: 6.5.1
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource/sora@5.3.0': {}
 
   '@fuma-translate/react@1.0.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -22634,6 +22655,8 @@ snapshots:
   inline-style-parser@0.2.7: {}
 
   inline-style-parser@0.2.9: {}
+
+  inter-ui@4.1.1: {}
 
   internal-slot@1.1.0:
     dependencies:

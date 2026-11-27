@@ -69,7 +69,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     );
 
     const labelClassNames = classNames(
-        'pl-2 text-sm leading-tight font-normal text-surface-secondary md:pl-3 md:text-base', // Default
+        'pl-2 type-label-option text-surface-secondary md:pl-3', // Default
         'peer-data-[state=checked]:text-surface-primary', // Checked
         'peer-disabled:text-surface-disabled peer-data-[state=checked]:peer-disabled:text-surface-primary', // Disabled
     );

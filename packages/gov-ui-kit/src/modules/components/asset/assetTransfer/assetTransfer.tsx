@@ -110,15 +110,11 @@ export const AssetTransfer: React.FC<IAssetTransferProps> = (props) => {
             >
                 <div className="flex items-center space-x-3 md:space-x-4">
                     <Avatar responsiveSize={{ md: 'md' }} src={assetIconSrc} />
-                    <span className="text-sm leading-tight text-surface-primary md:text-base">{assetName}</span>
+                    <span className="type-title-item--compact-list text-surface-primary">{assetName}</span>
                 </div>
                 <div className="flex flex-col items-end justify-end">
-                    <span className="text-sm leading-tight text-surface-primary md:text-base">
-                        {formattedTokenAmount}
-                    </span>
-                    <span className="text-sm leading-tight text-surface-secondary md:text-base">
-                        {formattedFiatValue}
-                    </span>
+                    <span className="type-supporting text-surface-primary">{formattedTokenAmount}</span>
+                    <span className="type-supporting text-surface-secondary">{formattedFiatValue}</span>
                 </div>
             </DataList.Item>
         </div>

@@ -345,7 +345,9 @@ export const GaugeVoterGaugesPageContent: React.FC<
                     )}
                 >
                     {description && (
-                        <p className="text-base text-gray-500">{description}</p>
+                        <p className="type-body--unstepped text-gray-500">
+                            {description}
+                        </p>
                     )}
                     <GaugeVoterVotingStats
                         daysLeftToVote={daysLeftToVote}

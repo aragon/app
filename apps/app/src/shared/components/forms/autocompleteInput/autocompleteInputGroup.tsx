@@ -17,12 +17,12 @@ export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (
     return (
         <div className={classNames('flex flex-col', className)} {...otherProps}>
             {group && (
-                <div className="flex flex-row items-center gap-3 px-3 py-2 text-base leading-tight font-normal">
-                    <p className="shrink-0 text-surface-primary">
+                <div className="flex flex-row items-center gap-3 px-3 py-2">
+                    <p className="shrink-0 type-title-group--compact text-surface-primary">
                         {group.name}
                     </p>
                     <hr className="h-[1px] w-full border-surface-secondary" />
-                    <p className="shrink-0 text-sm text-surface-secondary">
+                    <p className="shrink-0 type-supporting--compact-detail text-surface-secondary">
                         {group.info}
                     </p>
                     <hr className="h-[1px] w-5 border-surface-secondary" />

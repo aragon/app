@@ -62,7 +62,7 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     );
 
     const labelClasses = classNames(
-        'w-full truncate text-left text-surface-default group-disabled:text-surface-disabled md:text-base',
+        'w-full truncate text-left type-label-option--card text-surface-default group-disabled:text-surface-disabled',
         'group-data-[state=checked]:text-surface-primary group-data-[state=checked]:group-disabled:text-surface-primary',
     );
 
@@ -81,12 +81,12 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
                 <div
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 text-sm leading-tight font-normal md:gap-y-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 md:gap-y-1">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>
                         {description && (
-                            <p className="w-full truncate text-left text-surface-secondary group-disabled:text-surface-disabled">
+                            <p className="w-full truncate text-left type-supporting--compact-meta text-surface-secondary group-disabled:text-surface-disabled">
                                 {description}
                             </p>
                         )}

@@ -41,14 +41,7 @@ export const AlertInline: React.FC<IAlertInlineProps> = (props) => {
                 responsiveSize={{ md: 'md' }}
                 size="sm"
             />
-            <p
-                className={classNames(
-                    'text-xs leading-tight font-normal md:text-base',
-                    variantToTextClassNames[variant],
-                )}
-            >
-                {message}
-            </p>
+            <p className={classNames('type-supporting--inline-alert', variantToTextClassNames[variant])}>{message}</p>
         </div>
     );
 };

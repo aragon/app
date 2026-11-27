@@ -44,6 +44,14 @@
                 {
                     "path": "./biome-plugins/css/noPrimitiveColors.grit",
                     "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/js/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
                 }
             ]
         },

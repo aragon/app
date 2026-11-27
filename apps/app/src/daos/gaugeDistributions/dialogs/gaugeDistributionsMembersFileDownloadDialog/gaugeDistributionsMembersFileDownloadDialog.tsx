@@ -244,7 +244,7 @@ export const GaugeDistributionsMembersFileDownloadDialog: React.FC<
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (
-                        <p className="text-sm text-critical-primary-message">
+                        <p className="type-body-compact--component-note text-critical-primary-message">
                             {t(
                                 `app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.error.${errorKey}`,
                             )}

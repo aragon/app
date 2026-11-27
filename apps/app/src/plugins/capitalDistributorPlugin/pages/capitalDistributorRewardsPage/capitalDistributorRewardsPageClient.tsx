@@ -93,7 +93,9 @@ export const CapitalDistributorRewardsPageClient: React.FC<
             <Page.Aside>
                 <Page.AsideCard title={pluginName}>
                     {description && (
-                        <p className="text-base text-gray-500">{description}</p>
+                        <p className="type-body--unstepped text-gray-500">
+                            {description}
+                        </p>
                     )}
                     {address && (
                         <CapitalDistributorRewardsStats

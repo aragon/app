@@ -73,7 +73,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     })}
                 >
                     <div className="flex flex-col gap-y-1">
-                        <div className="flex gap-2 text-base leading-tight font-normal md:text-lg">
+                        <div className="flex gap-2 type-title-item">
                             <p className="truncate text-surface-primary">
                                 {daoUtils.getPluginName(process)}
                             </p>
@@ -82,7 +82,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                             </p>
                         </div>
                         {processDescription && (
-                            <p className="line-clamp-2 text-sm leading-normal font-normal text-surface-secondary md:text-base">
+                            <p className="line-clamp-2 type-body-compact text-surface-secondary">
                                 {processDescription}
                             </p>
                         )}
@@ -90,7 +90,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-surface-tertiary-hint md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-tertiary-hint">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link
                             href={daoUtils.getDaoUrl(

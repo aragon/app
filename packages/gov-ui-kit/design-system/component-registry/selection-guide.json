@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "5a9a5ac742cbffb584e39e8decf5b32f8f5b2f153aece12c9d55adf44de31250",
+            "sha256": "cc71140bad938f92c773d388ca97592a10c8b17ff21944421bfd346caadb3d6c",
             "totalRecords": 398,
             "entryCount": 147,
             "uiEntryCount": 140,
@@ -472,7 +472,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:134",
+                "source": "kit:src/core/components/avatars/avatar/avatar.tsx:136",
                 "stories": [
                     "kit:src/core/components/avatars/avatar/avatar.stories.tsx:1"
                 ]
@@ -921,7 +921,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81",
+                "source": "kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:83",
                 "stories": [
                     "kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1"
                 ]
@@ -1814,7 +1814,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/core/components/heading/heading.tsx:28",
+                "source": "kit:src/core/components/heading/heading.tsx:33",
                 "stories": [
                     "kit:src/core/components/heading/heading.stories.tsx:1"
                 ]

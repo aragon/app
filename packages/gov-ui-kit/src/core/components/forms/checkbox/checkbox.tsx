@@ -90,7 +90,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, ICheckboxProps>((props, re
             </RadixCheckbox.Root>
             <label
                 className={classNames(
-                    'cursor-pointer text-sm leading-tight font-normal text-surface-default md:text-base',
+                    'cursor-pointer type-label-option text-surface-default',
                     'group-hover/root:text-surface-hover-label',
                     'peer-data-disabled:cursor-default peer-data-disabled:text-surface-default peer-data-[state=unchecked]:peer-data-disabled:text-surface-disabled',
                     { 'pl-2 md:pl-3': labelPosition === 'right' },

@@ -47,8 +47,8 @@ const resolveTargetAddress = (
  * Only renders when there are multiple DAOs/linked accounts.
  */
 const sizeConfig = {
-    sm: 'text-sm',
-    xs: 'text-xs',
+    sm: 'type-supporting--compact-detail',
+    xs: 'type-supporting--indicator-xs',
 } as const;
 
 export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
@@ -85,7 +85,7 @@ export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
     const textSizeClass = size != null ? sizeConfig[size] : '';
 
     return (
-        <div className="flex items-center gap-2 leading-tight text-surface-secondary">
+        <div className="flex items-center gap-2 text-surface-secondary">
             <DaoAvatar name={targetDao.name} size="sm" src={avatarSrc} />
             <span className={`${textSizeClass} truncate`.trim()}>
                 {targetDao.name}

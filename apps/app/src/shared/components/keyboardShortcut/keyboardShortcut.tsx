@@ -8,7 +8,7 @@ export const KeyboardShortcut: React.FC<IKeyboardShortcutProps> = (props) => {
 
     const containerClassName = classNames(
         'flex h-[18px] w-5 items-center justify-center rounded-md border border-surface-secondary bg-surface-primary',
-        'text-xs leading-tight font-normal text-surface-primary',
+        'type-caption--input-hint text-surface-primary',
         className,
     );
 

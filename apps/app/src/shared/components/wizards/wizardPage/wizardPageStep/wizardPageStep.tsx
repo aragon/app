@@ -81,8 +81,10 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         >
             <div className="flex flex-col gap-6 md:gap-12">
                 <div className="flex flex-col gap-2">
-                    <Heading size="h1">{title}</Heading>
-                    <p className="text-base leading-normal font-normal text-surface-secondary md:text-lg">
+                    <Heading as="h1" typeClassName="type-title-page">
+                        {title}
+                    </Heading>
+                    <p className="type-body text-surface-secondary">
                         {description}
                     </p>
                 </div>
@@ -145,7 +147,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         )}
                     </div>
                     {submitHelpText && (
-                        <p className="text-right text-sm leading-tight font-normal text-surface-secondary">
+                        <p className="text-right type-supporting--compact-meta text-surface-secondary">
                             {submitHelpText}
                         </p>
                     )}

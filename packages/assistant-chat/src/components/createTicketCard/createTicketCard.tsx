@@ -27,7 +27,7 @@ const cardClassName =
 // A draft nobody acted on is not an event worth a card: it collapses into a quiet line so the
 // transcript stays readable while still reading honestly.
 const spentNoteClassName =
-    'my-3 text-center text-surface-tertiary text-xs leading-normal first:mt-0 last:mb-0';
+    'my-3 text-center type-caption--chat-note first:mt-0 last:mb-0 text-surface-tertiary';
 
 // The ticket draft the model assembled, rendered as an approval card in the transcript. It walks
 // four states: the draft streaming in, the draft awaiting the user's Create/Dismiss decision, the
@@ -69,19 +69,19 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         icon={IconType.SUCCESS}
                         size="md"
                     />
-                    <Heading as="h3" size="h5">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.successTitle}
                     </Heading>
                 </div>
                 <div className="flex items-center gap-2">
                     <Tag label={result.identifier} variant="primary" />
                     {args.title != null && (
-                        <span className="min-w-0 truncate text-sm text-surface-secondary">
+                        <span className="min-w-0 truncate type-supporting--compact-detail text-surface-secondary">
                             {args.title}
                         </span>
                     )}
                 </div>
-                <p className="text-sm leading-normal text-surface-secondary">
+                <p className="type-body-compact--unstepped text-surface-secondary">
                     {chatCopy.ticketCard.contactUpdates}
                 </p>
             </div>
@@ -110,11 +110,11 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                         icon={IconType.WARNING}
                         size="md"
                     />
-                    <Heading as="h3" size="h5">
+                    <Heading as="h3" typeClassName="type-supporting">
                         {chatCopy.ticketCard.errorTitle}
                     </Heading>
                 </div>
-                <p className="text-sm leading-normal text-surface-secondary">
+                <p className="type-body-compact--unstepped text-surface-secondary">
                     {chatCopy.ticketCard.errorFallback}
                 </p>
                 <Button
@@ -153,7 +153,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         return (
             <div className={cardClassName}>
                 <div
-                    className="flex items-center gap-2 text-sm text-surface-secondary"
+                    className="flex items-center gap-2 type-supporting--compact-detail text-surface-secondary"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />
@@ -176,21 +176,21 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
         <div className={cardClassName}>
             {/* The ticket leads with itself: its title is the card's heading. */}
             {args.title != null && (
-                <Heading as="h3" size="h4">
+                <Heading as="h3" typeClassName="type-title-item">
                     {args.title}
                 </Heading>
             )}
             {args.description != null && (
-                <p className="text-sm leading-normal whitespace-pre-wrap text-surface-secondary-ticket">
+                <p className="type-body-compact--unstepped whitespace-pre-wrap text-surface-secondary-ticket">
                     {args.description}
                 </p>
             )}
             {steps.length > 0 && (
                 <div className="flex flex-col gap-1">
-                    <p className="text-sm leading-normal font-semibold text-surface-primary">
+                    <p className="type-body-compact--unstepped type-strong text-surface-primary">
                         {chatCopy.ticketCard.stepsLabel}
                     </p>
-                    <ol className="list-decimal pl-5 text-sm leading-normal text-surface-secondary-ticket">
+                    <ol className="list-decimal pl-5 type-body-compact--unstepped text-surface-secondary-ticket">
                         {steps.map((step, index) => (
                             // biome-ignore lint/suspicious/noArrayIndexKey: steps are positional and may repeat verbatim
                             <li key={`step-${index}`}>{step}</li>
@@ -202,11 +202,11 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 <>
                     {/* Deterministic invite to enrich the request: the model does not reliably
                         narrate around its tool call, so the card itself carries the nudge. */}
-                    <p className="text-xs leading-normal text-surface-tertiary">
+                    <p className="type-caption--chat-note text-surface-tertiary">
                         {chatCopy.ticketCard.addMore}
                     </p>
                     {args.contact != null && args.contact.length > 0 && (
-                        <p className="text-xs leading-normal text-surface-tertiary">
+                        <p className="type-caption--chat-note text-surface-tertiary">
                             {`${chatCopy.ticketCard.contactPrefix} ${args.contact}`}
                         </p>
                     )}
@@ -238,7 +238,7 @@ export const CreateTicketCard: ToolCallMessagePartComponent<
                 </>
             ) : (
                 <div
-                    className="flex items-center gap-2 text-xs text-surface-tertiary"
+                    className="flex items-center gap-2 type-caption--unstepped text-surface-tertiary"
                     role="status"
                 >
                     <Spinner size="sm" variant="neutral" />

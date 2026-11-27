@@ -230,7 +230,7 @@ Generic image avatar with size variants, a fallback and an optional corner badge
 
 **References**
 
-- `kit:src/core/components/avatars/avatar/avatar.tsx:134`
+- `kit:src/core/components/avatars/avatar/avatar.tsx:136`
 - `kit:src/core/components/avatars/avatar/avatar.stories.tsx:1`
 
 ### AvatarBase
@@ -516,7 +516,7 @@ Avatar specialized for a DAO (name + image with fallback).
 
 **References**
 
-- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:81`
+- `kit:src/modules/components/dao/daoAvatar/daoAvatar.tsx:83`
 - `kit:src/modules/components/dao/daoAvatar/daoAvatar.stories.tsx:1`
 
 ### DaoDataListItem.Skeleton
@@ -869,7 +869,7 @@ Semantic heading with size and rendered element (as h1..h5).
 
 **References**
 
-- `kit:src/core/components/heading/heading.tsx:28`
+- `kit:src/core/components/heading/heading.tsx:33`
 - `kit:src/core/components/heading/heading.stories.tsx:1`
 
 ### Icon

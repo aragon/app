@@ -31,6 +31,12 @@ class TokenPreviewUtils {
             label: 'Colour theme',
             modes: ['next', 'dark'],
         },
+        {
+            attribute: 'typography',
+            cookieName: 'aragon.debug.typographyPreview',
+            label: 'Typography',
+            modes: ['next'],
+        },
     ];
 
     /**

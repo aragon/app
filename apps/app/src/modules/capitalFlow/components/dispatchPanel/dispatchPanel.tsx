@@ -59,7 +59,7 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
     return (
         <Page.AsideCard title={t('app.capitalFlow.dispatchPanel.title')}>
             <div className="flex flex-col gap-6">
-                <p className="text-base text-surface-secondary">
+                <p className="type-body--unstepped text-surface-secondary">
                     {t('app.capitalFlow.dispatchPanel.description')}
                 </p>
                 <div className="flex flex-col gap-1">
@@ -69,11 +69,11 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
                             size="sm"
                             variant="primary"
                         />
-                        <span className="text-base text-surface-primary">
+                        <span className="type-supporting--body-size text-surface-primary">
                             {t('app.capitalFlow.dispatchPanel.routingTitle')}
                         </span>
                     </div>
-                    <p className="pl-9 text-sm text-surface-secondary">
+                    <p className="pl-9 type-supporting--compact-detail text-surface-secondary">
                         {t('app.capitalFlow.dispatchPanel.routingDescription')}
                     </p>
                 </div>

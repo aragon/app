@@ -44,8 +44,8 @@ export const CardSummary: React.FC<ICardSummaryProps> = (props) => {
                         { 'flex-col md:col-start-2 md:flex-row md:items-baseline': !isStacked },
                     )}
                 >
-                    <p className="text-2xl leading-tight font-normal text-surface-primary md:text-3xl">{value}</p>
-                    <p className="text-base leading-tight font-normal text-surface-secondary">{description}</p>
+                    <p className="type-stat--summary-card text-surface-primary type-numeric">{value}</p>
+                    <p className="type-supporting--detail-value text-surface-secondary">{description}</p>
                 </div>
             </div>
         </Card>

@@ -74,7 +74,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                 >
                     {t('app.finance.financeDetailsList.octavLabel')}
                 </Button>
-                <p className="text-sm text-surface-secondary">
+                <p className="type-supporting--compact-detail text-surface-secondary">
                     {t('app.finance.financeDetailsList.octavDescription')}
                 </p>
             </div>

@@ -95,7 +95,7 @@ export const TokenVotingOptionToggle: React.FC<
             value={value}
             {...otherProps}
         >
-            <p className="text-sm leading-tight font-normal md:text-base">
+            <p className="type-label-option">
                 {label}
                 {description && (
                     <span className="text-surface-secondary">

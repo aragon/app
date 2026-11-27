@@ -54,7 +54,7 @@ export const CryptexMembersFileDownload: React.FC<
         >
             {downloadedFileName && (
                 <Card className="px-6 py-2 shadow-surface-sm">
-                    <p className="text-sm text-surface-tertiary">
+                    <p className="type-body-compact--component-note text-surface-tertiary">
                         {t(
                             'app.daos.cryptex.cryptexMembersFileDownload.downloadedFile',
                             { fileName: downloadedFileName },

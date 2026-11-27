@@ -132,7 +132,10 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
             </Card>
             {resources != null && resources.length > 0 && (
                 <Card className="flex flex-col gap-3 p-6">
-                    <Heading size="h4">
+                    <Heading
+                        as="h4"
+                        typeClassName="type-title-group--small-panel"
+                    >
                         {t(
                             'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources',
                         )}

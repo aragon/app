@@ -54,10 +54,8 @@ const CodeHeader: React.FC<CodeHeaderProps> = ({ language, code }) => {
     };
 
     return (
-        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-b-0 border-surface-secondary bg-surface-secondary px-3.5 py-1.5 text-xs">
-            <span className="font-medium text-surface-secondary lowercase">
-                {language}
-            </span>
+        <div className="mt-3 flex items-center justify-between rounded-t-xl border border-b-0 border-surface-secondary bg-surface-secondary px-3.5 py-1.5 type-caption--unstepped">
+            <span className="text-surface-secondary lowercase">{language}</span>
             <TooltipIconButton
                 onClick={onCopy}
                 tooltip={chatCopy.markdown.copyCode}
@@ -80,7 +78,7 @@ const Code: React.FC<React.ComponentProps<'code'>> = ({
         <code
             className={classNames(
                 !isCodeBlock &&
-                    'rounded-md bg-surface-tertiary px-1.5 py-0.5 font-mono text-[0.85em]',
+                    'rounded-md bg-surface-tertiary px-1.5 py-0.5 type-mono text-[0.85em]',
                 className,
             )}
             {...props}
@@ -92,7 +90,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h1: ({ className, ...props }) => (
         <h1
             className={classNames(
-                'mt-5 mb-2 text-xl font-semibold first:mt-0 last:mb-0',
+                'mt-5 mb-2 type-title-page--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -101,7 +99,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h2: ({ className, ...props }) => (
         <h2
             className={classNames(
-                'mt-5 mb-2 text-lg font-semibold first:mt-0 last:mb-0',
+                'mt-5 mb-2 type-title-section--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -110,7 +108,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h3: ({ className, ...props }) => (
         <h3
             className={classNames(
-                'mt-4 mb-1.5 text-base font-semibold first:mt-0 last:mb-0',
+                'mt-4 mb-1.5 type-title-group--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -119,7 +117,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h4: ({ className, ...props }) => (
         <h4
             className={classNames(
-                'mt-3.5 mb-1 text-base font-medium first:mt-0 last:mb-0',
+                'mt-3.5 mb-1 type-title-item--chat-markdown first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -128,7 +126,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h5: ({ className, ...props }) => (
         <h5
             className={classNames(
-                'mt-3 mb-1 text-sm font-semibold first:mt-0 last:mb-0',
+                'mt-3 mb-1 type-supporting--chat-markdown type-strong first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -137,7 +135,7 @@ const defaultComponents = memoizeMarkdownComponents({
     h6: ({ className, ...props }) => (
         <h6
             className={classNames(
-                'mt-3 mb-1 text-sm font-medium first:mt-0 last:mb-0',
+                'mt-3 mb-1 type-caption--compact-label first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -146,7 +144,7 @@ const defaultComponents = memoizeMarkdownComponents({
     p: ({ className, ...props }) => (
         <p
             className={classNames(
-                'my-3 leading-relaxed first:mt-0 last:mb-0',
+                'my-3 type-body-compact--chat-message first:mt-0 last:mb-0',
                 className,
             )}
             {...props}
@@ -198,15 +196,18 @@ const defaultComponents = memoizeMarkdownComponents({
         />
     ),
     li: ({ className, ...props }) => (
-        <li className={classNames('leading-relaxed', className)} {...props} />
+        <li
+            className={classNames('type-body-compact--chat-message', className)}
+            {...props}
+        />
     ),
     strong: ({ className, ...props }) => (
-        <strong className={classNames('font-semibold', className)} {...props} />
+        <strong className={classNames('type-strong', className)} {...props} />
     ),
     sup: ({ className, ...props }) => (
         <sup
             className={classNames(
-                '[&>a]:text-xs [&>a]:no-underline',
+                '[&>a]:type-caption--unstepped [&>a]:no-underline',
                 className,
             )}
             {...props}
@@ -225,7 +226,7 @@ const defaultComponents = memoizeMarkdownComponents({
         <div className="my-3 overflow-x-auto">
             <table
                 className={classNames(
-                    'w-full border-collapse text-sm',
+                    'w-full border-collapse type-body-compact--component-note',
                     className,
                 )}
                 {...props}
@@ -235,7 +236,7 @@ const defaultComponents = memoizeMarkdownComponents({
     th: ({ className, ...props }) => (
         <th
             className={classNames(
-                'border border-surface-secondary bg-surface-secondary px-2 py-1 text-left font-semibold',
+                'border border-surface-secondary bg-surface-secondary px-2 py-1 text-left type-strong',
                 className,
             )}
             {...props}

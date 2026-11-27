@@ -10,7 +10,9 @@ import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { useTokenPreview } from '../../hooks/useTokenPreview';
 import { DebugPanelControl } from './debugPanelControl';
 import { WorkspaceRegistryControls } from './workspaceRegistryControls';
-// The kit's preview value sets (Next, Dark): loaded with the panel only, so they never reach other users.
+// The kit's preview value sets (Next, Dark) and the Next faces: loaded with the panel only, so they never reach other
+// users.
+import '../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/nextTypographyFonts.css';
 import '../../../../../node_modules/@aragon/gov-ui-kit/design-system/tokens/preview/index.css';
 
 const groupOrder: Record<string, number> = {

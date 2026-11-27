@@ -105,7 +105,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                             <div className="relative flex grow">
                                 {valueLabel && (
                                     <p
-                                        className="absolute -top-5 text-xs whitespace-nowrap text-accent-primary transition-all duration-500 ease-in-out"
+                                        className="absolute -top-5 type-caption--unstepped whitespace-nowrap text-accent-primary transition-all duration-500 ease-in-out"
                                         style={valueLabelStyle}
                                     >
                                         {valueLabel}
@@ -120,7 +120,7 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
                         </div>
 
                         {totalLabel && (
-                            <p className="self-end text-xs leading-tight font-normal text-surface-secondary">
+                            <p className="self-end type-caption--input-hint text-surface-secondary">
                                 {totalLabel}
                             </p>
                         )}
