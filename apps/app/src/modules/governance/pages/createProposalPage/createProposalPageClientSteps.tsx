@@ -1,16 +1,19 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
 } from '../../components/createProposalForm';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import type { SimulateActionsTarget } from '../../dialogs/simulateActionsDialog';
 import { useSimulateActionsDropdown } from '../../hooks/useSimulateActionsDropdown';
 import {
     CreateProposalWizardStep,
@@ -55,9 +58,15 @@ export const CreateProposalPageClientSteps: React.FC<
     const hideSettingsStep =
         pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
+    const { network } = daoUtils.parseDaoId(daoId);
+    const simulationTarget = useMemo<SimulateActionsTarget>(
+        () => ({ type: 'plugin', pluginAddress }),
+        [pluginAddress],
+    );
+
     const simulateDropdownItems = useSimulateActionsDropdown({
-        daoId,
-        from: pluginAddress,
+        network,
+        target: simulationTarget,
         formId: createProposalWizardId,
     });
 

@@ -6,4 +6,5 @@ export const SimulateActionsDialog = dynamic(() =>
 export type {
     ISimulateActionsDialogParams,
     ISimulateActionsDialogProps,
+    SimulateActionsTarget,
 } from './simulateActionsDialog';

@@ -10,29 +10,33 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     useSimulateDirectExecuteActions,
     useSimulateProposalActions,
+    useSimulateSafeActions,
 } from '../../api/actionSimulationService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
+/**
+ * What runs the actions, which decides how they are simulated:
+ * - `plugin`: a governance plugin calls `DAO.execute`, for a proposal;
+ * - `dao`: the connected wallet calls `DAO.execute` directly (`from`), for direct execution;
+ * - `safe`: the Safe runs them as one transaction, from one of its owners, before the transaction is created.
+ */
+export type SimulateActionsTarget =
+    | { type: 'plugin'; pluginAddress: string }
+    | { type: 'dao'; daoAddress: string; from: string }
+    | { type: 'safe'; safeAddress: string };
+
 export interface ISimulateActionsDialogParams {
     /**
-     * Network of the DAO.
+     * Network the actions run on.
      */
     network: Network;
     /**
-     * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
-     * `from` address): the governance plugin for proposals, the connected wallet for direct
-     * execution.
+     * What runs the actions.
      */
-    from: string;
+    target: SimulateActionsTarget;
     /**
-     * Address of the DAO the actions are executed on. Set only for direct execution, in which case
-     * the actions are simulated against the DAO from the connected wallet (`from`) instead of a
-     * governance plugin.
-     */
-    daoAddress?: string;
-    /**
-     * List of actions to simulate.
+     * List of actions to simulate, already prepared.
      */
     actions: IProposalCreateAction[];
     /**
@@ -53,29 +57,39 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         location.params != null,
         'SimulateActionsDialog: params must be set for the dialog to work correctly',
     );
-    const { actions, network, from, daoAddress, formId } = location.params;
+    const { actions, network, target, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const proposalSimulation = useSimulateProposalActions();
     const directExecuteSimulation = useSimulateDirectExecuteActions();
+    const safeSimulation = useSimulateSafeActions();
 
-    const isDirectExecute = daoAddress != null;
-    const activeSimulation = isDirectExecute
-        ? directExecuteSimulation
-        : proposalSimulation;
-
+    const simulations = {
+        plugin: proposalSimulation,
+        dao: directExecuteSimulation,
+        safe: safeSimulation,
+    };
     const {
         isError,
         isPending,
         status,
         data,
-        error: simulationError,
-    } = activeSimulation;
+        error: failure,
+    } = simulations[target.type];
 
     useEffect(() => {
         if (status !== 'idle') {
+            return;
+        }
+
+        if (target.type === 'safe') {
+            safeSimulation.mutate({
+                network,
+                safeAddress: target.safeAddress,
+                actions,
+            });
             return;
         }
 
@@ -85,37 +99,37 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
             value: value.toString(),
         }));
 
-        if (isDirectExecute) {
+        if (target.type === 'dao') {
             directExecuteSimulation.mutate({
-                urlParams: { network, daoAddress },
-                body: { from, actions: processedActions },
+                urlParams: { network, daoAddress: target.daoAddress },
+                body: { from: target.from, actions: processedActions },
             });
         } else {
             proposalSimulation.mutate({
-                urlParams: { network, pluginAddress: from },
+                urlParams: { network, pluginAddress: target.pluginAddress },
                 body: { actions: processedActions },
             });
         }
     }, [
         actions,
         network,
-        from,
-        isDirectExecute,
+        target,
         status,
         directExecuteSimulation.mutate,
         proposalSimulation.mutate,
-        daoAddress,
+        safeSimulation.mutate,
     ]);
 
     const hasSimulationFailed = isError || data?.status === 'failed';
     const lastSimulation =
         data != null ? { ...data, timestamp: data.runAt } : undefined;
 
+    // A Safe transaction that cannot be built failed on a chain read, so it reads as unavailable like a network error.
     let errorContext = 'error';
-    if (AragonBackendServiceError.isSimulationBudgetError(simulationError)) {
+    if (AragonBackendServiceError.isSimulationBudgetError(failure)) {
         errorContext = 'limitReached';
     } else if (
-        AragonBackendServiceError.isSimulationUnavailableError(simulationError)
+        AragonBackendServiceError.isSimulationUnavailableError(failure)
     ) {
         errorContext = 'unavailable';
     }
