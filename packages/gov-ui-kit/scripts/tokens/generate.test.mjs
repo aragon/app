@@ -102,6 +102,20 @@ test('a spacing value becomes a theme variable per dimension and width, the app-
     assert.doesNotMatch(roles, /inset-page/);
 });
 
+test('a status shadow primitive has no class name, and each status shadow role aliases one', () => {
+    const files = generate();
+    const declarations = (layer) =>
+        [...files.get(resolve(kitRoot, `src/theme/tokens/${layer}/shadows.css`)).matchAll(/^ {4}(--[\w-]+): (.+);$/gm)]
+            .map(([, name, value]) => [name, value])
+            .filter(([name]) => /^--shadow-(?:success|warning|critical|info)(?:-|$)/.test(name));
+    assert.deepEqual(declarations('primitives'), []);
+    const roles = declarations('semantic');
+    assert(roles.length > 0);
+    for (const [name, value] of roles) {
+        assert.match(value, /^var\(--guk-shadow-[\w-]+\)$/, name);
+    }
+});
+
 test('a changed token makes its file stale', (context) => {
     const dir = mutated(context, 'primitives.tokens.json', (json) => {
         json.radius.md.$value.value = 5;
@@ -345,7 +359,7 @@ test('a mode inside an at-rule adds to the same mode outside it and writes only 
     assert(coarse.includes('--guk-space-height-control-md: 40px;'));
     assert(compact.includes('--guk-space-height-control-md: 36px;'));
     // An exception that follows its size follows it inside the at-rule too.
-    assert(coarse.includes('--guk-space-y-control-lg--fixed-8: 12px;'));
+    assert(coarse.includes('--guk-space-y-control-lg--fixed-16: 12px;'));
     assert.deepEqual(
         coarse.filter((line) => compact.includes(line)),
         [],
@@ -357,6 +371,43 @@ test('a mode inside an at-rule adds to the same mode outside it and writes only 
     assert.deepEqual(
         coarse.filter((line) => !after.includes(line)),
         ['--guk-space-height-control-md: 40px;'],
+    );
+});
+
+test('in looser no spacing value is tighter than the default, in compact none is looser', () => {
+    const files = generate();
+    const values = (lines) =>
+        new Map(
+            lines.map((line) => {
+                const [, name, px] = line.match(/^(--[\w-]+): (\d+)px;$/);
+                return [name, Number(px)];
+            }),
+        );
+    const defaults = values(
+        [cssFile('roles', 'spacing'), resolve(kitRoot, 'design-system/tokens/app/spacing.css')].flatMap((file) =>
+            declarations(files.get(file), '@theme'),
+        ),
+    );
+    const preview = files.get(previewFile('spacing'));
+    // The coarse block writes only what differs from compact; the rest is checked with compact.
+    const blocks = [
+        ['spacing.looser', declarations(preview, SPACING('looser')), (px, def) => px < def],
+        ['spacing.compact', declarations(preview, SPACING('compact')), (px, def) => px > def],
+        [
+            'spacing.compact.coarse',
+            declarations(preview, SPACING('compact'), '@media (pointer: coarse)'),
+            (px, def) => px > def,
+        ],
+    ];
+    const wrongWay = blocks.flatMap(([document, lines, isWrong]) =>
+        [...values(lines)]
+            .filter(([name, px]) => isWrong(px, defaults.get(name)))
+            .map(([name, px]) => `${document}: ${name} is ${px}px, default ${defaults.get(name)}px`),
+    );
+    assert.deepEqual(
+        wrongWay,
+        [],
+        'Set these to their default value in modes/<document>.tokens.json: an exception the document leaves out follows its role or size',
     );
 });
 
@@ -386,6 +437,7 @@ test('role classes compile once, after their primitive siblings, and keep varian
         'hover:bg-surface-hover',
         'aria-disabled:text-surface-disabled',
         'md:border-x-accent-default',
+        'shadow-success-sm',
     ]);
     const rule = (selector) => {
         const rules = css.match(
@@ -410,6 +462,8 @@ test('role classes compile once, after their primitive siblings, and keep varian
     );
     assert.equal(rule('.md\\:border-x-accent-default'), 'border-inline-color: var(--guk-border-accent-default); }');
     assert.equal(rule('.probe'), 'background-color: var(--guk-bg-surface-primary); }');
+    // A status shadow class reads the primitive's variable, which a preview mode overrides.
+    assert.match(rule('.shadow-success-sm'), /^--tw-shadow: var\(--guk-shadow-success-sm\);/);
     assert(css.indexOf('.bg-neutral-0 {') < css.indexOf('.bg-surface-primary {'));
     assert(css.indexOf('.icon-surface-primary {') < css.indexOf('.text-surface-primary {'));
     assert.match(css, /--guk-bg-surface-primary: var\(--color-neutral-0\);/);

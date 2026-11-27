@@ -85,6 +85,11 @@ Components take colours from roles, not from the primitive ramps. Three tiers:
 The variables are `--guk-<family>-<group>-<role>` theme variables; shadows are `--shadow-<group>-<size>` on Tailwind's
 own namespace. Tailwind emits only the variables a class or a `var()` in the scanned source uses.
 
+Shadow classes: the neutral and primary primitives keep their Tailwind names, and their classes (`shadow-neutral-sm`)
+inline the default value, so they ignore a preview mode. The status primitives are `--guk-shadow-<status>-<size>`,
+which no utility reads, so `shadow-success-sm` is the class of the `semantic.shadow.success.sm` role and follows the
+mode.
+
 Classes: `src/theme/tokens/colorRoles.css` declares one functional utility per family and property (`bg-*`, `text-*`,
 `icon-*`, `border-*` and its sides, `ring-*`) that reads those variables, so `bg-surface-primary` sets
 `background-color: var(--guk-bg-surface-primary)`. A value with no role variable falls through to Tailwind's own
@@ -98,9 +103,7 @@ needs a `cssNames` rule in `semantic.config.json`; a new family also needs its u
 Modes: `semantic.config.json` `preview` defines Next and Dark as documents merged over the default theme (`modes/`
 holds the designer's palette, its primitives, shadows and roles). The generator writes, per mode selector, every token
 whose value differs from the default as a literal to `design-system/tokens/preview/`. The file is not in the npm
-package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel. Tailwind
-inlines a literal shadow into its utility, so a primitive shadow class (`shadow-success-sm`) keeps its default colour
-in every mode; the alias shadows (`shadow-surface-*`, `shadow-accent-*`, `shadow-<status>-default`) read the variable.
+package: Storybook switches it from `.storybook/tokenPreviews.json`, the app loads it with its debug panel.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveColors.grit` flag primitive colour classes and variables in kit and app
 source outside the theme. A class kept on purpose takes `biome-ignore lint/plugin/noPrimitiveColors: <reason>` on the
@@ -215,10 +218,12 @@ Padding, margins, gaps and control heights take a role by its job, not a number.
 - **Previews**: `modes/spacing.new.tokens.json`, `spacing.looser.tokens.json` and `spacing.compact.tokens.json` hold the
   values that differ from the default theme, `spacing.compact.coarse.tokens.json` the controls that keep their New size
   on a touch screen (written inside `@media (pointer: coarse)`). To change a preview value, edit or add it in its mode
-  document (a missing `base` or `md` keeps the default) and run `pnpm tokens:generate`. An exception follows its role,
+  document (a `base` or `md` a role or size leaves out keeps the default) and run `pnpm tokens:generate`. An exception follows its role,
   a `control-*` one its size, unless its mode document sets it: the navigation chrome and the density-invariant
-  exceptions have their own values there. `design-system/tokens/preview/spacing.css` sets the modes under
-  `data-spacing="new|looser|compact"`; Storybook (toolbar) and the app's debug panel load it.
+  exceptions have their own values there, and an exception its role would move the wrong way (tighter than the
+  default in looser, looser in compact) keeps its default value there; `generate.test.mjs` checks the direction.
+  `design-system/tokens/preview/spacing.css` sets the modes under `data-spacing="new|looser|compact"`; Storybook
+  (toolbar) and the app's debug panel load it.
 
 Lint: `biome-plugins/{js,css}/noPrimitiveSpacing.grit` flag number, `px`, arbitrary and variable values of padding,
 margin, gap and space classes (`p-4`, `md:gap-x-2.5`, `-ml-1`, `pt-[72px]`) outside the theme; zero and `auto` pass. A

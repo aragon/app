@@ -6,7 +6,7 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "ac44d85c3adb6badbcde2ac59ea39434c62e509f",
+            "commit": "9c76739deb70804548b76285c1baed018c414f0c",
             "dirty": [],
             "sourceVersion": "3.1.0",
             "entrypoints": {
@@ -3077,7 +3077,7 @@
                 "repository": "kit",
                 "path": "build.css",
                 "line": 1,
-                "sha256": "cbac7d81b82ee1b49882e83a86866b3479f187f0d000617565908e7ffd832a6b"
+                "sha256": "bfe14b9e925d42f3d345600a50398b435da1dab79ed84a3c9239acb316ba7ca7"
             },
             "props": [],
             "stories": [],

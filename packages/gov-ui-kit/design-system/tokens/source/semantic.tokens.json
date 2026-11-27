@@ -916,21 +916,49 @@
             "success": {
                 "default": {
                     "$value": "{shadow.success}"
+                },
+                "sm": {
+                    "$value": "{shadow.success-sm}"
+                },
+                "md": {
+                    "$value": "{shadow.success-md}",
+                    "$description": "Elevation of the success tooltip."
                 }
             },
             "warning": {
                 "default": {
                     "$value": "{shadow.warning}"
+                },
+                "sm": {
+                    "$value": "{shadow.warning-sm}"
+                },
+                "md": {
+                    "$value": "{shadow.warning-md}",
+                    "$description": "Elevation of the warning tooltip."
                 }
             },
             "critical": {
                 "default": {
                     "$value": "{shadow.critical}"
+                },
+                "sm": {
+                    "$value": "{shadow.critical-sm}"
+                },
+                "md": {
+                    "$value": "{shadow.critical-md}",
+                    "$description": "Elevation of the critical tooltip."
                 }
             },
             "info": {
                 "default": {
                     "$value": "{shadow.info}"
+                },
+                "sm": {
+                    "$value": "{shadow.info-sm}"
+                },
+                "md": {
+                    "$value": "{shadow.info-md}",
+                    "$description": "Elevation of the info tooltip."
                 }
             }
         },

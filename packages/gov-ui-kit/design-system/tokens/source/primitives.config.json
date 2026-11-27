@@ -1,5 +1,5 @@
 {
-    "$description": "How primitives.tokens.json becomes CSS. cssNames: the custom property of each token path (`*` captures one path segment, `$1`.. reinsert it; first match wins). files: the generated files of src/theme/tokens/primitives/, in the order their barrel imports them; each maps a selector or at-rule to its lines. A line ending in `;` is CSS that has no DTCG form (a namespace reset, `--radius-none: none`); any other line is a token path and places that token, or every token under that group, in document order.",
+    "$description": "How primitives.tokens.json becomes CSS. cssNames: the custom property of each token path (`*` captures one path segment, `$1`.. reinsert it; first match wins). The neutral and primary shadows keep Tailwind's `--shadow-*` names and so their classes (`shadow-neutral-sm`); the status shadows are `--guk-shadow-*`, which no utility reads, so `shadow-<status>-<size>` is the class of a semantic role. files: the generated files of src/theme/tokens/primitives/, in the order their barrel imports them; each maps a selector or at-rule to its lines. A line ending in `;` is CSS that has no DTCG form (a namespace reset, `--radius-none: none`); any other line is a token path and places that token, or every token under that group, in document order.",
     "cssNames": {
         "color.transparent": "--color-transparent",
         "color.*.*": "--color-$1-$2",
@@ -13,7 +13,19 @@
         "font.size.*": "--text-$1",
         "font.leading.*": "--leading-$1",
         "font.leadingDefault.*": "--leading-default-$1",
-        "shadow.*": "--shadow-$1",
+        "shadow.neutral-sm": "--shadow-neutral-sm",
+        "shadow.neutral": "--shadow-neutral",
+        "shadow.neutral-md": "--shadow-neutral-md",
+        "shadow.neutral-lg": "--shadow-neutral-lg",
+        "shadow.neutral-xl": "--shadow-neutral-xl",
+        "shadow.neutral-2xl": "--shadow-neutral-2xl",
+        "shadow.primary-sm": "--shadow-primary-sm",
+        "shadow.primary": "--shadow-primary",
+        "shadow.primary-md": "--shadow-primary-md",
+        "shadow.primary-lg": "--shadow-primary-lg",
+        "shadow.primary-xl": "--shadow-primary-xl",
+        "shadow.primary-2xl": "--shadow-primary-2xl",
+        "shadow.*": "--guk-shadow-$1",
         "ring.color.*": "--ring-color-$1"
     },
     "files": {
