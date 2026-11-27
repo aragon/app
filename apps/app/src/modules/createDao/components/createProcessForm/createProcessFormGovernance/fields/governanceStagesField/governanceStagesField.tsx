@@ -57,13 +57,13 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
             <div className="flex flex-col gap-6 rounded-xl border border-surface-secondary bg-surface-primary p-4 shadow-surface-sm md:p-12">
                 <div className="flex items-start justify-between gap-6">
                     <div className="flex flex-col gap-2">
-                        <p className="text-lg leading-tight text-surface-primary md:text-2xl">
+                        <p className="type-title-group--wizard-intro text-surface-primary">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.heading',
                                 { daoName: dao?.name ?? daoId },
                             )}
                         </p>
-                        <p className="text-sm leading-normal text-surface-secondary md:text-base">
+                        <p className="type-body-compact text-surface-secondary">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.description',
                             )}
@@ -76,10 +76,10 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                         />
                     </div>
                 </div>
-                <ol className="flex flex-col gap-3 text-sm leading-normal text-surface-secondary md:text-base">
+                <ol className="flex flex-col gap-3 type-body-compact text-surface-secondary">
                     {gatedFeatureKeys.map((key) => (
                         <li className="flex items-baseline gap-3" key={key}>
-                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-secondary text-sm text-surface-secondary">
+                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-secondary type-caption--compact-label text-surface-secondary">
                                 {key}
                             </span>
                             <span>

@@ -1,0 +1,51 @@
+# The "App OCC" workflow deploys main (or the dispatched ref) to OCC (new.app.aragon.org) by hand,
+# outside a release, and runs the smoke suite against it. Production is not touched. The deploy
+# opens its own Slack thread, which the test results join. The next production release or
+# rollback puts OCC back on its tag.
+
+name: App OCC
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  # Same OCC group as the deploy-occ jobs of app-production.yml and app-rollback.yml: the latest
+  # deploy to OCC wins.
+  deploy:
+    concurrency:
+      group: occ-deployment
+      cancel-in-progress: true
+    uses: aragon/github-templates/.github/workflows/deploy-vercel.yml@v1
+    with:
+      env: occ
+      prod: true
+      domain: new.app.aragon.org
+      vercel-scope: aragon-app
+      workspace: apps/app
+      op-infra-vault: kv_app_infra
+      op-env-vault: kv_app_production
+      setup-command: pnpm run setup occ
+      patch-root-directory: true
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+
+  e2e:
+    needs: deploy
+    uses: aragon/github-templates/.github/workflows/e2e.yml@v1
+    with:
+      deployment-url: https://new.app.aragon.org
+      environment: occ
+      working-directory: apps/app
+      env-secret-refs: |
+        E2E_BYPASS_TOKEN=op://kv_app_infra/E2E_BYPASS_TOKEN/credential
+      artifact-viewer-host: gh-artifact-viewer.aragonservices.in
+      slack-thread-ts: ${{ needs.deploy.outputs.slack-ts }}
+      op-slack-bot-token-path: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+      op-slack-channel-id-path: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}

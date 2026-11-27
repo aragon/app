@@ -72,10 +72,11 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `src/index.css` pulls in core + theme CSS.
   Tokens are defined once, as DTCG JSON in `design-system/tokens/source/`, and `pnpm tokens:generate` writes the
   `@theme` CSS under `src/theme/tokens/primitives/` (the `--color-*` ramps, shadows, radius, type) and
-  `src/theme/tokens/semantic/` (the `--guk-<family>-*` colour roles), and the aliases only the app uses under
-  `design-system/tokens/app/` (not published; the app imports it). Components use role classes such as
-  `bg-surface-primary`, `text-surface-secondary` and `icon-accent-primary`, the functional utilities of
-  `src/theme/tokens/colorRoles.css`.
+  `src/theme/tokens/semantic/` and `typography/` (the `--guk-<family>-*` colour roles, the `--guk-type-*` type roles),
+  and the colour aliases and type exceptions only the app uses under `design-system/tokens/app/` (not published; the
+  app imports it). Components use role classes such as `bg-surface-primary`, `text-surface-secondary`,
+  `icon-accent-primary` and `type-supporting`, the functional utilities of `src/theme/tokens/colorRoles.css` and
+  `typeRoles.css`.
 - **Icons:** SVG imports are transformed by SVGR in Rollup/Storybook. Adding an icon means
   adding the SVG under `src/core/assets/icons/` and registering it in
   `src/core/components/icon/iconType.ts` and `iconList.ts` (checked-in registries).
@@ -94,12 +95,16 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
   `biome-ignore lint/plugin/noPrimitiveColors: <reason>` above it says why. A colour class passed through
   `className` that sets a property the component already sets needs the important modifier (`bg-surface-hover!`):
   utilities of one property are emitted in alphabetical order, so source order decides nothing.
+- **Typography roles, not primitive type classes.** Text takes a `type-<role>` class (or a documented
+  `type-<role>--<pattern>` exception) and the modifiers `type-strong`, `type-mono`, `type-numeric`, not `text-sm`,
+  `leading-*`, `font-semibold` or `tracking-*`; `lint:check` fails on those unless a
+  `biome-ignore lint/plugin/noPrimitiveTypography: <reason>` above it says why.
 - **No Tailwind arbitrary spacing/values** (`p-[17px]`, `w-[42%]`). Use the token/scale.
 - **No component without a co-located `*.stories.tsx`.** Storybook is the docs source of truth.
 - **Do not build custom dropdown/dialog/tooltip primitives outside the kit.** Reuse the
   Radix-based primitives in `src/core/components`.
 - **Design tokens are generated.** Edit the DTCG source in `design-system/tokens/source/` (see
-  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/{primitives,semantic}/`
+  `design-system/tokens/README.md`) and run `pnpm tokens:generate`; never edit `src/theme/tokens/*/`
   or `design-system/tokens/{app,preview}/` by hand (`pnpm test` fails on a stale file). Do not edit tokens without CODEOWNERS review
   (`@aragon/app-team`). Tokens are the theming contract.
 - **Preserve accessibility when composing.** Radix gives primitives their a11y; components in
@@ -136,7 +141,7 @@ app and the kit needs two changeset files. `pnpm validate:changesets` enforces t
 - `src/core/components/` — reusable primitives and their stories/tests.
 - `src/modules/` — governance feature components and composition.
 - `design-system/tokens/source/` — the design-token source (DTCG JSON plus config), README in the parent folder;
-  `src/theme/tokens/{primitives,semantic}/` and `design-system/tokens/app/` — the CSS generated from it; all CODEOWNERS-gated (`@aragon/app-team`).
+  `src/theme/tokens/*/` and `design-system/tokens/app/` — the CSS generated from it; all CODEOWNERS-gated (`@aragon/app-team`).
 - `docs/codingGuidelines/` — dependency and coding guidance.
 - `docs/`, `.storybook/main.ts`, `.storybook/preview.tsx` — Storybook docs/config.
 - `package.json`, `turbo.json`, `biome.jsonc`, `tsconfig.json` — scripts, deps, Turbo/lint/TS rules

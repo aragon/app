@@ -137,11 +137,11 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                         type={type}
                     />
                     <div className="flex min-w-0 grow flex-col gap-1">
-                        <span className="truncate text-base leading-tight text-surface-primary">
+                        <span className="truncate type-title-item--compact-card text-surface-primary">
                             {name ?? addressOutput}
                         </span>
                         {/* An unnamed account is titled by its address, so only the network shows here. */}
-                        <span className="flex min-w-0 items-baseline gap-1.5 text-sm leading-tight">
+                        <span className="flex min-w-0 items-baseline gap-1.5 type-supporting--compact-meta">
                             <span className="shrink-0 text-surface-primary">
                                 {networkName}
                             </span>
@@ -155,7 +155,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     {isMultiSelect ? (
                         <div className="flex shrink-0 items-center gap-3">
                             {note != null && (
-                                <span className="text-sm leading-tight text-surface-secondary">
+                                <span className="type-control-sm text-surface-secondary">
                                     {note}
                                 </span>
                             )}
@@ -187,7 +187,7 @@ export const WorkspaceSelectAccountDialogItem: React.FC<
                     )}
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-sm text-surface-tertiary-hint md:text-base">
+                    <div className="type-supporting--framework-leading text-surface-tertiary-hint">
                         {t(
                             'app.workspace.workspaceSelectAccountDialogItem.notEligible',
                         )}

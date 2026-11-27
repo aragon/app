@@ -46,7 +46,7 @@ export interface ITextAreaRichTextProps
 // (see https://tiptap.dev/docs/editor/api/extensions/placeholder#additional-setup)
 const placeholderClasses = classNames(
     'first:before:pointer-events-none first:before:absolute first:before:top-5', // General
-    'first:before:text-base/tight first:before:font-normal first:before:text-surface-placeholder', // Typography
+    'first:before:type-control first:before:text-surface-placeholder', // Typography
     'first:before:content-[attr(data-placeholder)]', // Content
 );
 
@@ -80,7 +80,7 @@ export const TextAreaRichText: React.FC<ITextAreaRichTextProps> = (props) => {
         immediatelyRender,
         editorProps: {
             attributes: {
-                class: 'relative outline-hidden p-4 [overflow-wrap:anywhere]! prose prose-neutral min-h-40 h-full max-w-none leading-normal',
+                class: 'relative outline-hidden p-4 [overflow-wrap:anywhere]! prose prose-neutral min-h-40 h-full max-w-none type-body--unstepped',
                 role: 'textbox',
                 'aria-labelledby': randomId,
             },

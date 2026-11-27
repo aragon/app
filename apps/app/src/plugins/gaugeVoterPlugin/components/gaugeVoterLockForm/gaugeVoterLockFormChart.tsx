@@ -178,17 +178,19 @@ export const GaugeVoterLockFormChart: React.FC<
     return (
         <div className="w-full py-2">
             <div className="mb-3">
-                <p className="font-semibold! text-surface-primary">
-                    {formatterUtils.formatNumber(activePoint.y, {
-                        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                    })}{' '}
-                    <span className="font-normal">
+                <p>
+                    <span className="type-strong text-surface-primary">
+                        {formatterUtils.formatNumber(activePoint.y, {
+                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                        })}{' '}
+                    </span>
+                    <span>
                         {t(
                             'app.plugins.gaugeVoter.gaugeVoterLockForm.chart.votingPower',
                         )}
                     </span>
                 </p>
-                <span className="text-sm text-surface-secondary md:text-base">
+                <span className="type-supporting--framework-leading text-surface-secondary">
                     {activePoint.x}
                 </span>
             </div>
@@ -215,7 +217,7 @@ export const GaugeVoterLockFormChart: React.FC<
                     </defs>
                     <XAxis
                         axisLine={false}
-                        className="text-xs"
+                        className="type-caption--unstepped"
                         dataKey="x"
                         interval={0}
                         tick={{ dy: 12 }}
@@ -225,7 +227,7 @@ export const GaugeVoterLockFormChart: React.FC<
                     />
                     <YAxis
                         axisLine={false}
-                        className="text-xs"
+                        className="type-caption--unstepped"
                         dataKey="y"
                         domain={[yDomainMin, yDomainMax]}
                         orientation="right"

@@ -166,6 +166,7 @@ export const AvatarStack: React.FC<IAvatarStackProps> = (props) => {
                     fallback={
                         <span
                             aria-label={`+${overflowCount}`}
+                            // biome-ignore lint/plugin/noPrimitiveTypography: the "+n" counter is an avatar glyph, like the initials
                             className="flex size-full items-center justify-center bg-surface-secondary font-semibold text-surface-secondary"
                             role="img"
                         >

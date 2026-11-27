@@ -22,7 +22,7 @@ export const ChatRequestHistory: React.FC = () => {
 
     if (requestHistory.length === 0) {
         return (
-            <p className="flex flex-1 items-center justify-center p-6 text-center text-sm text-surface-tertiary">
+            <p className="flex flex-1 items-center justify-center p-6 text-center type-body-compact--component-note text-surface-tertiary">
                 {chatCopy.requestHistory.empty}
             </p>
         );
@@ -36,10 +36,10 @@ export const ChatRequestHistory: React.FC = () => {
                     key={entry.identifier}
                 >
                     <Tag label={entry.identifier} variant="primary" />
-                    <span className="min-w-0 flex-1 truncate text-sm text-surface-primary">
+                    <span className="min-w-0 flex-1 truncate type-title-item--chat text-surface-primary">
                         {entry.summary}
                     </span>
-                    <span className="flex-none text-sm text-surface-tertiary">
+                    <span className="flex-none type-supporting--compact-detail text-surface-tertiary">
                         {formatCreatedAt(entry.createdAt)}
                     </span>
                 </div>

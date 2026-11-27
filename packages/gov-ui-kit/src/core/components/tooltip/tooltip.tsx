@@ -141,7 +141,7 @@ export const Tooltip: React.FC<ITooltipProps> = (props) => {
                     <Content
                         className={classNames(
                             variantToContentClassName[variant],
-                            'z-50 box-border flex min-h-6 max-w-[var(--radix-tooltip-content-available-width)] items-center rounded-md px-1.5 text-sm leading-tight font-semibold break-all whitespace-normal',
+                            'z-50 box-border flex min-h-6 max-w-[var(--radix-tooltip-content-available-width)] items-center rounded-md px-1.5 type-tooltip break-all whitespace-normal',
                             className,
                         )}
                         {...otherProps}

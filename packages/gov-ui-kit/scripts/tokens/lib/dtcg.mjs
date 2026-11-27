@@ -10,12 +10,12 @@ export const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const isAlias = (value) => typeof value === 'string' && value.startsWith('{') && value.endsWith('}');
 const aliasTarget = (value) => value.slice(1, -1);
 
-// Path ("color.primary.50") -> { type, value } in document order. A group's $type is inherited.
+// Path ("color.primary.50") -> { type, value, extensions } in document order. A group's $type is inherited.
 const collectTokens = (group, inheritedType, prefix = '', tokens = new Map()) => {
     const type = group.$type ?? inheritedType;
     if (Object.hasOwn(group, '$value')) {
         assert(type, `Missing type: ${prefix}`);
-        tokens.set(prefix, { type, value: group.$value });
+        tokens.set(prefix, { type, value: group.$value, extensions: group.$extensions?.['org.aragon.gov-ui-kit'] });
         return tokens;
     }
     for (const [key, child] of Object.entries(group)) {
@@ -26,8 +26,8 @@ const collectTokens = (group, inheritedType, prefix = '', tokens = new Map()) =>
     return tokens;
 };
 
-// The token paths a document defines, in document order.
-export const tokenPaths = (document) => [...collectTokens(document).keys()];
+// The token paths a document defines, in document order (a typography composite as its parts).
+export const tokenPaths = (document) => [...expandComposites(collectTokens(document)).keys()];
 
 // Follows aliases to the token that holds a value.
 const resolveToken = (tokens, path, chain = []) => {
@@ -51,6 +51,32 @@ const checkShadowLiterals = (value, path) => {
     }
 };
 
+// The type of each part of a typography value.
+const TYPOGRAPHY_PARTS = {
+    fontFamily: 'fontFamily',
+    fontSize: 'dimension',
+    fontWeight: 'fontWeight',
+    letterSpacing: 'dimension',
+    lineHeight: 'number',
+};
+
+// A typography token becomes one token per part (`<path>.fontSize`, …), so each part is aliased, validated, named and
+// placed like any other token. A whole-value alias becomes an alias of each part of its target.
+const expandComposites = (tokens) =>
+    new Map(
+        [...tokens].flatMap(([path, token]) =>
+            token.type === 'typography'
+                ? Object.entries(TYPOGRAPHY_PARTS).map(([part, type]) => [
+                      `${path}.${part}`,
+                      {
+                          type,
+                          value: isAlias(token.value) ? `{${aliasTarget(token.value)}.${part}}` : token.value[part],
+                      },
+                  ])
+                : [[path, token]],
+        ),
+    );
+
 // The tokens of a set of documents (path -> { type, value }), validated: each document against the published schema,
 // every alias (missing target, cycle, type mismatch) and every resolved value against the schema of its type. The
 // `documents` define each token once; the `overrides` are merged over them in order and may redefine any token. JSON
@@ -59,15 +85,16 @@ const checkShadowLiterals = (value, path) => {
 export const readTokens = (schema, documents, overrides = []) => {
     const ajv = new Ajv({ strict: false, allErrors: true, validateFormats: false });
     const validateDocument = ajv.compile(schema);
-    const tokens = new Map();
+    const merged = new Map();
     for (const document of [...documents, ...overrides]) {
         assert.equal(document.$schema, schema.$id, 'DTCG schema version changed');
         assert(validateDocument(document), ajv.errorsText(validateDocument.errors));
         for (const [path, token] of collectTokens(document)) {
-            assert(overrides.includes(document) || !tokens.has(path), `Token defined twice: ${path}`);
-            tokens.set(path, token);
+            assert(overrides.includes(document) || !merged.has(path), `Token defined twice: ${path}`);
+            merged.set(path, token);
         }
     }
+    const tokens = expandComposites(merged);
     for (const [path, { type }] of tokens) {
         const validateValue = ajv.getSchema(schema.$id.replace(/format\.json$/, `format/values/${type}.json`));
         assert(validateValue, `Unsupported token type: ${type} (${path})`);
@@ -130,6 +157,7 @@ const dimensionToCss = ({ value, unit }) => `${value}${unit}`;
 // Generic and system families, and the two names the kit's stack has always left bare; any other family is quoted.
 const UNQUOTED_FONT_FAMILIES = new Set([
     'ui-sans-serif',
+    'ui-monospace',
     'system-ui',
     '-apple-system',
     'BlinkMacSystemFont',
@@ -149,7 +177,17 @@ const fontFamilyToCss = (value) =>
 const shadowLayer = ({ offsetX, offsetY, blur, spread, color, inset }) =>
     `${inset ? 'inset ' : ''}${[offsetX, offsetY, blur, spread].map(dimensionToCss).join(' ')} ${colorToCss(color)}`;
 
-const valueToCss = ({ type, value }) => {
+// A number with a `ratio` extension is written as that division, the exact `calc()` Tailwind writes for its own line
+// heights: the rounded decimal renders a fraction of a pixel off.
+const numberToCss = (value, ratio) => {
+    if (ratio === undefined) {
+        return String(value);
+    }
+    assert.equal(ratio[0] / ratio[1], value, `The ratio ${ratio.join(' / ')} is not ${value}`);
+    return `calc(${ratio[0]} / ${ratio[1]})`;
+};
+
+const valueToCss = ({ type, value, extensions }) => {
     switch (type) {
         case 'color':
             return colorToCss(value);
@@ -158,8 +196,9 @@ const valueToCss = ({ type, value }) => {
         case 'fontFamily':
             return fontFamilyToCss(value);
         case 'fontWeight':
-        case 'number':
             return String(value);
+        case 'number':
+            return numberToCss(value, extensions?.ratio);
         case 'shadow':
             return [value].flat().map(shadowLayer).join(', ');
         default:

@@ -292,7 +292,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             />
             <div className="flex min-w-0 grow flex-col gap-0.5">
                 <div className="flex items-center gap-2">
-                    <p className="truncate text-base leading-tight font-semibold text-surface-primary">
+                    <p className="truncate type-title-item--compact-card type-strong text-surface-primary">
                         {delegatee != null && (
                             <AddressOutput
                                 address={delegatee}
@@ -308,7 +308,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                         variant="primary"
                     />
                 </div>
-                <p className="text-sm leading-tight text-surface-secondary">
+                <p className="type-supporting--compact-meta text-surface-secondary">
                     {t(
                         `app.daos.alchemix.alchemixSubmitVote.${delegateeStatusKey}`,
                         {
@@ -339,7 +339,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     />
                     <div className="flex min-w-0 grow flex-col gap-0.5">
                         <div className="flex items-center gap-2">
-                            <p className="truncate text-base leading-tight font-semibold text-surface-primary">
+                            <p className="truncate type-title-item--compact-card type-strong text-surface-primary">
                                 {address != null && (
                                     <AddressOutput
                                         address={address}
@@ -355,7 +355,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                                 variant="neutral"
                             />
                         </div>
-                        <p className="text-sm leading-tight text-surface-secondary">
+                        <p className="type-supporting--compact-meta text-surface-secondary">
                             {positionInfo}
                         </p>
                     </div>

@@ -1,5 +1,6 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import { useEffect } from 'react';
+import '../design-system/tokens/nextTypographyFonts.css';
 import '../design-system/tokens/preview/index.css';
 import '../index.css';
 import { GukModulesProvider } from '../src/modules';

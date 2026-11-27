@@ -106,10 +106,10 @@ export const ChatHeader: React.FC<IChatHeaderProps> = (props) => {
                 <AragonMark />
             )}
             <div className="flex min-w-0 flex-col">
-                <Heading as="h2" size="h4">
+                <Heading as="h2" typeClassName="type-title-group--small-panel">
                     {chatCopy.header.title}
                 </Heading>
-                <p className="truncate text-xs text-surface-tertiary">
+                <p className="truncate type-caption--unstepped text-surface-tertiary">
                     {context}
                 </p>
             </div>

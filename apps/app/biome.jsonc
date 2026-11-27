@@ -72,6 +72,14 @@
                 {
                     "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveColors.grit",
                     "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/js/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "../../packages/gov-ui-kit/biome-plugins/css/noPrimitiveTypography.grit",
+                    "resolutionKind": "config"
                 }
             ]
         },

@@ -159,17 +159,17 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                     <Card className="flex flex-col gap-4 p-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-lg text-surface-primary">
+                                <span className="type-title-item--picker-row text-surface-primary">
                                     {policy.name}
                                 </span>
                                 {policy.policyKey && (
-                                    <span className="text-lg text-surface-secondary">
+                                    <span className="type-title-item--picker-row text-surface-secondary">
                                         {policy.policyKey}
                                     </span>
                                 )}
                             </div>
                             {policy.description && (
-                                <p className="text-base text-surface-secondary">
+                                <p className="type-body--unstepped text-surface-secondary">
                                     {policy.description}
                                 </p>
                             )}
@@ -198,7 +198,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                     className="flex items-baseline gap-6 px-6 py-6"
                                     key={subRouter.address}
                                 >
-                                    <div className="flex flex-1 gap-2 text-lg">
+                                    <div className="flex flex-1 gap-2 type-title-item--picker-row">
                                         <span className="text-surface-primary">
                                             {subRouter.name ??
                                                 t(
@@ -211,7 +211,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="flex gap-0.5 text-base">
+                                    <span className="flex gap-0.5 type-supporting--body-size">
                                         <span className="text-surface-primary">
                                             {index + 1}
                                         </span>

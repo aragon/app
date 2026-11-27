@@ -790,6 +790,19 @@
                     "Segoe UI Symbol",
                     "Noto Color Emoji"
                 ]
+            },
+            "mono": {
+                "$description": "Machine text (the `type-mono` modifier). Tailwind's default monospace stack, which `font-mono` and code elements render today.",
+                "$value": [
+                    "ui-monospace",
+                    "SFMono-Regular",
+                    "Menlo",
+                    "Monaco",
+                    "Consolas",
+                    "Liberation Mono",
+                    "Courier New",
+                    "monospace"
+                ]
             }
         },
         "weight": {
@@ -863,11 +876,98 @@
             "tight": {
                 "$value": 1.25
             },
+            "snug": {
+                "$value": 1.375
+            },
             "normal": {
                 "$value": 1.5
             },
             "relaxed": {
                 "$value": 1.65
+            }
+        },
+        "leadingDefault": {
+            "$type": "number",
+            "$description": "Tailwind's built-in line height of each size (the `--text-<size>--line-height` it applies when no leading class is set), kept explicitly because a typography role or exception renders it today. Only the sizes in use are listed. A ratio extension makes the CSS the exact calc() Tailwind writes.",
+            "xs": {
+                "$value": 1.3333333333333333,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            1,
+                            0.75
+                        ]
+                    }
+                }
+            },
+            "sm": {
+                "$value": 1.4285714285714286,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            1.25,
+                            0.875
+                        ]
+                    }
+                }
+            },
+            "base": {
+                "$value": 1.5
+            },
+            "lg": {
+                "$value": 1.5555555555555556,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            1.75,
+                            1.125
+                        ]
+                    }
+                }
+            },
+            "xl": {
+                "$value": 1.4,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            1.75,
+                            1.25
+                        ]
+                    }
+                }
+            },
+            "2xl": {
+                "$value": 1.3333333333333333,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            2,
+                            1.5
+                        ]
+                    }
+                }
+            },
+            "3xl": {
+                "$value": 1.2,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            2.25,
+                            1.875
+                        ]
+                    }
+                }
+            },
+            "4xl": {
+                "$value": 1.1111111111111112,
+                "$extensions": {
+                    "org.aragon.gov-ui-kit": {
+                        "ratio": [
+                            2.5,
+                            2.25
+                        ]
+                    }
+                }
             }
         }
     },

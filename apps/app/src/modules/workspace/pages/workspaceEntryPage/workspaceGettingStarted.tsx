@@ -200,7 +200,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                                         'app.workspace.workspaceGettingStarted.title',
                                     )}
                                 </Heading>
-                                <p className="text-base leading-normal font-normal text-surface-secondary md:text-lg">
+                                <p className="type-body text-surface-secondary">
                                     {t(
                                         'app.workspace.workspaceGettingStarted.description',
                                     )}
@@ -208,6 +208,7 @@ export const WorkspaceGettingStarted: React.FC = () => {
                             </div>
                             {isScanning && (
                                 <div
+                                    // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
                                     className="flex items-center gap-2 text-sm text-surface-secondary"
                                     role="status"
                                 >

@@ -203,7 +203,7 @@ export const CreateProcessFormProposalCreation: React.FC<
                     </>
                 )}
                 {showBasicNotSupported && (
-                    <p className="text-sm text-surface-secondary">
+                    <p className="type-supporting--compact-detail text-surface-secondary">
                         {t(
                             'app.createDao.createProcessForm.proposalCreation.existingCondition.basicNotSupported',
                         )}

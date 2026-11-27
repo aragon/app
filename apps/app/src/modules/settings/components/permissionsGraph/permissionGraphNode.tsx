@@ -80,7 +80,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             )}
         >
             {selectionRole != null && (
-                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-surface-selected bg-surface-primary px-4 py-0.5 text-xs font-medium text-surface-secondary uppercase">
+                <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-b-0 border-surface-selected bg-surface-primary px-4 py-0.5 type-caption--unstepped text-surface-secondary uppercase">
                     {t(SELECTION_LABEL_KEY[selectionRole])}
                 </span>
             )}
@@ -104,7 +104,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                             className="text-surface-primary"
                             label={label}
                         />
-                        <span className="truncate text-sm text-surface-secondary">
+                        <span className="truncate type-supporting--compact-detail text-surface-secondary">
                             {data.versionName ?? t(subtitleKey)}
                         </span>
                     </div>

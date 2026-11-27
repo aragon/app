@@ -55,12 +55,12 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
     const containerClasses = classNames(
         'flex min-h-12 w-full flex-row items-center', // Layout
         'rounded-xl border text-surface-secondary transition-all', // Styling
-        'text-base leading-tight font-normal', // Typography
+        'type-control', // Typography
         variantToClassNames[processedVariant],
         wrapperClassName,
     );
 
-    const counterClasses = classNames('text-xs leading-tight font-normal text-surface-secondary md:text-sm', {
+    const counterClasses = classNames('type-caption text-surface-secondary', {
         'animate-shake': inputLength === maxLength,
     });
 
@@ -73,17 +73,11 @@ export const InputContainer = forwardRef<HTMLDivElement, IInputContainerProps>((
                 <label className="flex flex-col gap-0.5 md:gap-1" htmlFor={id}>
                     {label && (
                         <div className="flex flex-row items-center gap-3">
-                            <p className="text-base leading-tight font-normal text-surface-primary md:text-lg">
-                                {label}
-                            </p>
+                            <p className="type-label text-surface-primary">{label}</p>
                             {isOptional && <Tag label={copy.inputContainer.optionalLabel} variant="neutral" />}
                         </div>
                     )}
-                    {helpText && (
-                        <p className="text-sm leading-normal font-normal text-surface-secondary md:text-base">
-                            {helpText}
-                        </p>
-                    )}
+                    {helpText && <p className="type-body-compact text-surface-secondary">{helpText}</p>}
                 </label>
             )}
             <InputWrapper {...containerProps}>{children}</InputWrapper>

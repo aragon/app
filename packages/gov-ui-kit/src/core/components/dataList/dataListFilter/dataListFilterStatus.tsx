@@ -29,7 +29,7 @@ export const DataListFilterStatus: React.FC<IDataListFilterStatusProps> = ({ onR
         <div className="flex items-center justify-between">
             <p
                 className={classNames(
-                    'px-3 py-2.5 text-sm leading-tight font-normal md:text-base',
+                    'px-3 py-2.5 type-supporting',
                     isLoading || isInitialLoading ? 'text-accent-primary' : 'text-surface-secondary',
                 )}
             >

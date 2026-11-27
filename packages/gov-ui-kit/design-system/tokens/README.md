@@ -6,15 +6,17 @@ One DTCG 2025.10 token source, one generator. The token values live in JSON; the
 design-system/tokens/source/
   primitives.tokens.json        the primitives: colours, shadows, radius, breakpoints, spacing, type, focus ring colours
   semantic.tokens.json          the semantic colour roles of the default theme, as aliases of the primitives
-  app.tokens.json               the tokens only the app uses (component aliases no kit component takes)
+  typography.tokens.json        the typography roles, their exceptions and the modifiers of the default theme
+  app.tokens.json               the tokens only the app uses (component aliases and type exceptions no kit component takes)
   <layer>.config.json           not tokens: the CSS name of each token, the layout of the generated files, the previews
   modes/                        the preview modes (Next, Dark): documents merged over the default theme
   schema/format.2025.10.json    the published DTCG schema, unmodified
 design-system/tokens/app/       the generated CSS of app.tokens.json (do not edit)
 design-system/tokens/preview/   the generated preview CSS (do not edit)
+design-system/tokens/nextTypographyFonts.css   the faces of the Next typography preview, loaded with the preview
 scripts/tokens/                 generate.mjs and lib/ (the generator), generate.test.mjs
 src/theme/tokens/<layer>/       the generated CSS (do not edit)
-src/theme/tokens/               hand-written CSS that goes with the tokens: role, focus ring and gradient utilities
+src/theme/tokens/               hand-written CSS that goes with the tokens: role, type role, focus ring and gradient utilities
 src/theme/fonts/                the font files and their @font-face rules
 ```
 
@@ -43,6 +45,8 @@ Tokens follow the DTCG format. A colour is a colour object, a dimension a value 
 
 A token can alias another of the same type (`"$value": "{color.primary.200}"`); the CSS then holds a `var()`.
 Individual shadow layers and their fields must be literals. Set `"inset": true` on a layer for an inner shadow.
+A `typography` composite becomes one token per part (`<path>.fontSize`, …): each part may alias a token of its own
+type, and a whole-composite alias aliases each part of its target.
 
 The `components` are the colour; the `hex` is its readable form, which DTCG keeps optional and this source always
 carries. `pnpm tokens:generate` writes it, so a new colour needs only its components. To change a colour by its hex,
@@ -54,8 +58,11 @@ Each `<layer>.config.json` lays out the tokens of `<layer>.tokens.json`: it maps
 each block (`@theme`, `:root`) to its lines. A line ending in `;` is CSS with no DTCG form, such as a namespace reset
 (`--color-*: initial;`) or `--radius-none: none;`. Any other line is a token path: it places that token, or every
 token under that group, in document order. The files go to `src/theme/tokens/<layer>/`, or to the kit-relative `dir`
-of the config (`app.config.json`: `design-system/tokens/app/`). `cssNames` rules apply across layers. `preview` maps each preview file to its mode selectors, and each selector to the mode documents
-merged over the default theme, in order.
+of the config (`app.config.json`: `design-system/tokens/app/`). `cssNames` rules apply across layers. `preview` maps
+each preview file to its mode selectors, and each selector to a list: the mode documents merged over the default
+theme, in order; follow rules such as `{ "type.exception.*--*": "type.role.$1" }`, which make every token under a
+matching group alias the same token under the target group (after the documents; a `*` matches within one path
+segment); and CSS lines ending in `;` for a value with no DTCG type.
 
 ## Semantic colours
 
@@ -118,10 +125,55 @@ Code names that differ from Figma:
 | `icon/accent/default-inverse`, `hover-inverse`, `active-inverse` | `icon/accent/inverse` |
 | `text/surface/primary-inverse` | `text/surface/inverse` |
 
+## Typography roles
+
+Text takes a role by its job, not a size. `typography.tokens.json` holds 15 roles (`type.role.<role>`: display,
+title-page, title-section, title-group, title-item, body, body-compact, supporting, caption, label, label-option,
+control, control-sm, stat, tooltip). A role has a `base`, a DTCG `typography` composite whose parts alias the type
+primitives, and an `md` from the md breakpoint that holds only the parts that may step: font size, line height and
+letter spacing (family and weight never change at `md`).
+
+```json
+"supporting": {
+    "base": { "$value": { "fontFamily": "{font.family.sans}", "fontSize": "{font.size.sm}", "fontWeight": "{font.weight.normal}", "letterSpacing": { "value": 0, "unit": "px" }, "lineHeight": "{font.leading.tight}" } },
+    "md": {
+        "fontSize": { "$type": "dimension", "$value": "{font.size.base}" },
+        "lineHeight": { "$type": "number", "$value": "{font.leading.tight}" },
+        "letterSpacing": { "$type": "dimension", "$value": { "value": 0, "unit": "px" } }
+    }
+}
+```
+
+Each part is a `--guk-type-<property>-<role>` theme variable (`--guk-type-md-…` for `md`). `src/theme/tokens/
+typeRoles.css` declares one functional utility, `type-*`, that sets the five properties and steps through the `md`
+variant of the build that compiles it: a container query on the app column in the app. Tailwind emits only the
+variables of the roles in use.
+
+- **Exceptions** (`type.exception.<role>--<pattern>`): a place that renders another bundle than its role, its
+  `$description` naming the place. The class is `type-<role>--<pattern>`. An exception no kit component uses lives in
+  `app.tokens.json`, so the published CSS does not carry it. In a preview mode an exception follows its role: one rule
+  in `typography.config.json` (`"type.exception.*--*": "type.role.$1"`).
+- **Modifiers**: `type-strong` (`type.modifier.strong`, 600), `type-mono` (`type.modifier.mono`) and `type-numeric`
+  (tabular figures in Next, a CSS line of the preview because `font-variant-numeric` has no DTCG type; the parent's
+  figures otherwise).
+- **Order**: a role sorts before raw `text-*`, `leading-*`, `font-*` and `tracking-*` classes and the modifiers, so
+  those win over it at every width; a raw `text-*` brings its own line height. Between two roles on one element the
+  later name in the alphabet wins.
+- **A new role or exception**: add it to `typography.tokens.json` (an exception only the app uses to
+  `app.tokens.json`; a role also to `modes/typography.next.tokens.json`), run `pnpm tokens:generate`, use the class.
+  Reuse a role or an exception with the same bundle before adding one.
+- **Next**: `modes/typography.next.tokens.json` holds the designer's 15 role bundles and the two faces they use;
+  `design-system/tokens/preview/typography.css` sets them under `data-typography="next"`. Storybook (toolbar) and the
+  app's debug panel load it with `nextTypographyFonts.css`; nothing of Next ships in the kit's CSS.
+
+Lint: `biome-plugins/{js,css}/noPrimitiveTypography.grit` flag primitive type classes (`text-sm`, `md:text-lg`,
+`leading-*`, `font-semibold`, `tracking-*`, `text-[13px]`) outside the theme. A class kept on purpose takes
+`biome-ignore lint/plugin/noPrimitiveTypography: <reason>` on the line above.
+
 ## What the generator checks
 
-- The document against the DTCG 2025.10 schema, every alias (missing target, cycle, type mismatch), every resolved
-  value against the schema of its type; the same for every preview mode.
+- The document against the DTCG 2025.10 schema, every alias (missing target, cycle, type mismatch, typography parts
+  included), every resolved value against the schema of its type; the same for every preview mode.
 - Every token has a CSS name of its own and is placed exactly once; a mode has no token the default theme lacks.
 - Every colour's `hex` agrees with its components.
 
@@ -132,3 +184,5 @@ Code names that differ from Figma:
   tokens; no root font-size assumption converts between them.
 - `transparent` is sRGB black with alpha zero.
 - Colours are sRGB with numeric components; the generator rejects other colour spaces.
+- Tailwind's built-in line heights that a typography style keeps (`font.leadingDefault.*`) are numbers with a
+  `ratio` extension, written as the `calc()` Tailwind writes: the rounded decimal renders a fraction of a pixel off.

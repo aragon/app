@@ -119,7 +119,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                             key={policy.address}
                             onClick={() => handleSelectPolicy(policy)}
                         >
-                            <div className="flex flex-1 gap-2 text-lg">
+                            <div className="flex flex-1 gap-2 type-title-item--picker-row">
                                 <span className="text-surface-primary">
                                     {policy.name ??
                                         t(
@@ -133,7 +133,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                 )}
                             </div>
                             {shouldShowTabs && activeTab === 'multi' && (
-                                <span className="flex gap-0.5 text-base">
+                                <span className="flex gap-0.5 type-supporting--body-size">
                                     <span className="text-surface-primary">
                                         {policy.strategy?.subRouters?.length ??
                                             0}

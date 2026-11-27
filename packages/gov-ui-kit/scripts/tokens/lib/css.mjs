@@ -13,15 +13,21 @@ const header = (tokens, config) => `/*
  * ${config}. Do not edit: change those files and run \`pnpm tokens:generate\`.
  */`;
 
+// A `*` matches within one path segment, the shortest run first: `type.exception.*--*` captures the role name.
 const globToRegExp = (pattern) =>
     new RegExp(
         `^${pattern
             .split('.')
-            .map((part) => (part === '*' ? '([^.]+)' : part.replace(/[-/\\^$+?()|[\]{}]/g, '\\$&')))
+            .map((part) =>
+                part
+                    .split('*')
+                    .map((text) => text.replace(/[-/\\^$+?()|[\]{}]/g, '\\$&'))
+                    .join('([^.]+?)'),
+            )
             .join('\\.')}$`,
     );
 
-// token path -> CSS custom property, by the first matching `cssNames` rule; undefined without one.
+// token path -> the template of the first matching rule, `$1`.. filled with the captures; undefined without one.
 const createNameOf = (cssNames) => {
     const rules = cssNames.map(([pattern, template]) => [globToRegExp(pattern), template]);
     return (path) => {
@@ -86,15 +92,32 @@ export const renderCss = ({ tokens, layers, layerPaths, modeTokens }) => {
     const missing = [...tokens.keys()].filter((path) => !paths.has(path));
     assert.equal(missing.length, 0, `The layout places no CSS for: ${missing.join(', ')}`);
 
-    // A preview file: per mode selector, every placed token whose value differs from the default, as a literal.
+    // A preview file: per mode selector, every placed token whose value differs from the default, as a literal. A mode
+    // lists the documents merged over the default theme, rules that make every token under a group follow the same
+    // token under another (`{ "type.exception.*--*": "type.role.$1" }`, applied after the documents), and CSS lines
+    // ending in `;` for values with no DTCG type.
     const previews = Object.entries(layers).flatMap(([layer, config]) =>
         Object.entries(config.preview ?? {}).map(([file, modes]) => {
-            const blocks = Object.entries(modes).map(([selector, documents]) => {
-                const mode = modeTokens(documents);
+            const blocks = Object.entries(modes).map(([selector, entries]) => {
+                const css = entries.filter((entry) => typeof entry === 'string' && entry.endsWith(';'));
+                const mode = modeTokens(entries.filter((entry) => typeof entry === 'string' && !entry.endsWith(';')));
                 const stray = [...mode.keys()].filter((path) => !tokens.has(path) && nameOf(path));
                 assert.equal(stray.length, 0, `${layer}.config.json: not in the default theme: ${stray.join(', ')}`);
+                const targetOf = createNameOf(
+                    entries.flatMap((entry) => (typeof entry === 'object' ? Object.entries(entry) : [])),
+                );
+                for (const [path, { type }] of mode) {
+                    const segments = path.split('.');
+                    for (let depth = 1; depth < segments.length; depth++) {
+                        const group = targetOf(segments.slice(0, depth).join('.'));
+                        if (group !== undefined) {
+                            mode.set(path, { type, value: `{${[group, ...segments.slice(depth)].join('.')}}` });
+                            break;
+                        }
+                    }
+                }
                 const changed = [...placed].filter(([, path]) => literal(mode, path) !== literal(tokens, path));
-                return [selector, changed.map(([name, path]) => `${name}: ${literal(mode, path)};`)];
+                return [selector, [...changed.map(([name, path]) => `${name}: ${literal(mode, path)};`), ...css]];
             });
             return [file, blocks.map(block).join('\n\n')];
         }),

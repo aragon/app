@@ -24,7 +24,8 @@ export const PermissionStackNode: React.FC<
                 return (
                     <button
                         className={classNames(
-                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-surface-sm transition-colors',
+                            // biome-ignore lint/plugin/noPrimitiveTypography: node labels follow the node size, not a type role
+                            'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center type-mono text-[10px] shadow-surface-sm transition-colors',
                             permission.conditionLabel != null && 'pb-1',
                             isSelected
                                 ? // biome-ignore lint/plugin/noPrimitiveColors: no border role has primary-500

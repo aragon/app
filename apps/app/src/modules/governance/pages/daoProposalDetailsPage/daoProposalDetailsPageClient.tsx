@@ -290,7 +290,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                         >
                             {metadataStatus ===
                                 ProposalMetadataStatus.NON_STANDARD && (
-                                <code className="mt-2 block rounded-lg bg-surface-secondary px-4 py-3 font-mono text-sm break-all text-surface-primary">
+                                <code className="mt-2 block rounded-lg bg-surface-secondary px-4 py-3 type-body-compact--component-note type-mono break-all text-surface-primary">
                                     {proposal.metadataUri}
                                 </code>
                             )}

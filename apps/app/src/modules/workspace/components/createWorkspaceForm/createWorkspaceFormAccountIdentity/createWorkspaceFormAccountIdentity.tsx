@@ -49,7 +49,7 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
         return (
             <div className={containerClassName}>
                 <Spinner size="md" variant="neutral" />
-                <span className="text-base leading-tight text-surface-secondary">
+                <span className="type-supporting--detail-value text-surface-secondary">
                     {t(`${namespace}.resolving`)}
                 </span>
             </div>
@@ -82,11 +82,11 @@ export const CreateWorkspaceFormAccountIdentity: React.FC<
                 />
             )}
             <div className="flex min-w-0 grow flex-col">
-                <span className="truncate text-base leading-tight text-surface-primary">
+                <span className="truncate type-title-item--compact-card text-surface-primary">
                     {resolvedName ?? truncatedAddress}
                 </span>
                 {resolvedName != null && (
-                    <span className="truncate text-sm leading-tight text-surface-secondary">
+                    <span className="truncate type-supporting--compact-meta text-surface-secondary">
                         {truncatedAddress}
                     </span>
                 )}

@@ -44,12 +44,12 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                             />
                         </div>
                         <div className="flex flex-col gap-0.5">
-                            <p className="text-base leading-tight font-semibold text-surface-primary">
+                            <p className="type-title-item--compact-card type-strong text-surface-primary">
                                 {t(
                                     `app.workspace.workspaceWelcomeDialog.items.${key}.title`,
                                 )}
                             </p>
-                            <p className="text-sm leading-normal text-pretty text-surface-secondary">
+                            <p className="type-body-compact--unstepped text-pretty text-surface-secondary">
                                 {t(
                                     `app.workspace.workspaceWelcomeDialog.items.${key}.description`,
                                 )}
@@ -64,7 +64,10 @@ export const WorkspaceWelcomeDialog: React.FC<IWorkspaceWelcomeDialogProps> = (
                     onClick: handleClose,
                 }}
             >
-                <p className="-mb-2 text-xs leading-normal text-pretty text-surface-secondary">
+                <p
+                    // biome-ignore lint/plugin/noPrimitiveTypography: added on main after the migration; no role assigned yet
+                    className="-mb-2 text-xs leading-normal text-pretty text-surface-secondary"
+                >
                     {t('app.workspace.workspaceWelcomeDialog.note')}
                 </p>
             </Dialog.Footer>

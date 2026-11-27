@@ -65,17 +65,17 @@ export const EmptyState: React.FC<IEmptyStateProps> = ({
                     })}
                 >
                     <p
-                        className={classNames('leading-tight font-normal text-surface-primary', {
-                            'text-xl md:text-2xl': isStacked,
-                            'text-base md:text-lg': !isStacked,
+                        className={classNames('text-surface-primary', {
+                            'type-title-section': isStacked,
+                            'type-title-section--inline-empty-state': !isStacked,
                         })}
                     >
                         {heading}
                     </p>
                     <p
-                        className={classNames('leading-tight font-normal text-surface-secondary', {
-                            'text-sm md:text-base': isStacked,
-                            'text-xs md:text-sm': !isStacked,
+                        className={classNames('text-surface-secondary', {
+                            'type-supporting': isStacked,
+                            'type-supporting--inline-empty-state': !isStacked,
                         })}
                     >
                         {description}

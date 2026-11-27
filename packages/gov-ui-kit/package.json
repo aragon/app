@@ -90,6 +90,7 @@
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
+        "@fontsource/sora": "catalog:",
         "@hookform/devtools": "^4.4.0",
         "@rollup/plugin-commonjs": "^29.0.3",
         "@rollup/plugin-image": "^3.0.3",
@@ -116,6 +117,7 @@
         "@types/sanitize-html": "^2.16.2",
         "ajv": "catalog:",
         "cross-env": "catalog:",
+        "inter-ui": "catalog:",
         "jest": "catalog:",
         "jest-environment-jsdom": "catalog:",
         "postcss": "^8.5.32",

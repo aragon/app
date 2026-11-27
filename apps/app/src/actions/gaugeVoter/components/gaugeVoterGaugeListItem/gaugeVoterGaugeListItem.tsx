@@ -52,11 +52,11 @@ export const GaugeVoterGaugeListItem: React.FC<
                         size="lg"
                         src={avatarSrc}
                     />
-                    <div className="flex flex-col gap-1 leading-tight font-normal">
-                        <p className="text-lg text-surface-primary">
+                    <div className="flex flex-col gap-1">
+                        <p className="type-title-item--picker-row text-surface-primary">
                             {gauge.name}
                         </p>
-                        <p className="text-sm text-surface-secondary">
+                        <p className="type-supporting--compact-detail text-surface-secondary">
                             <AddressOutput
                                 address={gauge.address}
                                 copy={false}

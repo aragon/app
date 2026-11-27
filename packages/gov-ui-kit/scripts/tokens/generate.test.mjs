@@ -12,8 +12,8 @@ import { generate, staleFiles } from './generate.mjs';
 
 const kitRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const sourceDir = resolve(kitRoot, 'design-system/tokens/source');
-const cssFile = (name) => resolve(kitRoot, `src/theme/tokens/primitives/${name}.css`);
-const previewFile = resolve(kitRoot, 'design-system/tokens/preview/colors.css');
+const cssFile = (name, layer = 'primitives') => resolve(kitRoot, `src/theme/tokens/${layer}/${name}.css`);
+const previewFile = (name) => resolve(kitRoot, `design-system/tokens/preview/${name}.css`);
 
 // A scratch copy of the source with one JSON file changed.
 const mutated = (context, file, change) => {
@@ -43,10 +43,32 @@ test('the generated CSS keeps its constructs', () => {
     assert.match(css('focusRing'), /--ring-color-primary: var\(--color-primary-200\);/);
     assert.match(css('shadows'), /--shadow-neutral: 0px 1px 3px 0px rgba\(97, 110, 124, 0\.1\), 0px 1px 2px -1px rgba/);
     assert.match(css('typography'), /--font-sans: "Manrope", ui-sans-serif, /);
+    assert.match(css('typography'), /--leading-default-lg: calc\(1\.75 \/ 1\.125\);/);
     // Pixel breakpoints stay in a plain :root rule, rem breakpoints in @theme.
     assert.match(css('breakpoints'), /:root \{\n {4}--breakpoint-sm-px: 640;/);
     assert.match(css('breakpoints'), /@theme \{\n {4}--breakpoint-\*: initial;\n {4}--breakpoint-sm: 40rem;/);
     assert.match(css('index'), /@import "\.\/borderRadius\.css";\n@import "\.\/breakpoints\.css";/);
+});
+
+test('a typography composite becomes one theme variable per part, a part alias a var()', () => {
+    const css = generate().get(cssFile('roles', 'typography'));
+    assert(
+        css.includes(
+            [
+                '--guk-type-font-family-display: var(--font-sans);',
+                '--guk-type-font-size-display: var(--text-3xl);',
+                '--guk-type-font-weight-display: var(--font-weight-normal);',
+                '--guk-type-letter-spacing-display: 0px;',
+                '--guk-type-line-height-display: var(--leading-tight);',
+                '--guk-type-md-font-size-display: var(--text-5xl);',
+                '--guk-type-md-line-height-display: var(--leading-tight);',
+                '--guk-type-md-letter-spacing-display: 0px;',
+            ].join('\n    '),
+        ),
+    );
+    assert.match(css, /--guk-type-line-height-supporting--framework-leading: var\(--leading-default-sm\);/);
+    assert.match(css, /--guk-type-strong: var\(--font-weight-semibold\);/);
+    assert.doesNotMatch(css, /--guk-type-md-font-(family|weight)-/);
 });
 
 test('a layer lays out the tokens of its own document, in its own dir', () => {
@@ -54,6 +76,8 @@ test('a layer lays out the tokens of its own document, in its own dir', () => {
     const css = (path) => files.get(resolve(kitRoot, path));
     assert.match(css('design-system/tokens/app/colors.css'), /--guk-bg-body-sidebar: var\(--color-neutral-25\);/);
     assert.doesNotMatch(css('src/theme/tokens/semantic/colors.css'), /--guk-bg-body-sidebar:/);
+    assert.match(css('design-system/tokens/app/typography.css'), /--guk-type-font-size-body--xmaquina-header:/);
+    assert.doesNotMatch(css('src/theme/tokens/typography/roles.css'), /xmaquina/);
 });
 
 test('a status shadow primitive has no class name, and each status shadow role aliases one', () => {
@@ -145,6 +169,22 @@ for (const [name, file, change, expected] of [
         /Alias type mismatch: ring\.color\.primary/,
     ],
     [
+        'a typography part alias of another type',
+        'typography.tokens.json',
+        ({ type }) => {
+            type.role.display.base.$value.fontSize = '{color.primary.500}';
+        },
+        /Alias type mismatch: type\.role\.display\.base\.fontSize/,
+    ],
+    [
+        'a ratio that is not its number',
+        'primitives.tokens.json',
+        ({ font }) => {
+            font.leadingDefault.lg.$extensions['org.aragon.gov-ui-kit'].ratio = [1.75, 1.25];
+        },
+        /The ratio 1\.75 \/ 1\.25 is not 1\.5555555555555556/,
+    ],
+    [
         'a value of another type',
         'primitives.tokens.json',
         (json) => {
@@ -214,16 +254,34 @@ for (const [name, file, change, expected] of [
     });
 }
 
-// The preview's declarations per mode selector, for a scratch source (or the repository's).
-const previewModes = (dir) =>
+// A preview file's declarations per mode selector, for a scratch source (or the repository's).
+const previewModes = (dir, file = 'colors') =>
     Object.fromEntries(
         [
             ...generate(dir)
-                .get(previewFile)
+                .get(previewFile(file))
                 .matchAll(/\n(\S[^{\n]*) \{\n([^}]*)\}/g),
         ].map(([, selector, body]) => [selector, body.trim().split(/\n\s*/)]),
     );
 const NEXT = ':root[data-theme="next"], [data-theme="next"]';
+const NEXT_TYPOGRAPHY = ':root[data-typography="next"], [data-typography="next"]';
+
+test('in a mode, an exception follows its role by the rule, and a CSS line is written as is', (context) => {
+    const dir = mutated(context, 'modes/typography.next.tokens.json', ({ type }) => {
+        type.role.caption.base.$value.fontSize = '{font.size.5xl}';
+    });
+    // The kit's exceptions and the app's alike.
+    const exceptions = ['typography', 'app'].flatMap((layer) =>
+        Object.keys(JSON.parse(readFileSync(join(sourceDir, `${layer}.tokens.json`), 'utf8')).type.exception),
+    );
+    const captions = ['caption', ...exceptions.filter((name) => name.startsWith('caption--'))];
+    const lines = previewModes(dir, 'typography')[NEXT_TYPOGRAPHY];
+    assert.deepEqual(
+        lines.filter((line) => /^--guk-type-font-size-caption(--|:)/.test(line)).sort(),
+        captions.map((name) => `--guk-type-font-size-${name}: 3rem;`).sort(),
+    );
+    assert.equal(lines.at(-1), '--guk-type-numeric: tabular-nums;');
+});
 
 test('a mode override adds exactly its declaration to its mode in the preview', (context) => {
     const dir = mutated(context, 'modes/semantic.next.tokens.json', ({ semantic }) => {
@@ -253,19 +311,20 @@ test('a token a mode leaves at its default value is not written', (context) => {
     assert.equal(after.length, before.length - 1);
 });
 
-test('role classes compile once, after their primitive siblings, and keep variants and @apply', async () => {
+// The kit's token CSS and Tailwind compiled with `extra` CSS after them, for the given class candidates.
+const compileTokens = async (extra, candidates) => {
     const loadStylesheet = async (id, base) => {
         const path =
             id === 'tailwindcss' ? fileURLToPath(import.meta.resolve('tailwindcss/index.css')) : resolve(base, id);
         return { path, base: dirname(path), content: readFileSync(path, 'utf8') };
     };
-    const entry = [
-        '@import "./src/theme/tokens/index.css";',
-        '@import "tailwindcss";',
-        '.probe { @apply bg-surface-primary; }',
-    ].join('\n');
+    const entry = ['@import "./src/theme/tokens/index.css";', '@import "tailwindcss";', extra].join('\n');
     const { build } = await compile(entry, { base: kitRoot, loadStylesheet });
-    const css = build([
+    return build(candidates);
+};
+
+test('role classes compile once, after their primitive siblings, and keep variants and @apply', async () => {
+    const css = await compileTokens('.probe { @apply bg-surface-primary; }', [
         'bg-surface-primary',
         'bg-neutral-0',
         'text-surface-primary',
@@ -311,9 +370,84 @@ test('role classes compile once, after their primitive siblings, and keep varian
     assert.doesNotMatch(css, /--guk-bg-surface-tertiary:/);
 });
 
-test('the js and css lint plugins match the same classes', () => {
-    const patterns = (language) =>
-        readFileSync(resolve(kitRoot, `biome-plugins/${language}/noPrimitiveColors.grit`), 'utf8').match(/r"[^"]*"/g);
-    assert.equal(patterns('js').length, 2);
-    assert.deepEqual(patterns('css'), patterns('js'));
+test('type roles compile with variants and @apply, before raw type classes and the modifiers', async () => {
+    const css = await compileTokens('.probe { @apply type-supporting type-strong; }', [
+        'type-supporting',
+        'type-title-item--entity-list',
+        'md:type-control',
+        'placeholder:type-caption',
+        'text-lg',
+        'leading-normal',
+        'font-semibold',
+        'tracking-wide',
+        'type-strong',
+        'type-mono',
+        'type-numeric',
+        'type-nonexistent',
+    ]);
+    const role = css.slice(css.indexOf('.type-supporting {'), css.indexOf('.type-title-item--entity-list {'));
+    assert.match(role, /^\.type-supporting \{\n\s+font-family: var\(--guk-type-font-family-supporting\);/);
+    // The md step sets the parts that may step, not the family and the weight.
+    assert.match(
+        role,
+        /@media \(width >= 48rem\) \{\n\s+font-size: var\(--guk-type-md-font-size-supporting\);\n\s+line-height: var\(--guk-type-md-line-height-supporting\);\n\s+letter-spacing: var\(--guk-type-md-letter-spacing-supporting\);\n\s+\}/,
+    );
+    assert.match(css, /\.placeholder\\:type-caption::placeholder \{/);
+    assert.match(css, /@media \(width >= 48rem\) \{\n\s+\.md\\:type-control \{/);
+    assert.match(css, /\.probe \{[\s\S]*\n {2}\}\n {2}font-weight: var\(--guk-type-strong\);\n\}/);
+    for (const later of ['.text-lg {', '.leading-normal {', '.font-semibold {', '.tracking-wide {', '.type-strong {']) {
+        assert(css.indexOf('.type-title-item--entity-list {') < css.indexOf(later), `the roles before ${later}`);
+    }
+    // The modifiers' variables are emitted with their classes; numeric falls back to the parent's figures.
+    assert.match(css, /--guk-type-strong: var\(--font-weight-semibold\);/);
+    assert.match(css, /--guk-type-mono: var\(--font-mono\);/);
+    assert.match(css, /\.type-numeric \{\n\s+font-variant-numeric: var\(--guk-type-numeric, inherit\);/);
+    assert.doesNotMatch(css, /--tw-leading: var\(--guk|--guk-type-font-size-display:|type-nonexistent/);
+});
+
+test('a type role steps with the md variant of the build that compiles it', async () => {
+    const css = await compileTokens('@custom-variant md { @container app (width >= 48rem) { @slot; } }', [
+        'type-supporting',
+    ]);
+    assert.match(css, /@container app \(width >= 48rem\) \{\n\s+font-size: var\(--guk-type-md-font-size-supporting\);/);
+});
+
+for (const rule of ['noPrimitiveColors', 'noPrimitiveTypography']) {
+    test(`the js and css plugins of ${rule} match the same classes`, () => {
+        const patterns = (language) =>
+            readFileSync(resolve(kitRoot, `biome-plugins/${language}/${rule}.grit`), 'utf8').match(/r"[^"]*"/g);
+        assert.equal(patterns('js').length, 2);
+        assert.deepEqual(patterns('css'), patterns('js'));
+    });
+}
+
+test('the typography lint flags primitive type classes and nothing that merely starts like one', () => {
+    const patterns = readFileSync(resolve(kitRoot, 'biome-plugins/js/noPrimitiveTypography.grit'), 'utf8')
+        .match(/r"[^"]*"/g)
+        // Grit matches a regex against the whole node text.
+        .map((pattern) => new RegExp(`^(?:${pattern.slice(2, -1).replace('(?s)', '')})$`, 's'));
+    const flagged = (text) => patterns.some((pattern) => pattern.test(text));
+    for (const text of [
+        'p-2 text-sm',
+        'md:text-lg/6',
+        'leading-6',
+        'font-semibold!',
+        '-tracking-wide',
+        'text-[13px]',
+    ]) {
+        assert(flagged(text), text);
+    }
+    for (const text of ['text-(length:--x)', 'leading-(--x)', 'leading-[1.2]', 'font-[550]', '[font-size:12px]']) {
+        assert(flagged(text), text);
+    }
+    for (const text of [
+        'tracking-id',
+        'leading-zero',
+        'text-surface-primary',
+        'font-mono',
+        'type-supporting',
+        'context-sm',
+    ]) {
+        assert(!flagged(text), text);
+    }
 });

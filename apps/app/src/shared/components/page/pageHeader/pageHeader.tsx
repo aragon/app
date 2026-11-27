@@ -69,7 +69,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
                     <div className="flex w-full flex-col gap-6">
                         <div className="flex flex-col gap-y-2 md:gap-y-3">
-                            <Heading size="h1">
+                            <Heading as="h1" typeClassName="type-title-page">
                                 {title != null &&
                                 addressUtils.isAddress(title) ? (
                                     <AddressOutput
@@ -88,7 +88,7 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                                     buttonLabelOpened={t(
                                         'app.shared.page.header.readLess',
                                     )}
-                                    className="text-base text-surface-secondary md:text-lg"
+                                    className="type-body--framework-leading text-surface-secondary"
                                     collapsedLines={2}
                                 >
                                     {description}

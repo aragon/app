@@ -102,7 +102,7 @@ export const DropdownItem: React.FC<IDropdownItemProps> = (props) => {
             asChild={renderLink || renderSubmitButton}
             className={classNames(
                 'flex items-center gap-3 px-4 py-3', // Layout
-                'cursor-pointer rounded-xl text-base leading-tight focus-visible:outline-hidden', // Style
+                'cursor-pointer rounded-xl type-control focus-visible:outline-hidden', // Style
                 'data-disabled:pointer-events-none data-disabled:cursor-default data-disabled:bg-surface-default data-disabled:text-surface-disabled', // Disabled
                 { 'bg-surface-default text-surface-default': !selected && !disabled }, // Not selected
                 { 'bg-surface-selected text-surface-active': selected && !disabled }, // Selected

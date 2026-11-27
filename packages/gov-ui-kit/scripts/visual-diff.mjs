@@ -434,7 +434,10 @@ const captureStory = async (browser, origin, story, globals, outDir) => {
                 [...document.images].map((image) =>
                     image.complete
                         ? null
-                        : new Promise((done) => image.addEventListener('loadend', done, { once: true })),
+                        : new Promise((done) => {
+                              image.addEventListener('load', done, { once: true });
+                              image.addEventListener('error', done, { once: true });
+                          }),
                 ),
             );
             await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
