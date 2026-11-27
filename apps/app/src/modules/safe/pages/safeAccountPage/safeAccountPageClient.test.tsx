@@ -1,4 +1,8 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    addressUtils,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
@@ -77,6 +81,26 @@ describe('<SafeAccountPageClient /> component', () => {
         );
     });
 
+    it('titles the page with the address book name of the Safe', () => {
+        const address = '0x1c8Cae0e29e1a0dc65f0f0E4C74DCE9f9C9F4a2B';
+        const entries = new Map([
+            [
+                addressEntryKey(address, 0),
+                { label: 'Treasury Safe', source: 'workspace' as const },
+            ],
+        ]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent({ address })}
+            </AddressResolutionProvider>,
+        );
+
+        expect(
+            screen.getByRole('heading', { name: 'Treasury Safe' }),
+        ).toBeInTheDocument();
+    });
+
     it('displays the reported Safe version verbatim', () => {
         useSafeInfoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
@@ -113,6 +137,29 @@ describe('<SafeAccountPageClient /> component', () => {
                 ),
             ),
         ).toBeInTheDocument();
+    });
+
+    it('names the guard from the address book', () => {
+        const guard = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+        useSafeInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateSafeInfoResponse({ guard }),
+            }),
+        );
+        const entries = new Map([
+            [
+                addressEntryKey(guard, 0),
+                { label: 'Spending guard', source: 'workspace' as const },
+            ],
+        ]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Spending guard')).toBeInTheDocument();
     });
 
     it('renders no module count for a Safe with no modules, rather than an empty authority field', () => {

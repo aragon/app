@@ -1,9 +1,11 @@
 import {
     AddressOutput,
+    addressUtils,
     Button,
     ChainEntityType,
     Dialog,
     IconType,
+    Link,
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -107,7 +109,6 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         <MemberAvatar
             address={address}
             avatarSrc={ensAvatar ?? undefined}
-            ensName={ensName ?? undefined}
             responsiveSize={{ sm: 'xl' }}
             size="lg"
         />
@@ -152,12 +153,14 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                         <p className="text-xl leading-tight font-normal text-neutral-800">
                             {displayName}
                         </p>
-                        <AddressOutput
-                            address={address}
+                        {/* The plain short address: resolving it would repeat the profile name above. */}
+                        <Link
                             className="text-base"
                             href={addressLink}
                             isExternal={true}
-                        />
+                        >
+                            {addressUtils.truncateAddress(address)}
+                        </Link>
                     </div>
                 ) : (
                     <AddressOutput

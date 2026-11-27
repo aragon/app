@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { DateTime } from 'luxon';
 import * as wagmi from 'wagmi';
-import { addressUtils } from '../../../../../core';
+import { AddressResolutionProvider, addressEntryKey, addressUtils } from '../../../../../core';
 import { modulesCopy } from '../../../../assets';
 import { ProposalStatus } from '../../proposalUtils';
 import { ProposalDataListItemStructure } from './proposalDataListItemStructure';
@@ -55,6 +55,29 @@ describe('<ProposalDataListItemStructure/> component', () => {
         render(createTestComponent({ publisher }));
 
         expect(await screen.findByRole('link', { name: 'You' })).toBeInTheDocument();
+    });
+
+    it('names a publisher without a name through the address resolution service, and keeps a given name', () => {
+        const unnamed = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        const named = '0x1111111111111111111111111111111111111111';
+        const entries = new Map([
+            [addressEntryKey(unnamed, 0), { label: 'Ops wallet', source: 'workspace' as const }],
+            [addressEntryKey(named, 0), { label: 'Other name', source: 'workspace' as const }],
+        ]);
+        const publisher = [
+            { address: unnamed, link: '#' },
+            { address: named, name: 'Founder', link: '#' },
+        ];
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent({ publisher })}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Ops wallet')).toBeInTheDocument();
+        expect(screen.getByText('Founder')).toBeInTheDocument();
+        expect(screen.queryByText('Other name')).not.toBeInTheDocument();
     });
 
     it('renders multiple publishers', () => {

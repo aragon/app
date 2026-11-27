@@ -1,9 +1,13 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    AddressNetworkProvider,
+    AddressResolutionProvider,
+    addressEntryKey,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import type { IUseEnsNameReturn } from '@/modules/ens';
-import * as ensModule from '@/modules/ens';
 import { SafeTransactionState } from '@/modules/safe/types';
 import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateSppProposal,
     generateSppStage,
@@ -29,13 +33,6 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         'useSafeMultisigBodyState',
     );
     const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
-    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
-
-    // No ENS resolves for the fixture body, so the row must fall back to the truncated address.
-    const unresolvedEnsName = {
-        data: null,
-        isLoading: false,
-    } as unknown as IUseEnsNameReturn;
 
     const pendingReport = {
         transaction: generateSafeMultisigTransaction({
@@ -72,13 +69,11 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
     beforeEach(() => {
         useSafeMultisigBodyStateSpy.mockReturnValue(state);
         getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
-        useEnsNameSpy.mockReturnValue(unresolvedEnsName);
     });
 
     afterEach(() => {
         useSafeMultisigBodyStateSpy.mockReset();
         getStageStatusSpy.mockReset();
-        useEnsNameSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -198,4 +193,38 @@ describe('<SafeMultisigProposalVotingSummary /> component', () => {
         ).not.toBeInTheDocument();
         expect(screen.getByText('0x0000…0001')).toBeInTheDocument();
     });
+
+    // The body is a contract, so its name is saved for its network: the page's network decides.
+    it.each([
+        { network: Network.ETHEREUM_MAINNET, expected: 'Treasury Safe' },
+        { network: Network.BASE_MAINNET, expected: '0x0000…0001' },
+    ])(
+        'names the body from the address book on a page of $network',
+        ({ network, expected }) => {
+            const entries = new Map([
+                [
+                    addressEntryKey(
+                        body,
+                        networkDefinitions[Network.ETHEREUM_MAINNET].id,
+                    ),
+                    {
+                        label: 'Treasury Safe',
+                        source: 'known-account' as const,
+                    },
+                ],
+            ]);
+
+            render(
+                <AddressResolutionProvider entries={entries}>
+                    <AddressNetworkProvider
+                        chainId={networkDefinitions[network].id}
+                    >
+                        {createTestComponent()}
+                    </AddressNetworkProvider>
+                </AddressResolutionProvider>,
+            );
+
+            expect(screen.getAllByText(expected).length).toBeGreaterThan(0);
+        },
+    );
 });

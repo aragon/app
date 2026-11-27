@@ -6,7 +6,6 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
-import { useEnsName } from '@/modules/ens';
 import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -30,7 +29,6 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     const { open } = useDialogContext();
     const { address } = useWalletAccount();
     const isConnected = useWalletConnected();
-    const { data: ensName } = useEnsName(address);
 
     const {
         isAdminMember,
@@ -42,11 +40,7 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     });
 
     const displayName = address ? (
-        <AddressOutput
-            address={address}
-            copy={false}
-            label={ensName ?? undefined}
-        />
+        <AddressOutput address={address} copy={false} />
     ) : undefined;
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;

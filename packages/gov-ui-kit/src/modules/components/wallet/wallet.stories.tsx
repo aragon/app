@@ -29,7 +29,8 @@ export const Address: Story = {
 };
 
 /**
- * The Wallet component resolves and displays the linked ENS name and ENS avatar of the specified address.
+ * The Wallet component shows the name the nearest `AddressResolutionProvider` gives the address, or its ENS name when
+ * there is no provider, and its ENS avatar.
  */
 export const ResolvedEnsData: Story = {
     args: {

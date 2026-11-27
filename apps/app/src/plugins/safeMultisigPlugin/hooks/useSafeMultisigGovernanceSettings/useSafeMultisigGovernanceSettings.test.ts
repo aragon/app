@@ -1,5 +1,6 @@
+import { AddressResolutionProvider, addressEntryKey } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
-import * as ensApi from '@/modules/ens';
+import { createElement, type ReactNode } from 'react';
 import {
     generateSppProposal,
     generateSppStage,
@@ -19,7 +20,6 @@ describe('useSafeMultisigGovernanceSettings hook', () => {
         settledReportApi,
         'useSafeSettledReport',
     );
-    const useEnsNameSpy = jest.spyOn(ensApi, 'useEnsName');
 
     beforeEach(() => {
         useSafeInfoSpy.mockReturnValue({
@@ -30,9 +30,6 @@ describe('useSafeMultisigGovernanceSettings hook', () => {
             isLoading: false,
             isError: false,
         });
-        useEnsNameSpy.mockReturnValue({
-            data: undefined,
-        } as unknown as ReturnType<typeof ensApi.useEnsName>);
     });
 
     afterEach(() => {
@@ -77,5 +74,30 @@ describe('useSafeMultisigGovernanceSettings hook', () => {
         expect(terms).not.toContain(`${key}.currentNonce`);
         expect(terms).not.toContain(`${key}.version`);
         expect(terms).toContain(`${key}.safe`);
+    });
+    it('names the Safe row from the address book', () => {
+        const entries = new Map([
+            [
+                addressEntryKey(body, 0),
+                { label: 'Treasury Safe', source: 'workspace' as const },
+            ],
+        ]);
+        const wrapper = ({ children }: { children: ReactNode }) =>
+            createElement(AddressResolutionProvider, { entries, children });
+
+        const { result } = renderHook(
+            () =>
+                useSafeMultisigGovernanceSettings({
+                    daoId,
+                    pluginAddress: body,
+                    settings: {},
+                }),
+            { wrapper },
+        );
+
+        const safeRow = result.current.find(
+            (setting) => setting.term === `${key}.safe`,
+        );
+        expect(safeRow?.definition).toEqual('Treasury Safe');
     });
 });

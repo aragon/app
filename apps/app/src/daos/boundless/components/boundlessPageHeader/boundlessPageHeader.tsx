@@ -1,9 +1,9 @@
 'use client';
 
+import { useResolveAddressText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useMemo } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -18,7 +18,8 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
 ) => {
     const { dao, className, ...otherProps } = props;
     const { address } = useWalletAccount();
-    const { data: ensName } = useEnsName(address);
+    // The address book or ENS name of the user, else the short address; empty with no wallet connected.
+    const userName = useResolveAddressText(address);
 
     const { t } = useTranslations();
     const actions = useMemo(() => getActions(dao), [dao]);
@@ -47,8 +48,8 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                 <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
                     <p className="text-3xl leading-tight text-[#000000] md:text-5xl">
                         {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
-                        {ensName && (
-                            <span className="text-[#537263]">{ensName}</span>
+                        {userName && (
+                            <span className="text-[#537263]">{userName}</span>
                         )}
                         <br />
                         {t('app.daos.boundless.boundlessPageHeader.to')}

@@ -1,8 +1,11 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    AddressResolutionProvider,
+    addressEntryKey,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
-import * as ensModule from '@/modules/ens';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDaoPluginInfo from '@/shared/hooks/useDaoPluginInfo';
@@ -35,7 +38,6 @@ describe('<ProposalVotingTerminal /> component', () => {
         'useSlotSingleFunction',
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useDaoPluginInfoSpy = jest.spyOn(
         useDaoPluginInfo,
         'useDaoPluginInfo',
@@ -44,17 +46,12 @@ describe('<ProposalVotingTerminal /> component', () => {
     beforeEach(() => {
         useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
         useDaoPluginInfoSpy.mockReturnValue([]);
-        useEnsNameSpy.mockReturnValue({
-            data: undefined,
-            isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsName>);
     });
 
     afterEach(() => {
         useConnectionSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useDaoPluginInfoSpy.mockReset();
-        useEnsNameSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -120,5 +117,26 @@ describe('<ProposalVotingTerminal /> component', () => {
         });
         expect(screen.getByText(parsedSettings.term)).toBeInTheDocument();
         expect(screen.getByText(parsedSettings.definition)).toBeInTheDocument();
+    });
+
+    it('names the plugin from the address book', () => {
+        const proposal = generateProposal({
+            pluginAddress: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+        });
+        const entries = new Map([
+            [
+                addressEntryKey(proposal.pluginAddress, 0),
+                { label: 'Core voting', source: 'workspace' as const },
+            ],
+        ]);
+        useSlotSingleFunctionSpy.mockReturnValue([]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent({ proposal })}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Core voting')).toBeInTheDocument();
     });
 });

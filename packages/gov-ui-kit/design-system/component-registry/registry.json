@@ -6,11 +6,14 @@
         },
         "kit": {
             "root": "kit",
-            "commit": "f601a949968d69c47973a5f575967c679abb2f31",
+            "commit": "41d3a3cbce340dd8cd39042fbf49acf974c96a94",
             "dirty": [
+                "packages/gov-ui-kit/src/core/components/addressResolution/addressResolution.mdx",
                 "packages/gov-ui-kit/src/core/components/addressResolution/addressResolution.test.tsx",
-                "packages/gov-ui-kit/src/core/components/addressResolution/index.ts",
-                "packages/gov-ui-kit/src/core/components/addressResolution/useResolveAddressText.ts"
+                "packages/gov-ui-kit/src/core/components/addressResolution/useResolveAddressText.ts",
+                "packages/gov-ui-kit/src/modules/components/wallet/wallet.stories.tsx",
+                "packages/gov-ui-kit/src/modules/components/wallet/wallet.test.tsx",
+                "packages/gov-ui-kit/src/modules/components/wallet/wallet.tsx"
             ],
             "sourceVersion": "3.0.1",
             "entrypoints": {
@@ -22728,8 +22731,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
-                "line": 10,
-                "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                "line": 11,
+                "sha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
             },
             "props": [],
             "stories": [
@@ -22737,7 +22740,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.stories.tsx",
                     "line": 1,
-                    "sha256": "acd68735930cec1c1f2e15b47cf1f728f98d23c570bf6c87a3f554c26143e352"
+                    "sha256": "705961a6f85b3008805905cd8cbe2bac713e1454ed23a59d8595984900358ce7"
                 }
             ],
             "tests": [
@@ -22745,7 +22748,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.test.tsx",
                     "line": 1,
-                    "sha256": "f396735ab18f14f40074838551a505ac5d7bbe33438b25434e792953e37bba51"
+                    "sha256": "05ce0ec9b3c77a636179a5a3860dcd7fada71fbdbd714194513f2569bfde375b"
                 }
             ],
             "docs": [],
@@ -25091,8 +25094,8 @@
                     "source": {
                         "repository": "kit",
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
-                        "line": 26,
-                        "sha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "line": 25,
+                        "sha256": "53f9db56ab66fbb36129648788c9eb6e93d968168bcabcbdd456110c607772e9"
                     },
                     "props": [
                         {
@@ -25121,7 +25124,7 @@
                             "repository": "kit",
                             "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.test.tsx",
                             "line": 1,
-                            "sha256": "7386bc17aed94b3b299428558987b590bb9c23333c5c4cf184866b3ada159bf9"
+                            "sha256": "69404c4397b5308beb97a82307303f0ad090d73dc930c5078cd58e3034330dd2"
                         }
                     ],
                     "docs": []
@@ -25196,7 +25199,7 @@
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "5931ccfc2bc45f5f0c437d823fa5986cea9fd1f6d33dcfb6101112479017eee3",
-                        "actualSha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "actualSha256": "53f9db56ab66fbb36129648788c9eb6e93d968168bcabcbdd456110c607772e9"
                     },
                     {
                         "repository": "kit",
@@ -25335,8 +25338,8 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
-                "line": 26,
-                "sha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                "line": 25,
+                "sha256": "53f9db56ab66fbb36129648788c9eb6e93d968168bcabcbdd456110c607772e9"
             },
             "props": [
                 {
@@ -25365,7 +25368,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.test.tsx",
                     "line": 1,
-                    "sha256": "7386bc17aed94b3b299428558987b590bb9c23333c5c4cf184866b3ada159bf9"
+                    "sha256": "69404c4397b5308beb97a82307303f0ad090d73dc930c5078cd58e3034330dd2"
                 }
             ],
             "docs": [],
@@ -25398,7 +25401,7 @@
                         "path": "src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx",
                         "status": "changed",
                         "expectedSha256": "5931ccfc2bc45f5f0c437d823fa5986cea9fd1f6d33dcfb6101112479017eee3",
-                        "actualSha256": "48d1d99f8c2bfbde37a40c98b6bbf91826652e520c99be4871f1263d17894ea3"
+                        "actualSha256": "53f9db56ab66fbb36129648788c9eb6e93d968168bcabcbdd456110c607772e9"
                     }
                 ],
                 "review": {
@@ -33635,15 +33638,15 @@
             "source": {
                 "repository": "kit",
                 "path": "src/modules/components/wallet/wallet.tsx",
-                "line": 30,
-                "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                "line": 31,
+                "sha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
             },
             "props": [
                 {
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.tsx",
-                    "line": 10,
-                    "sha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                    "line": 11,
+                    "sha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
                 }
             ],
             "stories": [
@@ -33651,7 +33654,7 @@
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.stories.tsx",
                     "line": 1,
-                    "sha256": "acd68735930cec1c1f2e15b47cf1f728f98d23c570bf6c87a3f554c26143e352"
+                    "sha256": "705961a6f85b3008805905cd8cbe2bac713e1454ed23a59d8595984900358ce7"
                 }
             ],
             "tests": [
@@ -33659,13 +33662,13 @@
                     "repository": "kit",
                     "path": "src/modules/components/wallet/wallet.test.tsx",
                     "line": 1,
-                    "sha256": "f396735ab18f14f40074838551a505ac5d7bbe33438b25434e792953e37bba51"
+                    "sha256": "05ce0ec9b3c77a636179a5a3860dcd7fada71fbdbd714194513f2569bfde375b"
                 }
             ],
             "docs": [],
             "usageNotes": [
-                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
-                "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
+                "The connected handle is hidden below the `md` breakpoint, leaving only the avatar. Without a `user.name`, the address is named by the nearest `AddressResolutionProvider` (an address book or ENS name). With no provider, the Wallet looks up the ENS name itself. Without a name the address shows short.",
+                "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context."
             ],
             "intent": {
                 "description": "Wallet connect/identity button: shows connect copy when disconnected, or MemberAvatar + resolved handle (name/ENS/truncated address) when connected.",
@@ -33730,35 +33733,35 @@
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                        "actualSha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                        "actualSha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.tsx",
                         "status": "changed",
                         "expectedSha256": "d5381172909848e8e13a9ee4a55b6c07cf3114e91d2f8b3775343a42e6cf248d",
-                        "actualSha256": "e8c9dfd6df764714e5331a8f579d95d227eb0b726ec1f6f6c930f1725f95269e"
+                        "actualSha256": "a81d4463749f4261e9ba6693a67ca9d73a9ba8e38edac4f2b24fec598f759da1"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.stories.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "acd68735930cec1c1f2e15b47cf1f728f98d23c570bf6c87a3f554c26143e352",
-                        "actualSha256": "acd68735930cec1c1f2e15b47cf1f728f98d23c570bf6c87a3f554c26143e352"
+                        "actualSha256": "705961a6f85b3008805905cd8cbe2bac713e1454ed23a59d8595984900358ce7"
                     },
                     {
                         "repository": "kit",
                         "path": "src/modules/components/wallet/wallet.test.tsx",
-                        "status": "current",
+                        "status": "changed",
                         "expectedSha256": "f396735ab18f14f40074838551a505ac5d7bbe33438b25434e792953e37bba51",
-                        "actualSha256": "f396735ab18f14f40074838551a505ac5d7bbe33438b25434e792953e37bba51"
+                        "actualSha256": "05ce0ec9b3c77a636179a5a3860dcd7fada71fbdbd714194513f2569bfde375b"
                     }
                 ],
                 "review": {

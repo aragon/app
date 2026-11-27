@@ -1,11 +1,11 @@
 'use client';
 
+import { useResolveAddressText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -22,7 +22,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
 ) => {
     const { dao, className, ...otherProps } = props;
     const { address } = useWalletAccount();
-    const { data: ensName } = useEnsName(address);
+    // The address book or ENS name of the user, else the short address; empty with no wallet connected.
+    const userName = useResolveAddressText(address);
 
     const { t } = useTranslations();
 
@@ -49,8 +50,8 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                 <div className="top-6 flex w-fit max-w-180 flex-col gap-1.5 pt-6 pb-6 md:absolute md:top-8 md:w-180 md:gap-3">
                     <p className="text-3xl leading-tight text-neutral-0 md:text-5xl">
                         {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
-                        {ensName && (
-                            <span className="text-[#1ED612]">{ensName}</span>
+                        {userName && (
+                            <span className="text-[#1ED612]">{userName}</span>
                         )}
                         <br />
                         {t('app.daos.xmaquina.xmaquinaPageHeader.to')}

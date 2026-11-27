@@ -16,7 +16,6 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEnsName } from '@/modules/ens';
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
@@ -133,8 +132,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         isError: hasSimulationFailed,
         error: simulateProposalError,
     } = useSimulateProposal();
-
-    const { data: creatorEnsName } = useEnsName(proposal?.creator.address);
 
     // Dates are formatted in the viewer's timezone while the server renders in UTC —
     // render them only after mount to avoid a hydration mismatch.
@@ -409,12 +406,8 @@ export const DaoProposalDetailsPageClient: React.FC<
                                     {proposalSlug.toUpperCase()}
                                 </p>
                             </DefinitionList.Item>
+                            {/* The address alone: the item shows it through the widget, which names it. */}
                             <DefinitionList.Item
-                                copyValue={
-                                    creatorEnsName != null
-                                        ? creator.address
-                                        : undefined
-                                }
                                 link={{
                                     href: creatorLink,
                                     isOnchainEntity: true,
@@ -423,7 +416,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',
                                 )}
                             >
-                                {creatorEnsName ?? creator.address}
+                                {creator.address}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 link={{

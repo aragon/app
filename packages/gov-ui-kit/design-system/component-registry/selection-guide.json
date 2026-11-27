@@ -5,7 +5,7 @@
         "sourceRegistry": {
             "path": "registry.json",
             "schemaVersion": "2.0.0",
-            "sha256": "83ab20dc58726b32fbe5ba72e0539361990b3f4bd42508bb0df131d7144802bf",
+            "sha256": "c4b3c32b574d8d6212e45d9741f385d0380aa7679c5c462823407d70e4d60507",
             "totalRecords": 423,
             "entryCount": 150,
             "uiEntryCount": 143,
@@ -2570,7 +2570,7 @@
             "constraints": [],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:26",
+                "source": "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:25",
                 "stories": [
                     "kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx:1"
                 ]
@@ -3855,8 +3855,8 @@
             "alternatives": [],
             "keyProps": [],
             "usageNotes": [
-                "The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.",
-                "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`."
+                "The connected handle is hidden below the `md` breakpoint, leaving only the avatar. Without a `user.name`, the address is named by the nearest `AddressResolutionProvider` (an address book or ENS name). With no provider, the Wallet looks up the ENS name itself. Without a name the address shows short.",
+                "Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context."
             ],
             "constraints": [
                 "ENS name resolved via wagmi useEnsName on the chain from the chainId prop (default mainnet), and skipped when user.name is provided",
@@ -3864,7 +3864,7 @@
             ],
             "composition": [],
             "references": {
-                "source": "kit:src/modules/components/wallet/wallet.tsx:30",
+                "source": "kit:src/modules/components/wallet/wallet.tsx:31",
                 "stories": [
                     "kit:src/modules/components/wallet/wallet.stories.tsx:1"
                 ]

@@ -5,6 +5,7 @@ import {
     CardEmptyState,
     ChainEntityType,
     DefinitionList,
+    useResolveAddressText,
 } from '@aragon/gov-ui-kit';
 import {
     safeAppAccountUrl,
@@ -57,7 +58,8 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
         !isNetworkSupported ||
         SafeServiceError.isUnsupportedChainError(safeInfoError);
 
-    const truncatedAddress = addressUtils.truncateAddress(checksummedAddress);
+    // A Safe has no name onchain: its address book or ENS name, else its short address.
+    const safeName = useResolveAddressText(checksummedAddress);
     // The Safe app is the address's destination, not the explorer: this page is the in-app
     // account view, and the Safe app is where an owner keeps working with the account
     // (pending queue, history, owners) while the explorer only renders the address. Networks
@@ -84,7 +86,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
     const detailRows = [
         safeSettingsUtils.addressRow({
             address: checksummedAddress,
-            safeName: truncatedAddress,
+            safeName,
             safeHref: addressLink,
             version: safeInfo?.version,
             t,
@@ -129,7 +131,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                           },
                       ]
             }
-            title={truncatedAddress}
+            title={safeName}
         />
     );
 

@@ -1,5 +1,7 @@
 import {
     ActionSimulation,
+    AddressResolutionProvider,
+    addressEntryKey,
     clipboardUtils,
     GukModulesProvider,
     ProposalStatus,
@@ -379,6 +381,36 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(creatorLink.getAttribute('href')).toEqual(
             'https://sepolia.etherscan.io/address/0x123',
         );
+    });
+
+    it('names the creator from the address book', () => {
+        const creatorAddress = '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045';
+        const proposal = generateProposal({
+            creator: generateAddressInfo({ address: creatorAddress }),
+            network: Network.ETHEREUM_SEPOLIA,
+        });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
+        );
+        const entries = new Map([
+            [
+                addressEntryKey(creatorAddress, 0),
+                { label: 'Ops wallet', source: 'workspace' as const },
+            ],
+        ]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        const detailsContainer = screen.getByTestId(
+            'proposal-details-container',
+        );
+        expect(
+            within(detailsContainer).getByText('Ops wallet'),
+        ).toBeInTheDocument();
     });
 
     it('renders the proposal resources as external links', () => {

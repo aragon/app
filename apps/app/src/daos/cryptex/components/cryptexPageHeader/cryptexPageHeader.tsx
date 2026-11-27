@@ -1,9 +1,9 @@
 'use client';
 
+import { useResolveAddressText } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -19,7 +19,8 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const [isLightMode, setIsLightMode] = useState(true);
     const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useWalletAccount();
-    const { data: ensName } = useEnsName(address);
+    // The address book or ENS name of the user, else the short address; empty with no wallet connected.
+    const userName = useResolveAddressText(address);
 
     const { t } = useTranslations();
     const actions = useMemo(() => getActions(dao), [dao]);
@@ -135,7 +136,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                         )}
                     >
                         {t('app.daos.cryptex.cryptexPageHeader.welcome')}{' '}
-                        {ensName && (
+                        {userName && (
                             <span
                                 className={
                                     isLightMode
@@ -143,7 +144,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                                         : 'text-purple-400'
                                 }
                             >
-                                {ensName}
+                                {userName}
                             </span>
                         )}
                         <br />

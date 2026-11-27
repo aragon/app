@@ -12,7 +12,6 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
-import { useEnsName } from '@/modules/ens';
 import { useWorkspace } from '@/modules/workspace/api/workspaceService';
 import { WorkspaceAccountSelector } from '@/modules/workspace/components/workspaceAccountSelector';
 import { WorkspaceSelector } from '@/modules/workspace/components/workspaceSelector';
@@ -63,9 +62,6 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
-    const { data: displayName } = useEnsName(address, {
-        stripAragonRegistrySuffix: true,
-    });
     const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
@@ -87,10 +83,8 @@ export const NavigationWorkspace: React.FC<INavigationWorkspaceProps> = (
         open(dialog);
     };
 
-    const walletUser =
-        isMounted && address != null
-            ? { address, name: displayName ?? undefined }
-            : undefined;
+    // No name: the wallet widgets name the address through the address book (ENS included).
+    const walletUser = isMounted && address != null ? { address } : undefined;
 
     // The to-dos of the wallet in the scope the to-dos link opens, for its badge. Read under the same query as the
     // to-dos page and the overview, so the badge counts the rows its link leads to at no extra request.

@@ -1271,7 +1271,7 @@ ProposalDataListItemStructure: presentational item structure driven by props of 
 
 **References**
 
-- `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:26`
+- `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.tsx:25`
 - `kit:src/modules/components/proposal/proposalDataListItem/proposalDataListItemStructure/proposalDataListItemStructure.stories.tsx:1`
 
 ### ProposalVoting.BodyContent
@@ -1842,8 +1842,8 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **Usage notes**
 
-- The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the avatar.
-- Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only for a connected `user` without `name`.
+- The connected handle is hidden below the `md` breakpoint, leaving only the avatar. Without a `user.name`, the address is named by the nearest `AddressResolutionProvider` (an address book or ENS name). With no provider, the Wallet looks up the ENS name itself. Without a name the address shows short.
+- Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted and only disabled, so it needs the provider's wagmi and React Query context.
 
 **Use when**
 
@@ -1856,7 +1856,7 @@ Wallet connect/identity button: shows connect copy when disconnected, or MemberA
 
 **References**
 
-- `kit:src/modules/components/wallet/wallet.tsx:30`
+- `kit:src/modules/components/wallet/wallet.tsx:31`
 - `kit:src/modules/components/wallet/wallet.stories.tsx:1`
 
 ## Compound components

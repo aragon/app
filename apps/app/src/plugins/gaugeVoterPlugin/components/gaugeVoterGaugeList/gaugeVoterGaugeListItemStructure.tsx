@@ -158,17 +158,19 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     size="md"
                     src={avatarSrc}
                 />
+                {/* A named gauge shows its name and the plain short address: resolving that address would repeat a
+                 * name. An unnamed one shows its address once, named by the address book. */}
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className="truncate text-base text-neutral-800 md:text-lg">
-                        <AddressOutput
-                            address={gauge.address}
-                            copy={false}
-                            label={gauge.name ?? undefined}
-                        />
+                        {gauge.name ?? (
+                            <AddressOutput address={gauge.address} />
+                        )}
                     </p>
-                    <p className="truncate text-sm text-neutral-500">
-                        <AddressOutput address={gauge.address} />
-                    </p>
+                    {gauge.name != null && (
+                        <p className="truncate text-sm text-neutral-500">
+                            {addressUtils.truncateAddress(gauge.address)}
+                        </p>
+                    )}
                 </div>
             </div>
 

@@ -13,7 +13,6 @@ import type { Route } from 'next';
 import { useSearchParams } from 'next/navigation';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
-import { useEnsName } from '@/modules/ens';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
@@ -110,9 +109,6 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const exitHref = isAppPath(returnTo) ? returnTo : exitPath;
 
     const { address } = useWalletAccount();
-    const { data: displayName } = useEnsName(address, {
-        stripAragonRegistrySuffix: true,
-    });
     const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
@@ -126,10 +122,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
         open(dialog);
     };
 
-    const walletUser =
-        isMounted && address != null
-            ? { address, name: displayName ?? undefined }
-            : undefined;
+    // No name: the wallet widgets name the address through the address book (ENS included).
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const displayDao = resolveDisplayDao(dao, targetDaoAddress);
     const displayDaoName =
         displayDao != null ? daoUtils.getDaoDisplayName(displayDao) : undefined;

@@ -1,5 +1,7 @@
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import {
+    AddressResolutionProvider,
+    addressEntryKey,
     addressUtils,
     clipboardUtils,
     GukModulesProvider,
@@ -129,6 +131,56 @@ describe('<UserDialog /> component', () => {
         expect(
             screen.getByText(addressUtils.truncateAddress(address)),
         ).toBeInTheDocument();
+    });
+
+    it('shows the profile name once, beside the plain short address, when the address book also names the address', () => {
+        const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
+        useConnectionSpy.mockReturnValue({
+            address,
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        const entries = new Map([
+            [
+                addressEntryKey(address, 0),
+                { label: 'Ops wallet', source: 'workspace' as const },
+            ],
+        ]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('name.eth')).toBeInTheDocument();
+        expect(
+            screen.getByText(addressUtils.truncateAddress(address)),
+        ).toBeInTheDocument();
+        expect(screen.queryByText('Ops wallet')).not.toBeInTheDocument();
+    });
+
+    it('names the user address from the address book when it has no profile', () => {
+        const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
+        useConnectionSpy.mockReturnValue({
+            address,
+        } as unknown as wagmi.UseConnectionReturnType);
+        const entries = new Map([
+            [
+                addressEntryKey(address, 0),
+                { label: 'Ops wallet', source: 'workspace' as const },
+            ],
+        ]);
+
+        render(
+            <AddressResolutionProvider entries={entries}>
+                {createTestComponent()}
+            </AddressResolutionProvider>,
+        );
+
+        expect(screen.getByText('Ops wallet')).toBeInTheDocument();
     });
 
     it('only renders the user address when it is not linked to an ENS name', () => {

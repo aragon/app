@@ -16,9 +16,8 @@ const parsePublisher = (
 ) => {
     const publisherIsConnected =
         canShowConnectedLabel && isConnected && addressUtils.isAddressEqual(publisher.address, connectedAddress);
-    const publisherLabel = publisherIsConnected
-        ? 'You'
-        : (publisher.name ?? addressUtils.truncateAddress(publisher.address));
+    // Without a name of its own, the address widget names the publisher through the address resolution service.
+    const publisherLabel = publisherIsConnected ? 'You' : publisher.name;
 
     return { label: publisherLabel, link: publisher.link, address: publisher.address };
 };

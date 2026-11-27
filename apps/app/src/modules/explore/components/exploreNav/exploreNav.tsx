@@ -8,7 +8,6 @@ import { SupportChatTrigger } from '@/modules/application/components/supportChat
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
-import { useEnsName } from '@/modules/ens';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation } from '@/shared/components/navigation';
@@ -16,16 +15,11 @@ import { useIsMounted } from '@/shared/hooks/useIsMounted';
 
 export const ExploreNav: React.FC = () => {
     const { address } = useWalletAccount();
-    const { data: displayName } = useEnsName(address, {
-        stripAragonRegistrySuffix: true,
-    });
     const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
-    const walletUser =
-        isMounted && address != null
-            ? { address, name: displayName ?? undefined }
-            : undefined;
+    // No name: the wallet widgets name the address through the address book (ENS included).
+    const walletUser = isMounted && address != null ? { address } : undefined;
     const { open } = useDialogContext();
 
     const [isPostHero, setIsPostHero] = useState(false);

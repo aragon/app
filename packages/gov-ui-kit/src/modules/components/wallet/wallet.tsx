@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import { useId } from 'react';
+import { useContext, useId } from 'react';
 import { mainnet } from 'viem/chains';
 import { useEnsName } from 'wagmi';
 import { AddressOutput, addressUtils, InteractiveAncestorContext, StateSkeletonBar } from '../../../core';
+import { AddressResolutionContext } from '../../../core/components/addressResolution/addressResolutionProvider';
 import type { ICompositeAddress, IWeb3ComponentProps } from '../../types';
 import { useGukModulesContext } from '../gukModulesProvider';
 import { MemberAvatar } from '../member';
@@ -21,26 +22,26 @@ export interface IWalletProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
  *
  * Usage notes:
  *
- * - The connected handle (name / ENS / truncated address) is hidden below the `md` breakpoint, leaving only the
- *   avatar.
- * - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always
- *   mounted and only disabled, so it needs the provider's wagmi and React Query context. The ENS lookup runs only
- *   for a connected `user` without `name`.
+ * - The connected handle is hidden below the `md` breakpoint, leaving only the avatar. Without a `user.name`, the
+ *   address is named by the nearest `AddressResolutionProvider` (an address book or ENS name). With no provider, the
+ *   Wallet looks up the ENS name itself. Without a name the address shows short.
+ * - Render it inside `GukModulesProvider`, even when no user is connected: its wagmi ENS-name hook is always mounted
+ *   and only disabled, so it needs the provider's wagmi and React Query context.
  */
 export const Wallet: React.FC<IWalletProps> = (props) => {
     const { user, className, chainId = mainnet.id, wagmiConfig, ...otherProps } = props;
 
     const { copy } = useGukModulesContext();
 
+    // Without a provider nothing resolves, so the Wallet keeps ENS names by looking them up itself.
+    const hasResolution = useContext(AddressResolutionContext) != null;
     const { data: ensName, isLoading: isEnsLoading } = useEnsName({
         address: user == null ? undefined : addressUtils.getChecksum(user.address),
-        query: { enabled: user != null && user.name == null },
+        query: { enabled: user != null && user.name == null && !hasResolution },
         chainId,
         config: wagmiConfig,
     });
 
-    // Without an ENS name the address resolves its own name.
-    const label = user?.name ?? ensName ?? undefined;
     const contentId = useId();
 
     const buttonClassName = classNames(
@@ -66,7 +67,11 @@ export const Wallet: React.FC<IWalletProps> = (props) => {
                     {!user && copy.wallet.connect}
                     {user && isEnsLoading && <StateSkeletonBar className="block max-md:hidden" size="lg" width={56} />}
                     {user && !isEnsLoading && (
-                        <AddressOutput address={user.address} className="truncate max-md:hidden" label={label} />
+                        <AddressOutput
+                            address={user.address}
+                            className="truncate max-md:hidden"
+                            label={user.name ?? ensName ?? undefined}
+                        />
                     )}
                     {user && (
                         <MemberAvatar

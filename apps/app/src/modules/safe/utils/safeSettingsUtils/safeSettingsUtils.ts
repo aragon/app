@@ -1,4 +1,4 @@
-import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
 import type { ISafeInfo } from '@/shared/api/safeService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
@@ -144,7 +144,8 @@ class SafeSettingsUtils {
         if (safeInfo.guard != null) {
             rows.push({
                 term: t(`${safeSettingsTranslationKey}.guard`),
-                definition: addressUtils.truncateAddress(safeInfo.guard),
+                // The full address: the list item shows it through the widget, which names it.
+                definition: safeInfo.guard,
                 link: buildContractLink(safeInfo.guard, buildAddressHref),
                 copyValue: safeInfo.guard,
             });
@@ -178,7 +179,8 @@ class SafeSettingsUtils {
             description: string,
         ): IDefinitionSetting => ({
             term,
-            definition: addressUtils.truncateAddress(address),
+            // The full address: the list item shows it through the widget, which names it.
+            definition: address,
             link: buildContractLink(address, buildAddressHref),
             copyValue: address,
             description,

@@ -1,3 +1,4 @@
+import { AddressResolutionProvider, addressEntryKey } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import type { ComponentProps } from 'react';
@@ -32,6 +33,16 @@ const renderStackNode = () => {
     );
 };
 
+const nodeAddress = '0x8888888888888888888888888888888888888888';
+
+// The address book names the node's address, for all networks.
+const entries = new Map([
+    [
+        addressEntryKey(nodeAddress, 0),
+        { label: 'Ops wallet', source: 'workspace' as const },
+    ],
+]);
+
 const renderGraphNode = (
     data: Partial<ComponentProps<typeof PermissionGraphNode>['data']> = {},
 ) => {
@@ -41,15 +52,17 @@ const renderGraphNode = (
             kind: 'plugin',
             label: 'Token Voting',
             tag: 'TOKENVOTING',
-            address: '0x8888888888888888888888888888888888888888',
+            address: nodeAddress,
             ...data,
         },
     } as unknown as ComponentProps<typeof PermissionGraphNode>;
 
     return render(
-        <ReactFlowProvider>
-            <PermissionGraphNode {...props} />
-        </ReactFlowProvider>,
+        <AddressResolutionProvider entries={entries}>
+            <ReactFlowProvider>
+                <PermissionGraphNode {...props} />
+            </ReactFlowProvider>
+        </AddressResolutionProvider>,
     );
 };
 
@@ -139,6 +152,19 @@ describe('<PermissionGraphNode /> component', () => {
 
         expect(screen.getByText('Anyone')).toBeInTheDocument();
         expect(screen.getByLabelText('Members')).toBeInTheDocument();
+    });
+
+    it('shows the name of a named node, not the address book name of its address', () => {
+        renderGraphNode();
+
+        expect(screen.getByText('Token Voting')).toBeInTheDocument();
+        expect(screen.queryByText('Ops wallet')).not.toBeInTheDocument();
+    });
+
+    it('names a node that is only an address from the address book', () => {
+        renderGraphNode({ kind: 'actor', label: undefined, tag: undefined });
+
+        expect(screen.getByText('Ops wallet')).toBeInTheDocument();
     });
 });
 
