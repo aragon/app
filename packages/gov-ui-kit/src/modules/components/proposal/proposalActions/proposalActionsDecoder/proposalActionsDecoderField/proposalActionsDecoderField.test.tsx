@@ -126,7 +126,7 @@ describe('<ProposalActionsDecoderField /> component', () => {
             .getAllByRole('button')
             .filter((button) => within(button).queryByTestId(IconType.CLOSE) != null);
         expect(removeButtons).toHaveLength(parameter.value.length);
-        removeButtons.forEach((button) => expect(button).toHaveClass('h-8', 'w-8'));
+        removeButtons.forEach((button) => expect(button).toHaveClass('h-control-sm', 'w-control-sm'));
         await userEvent.click(removeButtons[0]);
 
         expect(screen.getAllByRole('textbox')).toHaveLength(parameter.value.length);
@@ -162,7 +162,7 @@ describe('<ProposalActionsDecoderField /> component', () => {
             .getAllByRole('button')
             .filter((button) => within(button).queryByTestId(IconType.CLOSE) != null);
         expect(removeButtons).toHaveLength(parameter.value.length);
-        removeButtons.forEach((button) => expect(button).toHaveClass('h-8', 'w-8'));
+        removeButtons.forEach((button) => expect(button).toHaveClass('h-control-sm', 'w-control-sm'));
         parameter.value.forEach((_, index) =>
             expect(screen.getByText(`[${index.toString()}]:`)).toHaveClass('text-surface-secondary'),
         );

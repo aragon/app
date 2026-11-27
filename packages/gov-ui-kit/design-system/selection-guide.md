@@ -278,7 +278,7 @@ Avatar-shaped frame rendering an Icon with variant styling.
 
 **References**
 
-- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:141`
+- `kit:src/core/components/avatars/avatarStack/avatarStack.tsx:143`
 - `kit:src/core/components/avatars/avatarStack/avatarStack.stories.tsx:1`
 
 ### Breadcrumbs

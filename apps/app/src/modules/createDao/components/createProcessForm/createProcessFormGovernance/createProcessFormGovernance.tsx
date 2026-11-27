@@ -70,9 +70,9 @@ export const CreateProcessFormGovernance: React.FC<
           };
 
     return (
-        <div className="flex w-full flex-col gap-4 md:gap-6">
+        <div className="flex w-full flex-col gap-group-stepped">
             <RadioGroup
-                className="w-full gap-4 md:flex-row [&>*]:min-w-0 [&>*]:flex-1"
+                className="w-full gap-group md:flex-row [&>*]:min-w-0 [&>*]:flex-1"
                 helpText={t(
                     'app.createDao.createProcessForm.governance.type.helpText',
                 )}

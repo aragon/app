@@ -95,7 +95,8 @@ export const WorkspaceEntryPageClient: React.FC<
     if (outcome === 'open') {
         return (
             <div
-                className="flex grow flex-col items-center justify-center gap-3 py-20 text-surface-secondary"
+                // biome-ignore lint/plugin/noPrimitiveSpacing: loading placeholder, 80 px above and below the spinner
+                className="flex grow flex-col items-center justify-center gap-related py-20 text-surface-secondary"
                 role="status"
             >
                 <Spinner size="lg" variant="neutral" />

@@ -132,9 +132,9 @@ export const WorkspaceGateAccountPrompt: React.FC<
     }
 
     return (
-        <div className="flex grow items-center justify-center px-4 py-10">
-            <Card className="flex w-full max-w-[480px] flex-col gap-6 p-6 md:p-8">
-                <div className="flex flex-col gap-1 md:gap-2">
+        <div className="flex grow items-center justify-center px-group py-section-wide">
+            <Card className="flex w-full max-w-[480px] flex-col gap-section p-inset-surface-wide--24-32">
+                <div className="flex flex-col gap-tight--4-8">
                     <Heading
                         as="h1"
                         typeClassName="type-title-page--gate-prompt"
@@ -157,7 +157,7 @@ export const WorkspaceGateAccountPrompt: React.FC<
                         <Radio key={id} label={label} value={id} />
                     ))}
                 </RadioGroup>
-                <div className="flex flex-col gap-3 md:flex-row">
+                <div className="flex flex-col gap-group--fixed-12 md:flex-row">
                     <Button
                         disabled={activeId == null}
                         isLoading={isCreating || isNavigating}

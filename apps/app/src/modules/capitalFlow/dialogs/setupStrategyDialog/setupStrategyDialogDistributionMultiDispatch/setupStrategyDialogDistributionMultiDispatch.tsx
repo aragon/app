@@ -67,9 +67,9 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
     };
 
     return (
-        <div className="flex w-full flex-col gap-3">
-            <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
+        <div className="flex w-full flex-col gap-related">
+            <div className="flex flex-col gap-group">
+                <div className="flex flex-col gap-tight">
                     <p className="type-title-item--unstepped text-surface-primary">
                         {t(
                             'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.label',
@@ -82,7 +82,7 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
                     </p>
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     {fields.map((field, index) => (
                         <RouterAddressInput
                             canMoveDown={index < fields.length - 1}

@@ -38,7 +38,7 @@ export const GaugeVoterLockOnboardingFormDialog: React.FC<
                     'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.form.title',
                 )}
             />
-            <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
+            <Dialog.Content className="flex w-full flex-col gap-group pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <GaugeVoterLockForm
                     daoId={daoId}
                     mode="dialog"

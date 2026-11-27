@@ -34,13 +34,13 @@ export const CapitalDistributorClaimDialogDetailsInfo: React.FC<
     const { label, value, token } = info;
 
     return (
-        <div className="flex grow basis-0 flex-col gap-1">
+        <div className="flex grow basis-0 flex-col gap-tight">
             <p className="type-supporting--compact-meta text-surface-secondary">
                 {t(
                     `app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.${label}`,
                 )}
             </p>
-            <div className="flex flex-row gap-1.5">
+            <div className="flex flex-row gap-tight--fixed-6">
                 {token && <Avatar size="sm" src={token.logo} />}
                 <p className="type-body--unstepped text-surface-primary first-letter:uppercase">
                     {value}

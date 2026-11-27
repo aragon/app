@@ -28,7 +28,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     });
 
     return (
-        <div className="flex flex-col gap-2 md:gap-3">
+        <div className="flex flex-col gap-related--8-12">
             <InputContainer
                 helpText={helpText}
                 id="resourcesInput"
@@ -37,7 +37,7 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
                 useCustomWrapper={true}
             />
             {fields.length > 0 && (
-                <div className="flex flex-col gap-3 md:gap-2">
+                <div className="flex flex-col gap-related--12-8">
                     {fields.map((field, index) => (
                         <ResourcesInputItem
                             index={index}

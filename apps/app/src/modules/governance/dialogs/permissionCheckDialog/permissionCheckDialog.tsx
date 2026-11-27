@@ -111,7 +111,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (
     return (
         <>
             <Dialog.Header description={description} title={title} />
-            <Dialog.Content className="pb-3">
+            <Dialog.Content className="pb-inset-surface-flat">
                 <PermissionsDefinitionList
                     isLoading={isLoading}
                     isRestricted={isRestricted}

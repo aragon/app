@@ -127,7 +127,7 @@ export const CreateProcessFormProposalCreation: React.FC<
     return (
         <>
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="flex gap-group md:!flex-row"
                 onValueChange={onModeChange}
                 value={mode}
                 {...modeField}

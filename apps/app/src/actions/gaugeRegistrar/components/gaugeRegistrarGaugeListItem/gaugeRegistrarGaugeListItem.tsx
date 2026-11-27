@@ -39,20 +39,24 @@ export const GaugeRegistrarGaugeListItem: React.FC<
 
     return (
         <DataList.Item
-            className={classNames('px-4 py-3 md:p-6', className, {
-                'border-surface-selected shadow-accent-default! hover:border-surface-selected':
-                    isActive,
-            })}
+            className={classNames(
+                'px-inset-item py-inset-item--12-24',
+                className,
+                {
+                    'border-surface-selected shadow-accent-default! hover:border-surface-selected':
+                        isActive,
+                },
+            )}
             {...otherProps}
         >
-            <div className="flex items-center justify-between gap-12">
-                <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-section-wide--fixed-48">
+                <div className="flex items-center gap-group">
                     <Avatar
                         fallback={avatarFallback}
                         size="lg"
                         src={avatarSrc}
                     />
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-tight">
                         <p className="type-title-item--picker-row text-surface-primary">
                             {gauge.name}
                         </p>

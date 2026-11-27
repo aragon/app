@@ -83,20 +83,20 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                 {/* Stable skeleton in every state: the composer is always pinned to the bottom;
                     the welcome block fills the space above it on a fresh chat, messages take
                     over once the conversation starts. Nothing repositions between the two. */}
-                <div className="mx-auto flex w-full max-w-(--thread-max-width) flex-1 flex-col px-4 pt-4">
+                <div className="mx-auto flex w-full max-w-(--thread-max-width) flex-1 flex-col px-inset-surface-flat pt-inset-surface-flat--fixed-16">
                     <AuiIf condition={isNewChatView}>
                         <ThreadWelcome />
                     </AuiIf>
 
                     {/* mt-auto pins a short conversation to the bottom, so messages stack from
                         the composer upwards. */}
-                    <div className="mt-auto mb-8 flex flex-col gap-y-6 empty:hidden">
+                    <div className="mt-auto mb-section--fixed-32 flex flex-col gap-y-section empty:hidden">
                         <ThreadPrimitive.Messages>
                             {() => <ThreadMessage />}
                         </ThreadPrimitive.Messages>
                     </div>
 
-                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-3 overflow-visible rounded-t-(--composer-radius) bg-surface-primary pb-4 md:pb-6">
+                    <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-related overflow-visible rounded-t-(--composer-radius) bg-surface-primary pb-inset-surface">
                         <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
@@ -164,7 +164,7 @@ const ThreadTimeDivider: React.FC<IThreadTimeDividerProps> = (props) => {
     const { label } = props;
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-related">
             <span className="h-px flex-1 bg-surface-tertiary" />
             <p className="flex-none type-caption--unstepped text-surface-tertiary">
                 {label}
@@ -189,7 +189,7 @@ const ThreadMessage: React.FC = () => {
 // Styled after the gov-ui-kit Link (its own type scale is too large for the caption lines): the
 // app's plain link look, opening in a new tab so the chat stays put.
 const captionLinkClassName =
-    'focus-ring ring-accent-focus inline-flex items-center gap-1.5 rounded-md text-link-default hover:text-link-hover active:text-link-active';
+    'inline-flex items-center gap-tight--fixed-6 rounded-md focus-ring ring-accent-focus text-link-default hover:text-link-hover active:text-link-active';
 
 interface ICaptionLinkProps {
     href: string;
@@ -214,7 +214,7 @@ const CaptionLink: React.FC<ICaptionLinkProps> = (props) => {
 
 // Fills the space between header and composer on a fresh chat.
 const ThreadWelcome: React.FC = () => (
-    <div className="flex flex-1 flex-col items-center justify-center px-8 py-6 text-center">
+    <div className="flex flex-1 flex-col items-center justify-center px-inset-surface-wide--fixed-32 py-inset-surface-wide text-center">
         <Heading
             as="h2"
             className="text-balance"
@@ -262,7 +262,7 @@ const AiNotice: React.FC<IAiNoticeProps> = (props) => {
 
     return (
         <p
-            className="px-2 text-center type-caption--chat-note text-balance text-surface-tertiary"
+            className="px-related--fixed-8 text-center type-caption--chat-note text-balance text-surface-tertiary"
             id={id}
         >
             {text}
@@ -302,7 +302,7 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="flex items-center justify-center gap-1 text-center type-caption--unstepped text-surface-tertiary">
+    <p className="flex items-center justify-center gap-tight text-center type-caption--unstepped text-surface-tertiary">
         {chatCopy.composer.escalationPrompt}
         <CaptionLink href={supportEmailHref}>
             {chatCopy.composer.escalationLink}
@@ -318,7 +318,7 @@ const ThreadSuggestions: React.FC = () => {
     return (
         <div
             className={classNames(
-                'flex w-full flex-wrap items-center justify-center gap-2 px-4',
+                'flex w-full flex-wrap items-center justify-center gap-related--fixed-8 px-inset-surface-flat',
                 !isComposerEmpty && 'invisible',
             )}
         >
@@ -330,7 +330,7 @@ const ThreadSuggestions: React.FC = () => {
                     send={true}
                 >
                     <button
-                        className="cursor-pointer rounded-full border border-surface-secondary px-3.5 py-1.5 type-control-sm--framework-leading whitespace-nowrap text-surface-primary ring-accent-focus focus-ring transition-colors hover:bg-surface-hover"
+                        className="cursor-pointer rounded-full border border-surface-secondary px-control-md--fixed-14 py-inset-tight--fixed-6 type-control-sm--framework-leading whitespace-nowrap text-surface-primary ring-accent-focus focus-ring transition-colors hover:bg-surface-hover"
                         type="button"
                     >
                         {suggestion.label}
@@ -376,14 +376,14 @@ const Composer: React.FC<IComposerProps> = (props) => {
     return (
         <ComposerPrimitive.Root className="relative flex w-full flex-col">
             <ComposerPrimitive.AttachmentDropzone asChild={true}>
-                <div className="flex w-full flex-col gap-2 rounded-(--composer-radius) border border-surface-default-composer bg-surface-default p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-accent-active focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-accent-active data-[dragging=true]:bg-primary-50">
+                <div className="flex w-full flex-col gap-related--fixed-8 rounded-(--composer-radius) border border-surface-default-composer bg-surface-default p-(--composer-padding) shadow-[0_4px_16px_-8px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] focus-within:border-accent-active focus-within:shadow-[0_6px_24px_-8px_rgba(0,0,0,0.12),0_1px_2px_rgba(0,0,0,0.05)] data-[dragging=true]:border-dashed data-[dragging=true]:border-accent-active data-[dragging=true]:bg-primary-50">
                     <ComposerAttachments />
                     <AuiIf
                         condition={(state) =>
                             state.composer.attachments.length > 0
                         }
                     >
-                        <p className="px-2.5 type-caption--chat-note text-surface-tertiary-hint">
+                        <p className="px-related--fixed-10 type-caption--chat-note text-surface-tertiary-hint">
                             {chatCopy.composer.attachmentsShared}
                         </p>
                     </AuiIf>
@@ -394,7 +394,7 @@ const Composer: React.FC<IComposerProps> = (props) => {
                     <ComposerPrimitive.Input
                         aria-describedby={isNewChat ? aiNoticeId : undefined}
                         aria-label={chatCopy.composer.inputLabel}
-                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-2.5 py-1 type-control-sm--framework-leading text-surface-primary caret-(--guk-text-accent-primary) outline-none placeholder:text-surface-placeholder"
+                        className="max-h-32 min-h-10 w-full resize-none bg-transparent px-control-sm--fixed-10 py-inset-tight--fixed-4 type-control-sm--framework-leading text-surface-primary caret-(--guk-text-accent-primary) outline-none placeholder:text-surface-placeholder"
                         enterKeyHint="send"
                         maxLength={assistantLimits.maxMessageLength}
                         placeholder={placeholder}
@@ -461,7 +461,7 @@ const ComposerAction: React.FC = () => {
     return (
         <div className="relative flex items-center justify-between">
             <ComposerAddAttachment />
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-tight--fixed-6">
                 <ComposerCharacterCount />
                 <AuiIf condition={(state) => !state.thread.isRunning}>
                     <ComposerPrimitive.Send asChild={true}>
@@ -521,7 +521,7 @@ const MessageErrorText: React.FC = () => {
 
 const MessageError: React.FC = () => (
     <MessagePrimitive.Error>
-        <ErrorPrimitive.Root className="mt-2 flex flex-col gap-1 rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-3 type-body-compact--unstepped text-critical-primary">
+        <ErrorPrimitive.Root className="mt-related--fixed-8 flex flex-col gap-tight rounded-xl border border-critical-primary-chat-error bg-critical-100/40 p-inset-surface-flat--fixed-12 type-body-compact--unstepped text-critical-primary">
             <MessageErrorText />
         </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -576,7 +576,7 @@ const AssistantWorking: React.FC = () => {
     return (
         <div
             aria-label={label}
-            className="flex items-center py-1"
+            className="flex items-center py-tight"
             role="status"
         >
             <Spinner size="md" variant="neutral" />
@@ -589,7 +589,7 @@ const AssistantWorking: React.FC = () => {
 // hover autohide): appearing on hover makes the layout feel jumpy.
 const AssistantActionBar: React.FC = () => (
     <ActionBarPrimitive.Root
-        className="-ms-1 flex gap-1 text-surface-secondary"
+        className="-ms-1 flex gap-tight text-surface-secondary"
         hideWhenRunning={true}
     >
         <ActionBarPrimitive.Copy asChild={true}>
@@ -610,7 +610,7 @@ const AssistantMessage: React.FC = () => (
         className="group relative [contain-intrinsic-size:auto_200px] [content-visibility:auto]"
         data-role="assistant"
     >
-        <div className="px-2 type-body-compact--chat-message wrap-break-word text-surface-primary">
+        <div className="px-related--fixed-8 type-body-compact--chat-message wrap-break-word text-surface-primary">
             {/* A tool without a registered component deliberately renders nothing: the model
                 narrates around flagOffTopic, and the documentation tools are covered by the
                 single indicator below. */}
@@ -631,7 +631,7 @@ const AssistantMessage: React.FC = () => (
 
         {/* The slot always occupies its height so messages never shift; the bar itself fades in
             on hover (or keyboard focus) only. */}
-        <div className="ms-2 flex items-center pt-1.5 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+        <div className="ms-related--fixed-8 flex items-center pt-tight--fixed-6 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
             <AssistantActionBar />
         </div>
     </MessagePrimitive.Root>
@@ -639,13 +639,13 @@ const AssistantMessage: React.FC = () => (
 
 const UserMessage: React.FC = () => (
     <MessagePrimitive.Root
-        className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] content-start gap-y-2 px-2 [contain-intrinsic-size:auto_200px] [content-visibility:auto] [&:where(>*)]:col-start-2"
+        className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] content-start gap-y-related--fixed-8 px-inset-tight--fixed-8 [contain-intrinsic-size:auto_200px] [content-visibility:auto] [&:where(>*)]:col-start-2"
         data-role="user"
     >
         <UserMessageAttachments />
 
         <div className="relative col-start-2 min-w-0">
-            <div className="rounded-xl rounded-br-sm bg-surface-tertiary px-4 py-2 type-body-compact--component-note wrap-break-word whitespace-pre-wrap text-surface-primary empty:hidden">
+            <div className="rounded-xl rounded-br-sm bg-surface-tertiary px-inset-item-flat py-inset-item-flat--fixed-8 type-body-compact--component-note wrap-break-word whitespace-pre-wrap text-surface-primary empty:hidden">
                 <MessagePrimitive.Parts />
             </div>
         </div>

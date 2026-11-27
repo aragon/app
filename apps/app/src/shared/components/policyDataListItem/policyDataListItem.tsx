@@ -38,13 +38,13 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
 
     return (
         <DataList.Item
-            className="px-4 py-3 md:p-6"
+            className="px-inset-item py-inset-item--12-24"
             key={policy.address}
             {...otherProps}
         >
-            <div className="flex flex-col gap-3 md:gap-4">
-                <div className="flex flex-col gap-y-1">
-                    <div className="flex gap-2 type-title-item">
+            <div className="flex flex-col gap-group--12-16">
+                <div className="flex flex-col gap-y-tight">
+                    <div className="flex gap-related--fixed-8 type-title-item">
                         <p className="truncate text-surface-primary">
                             {processedName}
                         </p>

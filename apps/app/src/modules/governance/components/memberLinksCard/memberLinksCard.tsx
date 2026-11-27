@@ -164,9 +164,9 @@ export const MemberLinksCard: React.FC<IMemberLinksCardProps> = (props) => {
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             {links.map((link) => (
-                <div className="flex flex-col gap-1" key={link.labelKey}>
+                <div className="flex flex-col gap-tight" key={link.labelKey}>
                     {link.href ? (
                         <Link href={link.href} isExternal={true}>
                             {t(link.labelKey)}

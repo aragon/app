@@ -48,7 +48,7 @@ export const RadioGroup = forwardRef<HTMLDivElement, IRadioGroupProps>((props, r
     return (
         <InputContainer id={randomId} useCustomWrapper={true} {...otherProps}>
             <PrimitiveRadioGroup
-                className={classNames('flex min-w-0 flex-col gap-y-2 md:gap-y-3', className)}
+                className={classNames('flex min-w-0 flex-col gap-y-related--8-12', className)}
                 defaultValue={defaultValue}
                 disabled={disabled}
                 id={randomId}

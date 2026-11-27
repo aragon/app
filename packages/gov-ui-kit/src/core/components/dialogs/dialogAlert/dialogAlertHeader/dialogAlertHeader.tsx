@@ -33,7 +33,7 @@ export const DialogAlertHeader: React.FC<IDialogAlertHeaderProps> = (props) => {
     const { variant } = useDialogAlertContext();
 
     const headerClassNames = classNames(
-        'flex w-full items-center gap-x-4 rounded-t-xl px-4 pt-4 pb-2 backdrop-blur-md gradient-surface-primary-to-b md:px-6 md:pt-6',
+        'flex w-full items-center gap-x-group rounded-t-xl px-inset-surface pt-inset-surface pb-inset-surface-flat--fixed-8 backdrop-blur-md gradient-surface-primary-to-b',
         className,
     );
 

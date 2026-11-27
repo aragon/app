@@ -93,21 +93,21 @@ export const GaugeVoterVoteDialogContent: React.FC<
     const anyWeightSet = displayShares.some((s) => s > 0);
 
     return (
-        <div className="flex flex-col gap-2">
-            <div className="hidden gap-3 pr-4 md:flex md:items-center md:justify-end">
-                <span className="w-32 pr-2 text-right type-caption--unstepped type-strong text-surface-secondary uppercase">
+        <div className="flex flex-col gap-related--fixed-8">
+            <div className="hidden gap-related pr-inset-item-flat md:flex md:items-center md:justify-end">
+                <span className="w-32 pr-inset-tight--fixed-8 text-right type-caption--unstepped type-strong text-surface-secondary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.votingPower',
                     )}
                 </span>
-                <span className="w-40 pr-2 text-right type-caption--unstepped type-strong text-surface-secondary uppercase">
+                <span className="w-40 pr-inset-tight--fixed-8 text-right type-caption--unstepped type-strong text-surface-secondary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.weights',
                     )}
                 </span>
                 <span aria-hidden="true" className="w-9" />
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-group">
                 {voteAllocations.map((allocation, index) => (
                     <GaugeVoterVoteDialogItem
                         displayShare={

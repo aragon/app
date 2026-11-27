@@ -121,7 +121,7 @@ export const SafeProposalReportLink: React.FC<ISafeProposalReportLinkProps> = ({
     );
 
     return (
-        <div className="flex min-w-0 flex-row items-center gap-2">
+        <div className="flex min-w-0 flex-row items-center gap-related--fixed-8">
             <Tag label={proposalSlug} />
             <Link
                 aria-label={`${proposalSlug}: ${title}`}

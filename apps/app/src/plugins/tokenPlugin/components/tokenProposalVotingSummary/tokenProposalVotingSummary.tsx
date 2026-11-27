@@ -96,7 +96,7 @@ export const TokenProposalVotingSummary: React.FC<
     }
 
     return (
-        <div className="flex w-full flex-col gap-3">
+        <div className="flex w-full flex-col gap-related">
             <p className="type-title-item text-surface-primary">
                 {name}{' '}
                 <span className="text-surface-secondary">

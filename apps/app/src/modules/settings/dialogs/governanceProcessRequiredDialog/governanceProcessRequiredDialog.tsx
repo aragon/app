@@ -77,7 +77,7 @@ export const GovernanceProcessRequiredDialog: React.FC<
     return (
         <>
             <Dialog.Header onClose={() => close()} title={title} />
-            <Dialog.Content className="flex flex-col items-center gap-4">
+            <Dialog.Content className="flex flex-col items-center gap-group">
                 <EmptyState
                     description={t(
                         'app.settings.governanceProcessRequiredDialog.feedback.description',

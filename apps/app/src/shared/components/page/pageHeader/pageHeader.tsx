@@ -57,18 +57,19 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'bg-gradient-to-b from-(--guk-gradient-surface-secondary) to-(--guk-gradient-surface-primary) pt-6 group-has-[[data-app-sidebar]]/app:bg-none md:pt-10',
+                'bg-gradient-to-b from-(--guk-gradient-surface-secondary) to-(--guk-gradient-surface-primary) pt-inset-page group-has-[[data-app-sidebar]]/app:bg-none',
                 className,
             )}
             {...otherProps}
         >
-            <Container className="flex flex-col gap-6">
+            <Container className="flex flex-col gap-section">
                 {breadcrumbs && (
                     <Breadcrumbs links={breadcrumbs} tag={breadcrumbsTag} />
                 )}
+                {/* biome-ignore lint/plugin/noPrimitiveSpacing: page header gaps from lg: no role has them */}
                 <div className="flex w-full min-w-0 flex-row gap-10 md:gap-16 lg:gap-10 xl:gap-16">
-                    <div className="flex w-full flex-col gap-6">
-                        <div className="flex flex-col gap-y-2 md:gap-y-3">
+                    <div className="flex w-full flex-col gap-section">
+                        <div className="flex flex-col gap-y-related--8-12">
                             <Heading as="h1" typeClassName="type-title-page">
                                 {title != null &&
                                 addressUtils.isAddress(title) ? (
@@ -96,7 +97,8 @@ export const PageHeader: React.FC<IPageHeaderProps> = (props) => {
                             )}
                         </div>
                         {stats != null && stats.length > 0 && (
-                            <div className="flex flex-row gap-6 py-3 lg:gap-10 xl:gap-16">
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: page header gaps from lg: no role has them
+                            <div className="flex flex-row gap-section py-related lg:gap-10 xl:gap-16">
                                 {stats.map((stat) => (
                                     <PageHeaderStat
                                         key={stat.label}

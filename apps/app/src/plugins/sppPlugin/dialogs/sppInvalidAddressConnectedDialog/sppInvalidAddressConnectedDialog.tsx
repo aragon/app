@@ -26,7 +26,7 @@ export const SppInvalidAddressConnectedDialog: React.FC<
                 )}
             />
             <Dialog.Content
-                className="pb-4 md:pb-6"
+                className="pb-inset-surface"
                 description={t(
                     'app.plugins.spp.sppInvalidAddressConnectedDialog.description',
                 )}

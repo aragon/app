@@ -225,7 +225,7 @@ export const DaoProcessDetailsPageClient: React.FC<
                         >
                             <Card>
                                 <PermissionsDefinitionList
-                                    className="px-6 py-3"
+                                    className="px-inset-surface-wide py-inset-surface-flat"
                                     isLoading={isLoading}
                                     isRestricted={isRestricted}
                                     settings={settings}

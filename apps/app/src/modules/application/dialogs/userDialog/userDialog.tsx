@@ -115,10 +115,10 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
 
     return (
         <Dialog.Content
-            className="flex flex-col gap-6 pt-8 pb-4"
+            className="flex flex-col gap-section pt-inset-surface-wide--fixed-32 pb-inset-surface-flat--fixed-16"
             noInset={true}
         >
-            <div className="flex flex-col gap-3 px-8">
+            <div className="flex flex-col gap-related px-inset-surface-wide--fixed-32">
                 <div className="flex items-start justify-between">
                     {memberProfileHref != null ? (
                         <RouterLink
@@ -130,7 +130,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     ) : (
                         avatar
                     )}
-                    <div className="flex gap-2">
+                    <div className="flex gap-related--fixed-8">
                         {hasAragonProfile && isAragonProfileEnabled && (
                             <Button
                                 iconLeft={IconType.PEN}
@@ -148,7 +148,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     </div>
                 </div>
                 {hasAragonProfile ? (
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-tight">
                         <p className="type-title-group--profile-card text-surface-primary">
                             {displayName}
                         </p>
@@ -166,8 +166,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     />
                 )}
             </div>
-            <div className="flex flex-col gap-3 px-8">
-                <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-related px-inset-surface-wide--fixed-32">
+                <div className="flex flex-col gap-group--fixed-12">
                     <Button
                         className="w-full"
                         onClick={handleMyDaosClick}

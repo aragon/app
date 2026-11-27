@@ -13,12 +13,12 @@ export interface IProposalVotingProgressContainerProps extends ComponentProps<'d
 export const ProposalVotingProgressContainer: React.FC<IProposalVotingProgressContainerProps> = (props) => {
     const { direction = 'row', className, ...otherProps } = props;
 
-    const colClassNames = 'flex-col *:pb-6 *:border-b *:border-b-surface-secondary';
+    const colClassNames = 'flex-col *:pb-inset-surface-wide *:border-b *:border-b-surface-secondary';
     const rowClassNames =
-        'md:flex-row md:*:pr-6 md:*:border-r md:*:border-r-surface-secondary md:*:pb-0 md:*:border-b-(--guk-bg-surface-primary)';
+        'md:flex-row md:*:pr-inset-surface-wide md:*:border-r md:*:pb-0 md:*:border-r-surface-secondary md:*:border-b-(--guk-bg-surface-primary)';
 
     const containerClassNames = classNames(
-        'flex gap-6 rounded-xl border border-surface-secondary bg-surface-primary px-4 py-3 shadow-surface-sm md:p-6',
+        'flex gap-section--fixed-24 rounded-xl border border-surface-secondary bg-surface-primary px-inset-surface--16-24 py-inset-surface--12-24 shadow-surface-sm',
         '[&>*:last-child]:border-none [&>*:last-child]:p-0',
         colClassNames,
         direction === 'row' && rowClassNames,

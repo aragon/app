@@ -54,9 +54,10 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
-            <div className="flex flex-col gap-6 rounded-xl border border-surface-secondary bg-surface-primary p-4 shadow-surface-sm md:p-12">
-                <div className="flex items-start justify-between gap-6">
-                    <div className="flex flex-col gap-2">
+            // biome-ignore lint/plugin/noPrimitiveSpacing: stage card 16 px, 48 px from md: no role has this pair
+            <div className="flex flex-col gap-section rounded-xl border border-surface-secondary bg-surface-primary p-4 shadow-surface-sm md:p-12">
+                <div className="flex items-start justify-between gap-section">
+                    <div className="flex flex-col gap-related--fixed-8">
                         <p className="type-title-group--wizard-intro text-surface-primary">
                             {t(
                                 'app.createDao.createProcessForm.governance.advancedEmptyState.gated.heading',
@@ -76,9 +77,12 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                         />
                     </div>
                 </div>
-                <ol className="flex flex-col gap-3 type-body-compact text-surface-secondary">
+                <ol className="flex flex-col gap-related type-body-compact text-surface-secondary">
                     {gatedFeatureKeys.map((key) => (
-                        <li className="flex items-baseline gap-3" key={key}>
+                        <li
+                            className="flex items-baseline gap-related"
+                            key={key}
+                        >
                             <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-surface-secondary type-caption--compact-label text-surface-secondary">
                                 {key}
                             </span>
@@ -130,8 +134,8 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
     }
 
     return (
-        <div className="flex flex-col gap-2 md:gap-3">
-            <div className="flex flex-col gap-3 md:gap-2">
+        <div className="flex flex-col gap-related--8-12">
+            <div className="flex flex-col gap-related--12-8">
                 {stages.map((stage, index) => (
                     <GovernanceStagesFieldItem
                         daoId={daoId}

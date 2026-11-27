@@ -30,7 +30,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
             <RadixAccordionTrigger
                 asChild={removeControl != null && index != null}
                 className={classNames(
-                    'relative flex flex-1 items-baseline justify-between gap-x-4 px-4 py-3 outline-hidden md:gap-x-6 md:px-6 md:py-5',
+                    'relative flex flex-1 items-baseline justify-between gap-x-group-stepped--16-24 px-inset-item py-control-item outline-hidden',
                     'ring-accent-focus focus-ring group-data-disabled:cursor-default group-data-disabled:bg-surface-disabled',
                     {
                         'cursor-default': removeControl != null,
@@ -42,7 +42,7 @@ export const AccordionItemHeader = forwardRef<HTMLButtonElement, IAccordionItemH
                 {...otherProps}
             >
                 {removeControl != null && index != null ? (
-                    <div className="flex flex-1 items-baseline justify-between gap-x-4">
+                    <div className="flex flex-1 items-baseline justify-between gap-x-group">
                         {children}
                         <Tooltip content={removeControl.label} triggerAsChild={true}>
                             <Button

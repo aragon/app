@@ -164,7 +164,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
 
     return (
         <form
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-group"
             onSubmit={handleSubmit(handleFormSubmit)}
         >
             <RadioGroup
@@ -200,11 +200,11 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                 {...delegateField}
             />
             {mode === 'dialog' ? (
-                <div className="flex flex-col gap-9">
+                <div className="flex flex-col gap-section-wide--fixed-36">
                     {footerInfo}
                     <div
                         className={classNames(
-                            'flex gap-3',
+                            'flex gap-related',
                             onCancel != null
                                 ? 'justify-between'
                                 : 'justify-end',
@@ -237,7 +237,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-related">
                     <Button
                         disabled={isSubmitDisabled}
                         onClick={isConnected ? undefined : () => walletGuard()}

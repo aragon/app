@@ -13,7 +13,7 @@ export const AccordionItemContent = forwardRef<HTMLDivElement, IAccordionItemCon
     const { children, className, forceMount, ...otherProps } = props;
 
     const contentClassNames = classNames(
-        'overflow-hidden px-4 pt-1 pb-4 md:px-6 md:pb-6', // Default
+        'overflow-hidden px-inset-item pt-inset-tight--fixed-4 pb-inset-item--16-24', // Default
         { 'data-[state=closed]:hidden': forceMount }, // Force mount variant
         className,
     );

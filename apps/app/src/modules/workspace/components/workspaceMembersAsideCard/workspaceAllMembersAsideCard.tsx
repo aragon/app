@@ -83,7 +83,7 @@ export const WorkspaceAllMembersAsideCard: React.FC<
 
     return (
         <Page.AsideCard title={cardTitle}>
-            <div className="grid w-full grid-cols-2 gap-3">
+            <div className="grid w-full grid-cols-2 gap-group--fixed-12">
                 {stats.map((stat) => (
                     <StatCard
                         key={stat.label}

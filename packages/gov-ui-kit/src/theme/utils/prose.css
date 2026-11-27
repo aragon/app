@@ -8,27 +8,27 @@
 
 @utility prose {
     h1 {
-        @apply mt-2 mb-10 type-title-page--markdown;
+        @apply mt-related--fixed-8 mb-section-wide type-title-page--markdown;
     }
 
     h2 {
-        @apply mt-2 mb-8 type-title-section--markdown;
+        @apply mt-related--fixed-8 mb-section--fixed-32 type-title-section--markdown;
     }
 
     h3 {
-        @apply mt-2 mb-6 type-title-group--markdown;
+        @apply mt-related--fixed-8 mb-section type-title-group--markdown;
     }
 
     h4 {
-        @apply mt-0 mb-4 type-title-item--markdown;
+        @apply mt-0 mb-group type-title-item--markdown;
     }
 
     h5 {
-        @apply mt-0 mb-2 type-supporting--markdown;
+        @apply mt-0 mb-related--fixed-8 type-supporting--markdown;
     }
 
     h6 {
-        @apply mt-0 mb-1 type-caption--markdown;
+        @apply mt-0 mb-tight type-caption--markdown;
     }
 
     p {
@@ -65,7 +65,7 @@
     }
 
     code {
-        @apply rounded-md bg-neutral-900 p-1 text-neutral-50 before:pl-1 before:content-[''] after:pr-1 after:content-[''];
+        @apply rounded-md bg-neutral-900 p-inset-tight--fixed-4 text-neutral-50 before:pl-inset-tight--fixed-4 before:content-[''] after:pr-inset-tight--fixed-4 after:content-[''];
     }
 
     img,
@@ -74,7 +74,7 @@
     }
 
     hr {
-        @apply mt-10 border border-neutral-200;
+        @apply mt-section-wide border border-neutral-200;
     }
 }
 

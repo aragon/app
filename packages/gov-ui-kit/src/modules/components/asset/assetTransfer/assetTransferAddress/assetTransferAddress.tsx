@@ -61,7 +61,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                 target="_blank"
             />
             <div
-                className="pointer-events-none relative z-10 flex h-full w-full items-center space-x-4 px-4 md:p-6 [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
+                className="pointer-events-none relative z-10 space-x-group flex h-full w-full items-center px-inset-surface py-inset-flush--0-24 [&_[role=button]]:pointer-events-auto [&_a]:pointer-events-auto [&_button]:pointer-events-auto"
                 id={contentId}
             >
                 <MemberAvatar
@@ -73,7 +73,7 @@ export const AssetTransferAddress: React.FC<IAssetTransferAddressProps> = (props
                 />
                 <div className="flex min-w-0 flex-col">
                     <span className="type-caption text-surface-secondary">{txRole === 'sender' ? 'From' : 'To'}</span>
-                    <div className="flex items-center space-x-1">
+                    <div className="space-x-tight flex items-center">
                         <AddressOutput
                             address={participant.address}
                             className="truncate type-title-item--compact-list text-surface-primary"

@@ -64,8 +64,8 @@ export const ProposalVotingStage: React.FC<IProposalVotingStageProps> = (props) 
         <ProposalVotingContextProvider bodyList={bodyList}>
             <Accordion.Item value={index.toString()} {...otherProps}>
                 <Accordion.ItemHeader>
-                    <div className="flex grow flex-row justify-between gap-4 md:gap-6">
-                        <div className="flex flex-col items-start gap-1">
+                    <div className="flex grow flex-row justify-between gap-group-stepped">
+                        <div className="flex flex-col items-start gap-tight">
                             <p className="type-title-item--unstepped text-surface-primary">{name}</p>
                             <ProposalVotingStatus
                                 endDate={endDate}
@@ -75,7 +75,7 @@ export const ProposalVotingStage: React.FC<IProposalVotingStageProps> = (props) 
                                 status={status}
                             />
                         </div>
-                        <p className="mt-1 type-supporting--compact-meta text-surface-secondary">
+                        <p className="mt-tight type-supporting--compact-meta text-surface-secondary">
                             {copy.proposalVotingStage.stage(index + 1)}
                         </p>
                     </div>

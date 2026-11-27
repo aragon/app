@@ -24,7 +24,7 @@ export const PagePager = ({ previous, next }: IPagePagerProps) => {
     return (
         <nav
             aria-label="Pages"
-            className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-surface-secondary pt-6"
+            className="mt-section flex flex-wrap items-center justify-between gap-group border-t border-surface-secondary pt-inset-surface-wide"
         >
             {previous == null ? (
                 <span />

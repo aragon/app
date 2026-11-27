@@ -26,12 +26,12 @@ export const AragonDemoPoliciesPageHeaderStat: React.FC<
     return (
         <div
             className={classNames(
-                'flex flex-col gap-1 text-neutral-0',
+                'flex flex-col gap-tight text-neutral-0',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-row items-baseline gap-1">
+            <div className="flex flex-row items-baseline gap-phrase">
                 <p className="type-stat--dao-header">{value}</p>
                 {suffix && (
                     <p className="type-caption--dao-header-stat">{suffix}</p>

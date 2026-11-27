@@ -22,9 +22,9 @@ export const FooterSidebar: React.FC = () => {
     const year = new Date().getFullYear();
 
     return (
-        <div className="flex flex-col gap-2 border-t border-surface-secondary px-1 pt-4 text-surface-secondary">
+        <div className="flex flex-col gap-nav-related border-t border-surface-secondary px-inset-nav--fixed-4 pt-inset-nav text-surface-secondary">
             <Link
-                className="flex items-center gap-2 self-start type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
+                className="flex items-center gap-nav-related self-start type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
                 href={isWalletConnected ? '/explore' : '/'}
             >
                 <span className="text-nowrap">
@@ -32,7 +32,7 @@ export const FooterSidebar: React.FC = () => {
                 </span>
                 <AragonLogo size="sm" />
             </Link>
-            <div className="flex flex-wrap items-center gap-x-2">
+            <div className="flex flex-wrap items-center gap-x-nav-related--fixed-8">
                 {sidebarLinks.map(({ link, label, target }) => (
                     <Link
                         className="type-control-sm--framework-leading text-link-secondary-default hover:text-link-secondary-hover-nav"
@@ -44,7 +44,7 @@ export const FooterSidebar: React.FC = () => {
                     </Link>
                 ))}
             </div>
-            <div className="flex min-w-0 items-center gap-2">
+            <div className="flex min-w-0 items-center gap-nav-related">
                 <p className="truncate type-caption--unstepped">
                     {t('app.application.footer.copyright', { year })}
                 </p>

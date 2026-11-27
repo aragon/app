@@ -115,7 +115,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                 )}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-6 py-2">
+                <div className="flex flex-col gap-section py-tight--fixed-8">
                     <InputDate
                         label={t(
                             'app.daos.cryptex.cryptexMembersFileDownloadDialog.lookbackDateLabel',

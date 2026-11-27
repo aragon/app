@@ -115,7 +115,7 @@ export const PluginFilterComponent = <
     }
 
     return (
-        <div className="flex flex-col gap-2 md:gap-3">
+        <div className="flex flex-col gap-related--8-12">
             {variant === 'dropdown' ? (
                 <div>
                     <Dropdown.Container label={activePluginRecord?.label}>

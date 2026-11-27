@@ -15,5 +15,15 @@
         "modes": [
             "next"
         ]
+    },
+    {
+        "attribute": "spacing",
+        "title": "Spacing",
+        "icon": "grow",
+        "modes": [
+            "new",
+            "looser",
+            "compact"
+        ]
     }
 ]

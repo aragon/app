@@ -47,7 +47,8 @@ export const NavigationSidebarAccount: React.FC<
 
     return (
         <button
-            className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 text-left ring-accent-focus focus-ring transition-all hover:border-surface-hover active:bg-surface-active-control"
+            // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the account avatar button
+            className="flex w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-surface-default bg-surface-default p-2 text-left ring-accent-focus focus-ring transition-all hover:border-surface-hover active:bg-surface-active-control"
             onClick={onClick}
             type="button"
         >

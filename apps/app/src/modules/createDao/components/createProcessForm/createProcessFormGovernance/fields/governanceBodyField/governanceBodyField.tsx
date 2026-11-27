@@ -116,7 +116,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
                         />
                     </InteractiveAncestorContext.Provider>
                 </Accordion.ItemHeader>
-                <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">
+                <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-group-stepped">
                     <PluginSingleComponent
                         body={body}
                         daoId={daoId}

@@ -45,7 +45,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
     const renderSelectedPlugin = (
         plugin: IFilterComponentPlugin<IDaoPlugin>,
     ) => (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-group">
             <DelegationStatsCard
                 daoId={daoId}
                 displayDisclaimer={hasMultipleDelegationBodies}

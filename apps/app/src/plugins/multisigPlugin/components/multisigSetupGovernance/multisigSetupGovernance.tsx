@@ -62,7 +62,7 @@ export const MultisigSetupGovernance: React.FC<
     } as const;
 
     return (
-        <div className="flex w-full flex-col gap-y-6 md:gap-y-10">
+        <div className="flex w-full flex-col gap-y-section-stepped">
             <NumberProgressInput
                 alert={minApprovalAlert}
                 fieldName={minApprovalsFieldName}

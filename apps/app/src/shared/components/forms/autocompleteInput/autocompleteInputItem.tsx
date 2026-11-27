@@ -23,7 +23,7 @@ export const AutocompleteInputItem = forwardRef<
     const { id, icon, name, info } = item;
 
     const itemClassName = classNames(
-        'flex flex-row items-center justify-between gap-4 rounded-lg px-3 py-2 hover:cursor-pointer',
+        'flex flex-row items-center justify-between gap-group rounded-lg px-inset-item-flat--fixed-12 py-control-item-flat--fixed-8 hover:cursor-pointer',
         { 'bg-surface-hover text-surface-hover-label': isActive },
         { 'text-surface-default': !isActive },
         className,
@@ -38,7 +38,7 @@ export const AutocompleteInputItem = forwardRef<
             role="option"
             {...otherProps}
         >
-            <span className="flex min-w-0 flex-row items-center gap-4">
+            <span className="flex min-w-0 flex-row items-center gap-group">
                 <Icon
                     className={classNames({
                         'icon-surface-default': !isActive,
@@ -47,11 +47,12 @@ export const AutocompleteInputItem = forwardRef<
                 />
                 <p className="type-control--tall-line">{name}</p>
             </span>
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-related--fixed-8">
                 {info && (
                     <span
                         className={classNames(
                             'type-supporting--compact-detail',
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: room for the check icon of the active item (icon + gap)
                             { 'mr-7': !isActive },
                         )}
                     >

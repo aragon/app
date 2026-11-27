@@ -62,7 +62,7 @@ export const DataListSelectAddressView: React.FC<
 
     return (
         <DataListRoot
-            className="flex w-full flex-col gap-3"
+            className="flex w-full flex-col"
             entityLabel={entity}
             state={isLoading ? 'loading' : 'idle'}
         >

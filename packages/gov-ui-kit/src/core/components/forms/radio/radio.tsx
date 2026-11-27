@@ -38,12 +38,12 @@ export const Radio = forwardRef<HTMLButtonElement, IRadioProps>((props, ref) => 
         'cursor-pointer type-label-option--radio text-surface-default', // default
         'hover:text-surface-hover-label', // hover
         'peer-disabled:cursor-default peer-data-[state=unchecked]:peer-disabled:text-surface-disabled', // unchecked and disabled
-        { 'pr-2 md:pr-3': labelPosition === 'left' },
-        { 'pl-2 md:pl-3': labelPosition === 'right' },
+        { 'pr-control-sm--8-12': labelPosition === 'left' },
+        { 'pl-control-sm--8-12': labelPosition === 'right' },
     );
 
     return (
-        <div className={classNames('flex items-center px-0.5', className)}>
+        <div className={classNames('flex items-center px-inset-tight', className)}>
             <RadioGroupItem
                 className={itemClasses}
                 disabled={disabled}

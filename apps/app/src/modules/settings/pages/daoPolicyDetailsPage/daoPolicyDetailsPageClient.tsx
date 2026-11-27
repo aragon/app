@@ -118,7 +118,7 @@ export const DaoPolicyDetailsPageClient: React.FC<
                             'app.settings.daoPolicyDetailsPage.section.policySettings',
                         )}
                     >
-                        <Card className="px-6 py-3">
+                        <Card className="px-inset-surface-wide py-inset-surface-flat">
                             <DefinitionList.Container>
                                 {policySettings.map((setting) => {
                                     const addressLink =
@@ -218,12 +218,12 @@ const SubRouterCard: React.FC<ISubRouterCardProps> = (props) => {
 
     return (
         <DataList.Item
-            className="px-4 py-3 md:px-6 md:py-4"
+            className="px-inset-item py-inset-item--12-16"
             href={href}
             target="_blank"
         >
             <div className="flex w-full items-center justify-between">
-                <div className="flex items-baseline gap-2">
+                <div className="flex items-baseline gap-related--fixed-8">
                     <span className="type-title-item--framework-leading text-surface-primary">
                         {policyName}
                     </span>
@@ -233,7 +233,7 @@ const SubRouterCard: React.FC<ISubRouterCardProps> = (props) => {
                         </span>
                     )}
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-group">
                     <span className="type-supporting--framework-leading text-surface-secondary">
                         {index} of {total}
                     </span>

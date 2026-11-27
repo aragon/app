@@ -1,0 +1,46 @@
+{
+    "$description": "How spacing.tokens.json becomes CSS; cssNames, files and preview read as in semantic.config.json, the files go to src/theme/tokens/spacing/. A gap role or exception is a `--guk-space-gap-<name>` theme variable (its `gap-` prefix dropped), every other value a `--guk-space-<dimension>-<name>` one (`x`, `y`, `gap`, `height`); the `md` values take `--guk-space-md-…`. The names also serve app.tokens.json. They are read by the utilities of src/theme/tokens/spacingRoles.css. In a preview an exception follows its role, or its size for a `control-*` exception, unless the mode document sets it.",
+    "cssNames": {
+        "space.*.gap-*.base": "--guk-space-gap-$2",
+        "space.*.gap-*.md": "--guk-space-md-gap-$2",
+        "space.*.*.*.base": "--guk-space-$3-$2",
+        "space.*.*.*.md": "--guk-space-md-$3-$2"
+    },
+    "files": {
+        "roles.css": {
+            "@theme": [
+                "space"
+            ]
+        }
+    },
+    "preview": {
+        "spacing.css": {
+            ":root[data-spacing=\"new\"], [data-spacing=\"new\"]": [
+                "modes/spacing.new.tokens.json",
+                {
+                    "space.exception.control-*--*": "space.size.control-$1",
+                    "space.exception.*--*": "space.role.$1"
+                }
+            ],
+            ":root[data-spacing=\"looser\"], [data-spacing=\"looser\"]": [
+                "modes/spacing.looser.tokens.json",
+                {
+                    "space.exception.control-*--*": "space.size.control-$1",
+                    "space.exception.*--*": "space.role.$1"
+                }
+            ],
+            ":root[data-spacing=\"compact\"], [data-spacing=\"compact\"]": [
+                "modes/spacing.compact.tokens.json",
+                {
+                    "space.exception.control-*--*": "space.size.control-$1",
+                    "space.exception.*--*": "space.role.$1"
+                }
+            ],
+            "@media (pointer: coarse)": {
+                ":root[data-spacing=\"compact\"], [data-spacing=\"compact\"]": [
+                    "modes/spacing.compact.coarse.tokens.json"
+                ]
+            }
+        }
+    }
+}

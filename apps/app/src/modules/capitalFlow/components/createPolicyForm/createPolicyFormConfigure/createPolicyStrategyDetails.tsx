@@ -122,7 +122,7 @@ export const CreatePolicyStrategyDetails: React.FC<
     };
 
     return (
-        <DefinitionList.Container className="rounded-xl border border-surface-secondary bg-surface-primary px-6 py-4">
+        <DefinitionList.Container className="rounded-xl border border-surface-secondary bg-surface-primary px-inset-surface-wide py-inset-surface-flat--fixed-16">
             <DefinitionList.Item
                 description={routerTypeDescription}
                 term={t(
@@ -157,7 +157,7 @@ export const CreatePolicyStrategyDetails: React.FC<
             >
                 {renderRecipients()}
             </DefinitionList.Item>
-            <div className="flex w-full justify-between pt-4">
+            <div className="flex w-full justify-between pt-group">
                 <Button onClick={onEdit} size="md" variant="secondary">
                     {t(
                         'app.capitalFlow.createPolicyForm.configure.strategy.details.edit',

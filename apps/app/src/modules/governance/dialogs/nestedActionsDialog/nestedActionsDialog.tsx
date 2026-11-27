@@ -230,7 +230,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                     onClose={handleClose}
                     title={t('app.governance.nestedActionsDialog.title')}
                 />
-                <Dialog.Content className="flex flex-col gap-4 pt-2 pb-6">
+                <Dialog.Content className="flex flex-col gap-group pt-inset-surface-flat--fixed-8 pb-inset-surface-wide">
                     {isLoadingActions ? (
                         <AlertInline
                             message={t(

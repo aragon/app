@@ -43,7 +43,7 @@ export const GaugeVoterGaugeDetailsDialogFooter: React.FC<
     const { t } = useTranslations();
 
     return (
-        <div className="flex w-full grow items-center justify-between px-4 pb-4 md:px-6 md:pb-6">
+        <div className="flex w-full grow items-center justify-between px-inset-surface pb-inset-surface">
             <Button
                 disabled={disablePrevious}
                 onClick={onPrevious}

@@ -135,7 +135,7 @@ export const AragonProfileRenameDialog: React.FC<
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileRenameDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
+            <Dialog.Content className="flex flex-col gap-section px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <InputText
                     {...fieldProps}
                     helpText={t(

@@ -61,7 +61,7 @@ export const CapitalDistributorClaimDialog: React.FC<
 
     return (
         <WizardDialog.Container<ICapitalDistributorClaimDialogForm>
-            className="pt-2 pb-1.5"
+            className="pt-inset-surface-flat--fixed-8 pb-inset-tight--fixed-6"
             defaultValues={{ recipient: address }}
             description={campaign.description}
             formId="capitalDistributorClaim"
@@ -78,7 +78,7 @@ export const CapitalDistributorClaimDialog: React.FC<
                 />
             </WizardDialog.Step>
             <WizardDialog.Step
-                className="flex grow flex-col gap-6"
+                className="flex grow flex-col gap-section"
                 id="claim"
                 meta={{ name: '' }}
                 order={2}

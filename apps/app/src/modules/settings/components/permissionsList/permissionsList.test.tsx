@@ -204,10 +204,7 @@ describe('<PermissionsList /> component', () => {
             .find((parent) => parent?.classList.contains('invisible'));
 
         expect(alignmentAffordance).toBeInTheDocument();
-        expect(alignmentAffordance?.parentElement).toHaveClass(
-            'px-4',
-            'md:px-6',
-        );
+        expect(alignmentAffordance?.parentElement).toHaveClass('px-inset-item');
     });
 
     it('renders the collapsed condition cell with the resolved label or a dash', () => {

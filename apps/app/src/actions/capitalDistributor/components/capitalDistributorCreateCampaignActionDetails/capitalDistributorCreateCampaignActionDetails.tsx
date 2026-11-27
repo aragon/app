@@ -144,7 +144,7 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                         'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.resourcesTerm',
                     )}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {resources.map((link) => (
                             <ResourceLink
                                 isExternal={true}
@@ -162,7 +162,7 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                         'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.totalAmountTerm',
                     )}
                 >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-tight--fixed-8">
                         <Avatar size="sm" src={token.logo} />
                         <span>
                             {formattedAmount} {token.symbol}

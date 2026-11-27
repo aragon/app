@@ -89,10 +89,10 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
     const displayClearIcon = searchValue.length > 0;
 
     return (
-        <div className={classNames('flex flex-col gap-2 md:gap-3', className)} {...otherProps}>
+        <div className={classNames('flex flex-col gap-related--8-12', className)} {...otherProps}>
             <div
                 className={classNames(
-                    'flex flex-row items-center rounded-xl border p-3 pr-2 transition-all md:pr-3 md:pl-6',
+                    'flex flex-row items-center rounded-xl border py-control-lg pr-control-md--8-12 pl-inset-item--12-24 transition-all',
                     'border-surface-default bg-surface-primary text-surface-secondary shadow-surface-sm',
                     'type-control',
                     'hover:border-surface-hover hover:shadow-surface-default',
@@ -109,11 +109,12 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                     />
                 )}
                 {state === 'loading' && (
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the search clear button and of the spinner slot
                     <Spinner className="m-1" responsiveSize={{ md: 'lg' }} size="md" variant="primary" />
                 )}
                 <input
                     className={classNames(
-                        'size-full search-cancel-hidden truncate bg-transparent pl-3 caret-(--guk-text-surface-secondary) outline-hidden',
+                        'size-full search-cancel-hidden truncate bg-transparent pl-control-md caret-(--guk-text-surface-secondary) outline-hidden',
                         'placeholder:type-control placeholder:text-surface-placeholder',
                     )}
                     onBlur={handleInputBlur}
@@ -124,11 +125,12 @@ export const DataListFilter: React.FC<IDataListFilterProps> = (props) => {
                     value={searchValue}
                 />
                 {displayClearIcon && (
-                    <button className="mr-2 cursor-pointer p-2.5 md:mr-4" onClick={handleClear} type="button">
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the search clear button and of the spinner slot
+                    <button className="mr-related--8-16 cursor-pointer p-2.5" onClick={handleClear} type="button">
                         <Icon className="icon-surface-default" icon={IconType.CLOSE} size="sm" />
                     </button>
                 )}
-                <div className="flex flex-row gap-2 md:gap-3">
+                <div className="flex flex-row gap-related--8-12">
                     {onFilterClick && (
                         <>
                             <Button

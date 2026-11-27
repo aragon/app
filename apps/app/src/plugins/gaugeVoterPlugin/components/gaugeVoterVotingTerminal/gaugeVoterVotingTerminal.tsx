@@ -85,9 +85,10 @@ export const GaugeVoterVotingTerminal: React.FC<
     const showVoteButton = isVotingPeriod && (hasVoted || selectedCount > 0);
 
     const wrapperClassName = classNames(
-        'flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6',
+        'flex flex-col gap-group-stepped--12-24 md:flex-row md:items-center md:justify-between',
+        // biome-ignore lint/plugin/noPrimitiveSpacing: the sticky terminal bleeds past the column from lg
         'sticky bottom-3 md:bottom-6 lg:-mx-4',
-        'rounded-xl border border-b-0 bg-surface-primary p-3 md:h-[64px] md:px-4 md:py-0',
+        'rounded-xl border border-b-0 bg-surface-primary px-inset-surface-flat--12-16 md:h-[64px] max-md:py-inset-surface-flat',
         {
             'border-surface-secondary shadow-surface-md': !showVoteButton,
             // biome-ignore lint/plugin/noPrimitiveColors: no shadow role has the xl size
@@ -97,16 +98,16 @@ export const GaugeVoterVotingTerminal: React.FC<
 
     return (
         <div className={wrapperClassName}>
-            <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-col md:flex-row md:items-center md:gap-section">
                 <p className="type-caption--framework-leading type-strong text-surface-primary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes',
                     )}
                 </p>
-                <div className="flex items-center gap-8 md:gap-3">
-                    <div className="flex items-center gap-2">
+                <div className="flex items-center gap-section--fixed-32 md:gap-related">
+                    <div className="flex items-center gap-tight--fixed-8">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
-                        <div className="flex items-baseline gap-0.5">
+                        <div className="flex items-baseline gap-phrase--fixed-2">
                             <span className="type-stat--voting-terminal text-surface-primary">
                                 {displayVotingPower}
                             </span>
@@ -115,7 +116,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                             </span>
                         </div>
                     </div>
-                    <div className="flex items-baseline gap-0.5">
+                    <div className="flex items-baseline gap-phrase--fixed-2">
                         <span className="type-stat--voting-terminal text-surface-primary">
                             {formattedUsagePercentage}
                         </span>
@@ -127,7 +128,7 @@ export const GaugeVoterVotingTerminal: React.FC<
                     </div>
                 </div>
             </div>
-            <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
+            <div className="flex w-full items-center justify-between gap-related--12-16 md:w-auto">
                 {!isVotingPeriod && (
                     <Button
                         className="w-full md:w-auto"

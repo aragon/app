@@ -13,7 +13,7 @@ export interface IDialogAlertContentProps extends ComponentPropsWithoutRef<'div'
 export const DialogAlertContent: React.FC<IDialogAlertContentProps> = (props) => {
     const { className, noInset = false, ...otherProps } = props;
 
-    const contentClassNames = classNames('overflow-auto', { 'px-4 md:px-6': !noInset }, classNames);
+    const contentClassNames = classNames('overflow-auto', { 'px-inset-surface': !noInset }, classNames);
 
     return <div className={contentClassNames} {...otherProps} />;
 };

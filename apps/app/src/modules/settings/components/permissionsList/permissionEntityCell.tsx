@@ -17,7 +17,7 @@ interface IPermissionEntityCellProps {
 export const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     entity,
 }) => (
-    <span className="flex min-w-0 items-center gap-2 text-surface-primary">
+    <span className="flex min-w-0 items-center gap-related--fixed-8 text-surface-primary">
         <AddressOutput address={entity.address} label={entity.label} />
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />

@@ -139,7 +139,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-group">
             {!showOptions && latestVote == null && (
                 <Button
                     className="w-fit"
@@ -155,7 +155,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
                 </Button>
             )}
             {!showOptions && latestVote != null && (
-                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                <div className="flex w-full flex-col items-center gap-group md:flex-row">
                     {latestVoteTxHref != null ? (
                         <Button
                             className="w-full md:w-fit"
@@ -198,7 +198,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
                 </div>
             )}
             {showOptions && (
-                <Card className="p-6 shadow-surface-sm">
+                <Card className="p-inset-surface-wide shadow-surface-sm">
                     <TokenVotingOptions
                         isVeto={isVeto}
                         onChange={setSelectedOption}
@@ -207,7 +207,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
                 </Card>
             )}
             {showOptions && (
-                <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
+                <div className="flex w-full flex-col items-center gap-y-related md:flex-row md:gap-x-group">
                     <Button
                         className="w-full md:w-fit"
                         disabled={

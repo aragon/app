@@ -37,7 +37,7 @@ export const TokenDelegationOnboardingIntroDialog: React.FC<
     };
 
     return (
-        <Dialog.Content className="flex flex-col items-center gap-4">
+        <Dialog.Content className="flex flex-col items-center gap-group">
             <EmptyState
                 description={t(
                     'app.plugins.token.tokenDelegationOnboardingDialog.intro.description',

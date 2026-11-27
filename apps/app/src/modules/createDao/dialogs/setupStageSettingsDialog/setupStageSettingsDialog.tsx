@@ -71,7 +71,7 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (
             />
             <Dialog.Content>
                 <form
-                    className="flex flex-col gap-6 py-4"
+                    className="flex flex-col gap-section py-group"
                     id={formId}
                     onSubmit={handleSubmit(onFormSubmit)}
                 >

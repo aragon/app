@@ -58,12 +58,12 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
 
     return (
         <Page.AsideCard title={t('app.capitalFlow.dispatchPanel.title')}>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-section">
                 <p className="type-body--unstepped text-surface-secondary">
                     {t('app.capitalFlow.dispatchPanel.description')}
                 </p>
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-3">
+                <div className="flex flex-col gap-tight">
+                    <div className="flex items-center gap-related">
                         <AvatarIcon
                             icon={IconType.APP_TRANSACTIONS}
                             size="sm"
@@ -73,6 +73,7 @@ export const DispatchPanel: React.FC<IDispatchPanelProps> = ({
                             {t('app.capitalFlow.dispatchPanel.routingTitle')}
                         </span>
                     </div>
+                    {/* biome-ignore lint/plugin/noPrimitiveSpacing: indents the description past the title icon (icon + gap) */}
                     <p className="pl-9 type-supporting--compact-detail text-surface-secondary">
                         {t('app.capitalFlow.dispatchPanel.routingDescription')}
                     </p>

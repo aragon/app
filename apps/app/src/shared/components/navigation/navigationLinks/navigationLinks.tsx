@@ -29,10 +29,10 @@ export const NavigationLinks: React.FC<INavigationLinksProps> = (props) => {
             className={classNames(
                 'flex',
                 {
-                    'item-center flex-row gap-x-6 xl:gap-x-10':
+                    'item-center flex-row gap-x-nav-section xl:gap-x-nav-section--fixed-40':
                         variant === 'row',
                 },
-                { 'flex-col gap-y-1': variant === 'column' },
+                { 'flex-col gap-y-nav-tight': variant === 'column' },
                 className,
             )}
             {...otherProps}

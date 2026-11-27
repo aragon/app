@@ -4,7 +4,7 @@ export const GaugeVoterGaugeListHeading = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="hidden gap-4 px-6 py-3 text-surface-secondary uppercase md:flex">
+        <div className="hidden gap-group px-inset-surface-wide py-inset-item-flat text-surface-secondary uppercase md:flex">
             <div className="min-w-0 grow basis-0">
                 <p className="type-supporting--column-heading type-strong">
                     {t(

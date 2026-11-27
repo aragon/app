@@ -25,13 +25,14 @@ export const CreateWorkspaceFormTargetsItem: React.FC<
     const { t } = useTranslations();
 
     return (
-        <Card className="flex flex-col gap-3 p-6 shadow-surface-sm md:flex-row md:gap-2">
+        <Card className="flex flex-col gap-related--12-8 p-inset-surface-wide shadow-surface-sm md:flex-row">
             <div className="min-w-0 grow">
                 <CreateWorkspaceFormNetworkAddressFields
                     index={index}
                     listName={name}
                 />
             </div>
+            {/* biome-ignore lint/plugin/noPrimitiveSpacing: aligns the menu button with the field below the label from md */}
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}

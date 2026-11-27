@@ -13,7 +13,7 @@ export const PermissionsListHeaderLabel: React.FC<
     const { t } = useTranslations();
 
     return (
-        <span className="flex min-w-0 items-center gap-1">
+        <span className="flex min-w-0 items-center gap-tight">
             <span className="truncate">{t(labelKey)}</span>
             <PermissionInfoTooltip
                 tooltipKey={tooltipKey}

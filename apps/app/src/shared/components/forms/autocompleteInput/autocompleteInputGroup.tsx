@@ -17,7 +17,7 @@ export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (
     return (
         <div className={classNames('flex flex-col', className)} {...otherProps}>
             {group && (
-                <div className="flex flex-row items-center gap-3 px-3 py-2">
+                <div className="flex flex-row items-center gap-related px-inset-item-flat--fixed-12 py-inset-item-flat--fixed-8">
                     <p className="shrink-0 type-title-group--compact text-surface-primary">
                         {group.name}
                     </p>

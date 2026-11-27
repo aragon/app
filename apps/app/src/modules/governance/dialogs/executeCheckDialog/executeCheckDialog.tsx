@@ -136,7 +136,10 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (
     return (
         <>
             <Dialog.Header title={title} />
-            <Dialog.Content className="pb-3" description={description} />
+            <Dialog.Content
+                className="pb-inset-surface-flat"
+                description={description}
+            />
             <Dialog.Footer primaryAction={footerAction} />
         </>
     );

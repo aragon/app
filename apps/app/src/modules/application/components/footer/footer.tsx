@@ -14,7 +14,7 @@ import { footerLinks } from './footerLinks';
 export interface IFooterProps extends ComponentProps<'footer'> {}
 
 const linkClassNames =
-    'truncate border-b py-4 type-control last:border-none md:border-none md:py-0 border-surface-secondary text-surface-secondary';
+    'truncate border-b last:border-none max-md:py-inset-nav-item--fixed-16 md:border-none type-control border-surface-secondary text-surface-secondary';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
@@ -36,19 +36,19 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     return (
         <footer
             className={classNames(
-                'border-t border-surface-secondary bg-surface-primary py-5',
+                'border-t border-surface-secondary bg-surface-primary py-inset-nav-bar--fixed-20',
                 className,
             )}
             {...otherProps}
         >
             <Container
                 className={classNames(
-                    'grid items-center md:gap-6',
+                    'grid items-center md:gap-nav-section',
                     layoutClassNames,
                 )}
             >
-                <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
-                    <div className="flex items-center gap-2.5">
+                <div className="flex flex-row items-center justify-between gap-nav-group [grid-area:metadata] md:justify-normal lg:justify-self-start max-md:pt-inset-nav-item max-md:pb-inset-nav-item--fixed-16">
+                    <div className="flex items-center gap-nav-related--fixed-10">
                         <p className="type-supporting text-nowrap text-surface-primary">
                             {t('app.application.footer.governed')}
                         </p>
@@ -60,7 +60,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         variant="primary"
                     />
                 </div>
-                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
+                <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-nav-section">
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
                             className={linkClassNames}
@@ -72,7 +72,7 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                         </Link>
                     ))}
                 </div>
-                <p className="truncate pt-6 pb-3 type-caption--footnote text-surface-secondary [grid-area:copyright] md:py-0 lg:justify-self-end">
+                <p className="truncate type-caption--footnote text-surface-secondary [grid-area:copyright] lg:justify-self-end max-md:pt-inset-nav-item--fixed-24 max-md:pb-inset-nav-item">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

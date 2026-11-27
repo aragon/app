@@ -28,8 +28,8 @@ export const GaugeVoterVoteDialogFooter: React.FC<
     const { t } = useTranslations();
 
     return (
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-x-6">
-            <div className="flex flex-col gap-3 md:grow md:flex-row md:items-center md:gap-x-6">
+        <div className="flex flex-col gap-group md:flex-row md:items-center md:justify-between md:gap-x-section">
+            <div className="flex flex-col gap-related md:grow md:flex-row md:items-center md:gap-x-section">
                 <span className="type-supporting--compact-detail type-strong text-surface-primary uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.footer.totalVotingPower',
@@ -39,7 +39,7 @@ export const GaugeVoterVoteDialogFooter: React.FC<
                     {totalVotingPower} {tokenSymbol}
                 </span>
             </div>
-            <div className="flex gap-2 md:gap-3">
+            <div className="flex gap-related--8-12">
                 <Button
                     className="w-full md:w-fit"
                     onClick={onEqualize}

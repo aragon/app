@@ -85,7 +85,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
                 <span className="truncate type-title-item--compact-card text-surface-primary">
                     {name ?? addressOutput}
                 </span>
-                <span className="flex gap-1 truncate type-supporting--compact-meta">
+                <span className="flex gap-phrase truncate type-supporting--compact-meta">
                     <span className="text-surface-primary">{networkName}</span>
                     {name != null && (
                         <span className="min-w-0 text-surface-secondary">
@@ -100,7 +100,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
     // A menu cannot sit inside a link, so a removable row is not one.
     if (onRemove != null) {
         return (
-            <Card className="flex items-center gap-3 p-4 md:p-6">
+            <Card className="flex items-center gap-related p-inset-surface">
                 {content}
                 <Dropdown.Container
                     constrainContentWidth={false}
@@ -126,7 +126,7 @@ export const WorkspaceAccountItem: React.FC<IWorkspaceAccountItemProps> = (
 
     return (
         <DataList.Item
-            className="flex items-center gap-3 p-4 md:p-6"
+            className="flex items-center gap-related px-inset-item py-inset-item--16-24"
             href={workspaceUtils.getAccountScopeUrl(
                 workspaceId,
                 account.id,

@@ -12,20 +12,20 @@ export const DaoDataListItemSkeleton: React.FC<IDaoDataListItemSkeletonProps> = 
             aria-busy="true"
             aria-label="loading"
             className={classNames(
-                'flex min-h-[173.5px] w-full flex-col justify-center gap-y-3 py-4 md:min-h-[207px] md:gap-y-4 md:py-6',
+                'flex min-h-[173.5px] w-full flex-col justify-center gap-y-related--12-16 py-inset-item--16-24 md:min-h-[207px]',
                 className,
             )}
             tabIndex={0}
             {...otherProps}
         >
             <div className="flex w-full justify-between">
-                <div className="flex w-2/3 flex-col gap-y-2.5 text-surface-primary">
+                <div className="flex w-2/3 flex-col gap-y-related--fixed-10 text-surface-primary">
                     <StateSkeletonBar responsiveSize={{ md: 'xl' }} size="lg" width="100%" />
                     <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="50%" />
                 </div>
                 <StateSkeletonCircular responsiveSize={{ md: 'lg' }} size="md" />
             </div>
-            <div className="flex w-full flex-col gap-y-2">
+            <div className="flex w-full flex-col gap-y-related--fixed-8">
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="100%" />
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="85%" />
             </div>

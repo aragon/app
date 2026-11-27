@@ -101,9 +101,9 @@ export const CreateProcessFormPermissions: React.FC<
         : undefined;
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-section">
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="flex gap-group md:!flex-row"
                 helpText={t(
                     'app.createDao.createProcessForm.permissions.permissionField.helpText',
                 )}

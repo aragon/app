@@ -49,7 +49,7 @@ export const InputNumberMax: React.FC<IInputNumberMaxProps> = (props) => {
                 {...otherInputProps}
             />
             {!disabled && (
-                <Button className="mr-2" onClick={handleMaxClick} size="sm" variant="tertiary">
+                <Button className="mr-control-sm" onClick={handleMaxClick} size="sm" variant="tertiary">
                     {copy.inputNumberMax.max}
                 </Button>
             )}

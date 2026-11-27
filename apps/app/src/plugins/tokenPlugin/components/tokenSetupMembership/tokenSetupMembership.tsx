@@ -53,7 +53,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (
     };
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-section">
             <InputContainer
                 helpText={t(
                     'app.plugins.token.tokenSetupMembership.type.helpText',
@@ -67,7 +67,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (
                     onValueChange={handleTokenTypeChange}
                     value={tokenType}
                 >
-                    <div className="flex w-full flex-row gap-x-2">
+                    <div className="flex w-full flex-row gap-x-related--fixed-8">
                         <RadioCard
                             label={t(
                                 'app.plugins.token.tokenSetupMembership.type.option.create',

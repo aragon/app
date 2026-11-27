@@ -73,7 +73,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
         .map((entry) => entry.row);
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-related">
             <PermissionsListHeader />
             <Accordion.Container
                 isMulti={true}

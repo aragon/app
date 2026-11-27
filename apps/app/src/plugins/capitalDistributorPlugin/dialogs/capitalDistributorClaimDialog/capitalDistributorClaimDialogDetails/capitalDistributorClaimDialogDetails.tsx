@@ -111,8 +111,8 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
         !termsConditionsAccepted;
 
     return (
-        <div className="flex grow flex-col gap-4">
-            <Card className="flex grow flex-col gap-3 p-6">
+        <div className="flex grow flex-col gap-group">
+            <Card className="flex grow flex-col gap-related p-inset-surface-wide">
                 {completeDetails.map((detailsGroup, index) => (
                     // biome-ignore lint/suspicious/noArrayIndexKey: fixed groups, never reordered
                     <React.Fragment key={index}>
@@ -131,7 +131,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                 ))}
             </Card>
             {resources != null && resources.length > 0 && (
-                <Card className="flex flex-col gap-3 p-6">
+                <Card className="flex flex-col gap-related p-inset-surface-wide">
                     <Heading
                         as="h4"
                         typeClassName="type-title-group--small-panel"
@@ -140,7 +140,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                             'app.plugins.capitalDistributor.capitalDistributorClaimDialog.details.resources',
                         )}
                     </Heading>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-group">
                         {resources.map((resource) => (
                             <ResourceLink
                                 isExternal={true}
@@ -153,7 +153,7 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                 </Card>
             )}
             {plugin.termsConditionsUrl != null && (
-                <div className="flex flex-row gap-1">
+                <div className="flex flex-row gap-tight">
                     <Checkbox
                         checked={termsConditionsAccepted}
                         label={termsConditionsAcceptedLabel as string}

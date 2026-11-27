@@ -167,10 +167,10 @@ export const DispatchSimulationDialog: React.FC<
                 })}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-4 pb-6">
+                <div className="flex flex-col gap-group pb-section">
                     {/* Loading State */}
                     {isLoading && (
-                        <Card className="flex flex-col items-center justify-center gap-4 p-8">
+                        <Card className="flex flex-col items-center justify-center gap-group p-inset-surface-wide--fixed-32">
                             <Spinner size="lg" variant="primary" />
                             <p className="text-surface-secondary">
                                 {t(
@@ -183,11 +183,12 @@ export const DispatchSimulationDialog: React.FC<
                     {/* Error State */}
                     {(error || isReverted) && !isLoading && (
                         <Card
-                            className="flex flex-col gap-3 border-critical-primary-dispatch! p-4"
+                            className="flex flex-col gap-related border-critical-primary-dispatch! p-inset-surface-flat--fixed-16"
                             role="alert"
                         >
-                            <div className="flex items-start gap-3">
+                            <div className="flex items-start gap-related">
                                 <Icon
+                                    // biome-ignore lint/plugin/noPrimitiveSpacing: optical nudge of the warning icon to the first text line
                                     className="mt-0.5 shrink-0 icon-critical-primary"
                                     icon={IconType.WARNING}
                                     size="md"
@@ -200,12 +201,12 @@ export const DispatchSimulationDialog: React.FC<
                                                 : 'app.capitalFlow.dispatchSimulationDialog.failed',
                                         )}
                                     </p>
-                                    <p className="mt-1 type-body-compact--dialog-note break-words text-critical-primary-message">
+                                    <p className="mt-tight type-body-compact--dialog-note break-words text-critical-primary-message">
                                         {isReverted ? simulation?.error : error}
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex justify-end gap-2">
+                            <div className="flex justify-end gap-related--fixed-8">
                                 {isReverted && simulation?.tenderlyUrl && (
                                     <Button
                                         href={simulation.tenderlyUrl}

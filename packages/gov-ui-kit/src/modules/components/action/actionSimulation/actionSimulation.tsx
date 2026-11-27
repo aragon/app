@@ -51,7 +51,12 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
         }) ?? simulationCopy.never;
 
     return (
-        <DataList.Item className={classNames('flex flex-col gap-4 p-4 pt-1 pb-4', className)}>
+        <DataList.Item
+            className={classNames(
+                'flex flex-col gap-group pt-inset-tight--fixed-4 pb-inset-item-flat--fixed-16',
+                className,
+            )}
+        >
             <DefinitionList.Container>
                 <DefinitionList.Item term={copy.actionSimulation.totalActionsTerm}>
                     {`${totalActions.toString()} ${totalActions === 1 ? simulationCopy.action : simulationCopy.actions}`}
@@ -59,7 +64,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
 
                 <DefinitionList.Item term={copy.actionSimulation.lastSimulationTerm}>
                     {isLoading ? (
-                        <span className="flex items-center gap-2 text-accent-primary md:gap-3">
+                        <span className="flex items-center gap-related--8-12 text-accent-primary">
                             <Spinner size="md" variant="primary" />
                             {simulationCopy.simulating}
                         </span>
@@ -70,9 +75,9 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
 
                 <DefinitionList.Item term={copy.actionSimulation.executableTerm}>
                     <div className="flex w-full items-center justify-between">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-related--fixed-8">
                             {isLoading ? (
-                                <span className="flex items-center gap-2 text-accent-primary md:gap-3">
+                                <span className="flex items-center gap-related--8-12 text-accent-primary">
                                     <Spinner size="md" variant="primary" />
                                     {simulationCopy.simulating}
                                 </span>
@@ -96,7 +101,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 </DefinitionList.Item>
             </DefinitionList.Container>
 
-            <div className={classNames('flex flex-col gap-2 md:flex-row md:justify-between')}>
+            <div className={classNames('flex flex-col gap-related--fixed-8 md:flex-row md:justify-between')}>
                 {isEnabled && (
                     <Button isLoading={isLoading} onClick={onSimulate} size="md" variant="secondary">
                         {isLoading
@@ -129,7 +134,7 @@ export const ActionSimulation: React.FC<IActionSimulationProps> = (props) => {
                 )}
             </div>
             {error && (
-                <div className="flex items-center gap-2 type-body-compact--component-note text-critical-primary">
+                <div className="flex items-center gap-related--fixed-8 type-body-compact--component-note text-critical-primary">
                     <AvatarIcon icon={IconType.INFO} size="sm" variant="critical" />
                     {error}
                 </div>

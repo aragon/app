@@ -108,7 +108,7 @@ export const WorkspaceExternalAccountBanner: React.FC<
 
     return (
         <Banner message={message}>
-            <div className="flex flex-col gap-3 md:flex-row">
+            <div className="flex flex-col gap-group--fixed-12 md:flex-row">
                 <Button
                     disabled={isUpdating || currentWorkspace == null}
                     iconLeft={IconType.PLUS}

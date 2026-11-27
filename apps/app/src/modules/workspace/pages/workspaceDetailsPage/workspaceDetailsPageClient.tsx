@@ -142,6 +142,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                         )}
                     >
                         {accounts.length === 0 && (
+                            // biome-ignore lint/plugin/noPrimitiveSpacing: empty-state card padding 40 px: no inset role has it
                             <Card className="py-10">
                                 <EmptyState
                                     heading={t(
@@ -166,7 +167,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                 />
                             </Card>
                         )}
-                        <div className="flex flex-col gap-3 md:gap-2">
+                        <div className="flex flex-col gap-related--12-8">
                             {accounts.map((account) => (
                                 <WorkspaceAccountItem
                                     account={account}
@@ -190,10 +191,10 @@ export const WorkspaceDetailsPageClient: React.FC<
                                 'app.workspace.workspaceDetailsPage.section.targets',
                             )}
                         >
-                            <div className="flex flex-col gap-3 md:gap-2">
+                            <div className="flex flex-col gap-related--12-8">
                                 {targets.map((target) => (
                                     <Card
-                                        className="flex flex-col gap-1 p-4 shadow-surface-sm md:p-6"
+                                        className="flex flex-col gap-tight p-inset-surface shadow-surface-sm"
                                         key={`${target.network}-${target.address}`}
                                     >
                                         <span className="type-body-compact--unstepped text-surface-secondary">
@@ -219,7 +220,7 @@ export const WorkspaceDetailsPageClient: React.FC<
                                 'app.workspace.workspaceDetailsPage.aside.resources',
                             )}
                         >
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-group--fixed-12">
                                 {links.map((link) => (
                                     <Link
                                         href={link.url}

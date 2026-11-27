@@ -72,7 +72,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             useCustomWrapper={true}
         >
             {downloadedFileName && (
-                <Card className="px-6 py-2 shadow-surface-sm">
+                <Card className="px-inset-surface-wide py-inset-surface-flat--fixed-8 shadow-surface-sm">
                     <p className="type-body-compact--component-note text-surface-tertiary">
                         {t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.downloadedFile',

@@ -58,10 +58,10 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
             : undefined;
 
     return (
-        <div className="flex grow flex-col gap-3">
+        <div className="flex grow flex-col gap-related">
             <div className="flex items-center justify-between">
                 <ToggleGroup
-                    className="flex w-full items-center gap-x-2 md:gap-x-3"
+                    className="flex w-full items-center gap-x-related--8-12"
                     isMultiSelect={false}
                     onChange={handleToggleChange}
                     value={daoFilter}

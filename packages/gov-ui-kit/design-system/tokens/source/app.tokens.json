@@ -2088,5 +2088,885 @@
                 }
             }
         }
+    },
+    "space": {
+        "$type": "dimension",
+        "role": {
+            "inset-page": {
+                "$description": "Page gutters and the page block padding: container, page main and content, page header, footer, top bars.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 40,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-section-stepped": {
+                "$description": "Between sections that space out on desktop: wizard steps, settings forms, governance setup sections.",
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-layout": {
+                "$description": "Between page columns (main and aside) and the top-level blocks of a landing page.",
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 80,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-nav": {
+                "$description": "Navigation chrome: padding of the app shell around the navigation: the sidebar panel, the top and mobile header bars, the mobile nav menu.",
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "size": {
+            "row": {
+                "$description": "Minimum height of a clickable list row that is not an item with padding (account and workspace selector rows).",
+                "height": {
+                    "base": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 56,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        },
+        "exception": {
+            "control-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-lg--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "gap": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-md--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--fixed-10": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 10,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "control-sm--fixed-6": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 6,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-group--16-12": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group--fixed-14": {
+                "base": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-group-stepped--12-24": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--12-16": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--fixed-14": {
+                "base": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 14,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--8-12": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-40": {
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-48": {
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-tight--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-phrase--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--12-8": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--6-12": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-stepped--24-48": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--32-40": {
+                "base": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--40-48": {
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--fixed-36": {
+                "base": {
+                    "$value": {
+                        "value": 36,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 36,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section-wide--fixed-48": {
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-item-flat--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-4": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-8": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-12": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-4": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--12-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-12": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-flat--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 14,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--24-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-28": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 28,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 28,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface-wide--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-tight--4-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
     }
 }

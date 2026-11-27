@@ -89,7 +89,8 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                 constrainContentWidth={false}
                 customTrigger={
                     <button
-                        className="group flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl border border-surface-default bg-surface-default p-2 pr-3 text-surface-default shadow-surface-sm ring-accent-focus focus-ring transition-all hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active"
+                        // biome-ignore lint/plugin/noPrimitiveSpacing: frame of the workspace avatar trigger
+                        className="group flex min-h-row w-full cursor-pointer items-center gap-nav-related--fixed-12 rounded-xl border border-surface-default bg-surface-default p-2 pr-control-md text-surface-default shadow-surface-sm ring-accent-focus focus-ring transition-all hover:border-surface-hover hover:bg-surface-hover hover:shadow-surface-default active:border-surface-active active:bg-surface-active active:text-surface-active"
                         type="button"
                     >
                         <span className="flex w-11 shrink-0 items-center">
@@ -117,7 +118,7 @@ export const WorkspaceSelector: React.FC<IWorkspaceSelectorProps> = (props) => {
                         onSelect={() => handleSelectWorkspace(id)}
                         selected={id === workspaceId}
                     >
-                        <span className="flex min-w-0 items-center gap-3">
+                        <span className="flex min-w-0 items-center gap-nav-related--fixed-12">
                             <DaoAvatar
                                 className="shrink-0"
                                 name={name}

@@ -62,7 +62,7 @@ export const CreateProposalActionDetails: React.FC<
         : undefined;
 
     return (
-        <div className="flex w-full flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-section">
             <DefinitionList.Container>
                 {metadata != null && (
                     <>
@@ -109,7 +109,7 @@ export const CreateProposalActionDetails: React.FC<
                                         'app.actions.core.createProposalActionDetails.metadataResources',
                                     )}
                                 >
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-related">
                                         {metadata.resources.map((resource) => (
                                             <ResourceLink
                                                 isExternal={true}

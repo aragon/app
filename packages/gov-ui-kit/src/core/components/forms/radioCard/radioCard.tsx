@@ -52,8 +52,8 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
     const labelId = `${randomId}-label`;
 
     const containerClasses = classNames(
-        'group flex w-full flex-col gap-3 rounded-xl border border-surface-default bg-surface-primary px-4 py-3 ring-accent-focus focus-ring', // default
-        'cursor-pointer shadow-surface-sm outline-hidden transition-all md:rounded-2xl md:px-6 md:py-4', // default
+        'group flex w-full flex-col gap-related rounded-xl border border-surface-default bg-surface-primary px-inset-item py-control-item--12-16 ring-accent-focus focus-ring', // default
+        'cursor-pointer shadow-surface-sm outline-hidden transition-all md:rounded-2xl', // default
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // checked
         'hover:border-surface-hover hover:shadow-surface-default hover:data-[state=checked]:shadow-accent-md', // hover
         'disabled:cursor-default disabled:border-surface-disabled disabled:bg-surface-disabled disabled:shadow-none', // disabled
@@ -76,12 +76,13 @@ export const RadioCard = forwardRef<HTMLButtonElement, IRadioCardProps>((props, 
             value={value}
             {...rest}
         >
-            <div className="flex size-full items-center gap-x-3 md:gap-x-4">
+            <div className="flex size-full items-center gap-x-group--12-16">
                 {avatar && <Avatar responsiveSize={{ md: 'md' }} size="sm" src={avatar} />}
                 <div
+                    // biome-ignore lint/plugin/noPrimitiveSpacing: label to tag gap 2 px, 16 px from md: no role has this pair
                     className={classNames('flex min-w-0 flex-1 gap-x-0.5 md:gap-x-4', { 'items-center': !description })}
                 >
-                    <div className="flex min-w-0 flex-1 flex-col gap-y-0.5 md:gap-y-1">
+                    <div className="flex min-w-0 flex-1 flex-col gap-y-tight--2-4">
                         <p className={labelClasses} id={labelId}>
                             {label}
                         </p>

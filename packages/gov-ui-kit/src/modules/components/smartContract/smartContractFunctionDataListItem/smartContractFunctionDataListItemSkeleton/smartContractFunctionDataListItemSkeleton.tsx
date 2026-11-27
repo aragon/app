@@ -18,7 +18,7 @@ export const SmartContractFunctionDataListItemSkeleton: React.FC<ISmartContractF
             aria-busy={asChild ? undefined : true}
             aria-label={asChild ? undefined : 'loading'}
             className={classNames(
-                'flex w-full flex-col gap-3 py-4',
+                'flex w-full flex-col gap-related py-inset-item-flat--fixed-16',
                 { 'min-h-[67.5px] md:min-h-[88.5px]': !asChild },
                 { 'min-h-[35.5px] border-none p-0! shadow-none! md:min-h-[56.5px]': asChild },
                 className,
@@ -29,7 +29,7 @@ export const SmartContractFunctionDataListItemSkeleton: React.FC<ISmartContractF
             <div className="flex w-1/2 md:w-1/3">
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="100%" />
             </div>
-            <div className="flex w-3/4 gap-x-2 md:w-1/2">
+            <div className="flex w-3/4 gap-x-related--fixed-8 md:w-1/2">
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="50%" />
                 <StateSkeletonBar responsiveSize={{ md: 'lg' }} width="50%" />
             </div>

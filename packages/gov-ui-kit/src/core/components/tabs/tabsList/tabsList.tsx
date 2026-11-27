@@ -10,7 +10,7 @@ export const TabsList: React.FC<ITabsListProps> = (props) => {
     const { isUnderlined } = useContext(TabsContext);
 
     const tabsListClassNames = classNames(
-        'flex gap-x-6',
+        'flex gap-x-section',
         { 'border-b border-surface-secondary': isUnderlined },
         className,
     );

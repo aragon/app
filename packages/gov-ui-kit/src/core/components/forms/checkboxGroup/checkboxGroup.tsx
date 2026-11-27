@@ -22,7 +22,7 @@ export const CheckboxGroup: React.FC<ICheckboxGroupProps> = (props) => {
 
     return (
         <InputContainer id={id} useCustomWrapper={true} {...otherProps}>
-            <div className={classNames('flex min-w-0 flex-col gap-2 md:gap-3', className)}>{children}</div>
+            <div className={classNames('flex min-w-0 flex-col gap-related--8-12', className)}>{children}</div>
         </InputContainer>
     );
 };

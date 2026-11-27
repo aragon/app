@@ -38,7 +38,7 @@ export const LockToVoteLockOnboardingFormDialog: React.FC<
                     'app.plugins.lockToVote.lockToVoteLockOnboardingDialog.form.title',
                 )}
             />
-            <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
+            <Dialog.Content className="flex w-full flex-col gap-group pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <LockToVoteLockForm
                     daoId={daoId}
                     mode="dialog"

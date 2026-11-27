@@ -20,7 +20,7 @@ export const CardCollapsible: React.FC<ICardCollapsibleProps> = (props) => {
     const { children, className, collapsedPixels = 180, ...otherProps } = props;
 
     return (
-        <Card className={classNames('p-4 md:p-6', className)}>
+        <Card className={classNames('p-inset-surface', className)}>
             <Collapsible collapsedPixels={collapsedPixels} showOverlay={true} {...otherProps}>
                 {children}
             </Collapsible>

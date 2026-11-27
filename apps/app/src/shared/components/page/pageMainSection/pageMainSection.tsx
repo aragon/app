@@ -65,14 +65,14 @@ export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
         <div
             className={classNames(
                 'flex flex-col',
-                { 'gap-4': inset },
+                { 'gap-group': inset },
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-col gap-2">
-                <div className="flex flex-row justify-between gap-1">
-                    <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-related--fixed-8">
+                <div className="flex flex-row justify-between gap-tight">
+                    <div className="flex items-center gap-related--fixed-8">
                         <Heading as="h2" typeClassName="type-title-section">
                             {title}
                         </Heading>

@@ -27,7 +27,7 @@ export const WorkspaceCreateAccountDialogSigners: React.FC = () => {
     }, [threshold, total, setValue]);
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <ManageMembershipAddressList
                 helpText={t(`${i18nBase}.signers.helpText`)}
                 label={t(`${i18nBase}.signers.label`)}

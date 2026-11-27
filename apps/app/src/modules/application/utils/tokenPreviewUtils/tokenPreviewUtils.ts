@@ -37,6 +37,12 @@ class TokenPreviewUtils {
             label: 'Typography',
             modes: ['next'],
         },
+        {
+            attribute: 'spacing',
+            cookieName: 'aragon.debug.spacingPreview',
+            label: 'Spacing',
+            modes: ['new', 'looser', 'compact'],
+        },
     ];
 
     /**

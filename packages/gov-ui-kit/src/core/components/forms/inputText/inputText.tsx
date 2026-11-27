@@ -42,7 +42,7 @@ export const InputText = forwardRef<HTMLInputElement, IInputTextProps>((props, r
     const variantKey = disabled ? 'disabled' : variant;
 
     const addonClasses = classNames(
-        'flex h-[stretch] shrink-0 items-center justify-center px-3 type-control',
+        'flex h-[stretch] shrink-0 items-center justify-center px-control-md type-control',
         variantToAddonClassNames[variantKey],
         { 'border-r-[1px]': addonPosition === 'left' },
         { 'order-last border-l-[1px]': addonPosition === 'right' },
@@ -62,9 +62,13 @@ export const InputText = forwardRef<HTMLInputElement, IInputTextProps>((props, r
                     {addon}
                 </div>
             )}
-            {iconLeft != null && <Icon className={classNames(iconClasses, 'ml-4')} icon={iconLeft} size="md" />}
+            {iconLeft != null && (
+                <Icon className={classNames(iconClasses, 'ml-control-lg')} icon={iconLeft} size="md" />
+            )}
             <input ref={ref} type="text" {...inputProps} />
-            {iconRight != null && <Icon className={classNames(iconClasses, 'mr-4')} icon={iconRight} size="md" />}
+            {iconRight != null && (
+                <Icon className={classNames(iconClasses, 'mr-control-lg')} icon={iconRight} size="md" />
+            )}
         </InputContainer>
     );
 });

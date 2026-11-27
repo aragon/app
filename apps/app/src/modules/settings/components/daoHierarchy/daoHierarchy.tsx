@@ -50,7 +50,7 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
             <DefinitionList.Item
                 term={t('app.settings.daoSettingsInfo.blockchain')}
             >
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-tight">
                     <p className="text-surface-secondary">
                         {networkDefinitions[dao.network].name}
                     </p>
@@ -118,7 +118,7 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                 <DefinitionList.Item
                     term={t('app.settings.daoSettingsInfo.links')}
                 >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-related">
                         {dao.links.map((link) => (
                             <ResourceLink
                                 isExternal={true}
@@ -163,8 +163,8 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
             <Accordion.Container defaultValue={[dao.id]} isMulti={true}>
                 <Accordion.Item value={dao.id}>
                     <Accordion.ItemHeader className="items-center">
-                        <div className="flex w-full items-center gap-3">
-                            <div className="flex min-w-0 flex-1 items-center gap-3">
+                        <div className="flex w-full items-center gap-related">
+                            <div className="flex min-w-0 flex-1 items-center gap-related">
                                 <DaoAvatar
                                     name={dao.name}
                                     size="md"
@@ -187,8 +187,8 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                         value={linkedAccount.id}
                     >
                         <Accordion.ItemHeader className="items-center">
-                            <div className="flex w-full items-center gap-3">
-                                <div className="flex min-w-0 flex-1 items-center gap-3">
+                            <div className="flex w-full items-center gap-related">
+                                <div className="flex min-w-0 flex-1 items-center gap-related">
                                     <DaoAvatar
                                         name={linkedAccount.name}
                                         size="md"
@@ -212,7 +212,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
 
     // Default: regular view for main DAO without linked accounts or when viewing a linked account
     return (
-        <Card className="p-6">
+        <Card className="p-inset-surface-wide">
             <DaoInfo dao={dao} permissionsHref={permissionsHref} />
         </Card>
     );

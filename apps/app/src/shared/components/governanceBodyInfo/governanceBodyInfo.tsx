@@ -50,9 +50,9 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
         : t('app.shared.governanceBodyInfo.external');
 
     return (
-        <div className="flex w-full flex-col items-start gap-1">
+        <div className="flex w-full flex-col items-start gap-tight">
             <div className="flex w-full items-center justify-between">
-                <p className="flex items-center gap-2 type-title-item text-surface-primary">
+                <p className="flex items-center gap-related--fixed-8 type-title-item text-surface-primary">
                     {address != null ? (
                         <AddressOutput address={address} label={bodyName} />
                     ) : (

@@ -1,0 +1,511 @@
+{
+    "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+    "$description": "Spacing preview New: every role at its one standard value. Exceptions follow their role (spacing.config.json) except the navigation chrome ones and the density-invariant ones listed here.",
+    "space": {
+        "$type": "dimension",
+        "role": {
+            "inset-tight": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "gap-related": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            }
+        },
+        "exception": {
+            "gap-group-stepped--16-24": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--12-16": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-group--fixed-14": {
+                "base": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 16,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--8-12": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-10": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-related--fixed-8": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-32": {
+                "base": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 32,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-40": {
+                "base": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 40,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-section--fixed-48": {
+                "base": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 48,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-tight--fixed-2": {
+                "base": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 2,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-nav-tight--fixed-6": {
+                "base": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 6,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-related--fixed-12": {
+                "base": {
+                    "$value": {
+                        "value": 8,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 12,
+                        "unit": "px"
+                    }
+                }
+            },
+            "gap-section--fixed-24": {
+                "base": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                },
+                "md": {
+                    "$value": {
+                        "value": 24,
+                        "unit": "px"
+                    }
+                }
+            },
+            "inset-nav--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-4": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav--fixed-8": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-12": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 12,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-14": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-16": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-20": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 20,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-bar--fixed-32": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                },
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 32,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-16": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-24": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-4": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 4,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-nav-item--fixed-8": {
+                "y": {
+                    "base": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 8,
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "inset-surface--16-24": {
+                "x": {
+                    "base": {
+                        "$value": {
+                            "value": 16,
+                            "unit": "px"
+                        }
+                    },
+                    "md": {
+                        "$value": {
+                            "value": 24,
+                            "unit": "px"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -87,12 +87,12 @@ export const AdvancedDateInputDuration: React.FC<
     return (
         <Card
             className={classNames(
-                'flex flex-col gap-4 p-6 shadow-surface-sm',
+                'flex flex-col gap-group p-inset-surface-wide shadow-surface-sm',
                 className,
             )}
             {...otherProps}
         >
-            <div className="flex flex-col justify-between gap-4 md:flex-row">
+            <div className="flex flex-col justify-between gap-group md:flex-row">
                 <InputNumber
                     className="w-full md:w-1/3"
                     label={t('app.shared.advancedDateInput.duration.minutes')}

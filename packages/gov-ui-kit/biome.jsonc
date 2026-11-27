@@ -52,6 +52,14 @@
                 {
                     "path": "./biome-plugins/css/noPrimitiveTypography.grit",
                     "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/js/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
+                },
+                {
+                    "path": "./biome-plugins/css/noPrimitiveSpacing.grit",
+                    "resolutionKind": "config"
                 }
             ]
         },

@@ -79,12 +79,12 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
 
     const isTokenVoting = votingPower != null && tokenSymbol != null;
     const centerInfoClassNames = classNames(
-        'flex min-h-[46.5px] w-full min-w-0 shrink flex-col justify-center gap-y-1',
+        'flex min-h-[46.5px] w-full min-w-0 shrink flex-col justify-center gap-y-tight',
     );
 
     return (
         <DataList.Item
-            className={classNames('flex items-center gap-x-3 py-3 md:gap-x-4 md:py-5', className)}
+            className={classNames('flex items-center gap-x-related--12-16 py-inset-item', className)}
             {...otherProps}
         >
             <MemberAvatar
@@ -95,7 +95,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                 size="sm"
             />
             <div className={centerInfoClassNames}>
-                <span className="flex items-center gap-x-1 type-title-item--framework-leading text-surface-primary md:gap-x-1.5">
+                <span className="flex items-center gap-x-tight--4-6 type-title-item--framework-leading text-surface-primary">
                     <AddressOutput address={voter.address} className="truncate" label={resolvedUserHandle} />
                     {isDelegate && !isCurrentUser && (
                         <Tag label={copy.voteDataListItemStructure.yourDelegate} variant="primary" />
@@ -109,7 +109,7 @@ export const VoteDataListItemStructure: React.FC<IVoteDataListItemStructureProps
                 )}
             </div>
 
-            <div className="flex items-center gap-x-1 type-supporting text-surface-secondary md:gap-x-2">
+            <div className="flex items-center gap-x-tight--4-8 type-supporting text-surface-secondary">
                 <Tag
                     className="capitalize"
                     data-testid="tag"

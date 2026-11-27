@@ -97,7 +97,7 @@ const WorkspaceCreateAccountDialogDetails: React.FC = () => {
     });
 
     return (
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-section-wide">
             <InputText maxLength={nameMaxLength} {...nameField} />
             <AvatarInput name="avatar" />
             <TextArea
@@ -133,7 +133,7 @@ const WorkspaceCreateAccountDialogSteps: React.FC = () => {
 
     const renderStep = (step: IWizardStepperStep, children: ReactNode) => (
         <WizardDialog.Step className="flex-col" {...step}>
-            <div className="flex flex-col gap-2 pb-6">
+            <div className="flex flex-col gap-related--fixed-8 pb-section">
                 <Heading size="h3">
                     {t(`${i18nBase}.steps.${step.id}.title`)}
                 </Heading>

@@ -107,7 +107,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                         'app.application.aragonProfileClaimSubdomainDialog.alreadyRegistered.title',
                     )}
                 />
-                <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
+                <Dialog.Content className="flex flex-col gap-related px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                     <AragonProfilePreviewCard
                         address={address}
                         label={`${existingSubdomain}${memberRegistrySubdomainSuffix}`}
@@ -142,7 +142,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                     'app.application.aragonProfileClaimSubdomainDialog.title',
                 )}
             />
-            <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
+            <Dialog.Content className="flex flex-col gap-related px-inset-surface-wide pt-inset-surface-flat--fixed-16 pb-inset-surface-wide">
                 <InputText
                     {...fieldProps}
                     helpText={t(

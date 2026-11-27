@@ -57,6 +57,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     const randomId = useRandomId(id);
 
     const switchClassNames = classNames(
+        // biome-ignore lint/plugin/noPrimitiveSpacing: the switch track around its thumb
         'group peer w-10 cursor-default rounded-[40px] border border-surface-default-switch bg-surface-default p-1 shadow-surface-sm ring-accent-focus focus-ring', // Default
         'data-[state=checked]:border-surface-selected data-[state=checked]:shadow-accent-default', // Checked
         'disabled:bg-surface-disabled disabled:data-[state=checked]:border-surface-disabled disabled:data-[state=checked]:shadow-none', // Disabled
@@ -69,7 +70,7 @@ export const Switch: React.FC<ISwitchProps> = (props) => {
     );
 
     const labelClassNames = classNames(
-        'pl-2 type-label-option text-surface-secondary md:pl-3', // Default
+        'pl-control-sm--8-12 type-label-option text-surface-secondary', // Default
         'peer-data-[state=checked]:text-surface-primary', // Checked
         'peer-disabled:text-surface-disabled peer-data-[state=checked]:peer-disabled:text-surface-primary', // Disabled
     );

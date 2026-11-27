@@ -39,7 +39,7 @@ export const PermissionActionCreate: React.FC<IPermissionActionCreateProps> = (
         `inputData.parameters.${parameterIndex.toString()}.value`;
 
     return (
-        <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-col gap-section">
             <AlertInline
                 message={t('app.actions.core.permissionManager.riskWarning')}
                 variant="warning"

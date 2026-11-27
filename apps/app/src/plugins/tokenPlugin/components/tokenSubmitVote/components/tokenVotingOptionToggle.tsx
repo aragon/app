@@ -78,7 +78,7 @@ export const TokenVotingOptionToggle: React.FC<
     } = props;
 
     const toggleClasses = classNames(
-        'flex h-[50px] items-center justify-between gap-3 rounded-xl border py-2 pr-3 pl-4',
+        'flex h-[50px] items-center justify-between gap-related rounded-xl border py-control-lg--fixed-8 pr-control-md pl-control-lg',
         'cursor-pointer bg-surface-default transition-all',
         'border-surface-default text-surface-default shadow-surface-sm ring-accent-focus focus-ring',
         'active:shadow-none',

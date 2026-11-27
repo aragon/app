@@ -79,14 +79,14 @@ export const WorkspaceAdminPageClient: React.FC<
                     }}
                     title={t('app.workspace.workspaceAdminPage.details.title')}
                 >
-                    <Card className="p-6">
+                    <Card className="p-inset-surface-wide">
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 term={t(
                                     'app.workspace.workspaceAdminPage.details.name',
                                 )}
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-related--fixed-8">
                                     <p className="text-surface-secondary">
                                         {name}
                                     </p>
@@ -116,7 +116,7 @@ export const WorkspaceAdminPageClient: React.FC<
                                         'app.workspace.workspaceAdminPage.details.links',
                                     )}
                                 >
-                                    <div className="flex flex-col gap-3">
+                                    <div className="flex flex-col gap-group--fixed-12">
                                         {links.map((link, index) => (
                                             <ResourceLink
                                                 isExternal={true}
@@ -138,7 +138,7 @@ export const WorkspaceAdminPageClient: React.FC<
                 <Page.AsideCard
                     title={t('app.workspace.workspaceAdminPage.storage.title')}
                 >
-                    <div className="flex w-full flex-col gap-y-4 md:gap-y-6">
+                    <div className="flex w-full flex-col gap-y-group-stepped">
                         {/* Fixed until workspaces can be published. */}
                         <DefinitionList.Container>
                             <DefinitionList.Item

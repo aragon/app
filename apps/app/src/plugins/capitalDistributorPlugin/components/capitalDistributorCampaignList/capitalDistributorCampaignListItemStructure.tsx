@@ -82,14 +82,14 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
 
     return (
         <DataList.Item
-            className="flex flex-col items-center gap-4 p-6 sm:flex-row sm:gap-12"
+            className="flex flex-col items-center gap-group p-inset-surface-wide sm:flex-row sm:gap-section-wide--fixed-48"
             href={isClaimed ? addressLink : undefined}
             onClick={isClaimed ? undefined : handleOpenDialog}
             target="_blank"
         >
-            <div className="flex w-full min-w-0 items-center gap-4">
+            <div className="flex w-full min-w-0 items-center gap-group">
                 <Avatar size="lg" src={token.logo} />
-                <div className="flex min-w-0 flex-col gap-1">
+                <div className="flex min-w-0 flex-col gap-tight">
                     <h3 className="type-title-item--picker-row text-surface-primary">
                         {title}
                     </h3>
@@ -99,9 +99,9 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                 </div>
             </div>
             <div className="w-full border-t border-surface-secondary sm:hidden" />
-            <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-8">
-                <div className="flex grow items-center gap-4">
-                    <div className="flex min-w-20 flex-col gap-1">
+            <div className="flex w-full items-center justify-between gap-group sm:w-auto sm:gap-section--fixed-32">
+                <div className="flex grow items-center gap-group">
+                    <div className="flex min-w-20 flex-col gap-tight">
                         <h3 className="type-supporting--sm-step-label text-surface-secondary sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.amount',
@@ -111,7 +111,7 @@ export const CapitalDistributorCampaignListItemStructure: React.FC<
                             {formattedAmount}
                         </p>
                     </div>
-                    <div className="flex min-w-20 flex-col gap-1">
+                    <div className="flex min-w-20 flex-col gap-tight">
                         <h3 className="type-supporting--sm-step-label text-surface-secondary sm:type-supporting--sm-step-label-wide">
                             {t(
                                 'app.plugins.capitalDistributor.capitalDistributorCampaignList.item.value',
